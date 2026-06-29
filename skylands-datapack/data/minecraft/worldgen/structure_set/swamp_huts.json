@@ -1,0 +1,16 @@
+{
+ "structures": [
+  {
+   "structure": "minecraft:swamp_hut",
+   "weight": 1
+  }
+ ],
+ "placement": {
+  "type": "skytekx:surface_spread",
+  "salt": 14357620,
+  "spacing": 32,
+  "separation": 8,
+  "spread_type": "linear",
+  "min_surface_y": 36
+ }
+}

@@ -1,0 +1,1213 @@
+# deadlyworld:blocks.toml
+# This config contains options to control the physical properties of the blocks added by this mod.
+# IMPORTANT: Any changes made to block properties while the game is running will not take effect until you restart the
+#   game!
+
+
+# Category: spawner.simple
+# Options to customize the physical properties of the simple spawner block.
+
+  # Influences the time it takes to break simple spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.simple.hardness = 5.0
+  # How resistant simple spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.simple.explosion_resistance = 1200.0
+
+  # If true, simple spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.simple.requires_tool = false
+
+  # How slippery simple spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.simple.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on simple spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.simple.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on simple spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.simple.jump_factor = 1.0
+
+  # The level of light emitted by simple spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.simple.light_level = 0
+
+
+# Category: spawner.stream
+# Options to customize the physical properties of the stream spawner block.
+
+  # Influences the time it takes to break stream spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.stream.hardness = 5.0
+  # How resistant stream spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.stream.explosion_resistance = 1200.0
+
+  # If true, stream spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.stream.requires_tool = false
+
+  # How slippery stream spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.stream.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on stream spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.stream.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on stream spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.stream.jump_factor = 1.0
+
+  # The level of light emitted by stream spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.stream.light_level = 0
+
+
+# Category: spawner.swarm
+# Options to customize the physical properties of the swarm spawner block.
+
+  # Influences the time it takes to break swarm spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.swarm.hardness = 5.0
+  # How resistant swarm spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.swarm.explosion_resistance = 1200.0
+
+  # If true, swarm spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.swarm.requires_tool = false
+
+  # How slippery swarm spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.swarm.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on swarm spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.swarm.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on swarm spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.swarm.jump_factor = 1.0
+
+  # The level of light emitted by swarm spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.swarm.light_level = 0
+
+
+# Category: spawner.brutal
+# Options to customize the physical properties of the brutal spawner block.
+
+  # Influences the time it takes to break brutal spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.brutal.hardness = 5.0
+  # How resistant brutal spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.brutal.explosion_resistance = 1200.0
+
+  # If true, brutal spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.brutal.requires_tool = false
+
+  # How slippery brutal spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.brutal.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on brutal spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.brutal.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on brutal spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.brutal.jump_factor = 1.0
+
+  # The level of light emitted by brutal spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.brutal.light_level = 0
+
+
+# Category: spawner.floaty
+# Options to customize the physical properties of the floaty spawner block.
+
+  # Influences the time it takes to break floaty spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.floaty.hardness = 5.0
+  # How resistant floaty spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.floaty.explosion_resistance = 1200.0
+
+  # If true, floaty spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.floaty.requires_tool = false
+
+  # How slippery floaty spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.floaty.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on floaty spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.floaty.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on floaty spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.floaty.jump_factor = 1.0
+
+  # The level of light emitted by floaty spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.floaty.light_level = 0
+
+
+# Category: spawner.nest
+# Options to customize the physical properties of the nest spawner block.
+
+  # Influences the time it takes to break nest spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.nest.hardness = 5.0
+  # How resistant nest spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.nest.explosion_resistance = 1200.0
+
+  # If true, nest spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.nest.requires_tool = false
+
+  # How slippery nest spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.nest.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on nest spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.nest.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on nest spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.nest.jump_factor = 1.0
+
+  # The level of light emitted by nest spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.nest.light_level = 0
+
+
+# Category: spawner.mini
+# Options to customize the physical properties of the mini spawner block.
+
+  # Influences the time it takes to break mini spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.mini.hardness = 5.0
+  # How resistant mini spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.mini.explosion_resistance = 1200.0
+
+  # If true, mini spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.mini.requires_tool = false
+
+  # How slippery mini spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.mini.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on mini spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.mini.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on mini spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.mini.jump_factor = 1.0
+
+  # The level of light emitted by mini spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.mini.light_level = 0
+
+
+# Category: spawner.buried
+# Options to customize the physical properties of the buried spawner block.
+
+  # Influences the time it takes to break buried spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.buried.hardness = 5.0
+  # How resistant buried spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.buried.explosion_resistance = 1200.0
+
+  # If true, buried spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.buried.requires_tool = false
+
+  # How slippery buried spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.buried.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on buried spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.buried.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on buried spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.buried.jump_factor = 1.0
+
+  # The level of light emitted by buried spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.buried.light_level = 0
+
+
+# Category: spawner.dungeon
+# Options to customize the physical properties of the dungeon spawner block.
+
+  # Influences the time it takes to break dungeon spawner blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spawner.dungeon.hardness = 5.0
+  # How resistant dungeon spawner blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  spawner.dungeon.explosion_resistance = 1200.0
+
+  # If true, dungeon spawner blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spawner.dungeon.requires_tool = false
+
+  # How slippery dungeon spawner blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spawner.dungeon.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on dungeon spawner blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.dungeon.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on dungeon spawner blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spawner.dungeon.jump_factor = 1.0
+
+  # The level of light emitted by dungeon spawner blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spawner.dungeon.light_level = 0
+
+
+# Category: floor_trap.tnt
+# Options to customize the physical properties of the tnt floor_trap block.
+
+  # Influences the time it takes to break tnt floor_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  floor_trap.tnt.hardness = 5.0
+  # How resistant tnt floor_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 3.5
+  floor_trap.tnt.explosion_resistance = 3.5
+
+  # If true, tnt floor_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  floor_trap.tnt.requires_tool = false
+
+  # How slippery tnt floor_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  floor_trap.tnt.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on tnt floor_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.tnt.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on tnt floor_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.tnt.jump_factor = 1.0
+
+  # The level of light emitted by tnt floor_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  floor_trap.tnt.light_level = 0
+
+
+# Category: floor_trap.tnt_mob
+# Options to customize the physical properties of the tnt_mob floor_trap block.
+
+  # Influences the time it takes to break tnt_mob floor_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  floor_trap.tnt_mob.hardness = 5.0
+  # How resistant tnt_mob floor_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 3.5
+  floor_trap.tnt_mob.explosion_resistance = 3.5
+
+  # If true, tnt_mob floor_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  floor_trap.tnt_mob.requires_tool = false
+
+  # How slippery tnt_mob floor_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  floor_trap.tnt_mob.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on tnt_mob floor_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.tnt_mob.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on tnt_mob floor_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.tnt_mob.jump_factor = 1.0
+
+  # The level of light emitted by tnt_mob floor_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  floor_trap.tnt_mob.light_level = 0
+
+
+# Category: floor_trap.potion
+# Options to customize the physical properties of the potion floor_trap block.
+
+  # Influences the time it takes to break potion floor_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  floor_trap.potion.hardness = 5.0
+  # How resistant potion floor_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 3.5
+  floor_trap.potion.explosion_resistance = 3.5
+
+  # If true, potion floor_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  floor_trap.potion.requires_tool = false
+
+  # How slippery potion floor_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  floor_trap.potion.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on potion floor_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.potion.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on potion floor_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.potion.jump_factor = 1.0
+
+  # The level of light emitted by potion floor_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  floor_trap.potion.light_level = 0
+
+
+# Category: floor_trap.lava
+# Options to customize the physical properties of the lava floor_trap block.
+
+  # Influences the time it takes to break lava floor_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  floor_trap.lava.hardness = 5.0
+  # How resistant lava floor_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 3.5
+  floor_trap.lava.explosion_resistance = 3.5
+
+  # If true, lava floor_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  floor_trap.lava.requires_tool = false
+
+  # How slippery lava floor_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  floor_trap.lava.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on lava floor_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.lava.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on lava floor_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.lava.jump_factor = 1.0
+
+  # The level of light emitted by lava floor_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  floor_trap.lava.light_level = 0
+
+
+# Category: floor_trap.fire
+# Options to customize the physical properties of the fire floor_trap block.
+
+  # Influences the time it takes to break fire floor_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  floor_trap.fire.hardness = 5.0
+  # How resistant fire floor_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 3.5
+  floor_trap.fire.explosion_resistance = 3.5
+
+  # If true, fire floor_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  floor_trap.fire.requires_tool = false
+
+  # How slippery fire floor_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  floor_trap.fire.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on fire floor_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.fire.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on fire floor_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.fire.jump_factor = 1.0
+
+  # The level of light emitted by fire floor_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  floor_trap.fire.light_level = 0
+
+
+# Category: floor_trap.sea_mine_mob
+# Options to customize the physical properties of the sea_mine_mob floor_trap block.
+
+  # Influences the time it takes to break sea_mine_mob floor_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  floor_trap.sea_mine_mob.hardness = 5.0
+  # How resistant sea_mine_mob floor_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 3.5
+  floor_trap.sea_mine_mob.explosion_resistance = 3.5
+
+  # If true, sea_mine_mob floor_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  floor_trap.sea_mine_mob.requires_tool = false
+
+  # How slippery sea_mine_mob floor_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  floor_trap.sea_mine_mob.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on sea_mine_mob floor_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.sea_mine_mob.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on sea_mine_mob floor_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  floor_trap.sea_mine_mob.jump_factor = 1.0
+
+  # The level of light emitted by sea_mine_mob floor_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  floor_trap.sea_mine_mob.light_level = 0
+
+
+# Category: tower_dispenser.simple
+# Options to customize the physical properties of the simple tower_dispenser block.
+
+  # Influences the time it takes to break simple tower_dispenser blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  tower_dispenser.simple.hardness = 5.0
+  # How resistant simple tower_dispenser blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  tower_dispenser.simple.explosion_resistance = 1200.0
+
+  # If true, simple tower_dispenser blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  tower_dispenser.simple.requires_tool = false
+
+  # How slippery simple tower_dispenser blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  tower_dispenser.simple.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on simple tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.simple.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on simple tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.simple.jump_factor = 1.0
+
+  # The level of light emitted by simple tower_dispenser blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  tower_dispenser.simple.light_level = 0
+
+
+# Category: tower_dispenser.fire
+# Options to customize the physical properties of the fire tower_dispenser block.
+
+  # Influences the time it takes to break fire tower_dispenser blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  tower_dispenser.fire.hardness = 5.0
+  # How resistant fire tower_dispenser blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  tower_dispenser.fire.explosion_resistance = 1200.0
+
+  # If true, fire tower_dispenser blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  tower_dispenser.fire.requires_tool = false
+
+  # How slippery fire tower_dispenser blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  tower_dispenser.fire.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on fire tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.fire.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on fire tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.fire.jump_factor = 1.0
+
+  # The level of light emitted by fire tower_dispenser blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  tower_dispenser.fire.light_level = 0
+
+
+# Category: tower_dispenser.potion
+# Options to customize the physical properties of the potion tower_dispenser block.
+
+  # Influences the time it takes to break potion tower_dispenser blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  tower_dispenser.potion.hardness = 5.0
+  # How resistant potion tower_dispenser blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  tower_dispenser.potion.explosion_resistance = 1200.0
+
+  # If true, potion tower_dispenser blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  tower_dispenser.potion.requires_tool = false
+
+  # How slippery potion tower_dispenser blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  tower_dispenser.potion.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on potion tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.potion.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on potion tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.potion.jump_factor = 1.0
+
+  # The level of light emitted by potion tower_dispenser blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  tower_dispenser.potion.light_level = 0
+
+
+# Category: tower_dispenser.gatling
+# Options to customize the physical properties of the gatling tower_dispenser block.
+
+  # Influences the time it takes to break gatling tower_dispenser blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  tower_dispenser.gatling.hardness = 5.0
+  # How resistant gatling tower_dispenser blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  tower_dispenser.gatling.explosion_resistance = 1200.0
+
+  # If true, gatling tower_dispenser blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  tower_dispenser.gatling.requires_tool = false
+
+  # How slippery gatling tower_dispenser blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  tower_dispenser.gatling.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on gatling tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.gatling.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on gatling tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.gatling.jump_factor = 1.0
+
+  # The level of light emitted by gatling tower_dispenser blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  tower_dispenser.gatling.light_level = 0
+
+
+# Category: tower_dispenser.fireball
+# Options to customize the physical properties of the fireball tower_dispenser block.
+
+  # Influences the time it takes to break fireball tower_dispenser blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  tower_dispenser.fireball.hardness = 5.0
+  # How resistant fireball tower_dispenser blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 1200.0
+  tower_dispenser.fireball.explosion_resistance = 1200.0
+
+  # If true, fireball tower_dispenser blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  tower_dispenser.fireball.requires_tool = false
+
+  # How slippery fireball tower_dispenser blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  tower_dispenser.fireball.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on fireball tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.fireball.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on fireball tower_dispenser blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  tower_dispenser.fireball.jump_factor = 1.0
+
+  # The level of light emitted by fireball tower_dispenser blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  tower_dispenser.fireball.light_level = 0
+
+
+# Category: sea_mine.normal
+# Options to customize the physical properties of the normal sea_mine block.
+
+  # Influences the time it takes to break normal sea_mine blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 0.0
+  sea_mine.normal.hardness = 0.0
+  # How resistant normal sea_mine blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 0.0
+  sea_mine.normal.explosion_resistance = 0.0
+
+  # If true, normal sea_mine blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  sea_mine.normal.requires_tool = false
+
+  # How slippery normal sea_mine blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  sea_mine.normal.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on normal sea_mine blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  sea_mine.normal.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on normal sea_mine blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  sea_mine.normal.jump_factor = 1.0
+
+  # The level of light emitted by normal sea_mine blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  sea_mine.normal.light_level = 0
+
+
+# Category: sea_mine.puffer
+# Options to customize the physical properties of the puffer sea_mine block.
+
+  # Influences the time it takes to break puffer sea_mine blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 0.0
+  sea_mine.puffer.hardness = 0.0
+  # How resistant puffer sea_mine blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 0.0
+  sea_mine.puffer.explosion_resistance = 0.0
+
+  # If true, puffer sea_mine blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  sea_mine.puffer.requires_tool = false
+
+  # How slippery puffer sea_mine blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  sea_mine.puffer.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on puffer sea_mine blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  sea_mine.puffer.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on puffer sea_mine blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  sea_mine.puffer.jump_factor = 1.0
+
+  # The level of light emitted by puffer sea_mine blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  sea_mine.puffer.light_level = 0
+
+
+# Category: sea_mine.guardian
+# Options to customize the physical properties of the guardian sea_mine block.
+
+  # Influences the time it takes to break guardian sea_mine blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 0.0
+  sea_mine.guardian.hardness = 0.0
+  # How resistant guardian sea_mine blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 0.0
+  sea_mine.guardian.explosion_resistance = 0.0
+
+  # If true, guardian sea_mine blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  sea_mine.guardian.requires_tool = false
+
+  # How slippery guardian sea_mine blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  sea_mine.guardian.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on guardian sea_mine blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  sea_mine.guardian.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on guardian sea_mine blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  sea_mine.guardian.jump_factor = 1.0
+
+  # The level of light emitted by guardian sea_mine blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  sea_mine.guardian.light_level = 0
+
+
+# Category: spike_trap.mundane
+# Options to customize the physical properties of the mundane spike_trap block.
+
+  # Influences the time it takes to break mundane spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.mundane.hardness = 5.0
+  # How resistant mundane spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.mundane.explosion_resistance = 2.5
+
+  # If true, mundane spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.mundane.requires_tool = false
+
+  # How slippery mundane spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.mundane.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on mundane spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mundane.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on mundane spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mundane.jump_factor = 1.0
+
+  # The level of light emitted by mundane spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spike_trap.mundane.light_level = 0
+
+
+# Category: spike_trap.poison
+# Options to customize the physical properties of the poison spike_trap block.
+
+  # Influences the time it takes to break poison spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.poison.hardness = 5.0
+  # How resistant poison spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.poison.explosion_resistance = 2.5
+
+  # If true, poison spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.poison.requires_tool = false
+
+  # How slippery poison spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.poison.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on poison spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.poison.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on poison spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.poison.jump_factor = 1.0
+
+  # The level of light emitted by poison spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spike_trap.poison.light_level = 0
+
+
+# Category: spike_trap.fiery
+# Options to customize the physical properties of the fiery spike_trap block.
+
+  # Influences the time it takes to break fiery spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.fiery.hardness = 5.0
+  # How resistant fiery spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.fiery.explosion_resistance = 2.5
+
+  # If true, fiery spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.fiery.requires_tool = false
+
+  # How slippery fiery spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.fiery.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on fiery spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.fiery.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on fiery spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.fiery.jump_factor = 1.0
+
+  # The level of light emitted by fiery spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 7
+  spike_trap.fiery.light_level = 7
+
+
+# Category: spike_trap.withering
+# Options to customize the physical properties of the withering spike_trap block.
+
+  # Influences the time it takes to break withering spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.withering.hardness = 5.0
+  # How resistant withering spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.withering.explosion_resistance = 2.5
+
+  # If true, withering spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.withering.requires_tool = false
+
+  # How slippery withering spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.withering.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on withering spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.withering.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on withering spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.withering.jump_factor = 1.0
+
+  # The level of light emitted by withering spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spike_trap.withering.light_level = 0
+
+
+# Category: spike_trap.mechanical_mundane
+# Options to customize the physical properties of the mechanical_mundane spike_trap block.
+
+  # Influences the time it takes to break mechanical_mundane spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.mechanical_mundane.hardness = 5.0
+  # How resistant mechanical_mundane spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.mechanical_mundane.explosion_resistance = 2.5
+
+  # If true, mechanical_mundane spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.mechanical_mundane.requires_tool = false
+
+  # How slippery mechanical_mundane spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.mechanical_mundane.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on mechanical_mundane spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_mundane.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on mechanical_mundane spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_mundane.jump_factor = 1.0
+
+  # The level of light emitted by mechanical_mundane spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spike_trap.mechanical_mundane.light_level = 0
+
+
+# Category: spike_trap.mechanical_poison
+# Options to customize the physical properties of the mechanical_poison spike_trap block.
+
+  # Influences the time it takes to break mechanical_poison spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.mechanical_poison.hardness = 5.0
+  # How resistant mechanical_poison spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.mechanical_poison.explosion_resistance = 2.5
+
+  # If true, mechanical_poison spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.mechanical_poison.requires_tool = false
+
+  # How slippery mechanical_poison spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.mechanical_poison.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on mechanical_poison spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_poison.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on mechanical_poison spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_poison.jump_factor = 1.0
+
+  # The level of light emitted by mechanical_poison spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spike_trap.mechanical_poison.light_level = 0
+
+
+# Category: spike_trap.mechanical_fiery
+# Options to customize the physical properties of the mechanical_fiery spike_trap block.
+
+  # Influences the time it takes to break mechanical_fiery spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.mechanical_fiery.hardness = 5.0
+  # How resistant mechanical_fiery spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.mechanical_fiery.explosion_resistance = 2.5
+
+  # If true, mechanical_fiery spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.mechanical_fiery.requires_tool = false
+
+  # How slippery mechanical_fiery spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.mechanical_fiery.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on mechanical_fiery spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_fiery.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on mechanical_fiery spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_fiery.jump_factor = 1.0
+
+  # The level of light emitted by mechanical_fiery spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 7
+  spike_trap.mechanical_fiery.light_level = 7
+
+
+# Category: spike_trap.mechanical_withering
+# Options to customize the physical properties of the mechanical_withering spike_trap block.
+
+  # Influences the time it takes to break mechanical_withering spike_trap blocks. Actual time in seconds is 1.5 times
+  # this value when using a valid tool (ignoring any tool speed modifiers), and 5 times this value when
+  # using an invalid tool. A negative hardness value makes it impossible to break by hand, like bedrock.
+  # For reference: 1.5 = stone, 5 = vanilla spawner, 50 = obsidian, -1 = bedrock
+  # <Number> Range: ≥ -1.0, Default: 5.0
+  spike_trap.mechanical_withering.hardness = 5.0
+  # How resistant mechanical_withering spike_trap blocks are to being destroyed by explosions. This is usually equal
+  # to the hardness value, but frequently higher for stone/metal materials.
+  # For reference: 6 = stone, 5 = vanilla spawner, 1200 = obsidian, 3600000 = bedrock
+  # <Number> Range: ≥ 0.0, Default: 2.5
+  spike_trap.mechanical_withering.explosion_resistance = 2.5
+
+  # If true, mechanical_withering spike_trap blocks will not drop any loot unless broken by the harvest tool.
+  # <Boolean> Valid Values: { true, false }, Default: false
+  spike_trap.mechanical_withering.requires_tool = false
+
+  # How slippery mechanical_withering spike_trap blocks are to move on.  The game physics start to make no sense
+  # if this is set outside the range of 0 to 1, but I guess you can do that if you want.
+  # For reference: 0.6 = most things, 0.8 = slime, 0.98 = ice, 0.989 = blue ice
+  # <Number> Range: Any Value, Default: 0.6
+  spike_trap.mechanical_withering.slipperiness = 0.6
+  # A speed multiplier applied to entities actively moving on mechanical_withering spike_trap blocks.
+  # For reference: 1.0 = most things, 0.4 = soul sand
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_withering.speed_factor = 1.0
+  # A jump power multiplier applied to entities jumping on mechanical_withering spike_trap blocks.
+  # For reference: 1.0 = most things, 0.5 = honey
+  # <Number> Range: Any Value, Default: 1.0
+  spike_trap.mechanical_withering.jump_factor = 1.0
+
+  # The level of light emitted by mechanical_withering spike_trap blocks.
+  # For reference: 0 = most things, 7 = glow lichen, 14 = torch, 15 = glowstone
+  # <Integer> Range: 0 ~ 15, Default: 0
+  spike_trap.mechanical_withering.light_level = 0

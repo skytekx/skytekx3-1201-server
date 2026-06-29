@@ -1,0 +1,151 @@
+
+[general]
+	#Resource locations of the dimensions that lunar events should occur in
+	allowedDimensions = ["minecraft:overworld"]
+	#If lunar water should be enabled
+	lunarWater = true
+	#The chance (1 = 100%) for a meteor shard to be dropped from an elder guardian
+	#Range: 0.0 ~ 1.0
+	meteorShardGuardianChance = 0.05
+	#Registry names of entities that should not be spawned during the full and blood moons (or a whitelist if isMobDuplicationWhitelist)
+	mobDuplicationBlacklist = []
+	#If the mobDuplicationBlacklist should act as a whitelist instead
+	isMobDuplicationWhitelist = false
+	#If moon events should tint the sky
+	moonEventTint = true
+	#Ticks a cauldron of water must be exposed to the night sky per moon phase: Full, new, waning crescent, waxing crescent, third quarter, first quarter, waning gibbous, waxing gibbous, harvest moon, blood moon. -1 disables that phase.
+	lunarWaterTicks = [1200, -1, 4800, 4800, 3600, 3600, 2400, 2400, 600, -1]
+	#If moon events should be announced in chat when they start
+	eventNotifications = true
+
+[fullMoon]
+	#If the vanilla full moon should be considered a proper lunar event
+	fullMoon = true
+	#If mobs spawned during a full moon should have random potion effects
+	addPotionEffects = true
+	#Chance for an additional mob to spawn during a full moon (higher = less likely, 0 disables)
+	#Range: 0 ~ 1000
+	additionalMobsChance = 5
+
+[enchantments]
+	#If the enchantments should be enabled
+	enchantments = true
+	#If a weapon enchanted with lunar edge should increase experience drops
+	lunarEdgeXp = true
+	#If enchanting should be disallowed during the day
+	disallowDayEnchanting = true
+	#Dimensions where enchanting is always allowed, not just at night
+	enchantingWhitelistDimensions = ["minecraft:the_nether", "minecraft:the_end"]
+
+[harvestMoon]
+	#If the Harvest Moon should be enabled
+	harvestMoon = true
+	#Chance (1 = 100%) of the Harvest Moon occurring
+	#Range: 0.0 ~ 1.0
+	harvestMoonChance = 0.05
+	#Nights that should pass before the Harvest Moon occurs for the first time
+	#Range: 0 ~ 1000
+	harvestMoonStartNight = 0
+	#Interval in days at which the Harvest Moon should occur. Overrides chance if > 0.
+	#Range: 0 ~ 1000
+	harvestMoonInterval = 0
+	#Days that should pass until the Harvest Moon happens again
+	#Range: 0 ~ 1000
+	harvestMoonGracePeriod = 0
+	#If the harvest moon should only occur on full moon nights
+	harvestMoonOnFull = true
+	#Plants grown per chunk during the harvest moon
+	#Range: 0 ~ 100
+	harvestMoonGrowAmount = 15
+	#Ticks between plant growth during the harvest moon
+	#Range: 1 ~ 100
+	harvestMoonGrowInterval = 10
+
+[fallingStars]
+	#If the Star Showers should be enabled
+	starShowers = true
+	#Chance (1 = 100%) of the Star Showers occurring
+	#Range: 0.0 ~ 1.0
+	starShowersChance = 0.05
+	#Nights that should pass before the Star Showers occurs for the first time
+	#Range: 0 ~ 1000
+	starShowersStartNight = 0
+	#Interval in days at which the Star Showers should occur. Overrides chance if > 0.
+	#Range: 0 ~ 1000
+	starShowersInterval = 0
+	#Days that should pass until the Star Showers happens again
+	#Range: 0 ~ 1000
+	starShowersGracePeriod = 0
+	#If falling stars should be enabled
+	fallingStars = true
+	#Chance (1 = 100%) for a falling star to appear at night for each player each second
+	#Range: 0.0 ~ 1.0
+	fallingStarRarity = 0.01
+
+[bloodMoon]
+	#If the Blood Moon should be enabled
+	bloodMoon = true
+	#Chance (1 = 100%) of the Blood Moon occurring
+	#Range: 0.0 ~ 1.0
+	bloodMoonChance = 0.05
+	#Nights that should pass before the Blood Moon occurs for the first time
+	#Range: 0 ~ 1000
+	bloodMoonStartNight = 0
+	#Interval in days at which the Blood Moon should occur. Overrides chance if > 0.
+	#Range: 0 ~ 1000
+	bloodMoonInterval = 0
+	#Days that should pass until the Blood Moon happens again
+	#Range: 0 ~ 1000
+	bloodMoonGracePeriod = 0
+	#If sleeping is allowed during a blood moon
+	bloodMoonSleeping = false
+	#Multiplier with which mobs spawn during the blood moon
+	#Range: 1 ~ 1000
+	bloodMoonSpawnMultiplier = 2
+	#If mobs spawned by the blood moon should die at sunup
+	bloodMoonVanish = true
+	#Closest distance mobs can spawn from a player during the blood moon
+	#Range: 0 ~ 256
+	bloodMoonSpawnRadius = 20
+	#If the blood moon should only occur on full moon nights
+	bloodMoonOnFull = true
+
+[meteors]
+	#If meteor content should be enabled
+	meteors = true
+	#Chance of a meteor spawning every second, during the day
+	#Range: 0.0 ~ 1.0
+	meteorChance = 1.4E-4
+	#Chance of a meteor spawning every second, during nighttime
+	#Range: 0.0 ~ 1.0
+	meteorChanceNight = 0.0024
+	#Dimension that needs to be entered to increase meteor spawning
+	meteorGateDimension = "minecraft:the_nether"
+	#Daytime meteor chance after the gate dimension was entered
+	#Range: 0.0 ~ 1.0
+	meteorChanceAfterGate = 2.0E-4
+	#Nighttime meteor chance after the gate dimension was entered
+	#Range: 0.0 ~ 1.0
+	meteorChanceAfterGateNight = 0.003
+	#Chance of a meteor spawning every second during a star shower
+	#Range: 0.0 ~ 1.0
+	meteorChanceStarShower = 0.0075
+	#Chance of a meteor spawning every second in the end dimension
+	#Range: 0.0 ~ 1.0
+	meteorChanceEnd = 0.003
+	#Blocks a meteor can spawn away from the nearest player
+	#Range: 1 ~ 10000
+	meteorSpawnRadius = 1000
+	#Radius in chunks marked invalid for meteor spawning around each player
+	#Range: 0 ~ 64
+	meteorDisallowRadius = 16
+	#Ticks per player until the chance of a meteor spawning in the area is halved
+	#Range: 1 ~ 100000
+	meteorDisallowTime = 12000
+	#Uses a gleaning crystal has for bone-mealing
+	#Range: 1 ~ 100000
+	crystalDurability = 1000
+	#Damage the meteor hammer deals at maximum flight time
+	#Range: 0 ~ 1000
+	hammerDamage = 15
+

@@ -55,6 +55,38 @@
     {
       "structure": "skytekx3:sky_balloon",
       "weight": 2
+    },
+    {
+      "structure": "skytekx3:sky_heavenly_conqueror",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_heavenly_rider",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_shiraz_palace",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_illager_fort",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_coliseum",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_bandit_towers",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_giant_mushroom",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_abandoned_temple",
+      "weight": 1
     }
   ],
   "placement": {

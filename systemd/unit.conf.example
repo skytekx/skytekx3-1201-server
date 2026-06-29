@@ -1,0 +1,3 @@
+# Deploy-host env for skytekx3.service (NOT committed with real values).
+# ansible renders RCON_PW from vault_rcon_password.
+RCON_PW=__SET_FROM_ANSIBLE_VAULT__

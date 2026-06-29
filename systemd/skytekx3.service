@@ -1,0 +1,41 @@
+[Unit]
+Description=SkyTekx3 Minecraft Server (MC 1.20.1 / Forge / Arclight) configured by kleberbaum
+Wants=network.target
+After=network.target
+
+[Service]
+User=minecraft
+Group=minecraft
+Nice=-20
+EnvironmentFile=-/opt/minecraft-server/server/skytekx3-1201-server/unit.conf
+KillMode=none
+SuccessExitStatus=0 1
+ProtectHome=true
+ProtectSystem=false
+PrivateDevices=true
+NoNewPrivileges=true
+PrivateTmp=true
+ReadWriteDirectories=/opt/minecraft-server/server/skytekx3-1201-server
+WorkingDirectory=/opt/minecraft-server/server/skytekx3-1201-server
+
+; NOTE: Arclight 1.20.1 requires Java 17 (crashes on 21). Install java-17-openjdk on the host.
+ExecStart=/usr/lib/jvm/java-17-openjdk/bin/java \
+  -Xms11G -Xmx11G \
+  -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 \
+  -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch \
+  -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M \
+  -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 \
+  -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 \
+  -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 \
+  -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 \
+  -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true \
+  -Dfile.encoding=UTF-8 \
+  -jar arclight.jar nogui
+
+ExecStop=/usr/local/bin/mcrcon -H localhost -P 65535 -p ${RCON_PW} stop
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

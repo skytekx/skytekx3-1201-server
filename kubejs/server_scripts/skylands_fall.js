@@ -5,25 +5,27 @@
 // the sky (Y 300) so they free-fall down into the overworld — exactly like falling
 // off the edge of the Aether.
 //
-// WHY THE THRESHOLD IS Y < 0 (see VOID_Y):
-//   The skylands dimension has min_y = 0, height 256 (buildable 0..255). The island
-//   noise floor (skytekx3:skylands noise_settings) makes EVERY column below y12 pure
-//   air, and the solid island mass sits ~y28..90 (spawn/landing platform is y60).
-//   So a player can never be standing on terrain below y0; reaching y < 0 means they
-//   have fallen clean off the bottom of the world into the void. Void damage in this
-//   dimension only starts at y < min_y - 64 = -64, so catching at y < 0 gives a full
-//   64-block buffer before any damage — and it also respects player-built platforms
-//   anywhere in the legal 0..255 range (we never yank someone off a low base).
+// THE THRESHOLD (VOID_Y): the skylands island mass sits well above y0 and every
+// column below ~y12 is pure air, so reaching y < 0 means a clean fall off the bottom
+// of the world. Catching at y < 0 fires long before any void damage and respects
+// player-built platforms in the legal 0..255 range.
+//
+// RHINO BINDING NOTE (this is what was broken before): in KubeJS/Rhino here, the
+// no-arg accessors level()/dimension()/location() are exposed as bean PROPERTIES,
+// so they MUST be read without parentheses (`player.level`, not `player.level()`);
+// calling them throws "TypeError: ... is not a function, it is object" every tick.
+// getX()/getY()/getServer()/getLevel(...) keep their parens (getter / arg methods).
 //
 // EFFICIENCY: the per-tick hot path is a single double compare (player.getY() >= 0)
-//   and returns immediately for everyone who is not currently in the void. Only the
-//   rare already-falling player pays for the dimension check + teleport.
+//   and returns immediately for everyone who is not currently in the void.
 
 const Component = Java.loadClass('net.minecraft.network.chat.Component')
 const ChatFormatting = Java.loadClass('net.minecraft.ChatFormatting')
+const Level = Java.loadClass('net.minecraft.world.level.Level')
+const OVERWORLD = Level.OVERWORLD   // ResourceKey<Level> for minecraft:overworld
 
 const SKYLANDS = 'skytekx3:skylands'
-const VOID_Y = 0      // below this Y in the skylands = clearly in the void (see header)
+const VOID_Y = 0      // below this Y in the skylands = clearly in the void
 const DROP_Y = 300.0  // re-enter the overworld near the top of the world and free-fall
 
 PlayerEvents.tick(event => {
@@ -32,20 +34,15 @@ PlayerEvents.tick(event => {
   // Cheapest possible gate first: one Y compare. Anyone above the void floor is done.
   if (player.getY() >= VOID_Y) return
 
-  // Only the void-fall case gets here. Make sure they are actually in the Skylands.
-  if (player.level().dimension().location().toString() !== SKYLANDS) return
+  // Property access (no parens) — see RHINO BINDING NOTE above.
+  if (('' + player.level.dimension.location) !== SKYLANDS) return
 
   const server = player.getServer()
   if (server == null) return
-  const overworld = server.overworld()
+  const overworld = server.getLevel(OVERWORLD)   // arg method -> not bean-mapped -> safe
+  if (overworld == null) return
 
-  const x = player.getX()
-  const z = player.getZ()
-
-  // ServerPlayer.teleportTo(ServerLevel, x, y, z, yaw, pitch) performs the cross-
-  // dimension move (and keeps their facing) — same as `/execute in overworld run tp`.
-  player.teleportTo(overworld, x, DROP_Y, z, player.getYRot(), player.getXRot())
-
+  player.teleportTo(overworld, player.getX(), DROP_Y, player.getZ(), player.getYRot(), player.getXRot())
   player.sendSystemMessage(
     Component.literal('You fell from the Skylands…').withStyle(ChatFormatting.AQUA)
   )

@@ -1,0 +1,35 @@
+{
+  "structures": [
+    {
+      "structure": "skytekx3:sky_blimp",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_corsair",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_galley",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_pirate_ship",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_windmill",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_monastery",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 5318411,
+    "spacing": 44,
+    "separation": 12,
+    "spread_type": "linear"
+  }
+}

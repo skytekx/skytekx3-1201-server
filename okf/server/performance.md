@@ -1,16 +1,19 @@
 ---
 type: Runbook
 title: Performance and worldgen profiling
-description: Spark profile of live chunk generation — the lag is vanilla-noise-bound, not memory, and no single mod is the villain.
+description: Spark profile of live chunk generation — the lag is vanilla-noise-bound, not memory, no single mod is the villain, but the Skylands is over-saturated with structures.
 tags: [performance, worldgen, profiling, spark]
-timestamp: 2026-06-29
+timestamp: 2026-06-30
 ---
 
 # Performance and worldgen profiling
 
 Profiled the **running** server (Arclight 1.20.1, Forge 47.4.18) under forced fresh worldgen to find
 what makes chunk loading lag. Short version: **the cost is vanilla terrain noise + JVM overhead, not a
-mod.** There is no mod to delete for a worldgen win. Pregen wider instead.
+mod.** There is no mod to delete for a worldgen win. Pregen wider instead. A later follow-up
+([section 6](#6-skylands-structure-density-and-the-per-structure-spike-2026-06-30-follow-up)) found one
+real, structure-side win: the **Skylands is over-saturated** and the densest/redundant/heaviest sets can
+be thinned for a GC and chunk-gen reliability gain.
 
 ## 1. Memory is *not* the bottleneck (confirmed)
 
@@ -59,7 +62,7 @@ samples); the rest is GC + JIT + chunk IO. By *source*:
 | Zeta + Quark | ~0.97 % | — | Quark + its lib |
 | YUNG's API | 0.23 % | 0.35 % | Structure framework (Better Dungeons/Mineshafts/Strongholds) |
 | TerraBlender | 0.19 % | — | Biome region manager |
-| **skytekx-worldgen (custom)** | <0.01 % | <0.01 % | Our `surface_spread` placement + the ~14 Skylands floaters — **invisible** |
+| **skytekx-worldgen (custom)** | <0.01 % | <0.01 % | Our `surface_spread` placement + the Skylands floaters (then ~14, now 22) — **invisible** |
 
 Top *classes* by self-time are almost entirely vanilla noise: `Aquifer$NoiseBasedAquifer` (8.4 %,
 overworld), `SimplexNoise` (4.9 % / 17.9 %), `ImprovedNoise`, `PerlinNoise`, `Mth`, the
@@ -99,8 +102,98 @@ So the levers that remain are operational:
 3. **Don't cut content mods for worldgen** — the profile shows no payoff. If you *must* trim, the biome
    libs (BoP/TerraBlender/Biolith) are the only ones touching a measurable vanilla cost, and even they are
    ~5 % at most and load-bearing for the biome set.
-4. **Unrelated, but seen while profiling:** the `ruins` mod throws a `RuinsPositionsFile.txt` flush crash
-   roughly every 5 min (an IO/threading bug, *not* worldgen CPU). It spams the log and risks the
-   positions file — worth a separate look.
+4. **The `ruins` mod was removed** (commit `ac261f1`). It used to throw a `RuinsPositionsFile.txt` flush
+   crash roughly every 5 min (an IO/threading bug, not worldgen CPU) that spammed the log — that noise is
+   now gone.
 
 Related: [Arclight runtime](arclight.md), [world reset / pregen](world-reset.md), [deploy](deploy.md).
+
+## 6. Skylands structure density and the per-structure spike (2026-06-30 follow-up)
+
+After the first pass, two things changed: the `ruins` mod was removed and the `skylands_floaters` set
+grew from 14 to **22** entries (7 new When Dungeons Arise + 1 Cataclysm `abandoned_temple`). Re-audited
+specifically for (a) how crowded the Skylands actually is and (b) whether any single structure — the fear
+being **L_Ender's Cataclysm** — spikes chunk-gen.
+
+### 6.1 What actually generates in the Skylands
+
+`/locate` runs each structure's generation-point check, so a hit means it really generates there. Sweeping
+`/locate` (via `execute in skytekx3:skylands positioned … run locate structure …`) from four far centers
+shows the Skylands is fed by **four overlapping layers**, not just the 22 floaters:
+
+| Layer | Set / placement | Spacing (chunks) | Lived density (empirical `/locate`) |
+|---|---|---:|---|
+| Floaters (22 custom `sky_*`) | `skytekx3:skylands_floaters` random_spread | 44 / 12 | any floater ~every **335 blocks** (avg) |
+| Ground DA (10) | `skytekx3:skylands_ground` surface_spread | **18 / 6** | one ~every **288 blocks** — densest layer |
+| Raw DA majors (8) | `dungeons_arise:major_structures` random_spread | 60 / 50 | present, **6 of 8 duplicate a floater** |
+| Villages + swamp hut | `minecraft:villages` / `swamp_huts` surface_spread | 34 / 32 | plains/savanna/taiga + swamp present |
+| Cataclysm (2) | `cataclysm:acropolis` / `soul_black_smith` | 80 / 60 | both present (smith located as close as 57 b) |
+
+Empirical **nearest-any-structure from a random point: 32 / 48 / 128 / 248 blocks** across four bases.
+Theoretical combined density (sum of `1/spacing²` over the active sets) ≈ **one structure per ~210 blocks**
+— about 2.5× denser than the vanilla overworld village grid (one per ~544 blocks). The Skylands is
+**over-saturated**: the floaters cannot feel special when there is a DA hut or a village every few hundred
+blocks under them.
+
+Two concrete problems:
+
+- **Redundant raw-DA layer.** The DA `has_structure/*_biomes` tags were edited `replace:false` to add the
+  14 Skylands biomes, so the raw `dungeons_arise:` majors place on island surfaces *in addition to* the
+  custom floaters. Six exist BOTH as a `sky_*` floater AND as a raw surface build (`aviary`,
+  `bandit_towers`, `thornborn_towers`, `heavenly_conqueror`, `heavenly_challenger`, `heavenly_rider`) —
+  pure duplication.
+- **Heavy Cataclysm builds are in the sky.** `cataclysm:acropolis` (spacing 80) and
+  `cataclysm:soul_black_smith` (spacing 60) both generate in the Skylands — their `*_biomes` tags include
+  the Skylands biomes — despite the intent that the big non-jigsaw Cataclysm builds would not float.
+
+### 6.2 The per-structure spike — measured
+
+Profiled fresh generation of a structure-dense Skylands region (`120000,120000`, r480, ~3,700 chunks):
+<https://spark.lucko.me/fwMefVlnFM>, compared to the earlier sparse Skylands pass.
+
+| Metric | Sparse Skylands | Dense Skylands |
+|---|---:|---:|
+| Worldgen throughput (Chunky) | ~115 chunks/s | **~47 chunks/s** |
+| GC (GC Thread + G1 Conc + Refine) | ~14 % | **~39 %** |
+| `libjvm.so` (native, mostly GC/JIT) | 17.9 % | 41.4 % |
+| Vanilla structure/jigsaw/template assembly | 0.44 % | 1.40 % |
+| **Cataclysm own code** | 0.01 % | **0.00 %** |
+| **DungeonsArise own code** | 0.00 % | **0.00 %** |
+
+**Cataclysm verdict: not guilty on CPU.** Cataclysm (and DA) structures are data-driven — assembled by
+*vanilla* jigsaw/template code — so the mods' own code is ~0 %, and even total structure assembly is only
+1.4 % in a saturated region. No single structure is a CPU bomb.
+
+But the saturated region generates **~2.4× slower** and **triples GC pressure** (≈39 % of samples vs
+≈14 %). The cost of over-saturation is not CPU in one method — it is allocation churn (jigsaw template
+block-infos, palettes, block-state writes) feeding the garbage collector, plus the block-volume of big
+builds. More concurrent heavy placements = more GC pauses + slower chunk gen = exactly the chunk-loading
+stalls behind the earlier reliability incident.
+
+### 6.3 Decisive fix — thin the Skylands (performance + reliability)
+
+The Skylands does not need a structure every ~210 blocks. These are **spacing/tag-only** edits, so they
+affect only **not-yet-generated** chunks — non-destructive and reversible. Apply in BOTH
+`skylands-datapack/` and the runtime `world/datapacks/skytekx3_skylands/`, then
+[regen/pregen](world-reset.md):
+
+1. **Widen the densest layer.** `skylands_ground` spacing **18 → 32**, separation **6 → 10**. Cuts the
+   dominant ground-structure density by ~68 % (one per ~288 → ~512 blocks, in line with villages).
+2. **Drop the redundant raw-DA layer.** Remove the 14 Skylands biomes from the 8 DA `has_structure/*_biomes`
+   tags (`aviary`, `bandit_towers`, `thornborn_towers`, `heavenly_conqueror`, `heavenly_challenger`,
+   `heavenly_rider`, `mechanical_nest`, `keep_kayra`). The `sky_*` floaters already provide that content in
+   the air; the raw surface copies are duplication.
+3. **Pull the heavy Cataclysm builds out of the Skylands.** Remove the Skylands biomes from
+   `cataclysm:acropolis_biomes` and `cataclysm:soul_black_smith_biomes`. These are the largest builds by
+   block-volume and do not fit the floating-island theme. The intended Cataclysm presence, the
+   `sky_abandoned_temple` floater, stays.
+4. **Optional:** `skylands_floaters` spacing **44 → 50** to make the floaters rarer and more special.
+
+Projected combined density after (1)+(2)+(3): ~one structure per **~280 blocks** (from ~210), with the two
+heavy Cataclysm builds and the entire redundant raw-DA surface layer gone — which is where the GC and
+throughput win comes from, not the raw count alone.
+
+> Status: **measured and specified, not yet applied.** These are gameplay/worldgen-design changes to the
+> published pack, so they are left for the pack owner to apply (one spacing edit plus a handful of tag
+> deletions) rather than committed unattended. Cutting a whole mod, or deleting already-generated Skylands
+> chunks, would be destructive and is out of scope.

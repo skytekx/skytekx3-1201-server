@@ -31,3 +31,12 @@ Spark-profiled live chunk generation (overworld + Skylands) on the running serve
 (~30 %) dominate; the worst mod is Starlight (<1–3 %, itself a perf mod) and the custom Skylands worldgen
 is invisible. No content mod is worth cutting — pregen wider instead. Full writeup:
 [server/performance.md](server/performance.md).
+
+## 2026-06-30 — Skylands structure-density follow-up
+`/locate` sweep + a dense-region Spark profile found the Skylands **over-saturated**: one structure per
+~210 blocks, fed by four overlapping layers (22 floaters + dense `skylands_ground` at spacing 18 + a
+**redundant** raw-DA surface layer that duplicates 6 floaters + villages/swamp + two heavy Cataclysm
+builds that do generate there). Per-structure spike verdict: **Cataclysm is not a CPU cost** (its code is
+~0 %, all vanilla jigsaw assembly), but saturated regions generate ~2.4× slower and **triple GC**. Decisive
+thinning is specified (widen `skylands_ground` 18→32, drop the raw-DA + Cataclysm Skylands biome tags) in
+[server/performance.md §6](server/performance.md); left for the pack owner to apply (gameplay edit).

@@ -14,6 +14,7 @@ systemd and operated over RCON.
 - **[Arclight runtime](arclight.md)** — the loader, the Java 17 constraint, the plugin layer.
 - **[Deploy](deploy.md)** — systemd unit, `ServerLinux.sh`, mcrcon, firewall.
 - **[World reset](world-reset.md)** — full regen + pregen procedure.
+- **[Performance](performance.md)** — Spark worldgen profile: the lag is vanilla-noise-bound, not memory, no villain mod.
 - **[Secrets](secrets.md)** — vault, gitignored credential files, RCON.
 
 See [`../../README.md`](../../README.md) for the from-scratch self-hosting walkthrough.

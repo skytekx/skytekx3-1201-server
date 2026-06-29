@@ -1,0 +1,42 @@
+diff --git a/arclight-common/src/main/java/io/izzel/arclight/common/mixin/core/server/level/DistanceManagerMixin.java b/arclight-common/src/main/java/io/izzel/arclight/common/mixin/core/server/level/DistanceManagerMixin.java
+index f9b138b..7eb6669 100644
+--- a/arclight-common/src/main/java/io/izzel/arclight/common/mixin/core/server/level/DistanceManagerMixin.java
++++ b/arclight-common/src/main/java/io/izzel/arclight/common/mixin/core/server/level/DistanceManagerMixin.java
+@@ -45,12 +45,24 @@ public abstract class DistanceManagerMixin implements TicketManagerBridge {
+ 
+     @Redirect(method = "runAllUpdates", at = @At(value = "INVOKE", remap = false, target = "Ljava/util/Set;forEach(Ljava/util/function/Consumer;)V"))
+     private void arclight$safeIter(Set<ChunkHolder> instance, Consumer<ChunkHolder> consumer) {
+-        // Iterate pending chunk updates with protection against concurrent modification exceptions
++        // Iterate pending chunk updates with protection against concurrent modification exceptions.
++        // Hardened (SkyTekx backport): the original do-while called iter.next() unguarded and only
++        // resynced on add(); under concurrent chunk-holder mutation from worker threads this threw
++        // NoSuchElementException -> "Exception in server tick loop" crash. Guard with hasNext() and
++        // catch concurrent-modification exceptions, re-acquiring a fresh iterator instead of dying.
+         var iter = instance.iterator();
+         var expectedSize = instance.size();
+-        do {
+-            var chunkHolder = iter.next();
+-            iter.remove();
++        while (iter.hasNext()) {
++            ChunkHolder chunkHolder;
++            try {
++                chunkHolder = iter.next();
++                iter.remove();
++            } catch (java.util.NoSuchElementException | java.util.ConcurrentModificationException e) {
++                // Set was mutated out from under us; re-acquire and keep ticking rather than crash.
++                iter = instance.iterator();
++                expectedSize = instance.size();
++                continue;
++            }
+             expectedSize--;
+ 
+             consumer.accept(chunkHolder);
+@@ -60,7 +72,7 @@ public abstract class DistanceManagerMixin implements TicketManagerBridge {
+                 expectedSize = instance.size();
+                 iter = instance.iterator();
+             }
+-        } while (iter.hasNext());
++        }
+     }
+ 
+     public <T> boolean addRegionTicketAtDistance(TicketType<T> type, ChunkPos pos, int level, T value) {

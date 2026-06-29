@@ -23,6 +23,38 @@
     {
       "structure": "skytekx3:sky_monastery",
       "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_lighthouse",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_aviary",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_thornborn_towers",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_heavenly_challenger",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_wishing_well",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_spire",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_factory",
+      "weight": 1
+    },
+    {
+      "structure": "skytekx3:sky_balloon",
+      "weight": 2
     }
   ],
   "placement": {

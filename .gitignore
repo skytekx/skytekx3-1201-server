@@ -1,0 +1,60 @@
+# --- runtime / generated ---
+world/
+world_*/
+DIM*/
+logs/
+crash-reports/
+backups/
+*.log
+*.log.gz
+banned-*.json
+ops.json
+whitelist.json
+usercache.json
+usernamecache.json
+session.lock
+
+# --- server binaries / libraries (downloaded, not tracked) ---
+libraries/
+versions/
+arclight-*.jar
+forge-*.jar
+*-installer.jar
+*-installer.jar.log
+run.sh
+user_jvm_args.txt
+
+# --- secrets (never commit) ---
+.vault_pass.txt
+.vaultpw
+*.vault_pass
+
+# --- Modrinth-resolvable mods (reproducible from modrinth.index.json; fetched on deploy) ---
+mods/
+client-only-mods/
+# built modpack artifact (rebuild via tools/build_mrpack.py from the index + overrides)
+*.mrpack
+# user-provided menu art (dropped locally; not redistributable)
+menu-assets/*.png
+
+# NOTE: local-mods/ (Twilight Forest, built from source — not on Modrinth) IS tracked.
+
+# --- local dev ---
+spark/
+debug/
+
+# --- live secret-bearing (rotated; real values in ansible vault) ---
+server.properties
+unit.conf
+
+# --- runtime caches / generated-at-runtime (not part of the pack) ---
+modernfix/
+.arclight/
+.wrangler/
+.mixin.out/
+local/
+disabled-mods/
+RuinsPositionsFile.txt
+boot*.log
+srv.log
+installer_stripped.jar.log

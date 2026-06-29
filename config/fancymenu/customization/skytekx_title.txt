@@ -1,0 +1,69 @@
+type = fancymenu_layout
+
+layout-meta {
+  identifier = title_screen
+  render_custom_elements_behind_vanilla = false
+  last_edited_time = 1782663054959
+  is_enabled = true
+  randommode = false
+  randomgroup = 1
+  randomonlyfirsttime = false
+  layout_index = 0
+  [loading_requirement_container_meta:7abdee00-0921-4b40-b192-a14578e2eb6d-1782663054959] = [groups:][instances:]
+}
+
+menu_background {
+  image_path = [source:local]config/fancymenu/assets/skytekx_bg.png
+  slide = false
+  repeat_texture = false
+  background_type = image
+}
+
+customization {
+  action = backgroundoptions
+  keepaspectratio = false
+}
+
+element {
+  source = [source:local]config/fancymenu/assets/skytekx_logo.png
+  repeat_texture = false
+  nine_slice_texture = false
+  nine_slice_texture_border_x = 5
+  nine_slice_texture_border_y = 5
+  element_type = image
+  instance_identifier = 1a7121ed-37aa-4ea3-b9a3-cced4cb2ea6c-1782663054959
+  appearance_delay = no_delay
+  appearance_delay_seconds = 1.0
+  fade_in = false
+  fade_in_speed = 1.0
+  anchor_point = top-centered
+  x = -210
+  y = 30
+  width = 420
+  height = 160
+  stretch_x = false
+  stretch_y = false
+  stay_on_screen = false
+  element_loading_requirement_container_identifier = fa84182f-6c86-4fdc-aeb5-6f0a66fd151a-1782663054959
+  [loading_requirement_container_meta:fa84182f-6c86-4fdc-aeb5-6f0a66fd151a-1782663054959] = [groups:][instances:]
+}
+
+deep_element {
+  element_type = title_screen_logo
+  instance_identifier = deep:title_screen_logo
+  appearance_delay = no_delay
+  appearance_delay_seconds = 1.0
+  fade_in = false
+  fade_in_speed = 1.0
+  anchor_point = vanilla
+  x = 290
+  y = 30
+  width = 274
+  height = 52
+  stretch_x = false
+  stretch_y = false
+  stay_on_screen = true
+  element_loading_requirement_container_identifier = a32b947a-be91-419c-86d0-6ef6e065a378-1782663054959
+  [loading_requirement_container_meta:a32b947a-be91-419c-86d0-6ef6e065a378-1782663054959] = [groups:][instances:]
+  is_hidden = true
+}

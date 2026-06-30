@@ -24,7 +24,7 @@
  "placement": {
   "type": "skytekx:surface_spread",
   "salt": 10387312,
-  "spacing": 34,
+  "spacing": 24,
   "separation": 8,
   "spread_type": "linear",
   "min_surface_y": 36

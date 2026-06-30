@@ -43,8 +43,8 @@
   ],
   "placement": {
     "type": "skytekx:surface_spread",
-    "spacing": 18,
-    "separation": 6,
+    "spacing": 14,
+    "separation": 5,
     "salt": 7654321,
     "spread_type": "linear",
     "min_surface_y": 36

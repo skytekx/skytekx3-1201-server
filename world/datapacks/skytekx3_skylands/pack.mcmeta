@@ -1,6 +1,6 @@
 {
-  "pack": {
-    "pack_format": 15,
-    "description": "SkyTekx3 Skylands — a separate floating-islands dimension that keeps modded biomes & ores. Travel: /trigger sktx_skylands  ·  return: /trigger sktx_overworld"
-  }
+ "pack": {
+  "pack_format": 15,
+  "description": "SkyTekx3 Skylands, a separate floating-islands dimension that keeps modded biomes and ores. Travel up by flying or pillaring to the overworld build ceiling to ascend into the Skylands, and fall off an island to drop back to the overworld."
+ }
 }

@@ -40,3 +40,14 @@ builds that do generate there). Per-structure spike verdict: **Cataclysm is not 
 ~0 %, all vanilla jigsaw assembly), but saturated regions generate ~2.4× slower and **triple GC**. Decisive
 thinning is specified (widen `skylands_ground` 18→32, drop the raw-DA + Cataclysm Skylands biome tags) in
 [server/performance.md §6](server/performance.md); left for the pack owner to apply (gameplay edit).
+
+## 2026-06-30 — Skylands thinned (light touch, applied)
+Owner chose the lowest-regret slice and it is now live. Removed the 6 raw-DA structures that duplicate a
+sky floater (`aviary`, `bandit_towers`, `thornborn_towers`, `heavenly_conqueror`, `heavenly_challenger`,
+`heavenly_rider`) and the 2 heaviest Cataclysm builds (`acropolis`, `soul_black_smith`) from the Skylands
+by deleting their `has_structure` biome tags in both datapack copies (16 files). Kept the 22 floaters, the
+`skylands_ground` DA layer, the villages and `sky_abandoned_temple`. Tag-only edit, so only not-yet-generated
+chunks change and it is fully reversible. Verified after a restart: all 8 no longer `/locate` in the
+Skylands but still generate in their native dimensions (End, Nether, overworld ocean or badlands), so
+nothing was deleted from the game, only un-duplicated out of the sky. The bigger `skylands_ground` spacing
+widen stays available for a later pass. Details: [server/performance.md §6.4](server/performance.md).

@@ -193,7 +193,45 @@ Projected combined density after (1)+(2)+(3): ~one structure per **~280 blocks**
 heavy Cataclysm builds and the entire redundant raw-DA surface layer gone — which is where the GC and
 throughput win comes from, not the raw count alone.
 
-> Status: **measured and specified, not yet applied.** These are gameplay/worldgen-design changes to the
-> published pack, so they are left for the pack owner to apply (one spacing edit plus a handful of tag
-> deletions) rather than committed unattended. Cutting a whole mod, or deleting already-generated Skylands
-> chunks, would be destructive and is out of scope.
+> Status: **light-touch subset applied 2026-06-30** (see [6.4](#64-applied-light-touch-subset-2026-06-30)).
+> The owner chose the lowest-regret slice: pull the redundant raw-DA duplicates and the two heavy Cataclysm
+> builds out of the Skylands, but keep the dense `skylands_ground` layer, the floater spacing, and the
+> villages as-is. The spacing widen (step 1) and the optional floater widen (step 4) were **not** applied.
+
+### 6.4 Applied: light-touch subset (2026-06-30)
+
+Applied only steps 2 and 3, scoped to the structures that are pure duplication or the heaviest builds, and
+left the rest of the density alone. The edit is **tag-deletion only** in both `skylands-datapack/` and the
+runtime `world/datapacks/skytekx3_skylands/` (16 files), so it affects only **not-yet-generated** Skylands
+chunks and is fully reversible.
+
+**Removed from the Skylands** (deleted their `has_structure/*_biomes` Skylands tag in both copies):
+
+| Structure | Why removed | Still generates in |
+|---|---|---|
+| `dungeons_arise:aviary` | duplicate of a `sky_*` floater | The End (`end_midlands/highlands`) |
+| `dungeons_arise:bandit_towers` | duplicate of a floater | overworld badlands |
+| `dungeons_arise:thornborn_towers` | duplicate of a floater | overworld (native tag) |
+| `dungeons_arise:heavenly_conqueror` | duplicate of a floater | overworld + End |
+| `dungeons_arise:heavenly_challenger` | duplicate of a floater | overworld + End |
+| `dungeons_arise:heavenly_rider` | duplicate of a floater | overworld jungle/forest/savanna + End |
+| `cataclysm:acropolis` | heavy build, off-theme in the sky | overworld `warm_ocean` |
+| `cataclysm:soul_black_smith` | heavy build, off-theme in the sky | the Nether |
+
+**Kept** (unchanged): the 22 `sky_*` floaters, the `skylands_ground` DA layer (spacing 18), the raw-only DA
+majors `keep_kayra` + `mechanical_nest`, all minor DA huts, the villages + swamp hut, and the
+`sky_abandoned_temple` Cataclysm floater.
+
+**Verified** after a server restart (worldgen registries rebind only on restart, **not** on `/reload`):
+all 8 removed structures now return *"Could not find ... nearby"* when `/locate`-d in `skytekx3:skylands`,
+while every kept structure (incl. `sky_balloon`, `keep_kayra`, `mechanical_nest`, `wishing_well`) still
+locates there, and all 8 removed structures still locate in their **native** dimensions (so nothing was
+deleted from the game, only un-duplicated out of the sky). Boot clean: `Done (5.475s)`, 0 FATAL.
+
+**Effect:** removes the entire redundant raw-DA surface layer plus the two largest-block-volume Cataclysm
+builds from the Skylands. That is exactly the over-saturation that [6.2](#62-the-per-structure-spike--measured)
+tied to GC pressure (jigsaw template allocation) and slower chunk gen, so the win is on the
+allocation/throughput axis rather than CPU. A full before/after pregen was **not** re-run for this small
+subset (the dense-vs-sparse profile in 6.2 already quantifies the mechanism, and the remaining ground DA +
+village layers keep the lived density only modestly below the ~1 per 210 blocks baseline). The bigger
+levers (the `skylands_ground` 18→32 widen) remain available in 6.3 if a future pass wants more headroom.

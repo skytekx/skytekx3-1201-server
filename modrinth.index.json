@@ -3244,6 +3244,21 @@
         "https://cdn.modrinth.com/data/exX7lG6M/versions/22d5xdMC/Medieval_Embroidery-1.20.1-0.7.5.jar"
       ],
       "fileSize": 2680054
+    },
+    {
+      "path": "mods/theoneprobe-1.20.1-10.0.3.jar",
+      "hashes": {
+        "sha1": "b313190617941a8199ae3314c3d3164a64a0fe38",
+        "sha512": "eb2ac8566c3ae1de2714d369d1bcf5129666fed1ed31bd873194553c549b3614f59f249b0ec0b9723de43c799e86c5ebb5ca52bcb8b9bd1cd986ef35d597e263"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/Eyw0UxEx/versions/r7iv0zP9/theoneprobe-1.20.1-10.0.3.jar"
+      ],
+      "fileSize": 331601
     }
   ],
   "dependencies": {

@@ -125,6 +125,33 @@ def _trim_ticex_recon(obj):
     return obj
 
 
+def _drop_catalyst_part(obj):
+    """Remove ticex:catalyst_* parts (absent integrations) from a tool definition so it still loads."""
+    for m in obj.get("modules", []):
+        if m.get("type") == "tconstruct:part_stats" and isinstance(m.get("parts"), list):
+            m["parts"] = [p for p in m["parts"]
+                          if not (isinstance(p, str) and p.startswith("ticex:catalyst_"))]
+    return obj
+
+
+def _drop_catalyst_slot(obj):
+    """Remove tinker-station input slots that filter for an absent ticex:catalyst_* item."""
+    if isinstance(obj.get("input_slots"), list):
+        obj["input_slots"] = [s for s in obj["input_slots"]
+                              if not str((s.get("filter") or {}).get("item", "")).startswith("ticex:catalyst_")]
+    return obj
+
+
+def _mixin_to_client(entry):
+    """Move a client-only mixin from the common 'mixins' list to 'client' (it errors on a server otherwise)."""
+    def t(obj):
+        if entry in obj.get("mixins", []):
+            obj["mixins"] = [m for m in obj["mixins"] if m != entry]
+            obj.setdefault("client", []).append(entry)
+        return obj
+    return t
+
+
 def patch_nested_min_version(outer_jar, inner_jar_substr, inner_mixins):
     """Add minVersion to a mixins.json inside a jar-in-jar (e.g. terraform-wood inside traverse-forge)."""
     if not outer_jar or not os.path.exists(outer_jar):
@@ -169,10 +196,12 @@ def main():
     tj = find_jar("*[Tt]icex*.jar")
     for tool in ("blitz_gun", "singular_gem_boots", "singular_gem_chestplate",
                  "singular_gem_helmet", "singular_gem_leggings"):
-        delete_entry(tj, f"data/ticex/tinkering/tool_definitions/{tool}.json")
-        delete_entry(tj, f"data/ticex/tinkering/station_layouts/{tool}.json")
+        edit_json(tj, f"data/ticex/tinkering/tool_definitions/{tool}.json", _drop_catalyst_part)
+        edit_json(tj, f"data/ticex/tinkering/station_layouts/{tool}.json", _drop_catalyst_slot)
     # trim the reconstruction material to only catalyst stats whose mod is actually present
     edit_json(tj, "data/ticex/tinkering/materials/stats/reconstruction.json", _trim_ticex_recon)
+    # cofhcore's MultiPlayerGameMode mixin is client-only but listed as common -> errors on a server
+    edit_json(find_jar("cofh_core*.jar"), "mixins.cofhcore.json", _mixin_to_client("MultiPlayerGameModeMixin"))
 
     # Medieval Embroidery ships entity tags referencing an unregistered griffin entity; make optional
     mej = find_jar("Medieval_Embroidery*.jar")

@@ -97,3 +97,11 @@ absent or incompatible). Moved the cofhcore and aether_genesis client-only mixin
 (they errored on a dedicated server). All jar fixes live in tools/patch_mods.py. Boot is now 152 to 3
 ERRORs (98% down): only the simplyjetpacks Patchouli book (pre-1.20 format, mod-author fix), an AllTheLeaks
 reflection into Citadel (benign, not Nyx), and the accepted EssentialsX warning remain.
+
+## 2026-06-30 — Removed Re:Avaritia
+Re:Avaritia was installed to satisfy ticex's gem-tinkers integration, but ticex 0.6.0 is code-incompatible
+with Re:Avaritia 1.4.0 (its Avaritia module targets a different build), so the gem catalyst never registered
+and the mod added nothing usable. Removed from mods + modrinth.index.json. The ticex singular_gem tools stay
+loadable (their fix drops the catalyst part, independent of Avaritia). Removing a mod from the live world
+logs one-time "Unidentified mapping" errors on the first boot that clear on the second. Boot stays at 3
+benign errors.

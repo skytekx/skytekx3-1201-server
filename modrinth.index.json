@@ -3216,21 +3216,6 @@
       "fileSize": 3852898
     },
     {
-      "path": "mods/Re-Avaritia-forge-1.20.1-1.4.0-release.jar",
-      "hashes": {
-        "sha1": "44997f292c3411c00dc603f40a4ea7a01c1061af",
-        "sha512": "b4ac7708f2bf2bed613b9ca7085b0a212be9f678e1265096cb138b1acf0c26bdc77eccf04bc29b6582906455ddedd11005291daea9d1da10f68a17265257b0bf"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/QeB3NRC5/versions/5muSI5qX/Re-Avaritia-forge-1.20.1-1.4.0-release.jar"
-      ],
-      "fileSize": 3502163
-    },
-    {
       "path": "mods/Medieval_Embroidery-1.20.1-0.7.5.jar",
       "hashes": {
         "sha1": "f8a478f94fcaae42ef427d3943b83b4e0adaf769",

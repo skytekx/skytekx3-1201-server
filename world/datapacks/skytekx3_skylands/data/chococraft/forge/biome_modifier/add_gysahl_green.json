@@ -1,5 +1,5 @@
 {
-  "type": "forge:add_spawns",
+  "type": "forge:add_features",
   "biomes": [
     "skytekx3:plains",
     "skytekx3:sunflower_plains",
@@ -16,10 +16,6 @@
     "skytekx3:badlands",
     "skytekx3:windswept_hills"
   ],
-  "spawners": {
-    "type": "chococraft:chocobo",
-    "weight": 30,
-    "minCount": 3,
-    "maxCount": 5
-  }
+  "features": "chococraft:patch_gysahl_green",
+  "step": "vegetal_decoration"
 }

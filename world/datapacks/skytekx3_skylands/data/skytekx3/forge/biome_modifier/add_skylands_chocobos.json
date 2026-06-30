@@ -1,19 +1,25 @@
 {
-  "type": "chococraft:add_chocobo",
+  "type": "forge:add_spawns",
   "biomes": [
-    "skytekx3:desert",
-    "skytekx3:badlands",
-    "skytekx3:savanna",
-    "skytekx3:jungle",
     "skytekx3:plains",
     "skytekx3:sunflower_plains",
+    "skytekx3:savanna",
     "skytekx3:forest",
     "skytekx3:flower_forest",
     "skytekx3:birch_forest",
     "skytekx3:dark_forest",
-    "skytekx3:swamp",
     "skytekx3:taiga",
     "skytekx3:snowy_taiga",
+    "skytekx3:jungle",
+    "skytekx3:swamp",
+    "skytekx3:desert",
+    "skytekx3:badlands",
     "skytekx3:windswept_hills"
-  ]
+  ],
+  "spawners": {
+    "type": "chococraft:chocobo",
+    "weight": 30,
+    "minCount": 3,
+    "maxCount": 5
+  }
 }

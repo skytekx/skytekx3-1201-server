@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "conditions": [
+    {
+      "type": "forge:false"
+    }
+  ],
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "create:crushed_raw_silver"
+  },
+  "result": "create:crushed_raw_silver"
+}

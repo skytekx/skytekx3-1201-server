@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "SkyTekx3 content fixes — overrides that neutralise broken third-party data files (patchouli book flag, FFB thermal-cultivation seeds, Create galosphere silver compat recipes, galosphere trim advancement) to silence boot-time parse spam."
+  }
+}

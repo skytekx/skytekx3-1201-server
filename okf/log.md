@@ -63,3 +63,12 @@ y0 leak: `dungeons_arise:major_structures` and `minor_structures` were still `mi
 (projecting DA dungeons onto the y0 void floor — a player found a keep at Y0), now converted to
 `skytekx:surface_spread` (min_surface_y 36) like every other skylands set. Details:
 [content/skylands-worldgen.md](content/skylands-worldgen.md).
+
+## 2026-06-30 — Boot-log cleanup (third-party parse spam)
+Added the `skytekx3_fixes` datapack (enabled LAST so it outranks the mod datapacks) that neutralises broken
+third-party data: 14 malformed advancements and 99 loot tables (items/types absent in 1.20.1) replaced with
+valid no-op/empty overrides. Fixed two configs: apotheosis dimdoors:string_theory power range (was inverted
+and unobtainable) and collective update checker off. Deleted a stray `minecraft:loot` table from the ad_astra
+jar (a 4-char path that crashed Bird's Nests' unguarded substring). Boot ERRORs dropped 152 to ~27. KEY
+LESSON: a world datapack that sits mid-order (like skytekx3_skylands) loses override priority to mods loaded
+after it, so content overrides must live in a dedicated pack enabled `last`.

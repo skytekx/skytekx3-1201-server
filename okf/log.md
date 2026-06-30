@@ -51,3 +51,15 @@ chunks change and it is fully reversible. Verified after a restart: all 8 no lon
 Skylands but still generate in their native dimensions (End, Nether, overworld ocean or badlands), so
 nothing was deleted from the game, only un-duplicated out of the sky. The bigger `skylands_ground` spacing
 widen stays available for a later pass. Details: [server/performance.md §6.4](server/performance.md).
+
+## 2026-06-30 — Skylands denser + chocobos + y0 dungeon fix
+Reversed course on thinning per the owner: a densely-populated skylands actually helps island-to-island
+traversal (structures are stepping-stones and landmarks). Tuned `skylands_floaters` 44→32,
+`skylands_ground` 18→14 and `minecraft:villages` 34→24 so friendly content (adventure houses + villager
+houses) is common. Made the whole chocobo mod skylands-only: a `forge:add_spawns` modifier adds
+`chococraft:chocobo` (weight 30) to the 14 skylands biomes, chococraft's overworld/mountain/nether
+spawn modifiers are overridden to `forge:none`, and gysahl green is retargeted to the skylands. FIXED a
+y0 leak: `dungeons_arise:major_structures` and `minor_structures` were still `minecraft:random_spread`
+(projecting DA dungeons onto the y0 void floor — a player found a keep at Y0), now converted to
+`skytekx:surface_spread` (min_surface_y 36) like every other skylands set. Details:
+[content/skylands-worldgen.md](content/skylands-worldgen.md).

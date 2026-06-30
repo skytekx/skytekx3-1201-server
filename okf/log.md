@@ -86,3 +86,14 @@ TiCEX tools for content not fully present (Avaritia gem mismatch, TaCz guns inte
 client class on a dedicated server, an optional The One Probe integration, the simplyjetpacks Patchouli book
 (old format), an AllTheLeaks reflection, and the EssentialsX/Bukkit hybrid warning (kept by choice). Boot:
 152 to 10 ERRORs, 589 to ~311 WARNs, 0 FATAL.
+
+## 2026-06-30 — Boot-log cleanup part 3 (down to 3 benign errors)
+Installed the rest of the deps the owner asked for. The One Probe (Modrinth) fixes the arsmagicalegacy
+TOPCompat error. BUILT Aether: Genesis from its GitHub 1.20.1-develop branch (no Modrinth release) by
+authenticating the GitHub Packages maven with GITHUB_TOKEN, shipped the no-embeds jar in local-mods; it
+provides the swet_jelly items aether-redux's tag needed. Made the ticex singular_gem and blitz_gun tools
+load by dropping their unregistered catalyst part + station slot (Re:Avaritia and TaCz integrations are
+absent or incompatible). Moved the cofhcore and aether_genesis client-only mixins into their client arrays
+(they errored on a dedicated server). All jar fixes live in tools/patch_mods.py. Boot is now 152 to 3
+ERRORs (98% down): only the simplyjetpacks Patchouli book (pre-1.20 format, mod-author fix), an AllTheLeaks
+reflection into Citadel (benign, not Nyx), and the accepted EssentialsX warning remain.

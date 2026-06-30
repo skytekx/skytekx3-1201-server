@@ -1,0 +1,13 @@
+{
+  "modId": "thermal",
+  "silent": true,
+  "group": {
+    "name": "Thermal Cultivation Seeds",
+    "enabledByDefault": true,
+    "defaultPayment": {
+      "item": "minecraft:emerald"
+    },
+    "defaultCategory": "farmingforblockheads:seeds"
+  },
+  "customEntries": []
+}

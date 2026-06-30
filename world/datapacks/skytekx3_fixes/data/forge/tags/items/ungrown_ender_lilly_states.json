@@ -1,0 +1,33 @@
+{
+ "replace": true,
+ "values": [
+  {
+   "id": "exura:ender_lilly_stage_5",
+   "required": false
+  },
+  {
+   "id": "exura:ender_lilly_stage_6",
+   "required": false
+  },
+  {
+   "id": "exura:ender_lilly_stage_7",
+   "required": false
+  },
+  {
+   "id": "exura:ender_lilly_stage_1",
+   "required": false
+  },
+  {
+   "id": "exura:ender_lilly_stage_2",
+   "required": false
+  },
+  {
+   "id": "exura:ender_lilly_stage_3",
+   "required": false
+  },
+  {
+   "id": "exura:ender_lilly_stage_4",
+   "required": false
+  }
+ ]
+}

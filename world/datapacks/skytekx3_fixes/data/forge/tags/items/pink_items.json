@@ -1,0 +1,77 @@
+{
+ "replace": true,
+ "values": [
+  {
+   "id": "minecraft:potted_pink_tulip",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_stained_glass",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_glazed_terracotta",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_concrete",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_concrete_powder",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_candle_cake",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_banner",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_bed",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_banner",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_wool",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_carpet",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_terracotta",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_stained_glass_pane",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_shulker_box",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_candle",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_wall_banner",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_dye",
+   "required": false
+  },
+  {
+   "id": "minecraft:pink_tulip",
+   "required": false
+  }
+ ]
+}

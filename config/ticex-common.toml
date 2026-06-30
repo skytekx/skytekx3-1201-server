@@ -36,12 +36,12 @@
 [modules]
 	"TiCEX Original Materials and Modifiers" = true
 	"TiCEX Original Utilities" = true
-	"Avaritia Compat" = true
+	"Avaritia Compat" = false
 	"Mekanism Compat" = true
 	"Draconic Evolution Compat" = true
 	"SlashBlade Compat" = true
 	"Apotheosis Compat" = true
-	"TaCz Compat" = true
+	"TaCz Compat" = false
 	"Create Compat" = true
 	"Iron's Spells n' Spellbooks Compat" = true
 	"ProjectE Compat" = true

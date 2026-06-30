@@ -1,0 +1,9 @@
+{
+ "replace": true,
+ "values": [
+  {
+   "id": "#ancient_aether:is_ancient_aether_biome",
+   "required": false
+  }
+ ]
+}

@@ -72,3 +72,17 @@ and unobtainable) and collective update checker off. Deleted a stray `minecraft:
 jar (a 4-char path that crashed Bird's Nests' unguarded substring). Boot ERRORs dropped 152 to ~27. KEY
 LESSON: a world datapack that sits mid-order (like skytekx3_skylands) loses override priority to mods loaded
 after it, so content overrides must live in a dedicated pack enabled `last`.
+
+## 2026-06-30 — Boot-log cleanup part 2 (152 to 10 errors)
+Resolved most of the remaining third-party parse spam by INSTALLING the missing optional dependencies the
+mods expect, not only neutering. Installed SlashBlade:Resharped, Re:Avaritia and Medieval Embroidery (added
+to modrinth.index.json), which TiCEX and DragNs Livestock expected. Bird's Nests' unguarded-substring crash
+is fixed durably by a mixin in the skytekx worldgen mod (BirdsnestsDecayLeafFixMixin), patched from our own
+mod so it survives re-resolves. Jar/config fixes that mods/ would overwrite on re-resolve live in
+tools/patch_mods.py (run it AFTER tools/resolve_all.py): mixin minVersion additions, orphan compat-mixin
+removals for absent mods, the ticex reconstruction-material catalyst trim, Medieval Embroidery broken
+predator tags, and the ad_astra stray loot table. The 10 remaining errors are benign or irreducible: 5
+TiCEX tools for content not fully present (Avaritia gem mismatch, TaCz guns intentionally absent), a cofhcore
+client class on a dedicated server, an optional The One Probe integration, the simplyjetpacks Patchouli book
+(old format), an AllTheLeaks reflection, and the EssentialsX/Bukkit hybrid warning (kept by choice). Boot:
+152 to 10 ERRORs, 589 to ~311 WARNs, 0 FATAL.

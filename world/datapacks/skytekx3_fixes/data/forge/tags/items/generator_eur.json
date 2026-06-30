@@ -1,0 +1,73 @@
+{
+ "replace": true,
+ "values": [
+  {
+   "id": "exura:ender_generator",
+   "required": false
+  },
+  {
+   "id": "exura:furnace_generator",
+   "required": false
+  },
+  {
+   "id": "exura:magma_generator",
+   "required": false
+  },
+  {
+   "id": "exura:disenchantment_generator",
+   "required": false
+  },
+  {
+   "id": "exura:culinary_generator",
+   "required": false
+  },
+  {
+   "id": "exura:halitosis_generator",
+   "required": false
+  },
+  {
+   "id": "exura:potion_generator_1",
+   "required": false
+  },
+  {
+   "id": "exura:survival_generator",
+   "required": false
+  },
+  {
+   "id": "exura:overclocked_generator",
+   "required": false
+  },
+  {
+   "id": "exura:netherstar_generator",
+   "required": false
+  },
+  {
+   "id": "exura:resonator",
+   "required": false
+  },
+  {
+   "id": "exura:redstone_generator",
+   "required": false
+  },
+  {
+   "id": "exura:tnt_generator",
+   "required": false
+  },
+  {
+   "id": "exura:death_generator",
+   "required": false
+  },
+  {
+   "id": "exura:frosty_generator_1",
+   "required": false
+  },
+  {
+   "id": "exura:pink_generator",
+   "required": false
+  },
+  {
+   "id": "exura:slimey_generator",
+   "required": false
+  }
+ ]
+}

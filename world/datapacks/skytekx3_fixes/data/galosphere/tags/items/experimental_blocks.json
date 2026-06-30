@@ -1,0 +1,13 @@
+{
+ "replace": true,
+ "values": [
+  {
+   "id": "galosphere:burrow_anchor",
+   "required": false
+  },
+  {
+   "id": "galosphere:block_comparator",
+   "required": false
+  }
+ ]
+}

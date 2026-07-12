@@ -8,10 +8,15 @@ import json, os, shutil, zipfile, sys
 
 REPO = "/home/snekmin/git/skytekx3-1201-server"
 SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
-VERSION = "3.0.4"
+VERSION = "3.0.5"
 FORGE = "47.4.6"
 
-files = json.load(open(SC+"/mrpack_files.json"))
+# mod file list: session scratch from resolve_all.py when present, else the committed index
+if os.path.exists(SC+"/mrpack_files.json"):
+    files = json.load(open(SC+"/mrpack_files.json"))
+else:
+    files = json.load(open(REPO+"/modrinth.index.json"))["files"]
+    print("mrpack_files.json scratch missing, using modrinth.index.json files list")
 # dedupe by path (last wins)
 byp = {}
 for f in files:
@@ -56,14 +61,17 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
                 full = os.path.join(root, fn)
                 rel = os.path.relpath(full, REPO)
                 z.write(full, "overrides/"+rel)
-    # Skylands dimension datapack -> ships into the server's world/datapacks/
-    dp = os.path.join(REPO, "skylands-datapack")
-    if os.path.isdir(dp):
+    # Skylands dimension datapacks -> ship into the server's world/datapacks/
+    # shared pack is vanilla safe, forge pack carries the mod integrations
+    for src, name in (("skylands-datapack", "skytekx3_skylands"),
+                      ("skylands-datapack-forge", "skytekx3_skylands_forge")):
+        dp = os.path.join(REPO, src)
+        if not os.path.isdir(dp): continue
         for root, _, fns in os.walk(dp):
             for fn in fns:
                 full = os.path.join(root, fn)
                 rel = os.path.relpath(full, dp)
-                z.write(full, "overrides/world/datapacks/skytekx3_skylands/"+rel)
+                z.write(full, "overrides/world/datapacks/"+name+"/"+rel)
     # Local/bundled mod jars (built from source, e.g. Twilight Forest) -> overrides/mods/
     lm = os.path.join(REPO, "local-mods")
     bundled = []

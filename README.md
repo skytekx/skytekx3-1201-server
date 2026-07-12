@@ -34,7 +34,8 @@ Public server: **`skytekx.com`** · Site: <https://skytekx.com> · Modpack: <htt
 | `local-mods/` | Mods built from source / not on Modrinth (Twilight Forest, Nyx, …). **Tracked** — these are part of the pack. |
 | `config/` | All mod configuration, incl. `config/almostunified/` (material unification). |
 | `kubejs/server_scripts/` | Gameplay scripts: `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js`, `combat_1_7.js`, `skylands_fall.js`. |
-| `skylands-datapack/` | **Source** datapack for the custom Skylands worldgen (structure sets + biome tags). |
+| `skylands-datapack/` | **Source** datapack for the Skylands worldgen (vanilla safe, runs on unmodded Spigot too). |
+| `skylands-datapack-forge/` | Forge-only Skylands content (Dungeons Arise sets, mod-pool floaters, botania features). |
 | `world/datapacks/` | The deployed copy of the datapack (built into the `.mrpack`; `world/` itself is gitignored except this). |
 | `scripts-legacy-reference/` | Original 1.12.2 CraftTweaker `.zs` — read-only reference for the KubeJS port. |
 | `tools/` | `resolve_all.py` (fetch mods from the index), `build_mrpack.py` (build + publish the modpack). |

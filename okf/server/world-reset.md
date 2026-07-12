@@ -29,6 +29,20 @@ mcrcon -H localhost -P 65535 -p "$RCON_PW" "chunky world skytekx3:skylands"   "c
 bloodmagic, dimdoors, irons_spellbooks, mocreatures, **skytekx3/skylands**, …); they all regen.
 Non-pregenned dims regenerate on first entry.
 
+## Skylands-only variant
+After a skylands-only worldgen change there is no need to wipe every dimension:
+
+```bash
+mcrcon -H localhost -P 65535 -p "$RCON_PW" "save-all flush" stop
+tar czf ~/skylands-prewipe-$(date +%F).tgz -C <repo> world/dimensions/skytekx3
+rm -rf world/dimensions/skytekx3/skylands/{region,entities,poi,data}   # data/ clears stale forceloads
+systemctl start skytekx3.service
+mcrcon -H localhost -P 65535 -p "$RCON_PW" "chunky world skytekx3:skylands" "chunky radius 1000" "chunky start"
+```
+
+Playerdata is kept. Anyone whose saved position is now over the void simply falls and the
+[travel functions](../content/aether-fall.md) drop them into the overworld, self healing.
+
 ## Gotchas
 - **Shutdown can hang** ~60 s ("threads not shutting down… force exiting"). If it does, SIGKILL the
   java pid as a fallback, then confirm it's gone before relaunching.

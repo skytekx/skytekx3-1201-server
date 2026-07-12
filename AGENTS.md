@@ -33,15 +33,17 @@ for the stack and self-hosting steps.
 | Material unification / dup recipes | `config/almostunified/unify.json` (`modPriorities`) |
 | Recipe / tag / loot tweaks | `kubejs/server_scripts/{recipe_fixes,tag_fixes,gameplay}.js` |
 | Combat feel (1.7 swing, no cooldown) | `kubejs/server_scripts/combat_1_7.js` |
-| Skylands fall-to-overworld | `kubejs/server_scripts/skylands_fall.js` |
-| Skylands structures / worldgen | `skylands-datapack/` **and** mirror into `world/datapacks/` |
+| Skylands travel (ascend + fall) | `skylands-datapack/data/skytekx3/functions/travel/` (vanilla mcfunctions) |
+| Skylands structures / worldgen | `skylands-datapack/` (shared, vanilla safe) + `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |
 | Deploy | `systemd/skytekx3.service`, `ServerLinux.sh`, `ansible/` |
 | Publish the pack | `tools/build_mrpack.py` |
 
-> The Skylands custom structure-placement type `skytekx:surface_spread` is provided by a
-> **source-built worldgen mod** (Mixin + a `StructurePlacementType` that gates on heightmap surface Y).
-> If you change structure sets, keep `skylands-datapack/` and the runtime `world/datapacks/` **in sync** —
-> `build_mrpack.py` ships `skylands-datapack/` into the `.mrpack`.
+> Skylands structure gating is **pure vanilla** since 2026-07-12: void columns get the featureless
+> `skytekx3:sky_void` biome (island mask routed into the `continents` climate channel), which sits in no
+> `has_structure` tag, so vanilla rejects every structure start over the void. The shared pack boots on
+> unmodded vanilla/Spigot; everything with mod registry references lives in `skylands-datapack-forge/`.
+> After editing either pack run `tools/sync_skylands_datapack.sh` — `build_mrpack.py` ships both into the
+> `.mrpack`. The old `skytekx:surface_spread` mod is retired; `skytekx-compat` only carries compat mixins.
 
 ## Server operations (RCON)
 

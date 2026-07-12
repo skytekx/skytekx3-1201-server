@@ -105,3 +105,18 @@ and the mod added nothing usable. Removed from mods + modrinth.index.json. The t
 loadable (their fix drops the catalyst part, independent of Avaritia). Removing a mod from the live world
 logs one-time "Unidentified mapping" errors on the first boot that clear on the second. Boot stays at 3
 benign errors.
+
+## 2026-07-12 — Skylands worldgen went pure vanilla (runs on unmodded Spigot)
+Requirement: the same skylands generator must run on an unmodded Spigot server. Replaced the
+skytekx:surface_spread mod placement with vanilla void-biome gating: a 2D island mask density function
+feeds the terrain gate, a guaranteed core slab (Y 52-77) and the continents climate channel; a
+featureless sky_void biome covers void columns and sits in no has_structure tag, so vanilla rejects
+every structure start over the void (bytecode-verified against Forge 1.20.1-47.4.18, all structure
+types). The five surface_spread sets returned to random_spread with identical salts. Pack split:
+skylands-datapack/ is vanilla safe (verified: boots on vanilla AND BuildTools Spigot 1.20.1 with zero
+registry errors, villages + sky_balloon generate on island slabs, world_skytekx3_skylands ticks), the
+new skylands-datapack-forge/ carries DA sets, the 21 mod-pool floaters and botania features. The
+worldgen mod shrank to skytekx-compat 2.0.0 (Birds Nests mixin only) and SkylandsFallHandler became
+datapack travel functions (predicates + platform retry loop), identical on every platform. Skylands
+dimension wiped (backup ~/skylands-prewipe-2026-07-12.tgz), regenerated, chunky pregen r1000. Fixed
+along the way: the always missing village_snowy has_structure tag.

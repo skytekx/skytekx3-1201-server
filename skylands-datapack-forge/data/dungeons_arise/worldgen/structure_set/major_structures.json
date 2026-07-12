@@ -110,11 +110,10 @@
   }
  ],
  "placement": {
-  "type": "skytekx:surface_spread",
+  "type": "minecraft:random_spread",
   "salt": 88371663,
   "spacing": 60,
   "separation": 50,
-  "spread_type": "linear",
-  "min_surface_y": 36
+  "spread_type": "linear"
  }
 }

@@ -10,6 +10,29 @@ timestamp: 2026-06-30
 
 The custom `skytekx3:skylands` floating-islands dimension and its structure placement.
 
+## 2026-07-12 rework: pure vanilla void-biome gating
+The mod placement below is **retired**. Requirement: the same generator must run on an **unmodded Spigot**
+server, so no mod code may touch worldgen. The vanilla mechanism that replaced it:
+
+- A 2D island mask (`skytekx3:skylands/island_mask`, `cache_2d` + `shifted_noise`, y_scale 0) feeds three
+  consumers from one registry reference: the terrain gate, a guaranteed core slab (~Y 52-77 wherever the
+  island biomes apply) and the `continents` climate channel.
+- A featureless `skytekx3:sky_void` biome covers every column with mask below 0.5; the 14 island biomes
+  moved from climate points to tiling temperature/humidity **ranges** with continentalness [0.5, 2.0], so
+  the island/void split is decided by continentalness alone.
+- `sky_void` sits in **no** `has_structure` tag (exceptions: `sky_floaters`, `keep_kayra`,
+  `mechanical_nest`, which are fixed-Y air structures), so vanilla's own structure start biome check
+  rejects every structure over the void, including modded ones that reach the dimension via
+  `is_overworld` tag chains. Never add `sky_void` to `is_overworld` or any ground structure tag.
+- All five `surface_spread` structure sets returned to `minecraft:random_spread` with identical salts.
+- Pack split: `skylands-datapack/` (shared, zero mod registry references, boots on vanilla/Spigot,
+  verified) and `skylands-datapack-forge/` (DA sets, 21 mod-pool floaters, botania features; overrides
+  the shared balloon-only floaters set on Forge). Sync both with `tools/sync_skylands_datapack.sh`.
+- The worldgen mod shrank to `skytekx-compat` (Birds Nests loot crash mixin only). Travel is
+  [datapack functions](aether-fall.md) now.
+
+Everything below documents the retired mod-based design for history.
+
 ## Custom placement type
 A **source-built worldgen mod** registers `skytekx:surface_spread`, a `StructurePlacementType` (Mixin +
 a heightmap gate) that only places a structure where the column's `WORLD_SURFACE_WG` height ≥

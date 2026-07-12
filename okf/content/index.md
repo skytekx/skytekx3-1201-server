@@ -12,7 +12,7 @@ The bespoke content built for SkyTekx 3 (everything else is curated upstream mod
 [mod set](../modpack/mod-set.md)).
 
 - **[Nyx](nyx.md)** — the ported night/lunar content mod (`skytekx/nyx`).
-- **[Skylands worldgen](skylands-worldgen.md)** — the custom floating-islands dimension + `surface_spread` structures.
+- **[Skylands worldgen](skylands-worldgen.md)** — the custom floating-islands dimension, pure vanilla datapack with void-biome structure gating.
 - **[Aether fall](aether-fall.md)** — drop off an island → fall to the overworld.
 
 These are exercised by the [world-reset / pregen](../server/world-reset.md) flow.

@@ -22,8 +22,11 @@ and download URL. To add or remove a Modrinth mod, **edit the index**, not `mods
 
 ## ⚠️ Known gap
 A few non-Modrinth jars are referenced but not yet bundled in `local-mods/` nor given a manual index
-entry: `skytekx-worldgen` (provides the [Skylands `surface_spread`](../content/skylands-worldgen.md)
-placement!), `alltheleaks`, `ba_bt`, `cataclysm_spellbooks`. A fresh clone won't have them until they
+entry: `alltheleaks`, `ba_bt`, `cataclysm_spellbooks`. A fresh clone won't have them until they
 are added to `local-mods/`. Fix before relying on a clean rebuild.
+
+Note: the former `skytekx-worldgen` mod is retired. Skylands worldgen is
+[pure vanilla datapack](../content/skylands-worldgen.md) now; the slim `skytekx-compat` jar in
+`local-mods/` only carries compat mixins (Birds Nests loot crash guard).
 
 Related: [AlmostUnified](almostunified.md), [publish](publish.md), [Arclight](../server/arclight.md).

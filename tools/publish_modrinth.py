@@ -7,7 +7,7 @@ import json, os, sys, mimetypes, urllib.request, urllib.error, uuid
 PAT = sys.argv[1]
 GO = "--go" in sys.argv
 REPO = "/home/snekmin/git/skytekx3-1201-server"
-VERSION = "3.0.5"
+VERSION = "3.0.6"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
@@ -87,7 +87,7 @@ vdata = {
     "name": f"SkyTekx3 {VERSION}",
     "version_number": VERSION,
     "project_id": project_id,
-    "changelog": "Full **Nyx** port (night/moon mechanics, meteors, lunar water) shipped server+client (env required/required). Skylands worldgen overhaul: fixed the island floor to y0 and added many new structures (villages, swamp huts, Dungeons Arise, Cataclysm, Botania mystical flowers). Added an Aether-style void-fall (drop off the Skylands islands and free-fall back into the overworld). Full all-dimension reset/regen so the new structure-sets, biome-tags and Nyx worldgen appear everywhere. Retuned AlmostUnified priorities.",
+    "changelog": "Updated 55 mods from Modrinth and the bundled Connectivity, Cupboard and Enchanting Plus, and added MezzConfig as a new dependency. The Skylands no longer generate Battle Towers, strongholds or illager campsites on the islands or petrified roots floating under them, and floating windmills no longer drop their fields onto the islands below. For Halloween the islands get pumpkin patches and jack o'lanterns, blood moons come on about every second full moon, and Nyx lunar events also reach the Skylands.",
     "dependencies": [],
     "game_versions": ["1.20.1"],
     "version_type": "beta",

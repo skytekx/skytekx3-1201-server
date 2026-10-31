@@ -19,13 +19,13 @@ people who work on it. The lineage is on [History](history.md).
 | Area | State | Details |
 |---|---|---|
 | Repo | Local master holds all commits of 2026-10-31 on top of GitHub's master 4c5e331 of 2026-07-12. None of them is pushed | [Related repos and services](related.md#this-repo-on-github) |
-| Work of 2026-10-31 | Mod update (216 index entries), Halloween worldgen and server icon, Nyx blood moons in the Skylands, Battle Towers, strongholds, the illager campsite, petrified roots and windmill fields kept off the islands, the move to the Mac mini and pack 3.0.6 on Modrinth | [Mod set](modpack/mod-set.md#update-of-2026-10-31), [Skylands worldgen](content/skylands-worldgen.md#changes-of-2026-10-31), [Mac mini](server/macos.md) |
-| Host | An Apple M4 Mac mini with 16 GB under launchd since 2026-10-31, reachable in the LAN only. Restart, stop, start, backup and a reboot were tested that evening | [Mac mini](server/macos.md) |
+| Work of 2026-10-31 | Mod update (216 index entries), Halloween worldgen and server icon, Nyx blood moons in the Skylands, Battle Towers, strongholds, the illager campsite, petrified roots and windmill fields kept off the islands, the move to the Mac mini, the public address `hex.skytekx.com` and packs 3.0.6 and 3.0.7 on Modrinth | [Mod set](modpack/mod-set.md#update-of-2026-10-31), [Skylands worldgen](content/skylands-worldgen.md#changes-of-2026-10-31), [Mac mini](server/macos.md), [Publish](modpack/publish.md#version-history) |
+| Host | An Apple M4 Mac mini with 16 GB under launchd since 2026-10-31, reachable in the LAN and since 21:13 through a Cloudflare Tunnel. Restart, stop, start, backup and a reboot were tested that evening | [Mac mini](server/macos.md) |
 | Last complete boot | 2026-10-31 19:35:14 on the Mac mini after the test reboot, `Done` after 35 s with 0 FATAL, 3 ERROR and 344 WARN lines. The Mac's logs are not in the repo | [Logs and crashes](server/logs-and-crashes.md#boot-error-baseline) |
 | World | The Halloween world on the Mac mini, created on 2026-10-31 at 18:07, pregenerated to radius 1500 in the Overworld and 3000 in the Skylands and first backed up at 19:34. The build machine's old world was last saved on 2026-07-13 15:45 and stays as it is | [World reset and pregen](server/world-reset.md), [Mac mini](server/macos.md#the-halloween-world) |
-| Pack | Version 3.0.6 was built from git HEAD on 2026-10-31 at 20:19 and uploaded to the Modrinth draft at 20:27. It installs, but a client needs BrassAmber BattleTowers added by hand to join, and with an 8 GB heap it froze after the join (JEI 15.74.0.233 against EMI 1.1.24) | [Publish](modpack/publish.md#test-of-2026-10-31) |
-| Modrinth | The project `skytekx3` is a draft and not public. Six All Rights Reserved jars, BattleTowers outside the pack and the JEI failure block a release | [Publish](modpack/publish.md#what-blocks-a-release) |
-| Public address | `hex.skytekx.com` through a Cloudflare Tunnel since 2026-10-31 21:13. Players need the client mod Modflared, and voice chat only works in the LAN. The uplink is carrier grade NAT, so a port forward cannot work | [Mac mini](server/macos.md#public-access) |
+| Pack | Version 3.0.7 was built from git HEAD on 2026-10-31 at 21:54 and uploaded to the Modrinth draft at 21:55. It is 3.0.6 plus Modflared and a server list with `hex.skytekx.com`. A client still needs BrassAmber BattleTowers added by hand to join, as the owner decided at 21:48, and a 12 GB heap, since the 3.0.6 test client froze after the join with 8 GB (JEI 15.74.0.233 against EMI 1.1.24) | [Publish](modpack/publish.md#version-history), [test](modpack/publish.md#test-of-2026-10-31) |
+| Modrinth | The project `skytekx3` is a draft and not public. Six All Rights Reserved jars and the JEI failure block a release. BattleTowers stays outside the pack by the owner's decision of 21:48 | [Publish](modpack/publish.md#what-blocks-a-release) |
+| Public address | The name `hex.skytekx.com` through a Cloudflare Tunnel since 2026-10-31 21:13. Players need the client mod Modflared, which pack 3.0.7 brings and which has no cloudflared for Linux on ARM. Nobody has joined through it yet. Voice chat only works in the LAN, and the whitelist stays off. The uplink is carrier grade NAT, so a port forward cannot work | [Mac mini](server/macos.md#public-access) |
 | Website | Live on skytekx.com, last changed on 2026-06-30. Some claims on it are wrong | [Related repos and services](related.md#the-website-skytekxcom) |
 | Players | Only the owner's account ever joined. Load with 20 players is unmeasured | [Server](server/index.md#load-and-players) |
 
@@ -39,7 +39,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | Game | Minecraft 1.20.1 with Forge 47.4.18 inside Arclight 1.20.1 1.0.6. The pack index asks clients for the same Forge build since c70f699 |
 | Server jar | The symlink `arclight.jar` on the hardened `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, built from `patches/` |
 | Java | Java 17. The Mac mini runs Temurin 17.0.21, and every boot on the build machine that reached `Done` ran Temurin 17.0.19 |
-| Mods | 216 Modrinth entries in `modrinth.index.json` and 35 bundled jars in `local-mods/`. The server's `mods/` holds 236 jars that git does not track |
+| Mods | 217 Modrinth entries in `modrinth.index.json`, the client only Modflared among them, and 35 bundled jars in `local-mods/`. The server's `mods/` holds 236 jars that git does not track |
 | Plugins | EssentialsX 2.22.0 and nothing else |
 | Recipe layers | AlmostUnified, Polymorph and KubeJS, the successors of UniDict, NoMoreRecipeConflict and CraftTweaker in SkyTekx 2 |
 | Own content | The Skylands dimension as a pure datapack, travel between it and the Overworld, the Nyx port, 1.7 style combat, the boot fixes and the small SkyTekx Compat mod |
@@ -81,7 +81,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | [KubeJS](modpack/kubejs.md) | The four server scripts and how to work with Rhino |
 | [Plugins](modpack/plugins.md) | EssentialsX, its files, permissions, metrics and update checks |
 | [Tools](modpack/tools.md) | The eleven scripts in `tools/` and what each one really does |
-| [Client](modpack/client.md) | The owner's Prism instance, the client-only mods, the main menu and the client crashes |
+| [Client](modpack/client.md) | The owner's Prism instance, the client-only mods, the main menu, the client crashes and how a player joins from outside the LAN |
 | [Publish](modpack/publish.md) | The Modrinth project, what blocks a release, the release steps and the version history |
 
 ### Content

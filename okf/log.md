@@ -341,6 +341,26 @@ logs stay on the Mac and are not in the repo.
   `docs/MODPACK_SUMMARY.txt` and `docs/MODPACK_DESCRIPTION.md`. They credit ts4.party, name no person
   or handle, drop "kitchen-sink" and ask for 12 GB of memory. The publish script got `--texts` for
   this. See [Publish](modpack/publish.md#state-on-2026-10-31).
+- At 21:48 the owner answered three questions. Players get in with a pack 3.0.7 that brings Modflared
+  and lists `hex.skytekx.com`, not through a relay on an owner server or playit.gg, and voice chat
+  still does not reach the internet. BrassAmber BattleTowers stays on the server, and players add the
+  jar by hand. The whitelist stays off with the public address. See [Decisions](decisions.md#hosting).
+- At about 21:50 the owner asked for the BattleTowers jar to send it to players over Telegram, and it
+  was copied for them. The official file on CurseForge is identical to the jar in `mods/`, see
+  [Mod set](modpack/mod-set.md#jars-outside-the-index).
+- From 21:53 to 21:54 Modflared 1.2.0+release.61 joined the index as a client only entry (44358a8),
+  the builder started to write the server list `client-overrides/servers.dat` with `hex.skytekx.com`
+  (cba636e), and the version went to 3.0.7 (1603723). The changelog of 3.0.7 in that commit says where
+  Modflared runs, as read from its bytecode: on Windows, on Linux on x86 and on macOS, where Apple
+  Silicon needs Rosetta 2, but not on Linux on ARM. See [Mac mini](server/macos.md#public-access).
+- Pack 3.0.7 was built at 21:54:18 (67,246,343 bytes, index in 465e625). Entry by entry it differs from
+  3.0.6 only by the new server list and by the version and the Modflared entry in its index. It went up
+  to the Modrinth draft at 21:55 as version `LRkF99Pz` with the same SHA-512 as the local build, and
+  3.0.6 stays up. See [Publish](modpack/publish.md#version-history).
+- At about 21:56 the body of the Modrinth draft got the section "Joining the server" (fa17708). It names
+  the address, Modflared and where it runs, says that voice chat stays in the LAN and sends players to
+  CurseForge for BattleTowers. The publish script replaced the summary and the body with `--texts`.
+  Nobody has joined through Modflared yet.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

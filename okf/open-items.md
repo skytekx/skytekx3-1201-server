@@ -28,13 +28,14 @@ evidence and the page with the details. The rulings behind the first section are
 - Skylands travel in singleplayer (2026-06-29 19:33). The `.mrpack` puts the datapacks, since 3c2662e
   the fixes pack too, under `overrides/world/datapacks/`, which a singleplayer save never reads. See
   [Skylands travel](content/aether-fall.md#open-points).
-- A public Modrinth project (2026-06-29 10:11). Six bundled jars are All Rights Reserved without a grant,
-  the Nyx download fails, three server jars are in no pack, and the texts are stale. See
-  [Publish](modpack/publish.md#what-blocks-a-release).
+- A public Modrinth project (2026-06-29 10:11). The draft holds versions up to 3.0.7, but six bundled
+  jars are All Rights Reserved without a grant, and EMI drops the Chipped recipes against the JEI build
+  of the pack. See [Publish](modpack/publish.md#what-blocks-a-release).
 - A public server on skytekx.com (2026-06-29 09:54). Since 2026-10-31 21:13 the game is reachable as
-  `hex.skytekx.com` through a Cloudflare Tunnel, but only with the client mod Modflared, which the
-  pack does not ship yet. Voice chat does not pass the tunnel, and the website names neither the
-  address nor Modflared. See [Mac mini](server/macos.md#public-access).
+  `hex.skytekx.com` through a Cloudflare Tunnel, but only with the client mod Modflared, which pack
+  3.0.7 brings since 21:55 and which has no cloudflared for Linux on ARM. Voice chat does not pass the
+  tunnel, as the owner accepted at 21:48, and the website names neither the address nor Modflared. See
+  [Mac mini](server/macos.md#public-access).
 - The old SkyTekx start menu (2026-06-27 20:49 to 21:49). FancyMenu, Konkrete and Melody are not in the
   index, the old buttons and texts were not rebuilt, and `menu-assets/` still waits for the original
   images. See [Client](modpack/client.md#main-menu).
@@ -56,15 +57,12 @@ evidence and the page with the details. The rulings behind the first section are
 - AsgardShieldReloaded 0.2 crashed the server twice when a creeper exploded next to a player
   (2026-06-27 20:43 and 21:16). Remove it, patch it or accept the risk. See
   [Combat](content/combat.md#known-crash-asgard-shield-reloaded).
-- BrassAmber BattleTowers runs on the server but is in no pack, and in the install test of 2026-10-31
-  a client without it could not join. It is All Rights Reserved and only on CurseForge. Ask its author
-  for a grant, have players add it by hand, or drop it, which removes its blocks and items from an
-  existing world. AllTheLeaks and the Cataclysm Spellbooks build are bundled since 782126f. See
-  [Mod set](modpack/mod-set.md#jars-outside-the-index).
-- Pack 3.0.6 ships JEI 15.74.0.233 from the update of 0a20b8c. EMI 1.1.24 cannot bridge it, drops 7,243
-  Chipped recipes, and in the install test the client ran out of its 8 GB heap after the join and
-  froze. JEI 15.20.0.132 showed neither. Roll JEI back in the index and on the server, or wait for an
-  EMI build that matches, then test again. See [Publish](modpack/publish.md#test-of-2026-10-31).
+- Packs 3.0.6 and 3.0.7 ship JEI 15.74.0.233 from the update of 0a20b8c. EMI 1.1.24 cannot bridge it
+  and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its 8 GB heap
+  after the join and froze, and with 12 GB it played. JEI 15.20.0.132 cannot come back, because
+  Tinkers' Construct, Tinkers' Reforged and Polymorph need newer builds. The recipes need a Chipped
+  build that does not call the new JEI method or an EMI build that implements it, then a decision and a
+  new test. See [Publish](modpack/publish.md#test-of-2026-10-31).
 - Six bundled jars are All Rights Reserved without a grant: Aether Genesis, Connectivity, Cupboard,
   Deadly World, Fireflies and Hexxit Additions. Ask for permission, replace or remove them before a
   public release. See [Publish](modpack/publish.md#what-blocks-a-release).
@@ -90,9 +88,6 @@ evidence and the page with the details. The rulings behind the first section are
   Overworld would need about 6.8 GB of the 9.4 GiB that were free there on 2026-10-31 at 21:05, so more
   disk comes first. See [Performance](server/performance.md#levers) and
   [Mac mini](server/macos.md#measured-numbers).
-- Access now that the address is public (`hex.skytekx.com` since 2026-10-31 21:13). The whitelist is
-  off with 39 slots and online mode on, and `advertiseDedicatedServerToLan` is true in
-  `world/serverconfig/forge-server.toml:19`. See [Server](server/index.md#facts-at-a-glance).
 - Rotate the exposed values. The Modrinth token and the vault password were pasted into a prompt on
   2026-06-27, and the Mac mini login on 2026-10-31 16:02. All three sit in plain text in the local prompt
   history of the build machine. See [Secrets](server/secrets.md#exposed-values-to-rotate).
@@ -143,6 +138,10 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Not verified
 
+- Modflared in a running game. Nobody has joined through it yet. The second MacBook is set up for it,
+  but its sign-in and first launch are left to the person at that Mac. Where Modflared runs, and that
+  on Linux on ARM it only logs an error and cannot join through the tunnel, was read from its
+  bytecode. See [Mac mini](server/macos.md#public-access).
 - The jar patches of `tools/patch_mods.py` were applied again to the new builds of Ad Astra, Deep Aether
   and TiCEX. The boots of the mod update on the Mac mini show the baseline of 0 FATAL and 3 ERROR lines,
   so the patched jars load, but nobody checked in game that each patch still does its job. See

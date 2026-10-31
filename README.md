@@ -41,7 +41,7 @@ skytekx.com does not point at a game server yet.
 | Symlink `arclight.jar` and folder `patches/` | The hardened Arclight jar with its symlink, both tracked, and the source patch behind it |
 | Folder `modrinth-permissions/` | One file per bundled jar for the Modrinth permission review |
 | Folder `scripts-legacy-reference/` | The CraftTweaker scripts of SkyTekx 2, a read-only reference for the KubeJS port |
-| Folder `tools/` | Ten scripts for datapack sync, mod updates, jar patches, the pack build, the Modrinth upload, RCON and region scans of the Skylands, see [Maintenance](#maintenance) |
+| Folder `tools/` | Eleven scripts for datapack sync, mod updates, jar patches, the pack build, the Modrinth upload, RCON, region scans of the Skylands and the Cloudflare Tunnel, see [Maintenance](#maintenance) |
 | Folder `docs/` | The recipe port notes `RECIPE_PORT.md` and the Modrinth texts, the body `MODPACK_DESCRIPTION.md` and the summary `MODPACK_SUMMARY.txt` |
 | Folder `okf/` | The project wiki in Open Knowledge Format. Start at [okf/index.md](okf/index.md) |
 | File `AGENTS.md` | Rules and pitfalls for anyone, human or agent, who edits this repo |

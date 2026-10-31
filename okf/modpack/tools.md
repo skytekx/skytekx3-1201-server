@@ -8,10 +8,11 @@ timestamp: 2026-10-31
 
 # Tools
 
-The folder [tools/](../../tools) holds ten scripts. Six came from the build sessions of June and July
+The folder [tools/](../../tools) holds eleven scripts. Six came from the build sessions of June and July
 2026. The seventh, `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58
 whether the installed mods have updates. It was committed at 18:14 (a64f045). The last three are the
-region scans that checked the Halloween world on the Mac mini the same evening.
+region scans that checked the Halloween world on the Mac mini the same evening. The eleventh,
+`cf_tunnel.py`, sets up the Cloudflare Tunnel that made the server public at 21:13.
 
 | Order | Tool | Lines | Job | Needs | Writes |
 |---|---|---:|---|---|---|
@@ -20,8 +21,9 @@ region scans that checked the Halloween world on the Mac mini the same evening.
 | 2 (legacy) | Resolve, `resolve_all.py` | 108 | Resolves a fixed slug list to the newest releases | Modrinth token, the old scratch folder | Jars in `mods/` and a scratch file whose folder no longer exists |
 | 3 | Patch, `patch_mods.py` | 218 | Re-applies the boot fixes inside mod jars | Python 3 | Jars in `mods/` |
 | 4 | Build, `build_mrpack.py` | 84 | Rewrites the index and zips the `.mrpack` from git HEAD | A git checkout | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
-| 5 | Publish, `publish_modrinth.py` | 113 | Creates the Modrinth project if missing, uploads the version and checks its hash | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go`) |
+| 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
+| Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
 | After a pregen | Scan, `void_scan.py` | 228 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 142 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
 | After a pregen | Scan, `structure_pieces.py` | 33 | Prints every piece of one structure with its projection and box | Python with numpy | Nothing |

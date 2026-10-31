@@ -9,7 +9,7 @@ import io, json, os, shutil, subprocess, tarfile, zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = "3.0.6"
-FORGE = "47.4.6"
+FORGE = "47.4.18"   # The Forge build that the server (inside Arclight) and the owner's client run
 
 def git(*args):
     return subprocess.run(["git", "-C", REPO, *args], check=True, capture_output=True).stdout

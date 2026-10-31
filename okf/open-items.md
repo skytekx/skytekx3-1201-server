@@ -85,8 +85,9 @@ evidence and the page with the details. The rulings behind the first section are
 - The performance levers: pregenerate a radius of 5000 or more per dimension and lower view and
   simulation distance to 8 and 6 (now 10 and 10 on both hosts). The Halloween world on the Mac mini is
   pregenerated to radius 1500 in the Overworld and 3000 in the Skylands. A radius of 5000 in the
-  Overworld would need about 6.8 GB of the 10 GB that are free there, so more disk comes first. See
-  [Performance](server/performance.md#levers) and [Mac mini](server/macos.md#measured-numbers).
+  Overworld would need about 6.8 GB of the 9.4 GiB that were free there on 2026-10-31 at 21:05, so more
+  disk comes first. See [Performance](server/performance.md#levers) and
+  [Mac mini](server/macos.md#measured-numbers).
 - Access before the address goes public. The whitelist is off with 39 slots and online mode on, and
   `advertiseDedicatedServerToLan` is true in `world/serverconfig/forge-server.toml:19`. See
   [Server](server/index.md#facts-at-a-glance).

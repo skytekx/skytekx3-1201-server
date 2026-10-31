@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 """Publish SkyTekx3 modpack to Modrinth (creates draft project if needed, uploads .mrpack version).
-Usage: publish_modrinth.py <PAT> [--go]   (without --go = dry run / inspect only)
+Usage: MODRINTH_TOKEN=<PAT> publish_modrinth.py [--go]   (without --go = dry run / inspect only)
+The token can also come as the first argument, but then other local users can read it in the process list.
 """
-import json, os, sys, mimetypes, urllib.request, urllib.error, uuid
+import hashlib, json, os, sys, mimetypes, urllib.request, urllib.error, uuid
 
-PAT = sys.argv[1]
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+PAT = os.environ.get("MODRINTH_TOKEN") or (args[0] if args else None)
+if not PAT:
+    sys.exit("Set MODRINTH_TOKEN to a Modrinth personal access token")
 GO = "--go" in sys.argv
-REPO = "/home/snekmin/git/skytekx3-1201-server"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = "3.0.6"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
 SLUG = "skytekx3"
 
-BODY = open(REPO+"/docs/MODPACK_DESCRIPTION.md").read() if os.path.exists(REPO+"/docs/MODPACK_DESCRIPTION.md") else "SkyTekx3 — gen-3 rebuild on 1.20.1."
+BODY = open(REPO+"/docs/MODPACK_DESCRIPTION.md").read() if os.path.exists(REPO+"/docs/MODPACK_DESCRIPTION.md") else "SkyTekx3, Hexxit × Tekkit × SkyFactory reborn on Minecraft 1.20.1."
 
 def req(method, path, headers=None, data=None):
     h = {"Authorization": PAT, "User-Agent": UA}
@@ -64,7 +68,7 @@ if not project_id:
     data = {
         "slug": SLUG,
         "title": "SkyTekx3",
-        "description": "Hexxit + Tekkit + SkyFactory-style tech/magic/adventure kitchen-sink on 1.20.1 (gen-3 SkyTekx).",
+        "description": "Hexxit × Tekkit × SkyFactory, reborn on Minecraft 1.20.1.",
         "body": BODY,
         "categories": ["adventure", "magic", "technology"],
         "client_side": "required",
@@ -87,7 +91,7 @@ vdata = {
     "name": f"SkyTekx3 {VERSION}",
     "version_number": VERSION,
     "project_id": project_id,
-    "changelog": "Updated 55 mods from Modrinth and the bundled Connectivity, Cupboard and Enchanting Plus, and added MezzConfig as a new dependency. The Skylands no longer generate Battle Towers, strongholds or illager campsites on the islands or petrified roots floating under them, and floating windmills no longer drop their fields onto the islands below. For Halloween the islands get pumpkin patches and jack o'lanterns, blood moons come on about every second full moon, and Nyx lunar events also reach the Skylands.",
+    "changelog": "Updated 55 mods from Modrinth and the bundled Connectivity, Cupboard and Enchanting Plus, and added MezzConfig as a new dependency. The Skylands no longer generate Battle Towers, strongholds or illager campsites on the islands or petrified roots floating under them, and floating windmills no longer drop their fields onto the islands below. For Halloween the islands get pumpkin patches and jack o'lanterns, blood moons come on about every second full moon, and Nyx lunar events also reach the Skylands. The pack now installs without a failed download (the Nyx jar comes bundled), bundles All The Leaks and the Cataclysm: Spellbooks build that the server runs, and uses Forge 47.4.18 like the server. A server set up from the pack also gets the fixes datapack.",
     "dependencies": [],
     "game_versions": ["1.20.1"],
     "version_type": "beta",
@@ -101,6 +105,9 @@ try:
     resp = req("POST", "/version", headers={"Content-Type": ctype}, data=body)
     v = json.load(resp)
     print("UPLOADED version:", v["id"], v["version_number"])
+    local = hashlib.sha512(open(MRPACK, "rb").read()).hexdigest()
+    for f in v["files"]:
+        print("file:", f["filename"], f["size"], "sha512 matches local build:", f["hashes"]["sha512"] == local)
     print("project page: https://modrinth.com/modpack/"+SLUG)
 except urllib.error.HTTPError as e:
     print("VERSION UPLOAD FAILED", e.code, e.read().decode()[:800]); sys.exit(1)

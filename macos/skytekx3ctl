@@ -44,6 +44,6 @@ case "${1:-status}" in
   backup)
     "$DIR/macos/backup.sh" ;;
   *)
-    sed -n '2,9p' "$0"
+    sed -n '/^set /q;2,$p' "$0"   # The comment block at the top, up to the "set" line
     exit 2 ;;
 esac

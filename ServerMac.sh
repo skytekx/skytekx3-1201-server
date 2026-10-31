@@ -14,8 +14,12 @@ JAR="${JAR:-arclight.jar}"   # Symlink to the hardened arclight-forge-1.20.1-1.0
 MEM="${MEM:-9G}"
 
 # A macOS shell starts with a soft limit of 256 open files. Mod jars and region files need more.
-# Under launchd the plist raises the limit, this line covers a manual start.
-ulimit -n 10240 2>/dev/null || true
+# Under launchd the plist sets 65536, this covers a manual start. Only a lower soft limit is raised:
+# a plain "ulimit -n" in bash sets the hard limit as well and would cut the plist's 65536 down.
+soft_files=$(ulimit -Sn)
+if [ "$soft_files" != unlimited ] && [ "$soft_files" -lt 10240 ]; then
+  ulimit -Sn 10240 2>/dev/null || true
+fi
 
 # Aikar's G1 flags (the same set as ServerLinux.sh and the systemd unit), plus three macOS additions:
 # ReservedCodeCacheSize keeps the JIT from running out of code cache with this many mods,

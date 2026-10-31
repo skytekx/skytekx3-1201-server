@@ -35,6 +35,12 @@ SkyTekx is a server first and a modpack second. The Skylands come as datapacks f
 - Java 17.
 - At least 12 GB of memory for the game. A test client with 8 GB ran out of memory after it joined, and one with 12 GB did not. That is far more than the usual launcher default, so raise it in the settings of your instance.
 
+## Joining the server
+
+The server list of the pack holds hex.skytekx.com. The server sits behind a Cloudflare Tunnel, and Modflared, which comes with the pack, connects you through it. On its first start Modflared downloads cloudflared, the client of the tunnel. That works on Windows, on Linux on x86 and on macOS, where Macs with Apple Silicon need Rosetta 2, but not on Linux on ARM. Browsers, pings and server status sites cannot reach the address, so they show it as down even while the server runs. Voice chat does not go through the tunnel.
+
+The server also runs Brass-Amber BattleTowers, which is not on Modrinth, and the server turns away a client without it. Download version 3.0.0-beta3.2.1 for Forge 1.20.1 from CurseForge and put the jar into the mods folder of your instance.
+
 ## Credits
 
 SkyTekx is a modpack by ts4.party, the TeamSpeak for party, formerly known as ts3.party. Supported by netsnek.com.

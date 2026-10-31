@@ -1,6 +1,7 @@
 {
  "replace": false,
- "values": [
+ "values": [],
+ "remove": [
   "skytekx3:desert",
   "skytekx3:badlands",
   "skytekx3:savanna",

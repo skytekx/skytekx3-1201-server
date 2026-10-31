@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Cloudflare Tunnel connector for hex.skytekx.com (macos/run-skytekx-tunnel.sh), as the server user,
+  at boot and again whenever it exits. Fill in __USER__ and __HOME__, copy it to /Library/LaunchDaemons
+  (root:wheel, 644) and load it with launchctl bootstrap system. The steps are in okf/server/macos.md.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.skytekx.cloudflared</string>
+  <key>UserName</key>
+  <string>__USER__</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>__HOME__/.cloudflared/run-skytekx-tunnel.sh</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>StandardOutPath</key>
+  <string>__HOME__/Library/Logs/skytekx-cloudflared.log</string>
+  <key>StandardErrorPath</key>
+  <string>__HOME__/Library/Logs/skytekx-cloudflared.log</string>
+</dict>
+</plist>

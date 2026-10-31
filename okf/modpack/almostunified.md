@@ -51,10 +51,10 @@ The priority overrides, custom tags, ignored tags and ignored items are all empt
 
 ## What it does at boot
 
-The last boot logged "Recipe count: 40492" and "Recipe count afterwards: 39987 (done in 675.8 ms)"
-(`logs/2026-07-12-1.log.gz`, 23:25:50 to 23:25:51). So AlmostUnified removed 505 duplicate recipes.
-It also logs one WARN that lists tag and material pairs that no mod defines, such as
-`forge:gems/aluminum`. The pattern list creates them on purpose, and the WARN is harmless.
+The last boot on the build machine logged "Recipe count: 40492" and "Recipe count afterwards: 39987
+(done in 675.8 ms)" (`logs/2026-07-12-1.log.gz`, 23:25:50 to 23:25:51). So AlmostUnified removed 505
+duplicate recipes. It also logs one WARN that lists tag and material pairs that no mod defines, such
+as `forge:gems/aluminum`. The pattern list creates them on purpose, and the WARN is harmless.
 
 ## Sides
 

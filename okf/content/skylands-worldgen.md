@@ -278,7 +278,7 @@ chunks) in 3 minutes 31 seconds at a median of 83.2 chunks per second. The densi
 purpose on 2026-06-30 (commit 801edb4) so that structures act as stepping stones between islands. The
 profiles are in [performance](../server/performance.md).
 
-The log of the last boot shows 33 runtime warnings "Empty or non-existent pool:
+The log of the last boot on the build machine shows 33 runtime warnings "Empty or non-existent pool:
 dungeons_arise:mechanical_nest/mechanical_nest_decoration" (logs/2026-07-12-1.log.gz). They come from
 the Dungeons Arise jar and have not caused a crash.
 

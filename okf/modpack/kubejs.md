@@ -22,8 +22,8 @@ tracked in [docs/RECIPE_PORT.md](../../docs/RECIPE_PORT.md).
 ## Scripts
 
 All scripts live in [kubejs/server_scripts/](../../kubejs/server_scripts). There are no startup or
-client scripts, and the folders `startup_scripts/`, `assets/` and `data/` are empty. The last boot
-loaded 4 of 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`).
+client scripts, and the folders `startup_scripts/`, `assets/` and `data/` are empty. The last boot on
+the build machine loaded 4 of 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`).
 
 | Script | What it does |
 |---|---|
@@ -32,7 +32,7 @@ loaded 4 of 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`)
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
 
-The recipe summary of the last boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes,
+The recipe summary of that boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes,
 with 17 failed recipes" (`logs/kubejs/server.log:54`, 23:25:52). The 17 failures are third-party
 recipes that name items which do not exist in this pack. They are not caused by these scripts.
 

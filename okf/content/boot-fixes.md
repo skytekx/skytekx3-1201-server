@@ -62,8 +62,8 @@ The Patchouli override does not work. The boot of 2026-07-12 still logs "Failed 
 simplyjetpacks:guidebook" (23:25:43). Only the mod author can fix it, see
 [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline).
 
-The last boot (`logs/2026-07-12-1.log.gz`, up to Done) has no "Couldn't parse element" and no
-"Couldn't load tag" line left.
+The last boot on the build machine (`logs/2026-07-12-1.log.gz`, up to Done) has no "Couldn't parse
+element" and no "Couldn't load tag" line left.
 
 Since the mod update of 2026-10-31 (see [mod set](../modpack/mod-set.md#update-of-2026-10-31)) three
 overridden mods run newer builds: DragNs Livestock Overhaul 3.9.4, Iron's Spellbooks 3.16.3 and

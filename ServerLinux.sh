@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# SkyTekx3 (MC 1.20.1 / Forge / Arclight) — local/dev launcher.
-# Production uses systemd (systemd/skytekx3.service). Java 21.
+# SkyTekx3 (MC 1.20.1 / Forge / Arclight) local and dev launcher for Linux.
+# Production uses systemd (systemd/skytekx3.service), macOS uses ServerMac.sh. Java 17.
 set -euo pipefail
 cd "$(dirname "$0")"
 

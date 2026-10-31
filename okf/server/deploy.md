@@ -126,7 +126,7 @@ its own restart script `./start.sh`, which does not exist, so restarts only come
 | 65535 | TCP | RCON | Never |
 | 22 | TCP | SSH | Admins only |
 
-All three server listeners bind every interface. The last boot logged
+All three server listeners bind every interface. The last boot on the build machine logged
 `Starting Minecraft server on 0.0.0.0:25565`, `RCON running on 0.0.0.0:65535` and
 `Voice chat server started at 0.0.0.0:24454` (`logs/2026-07-12-1.log.gz`). RCON binds to `server-ip`,
 which is `0.0.0.0` (`server.properties.example:48`), so only the firewall keeps it private. Voice chat

@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# Arclight 1.20.1 requires Java 17 (it crashes on 21 — IInventoryBridge NoClassDefFound).
+# Java 17 is the only version with a successful boot on record (okf/server/arclight.md).
 JAVA="${JAVA:-/usr/lib/jvm/java-17-openjdk/bin/java}"
 JAR="${JAR:-arclight.jar}"          # symlink -> arclight-forge-1.20.1-<ver>.jar
 MEM="${MEM:-11G}"                   # tuned for a 16GB host (e.g. M4 Mac mini); leaves ~5G for the OS

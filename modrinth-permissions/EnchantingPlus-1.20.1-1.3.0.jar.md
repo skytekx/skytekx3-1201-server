@@ -1,6 +1,6 @@
 # Enchanting Plus (Classic)
 
-**Bundled file:** `EnchantingPlus-1.20.1-1.2.0.jar`
+**Bundled file:** `EnchantingPlus-1.20.1-1.3.0.jar`
 **Status:** OK (author allows)
 
 ## Paste into the Modrinth attribution form
@@ -10,7 +10,7 @@
 - **License:** All Rights Reserved
 - **Explanation:**
 
-  Enchanting Plus (Classic) by Astryxion is All Rights Reserved, but the author explicitly states on the CurseForge project page: "This mod is free to use in modpacks. You are welcome to include it in public or private modpacks without permission." The bundled file EnchantingPlus-1.20.1-1.2.0.jar (CurseForge file ID 7636639) matches this mod exactly.
+  Enchanting Plus (Classic) by Astryxion is All Rights Reserved, but the author explicitly states on the CurseForge project page: "This mod is free to use in modpacks. You are welcome to include it in public or private modpacks without permission." The bundled file EnchantingPlus-1.20.1-1.3.0.jar (CurseForge file ID 7636639) matches this mod exactly.
 
 ## Reference
 

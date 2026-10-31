@@ -8,7 +8,7 @@ import json, os, shutil, zipfile, sys
 
 REPO = "/home/snekmin/git/skytekx3-1201-server"
 SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
-VERSION = "3.0.5"
+VERSION = "3.0.6"
 FORGE = "47.4.6"
 
 # mod file list: session scratch from resolve_all.py when present, else the committed index
@@ -33,7 +33,9 @@ index = {
     "dependencies": {"minecraft": "1.20.1", "forge": FORGE},
 }
 os.makedirs(REPO, exist_ok=True)
-json.dump(index, open(REPO+"/modrinth.index.json", "w"), indent=2)
+with open(REPO+"/modrinth.index.json", "w") as fh:   # trailing newline, as update_mods.py writes it
+    json.dump(index, fh, indent=2)
+    fh.write("\n")
 
 # --- split client-only jars out of the server mods/ dir ---
 clientonly = REPO+"/client-only-mods"

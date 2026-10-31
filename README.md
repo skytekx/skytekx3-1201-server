@@ -179,7 +179,7 @@ Never stop the server with a signal. Every logged signal stop went wrong, see
 
 ## Self-hosting on macOS
 
-The production server runs on an Apple M4 Mac mini with 16 GB under launchd. launchd starts it at boot
+The production server runs on an Apple M4 Mac mini with 16 GB under launchd, which starts it at boot
 with nobody logged in, starts it again after a crash and stops it over RCON. Details and measured
 numbers are on [Mac mini (macOS, launchd) deployment](okf/server/macos.md).
 
@@ -216,7 +216,8 @@ macos/skytekx3ctl start             # Starts it again (sudo)
 macos/skytekx3ctl rcon "list"       # One console command
 ```
 
-Updates also come from the build machine. `stop` and `start` call sudo, so the SSH sessions need `-t`.
+Updates also come from the build machine. The commands `stop` and `start` call sudo, so the SSH
+sessions need `-t`.
 
 ```bash
 ssh -t user@mac-mini 'cd ~/skytekx3-1201-server && macos/skytekx3ctl stop'
@@ -312,8 +313,9 @@ Modrinth token as `vault_modrinth_pat` and the RCON password as `vault_rcon_pass
 - No tool reads the vault. The scripts `tools/rcon.py` and `tools/resolve_all.py` take the password
   or the token as a command line argument, and `tools/publish_modrinth.py` reads the token from
   `MODRINTH_TOKEN`.
-- The vault password is never committed. `ansible/ansible.cfg` expects it in
-  `ansible/.vault_pass.txt`, which git ignores. Until that file exists, `--ask-vault-pass` prompts for it.
+- The vault password is never committed. The config `ansible/ansible.cfg` expects it in
+  `ansible/.vault_pass.txt`, which git ignores. Until that file exists, `--ask-vault-pass` prompts for
+  it.
 - The live `server.properties` and `unit.conf` carry the RCON password, and git ignores both. Commit only
   `server.properties.example`.
 

@@ -8,10 +8,11 @@ timestamp: 2026-10-31
 
 # Change log
 
-Oldest first. Times are the build machine's local time, CEST up to 2026-07-13 and CET on 2026-10-31. The build sessions themselves were
-deleted, so this log rests on the owner's prompts in `~/.claude/history.jsonl` (session 5bd3e1de, and
-3dcdf872 for the hosting question of 2026-06-26 23:09), the git history, the server logs and crash
-reports, the `.mrpack` files and file times. Rulings are collected on [Decisions](decisions.md).
+Oldest first. Times are the build machine's local time, CEST up to 2026-07-13 and CET on 2026-10-31.
+The build sessions themselves were deleted, so this log rests on the owner's prompts in
+`~/.claude/history.jsonl` (session 5bd3e1de, and 3dcdf872 for the hosting question of 2026-06-26
+23:09), the git history, the server logs and crash reports, the `.mrpack` files and file times.
+Rulings are collected on [Decisions](decisions.md).
 
 The git history before 2026-06-29 19:28 was rebuilt on the owner's request. The first 15 commits of
 master, 5ae7f82 to e94ed6c, all carry 2026-06-29 18:52:20, so their dates say nothing about when the work
@@ -292,8 +293,9 @@ logs stay on the Mac and are not in the repo.
   uploaded.
 - The scans of 19:20 found no structure piece below Y 24, no petrified roots and all 10 windmills
   whole, see [Mac mini](server/macos.md#pregen-and-worldgen-checks).
-- Between 19:26 and 19:36 restart, stop, start, backup and a reboot were tested. `launchctl bootout`
-  turned out to return before the job is gone, so `install.sh` and `skytekx3ctl stop` now wait for it.
+- Between 19:26 and 19:36 restart, stop, start, backup and a reboot were tested. The command
+  `launchctl bootout` turned out to return before the job is gone, so `install.sh` and
+  `skytekx3ctl stop` now wait for it.
   The first backup (688 MB) was written at 19:34. See [Mac mini](server/macos.md#tests-of-2026-10-31).
 - At 20:00 a checksum dry run of the sync showed 15 config files that differ between the checkout and
   the Mac, see [Open items](open-items.md#defects-to-fix).

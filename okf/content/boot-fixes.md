@@ -50,13 +50,14 @@ is tracked: 126 files, 125 data files plus `pack.mcmeta` (pack format 15).
 ### What the overrides change in game
 
 Each override was checked on 2026-10-31 against the last boot before the pack existed
-(`logs/2026-06-30-19.log.gz`, started 03:33 on 2026-06-30). That boot logged 152 ERRORs, 101 of them "Couldn't parse element". All 99
-loot tables and all 14 advancements were among the parse failures, so the originals never loaded. An
-empty loot table and an advancement that cannot be earned behave the same as a file that failed to
-load. These 113 overrides only remove log noise.
+(`logs/2026-06-30-19.log.gz`, started 03:33 on 2026-06-30). That boot logged 152 ERRORs, 101 of them
+"Couldn't parse element". All 99 loot tables and all 14 advancements were among the parse failures, so
+the originals never loaded. An empty loot table and an advancement that cannot be earned behave the
+same as a file that failed to load. These 113 overrides only remove log noise.
 
-The 8 tags are different. That same boot logged a "Couldn't load tag" error for each of them, and a tag with a missing required entry does not load at all. With the overrides they load and
-hold the entries that exist. So these tags now work where they were empty before.
+The 8 tags are different. That same boot logged a "Couldn't load tag" error for each of them, and a
+tag with a missing required entry does not load at all. With the overrides they load and hold the
+entries that exist. So these tags now work where they were empty before.
 
 The Patchouli override does not work. The boot of 2026-07-12 still logs "Failed to load book
 simplyjetpacks:guidebook" (23:25:43). Only the mod author can fix it, see
@@ -86,9 +87,9 @@ move a pack to the end are on [world reset](../server/world-reset.md).
 
 ## Jar patches
 
-The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (218 lines). It finds
-each jar by a glob next to the script, so the repo path does not matter, and it is idempotent: a second
-run prints `noop` for every jar.
+The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (218
+lines). It finds each jar by a glob next to the script, so the repo path does not matter, and it is
+idempotent: a second run prints `noop` for every jar.
 
 | Mod and jar | Patch | Why |
 |---|---|---|
@@ -104,8 +105,8 @@ run prints `noop` for every jar.
 | Medieval Embroidery (`Medieval_Embroidery*.jar`) | Rewrites 5 entity type tags with optional entries | They name a griffin entity that is never registered |
 
 Ten jars are patched. Nine of them come from the index, and exactly these nine no longer match their
-SHA-1 in `modrinth.index.json` (checked 2026-10-31). The tenth, Traverse, is a bundled jar, and the copy in `mods/` differs from the
-one in `local-mods/` because only `mods/` is patched.
+SHA-1 in `modrinth.index.json` (checked 2026-10-31). The tenth, Traverse, is a bundled jar, and the copy
+in `mods/` differs from the one in `local-mods/` because only `mods/` is patched.
 
 Run it after anything that downloads jars into `mods/`:
 

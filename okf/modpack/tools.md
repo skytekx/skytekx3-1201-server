@@ -22,9 +22,9 @@ region scans that checked the Halloween world on the Mac mini the same evening.
 | 4 | Build, `build_mrpack.py` | 84 | Rewrites the index and zips the `.mrpack` from git HEAD | A git checkout | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
 | 5 | Publish, `publish_modrinth.py` | 113 | Creates the Modrinth project if missing, uploads the version and checks its hash | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
-| After a pregen | Scan, `void_scan.py` | 228 | Lists structure starts and blocks below the islands and in void columns | numpy | Nothing |
-| After a pregen | Scan, `void_float.py` | 142 | Separates blocks that hang from an island from blocks that float free | numpy | Nothing |
-| After a pregen | Scan, `structure_pieces.py` | 33 | Prints every piece of one structure with its projection and box | numpy | Nothing |
+| After a pregen | Scan, `void_scan.py` | 228 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
+| After a pregen | Scan, `void_float.py` | 142 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
+| After a pregen | Scan, `structure_pieces.py` | 33 | Prints every piece of one structure with its projection and box | Python with numpy | Nothing |
 
 The Modrinth token and the RCON password live in the ansible vault as `vault_modrinth_pat` and
 `vault_rcon_password`, see [secrets](../server/secrets.md). The RCON password is passed as a command
@@ -34,9 +34,10 @@ back to an argument.
 
 ## Datapack sync
 
-The script [sync_skylands_datapack.sh](../../tools/sync_skylands_datapack.sh) changes into the repo root and runs
-`rsync -a --delete` from `skylands-datapack/` to `world/datapacks/skytekx3_skylands/` and from
-`skylands-datapack-forge/` to `world/datapacks/skytekx3_skylands_forge/`, then prints the file counts.
+The script [sync_skylands_datapack.sh](../../tools/sync_skylands_datapack.sh) changes into the repo
+root and runs `rsync -a --delete` from `skylands-datapack/` to `world/datapacks/skytekx3_skylands/` and
+from `skylands-datapack-forge/` to `world/datapacks/skytekx3_skylands_forge/`, then prints the file
+counts.
 Run it after every datapack edit and restart the server. It leaves `world/datapacks/skytekx3_fixes/`
 alone. See [Skylands worldgen](../content/skylands-worldgen.md#edit-workflow).
 
@@ -44,9 +45,9 @@ alone. See [Skylands worldgen](../content/skylands-worldgen.md#edit-workflow).
 
 ### The new update script
 
-The script `tools/update_mods.py` (commit 257d4c1, 2026-10-31) works from the pinned index. It sends the SHA-1 of
-every index entry to the public Modrinth endpoints `/version_files` and `/version_files/update` with
-the loader Forge and game version 1.20.1, and needs no token.
+The script `tools/update_mods.py` (commit 257d4c1, 2026-10-31) works from the pinned index. It sends
+the SHA-1 of every index entry to the public Modrinth endpoints `/version_files` and
+`/version_files/update` with the loader Forge and game version 1.20.1, and needs no token.
 
 ```sh
 python3 tools/update_mods.py                      # dry run, lists the updates
@@ -92,9 +93,9 @@ says, it never reads `modrinth.index.json`:
 
 ## Jar patches
 
-The script [patch_mods.py](../../tools/patch_mods.py) re-applies ten jar level fixes in `mods/`. It finds its
-targets by glob relative to its own folder and is idempotent. Run it after any tool or person put new
-jars into `mods/`. The patches are listed on [boot fixes](../content/boot-fixes.md#jar-patches).
+The script [patch_mods.py](../../tools/patch_mods.py) re-applies ten jar level fixes in `mods/`. It
+finds its targets by glob relative to its own folder and is idempotent. Run it after any tool or person
+put new jars into `mods/`. The patches are listed on [boot fixes](../content/boot-fixes.md#jar-patches).
 
 ## Build the `.mrpack`
 
@@ -149,11 +150,12 @@ the existing project keeps its texts of 2026-06-27. The state of the project and
 python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" list
 ```
 
-The script [rcon.py](../../tools/rcon.py) is a minimal Source RCON client: host, port, password, then the command
-words. It prints the reply or "(empty response)", and exits with "AUTH FAILED" on a wrong password. The
-port is `rcon.port` in `server.properties`, 65535 on this server (`server.properties:43`). Output of `say` does not come back over RCON, so use
-`execute if ...` probes to test things (see [Skylands worldgen](../content/skylands-worldgen.md#checking-a-change)).
-For the stop path and mcrcon see [deploy](../server/deploy.md#rcon-and-mcrcon).
+The script [rcon.py](../../tools/rcon.py) is a minimal Source RCON client: host, port, password, then
+the command words. It prints the reply or "(empty response)", and exits with "AUTH FAILED" on a wrong
+password. The port is `rcon.port` in `server.properties`, 65535 on this server
+(`server.properties:43`). Output of `say` does not come back over RCON, so use `execute if ...` probes
+to test things (see [Skylands worldgen](../content/skylands-worldgen.md#checking-a-change)). For the
+stop path and mcrcon see [deploy](../server/deploy.md#rcon-and-mcrcon).
 
 To find the server process, match `'java .*arclight[.]jar nogui'`. The plain pattern
 `-f 'arclight.jar nogui'` also matches the shell that runs `pkill` or `pgrep` (memory
@@ -172,16 +174,17 @@ pregen, against a stopped server or right after `save-all flush`. They need nump
 a venv, `python3 -m venv ~/.venvs/skyscan` with `pip install numpy` (numpy 2.0.2 on the system Python
 3.9).
 
-- [void_scan.py](../../tools/void_scan.py) lists every structure start with its lowest piece and the
-  biome at its start, every non-air block below the island band (Y 24 by default, `--band-min`) and
-  every non-air block in `sky_void` columns. Island rims are `sky_void` by design, so terrain there is
-  expected.
-- [void_float.py](../../tools/void_float.py) flood fills from each block below the band. A group that
-  reaches Y 40 (`--attach-y`) hangs from an island, for example an island bottom or a geode. A group that
-  never reaches it floats in the void and is a leak.
-- [structure_pieces.py](../../tools/structure_pieces.py) prints the template, projection and box of every
-  piece of one structure. It showed that the floating windmill dropped its terrain matching fields onto
-  an island below, see [Skylands worldgen](../content/skylands-worldgen.md#changes-of-2026-10-31).
+- The scan [void_scan.py](../../tools/void_scan.py) lists every structure start with its lowest piece
+  and the biome at its start, every non-air block below the island band (Y 24 by default,
+  `--band-min`) and every non-air block in `sky_void` columns. Island rims are `sky_void` by design, so
+  terrain there is expected.
+- The scan [void_float.py](../../tools/void_float.py) flood fills from each block below the band. A
+  group that reaches Y 40 (`--attach-y`) hangs from an island, for example an island bottom or a geode.
+  A group that never reaches it floats in the void and is a leak.
+- The scan [structure_pieces.py](../../tools/structure_pieces.py) prints the template, projection and
+  box of every piece of one structure. It showed that the floating windmill dropped its terrain
+  matching fields onto an island below, see
+  [Skylands worldgen](../content/skylands-worldgen.md#changes-of-2026-10-31).
 
 A clean result has no structure start with a piece below the band, and no floating group except the
 small islands that the terrain places low on purpose.

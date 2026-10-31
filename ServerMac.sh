@@ -53,10 +53,14 @@ fi
 # the RCON "stop" of a clean stop.
 prop() { sed -n "s/^$1=//p" server.properties | tr -d '\r'; }
 
-"$JAVA" "${JVM[@]}" </dev/null &
-pid=$!
-
+pid=""
+stop_requested=""
 stop_server() {
+  # A signal before "pid=$!" below only records the stop. The line after the JVM start then makes it.
+  if [ -z "$pid" ]; then
+    stop_requested=1
+    return 0
+  fi
   trap '' TERM INT
   local sent=0 i
   for i in $(seq 1 45); do
@@ -72,7 +76,12 @@ stop_server() {
     kill -TERM "$pid" 2>/dev/null || true
   fi
 }
+# Set before the JVM starts, so no signal can end this script and leave the JVM running without it.
 trap stop_server TERM INT
+
+"$JAVA" "${JVM[@]}" </dev/null &
+pid=$!
+[ -z "$stop_requested" ] || stop_server
 
 set +e
 wait "$pid"

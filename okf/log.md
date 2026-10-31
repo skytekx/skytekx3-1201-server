@@ -361,6 +361,23 @@ logs stay on the Mac and are not in the repo.
   the address, Modflared and where it runs, says that voice chat stays in the LAN and sends players to
   CurseForge for BattleTowers. The publish script replaced the summary and the body with `--texts`.
   Nobody has joined through Modflared yet.
+- At 22:08:49 `hex.skytekx.com` got the address 192.0.2.1 next to its TXT record. Minecraft resolves a
+  server name before Modflared sees it, and without an address the clients stopped at "Unknown host".
+  The address is a documentation address that answers nothing. `tools/cf_tunnel.py` sets it as step 6
+  since 00682e0. At 22:15:02 `play.skytekx.com` got the same address and the same TXT route as a second
+  name, which the setup script does not create yet.
+- At 22:34 LuckPerms-Bukkit 5.5.71 joined EssentialsX on the Mac mini, and the group `default` got 38
+  player nodes of EssentialsX. See [Plugins](modpack/plugins.md#permissions).
+- At about 22:44 the owner reported that nobody could break blocks or hit anyone and suspected the
+  permissions. Neither came from LuckPerms. Hits between players failed inside Asgard Shield Reloaded,
+  whose attack handler reads the arm a player last swung. That arm is null until the player swings after
+  a login or a respawn, so from 22:37 on 37 hits threw `Invalid hand null` and did no damage. Breaking
+  failed at the spawn. With one op on the server, the spawn protection of 16 blocks kept everyone else
+  from breaking or placing blocks there, and every new player lands within 10 blocks of the spawn.
+  `tools/patch_mods.py` now makes the handler read the hand in use (aa4eec0, see
+  [Boot fixes](content/boot-fixes.md#jar-patches)), `spawn-protection` went to 0 in the Mac's
+  `server.properties`, and the server restarted at 22:49:28 after a warning in chat. It was up again at
+  22:50:09 with the 3 accepted boot errors.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

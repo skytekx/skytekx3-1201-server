@@ -137,11 +137,20 @@ On 2026-10-31 at 20:56 the owner asked to install Prism and the pack on their se
 By 21:31 it had Prism Launcher 11.1.1 (universal build, notarized), Temurin 17.0.21 for arm64 and the
 instance SkyTekx3, all in its user's home folder and installed without sudo. The instance holds the
 files of 3.0.6, BrassAmber BattleTowers and Modflared, 241 jars, with a heap of 4096 to 12288 MB and
-the Modrinth project and version ids in `instance.cfg`. Its network cannot reach the Mac mini's LAN
-address, so its server list has the one entry `hex.skytekx.com`. The Microsoft sign-in and the first
-launch are left to the person at that Mac. In content the instance already matches 3.0.7 plus
-BattleTowers, so nothing was changed there for the new version. Nobody has joined from it yet, and the
-first real join through Modflared is still untested.
+the Modrinth project and version ids in `instance.cfg`. Its server list has the one entry
+`hex.skytekx.com`. In content the instance already matches 3.0.7 plus BattleTowers, so nothing was
+changed there for the new version.
+
+It sits on another subnet than the Mac mini but reaches it through the router. At about 22:01 a ping,
+a TCP connect to 25565 and a status ping from it to the Mac mini's LAN address all worked. A test at
+21:23 had failed only because the Mac mini's Ethernet link was down from 21:22 to 21:28 (see
+[Mac mini](../server/macos.md#link-drop-of-2026-10-31)), and the conclusion of that time, that the
+subnets cannot reach each other, was wrong. Joined by the LAN address, it gets voice chat and needs
+neither Modflared nor Rosetta.
+
+The first launch there failed to join with "Invalid session", because the instance ran with an
+offline account. After a sign-in with a Microsoft account it was relaunched at about 22:33. A join at
+22:34:44 was refused because the server was restarting at that moment.
 
 ## Other settings
 

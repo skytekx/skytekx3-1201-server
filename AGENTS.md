@@ -1,80 +1,151 @@
-# AGENTS.md — working in `skytekx3-1201-server`
+# AGENTS.md for skytekx3-1201-server
 
-Guidance for AI agents (and humans) contributing to the SkyTekx 3 server/modpack. Read this first,
-then browse the [OKF wiki](okf/index.md) for the per-subsystem deep dives.
+Guidance for AI agents and humans who work on the SkyTekx 3 server and modpack. Read this first, then
+the [OKF wiki](okf/index.md) for the details of each part. The open work is on
+[Open items](okf/open-items.md), the owner's rulings on [Decisions](okf/decisions.md).
 
 ## What this repo is
 
-A **Minecraft 1.20.1 / Forge 47 / Arclight** hybrid server *and* the modpack that runs on it. It is
-both the deployable server (config, deploy units, world datapacks) and the source of truth for the
-published Modrinth pack (`modrinth.index.json` + `local-mods/` overrides). See [`README.md`](README.md)
-for the stack and self-hosting steps.
+The repo is both the server and the modpack that runs on it. The server is Minecraft 1.20.1 with Forge
+47 on Arclight, a hybrid that also loads Bukkit plugins. The repo holds the server config, the deploy
+files and the world datapacks, and it is the source of the Modrinth pack (`modrinth.index.json` plus the
+bundled jars in `local-mods/`). The stack and the self-hosting steps are in the [README](README.md).
 
 ## Golden rules
 
-- **Java 17 only.** Arclight 1.20.1 dies on Java 21 (`IInventoryBridge NoClassDefFound`). Never bump it.
-- **Don't commit secrets or runtime state.** `server.properties`, `unit.conf`, `.vault_pass.txt`,
-  `world/` (except `world/datapacks/`), `mods/`, `client-only-mods/`, `logs/`, `modernfix/`,
-  `.arclight/` are gitignored for a reason. Real secrets live in the **ansible vault**.
-- **`mods/` is derived, not source.** It is rebuilt from `modrinth.index.json` via
-  `tools/resolve_all.py`. To add/remove a Modrinth mod, edit the **index**, not `mods/`.
-  A mod that is **not on Modrinth** goes in `local-mods/` (tracked) instead.
-- **Materialization stays internal.** Unify materials through `config/almostunified/` and tags, not by
-  hand-editing recipes per mod.
-- **Test changes against a real boot.** A clean boot = `Done` reached, **0 FATAL / crash / watchdog**.
-  Many pre-existing mod `ERROR` lines in the log are benign; only regressions you introduced matter.
+- Run the server on Java 17 only. Every boot that reached `Done` ran Temurin 17.0.19 on the build
+  machine or 17.0.21 on the Mac mini. The one try with Java 21 failed, so do not move to 21 without a
+  full boot test. See
+  [Arclight runtime](okf/server/arclight.md#java-17-only).
+- Keep `arclight.jar` pointed at the hardened jar
+  `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, which git tracks together with its patch in
+  `patches/`. A stock Arclight build brings back the shutdown crash of 2026-06-29.
+- Do not commit secrets or runtime state. Git ignores all of `world/`, and only the three datapacks in
+  `world/datapacks/` were force-added, so new files there need `git add -f`. It also ignores
+  `server.properties`, `unit.conf`, every `.vault_pass.txt` (the vault expects
+  `ansible/.vault_pass.txt`), `mods/`, `client-only-mods/`, `logs/`, `modernfix/` and `.arclight/`. The
+  folder `plugins/` is not ignored, and it holds player data in `plugins/Essentials/userdata/`, so read
+  `git status` before every commit. Real secrets live in the ansible vault.
+- Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, nine of them patched in
+  place, the bundled jars from `local-mods/` (one of them patched too) and three jars that are in no
+  pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change into `mods/` by
+  hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
+  [Mod set](okf/modpack/mod-set.md).
+- Unify materials through `config/almostunified/` and tags, not by editing recipes mod by mod.
+- Test every change against a real boot. A clean boot reaches `Done` with 0 FATAL lines, no crash
+  report and no watchdog, and keeps the baseline of 3 accepted ERROR lines: the Simply Jetpacks guide
+  book, the AllTheLeaks reflection into Citadel and the Essentials warning about the hybrid server. See
+  [Logs and crashes](okf/server/logs-and-crashes.md#boot-error-baseline).
+- Stop the server over RCON and wait until the java process has exited. Never stop it with a signal.
 
 ## Where things live
 
 | Task | Touch |
 |---|---|
-| Add/remove a Modrinth mod | `modrinth.index.json` (then `tools/resolve_all.py`) |
-| Add a non-Modrinth mod | drop the jar in `local-mods/` (it's tracked) |
-| Material unification / dup recipes | `config/almostunified/unify.json` (`modPriorities`) |
-| Recipe / tag / loot tweaks | `kubejs/server_scripts/{recipe_fixes,tag_fixes,gameplay}.js` |
-| Combat feel (1.7 swing, no cooldown) | `kubejs/server_scripts/combat_1_7.js` |
-| Skylands travel (ascend + fall) | `skylands-datapack/data/skytekx3/functions/travel/` (vanilla mcfunctions) |
-| Skylands structures / worldgen | `skylands-datapack/` (shared, vanilla safe) + `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |
-| Deploy | `systemd/skytekx3.service`, `ServerLinux.sh`, `ansible/` |
-| Publish the pack | `tools/build_mrpack.py` |
+| Add or remove a Modrinth mod | The index `modrinth.index.json`, then the same jar in `mods/` by hand |
+| Update mods | Script `tools/update_mods.py`, then `tools/patch_mods.py` and a boot test |
+| Add a mod that is not on Modrinth | Folder `local-mods/` (tracked) and `mods/`, plus a file in `modrinth-permissions/` for the review |
+| Unify materials and duplicate recipes | File `config/almostunified/unify.json` (`modPriorities`) |
+| Recipe and tag tweaks | Scripts `kubejs/server_scripts/recipe_fixes.js`, `tag_fixes.js` and `gameplay.js`. No loot code exists yet |
+| Combat feel (no attack cooldown) | Script `kubejs/server_scripts/combat_1_7.js` |
+| Broken data of other mods | The override datapack `world/datapacks/skytekx3_fixes/`, which has no other source |
+| Fixes inside mod jars | Script `tools/patch_mods.py` |
+| Skylands travel | Functions in `skylands-datapack/data/skytekx3/functions/travel/` |
+| Skylands terrain and structures | Sources `skylands-datapack/` (shared, vanilla safe) and `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |
+| Deploy on Linux | Unit `systemd/skytekx3.service` and `ServerLinux.sh`, see [Deploy on Debian](okf/server/deploy.md) |
+| Deploy on the Mac mini | See [Mac mini](okf/server/macos.md) |
+| Build and publish the pack | Scripts `tools/build_mrpack.py`, then `tools/publish_modrinth.py` |
 
-> Skylands structure gating is **pure vanilla** since 2026-07-12: void columns get the featureless
-> `skytekx3:sky_void` biome (island mask routed into the `continents` climate channel), which sits in no
-> `has_structure` tag, so vanilla rejects every structure start over the void. The shared pack boots on
-> unmodded vanilla/Spigot; everything with mod registry references lives in `skylands-datapack-forge/`.
-> After editing either pack run `tools/sync_skylands_datapack.sh` — `build_mrpack.py` ships both into the
-> `.mrpack`. The old `skytekx:surface_spread` mod is retired; `skytekx-compat` only carries compat mixins.
+### The Skylands in short
+
+Since 2026-07-12 the Skylands are a pure datapack. An island mask, routed into the `continents` climate
+channel, gives every column over the void the featureless biome `skytekx3:sky_void`. That biome sits in
+no `has_structure` tag, so vanilla rejects every structure start over the void, modded ones included.
+The only tags that list it are `#skytekx3:has_structure/sky_floaters` and the Dungeons Arise tags for
+Keep Kayra and the mechanical nest, which only hold structures with a fixed start height in the air.
+
+The shared pack registers only `minecraft` and `skytekx3` ids and boots on unmodded vanilla and Spigot.
+Everything that names a mod lives in `skylands-datapack-forge/`. The shared pack also carries five
+Forge biome modifier files for chocobos, which vanilla and Spigot ignore. After editing either source,
+run `tools/sync_skylands_datapack.sh` and restart. The build script ships both packs in the `.mrpack`.
+The design is on [Skylands worldgen](okf/content/skylands-worldgen.md).
+
+Check a worldgen change in a pregenerated copy of the dimension, not by eye. `tools/void_scan.py` lists
+structure starts and blocks below the islands, `tools/void_float.py` separates what hangs from an
+island from what floats free, and `tools/structure_pieces.py` shows where each piece of one structure
+landed. They read region files only and need numpy.
 
 ## Server operations (RCON)
 
 ```bash
-mcrcon -H localhost -P 65535 -p "$RCON_PW" "<cmd>"
+mcrcon -H localhost -P 65535 -p "$RCON_PW" "<command>"
+python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" <command>    # Standard library alternative
+macos/skytekx3ctl rcon "<command>"                            # On the Mac mini, reads the password itself
 ```
 
-- Graceful stop: `save-all flush` → `stop`. Shutdown can hang ~60 s ("threads not shutting down…");
-  if it does, SIGKILL the java pid as a fallback, then confirm it's gone before relaunching.
-- Pregen: Chunky — `chunky radius 1000` → `chunky start`; do this after any world wipe.
-- Full world regen procedure is in [`README.md`](README.md#maintenance) and
-  [`okf/server/world-reset.md`](okf/server/world-reset.md).
+- To stop the server, send `save-all flush` and `stop`. Saving takes another 5 to 9 seconds after the
+  `stop` reply. Wait until the java process is gone before you start it again or touch `world/`.
+- Match the process with `pgrep -f 'java .*arclight[.]jar nogui'`. The plain pattern
+  `'arclight.jar nogui'` also matches the shell that runs `pgrep` or `pkill`.
+- Every logged signal stop went wrong, see [Stop path](okf/server/logs-and-crashes.md#stop-path).
+- Pregenerate after every world wipe, one dimension at a time:
+  `chunky world minecraft:overworld`, `chunky radius 1000`, `chunky start`, then the same for
+  `skytekx3:skylands`.
+- Keep `/locate` sweeps off the live server. A sweep over every modded structure tripped the watchdog
+  on 2026-06-29.
+- The full regen procedure is in the [README](README.md#maintenance) and on
+  [World reset and pregen](okf/server/world-reset.md).
 
 ## Git conventions
 
-- **Author commits as the human driving the work** (the project owner / whoever is running you), **not**
-  as the AI — and don't add `Co-Authored-By` trailers crediting the agent.
-- **Conventional Commits / Commitizen**, multi-line, with a body explaining the *why*:
-  - `feat(scope): …`, `fix(scope): …`, `chore(scope): …`, `docs(scope): …`, `refactor(scope): …`.
-  - Scopes used here: `mods`, `worldgen`, `skylands`, `combat`, `recipes`, `config`, `deploy`, `tools`, `okf`.
-- Keep commits **granular** — one concern per commit (a mod group, a script, a config area), not one
-  giant "update everything".
-- `master` is the default branch.
+- Commits are authored by the human who drives the work, not by the AI. Add no `Co-Authored-By`
+  trailers for the agent.
+- Use Conventional Commits in the Commitizen style, multi-line, with a body that explains why.
+  - Types in use are `feat`, `fix`, `perf`, `chore`, `docs` and `refactor`.
+  - Scopes in use are `skylands`, `worldgen`, `mods`, `server`, `content`, `recipes`, `combat`,
+    `config`, `tools`, `deploy`, `release` and `okf`.
+- Commit messages carry no em dashes, no en dashes, no hyphens used as dashes and no semicolons.
+- Keep commits granular, one concern per commit, such as a mod group, a script or a config area.
+- The default branch is `master`.
+
+## Writing docs
+
+These rules hold for the README, this file and the OKF wiki.
+
+- Write in English.
+- Use no em dashes, no en dashes and no hyphens as dashes, no semicolons in prose and no exclamation
+  marks. Use no emoji and no warning signs.
+- Start every sentence, list item and table cell with a capital letter. Rephrase rather than start with
+  a code identifier or a lowercase name. Do not open a paragraph or list item with a bold label.
+- Do not number phases or steps in headings.
+- Give every OKF page the front matter keys `type`, `title`, `description`, `tags` and `timestamp`.
+- Cite the evidence for a claim: a file and line, a commit, a log or the owner's prompt with its time.
+  Mark what nobody verified.
+- Move retired designs into a short History section at the end of a page.
+- Name no real persons. Credit the community as ts4.party.
 
 ## Gotchas learned the hard way
 
-- A heightmap-gated structure can still leak to the y0 void floor if only the **start-chunk center** is
-  checked — gate on a `min_surface_y` high enough that the whole footprint sits on real terrain.
-- KubeJS uses native **Mojmap** APIs here (see `combat_1_7.js` for the attribute pattern); cross-dim
-  teleports (`skylands_fall.js`) only fire on a real void-fall, so load-verify, then test in-world.
-- The `-neoforge` suffix on some jars (e.g. Aether) is a filename, not a loader — they declare
-  `javafml` + `forge` and load fine on Forge.
-- After a bulk delete/regen, **always pregen** or the first players pay the worldgen cost and the edge
-  throttles.
+- Never add `skytekx3:sky_void` to `#minecraft:is_overworld`, `#forge:is_overworld` or another mod's
+  `has_structure` tag. Tag chains bring structures back onto the Y 0 floor over the void.
+- Structure sets are global. A set tuned for the Skylands also places in the Overworld wherever the
+  structures' biome tags match, see
+  [Skylands worldgen](okf/content/skylands-worldgen.md#structure-sets-are-global).
+- Pack order decides which datapack wins. A world datapack that sits before a mod's own pack loses to
+  it, as the ChocoCraft overrides do in the current world. Check the order with `/datapack list enabled`.
+- Worldgen registries only rebind on a restart, not on `/reload`, and edits only reach chunks that do
+  not exist yet.
+- Rhino can resolve no-argument accessors such as `level()` or `dimension()` to objects. The first fall
+  script threw a `TypeError` every tick and never teleported anyone. Load classes with
+  `Java.loadClass` and resolve constants at load time, as `combat_1_7.js` does, then test in game.
+- The suffix `-neoforge` in a jar name, as in the Aether Genesis jar, is part of the file name and not
+  the loader. The jar declares `javafml` and loads on Forge.
+- The update script takes betas by default. Pass `--channels release` for release builds only, and keep
+  Cataclysm at 3.31, the version the Cataclysm Spellbooks build on the server was ported to.
+- The pack build packs only the files git tracks under `config/`, `kubejs/` and `defaultconfigs/`, but
+  it reads them from disk. Commit or restore runtime rewrites of tracked configs before a build.
+- Client-only mods in the server's `mods/` stop the boot. They belong in `client-only-mods/`.
+- After a wipe, always pregenerate, or the first players pay the worldgen cost.
+- Retired designs stay retired: the `skytekx:surface_spread` structure placement of the old
+  skytekx-worldgen mod, the KubeJS fall script and the Java fall handler. SkyTekx Compat 2.0.0 only
+  guards Bird's Nests now, see [SkyTekx Compat](okf/content/compat-mod.md).

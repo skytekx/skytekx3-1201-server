@@ -1,73 +1,84 @@
-# SkyTekx 3 — Minecraft 1.20.1 / Forge / Arclight
+# SkyTekx 3: Hexxit × Tekkit × SkyFactory
 
-Gen-3 rebuild of **SkyTekx**, the ts3.party community modpack: the 1.7.10 original
-([`skytekx-1710-server`](https://github.com/skytekx/skytekx-1710-server)) → 1.12.2
-([`skytekx2-1122-server`](https://github.com/skytekx/skytekx2-1122-server)) → **this**, on 1.20.1.
+SkyTekx 3 is the third generation of SkyTekx, a modpack by ts4.party, the TeamSpeak for party, formerly
+known as ts3.party. It follows SkyTekx on Minecraft 1.7.10
+([`skytekx-1710-server`](https://github.com/skytekx/skytekx-1710-server)) and SkyTekx 2 on 1.12.2
+([`skytekx2-1122-server`](https://github.com/skytekx/skytekx2-1122-server)) and brings the pack to
+Minecraft 1.20.1.
 
-A Hexxit × Tekkit × SkyFactory kitchen-sink of tech, magic and adventure, run as a **Forge + Bukkit
-hybrid** (Arclight) so the EssentialsX / LuckPerms / Multiverse / WorldEdit plugin layer carries over
-alongside the Forge mods. Ships a bespoke **custom Skylands floating-islands dimension**.
+It mixes tech, magic and adventure and runs as a Forge and Bukkit hybrid on Arclight, so Forge mods and
+the EssentialsX plugin share one server. Its own Skylands dimension of floating islands replaces the
+skyblock plugin of SkyTekx 2.
 
-Public server: **`skytekx.com`** · Site: <https://skytekx.com> · Modpack: <https://modrinth.com/modpack/skytekx3>
-
----
+The website is <https://skytekx.com>. The Modrinth project `skytekx3` is not public yet, and
+skytekx.com does not point at a game server yet.
 
 ## Stack
 
-| | |
+| Part | Version |
 |---|---|
 | Minecraft | 1.20.1 |
-| Loader | Forge 47.x |
-| Server | **Arclight** (forge-1.20.1) hybrid — Mohist 1.20.1 is the documented fallback |
-| Java | **17** — Arclight 1.20.1 crashes on Java 21 (`IInventoryBridge` `NoClassDefFound`). Do **not** use 21. |
-| Recipe engine | AlmostUnified (unify) + Polymorph (in-grid conflicts) + KubeJS (scripts) |
-| Recipe viewer | EMI |
-| Pregen / profiling | Chunky · Spark |
-
----
+| Loader | Forge 47.4.18 inside Arclight (the pack index pins Forge 47.4.6 for clients) |
+| Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, started through the symlink `arclight.jar` |
+| Java | Java 17. The boots that reached `Done` ran Temurin 17.0.19 on the build machine and 17.0.21 on the Mac mini. The one try with Java 21 failed on a missing mod and was never repeated |
+| Plugins | EssentialsX 2.22.0 |
+| Mods | 217 Modrinth entries in `modrinth.index.json` plus 33 bundled jars in `local-mods/` |
+| Recipe layers | AlmostUnified for one item per material, Polymorph for grid conflicts, KubeJS for scripts |
+| Recipe viewers | EMI and JEI |
+| Pregen and profiling | Chunky and Spark |
 
 ## Repository layout
 
 | Path | What |
 |---|---|
-| `modrinth.index.json` | The pack manifest — every Modrinth-resolvable mod (213 files). `mods/` is rebuilt from this, so `mods/` is **gitignored**. |
-| `local-mods/` | Mods built from source / not on Modrinth (Twilight Forest, Nyx, …). **Tracked** — these are part of the pack. |
-| `config/` | All mod configuration, incl. `config/almostunified/` (material unification). |
-| `kubejs/server_scripts/` | Gameplay scripts: `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js`, `combat_1_7.js`, `skylands_fall.js`. |
-| `skylands-datapack/` | **Source** datapack for the Skylands worldgen (vanilla safe, runs on unmodded Spigot too). |
-| `skylands-datapack-forge/` | Forge-only Skylands content (Dungeons Arise sets, mod-pool floaters, botania features). |
-| `world/datapacks/` | The deployed copy of the datapack (built into the `.mrpack`; `world/` itself is gitignored except this). |
-| `scripts-legacy-reference/` | Original 1.12.2 CraftTweaker `.zs` — read-only reference for the KubeJS port. |
-| `tools/` | `resolve_all.py` (fetch mods from the index), `build_mrpack.py` (build + publish the modpack). |
-| `docs/` | `RECIPE_PORT.md`, `MODPACK_DESCRIPTION.md`. |
-| `okf/` | Open Knowledge Format wiki for AI agents working on the pack — start at `okf/index.md`. |
-| `AGENTS.md` | Conventions and gotchas for anyone (human or agent) editing this repo. |
-| `systemd/skytekx3.service`, `ServerLinux.sh`, `ansible/` | Deploy. |
-
----
+| File `modrinth.index.json` | The pack manifest with 217 entries, 216 from the Modrinth CDN and Nyx from GitHub. Git ignores `mods/`, and no script rebuilds it from the index, see [Provide the mods](#provide-the-mods) |
+| Folder `local-mods/` | The 33 jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Nyx and SkyTekx Compat. Forge does not load this folder, the jars have to be in `mods/` |
+| Folder `config/` | Mod configuration, with `config/almostunified/` for material unification |
+| Folder `kubejs/server_scripts/` | The four server scripts `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js` and `combat_1_7.js` |
+| Folder `skylands-datapack/` | Source of the shared Skylands datapack. It only uses vanilla ids and also runs on unmodded Spigot |
+| Folder `skylands-datapack-forge/` | Source of the Forge only Skylands content: Dungeons Arise sets, floaters from mod pools, Botania features |
+| Folder `world/datapacks/` | The three datapacks the world loads. Git ignores `world/`, these three were force-added. Two are copies of the sources above, `skytekx3_fixes` has no other source |
+| Symlink `arclight.jar` and folder `patches/` | The hardened Arclight jar with its symlink, both tracked, and the source patch behind it |
+| Folder `modrinth-permissions/` | One file per bundled jar for the Modrinth permission review |
+| Folder `scripts-legacy-reference/` | The CraftTweaker scripts of SkyTekx 2, a read-only reference for the KubeJS port |
+| Folder `tools/` | Ten scripts for datapack sync, mod updates, jar patches, the pack build, the Modrinth upload, RCON and region scans of the Skylands, see [Maintenance](#maintenance) |
+| Folder `docs/` | The recipe port notes `RECIPE_PORT.md` and the Modrinth body `MODPACK_DESCRIPTION.md`, which is partly out of date |
+| Folder `okf/` | The project wiki in Open Knowledge Format. Start at [okf/index.md](okf/index.md) |
+| File `AGENTS.md` | Rules and pitfalls for anyone, human or agent, who edits this repo |
+| Folder `macos/` and `ServerMac.sh` | The macOS deployment of the production server: launcher, launchd jobs, RCON firewall, backup, control script and the sync from the build machine |
+| Folder `systemd/` and `ServerLinux.sh` | The Linux deployment |
+| Folder `ansible/` | The encrypted vault with the Modrinth token and the RCON password |
 
 ## Self-hosting the server
 
-A from-scratch guide for a fresh **Debian / Ubuntu** box. The setup runs **without `screen`** — the
-server runs under **systemd** and is controlled over **RCON**.
+This guide sets up a fresh Debian or Ubuntu host. The server runs under systemd without `screen` and is
+controlled over RCON. The systemd unit has not run on a logged host yet, so check each step. Details
+are on [Deploy on Debian (systemd)](okf/server/deploy.md). The production server runs on a Mac mini
+under launchd instead, see [Self-hosting on macOS](#self-hosting-on-macos).
 
-> ⚠️ **Java 17 only.** Arclight 1.20.1 crashes on Java 21. Install `openjdk-17`.
-
-### 1 — Prepare the host
+### Prepare the host
 
 ```bash
 apt-get update && apt-get dist-upgrade -y
-apt-get install -y openjdk-17-jre-headless ca-certificates-java build-essential git ufw
+apt-get install -y openjdk-17-jre-headless ca-certificates-java build-essential git ufw rsync python3
 ```
 
-### 2 — Create a dedicated, unprivileged user under `/opt`
+Arclight 1.20.1 needs Java 17. Debian and Ubuntu install it under `/usr/lib/jvm/java-17-openjdk-<arch>`,
+for example `java-17-openjdk-amd64`, while the unit and `ServerLinux.sh` call
+`/usr/lib/jvm/java-17-openjdk/bin/java`. Fix the path in the `ExecStart` line of
+`systemd/skytekx3.service` and pass `JAVA=` to `ServerLinux.sh`. If the distribution no longer ships
+Java 17, install Temurin 17 from Eclipse Adoptium, the build that every logged run used.
+
+### Create a dedicated user
 
 ```bash
 adduser minecraft --system --group --home /opt/minecraft-server --disabled-login
 mkdir -p /opt/minecraft-server/{backup/server,build/mcrcon,server}
 ```
 
-### 3 — Build `mcrcon` (used by systemd to stop the server cleanly)
+### Build mcrcon
+
+The systemd unit stops the server through mcrcon.
 
 ```bash
 cd /opt/minecraft-server/build/mcrcon
@@ -75,105 +86,246 @@ git clone https://github.com/Tiiffi/mcrcon.git code && cd code
 gcc mcrcon.c -o mcrcon && mv mcrcon /usr/local/bin/
 ```
 
-### 4 — Clone the pack and provide the Arclight jar
+### Clone the repo
 
 ```bash
 git clone https://github.com/skytekx/skytekx3-1201-server.git \
   /opt/minecraft-server/server/skytekx3-1201-server
 cd /opt/minecraft-server/server/skytekx3-1201-server
-
-# Download an Arclight forge-1.20.1 build and symlink it (the versioned jar is gitignored):
-#   https://github.com/IzzelAliz/Arclight/releases
-ln -sf arclight-forge-1.20.1-<ver>.jar arclight.jar
 ```
 
-Fetch the Modrinth-resolvable mods into `mods/` from the manifest (needs a Modrinth token, see
-[Secrets](#secrets)). `local-mods/` is already in the repo and is loaded too:
+The clone brings the hardened Arclight jar and the symlink `arclight.jar` that points at it. Keep the
+symlink on that jar. A stock Arclight release brings back the crash at shutdown of 2026-06-29, see
+[Arclight runtime](okf/server/arclight.md#the-hardened-jar).
 
-```bash
-python3 tools/resolve_all.py            # downloads mods/ from modrinth.index.json
-```
+### Provide the mods
 
-### 5 — EULA, RCON, firewall
+Git does not hold `mods/`. Copy the folder from a running install as it is. It holds about 235 jars,
+among them jars patched in place and three jars that exist nowhere else in the repo, see
+[Mod set](okf/modpack/mod-set.md#three-jars-outside-the-pack).
+
+No script restores `mods/` from the pinned index yet. Do not use `tools/resolve_all.py` for it, because
+it ignores the index and installs whatever is newest, including Radium, which crashed Arclight on
+2026-06-27. A rebuild from the index takes four steps.
+
+1. Download every index entry whose `env.server` is not `unsupported` and check its hash against the
+   index.
+2. Copy the jars from `local-mods/` into `mods/`.
+3. Run `python3 tools/patch_mods.py`.
+4. Decide about the three jars that are in no pack.
+
+The plugin jar `plugins/EssentialsX-2.22.0.jar` and its folder `plugins/Essentials/` are not in git
+either. Copy them along, or the server has no `/gm` and no other Essentials command.
+
+### Configure the server
 
 ```bash
 cp server.properties.example server.properties
-# edit server.properties: set rcon.port=65535 and a strong rcon.password
-# (server-port 25565, max-players 39, enable-rcon=true)
+# Set rcon.password to a new strong password. The example already sets enable-rcon=true,
+# rcon.port=65535, server-port=25565 and max-players=39.
 echo "eula=true" > eula.txt
-
-sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
-ufw allow 22/tcp && ufw allow 25565/tcp && ufw enable     # RCON 65535 stays loopback-only
-chown -Rv minecraft:minecraft /opt/minecraft-server/
+# Bring the world copies of the Skylands datapacks in line with their sources
+tools/sync_skylands_datapack.sh
 ```
 
-### 6 — Launch
+The example leaves `level-seed` empty, so a new world gets a random seed. A new world also needs its
+datapack order checked, see [World reset and pregen](okf/server/world-reset.md#fresh-world).
 
-**Dev / quick start** (foreground, Aikar G1GC flags, 11 G heap):
+### Open the firewall
 
 ```bash
-./ServerLinux.sh        # JAVA=, JAR=, MEM= are overridable env vars
+ufw allow 22/tcp
+ufw allow 25565/tcp     # Game
+ufw allow 24454/udp     # Simple Voice Chat
+ufw enable              # The default policy denies the rest, RCON 65535 included
+chown -R minecraft:minecraft /opt/minecraft-server/
 ```
 
-**Production (systemd):** the unit reads `${RCON_PW}` from an `unit.conf` `EnvironmentFile`
-(gitignored — create it next to the repo with `RCON_PW=<your rcon password>`).
+RCON listens on every interface (`server-ip=0.0.0.0`) and sends its password in clear text. Never open
+port 65535.
+
+### Launch
+
+For a foreground test, start the launcher with the Java 17 path of the host. It uses Aikar's G1 flags
+and an 11 GB heap, sized for a 16 GB host. The variables `JAVA`, `JAR` and `MEM` override its defaults.
+Stop it by typing `stop` into the console, not with Ctrl+C.
 
 ```bash
-echo "RCON_PW=<your rcon password>" > unit.conf
+JAVA=/usr/lib/jvm/java-17-openjdk-amd64/bin/java ./ServerLinux.sh
+```
+
+For production, the systemd unit reads `RCON_PW` from `unit.conf` in the repo root. Write it with the
+same password as `rcon.password` and keep it private. Git ignores the file.
+
+```bash
+echo "RCON_PW=<the rcon.password from server.properties>" > unit.conf
+chmod 600 unit.conf && chown minecraft:minecraft unit.conf
 ln -s "$PWD/systemd/skytekx3.service" /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now skytekx3.service
 systemctl status skytekx3.service
 ```
 
-The unit stops the server gracefully via `mcrcon … stop` and `Restart=always`.
+The unit restarts the server after a crash (`Restart=always`). It stops the server with
+`mcrcon ... stop`, which returns before the save is done, and with `KillMode=none` systemd does not wait
+for the JVM. Before you start the unit again or touch `world/`, wait until the java process is gone.
 
----
+```bash
+while pgrep -f 'java .*arclight[.]jar nogui' >/dev/null; do sleep 1; done
+```
+
+Never stop the server with a signal. Every logged signal stop went wrong, see
+[Logs and crashes](okf/server/logs-and-crashes.md#stop-path).
+
+## Self-hosting on macOS
+
+The production server runs on an Apple M4 Mac mini with 16 GB under launchd. launchd starts it at boot
+with nobody logged in, starts it again after a crash and stops it over RCON. Details and measured
+numbers are on [Mac mini (macOS, launchd) deployment](okf/server/macos.md).
+
+Install Java 17 on the Mac and keep FileVault off, or the Mac waits at the unlock screen after a power
+cut and the server stays down.
+
+```bash
+brew install --cask temurin@17
+```
+
+The first copy comes from the build machine, which holds the checkout and `mods/`. With `--with-world`
+it also brings `world/` and the live files such as `server.properties`.
+
+```bash
+macos/sync-to-mac.sh user@mac-mini --with-world
+```
+
+Then install the launchd jobs once on the Mac.
+
+```bash
+cd ~/skytekx3-1201-server
+sudo macos/install.sh
+```
+
+The script turns sleep off and the automatic restart after a power cut on, installs pf rules that keep
+RCON (65535/tcp) on the loopback interface, and loads three jobs: the server, the RCON guard and a
+world backup every day at 05:00. Run the server and its tools through `macos/skytekx3ctl`.
+
+```bash
+macos/skytekx3ctl status            # launchd state, players and tick times
+macos/skytekx3ctl restart           # RCON stop, launchd starts the server again
+macos/skytekx3ctl stop              # Stops it over RCON and keeps it down (sudo)
+macos/skytekx3ctl start             # Starts it again (sudo)
+macos/skytekx3ctl rcon "list"       # One console command
+```
+
+Updates also come from the build machine. `stop` and `start` call sudo, so the SSH sessions need `-t`.
+
+```bash
+ssh -t user@mac-mini 'cd ~/skytekx3-1201-server && macos/skytekx3ctl stop'
+macos/sync-to-mac.sh user@mac-mini
+ssh -t user@mac-mini 'cd ~/skytekx3-1201-server && tools/sync_skylands_datapack.sh && macos/skytekx3ctl start'
+```
+
+Without `--with-world` the sync never touches the world, the player data, `server.properties` or the
+other live files. It does copy `config/`, and since the mod update of 2026-10-31 the Mac's configs
+differ from the checkout. Check every sync with a checksum dry run first, see
+[Mac mini](okf/server/macos.md#deploy-and-update).
 
 ## Maintenance
 
-**Regenerate the world** (e.g. after worldgen/datapack changes — surfaces new structures everywhere):
+### Regenerate the world
+
+Worldgen changes only reach chunks that do not exist yet. To regenerate every dimension while keeping
+the seed, the datapacks, the server configs and the player data:
 
 ```bash
-# stop, back up, wipe generated chunk data (keep level.dat + datapacks), restart, pregen
+# Stop over RCON and wait until the java process has exited
 mcrcon -H localhost -P 65535 -p "$RCON_PW" "save-all flush" stop
-tar czf ~/skytekx3-world-backup.tgz -C . world
+while pgrep -f 'java .*arclight[.]jar nogui' >/dev/null; do sleep 1; done
+# Back up, then wipe the generated chunk data only
+tar czf ~/skytekx3-world-$(date +%F).tgz world
 rm -rf world/region world/entities world/poi world/DIM-1 world/DIM1 world/dimensions
 systemctl start skytekx3.service
-mcrcon -H localhost -P 65535 -p "$RCON_PW" "chunky radius 1000" "chunky start"
+# Pregenerate the Overworld, and when Chunky reports it done, the Skylands
+mcrcon -H localhost -P 65535 -p "$RCON_PW" "chunky world minecraft:overworld" "chunky radius 1000" "chunky start"
+mcrcon -H localhost -P 65535 -p "$RCON_PW" "chunky world skytekx3:skylands" "chunky radius 1000" "chunky start"
 ```
 
-**Rebuild / publish the modpack** (`.mrpack`):
+Always pregenerate after a wipe, so players do not pay the worldgen cost. On the Mac mini use
+`macos/skytekx3ctl stop`, `start` and `rcon` for the server steps. A reset of the Skylands alone and the
+measured pregen rates are on [World reset and pregen](okf/server/world-reset.md).
+
+### Change the Skylands
+
+Edit `skylands-datapack/` or `skylands-datapack-forge/`, never the copies in `world/datapacks/`, then
+run `tools/sync_skylands_datapack.sh` and restart the server. Worldgen does not reload with `/reload`.
+The design and its rules are on [Skylands worldgen](okf/content/skylands-worldgen.md).
+
+### Update mods
 
 ```bash
-python3 tools/build_mrpack.py           # builds SkyTekx3-<ver>.mrpack from the index + overrides
-# publish: uploads to Modrinth (needs the Modrinth PAT from the vault)
+python3 tools/update_mods.py                      # Dry run, lists the updates
+python3 tools/update_mods.py --channels release   # Releases only, the default also takes betas
+python3 tools/update_mods.py --apply              # Rewrites the index and swaps the jars in mods/
+python3 tools/patch_mods.py                       # Puts the jar patches back on updated jars
 ```
 
-> ⚠️ Always `VACUUM`-equivalent housekeeping after big deletes is N/A here, but **always pregen**
-> after a wipe so worldgen cost is baked out of play.
+Then boot the server and compare the log with the baseline of 3 ERROR lines, see
+[Logs and crashes](okf/server/logs-and-crashes.md#boot-error-baseline). Keep Cataclysm at 3.31, the
+Cataclysm Spellbooks build on the server was ported to exactly that version.
 
----
+### Build and publish the pack
+
+```bash
+python3 tools/build_mrpack.py                         # Writes SkyTekx3-<version>.mrpack
+python3 tools/publish_modrinth.py "$MODRINTH_PAT"     # Dry run, checks the token and the project
+python3 tools/publish_modrinth.py "$MODRINTH_PAT" --go
+```
+
+The build script only builds. It packs the files git tracks under `config/`, `kubejs/` and
+`defaultconfigs/` as they are on disk, so commit or restore runtime rewrites first. It still hard-codes
+the build machine's paths. Raise `VERSION` in `tools/build_mrpack.py` and `tools/publish_modrinth.py` before a new
+build. The upload only happens with `--go`. What blocks a public release is on
+[Publish](okf/modpack/publish.md).
+
+### Tools
+
+| Script | Job |
+|---|---|
+| Sync, `tools/sync_skylands_datapack.sh` | Mirrors the two Skylands datapack sources into `world/datapacks/` |
+| Update, `tools/update_mods.py` | Lists or applies newer Modrinth builds of the index entries, no token needed |
+| Patch, `tools/patch_mods.py` | Puts the boot fixes back into mod jars in `mods/` |
+| Build, `tools/build_mrpack.py` | Builds the `.mrpack` from the index, the configs, the scripts, the datapacks and `local-mods/` |
+| Publish, `tools/publish_modrinth.py` | Uploads the `.mrpack` to Modrinth, only with `--go` |
+| RCON, `tools/rcon.py` | Sends one RCON command, for example `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" list` |
+| Scan, `tools/void_scan.py` | Lists structure starts and blocks below the Skylands islands and in void columns, read only |
+| Scan, `tools/void_float.py` | Tells blocks that hang from an island apart from blocks that float free in the void |
+| Scan, `tools/structure_pieces.py` | Prints where every piece of one structure ended up, with its projection and box |
+| Legacy, `tools/resolve_all.py` | Legacy resolver of a fixed slug list. Do not use it |
+
+More on each script is on [Tools](okf/modpack/tools.md).
 
 ## Secrets
 
-`ansible/group_vars/all/vault.yml` is ansible-vault encrypted (AES256) and holds `vault_modrinth_pat`
-(the Modrinth PAT used by `tools/` to fetch mods and publish the pack).
+The file `ansible/group_vars/all/vault.yml` is encrypted with ansible-vault (AES256). It holds the
+Modrinth token as `vault_modrinth_pat` and the RCON password as `vault_rcon_password`.
 
-- The vault password is **never committed**. Put it in `.vault_pass.txt` (gitignored); `ansible/ansible.cfg` points to it.
-- `server.properties` and `unit.conf` are gitignored (they carry the RCON password). Commit only `server.properties.example`.
+- No tool reads the vault. The scripts take the token or the password as a command line argument.
+- The vault password is never committed. `ansible/ansible.cfg` expects it in
+  `ansible/.vault_pass.txt`, which git ignores. Until that file exists, `--ask-vault-pass` prompts for it.
+- The live `server.properties` and `unit.conf` carry the RCON password, and git ignores both. Commit only
+  `server.properties.example`.
 
 ```bash
-ansible-vault view ansible/group_vars/all/vault.yml
+ansible-vault view --ask-vault-pass ansible/group_vars/all/vault.yml
 ```
 
----
+More on secrets, and which values must be rotated, is on [Secrets](okf/server/secrets.md).
 
 ## Design goals
 
-Feel as much like the original SkyTekx as possible — keep the maximum set of original mods, add only a
-curated handful of new ones, and keep recipes conflict-free using the same layered prevention the
-1.12.2 pack used (UniDict → **AlmostUnified**, NoMoreRecipeConflict → **Polymorph**, CraftTweaker → **KubeJS**).
+SkyTekx 3 should feel as much like the original SkyTekx as possible. It keeps as many of the original
+mods as it can, adds a small set of new ones, and keeps recipes free of conflicts with the same layers
+the 1.12.2 pack used: AlmostUnified in place of UniDict, Polymorph in place of NoMoreRecipeConflict and
+KubeJS in place of CraftTweaker.
 
-For deeper context — architecture, the Nyx port, the Skylands worldgen, the Aether-style fall, deploy
-and the publish pipeline — see **[`okf/`](okf/index.md)** and **[`AGENTS.md`](AGENTS.md)**.
+For the architecture, the Skylands, the Nyx port, deployment and publishing, see the
+[OKF wiki](okf/index.md) and [AGENTS.md](AGENTS.md).

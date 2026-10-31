@@ -185,11 +185,6 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Docs and housekeeping
 
-- Stale texts outside the OKF. The file `docs/MODPACK_DESCRIPTION.md` and the body on Modrinth list
-  Better Combat and Radium, say Twilight Forest is not bundled, credit a handle and say
-  "kitchen-sink", and the project description on Modrinth says it too. The changelog of 3.0.6 and the
-  summaries in the scripts are current since 8e11bbc and b3ec68c. See
-  [Publish](modpack/publish.md#what-blocks-a-release).
 - Two notes still say Nyx is gone, `kubejs/server_scripts/recipe_fixes.js:28` and the Nyx rows of
   `docs/RECIPE_PORT.md`. See [Nyx](content/nyx.md#open-points).
 - The GitHub repo description says "kitchen-sink" and points at a Modrinth project that is not public.

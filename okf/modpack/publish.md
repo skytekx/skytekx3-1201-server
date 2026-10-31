@@ -22,7 +22,7 @@ reaches the main menu, but in the test of 2026-10-31 it could not play on this s
 | Versions uploaded | 3.0.0 to 3.0.4 (2026-06-27 to 2026-06-29) and 3.0.6 (version id `Gi0aBofN`, 2026-10-31 20:27). 3.0.5 never went up | API with the token, 2026-10-31 |
 | Current build | File `SkyTekx3-3.0.6.mrpack`, 67,245,989 bytes, 808 entries, built 2026-10-31 at 20:19:59 from 8e11bbc, not in git. Commit 192084f holds the index it wrote. The file on the Modrinth CDN has the same SHA-512 | Repo root, upload of 20:27 |
 | Index in the build | 216 entries, all on `cdn.modrinth.com`, `versionId` 3.0.6, Forge 47.4.18. Identical to `modrinth.index.json` at 192084f | Build of 20:19 |
-| Project texts | The description and the body on Modrinth are still those of 2026-06-27, see blocker 4 | API with the token, 2026-10-31 |
+| Project texts | Replaced on 2026-10-31 at 21:25 with `docs/MODPACK_SUMMARY.txt` and `docs/MODPACK_DESCRIPTION.md`. The API returns both unchanged | Project PATCH and GET with the token, 2026-10-31 |
 
 The owner asked to publish on 2026-06-27 20:46 and again on 2026-06-29 17:04, and to make the project
 public on 2026-06-29 10:11. On 2026-06-30 18:16 they noted that it was still not public because of the
@@ -66,17 +66,8 @@ mod update of 092140d. The server on the Mac mini runs it too.
    dropped recipes are caused by the JEI update. The memory failure most likely is too, but a test with
    JEI 15.20.0.132 has to show it. Rolling JEI back in the index and on the server, or an EMI build that
    matches JEI 15.74, needs the owner's decision and a new test.
-4. The texts are stale:
-   - The project description on Modrinth still calls the pack a "kitchen-sink". The body (from
-     `docs/MODPACK_DESCRIPTION.md`, uploaded on 2026-06-27) lists Better Combat (parked) and Radium
-     (removed), says that Twilight Forest is not bundled (it is), and ends with "Built by kleberbaum".
-     The owner ruled on 2026-06-29 10:00 and 10:10 that the credit reads "a modpack by ts4.party, the
-     TeamSpeak for party, formerly known as ts3.party", and at 10:24 that the credits carry no real
-     names. The script `publish_modrinth.py` only sets these texts when it creates a project, so they
-     have to be changed in the web UI or with a project PATCH.
-   - The index summary and the changelog of 3.0.6 are up to date since b3ec68c and 8e11bbc.
-
-Fixed on 2026-10-31: the Nyx entry that downloaded from a GitHub release that does not exist (74faf22,
+Fixed on 2026-10-31: the stale project texts (21:25, the new summary and body credit ts4.party,
+name no person or handle and drop "kitchen-sink", Better Combat and Radium), the Nyx entry that downloaded from a GitHub release that does not exist (74faf22,
 the jar is bundled), the two jars the server ran outside the pack (507a8f2, AllTheLeaks and the
 Cataclysm Spellbooks build), the out-of-date permission folder (f4c2093), and the configs that server
 boots had rewritten on disk (ce31f6f, the builder reads git HEAD).

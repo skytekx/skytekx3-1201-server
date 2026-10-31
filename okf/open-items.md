@@ -31,9 +31,10 @@ evidence and the page with the details. The rulings behind the first section are
 - A public Modrinth project (2026-06-29 10:11). Six bundled jars are All Rights Reserved without a grant,
   the Nyx download fails, three server jars are in no pack, and the texts are stale. See
   [Publish](modpack/publish.md#what-blocks-a-release).
-- A public server on skytekx.com (2026-06-29 09:54). The domain is proxied by Cloudflare, has no
-  `_minecraft._tcp` SRV record and no DNS-only host, and port 25565 is closed. See
-  [Deploy on Debian](server/deploy.md#dns).
+- A public server on skytekx.com (2026-06-29 09:54). Since 2026-10-31 21:13 the game is reachable as
+  `hex.skytekx.com` through a Cloudflare Tunnel, but only with the client mod Modflared, which the
+  pack does not ship yet. Voice chat does not pass the tunnel, and the website names neither the
+  address nor Modflared. See [Mac mini](server/macos.md#public-access).
 - The old SkyTekx start menu (2026-06-27 20:49 to 21:49). FancyMenu, Konkrete and Melody are not in the
   index, the old buttons and texts were not rebuilt, and `menu-assets/` still waits for the original
   images. See [Client](modpack/client.md#main-menu).
@@ -89,9 +90,9 @@ evidence and the page with the details. The rulings behind the first section are
   Overworld would need about 6.8 GB of the 9.4 GiB that were free there on 2026-10-31 at 21:05, so more
   disk comes first. See [Performance](server/performance.md#levers) and
   [Mac mini](server/macos.md#measured-numbers).
-- Access before the address goes public. The whitelist is off with 39 slots and online mode on, and
-  `advertiseDedicatedServerToLan` is true in `world/serverconfig/forge-server.toml:19`. See
-  [Server](server/index.md#facts-at-a-glance).
+- Access now that the address is public (`hex.skytekx.com` since 2026-10-31 21:13). The whitelist is
+  off with 39 slots and online mode on, and `advertiseDedicatedServerToLan` is true in
+  `world/serverconfig/forge-server.toml:19`. See [Server](server/index.md#facts-at-a-glance).
 - Rotate the exposed values. The Modrinth token and the vault password were pasted into a prompt on
   2026-06-27, and the Mac mini login on 2026-10-31 16:02. All three sit in plain text in the local prompt
   history of the build machine. See [Secrets](server/secrets.md#exposed-values-to-rotate).

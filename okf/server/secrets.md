@@ -19,6 +19,8 @@ docs, commit messages or logs. This page only says where they are.
 | RCON password | The live `server.properties` on each host, `unit.conf` on a systemd host, and the vault as `vault_rcon_password` | The stop path through mcrcon or `tools/rcon.py`, and admins |
 | Modrinth personal access token | The vault as `vault_modrinth_pat` | The scripts `tools/resolve_all.py`, which takes it as its first command line argument, and `tools/publish_modrinth.py`, which reads `MODRINTH_TOKEN` since 8e11bbc |
 | Vault password | Outside git, meant for `ansible/.vault_pass.txt`, which does not exist yet | The `ansible-vault` tool |
+| Cloudflare Tunnel token | The file `~/.cloudflared/skytekx.token` on the Mac mini, mode 600. The script `tools/cf_tunnel.py` writes it to a file of your choice, which is deleted after the copy | The wrapper `run-skytekx-tunnel.sh`, which hands it to cloudflared through the environment |
+| Cloudflare API credentials | Outside the repo on the build machine | The script `tools/cf_tunnel.py` and the website deploy, both read them from the environment |
 
 The vault key names come from `systemd/unit.conf.example:2`, `server.properties.example:42` and notes
 from the build sessions. Nobody can check them without the vault password. No tool reads the vault,
@@ -85,6 +87,12 @@ is also the account's sudo password, and the assistant passed it to `sudo -S` on
 line during the setup of that day. So it sits in the same prompt history and in that session's
 transcript. Change it on the Mac mini in System Settings or with `passwd`. No file in this repo or on
 the Mac mini holds it.
+
+The Cloudflare Tunnel token was created on 2026-10-31 at 21:12. It was never printed, and it reached
+the Mac mini on stdin, but its copy in the assistant's scratch folder lived until the end of that
+session. Anyone with the token can run a connector for the tunnel. To rotate it, refresh the token of
+`skytekx3-mac-mini` in the Cloudflare dashboard (Zero Trust, Networks, Tunnels), fetch the new one with
+`tools/cf_tunnel.py` and copy it to the Mac mini.
 
 ## Outside this repo
 

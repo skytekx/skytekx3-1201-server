@@ -7,54 +7,30 @@ Example: tools/void_float.py world/dimensions/skytekx3/skylands/region
 Finds every non-air block below band-min, then flood fills (6 neighbours) through non-air blocks.
 A component that reaches attach-y is part of an island body (an island bottom, a geode or root
 hanging out of it). A component that never reaches it floats in the void and is a leak.
+Chunks it cannot read count as not generated, they are listed at the end.
 Reuses the NBT and region reader of void_scan.py (same directory). Needs numpy.
 """
-import collections, gzip, os, sys, zlib
+import collections, os, sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from void_scan import AIR, chunks, read_nbt, section_blocks
+from void_scan import AIR, chunks, is_full, load_chunk, print_bad, section_blocks, unreadable
 
 region_dir = sys.argv[1]
 band_min = int(sys.argv[sys.argv.index("--band-min") + 1]) if "--band-min" in sys.argv else 24
 attach_y = int(sys.argv[sys.argv.index("--attach-y") + 1]) if "--attach-y" in sys.argv else 40
 TOP = 256                                   # the Skylands height (min_y 0), so any --attach-y works
-
-region_cache = {}
-def region_bytes(rx, rz):
-    k = (rx, rz)
-    if k not in region_cache:
-        p = os.path.join(region_dir, f"r.{rx}.{rz}.mca")
-        region_cache[k] = open(p, "rb").read() if os.path.exists(p) else b""
-    return region_cache[k]
-
-def load_chunk(cx, cz):
-    data = region_bytes(cx >> 5, cz >> 5)
-    if len(data) < 8192:
-        return None
-    i = (cx & 31) + (cz & 31) * 32
-    off = int.from_bytes(data[i * 4:i * 4 + 3], "big")
-    if off == 0:
-        return None
-    p = off * 4096
-    ln = int.from_bytes(data[p:p + 4], "big")
-    comp = data[p + 4]
-    raw = data[p + 5:p + 4 + ln]
-    if comp == 2:
-        raw = zlib.decompress(raw)
-    elif comp == 1:
-        raw = gzip.decompress(raw)
-    return read_nbt(raw)
+CAP = 200000                                # blocks per fill, so that one fill cannot run away
 
 grid_cache = {}
 def grid(cx, cz):
-    """names array [TOP][16][16] (z, x) of block names, None for a missing chunk."""
+    """names array [TOP][16][16] (z, x) of block names, None for a missing, unfinished or unreadable chunk."""
     k = (cx, cz)
     if k in grid_cache:
         return grid_cache[k]
-    c = load_chunk(cx, cz)
+    c = load_chunk(region_dir, cx, cz)
     g = None
-    if c is not None and c.get("Status", "") in ("minecraft:full", "full"):
+    if c is not None and is_full(c):
         g = np.full((TOP, 16, 16), "minecraft:air", dtype=object)
         for s in c.get("sections", []):
             sy = s["Y"]
@@ -81,7 +57,7 @@ for fn in sorted(os.listdir(region_dir)):
     if not fn.endswith(".mca"):
         continue
     for c in chunks(os.path.join(region_dir, fn)):
-        if c.get("Status", "") not in ("minecraft:full", "full"):
+        if not is_full(c):
             continue
         cx, cz = c["xPos"], c["zPos"]
         for s in c.get("sections", []):
@@ -99,44 +75,86 @@ for fn in sorted(os.listdir(region_dir)):
                     low.append((cx * 16 + int(x), wy, cz * 16 + int(z)))
 print(f"blocks below Y {band_min}: {len(low)}")
 
-# pass 2: flood fill from each low block
-seen = set()
-attached, floating = [], []
+# pass 2: flood fill from each low block. A fill stops as soon as it reaches attach_y and leaves blocks
+# it claimed but never expanded, so a later fill from the same body can run into them. owner keeps the
+# fill of every claimed block, fills that meet are joined (union find), and a group counts as attached
+# when any of its fills reached attach_y.
+owner, parent, fills = {}, [], []           # fills[i] = (size, lo, hi, names, edge, reached, capped)
+
+def root(i):
+    while parent[i] != i:
+        parent[i] = parent[parent[i]]
+        i = parent[i]
+    return i
+
+def edge_kind(x, z):
+    return "unreadable" if unreadable(x >> 4, z >> 4) else "ungenerated"
+
 for start in low:
-    if start in seen:
+    if start in owner:
         continue
-    comp, q, top, names, unknown = [], collections.deque([start]), start[1], collections.Counter(), False
-    seen.add(start)
+    me = len(parent)
+    parent.append(me)
+    owner[start] = me
+    comp, q, names, edge, met = [], collections.deque([start]), collections.Counter(), set(), set()
+    reached = capped = False
     while q:
         x, y, z = q.popleft()
         b = block(x, y, z)
-        if b is None:
-            unknown = True
+        if b is None:                       # its chunk changed after pass 1 and cannot be read now
+            edge.add(edge_kind(x, z))
             continue
         comp.append((x, y, z))
         names[b] += 1
-        top = max(top, y)
-        if top >= attach_y or len(comp) > 200000:
+        if y >= attach_y:
+            reached = True
+            break
+        if len(comp) > CAP:
+            capped = True
             break
         for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
             n = (x + dx, y + dy, z + dz)
-            if n in seen:
+            o = owner.get(n)
+            if o is not None:
+                if o != me:
+                    met.add(o)
                 continue
             nb = block(*n)
             if nb is None:
-                unknown = True
+                edge.add(edge_kind(n[0], n[2]))
                 continue
             if nb in AIR:
                 continue
-            seen.add(n)
+            owner[n] = me
             q.append(n)
-    xs = [p[0] for p in comp]; ys = [p[1] for p in comp]; zs = [p[2] for p in comp]
-    info = (len(comp), (min(xs), min(ys), min(zs)), (max(xs), max(ys), max(zs)), names.most_common(4), unknown)
-    (attached if top >= attach_y else floating).append(info)
+    pts = comp or [start]
+    fills.append((len(comp), tuple(min(p[k] for p in pts) for k in range(3)),
+                  tuple(max(p[k] for p in pts) for k in range(3)), names, edge, reached, capped))
+    for o in met:
+        ra, rb = root(me), root(o)
+        if ra != rb:
+            parent[max(ra, rb)] = min(ra, rb)
+
+groups = {}
+for i, f in enumerate(fills):
+    groups.setdefault(root(i), []).append(f)
+attached, floating = [], []
+for fs in groups.values():
+    names = collections.Counter()
+    for f in fs:
+        names.update(f[3])
+    info = (sum(f[0] for f in fs), tuple(min(f[1][k] for f in fs) for k in range(3)),
+            tuple(max(f[2][k] for f in fs) for k in range(3)), names.most_common(4),
+            set().union(*(f[4] for f in fs)), any(f[6] for f in fs))
+    (attached if any(f[5] for f in fs) else floating).append(info)
 
 print(f"components reaching Y {attach_y} (hang from an island): {len(attached)}")
-for n, lo, hi, nm, unk in attached[:30]:
+for n, lo, hi, nm, edge, capped in attached[:30]:
     print(f"  size>={n:6d} from {lo} to {hi} {nm}")
 print(f"FLOATING components (never reach Y {attach_y}): {len(floating)}")
-for n, lo, hi, nm, unk in sorted(floating, key=lambda f: -f[0]):
-    print(f"  size={n:6d} from {lo} to {hi} {nm}{' (touches ungenerated area)' if unk else ''}")
+for n, lo, hi, nm, edge, capped in sorted(floating, key=lambda f: -f[0]):
+    note = (" (touches an unreadable chunk)" if "unreadable" in edge else "") + \
+           (" (touches ungenerated area)" if "ungenerated" in edge else "") + \
+           (f" (fill stopped at {CAP} blocks)" if capped else "")
+    print(f"  size={n:6d} from {lo} to {hi} {nm}{note}")
+print_bad()

@@ -20,20 +20,20 @@ was done. The times below come from the prompts and the logs. The lineage before
 
 ## 2026-06-26: Audit of SkyTekx 2 and the choice of 1.20.1
 
-- At 15:21 the owner asked for an updated version of SkyTekx 2, of which he is the original author.
+- At 15:21 the owner asked for an updated version of SkyTekx 2, of which they are the original author.
 - The session audited the 209 mods of SkyTekx 2 and mapped them to 1.21 and to 1.20.1. On 1.20.1, 170
   of them have a path and 128 survive as the same mod or a direct successor, while 1.21 loses Tinkers'
   Construct. The reports sit untracked in the SkyTekx 2 checkout, see
   [Related repos and services](related.md#skytekx-2-audit-files).
 - At 17:58 the owner objected that 1.21 loses Tinkers' Construct and that Silent Gear is no real
-  alternative. At 22:14 and 22:18 he asked whether 1.20.1 or 1.21 suits him better and how Arclight
-  compares with Mohist. At 23:09 he asked for a VPS with a very strong single core and 8 GB of RAM or
+  alternative. At 22:14 and 22:18 they asked whether 1.20.1 or 1.21 suits them better and how Arclight
+  compares with Mohist. At 23:09 they asked for a VPS with a very strong single core and 8 GB of RAM or
   more.
 
 ## 2026-06-27: First build on Arclight
 
 - At 10:34 the owner set the goal: feel as much like SkyTekx as possible, the most stable mod
-  configuration, the old mods plus a few new ones, and recipes that never conflict. At 10:55 he asked for
+  configuration, the old mods plus a few new ones, and recipes that never conflict. At 10:55 they asked for
   a new repo, and at 11:04 for an ansible vault that holds the Modrinth token.
 - At 12:01 the first boot ran on Red Hat OpenJDK 21.0.11 and failed because `irons_lib` was missing. At
   12:04 the server moved to Temurin 17.0.19, which every later run used (`boot.log`, `boot2.log`).
@@ -41,7 +41,7 @@ was done. The times below come from the prompts and the logs. The lineage before
   mixin (`crash-reports/crash-2026-06-27_12.05.07-server.txt`). Radium was removed, and the run of 12:06
   reached `Done` after 35 seconds.
 - At 12:07 the owner asked whether the server would carry 20 players on an Apple M4 Mac mini, and at
-  12:21 he noted that the smallest model has 16 GB. The 11 GB heap of `ServerLinux.sh` was sized for that
+  12:21 they noted that the smallest model has 16 GB. The 11 GB heap of `ServerLinux.sh` was sized for that
   machine. Load with 20 players was never measured, see [Open items](open-items.md).
 - At 12:11 the first pack, `SkyTekx3-3.0.0.mrpack`, held 109 Modrinth mods with the configs and the KubeJS
   scripts. Recipes run through AlmostUnified, Polymorph and KubeJS, the successors of UniDict,
@@ -51,7 +51,7 @@ was done. The times below come from the prompts and the logs. The lineage before
 - At 15:09 the owner set the project contact address to `skytekx@erebos.xyz`.
 - Twilight Forest was built from source and became the first bundled jar (17:29 ask, pack 3.0.2 at
   19:57). Pack 3.0.2 also brought Iron's Spells with its hidden library `irons_lib`. At 18:23 the owner
-  asked not to publish the Chocolate Quest version yet. At 20:46 he said "yes pls publish", and 3.0.3
+  asked not to publish the Chocolate Quest version yet. At 20:46 they said "yes pls publish", and 3.0.3
   (20:51) was uploaded with the server icon as its Modrinth icon.
 - At 20:43 and 21:16 AsgardShieldReloaded crashed the server twice when a creeper exploded next to the
   owner in the Skylands. It was never fixed, see [Logs and crashes](server/logs-and-crashes.md).
@@ -68,15 +68,15 @@ was done. The times below come from the prompts and the logs. The lineage before
 - The owner's rulings of that evening shaped the islands: smaller and a little further apart so
   players can build bridges, no flat tops, a different biome per island (18:33), and never any lava or
   water falling into the void (19:58, which replaced the bedrock catch basins of 18:33 and 18:46).
-  At 19:58 he also asked for fewer islands, a bit bigger and with much more distance between them.
+  At 19:58 they also asked for fewer islands, a bit bigger and with much more distance between them.
   Contained liquids where they would naturally spawn (20:13) and small lakes that never leak (20:35)
-  followed. He called the result "a lot better" at 20:35 and "looks great" at 22:29.
+  followed. They called the result "a lot better" at 20:35 and "looks great" at 22:29.
 - The FancyMenu title screen layout with the SkyTekx logo was made at 18:10 to 18:12, see
   [Client](modpack/client.md#main-menu).
-- At 22:30 the owner asked to add mod structures to the Skylands. At 22:55 he asked that all
+- At 22:30 the owner asked to add mod structures to the Skylands. At 22:55 they asked that all
   advancements show their real names. A resource pack with 66 Spartan Weaponry advancement names
   followed at 23:05. It was never committed or shipped.
-- At 23:15 the owner asked for chocobos, and at 23:18 he called the chocobo mod a core mod of SkyTekx.
+- At 23:15 the owner asked for chocobos, and at 23:18 they called the chocobo mod a core mod of SkyTekx.
 - The last run of the day stopped writing its log at 23:50 without a crash report. The cause is
   unknown.
 
@@ -91,21 +91,21 @@ was done. The times below come from the prompts and the logs. The lineage before
 - Between 08:26 and 09:12 the owner ruled that no structure may stand on the y=0 floor above the void.
   The structure placement got a surface height gate (`min_surface_y`).
 - Between 10:00 and 10:24 the owner set the credit line "a modpack by ts4.party, the TeamSpeak for
-  party, formerly known as ts3.party" and ruled out real names in the credits. At 10:11 he asked to make
+  party, formerly known as ts3.party" and ruled out real names in the credits. At 10:11 they asked to make
   the Modrinth project public.
-- At 11:40 he ruled out Battle Towers with the explosion golem in the Skylands and asked to turn off mob
-  explosion damage to blocks there. At 11:52 he called Battle Towers essential. At 12:00 he named
+- At 11:40 they ruled out Battle Towers with the explosion golem in the Skylands and asked to turn off mob
+  explosion damage to blocks there. At 11:52 they called Battle Towers essential. At 12:00 they named
   BrassAmber BattleTowers as its successor, and that jar went into `mods/`.
-- At 12:10 he asked for a sword swing like 1.7. The KubeJS script `combat_1_7.js` removes the attack
+- At 12:10 they asked for a sword swing like 1.7. The KubeJS script `combat_1_7.js` removes the attack
   cooldown, see [Combat](content/combat.md).
-- At 12:26 he asked to find as many old mods or their successors as possible, from Modrinth first, then
+- At 12:26 they asked to find as many old mods or their successors as possible, from Modrinth first, then
   GitHub, CurseForge only as a last resort. A batch of 69 jars landed at 12:47. At 12:49 the boot failed,
   because client-only mods (Forgematica, MaFgLib, WATERMeDIA) sat in the server's `mods/`. They moved to
   `client-only-mods/` and `disabled-mods/`, and the boot of 12:51 was clean.
 - The Aether and Hexxit Additions arrived at 13:56, Aether Villages, AeroBlender and XP Tomes at 14:16.
 - At 14:23 the owner asked to fork and port Nyx. The fork `skytekx/nyx` followed at 14:25, see
   [Nyx](content/nyx.md).
-- At 15:02 he asked for the essentials of the Better Minecraft pack BMC4. A batch with AllTheLeaks,
+- At 15:02 they asked for the essentials of the Better Minecraft pack BMC4. A batch with AllTheLeaks,
   Biomes O' Plenty, Galosphere, Repurposed Structures and others came at 15:15. VanillaBackport then
   stopped the boot at 15:19 with a mixin failure (`logs/2026-06-29-8.log.gz`) and was parked in
   `disabled-mods/`.
@@ -229,7 +229,7 @@ most likely slept or the process was killed.
 
 - At 18:04 the owner asked to start the server on the build machine. It ran from 18:11, and the owner
   joined at 20:31.
-- At 20:36 he recalled the ruling against structures on the y=0 floor. At 20:39 he asked for a more
+- At 20:36 they recalled the ruling against structures on the y=0 floor. At 20:39 they asked for a more
   elegant design and ruled that the same world generator must also work on an unmodded Spigot server.
 - The skytekx-worldgen source went into git at 21:43 in `~/git/skytekx-worldgen`. Its structure placement
   and fall handler were deleted, and the mod became SkyTekx Compat 2.0.0, which only guards Bird's Nests,

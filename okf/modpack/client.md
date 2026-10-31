@@ -10,7 +10,7 @@ timestamp: 2026-10-31
 
 The only SkyTekx 3 client that exists is the owner's Prism Launcher instance on this MacBook (Asahi
 Linux, aarch64, 16K pages). On 2026-06-27 19:58 the owner asked for the client to be added to Prism so
-he could join the server (`~/.claude/history.jsonl`, session 5bd3e1de).
+they could join the server (`~/.claude/history.jsonl`, session 5bd3e1de).
 
 | Setting | Value | Evidence |
 |---|---|---|

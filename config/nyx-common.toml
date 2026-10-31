@@ -1,7 +1,7 @@
 
 [general]
 	#Resource locations of the dimensions that lunar events should occur in
-	allowedDimensions = ["minecraft:overworld"]
+	allowedDimensions = ["minecraft:overworld", "skytekx3:skylands"]
 	#If lunar water should be enabled
 	lunarWater = true
 	#The chance (1 = 100%) for a meteor shard to be dropped from an elder guardian
@@ -87,7 +87,7 @@
 	bloodMoon = true
 	#Chance (1 = 100%) of the Blood Moon occurring
 	#Range: 0.0 ~ 1.0
-	bloodMoonChance = 0.05
+	bloodMoonChance = 0.5
 	#Nights that should pass before the Blood Moon occurs for the first time
 	#Range: 0 ~ 1000
 	bloodMoonStartNight = 0

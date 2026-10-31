@@ -13,15 +13,17 @@ Every step is idempotent:
   2. write its connector token to TOKEN_FILE with mode 600, without printing it
   3. route hex-tunnel.skytekx.com to tcp://localhost:25565 and everything else to a 404
   4. point hex-tunnel.skytekx.com at the tunnel with a proxied CNAME
-  5. set the TXT record hex.skytekx.com to cloudflared-route=hex-tunnel.skytekx.com for Modflared
-  6. give hex.skytekx.com the address 192.0.2.1, which answers nothing. Minecraft resolves the name
+  5. set the TXT record of each player name to cloudflared-route=hex-tunnel.skytekx.com for Modflared
+  6. give each player name the address 192.0.2.1, which answers nothing. Minecraft resolves the name
      before Modflared sees it, and without an address it stops at "Unknown host" (2026-10-31 22:08)
+The player names are hex.skytekx.com, the one in the pack's server list, and play.skytekx.com, a
+second name for the same server since 2026-10-31 22:15.
 Then copy TOKEN_FILE to ~/.cloudflared/skytekx.token on the Mac mini (mode 600) and delete it here.
 """
 import json, os, sys, urllib.error, urllib.request
 
 ZONE, TUNNEL = "skytekx.com", "skytekx3-mac-mini"
-ROUTE, PLAYER = "hex-tunnel.skytekx.com", "hex.skytekx.com"
+ROUTE, PLAYERS = "hex-tunnel.skytekx.com", ("hex.skytekx.com", "play.skytekx.com")
 SERVICE = "tcp://localhost:25565"
 API = "https://api.cloudflare.com/client/v4"
 
@@ -80,7 +82,8 @@ print("ingress", ROUTE, "to", SERVICE)
 
 ensure(zid, "CNAME", ROUTE, f"{tid}.cfargotunnel.com", True,
        "SkyTekx3 Minecraft through the Cloudflare Tunnel " + TUNNEL)
-ensure(zid, "TXT", PLAYER, f"cloudflared-route={ROUTE}", None,
-       f"Modflared: join {PLAYER} through the tunnel route")
-ensure(zid, "A", PLAYER, "192.0.2.1", False,   # A documentation address (RFC 5737), never routed
-       "Lets Minecraft resolve the name, then Modflared follows the TXT into the tunnel. Answers nothing.")
+for player in PLAYERS:
+    ensure(zid, "TXT", player, f"cloudflared-route={ROUTE}", None,
+           f"Modflared: join {player} through the tunnel route")
+    ensure(zid, "A", player, "192.0.2.1", False,   # A documentation address (RFC 5737), never routed
+           "Lets Minecraft resolve the name, then Modflared follows the TXT into the tunnel. Answers nothing.")

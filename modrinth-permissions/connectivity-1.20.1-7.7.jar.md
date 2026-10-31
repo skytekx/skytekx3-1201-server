@@ -1,6 +1,6 @@
 # Connectivity
 
-**Bundled file:** `connectivity-1.20.1-7.6.jar`
+**Bundled file:** `connectivity-1.20.1-7.7.jar`
 **Status:** BLOCKER — do NOT publish until resolved
 
 ## Paste into the Modrinth attribution form

@@ -4,12 +4,13 @@
 structure_pieces.py <region_dir> <structure_id>
 Example: tools/structure_pieces.py world/dimensions/skytekx3/skylands/region skytekx3:sky_windmill
 Shows where jigsaw pieces really ended up, for example terrain_matching pieces that left a floating
-structure. Reuses the NBT and region reader of void_scan.py (same directory). Needs numpy.
+structure. Lists the chunks it could not read at the end, a start in one of them is missing.
+Reuses the NBT and region reader of void_scan.py (same directory). Needs numpy.
 """
 import os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from void_scan import chunks
+from void_scan import chunks, print_bad
 
 if len(sys.argv) != 3:
     sys.exit(__doc__)
@@ -31,3 +32,4 @@ for fn in sorted(os.listdir(region_dir)):
                 bb = [int(v) for v in k.get("BB", [])]
                 print(f"   {loc:34s} projection={str(el.get('projection', '?')):16s} box={bb}")
 print("starts:", n)
+print_bad()

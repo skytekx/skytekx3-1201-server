@@ -44,7 +44,7 @@ How the three layers work together is on [AlmostUnified](almostunified.md#how-th
 ## Mac mini
 
 The pack needs nothing special on the Mac mini. The script `macos/sync-to-mac.sh` copies `mods/`, the
-configs, the plugin folder and the datapack sources from this checkout. The build and upload scripts
+configs, the Essentials config, the datapack sources and the fixes pack from this checkout. The build and upload scripts
 only run on the build machine, see [tools](tools.md#mac-mini). The details are on
 [macOS host](../server/macos.md).
 

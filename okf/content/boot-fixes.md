@@ -34,7 +34,7 @@ with 7cea753.
 ## The override datapack
 
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
-source folder, and the sync script does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
+source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
 is tracked: 126 files, 125 data files plus `pack.mcmeta` (pack format 15).
 
@@ -140,11 +140,11 @@ none of the jars in the checkout's `build/libs/`. So the jar was edited after th
 
 ## On a new host
 
-The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with the patched jars. The
-fixes pack lives in the world, so it only travels with `--with-world`. For a new world, such as the
-Halloween map the owner asked for on 2026-10-31 16:56, copy `world/datapacks/skytekx3_fixes/` into the
-new world's `datapacks/` before its first start. The script `tools/sync_skylands_datapack.sh` only
-writes the two Skylands packs. Run `patch_mods.py` only if jars are downloaded again, and never fill
+The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with the patched jars.
+Since 29927ae it also mirrors `world/datapacks/skytekx3_fixes/` straight into the Mac's world, so a new
+world there gets the pack when the sync runs before its first start. On any other host, copy the folder
+into a new world's `datapacks/` by hand, as was done for the Halloween map the owner asked for on
+2026-10-31 16:56. The script `tools/sync_skylands_datapack.sh` only writes the two Skylands packs. Run `patch_mods.py` only if jars are downloaded again, and never fill
 `mods/` with `resolve_all.py`. See [macOS host](../server/macos.md),
 [world reset](../server/world-reset.md) and [deploy](../server/deploy.md).
 

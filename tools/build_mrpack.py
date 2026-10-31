@@ -4,8 +4,9 @@
 - moves client-only jars out of the server mods/ dir
 - zips the index and the overrides, all read from git HEAD, so edits that are not committed
   (configs rewritten by a server boot, for example) stay out of the pack
+- writes the server list of the clients as client-overrides/servers.dat
 """
-import io, json, os, shutil, subprocess, tarfile, zipfile
+import io, json, os, shutil, struct, subprocess, tarfile, zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = "3.0.6"
@@ -66,6 +67,21 @@ def pack_path(rel):
             return "overrides/"+dst+rel[len(src):]
     return None
 
+# --- client-overrides: the server list, so a new instance shows the server right away ---
+# Modflared (in the index) opens the Cloudflare Tunnel behind this address. The server never reads it.
+SERVERS = [("SkyTekx", "hex.skytekx.com")]
+
+def nbt_str(text):
+    b = text.encode("utf-8")
+    return struct.pack(">H", len(b)) + b
+
+def servers_dat(entries):
+    """servers.dat is uncompressed NBT: a root compound with a list "servers" of compounds {name, ip}."""
+    out = b"\x0a" + nbt_str("") + b"\x09" + nbt_str("servers") + b"\x0a" + struct.pack(">i", len(entries))
+    for name, ip in entries:
+        out += b"\x08" + nbt_str("name") + nbt_str(name) + b"\x08" + nbt_str("ip") + nbt_str(ip) + b"\x00"
+    return out + b"\x00"
+
 # --- assemble the .mrpack ---
 out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
 if os.path.exists(out): os.remove(out)
@@ -78,7 +94,9 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr(dst, tree.extractfile(m).read())
         top = "/".join(dst.split("/")[1:4]) if dst.startswith("overrides/world/") else dst.split("/")[1]
         counts[top] = counts.get(top, 0) + 1
+    z.writestr("client-overrides/servers.dat", servers_dat(SERVERS))
 print("overrides from git HEAD:", counts)
+print("client-overrides/servers.dat:", SERVERS)
 size = os.path.getsize(out)
 print(f"WROTE {out} ({size} bytes) | {len(files)} mod files | client-only {len(moved)}")
 print("server mods/ jar count:", len([n for n in os.listdir(REPO+'/mods') if n.endswith('.jar')]))

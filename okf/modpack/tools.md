@@ -24,9 +24,9 @@ region scans that checked the Halloween world on the Mac mini the same evening. 
 | 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
-| After a pregen | Scan, `void_scan.py` | 228 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
-| After a pregen | Scan, `void_float.py` | 142 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
-| After a pregen | Scan, `structure_pieces.py` | 33 | Prints every piece of one structure with its projection and box | Python with numpy | Nothing |
+| After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
+| After a pregen | Scan, `void_float.py` | 160 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
+| After a pregen | Scan, `structure_pieces.py` | 35 | Prints every piece of one structure with its projection and box | Python with numpy | Nothing |
 
 The Modrinth token and the RCON password live in the ansible vault as `vault_modrinth_pat` and
 `vault_rcon_password`, see [secrets](../server/secrets.md). The RCON password is passed as a command
@@ -172,20 +172,27 @@ tools/void_float.py world/dimensions/skytekx3/skylands/region
 tools/structure_pieces.py world/dimensions/skytekx3/skylands/region skytekx3:sky_windmill
 ```
 
-The three scripts read region files with their own NBT reader and change nothing. Run them after a
+The three scripts read region files with their own NBT reader and change nothing. Since 4ec39e3 the
+reader works like the one of Minecraft 1.20.1: it also reads chunks kept in `c.X.Z.mcc` files, and
+each script ends with a list of every chunk or region file it could not read and why (torn by a write,
+cut off, missing `.mcc`, unknown compression). Run them after a
 pregen, against a stopped server or right after `save-all flush`. They need numpy. The Mac mini has it in
 a venv, `python3 -m venv ~/.venvs/skyscan` with `pip install numpy` (numpy 2.0.2 on the system Python
 3.9).
 
 - The scan [void_scan.py](../../tools/void_scan.py) lists every structure start with its lowest piece
-  and the biome at its start, every non-air block below the island band (Y 24 by default,
-  `--band-min`) and every non-air block in `sky_void` columns. Island rims are `sky_void` by design, so
-  terrain there is expected.
+  and its biome, every non-air block below the island band (Y 24 by default, `--band-min`) and every
+  non-air block in `sky_void` columns. It reads starts from every chunk, also from the chunks at the
+  edge of the generated area that are not full yet, and takes the biome at the center of the first
+  piece, which often lies in the next chunk. A start whose chunk holds no biome yet counts as
+  `start_biome_unknown`. Island rims are `sky_void` by design, so terrain there is expected.
 - The scan [void_float.py](../../tools/void_float.py) flood fills from each block below the band. A
   group that reaches Y 40 (`--attach-y`) hangs from an island, for example an island bottom or a geode.
-  A group that never reaches it floats in the void and is a leak.
+  A group that never reaches it floats in the void and is a leak. Since 6c2ff7d fills that meet are
+  joined into one group, so a body that hangs from an island is no longer split into a false floating
+  part, and a floating group next to an unreadable chunk is marked as such.
 - The scan [structure_pieces.py](../../tools/structure_pieces.py) prints the template, projection and
-  box of every piece of one structure. It showed that the floating windmill dropped its terrain
+  box of every piece of one structure and lists the unreadable chunks at the end. It showed that the floating windmill dropped its terrain
   matching fields onto an island below, see
   [Skylands worldgen](../content/skylands-worldgen.md#changes-of-2026-10-31).
 

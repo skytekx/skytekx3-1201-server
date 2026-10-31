@@ -46,7 +46,7 @@ The host setup from scratch (packages, user, mcrcon, clone) is in the README sec
 | Stopping | RCON `stop`, never a signal |
 | World | The Halloween world of 2026-10-31 on the Mac mini, pregenerated to radius 1500 in the Overworld and 3000 in the Skylands. The old world stays on the build machine (518 MB, last saved on 2026-07-13 at 15:45) |
 | Last complete boot | 2026-10-31 at 19:35:14 on the Mac mini under launchd after a test reboot, `Done` after 35 s with 0 FATAL, 3 ERROR and 344 WARN lines |
-| Public address | None yet. The domain skytekx.com only serves the website |
+| Public address | `hex.skytekx.com` through the Cloudflare Tunnel `skytekx3-mac-mini` since 2026-10-31 21:13, joined with the client mod Modflared, see [Mac mini](macos.md#public-access) |
 
 ## Rules that prevent the known failures
 

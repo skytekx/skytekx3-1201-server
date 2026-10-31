@@ -223,10 +223,57 @@ hours at the measured rate, which the free disk does not allow. Load with player
 
 ## Public access
 
-The server is only reachable in the LAN. Public play needs a port forward on the router for 25565/tcp
-and 24454/udp (Simple Voice Chat) to the Mac mini, and a DNS record without the Cloudflare proxy,
-because the proxy does not carry Minecraft traffic. The domain skytekx.com currently sits behind the
-proxy and only serves the website. Both are owner decisions.
+No port can be forwarded to the Mac mini. Its uplink is a mobile connection behind carrier grade NAT:
+on 2026-10-31 tracepath showed the private hops 172.20.136.193, 192.168.242.31 and 172.16.25.16 at
+about 40 ms before the first public one, and there is no IPv6. So the earlier plan of a router forward
+plus a DNS record without the Cloudflare proxy cannot work.
+
+Since 2026-10-31 at 21:13 a Cloudflare Tunnel carries the game instead. The connector cloudflared on
+the Mac mini dials out to Cloudflare, so no port has to be open.
+
+| Part | Setup |
+|---|---|
+| Tunnel | Named `skytekx3-mac-mini`, in the Cloudflare account of the zone skytekx.com and configured on Cloudflare's side. Its only route sends `hex-tunnel.skytekx.com` to `tcp://localhost:25565` |
+| DNS | The name `hex-tunnel.skytekx.com` is a proxied CNAME to the tunnel. The player address `hex.skytekx.com` has only a TXT record, `cloudflared-route=hex-tunnel.skytekx.com` |
+| Connector | Homebrew's cloudflared 2026.10.7 in `/opt/homebrew/bin`. The LaunchDaemon `com.skytekx.cloudflared` ([plist](../../macos/com.skytekx.cloudflared.plist)) runs [run-skytekx-tunnel.sh](../../macos/run-skytekx-tunnel.sh) from `~/.cloudflared/` as the server user at boot, with `KeepAlive`. It logs to `~/Library/Logs/skytekx-cloudflared.log` |
+| Token | The file `~/.cloudflared/skytekx.token`, mode 600. The wrapper hands it to cloudflared through the environment. It is not in the repo, see [Secrets](secrets.md) |
+| Setup script | The script [cf_tunnel.py](../../tools/cf_tunnel.py) creates or updates the tunnel, its route and both DNS records and writes the token to a file. Every step is idempotent |
+
+Players join through the client mod Modflared (Forge 1.20.1, 1.2.0+release.61, MIT, client only). It
+reads the TXT record of `hex.skytekx.com`, downloads its own copy of cloudflared from Cloudflare on the
+first connect, and runs the game connection through the route. Without Modflared the name does not
+resolve. On Apple Silicon Macs that copy is an Intel build, so Rosetta 2 must be installed
+(`softwareupdate --install-rosetta --agree-to-license`). Pack 3.0.6 does not contain Modflared, so
+players add the jar by hand. Simple Voice Chat needs 24454/udp, which the tunnel does not carry, so
+voice chat only works in the LAN.
+
+What was checked on 2026-10-31:
+
+- The connector registered four connections in Vienna at 21:13.
+- A server list ping through `cloudflared access tcp` from the build machine got "forge arclight/Trials
+  1.20.1" with 0 of 39 players.
+- The Cloudflare resolver 1.1.1.1 returns the TXT record.
+- Nobody has joined through Modflared yet.
+
+To set it up again:
+
+1. On the build machine, with `CLOUDFLARE_ACCOUNT_EMAIL` and `CLOUDFLARE_Global_API_Key` (or
+   `CLOUDFLARE_API_TOKEN`) in the environment, run `python3 tools/cf_tunnel.py <token file>`.
+2. On the Mac mini, run `brew install cloudflared`. Copy the token to `~/.cloudflared/skytekx.token`
+   (mode 600) and `macos/run-skytekx-tunnel.sh` to `~/.cloudflared/run-skytekx-tunnel.sh` (mode 700).
+   Delete the token file on the build machine.
+3. Fill in `__USER__` and `__HOME__` in `macos/com.skytekx.cloudflared.plist`, copy it to
+   `/Library/LaunchDaemons/` (owner root:wheel, mode 644) and load it with
+   `sudo launchctl bootstrap system /Library/LaunchDaemons/com.skytekx.cloudflared.plist`.
+4. Look for "Registered tunnel connection" in `~/Library/Logs/skytekx-cloudflared.log`.
+
+### Link drop of 2026-10-31
+
+The Mac mini's Ethernet link went down at 21:22:01 and came back at 21:28:43 at 1 Gbit/s
+(`AppleBCM5701Ethernet [en0]: Link down` and `Link up` in the system log). The Mac mini did not
+reboot, the server kept running, and cloudflared reconnected by itself at 21:28:48. The router stayed
+reachable from the build machine the whole time. The cause is not known. A cable, the switch port and
+someone unplugging the Mac mini fit the log.
 
 Related: [Server](index.md), [Arclight runtime](arclight.md), [World reset and pregen](world-reset.md),
 [Logs and crashes](logs-and-crashes.md), [Secrets](secrets.md), [Deploy on Debian (systemd)](deploy.md).

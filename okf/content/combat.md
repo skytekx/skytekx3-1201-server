@@ -70,8 +70,7 @@ was not checked.
 
 - Better Combat (`bettercombat-forge-1.9.0+1.20.1.jar`) was in the index up to mrpack 3.0.3 and left
   with 3.0.4. The reason is not recorded. The jar is parked in `disabled-mods/`, a folder that git
-  ignores. The Modrinth description in
-  `docs/MODPACK_DESCRIPTION.md` still lists it (see [publish](../modpack/publish.md)).
+  ignores.
 - Clean Swing Through Grass (`cleanswing-1.20-1.8.jar`, LGPL-3.0, CurseForge only) lets a sword hit
   mobs through grass. It is bundled from `local-mods/` (commit d3790ad).
 - Shield Parry (`parry-2.5.0.jar`, LGPL-2.1, CurseForge only) lets a shield parry projectiles. It is

@@ -317,6 +317,10 @@ logs stay on the Mac and are not in the repo.
   owner asked about it at 20:43. The 8 GB heap stayed full, and EMI's reload died with an
   `OutOfMemoryError` at 20:46:33. The owner's sessions of June and July with JEI 15.20.0.132 had the
   90% message but neither failure. See [Publish](modpack/publish.md#test-of-2026-10-31).
+- At 21:25 the summary and the body of the Modrinth draft were replaced with the rewritten
+  `docs/MODPACK_SUMMARY.txt` and `docs/MODPACK_DESCRIPTION.md`. They credit ts4.party, name no person
+  or handle, drop "kitchen-sink" and ask for 12 GB of memory. The publish script got `--texts` for
+  this. See [Publish](modpack/publish.md#state-on-2026-10-31).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

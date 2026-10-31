@@ -41,8 +41,9 @@ evidence and the page with the details. The rulings behind the first section are
   untracked, not shipped and not enabled. See [Client](modpack/client.md#resource-packs).
 - The 1.7 swing on every client (2026-06-29 12:10). The old animation needs Nostalgic Tweaks with its
   old swing setting, and the pack ships no config for it. See [Combat](content/combat.md#swing-animation).
-- The recipe port from SkyTekx 2 (2026-06-27 10:34). `docs/RECIPE_PORT.md` still has VERIFY rows, and
-  most of `kubejs/server_scripts/gameplay.js` is commented out. See [KubeJS](modpack/kubejs.md).
+- The recipe port from SkyTekx 2 (2026-06-27 10:34). The port notes in `docs/RECIPE_PORT.md` still have
+  VERIFY rows, and most of `kubejs/server_scripts/gameplay.js` is commented out. See
+  [KubeJS](modpack/kubejs.md).
 - No real names in the credits (2026-06-29 10:24). The `authors` line in the Nyx jar's `mods.toml` and
   lines 13 and 19 of `modrinth-permissions/nyx-1.20.1-1.0.0.jar.md` carry a real name. The jar needs a
   rebuild from the fork. See [Nyx](content/nyx.md#open-points).
@@ -77,8 +78,8 @@ evidence and the page with the details. The rulings behind the first section are
   the owner had the address of the first commit changed. Settle the address before the push. See
   [Related repos and services](related.md#this-repo-on-github).
 - Plugin telemetry and update checks. The bStats switch is on, PluginMetrics is not opted out, the
-  Essentials update check is on, and Iron's Lib fetches Patreon data at runtime. Turning them off fits the owner's
-  rule against telemetry. See [Plugins](modpack/plugins.md#metrics-and-update-checks).
+  Essentials update check is on, and Iron's Lib fetches Patreon data at runtime. Turning them off fits
+  the owner's rule against telemetry. See [Plugins](modpack/plugins.md#metrics-and-update-checks).
 - The Overworld also gets the Skylands structure sets. Villages at spacing 24 double the vanilla density
   there, and ten Dungeons Arise ground structures place on the island grid instead of their own spacing.
   Keep or gate. See [Performance](server/performance.md#side-effect-in-the-overworld).
@@ -102,7 +103,8 @@ evidence and the page with the details. The rulings behind the first section are
 - The tracked world copies of the Skylands datapacks on the build machine are behind their sources
   since the commits of 2026-10-31 (1c6f8d4, 1cc9702, 50824a3 and bcb113c). They belong to the old world,
   which stays as it was. The Halloween world on the Mac mini has current copies. Sync and commit them
-  only if the old world comes back. See [World reset and pregen](server/world-reset.md#datapacks-and-pack-order).
+  only if the old world comes back. See
+  [World reset and pregen](server/world-reset.md#datapacks-and-pack-order).
 - A new world does not get the fixes pack. The sync script writes only the two Skylands packs into
   `world/datapacks/`, and `macos/sync-to-mac.sh` skips `world/` unless it runs with `--with-world`. Copy
   `world/datapacks/skytekx3_fixes/` by hand, as was done for the Halloween world on the Mac mini. See
@@ -111,9 +113,10 @@ evidence and the page with the details. The rulings behind the first section are
   Waystones and Simple Voice Chat among others and needs the new jars before the next join. See
   [Client](modpack/client.md#mods).
 - Spigot's crash restart points at `./start.sh` (`spigot.yml:20-21`), which does not exist.
-- The ansible setup is a stub. `ansible/ansible.cfg` expects `.vault_pass.txt`, there is no inventory
-  and `ansible/playbooks/` is empty, although `systemd/unit.conf.example` and `server.properties.example`
-  say that ansible renders the RCON password. See [Secrets](server/secrets.md#the-ansible-vault).
+- The ansible setup is a stub. The config `ansible/ansible.cfg` expects `.vault_pass.txt`, there is no
+  inventory and `ansible/playbooks/` is empty, although `systemd/unit.conf.example` and
+  `server.properties.example` say that ansible renders the RCON password. See
+  [Secrets](server/secrets.md#the-ansible-vault).
 - The systemd unit sets `KillMode=none` and stops through an asynchronous `mcrcon` call, so systemd
   neither waits for the save nor stops a JVM whose RCON stop failed. A synchronous stop is documented as
   an untested candidate. See [Deploy on Debian](server/deploy.md#stopping-and-restarting).
@@ -185,7 +188,8 @@ evidence and the page with the details. The rulings behind the first section are
 - Stale texts outside the OKF. The file `docs/MODPACK_DESCRIPTION.md` and the body on Modrinth list
   Better Combat and Radium, say Twilight Forest is not bundled, credit a handle and say
   "kitchen-sink", and the project description on Modrinth says it too. The changelog of 3.0.6 and the
-  summaries in the scripts are current since 7f5ae03 and 5aeb24d. See [Publish](modpack/publish.md#what-blocks-a-release).
+  summaries in the scripts are current since 7f5ae03 and 5aeb24d. See
+  [Publish](modpack/publish.md#what-blocks-a-release).
 - Two notes still say Nyx is gone, `kubejs/server_scripts/recipe_fixes.js:28` and the Nyx rows of
   `docs/RECIPE_PORT.md`. See [Nyx](content/nyx.md#open-points).
 - The GitHub repo description says "kitchen-sink" and points at a Modrinth project that is not public.

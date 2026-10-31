@@ -80,8 +80,9 @@ Bird's Nests in `libs/` (compile only, for the mixin processor), which the repo 
 - 2026-07-12: the source became a git repo. Commit 64d3126 (21:43) imported version 1.0.0 as it ran on
   the server. Commit 2b49bba (21:44) deleted `SkylandsFallHandler` (124 lines),
   `SurfaceSpreadStructurePlacement` (129), `SurfaceCheckContext` (54) and the `ChunkGeneratorMixin` (49),
-  and trimmed the main class, 385 lines in total. Commit 68efb3f renamed the artifact to skytekx-compat and set version 2.0.0. In
-  this repo the jar swap landed with commit 7670df4, although the message of b7dd95f claims it.
+  and trimmed the main class, 385 lines in total. Commit 68efb3f renamed the artifact to skytekx-compat
+  and set version 2.0.0. In this repo the jar swap landed with commit 7670df4, although the message of
+  b7dd95f claims it.
 
 Related: [boot fixes](boot-fixes.md), [mod set](../modpack/mod-set.md),
 [Skylands worldgen](skylands-worldgen.md), [content](index.md).

@@ -28,8 +28,8 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   `git status` before every commit. Real secrets live in the ansible vault.
 - Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, nine of them patched in
   place, the bundled jars from `local-mods/` (one of them patched too) and BrassAmber BattleTowers,
-  which is in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change into `mods/` by
-  hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
+  which is in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change
+  into `mods/` by hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
   [Mod set](okf/modpack/mod-set.md).
 - Unify materials through `config/almostunified/` and tags, not by editing recipes mod by mod.
 - Test every change against a real boot. A clean boot reaches `Done` with 0 FATAL lines, no crash
@@ -70,10 +70,10 @@ Forge biome modifier files for chocobos, which vanilla and Spigot ignore. After 
 run `tools/sync_skylands_datapack.sh` and restart. The build script ships both packs in the `.mrpack`.
 The design is on [Skylands worldgen](okf/content/skylands-worldgen.md).
 
-Check a worldgen change in a pregenerated copy of the dimension, not by eye. `tools/void_scan.py` lists
-structure starts and blocks below the islands, `tools/void_float.py` separates what hangs from an
-island from what floats free, and `tools/structure_pieces.py` shows where each piece of one structure
-landed. They read region files only and need numpy.
+Check a worldgen change in a pregenerated copy of the dimension, not by eye. The script
+`tools/void_scan.py` lists structure starts and blocks below the islands, `tools/void_float.py`
+separates what hangs from an island from what floats free, and `tools/structure_pieces.py` shows where
+each piece of one structure landed. They read region files only and need numpy.
 
 ## Server operations (RCON)
 

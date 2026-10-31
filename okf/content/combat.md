@@ -9,7 +9,7 @@ timestamp: 2026-10-31
 # Combat
 
 On 2026-06-29 12:10 the owner said they dislike the sword swing animations of this pack and of newer
-Minecraft and wants combat to feel like 1.7 (`~/.claude/history.jsonl`, session 5bd3e1de). SkyTekx 1
+Minecraft and want combat to feel like 1.7 (`~/.claude/history.jsonl`, session 5bd3e1de). SkyTekx 1
 ran on 1.7.10, where every click hit at full strength. The pack gets close to that with one server
 script and a few mod choices.
 
@@ -48,10 +48,10 @@ knockback and critical hits only for fully charged hits. So all three are availa
 
 ### Tuning and revert
 
-The constant `VALUE` on line 29 is the only setting. The script's comment suggests 20 to give the slowest weapons a
-small cooldown back, or 8 as a gentler middle ground. To return to the vanilla cooldown, delete the
-script and run `/reload`. Players who are online keep the modifier until they relog or respawn, because
-it was already added to them.
+The constant `VALUE` on line 29 is the only setting. The script's comment suggests 20 to give the
+slowest weapons a small cooldown back, or 8 as a gentler middle ground. To return to the vanilla
+cooldown, delete the script and run `/reload`. Players who are online keep the modifier until they
+relog or respawn, because it was already added to them.
 
 ## Swing animation
 
@@ -87,8 +87,8 @@ for the item in a hand that its own helper returns as null, which ends in "Inval
 crashed the server twice on 2026-06-27, at 20:43:25 and at 21:16:11
 (`crash-reports/crash-2026-06-27_20.43.25-server.txt` and `crash-2026-06-27_21.16.11-server.txt`). No
 fix was ever made, and the mod still loads at every boot. "Invalid hand" appears in no later log, most
-likely because no explosion has hit a player since. On a public server this is a live crash bug. The full analysis is in
-[logs and crashes](../server/logs-and-crashes.md).
+likely because no explosion has hit a player since. On a public server this is a live crash bug. The
+full analysis is in [logs and crashes](../server/logs-and-crashes.md).
 
 ## History
 

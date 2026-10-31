@@ -46,8 +46,8 @@ was committed at 18:14 as 0a20b8c. The run went as follows:
   index SHA-1 again, as expected.
 
 At 18:06 three bundled jars followed in `local-mods/` and `mods/`: Connectivity 7.6 to 7.7, Cupboard 3.7
-to 4.2 and Enchanting Plus 1.2.0 to 1.3.0, with their files in `modrinth-permissions/` renamed (commit 1ba93f7).
-Their license status did not change.
+to 4.2 and Enchanting Plus 1.2.0 to 1.3.0, with their files in `modrinth-permissions/` renamed (commit
+1ba93f7). Their license status did not change.
 
 This server folder on the build machine has not booted with the new jars (its newest log ends on
 2026-07-13). The Mac mini runs them since the first boot of the Halloween world at 18:07, and all six
@@ -83,7 +83,8 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 Forge only loads `mods/`. The `local-mods/` jars reach the server because they were copied into
 `mods/`. Up to d3391bf Nyx was both an index entry and a bundled jar. All copies are byte identical,
 except Traverse, which `tools/patch_mods.py` patches in `mods/` only. Nine index jars are patched as
-well, so their SHA-1 no longer matches the index. Players get the unpatched jars. See [boot fixes](../content/boot-fixes.md).
+well, so their SHA-1 no longer matches the index. Players get the unpatched jars. See
+[boot fixes](../content/boot-fixes.md).
 
 The comment at `.gitignore:32` says that `mods/` is reproducible from the index and fetched on deploy.
 No tool does that today, see [tools](tools.md).
@@ -165,8 +166,9 @@ Mods removed for good:
 
 - Radium broke the first boot on 2026-06-27. Its merged `PortalForcer` method made Arclight's
   `PortalForcerMixin` fail (`crash-reports/crash-2026-06-27_12.05.07-server.txt`). It predates git.
-- Ruins left on 2026-06-30 01:13 (commit 720b8a4), see [Skylands worldgen](../content/skylands-worldgen.md#history).
-  The owner's client still has `ruins-1.20.1.2.jar`.
+- Ruins left on 2026-06-30 01:13 (commit 720b8a4), see
+  [Skylands worldgen](../content/skylands-worldgen.md#history). The owner's client still has
+  `ruins-1.20.1.2.jar`.
 - Re:Avaritia was installed on 2026-06-30 06:21 and removed at 08:11 on the owner's word (commit b6a1e20).
 - Skytekx-worldgen was replaced by SkyTekx Compat on 2026-07-12 (commit 7670df4).
 - Chocolate Quest Repoured was only tested. The index has Chocolate Quest Golden Apple Edition (1.1.0

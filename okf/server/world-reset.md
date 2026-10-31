@@ -146,9 +146,9 @@ A new `world/level.dat` changes two things.
   The Halloween world of 2026-10-31 put all three file packs at the end by itself. If a world ever has
   them earlier, the vanilla commands below move a pack to the end. They have not been tested on this
   server, so check the result with `/datapack list enabled`.
-- The new world has no fixes pack. `tools/sync_skylands_datapack.sh` writes only the two Skylands
-  packs, so copy `world/datapacks/skytekx3_fixes/` from the checkout into the new world before its
-  first boot, as was done on the Mac mini.
+- The new world has no fixes pack. The script `tools/sync_skylands_datapack.sh` writes only the two
+  Skylands packs, so copy `world/datapacks/skytekx3_fixes/` from the checkout into the new world before
+  its first boot, as was done on the Mac mini.
 
 ```text
 /datapack disable "file/skytekx3_fixes"

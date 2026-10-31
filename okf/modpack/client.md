@@ -119,12 +119,12 @@ There is no client crash report after 2026-06-29.
 ## Test instance
 
 On 2026-10-31 the uploaded pack 3.0.6 went into a second Prism instance, `SkyTekx3-test` with the name
-"SkyTekx3 3.0.6 test", to see what a player gets. It holds the 204 index files with a client side, the 35 bundled
-jars and the other overrides, 239 jars in all, and for the second join BrassAmber BattleTowers, added by
-hand.
-Its `mmc-pack.json` is a copy of the owner's instance, and it has the same Java, JVM flag and 8 GB
-heap. The pack's datapacks under `world/` only matter on a server and were left out. The instance is
-not linked to the Modrinth project. The results are on [publish](publish.md#test-of-2026-10-31).
+"SkyTekx3 3.0.6 test", to see what a player gets. It holds the 204 index files with a client side, the
+35 bundled jars and the other overrides, 239 jars in all, and for the second join BrassAmber
+BattleTowers, added by hand. Its `mmc-pack.json` is a copy of the owner's instance, and it has the same
+Java, JVM flag and 8 GB heap. The pack's datapacks under `world/` only matter on a server and were left
+out. The instance is not linked to the Modrinth project. The results are on
+[publish](publish.md#test-of-2026-10-31).
 
 The first launch stopped at Prism's Microsoft sign-in, which had expired (error AADSTS70000). The owner
 signed in again with a device code that evening.

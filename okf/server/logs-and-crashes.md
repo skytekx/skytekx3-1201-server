@@ -221,9 +221,10 @@ Client crashes from the Prism launcher are on [Client](../modpack/client.md).
 ## Stop path
 
 A clean stop sends `stop` over RCON, with `mcrcon` or with
-`python3 tools/rcon.py <host> <port> <password> stop`. The server thread then runs the Forge stopping handlers (ChunkOpt flushes its deferred queue),
-saves players and worlds, unloads configs and closes RCON. Arclight's exit thread ends the process 5 to
-9 seconds after `Stopping server`. That holds for every logged RCON stop from 2026-06-27 to 2026-07-12.
+`python3 tools/rcon.py <host> <port> <password> stop`. The server thread then runs the Forge stopping
+handlers (ChunkOpt flushes its deferred queue), saves players and worlds, unloads configs and closes
+RCON. Arclight's exit thread ends the process 5 to 9 seconds after `Stopping server`. That holds for
+every logged RCON stop from 2026-06-27 to 2026-07-12.
 
 A signal stop takes another path. SIGTERM or SIGINT start Arclight's `Server Shutdown Thread`. It skips
 the stopping handlers and closes the server while the server thread may still be ticking. All three

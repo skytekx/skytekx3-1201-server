@@ -42,8 +42,9 @@ commit it as is (see [secrets](../server/secrets.md)).
 ## Hybrid warning
 
 At every boot Essentials logs one ERROR that begins "You are running a server that does not properly
-support Bukkit plugins" (for example `logs/2026-07-12-1.log.gz:3185`). It is one of the three accepted boot errors, see
-[logs and crashes](../server/logs-and-crashes.md#boot-error-baseline). Essentials still enables and works.
+support Bukkit plugins" (for example `logs/2026-07-12-1.log.gz:3185`). It is one of the three accepted
+boot errors, see [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline). Essentials still
+enables and works.
 
 ## Permissions
 

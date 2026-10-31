@@ -8,18 +8,18 @@ timestamp: 2026-10-31
 
 # Mac mini (macOS, launchd) deployment
 
-The server runs on an Apple M4 Mac mini in the LAN. launchd starts it at boot with nobody logged in,
-keeps it running and stops it cleanly over RCON. The build machine (the Asahi laptop with the git
-checkout) pushes mods, configs and datapacks to it with `macos/sync-to-mac.sh`. The first run on the
-Mac mini happened on 2026-10-31 with a new world. The owner made the Mac mini the server "for the time
-being" on 2026-10-31 at 16:12 and asked to optimize everything for it at 16:34.
+The server runs on an Apple M4 Mac mini in the LAN. The macOS service manager launchd starts it at boot
+with nobody logged in, keeps it running and stops it cleanly over RCON. The build machine (the Asahi
+laptop with the git checkout) pushes mods, configs and datapacks to it with `macos/sync-to-mac.sh`.
+The first run on the Mac mini happened on 2026-10-31 with a new world. The owner made the Mac mini the
+server "for the time being" on 2026-10-31 at 16:12 and asked to optimize everything for it at 16:34.
 
 ## Host
 
 | Item | Value |
 |---|---|
 | Hardware | Mac16,10, Apple M4 with 4 performance and 6 efficiency cores, 16 GB RAM |
-| System | macOS 15.6 on wired Ethernet (Wi-Fi off) with a fixed LAN address |
+| System | Apple macOS 15.6 on wired Ethernet (Wi-Fi off) with a fixed LAN address |
 | Account | One admin user runs the server and owns the checkout in its home folder. Its password is not in the repo |
 | Java | Temurin 17.0.21 arm64 from `brew install --cask temurin@17`, found by `/usr/libexec/java_home -F -v 17`. The flag `-F` makes the lookup fail when Java 17 is missing, instead of falling back to another installed Java |
 | Tools | Homebrew in `/opt/homebrew` (not on the PATH of a non-login SSH command), htop, and the system `/usr/bin/python3` 3.9 for `tools/rcon.py`. The region scans run in a separate Python environment with numpy |
@@ -36,7 +36,8 @@ The host was slimmed for headless use on 2026-10-31, as the owner asked at 16:02
   Displaysleep is 1.
 - FileVault is off. With FileVault on, macOS waits at the unlock screen after a power cut and the
   server would not come back.
-- The application firewall is off and Time Machine has no destination. pf guards RCON, see below.
+- The application firewall is off and Time Machine has no destination. The packet filter pf guards
+  RCON, see below.
 - After a reboot with nobody logged in, macOS uses about 3.1 GB of RAM.
 
 On 2026-10-31 the system log stops at 16:35:35 without a panic report and the next boot is at 16:52.
@@ -46,34 +47,34 @@ That points to a power cut, and autorestart brought the Mac back.
 
 | File | Role |
 |---|---|
-| `ServerMac.sh` | The launcher. Java 17, a 9G heap, Aikar's G1 flags, a 512M code cache, headless AWT, an open file limit of 10240, and the SIGTERM handling described below |
-| `macos/com.skytekx.server.plist` | LaunchDaemon `com.skytekx.server`. Runs `ServerMac.sh` as the server user at boot, `KeepAlive` true, `ThrottleInterval` 30, `ExitTimeOut` 180, `ProcessType` Interactive, 65536 open files, stdout to `/dev/null`, stderr to `logs/launchd-stderr.log` |
-| `macos/com.skytekx.rcon-guard.plist` | LaunchDaemon `com.skytekx.rcon-guard`. Runs as root at boot and loads the pf anchor |
-| `macos/pf-rcon-guard.conf` | The anchor rules: pass TCP 65535 on `lo0`, drop it on every other interface |
-| `macos/com.skytekx.backup.plist` | LaunchDaemon `com.skytekx.backup`. Runs `macos/backup.sh` daily at 05:00 as the server user |
-| `macos/backup.sh` | Pauses saving over RCON, flushes, archives `world/` to `~/skytekx3-backups`, keeps the newest 3, skips the run below 4 GB free |
-| `macos/skytekx3ctl` | The commands `status`, `start`, `stop`, `restart`, `rcon <command>`, `log` and `backup` |
-| `macos/install.sh` | Run with sudo. Sets the power options, fills in the plist placeholders, installs the pf anchor and loads the three jobs. A second run reloads them, which restarts the server cleanly. It waits until each old job is gone before it loads the new one |
-| `macos/sync-to-mac.sh` | Run on the build machine. Pushes the checkout to the Mac mini |
+| Script `ServerMac.sh` | The launcher. Java 17, a 9G heap, Aikar's G1 flags, a 512M code cache, headless AWT, an open file limit of 10240, and the SIGTERM handling described below |
+| Plist `macos/com.skytekx.server.plist` | LaunchDaemon `com.skytekx.server`. Runs `ServerMac.sh` as the server user at boot, `KeepAlive` true, `ThrottleInterval` 30, `ExitTimeOut` 180, `ProcessType` Interactive, 65536 open files, stdout to `/dev/null`, stderr to `logs/launchd-stderr.log` |
+| Plist `macos/com.skytekx.rcon-guard.plist` | LaunchDaemon `com.skytekx.rcon-guard`. Runs as root at boot and loads the pf anchor |
+| Rules `macos/pf-rcon-guard.conf` | The anchor rules: pass TCP 65535 on `lo0`, drop it on every other interface |
+| Plist `macos/com.skytekx.backup.plist` | LaunchDaemon `com.skytekx.backup`. Runs `macos/backup.sh` daily at 05:00 as the server user |
+| Script `macos/backup.sh` | Pauses saving over RCON, flushes, archives `world/` to `~/skytekx3-backups`, keeps the newest 3, skips the run below 4 GB free |
+| Script `macos/skytekx3ctl` | The commands `status`, `start`, `stop`, `restart`, `rcon <command>`, `log` and `backup` |
+| Script `macos/install.sh` | Run with sudo. Sets the power options, fills in the plist placeholders, installs the pf anchor and loads the three jobs. A second run reloads them, which restarts the server cleanly. It waits until each old job is gone before it loads the new one |
+| Script `macos/sync-to-mac.sh` | Run on the build machine. Pushes the checkout to the Mac mini |
 
 ## Stop and restart
 
 Arclight must never get a signal. A SIGTERM sends it down its shutdown thread, which skips the stop
 handlers, and every logged signal stop saved badly (see
-[Logs and crashes](logs-and-crashes.md#stop-path)). launchd sends SIGTERM on `launchctl bootout` and on
-every shutdown and reboot. So `ServerMac.sh` starts the JVM as a child when it has no terminal, and a
+[Logs and crashes](logs-and-crashes.md#stop-path)). On `launchctl bootout` and on every shutdown and
+reboot, launchd sends SIGTERM. So `ServerMac.sh` starts the JVM as a child when it has no terminal, and a
 SIGTERM or SIGINT to the script becomes an RCON `stop`. If RCON does not answer within 90 seconds
 (the server is still booting), the script falls back to the signal. In a terminal the script hands over
 to the JVM as before, and `stop` is typed into the console.
 
 | Task | Command (in the server directory) |
 |---|---|
-| Status, players and tick times | `macos/skytekx3ctl status` |
-| Restart | `macos/skytekx3ctl restart` sends RCON `stop`. `KeepAlive` starts the server again |
-| Stop and keep it down | `macos/skytekx3ctl stop`. It boots the job out, which stops the server over RCON, and waits up to 200 s until the JVM has exited and launchd has removed the job |
-| Start after a stop | `macos/skytekx3ctl start` |
-| Console command | `macos/skytekx3ctl rcon "<command>"`. RCON replies longer than 4 KB are cut off by `tools/rcon.py` |
-| Follow the log | `macos/skytekx3ctl log` |
+| Status, players and tick times | Run `macos/skytekx3ctl status` |
+| Restart | Run `macos/skytekx3ctl restart`. It sends RCON `stop`, and `KeepAlive` starts the server again |
+| Stop and keep it down | Run `macos/skytekx3ctl stop`. It boots the job out, which stops the server over RCON, and waits up to 200 s until the JVM has exited and launchd has removed the job |
+| Start after a stop | Run `macos/skytekx3ctl start` |
+| Console command | Run `macos/skytekx3ctl rcon "<command>"`. RCON replies longer than 4 KB are cut off by `tools/rcon.py` |
+| Follow the log | Run `macos/skytekx3ctl log` |
 
 ### Tests of 2026-10-31
 
@@ -84,18 +85,19 @@ with 344 WARN lines.
 
 | Test | Started | Result |
 |---|---|---|
-| `sudo macos/install.sh` a second time | 19:26:01 | RCON stop, then a new boot at 19:26:53 with `Done` after 32 s. The first try failed, see below |
-| `macos/skytekx3ctl restart` | 19:27:39 | KeepAlive started the server again at 19:27:46, `Done` after 32 s |
-| `macos/skytekx3ctl stop` | 19:33:16 | Returned after 8 s with the JVM gone and the job removed |
-| `macos/skytekx3ctl start` | 19:33:32 | `Done` after 32 s |
-| `macos/skytekx3ctl backup` | 19:34 | 16 s with the server online. It wrote `world-2026-10-31-1934.tgz` (688 MB) and switched saving back on |
-| `sudo reboot` | 19:34:48 | RCON stop at shutdown. The server booted at 19:35:14 with nobody logged in and reached `Done` after 35 s. The pf anchor was loaded, 65535 was closed to the LAN, 25565 answered, and `logs/launchd-stderr.log` stayed empty |
+| Reinstall, a second `sudo macos/install.sh` | 19:26:01 | RCON stop, then a new boot at 19:26:53 with `Done` after 32 s. The first try failed, see below |
+| Restart, `macos/skytekx3ctl restart` | 19:27:39 | KeepAlive started the server again at 19:27:46, `Done` after 32 s |
+| Stop, `macos/skytekx3ctl stop` | 19:33:16 | Returned after 8 s with the JVM gone and the job removed |
+| Start, `macos/skytekx3ctl start` | 19:33:32 | Reached `Done` after 32 s |
+| Backup, `macos/skytekx3ctl backup` | 19:34 | Took 16 s with the server online. It wrote `world-2026-10-31-1934.tgz` (688 MB) and switched saving back on |
+| Reboot, `sudo reboot` | 19:34:48 | RCON stop at shutdown. The server booted at 19:35:14 with nobody logged in and reached `Done` after 35 s. The pf anchor was loaded, 65535 was closed to the LAN, 25565 answered, and `logs/launchd-stderr.log` stayed empty |
 
 The first attempt at the second run of `install.sh` stopped the server cleanly but failed to load the
-job again with `Bootstrap failed: 5: Input/output error`. `launchctl bootout` returns before the job has exited, and
-the bootstrap came too early, so the server stayed down. Since then `install.sh` waits until
-`launchctl print` no longer finds the job before it loads it, and `skytekx3ctl stop` waits up to 200 s
-until the JVM has exited and launchd has removed the job. Both waits held in the tests above.
+job again with `Bootstrap failed: 5: Input/output error`. The command `launchctl bootout` returns before
+the job has exited, and the bootstrap came too early, so the server stayed down. Since then
+`install.sh` waits until `launchctl print` no longer finds the job before it loads it, and
+`skytekx3ctl stop` waits up to 200 s until the JVM has exited and launchd has removed the job. Both
+waits held in the tests above.
 
 ## RCON guard
 

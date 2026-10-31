@@ -1,27 +1,21 @@
 #!/usr/bin/env python3
-"""Assemble SkyTekx3.mrpack (client+server) from resolved Modrinth metadata.
-- writes modrinth.index.json
-- splits client-only jars out of the server mods/ dir
-- zips overrides (config, kubejs, defaultconfigs) + index into the .mrpack
+"""Assemble SkyTekx3-<version>.mrpack (client and server) from the committed tree.
+- writes modrinth.index.json from the committed index with this version, summary and Forge
+- moves client-only jars out of the server mods/ dir
+- zips the index and the overrides, all read from git HEAD, so edits that are not committed
+  (configs rewritten by a server boot, for example) stay out of the pack
 """
-import json, os, shutil, subprocess, zipfile, sys
+import io, json, os, shutil, subprocess, tarfile, zipfile
 
-REPO = "/home/snekmin/git/skytekx3-1201-server"
-SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = "3.0.6"
 FORGE = "47.4.6"
 
-# mod file list: session scratch from resolve_all.py when present, else the committed index
-if os.path.exists(SC+"/mrpack_files.json"):
-    files = json.load(open(SC+"/mrpack_files.json"))
-else:
-    files = json.load(open(REPO+"/modrinth.index.json"))["files"]
-    print("mrpack_files.json scratch missing, using modrinth.index.json files list")
-# dedupe by path (last wins)
-byp = {}
-for f in files:
-    byp[f["path"]] = f
-files = list(byp.values())
+def git(*args):
+    return subprocess.run(["git", "-C", REPO, *args], check=True, capture_output=True).stdout
+
+# Mod file list from the committed index, deduped by path (last wins)
+files = list({f["path"]: f for f in json.loads(git("show", "HEAD:modrinth.index.json"))["files"]}.values())
 
 index = {
     "formatVersion": 1,
@@ -32,10 +26,9 @@ index = {
     "files": files,
     "dependencies": {"minecraft": "1.20.1", "forge": FORGE},
 }
-os.makedirs(REPO, exist_ok=True)
-with open(REPO+"/modrinth.index.json", "w") as fh:   # trailing newline, as update_mods.py writes it
-    json.dump(index, fh, indent=2)
-    fh.write("\n")
+index_json = json.dumps(index, indent=2) + "\n"   # trailing newline, as update_mods.py writes it
+with open(REPO+"/modrinth.index.json", "w") as fh:
+    fh.write(index_json)
 
 # --- split client-only jars out of the server mods/ dir ---
 clientonly = REPO+"/client-only-mods"
@@ -49,42 +42,41 @@ for f in files:
             shutil.move(src, os.path.join(clientonly, fn)); moved.append(fn)
 print("client-only moved out of server mods/:", len(moved), moved)
 
+# --- overrides: (folder in git, folder in the pack) ---
+# The Skylands datapacks go to the server's world/datapacks/. The shared pack is vanilla safe, the
+# forge pack carries the mod integrations. Bundled jars (built from source or not on Modrinth) go to mods/.
+OVERRIDES = [
+    ("config", "config"), ("kubejs", "kubejs"), ("defaultconfigs", "defaultconfigs"),
+    ("skylands-datapack", "world/datapacks/skytekx3_skylands"),
+    ("skylands-datapack-forge", "world/datapacks/skytekx3_skylands_forge"),
+    ("local-mods", "mods"),
+]
+# The Chunky task records are tracked by mistake and only hold the build machine's pregen state.
+SKIP = ("config/chunky/tasks/",)
+present = [src for src, _ in OVERRIDES if git("ls-tree", "--name-only", "HEAD", "--", src).strip()]
+tree = tarfile.open(fileobj=io.BytesIO(git("archive", "--format=tar", "HEAD", "--", *present)))
+
+def pack_path(rel):
+    if rel.startswith(SKIP): return None
+    for src, dst in OVERRIDES:
+        if rel.startswith(src+"/"):
+            if src == "local-mods" and not rel.endswith(".jar"): return None
+            return "overrides/"+dst+rel[len(src):]
+    return None
+
 # --- assemble the .mrpack ---
 out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
 if os.path.exists(out): os.remove(out)
+counts = {}
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
-    z.write(REPO+"/modrinth.index.json", "modrinth.index.json")
-    # overrides: config, kubejs, defaultconfigs. Only files git tracks, so leftovers of the build
-    # machine stay out (Spark profiler temp files, configs of removed mods). The Chunky task records
-    # are tracked by mistake and only hold the build machine's pregen state.
-    tracked = subprocess.run(["git", "-C", REPO, "ls-files", "-z", "config", "kubejs", "defaultconfigs"],
-                             check=True, capture_output=True).stdout.decode().split("\0")
-    packed = 0
-    for rel in sorted(t for t in tracked if t):
-        full = os.path.join(REPO, rel)
-        if rel.startswith("config/chunky/tasks/") or not os.path.isfile(full): continue
-        z.write(full, "overrides/"+rel); packed += 1
-    print("overrides from git:", packed, "files")
-    # Skylands dimension datapacks -> ship into the server's world/datapacks/
-    # shared pack is vanilla safe, forge pack carries the mod integrations
-    for src, name in (("skylands-datapack", "skytekx3_skylands"),
-                      ("skylands-datapack-forge", "skytekx3_skylands_forge")):
-        dp = os.path.join(REPO, src)
-        if not os.path.isdir(dp): continue
-        for root, _, fns in os.walk(dp):
-            for fn in fns:
-                full = os.path.join(root, fn)
-                rel = os.path.relpath(full, dp)
-                z.write(full, "overrides/world/datapacks/"+name+"/"+rel)
-    # Local/bundled mod jars (built from source, e.g. Twilight Forest) -> overrides/mods/
-    lm = os.path.join(REPO, "local-mods")
-    bundled = []
-    if os.path.isdir(lm):
-        for fn in sorted(os.listdir(lm)):
-            if fn.endswith(".jar"):
-                z.write(os.path.join(lm, fn), "overrides/mods/"+fn)
-                bundled.append(fn)
-    print("bundled local mods:", bundled)
+    z.writestr("modrinth.index.json", index_json)
+    for m in sorted((m for m in tree.getmembers() if m.isfile()), key=lambda m: m.name):
+        dst = pack_path(m.name)
+        if not dst: continue
+        z.writestr(dst, tree.extractfile(m).read())
+        top = "/".join(dst.split("/")[1:4]) if dst.startswith("overrides/world/") else dst.split("/")[1]
+        counts[top] = counts.get(top, 0) + 1
+print("overrides from git HEAD:", counts)
 size = os.path.getsize(out)
-print(f"WROTE {out} ({size//1024} KiB) | {len(files)} mod files | client-only {len(moved)}")
+print(f"WROTE {out} ({size} bytes) | {len(files)} mod files | client-only {len(moved)}")
 print("server mods/ jar count:", len([n for n in os.listdir(REPO+'/mods') if n.endswith('.jar')]))

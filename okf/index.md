@@ -80,7 +80,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | [AlmostUnified](modpack/almostunified.md) | One item per material across the tech mods |
 | [KubeJS](modpack/kubejs.md) | The four server scripts and how to work with Rhino |
 | [Plugins](modpack/plugins.md) | EssentialsX, its files, permissions, metrics and update checks |
-| [Tools](modpack/tools.md) | The ten scripts in `tools/` and what each one really does |
+| [Tools](modpack/tools.md) | The eleven scripts in `tools/` and what each one really does |
 | [Client](modpack/client.md) | The owner's Prism instance, the client-only mods, the main menu and the client crashes |
 | [Publish](modpack/publish.md) | The Modrinth project, what blocks a release, the release steps and the version history |
 

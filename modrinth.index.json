@@ -2196,21 +2196,6 @@
       "fileSize": 11500683
     },
     {
-      "path": "mods/nyx-1.20.1-1.0.0.jar",
-      "hashes": {
-        "sha1": "6424939d6484ea17b5762ebdc7d178e34c23f2f6",
-        "sha512": "58bd6f4e3dceb7cb92e5eeaf449cee2e96605b8e33ed69f9eb7f1b5f888792d7b4a558fe798b7387181b6fdac5e43841b129c0aed33f61457e57416a3d449820"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://github.com/skytekx/nyx/releases/download/v1.20.1-1.0.0/nyx-1.20.1-1.0.0.jar"
-      ],
-      "fileSize": 418839
-    },
-    {
       "path": "mods/OreBerries-Replanted-1.20.1-0.5.2.jar",
       "hashes": {
         "sha1": "1fd6ba5f33e5bb900e04964a572ae92b6b13c7c5",

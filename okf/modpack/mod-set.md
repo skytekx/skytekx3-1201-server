@@ -14,12 +14,12 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 
 | Item | Value | Evidence |
 |---|---|---|
-| Pack version | 3.0.6 | Field `versionId` in `modrinth.index.json`, set in commit b23a72f |
+| Pack version | 3.0.7 | Field `versionId` in `modrinth.index.json`, written by the build and committed in 465e625 (3.0.6 in b23a72f) |
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since c70f699, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 216 since d3391bf, all from `cdn.modrinth.com`. From 0a20b8c on there were 217, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 952,341,086 bytes since d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
+| Index entries | 217 since 44358a8, all from `cdn.modrinth.com`. The 217th is Modflared, a client only mod for the Cloudflare Tunnel. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 952,411,152 bytes since 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
 | Bundled jars | 35 in `local-mods/` since 782126f, 33 before | Tracked in git |
 | Jars the server loads | 236 in `mods/` after the update, 235 before | Counted 2026-10-31 |
 
@@ -77,7 +77,7 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
 | Folder [local-mods/](../../local-mods) | Yes | 35 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (200), the 35 `local-mods/` jars, and BrassAmber BattleTowers, which exists nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
-| Folder `client-only-mods/` | No (`.gitignore:34`) | 16 jars kept off the server: the 15 index entries with server env `unsupported`, and Nostalgic Tweaks, moved by hand |
+| Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since 44358a8, and Nostalgic Tweaks, moved by hand |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
 Forge only loads `mods/`. The `local-mods/` jars reach the server because they were copied into
@@ -91,14 +91,14 @@ No tool does that today, see [tools](tools.md).
 
 ## Sides
 
-Each index entry says whether the client and the server need it (checked 2026-10-31 after the update,
-which added one optional entry).
+Each index entry says whether the client and the server need it (checked on 2026-10-31 in the index
+of 3.0.7).
 
 | Client | Server | Count | Examples |
 |---|---|---:|---|
-| Required | Required | 154 | Content mods |
+| Required | Required | 153 | Content mods |
 | Optional | Optional | 25 | Nostalgic Tweaks, JEI, mezz_config and other tweaks and libraries |
-| Required | Unsupported | 15 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences |
+| Required | Unsupported | 16 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
 | Unsupported | Required | 12 | AI Improvements, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, Get It Together Drops, LootJS, Nether Portal Fix, Noisium, Repurposed Structures |
 | Required | Optional | 6 | CreativeCore, EMI, Enchantment Descriptions, GeckoLib, Xaero's Minimap and World Map |
 | Optional | Required | 5 | AlmostUnified, Create, FallingTree, Kleeslabs, Special Mobs |
@@ -136,15 +136,20 @@ neither the index nor `local-mods/`, so a fresh clone and the packs up to 3.0.5 
 | Jar | What it is | License | Source | Since 2026-10-31 |
 |---|---|---|---|---|
 | Jar `alltheleaks-1.1.1+1.20.1-forge.jar` | Memory leak fixes (AllTheLeaks) | MIT | Not on Modrinth | In `local-mods/` (782126f) |
-| Jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` | BrassAmber BattleTowers, the successor the owner named on 2026-06-29 12:01 | All Rights Reserved | CurseForge only | Still only in the server's `mods/` |
+| Jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` | BrassAmber BattleTowers, the successor the owner named on 2026-06-29 12:01 | All Rights Reserved | CurseForge only | Still only in the server's `mods/`. Players add it by hand (21:48) |
 | Jar `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm Spellbooks, built 2026-06-29 06:46 from the fork skytekx/Cataclysm_Spellbooks, commit 36d1cee | MIT | The fork has no release. Modrinth has a different upstream file that does not carry the fix | In `local-mods/` (782126f) |
 
 The owner ruled on 2026-06-29 06:25 to patch Spellbooks rather than Cataclysm, because the upstream
 Spellbooks crashed the client against stock Cataclysm 3.31. BattleTowers is the last jar outside the
 pack, and a client needs it. In the install test of 2026-10-31 a fresh install of 3.0.6 booted, but
 the join failed with "Your client is missing the following mods" and named Brass-Amber BattleTowers.
-All 177 registry entries the client lacked belong to it. Bundling it needs a redistribution grant or
-an owner decision, see [publish](publish.md#what-blocks-a-release).
+All 177 registry entries the client lacked belong to it. Bundling it would need a redistribution grant.
+On 2026-10-31 at 21:48 the owner decided to keep it on the server and to have players add the jar by
+hand, and since about 21:56 the Modrinth body tells them to get it from CurseForge. The official file
+is [ba_bt-1.20.1-3.0.0-beta3.2.1.jar](https://mediafilez.forgecdn.net/files/7453/586/ba_bt-1.20.1-3.0.0-beta3.2.1.jar)
+(CurseForge project 542294, file 7453586, uploaded 2026-01-13, 54,453,322 bytes, SHA-1
+fd9fc82fbdca5364992ec1b6518e3eb8d5bdc8ab), identical to the jar in `mods/`. At about 21:50 the owner
+asked for the jar to send it to players over Telegram, and it was copied for them.
 BattleTowers is also tied to an open ruling, see
 [Skylands worldgen](../content/skylands-worldgen.md#open-rulings).
 
@@ -207,7 +212,8 @@ Resharped, Re:Avaritia and Medieval Embroidery), 217 after af5860e (The One Prob
 b6a1e20 (Re:Avaritia out). Commit 4c5e331 only raised `versionId` to 3.0.5. The `.mrpack` of 3.0.5 holds
 an index that is byte identical to the one at commit 4c5e331. On 2026-10-31 the update above moved 55
 entries to newer builds and added mezz_config (0a20b8c), 217 entries in all. Commit d3391bf dropped
-the Nyx entry, whose jar is bundled anyway, which leaves 216.
+the Nyx entry, whose jar is bundled anyway, which leaves 216. Commit 44358a8 added the client only
+Modflared for pack 3.0.7, 217 entries again.
 
 Related: [AlmostUnified](almostunified.md), [KubeJS](kubejs.md), [publish](publish.md),
 [tools](tools.md), [client](client.md), [Arclight](../server/arclight.md).

@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Client
-description: The owner's Prism Launcher instance for SkyTekx 3 on Asahi Linux, with Java 17, the 16K page allocator flag, the mods only clients have, the custom main menu and the client crash history.
+description: The owner's Prism Launcher instance for SkyTekx 3 on Asahi Linux, with Java 17, the 16K page allocator flag, the mods only clients have, the custom main menu, the client crash history and how a player joins from outside the LAN.
 tags: [modpack, client, prism, asahi]
 timestamp: 2026-10-31
 ---
@@ -40,13 +40,15 @@ memory note).
 ## Mods
 
 The instance's `mods/` has 259 entries (2026-10-31). It still has the builds from before the mod update
-of 2026-10-31: 54 of the 204 index entries with a client side and three bundled jars (Connectivity,
-Cupboard and Enchanting Plus) differ by file name, among them JEI 15.20.0.132 where the pack has
-15.74.0.233. Next to the pack it holds:
+of 2026-10-31: 54 of the 204 index entries with a client side in 3.0.6 and three bundled jars
+(Connectivity, Cupboard and Enchanting Plus) differ by file name, among them JEI 15.20.0.132 where the
+pack has 15.74.0.233. Modflared, which 3.0.7 added, is not there, see [Mac mini](#mac-mini). Next to
+the pack it holds:
 
 - AllTheLeaks, BrassAmber BattleTowers and the Cataclysm Spellbooks fork build, with the same SHA-1 as
-  on the server. Up to 3.0.5 no pack had them. Since 3.0.6 the pack bundles the first and the last, and
-  BattleTowers is still in no pack (see [mod set](mod-set.md#jars-outside-the-index)).
+  on the server. Up to 3.0.5 no pack had them. Since 3.0.6 the pack bundles the first and the last.
+  BattleTowers is still in no pack, and since 2026-10-31 21:48 players add it by hand (see
+  [mod set](mod-set.md#jars-outside-the-index)).
 - FancyMenu 3.9.6, Konkrete 1.8.0 and Melody 1.0.3 for the main menu (see below).
 - Nostalgic Tweaks 2.0.0-beta.922 for the old swing (see [combat](../content/combat.md#swing-animation)).
 - Simple Voice Chat 2.6.20.
@@ -137,7 +139,9 @@ instance SkyTekx3, all in its user's home folder and installed without sudo. The
 files of 3.0.6, BrassAmber BattleTowers and Modflared, 241 jars, with a heap of 4096 to 12288 MB and
 the Modrinth project and version ids in `instance.cfg`. Its network cannot reach the Mac mini's LAN
 address, so its server list has the one entry `hex.skytekx.com`. The Microsoft sign-in and the first
-launch are left to the person at that Mac.
+launch are left to the person at that Mac. In content the instance already matches 3.0.7 plus
+BattleTowers, so nothing was changed there for the new version. Nobody has joined from it yet, and the
+first real join through Modflared is still untested.
 
 ## Other settings
 
@@ -147,11 +151,30 @@ launch are left to the person at that Mac.
 
 ## Mac mini
 
-The client stays on the MacBook. In the LAN it joins the Mac mini server by its LAN address. From
-anywhere else it joins `hex.skytekx.com` through the Cloudflare Tunnel, which needs the client mod
-Modflared in the instance. Simple Voice Chat uses 24454 over UDP
-(`config/voicechat/voicechat-server.properties:9`), which the tunnel does not carry, so voice chat
-only works in the LAN. See [macOS host](../server/macos.md#public-access).
+The client stays on the MacBook. In the LAN it joins the Mac mini server by its LAN address. Outside
+the LAN players join `hex.skytekx.com` through the Cloudflare Tunnel with the client mod Modflared,
+which pack 3.0.7 brings, but this instance cannot. Modflared maps no cloudflared download for Linux on
+ARM, so on this machine the game starts normally and a join to `hex.skytekx.com` fails, while a join
+by the LAN address works. That comes from Modflared's bytecode and was not tested in a running game.
+Simple Voice Chat uses 24454 over UDP (`config/voicechat/voicechat-server.properties:9`), which the
+tunnel does not carry, so voice chat only works in the LAN. See
+[macOS host](../server/macos.md#public-access).
+
+A player outside the LAN gets in with pack 3.0.7 like this:
+
+1. Install the pack. The Modrinth project is a draft that only its team can see, but the file is public
+   at the [CDN link of 3.0.7](https://cdn.modrinth.com/data/KqKLuzBj/versions/LRkF99Pz/SkyTekx3-3.0.7.mrpack).
+   It brings Modflared and a server list with the one entry SkyTekx at `hex.skytekx.com`.
+2. Add BrassAmber BattleTowers to the `mods/` folder of the instance, since the server refuses a client
+   without it. The owner decided on 2026-10-31 at 21:48 that players add it by hand. The official file
+   is linked on [mod set](mod-set.md#jars-outside-the-index).
+3. Give the game at least 12 GB of memory, see [publish](publish.md#test-of-2026-10-31).
+4. On a Mac with Apple Silicon, install Rosetta 2. Modflared runs an Intel build of cloudflared there.
+5. Start the game. On the first start Modflared downloads cloudflared from GitHub. Then join SkyTekx
+   from the server list. Linux on ARM cannot join this way.
+
+An instance that is updated to 3.0.7 from an older version gets the pack's server list in place of its
+own, so its own entries are lost.
 
 Related: [mod set](mod-set.md), [combat](../content/combat.md), [publish](publish.md),
 [logs and crashes](../server/logs-and-crashes.md).

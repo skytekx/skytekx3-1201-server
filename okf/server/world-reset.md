@@ -106,7 +106,8 @@ mini is pregenerated to radius 1500 in the Overworld and 3000 in the Skylands. N
 pregenerated anywhere. The performance profile recommends radius 5000 or more per dimension. Radius
 5000 means 625 by 625 chunks, or 390,625 chunks per dimension. At the Mac mini's rates that takes about
 1.5 hours for the Overworld and 55 minutes for the Skylands. The Overworld would need about 6.8 GB on
-disk, and the Mac mini had 10 GB free, so it needs more disk first. Run it before players join.
+disk, and the Mac mini had 9.4 GiB free on 2026-10-31 at 21:05, so it needs more disk first. Run it
+before players join.
 
 Chunky keeps task progress in `config/chunky/tasks/`. Git tracks those two files by mistake, so every
 pregen shows up as a config change. Chunky's `continueOnRestart` is false

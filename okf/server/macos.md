@@ -23,7 +23,7 @@ being" on 2026-10-31 at 16:12 and asked to optimize everything for it at 16:34.
 | Account | One admin user runs the server and owns the checkout in its home folder. Its password is not in the repo |
 | Java | Temurin 17.0.21 arm64 from `brew install --cask temurin@17`, found by `/usr/libexec/java_home -F -v 17`. The flag `-F` makes the lookup fail when Java 17 is missing, instead of falling back to another installed Java |
 | Tools | Homebrew in `/opt/homebrew` (not on the PATH of a non-login SSH command), htop, and the system `/usr/bin/python3` 3.9 for `tools/rcon.py`. The region scans run in a separate Python environment with numpy |
-| Disk | The data volume holds 228 GB and had 9.4 GB free after the pregens and the first backup of 2026-10-31. Watch it, the backups need room |
+| Disk | The data volume holds 228 GiB. On 2026-10-31 at 21:05, after the pregens and the first backup, `df -h /` reported 9.4 GiB free. Watch it, the backups need room |
 
 The host was slimmed for headless use on 2026-10-31, as the owner asked at 16:02.
 

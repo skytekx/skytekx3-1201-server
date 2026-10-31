@@ -336,7 +336,9 @@ and two commits of 18:52 close them.
 The Skylands were then wiped on the Mac mini at 18:54 and generated again with both fixes, to the same
 radius 3000 (142,129 chunks from 18:55 to 19:15). The same scans at 19:20 found this.
 
-- The same 268 structure starts, none with a piece below Y 24.
+- The same 268 structure starts, none with a piece below Y 24. The fixed scan of b2801e0 counts 296
+  on the same files, because it also reads the 28 starts in chunks at the edge that are not full yet.
+  None of them has a piece below Y 24 either.
 - 1,826 blocks below Y 24 instead of 2,133. All 307 root blocks and the two field blocks at Y 1 are
   gone, and no petrified root is left anywhere in the dimension.
 - The float scan finds eight bodies that hang from an island (island bottoms and amethyst geodes) and

@@ -196,8 +196,11 @@ wiped (region, entities, poi and data, `uid.dat` kept) and generated again with 
 After a `save-all flush`, the region scans of [Tools](../modpack/tools.md#region-scans) read the new
 Skylands at 19:20 with the Python environment on the Mac. They took about two minutes.
 
-- All 159,201 chunks were readable, 142,129 of them complete, and 93% of the columns are void.
-- None of the 268 structure starts has a piece below Y 24.
+- All 159,201 chunks were readable, 142,129 of them complete, and 93% of the columns are void. The
+  fixed reader of b2801e0 confirmed that on a copy of the same files at 21:40.
+- None of the structure starts has a piece below Y 24. The scan of 19:20 counted 268 starts. The fixed
+  scan of the same files counts 296, because it also reads the 28 starts in chunks that are not full
+  yet.
 - Below Y 24 lie 1,826 blocks, all island bottoms, amethyst geodes and two small natural islands. The
   307 petrified root blocks and the two windmill field blocks at Y 1 of the first run are gone.
 - The 10 windmills keep both parts, and their lowest piece sits at Y 139.

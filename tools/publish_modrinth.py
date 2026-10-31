@@ -15,7 +15,7 @@ if not PAT:
 GO = "--go" in sys.argv
 TEXTS = "--texts" in sys.argv
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.0.6"
+VERSION = "3.0.7"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
@@ -105,7 +105,7 @@ vdata = {
     "name": f"SkyTekx3 {VERSION}",
     "version_number": VERSION,
     "project_id": project_id,
-    "changelog": "Updated 55 mods from Modrinth and the bundled Connectivity, Cupboard and Enchanting Plus, and added MezzConfig as a new dependency. The Skylands no longer generate Battle Towers, strongholds or illager campsites on the islands or petrified roots floating under them, and floating windmills no longer drop their fields onto the islands below. For Halloween the islands get pumpkin patches and jack o'lanterns, blood moons come on about every second full moon, and Nyx lunar events also reach the Skylands. The pack now installs without a failed download (the Nyx jar comes bundled), bundles All The Leaks and the Cataclysm: Spellbooks build that the server runs, and uses Forge 47.4.18 like the server. A server set up from the pack also gets the fixes datapack.",
+    "changelog": "Modflared comes with the pack and the server list holds hex.skytekx.com, so the SkyTekx server can be joined from the internet through a Cloudflare Tunnel. On its first start Modflared downloads cloudflared from GitHub. It runs on Windows, on Linux on x86 and on macOS, where Macs with Apple Silicon need Rosetta 2, but not on Linux on ARM. Voice chat does not go through the tunnel. Updating an instance from an older version replaces its server list.",
     "dependencies": [],
     "game_versions": ["1.20.1"],
     "version_type": "beta",

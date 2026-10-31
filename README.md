@@ -18,11 +18,11 @@ skytekx.com does not point at a game server yet.
 | Part | Version |
 |---|---|
 | Minecraft | 1.20.1 |
-| Loader | Forge 47.4.18 inside Arclight (the pack index pins Forge 47.4.6 for clients) |
+| Loader | Forge 47.4.18 inside Arclight, the same build the pack index asks clients for |
 | Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, started through the symlink `arclight.jar` |
 | Java | Java 17. The boots that reached `Done` ran Temurin 17.0.19 on the build machine and 17.0.21 on the Mac mini. The one try with Java 21 failed on a missing mod and was never repeated |
 | Plugins | EssentialsX 2.22.0 |
-| Mods | 217 Modrinth entries in `modrinth.index.json` plus 33 bundled jars in `local-mods/` |
+| Mods | 216 Modrinth entries in `modrinth.index.json` plus 35 bundled jars in `local-mods/` |
 | Recipe layers | AlmostUnified for one item per material, Polymorph for grid conflicts, KubeJS for scripts |
 | Recipe viewers | EMI and JEI |
 | Pregen and profiling | Chunky and Spark |
@@ -31,8 +31,8 @@ skytekx.com does not point at a game server yet.
 
 | Path | What |
 |---|---|
-| File `modrinth.index.json` | The pack manifest with 217 entries, 216 from the Modrinth CDN and Nyx from GitHub. Git ignores `mods/`, and no script rebuilds it from the index, see [Provide the mods](#provide-the-mods) |
-| Folder `local-mods/` | The 33 jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Nyx and SkyTekx Compat. Forge does not load this folder, the jars have to be in `mods/` |
+| File `modrinth.index.json` | The pack manifest with 216 entries, all from the Modrinth CDN. Git ignores `mods/`, and no script rebuilds it from the index, see [Provide the mods](#provide-the-mods) |
+| Folder `local-mods/` | The 35 jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Nyx and SkyTekx Compat. Forge does not load this folder, the jars have to be in `mods/` |
 | Folder `config/` | Mod configuration, with `config/almostunified/` for material unification |
 | Folder `kubejs/server_scripts/` | The four server scripts `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js` and `combat_1_7.js` |
 | Folder `skylands-datapack/` | Source of the shared Skylands datapack. It only uses vanilla ids and also runs on unmodded Spigot |
@@ -100,9 +100,9 @@ symlink on that jar. A stock Arclight release brings back the crash at shutdown 
 
 ### Provide the mods
 
-Git does not hold `mods/`. Copy the folder from a running install as it is. It holds about 235 jars,
-among them jars patched in place and three jars that exist nowhere else in the repo, see
-[Mod set](okf/modpack/mod-set.md#three-jars-outside-the-pack).
+Git does not hold `mods/`. Copy the folder from a running install as it is. It holds 236 jars, among
+them jars patched in place and BrassAmber BattleTowers, which exists nowhere else in the repo, see
+[Mod set](okf/modpack/mod-set.md#jars-outside-the-index).
 
 No script restores `mods/` from the pinned index yet. Do not use `tools/resolve_all.py` for it, because
 it ignores the index and installs whatever is newest, including Radium, which crashed Arclight on
@@ -112,7 +112,7 @@ it ignores the index and installs whatever is newest, including Radium, which cr
    index.
 2. Copy the jars from `local-mods/` into `mods/`.
 3. Run `python3 tools/patch_mods.py`.
-4. Decide about the three jars that are in no pack.
+4. Add BrassAmber BattleTowers, which is in no pack.
 
 The plugin jar `plugins/EssentialsX-2.22.0.jar` and its folder `plugins/Essentials/` are not in git
 either. Copy them along, or the server has no `/gm` and no other Essentials command.
@@ -275,16 +275,17 @@ Cataclysm Spellbooks build on the server was ported to exactly that version.
 ### Build and publish the pack
 
 ```bash
-python3 tools/build_mrpack.py                         # Writes SkyTekx3-<version>.mrpack
-python3 tools/publish_modrinth.py "$MODRINTH_PAT"     # Dry run, checks the token and the project
-python3 tools/publish_modrinth.py "$MODRINTH_PAT" --go
+python3 tools/build_mrpack.py             # Writes SkyTekx3-<version>.mrpack from git HEAD
+export MODRINTH_TOKEN="$MODRINTH_PAT"     # The token from the vault, see Secrets
+python3 tools/publish_modrinth.py         # Dry run, checks the token and the project
+python3 tools/publish_modrinth.py --go    # Uploads the version and checks its hash
 ```
 
-The build script only builds. It packs the files git tracks under `config/`, `kubejs/` and
-`defaultconfigs/` as they are on disk, so commit or restore runtime rewrites first. It still hard-codes
-the build machine's paths. Raise `VERSION` in `tools/build_mrpack.py` and `tools/publish_modrinth.py` before a new
-build. The upload only happens with `--go`. What blocks a public release is on
-[Publish](okf/modpack/publish.md).
+The build script only builds. It takes every override from git HEAD, so commit what should ship
+first, and it rewrites `modrinth.index.json` with the version, the summary and the Forge build, which
+you commit after the build. Raise `VERSION` in `tools/build_mrpack.py` and `tools/publish_modrinth.py`
+before a new build. The upload only happens with `--go`. Test the pack in a fresh instance before the
+upload. What blocks a public release is on [Publish](okf/modpack/publish.md).
 
 ### Tools
 
@@ -308,7 +309,9 @@ More on each script is on [Tools](okf/modpack/tools.md).
 The file `ansible/group_vars/all/vault.yml` is encrypted with ansible-vault (AES256). It holds the
 Modrinth token as `vault_modrinth_pat` and the RCON password as `vault_rcon_password`.
 
-- No tool reads the vault. The scripts take the token or the password as a command line argument.
+- No tool reads the vault. The scripts `tools/rcon.py` and `tools/resolve_all.py` take the password
+  or the token as a command line argument, and `tools/publish_modrinth.py` reads the token from
+  `MODRINTH_TOKEN`.
 - The vault password is never committed. `ansible/ansible.cfg` expects it in
   `ansible/.vault_pass.txt`, which git ignores. Until that file exists, `--ask-vault-pass` prompts for it.
 - The live `server.properties` and `unit.conf` carry the RCON password, and git ignores both. Commit only

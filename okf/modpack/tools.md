@@ -19,16 +19,18 @@ region scans that checked the Halloween world on the Mac mini the same evening.
 | 2 | Update, `update_mods.py` | 151 | Lists or applies newer Modrinth builds of the index entries | Public Modrinth API | The index, `mods/` and `client-only-mods/` |
 | 2 (legacy) | Resolve, `resolve_all.py` | 108 | Resolves a fixed slug list to the newest releases | Modrinth token, the old scratch folder | Jars in `mods/` and a scratch file whose folder no longer exists |
 | 3 | Patch, `patch_mods.py` | 218 | Re-applies the boot fixes inside mod jars | Python 3 | Jars in `mods/` |
-| 4 | Build, `build_mrpack.py` | 88 | Rewrites the index and zips the `.mrpack` | The build machine's paths | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
-| 5 | Publish, `publish_modrinth.py` | 106 | Creates the Modrinth project if missing and uploads the version | Modrinth token | Modrinth (only with `--go`) |
+| 4 | Build, `build_mrpack.py` | 84 | Rewrites the index and zips the `.mrpack` from git HEAD | A git checkout | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
+| 5 | Publish, `publish_modrinth.py` | 113 | Creates the Modrinth project if missing, uploads the version and checks its hash | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | After a pregen | Scan, `void_scan.py` | 228 | Lists structure starts and blocks below the islands and in void columns | numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 142 | Separates blocks that hang from an island from blocks that float free | numpy | Nothing |
 | After a pregen | Scan, `structure_pieces.py` | 33 | Prints every piece of one structure with its projection and box | numpy | Nothing |
 
 The Modrinth token and the RCON password live in the ansible vault as `vault_modrinth_pat` and
-`vault_rcon_password`, see [secrets](../server/secrets.md). Both are passed as command line arguments,
-so they end up in the shell history and in the process list while the script runs.
+`vault_rcon_password`, see [secrets](../server/secrets.md). The RCON password is passed as a command
+line argument, so it ends up in the shell history and in the process list while the script runs.
+The script `publish_modrinth.py` reads the token from `MODRINTH_TOKEN` since 7f5ae03 and only falls
+back to an argument.
 
 ## Datapack sync
 
@@ -66,12 +68,12 @@ Points to watch with `--apply`:
   asked for the most stable configuration on 2026-06-27 10:34. The run of 2026-10-31 brought in 12
   betas.
 - Cataclysm must stay at 3.31, because the Cataclysm Spellbooks fork build on the server was ported to
-  exactly that version (see [mod set](mod-set.md#three-jars-outside-the-pack)).
+  exactly that version (see [mod set](mod-set.md#jars-outside-the-index)).
 - Every update can bring back boot errors that the [boot fixes](../content/boot-fixes.md) silenced, and
   the 9 patched index jars lose their patches until `patch_mods.py` runs again. An override of the
   fixes pack can also empty a loot table that a new build repaired.
-- It only touches index entries, so bundled jars, the three jars outside the pack and Nyx's broken
-  download URL stay as they are.
+- It only touches index entries, so the bundled jars and BrassAmber BattleTowers, which is in no pack,
+  stay as they are.
 - It does not restore `mods/` from the index. A jar that is missing from `mods/` is not downloaded unless
   it has an update.
 
@@ -102,37 +104,44 @@ python3 tools/build_mrpack.py
 
 The script [build_mrpack.py](../../tools/build_mrpack.py) does three things:
 
-1. It reads the mod list from the old scratch file if present (line 15), otherwise from the committed
-   index, and writes `modrinth.index.json` back with `versionId` 3.0.6, Forge 47.4.6 and a fixed summary
-   (lines 11, 12 and 31). The summary still says "kitchen-sink" and carries a dash. Since b23a72f the
-   file ends with a newline, as `update_mods.py` writes it, so a build no longer changes its last line.
+1. It reads the mod list from the committed index (`git show HEAD:modrinth.index.json`) and writes
+   `modrinth.index.json` back with its `VERSION`, its `FORGE` build and its summary: `versionId` 3.0.6,
+   Forge 47.4.18 and the tagline of skytekx.com. The file ends with a newline, as `update_mods.py`
+   writes it.
 2. It moves every jar whose index entry has server env `unsupported` from `mods/` to
-   `client-only-mods/` (lines 38 to 48).
-3. It zips `SkyTekx3-<version>.mrpack` with the index and these overrides: the files git tracks in
-   `config/`, `kubejs/` and `defaultconfigs/`, the two Skylands datapack sources under
-   `overrides/world/datapacks/`, and every jar in `local-mods/` under `overrides/mods/` (lines 52 to 89).
+   `client-only-mods/`.
+3. It zips `SkyTekx3-<version>.mrpack` with the index and these overrides, all taken from git HEAD with
+   `git archive`: `config/` without `config/chunky/tasks/`, `kubejs/`, `defaultconfigs/`, the two
+   Skylands datapack sources and `world/datapacks/skytekx3_fixes/` under `overrides/world/datapacks/`,
+   and the jars of `local-mods/` under `overrides/mods/`.
 
 Up to 3.0.5 it packed the working tree, not git. The 3.0.5 file therefore holds 14 untracked config
 files, among them `config/avaritia-common.toml` of a removed mod, and the Spark profiler's temporary
-native libraries and recordings under `config/spark/tmp/`. Since 41d15c4 it packs only the files git
-tracks under the three folders and skips `config/chunky/tasks/`. It does not ship
-`world/datapacks/skytekx3_fixes/`, the jar patches or the three jars outside the pack. To raise the
-version, edit `VERSION` in this script and in `publish_modrinth.py`. Pack 3.0.6 was built this way on
-2026-10-31 at 19:09 (65,020,785 bytes, 680 files, no client-only jar moved).
+native libraries and recordings under `config/spark/tmp/`. Commit 41d15c4 limited it to tracked files
+but still read them from disk, so a first 3.0.6 build at 19:09 carried seven configs that server boots
+had rewritten. Since 3a398b1 every override comes from git HEAD, so commit what should ship before a
+build. It does not ship the jar patches or BrassAmber BattleTowers. To raise the version, edit
+`VERSION` in this script and in `publish_modrinth.py`. Pack 3.0.6 was built this way on 2026-10-31 at
+20:19 (67,245,989 bytes, 808 entries, no client-only jar moved).
 
 ## Publish to Modrinth
 
 ```sh
-python3 tools/publish_modrinth.py <token>          # dry run: checks the token and the project
-python3 tools/publish_modrinth.py <token> --go     # creates the project if missing, uploads the version
+export MODRINTH_TOKEN="$MODRINTH_PAT"     # the token from the vault
+python3 tools/publish_modrinth.py         # dry run: checks the token and the project
+python3 tools/publish_modrinth.py --go    # creates the project if missing, uploads the version
 ```
 
-The script [publish_modrinth.py](../../tools/publish_modrinth.py) takes the body from
-`docs/MODPACK_DESCRIPTION.md` (line 16). A new project is created as a draft with the slug `skytekx3`,
-the categories adventure, magic and technology and the license All Rights Reserved (lines 63 to 76).
-The version goes up as a featured beta with status listed (lines 86 to 98). Since 222ee72 the script
-names 3.0.6 and its changelog describes that release. It had kept the changelog of 3.0.4 through 3.0.5.
-The state of the project and its blockers are on [publish](publish.md).
+The script [publish_modrinth.py](../../tools/publish_modrinth.py) reads the token from
+`MODRINTH_TOKEN`. A token as the first argument still works, but other local users can read it in the
+process list. It takes the body from `docs/MODPACK_DESCRIPTION.md`. A new project is created as a
+draft with the slug `skytekx3`, the categories adventure, magic and technology and the license All
+Rights Reserved (lines 66 to 87). The version goes up as a featured beta with status listed, and the
+script then compares the SHA-512 of the uploaded file with the local build (lines 89 to 113). Since
+222ee72 the script names 3.0.6 and its changelog describes that release. It had kept the changelog of
+3.0.4 through 3.0.5. The script sets the description and the body only when it creates a project, so
+the existing project keeps its texts of 2026-06-27. The state of the project and its blockers are on
+[publish](publish.md).
 
 ## RCON
 
@@ -180,9 +189,10 @@ small islands that the terrain places low on purpose.
 ## Mac mini
 
 The scripts that locate the repo from their own path work on any host: the sync script,
-`update_mods.py`, `patch_mods.py` and `rcon.py`. The scripts `resolve_all.py`, `build_mrpack.py` and
-`publish_modrinth.py` hard-code `/home/snekmin/git/skytekx3-1201-server`, so they only run on the build
-machine until the path is made relative. The Mac mini does not need them to run the server. The server
+`update_mods.py`, `patch_mods.py`, `rcon.py`, and since 2026-10-31 also `build_mrpack.py` and
+`publish_modrinth.py`. Only `resolve_all.py` still hard-codes `/home/snekmin/git/skytekx3-1201-server`.
+The builder reads git, and the Mac mini's copy has no `.git` folder, so packs are built on the build
+machine. The Mac mini does not need them to run the server. The server
 files reach it through `macos/sync-to-mac.sh`, see [macOS host](../server/macos.md).
 
 ## History

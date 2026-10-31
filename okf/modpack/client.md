@@ -8,9 +8,10 @@ timestamp: 2026-10-31
 
 # Client
 
-The only SkyTekx 3 client that exists is the owner's Prism Launcher instance on this MacBook (Asahi
-Linux, aarch64, 16K pages). On 2026-06-27 19:58 the owner asked for the client to be added to Prism so
-they could join the server (`~/.claude/history.jsonl`, session 5bd3e1de).
+The owner plays SkyTekx 3 in a Prism Launcher instance on this MacBook (Asahi Linux, aarch64, 16K
+pages). On 2026-06-27 19:58 the owner asked for the client to be added to Prism so they could join the
+server (`~/.claude/history.jsonl`, session 5bd3e1de). Since 2026-10-31 a second instance holds a clean
+install of pack 3.0.6 for tests, see [test instance](#test-instance).
 
 | Setting | Value | Evidence |
 |---|---|---|
@@ -18,7 +19,7 @@ they could join the server (`~/.claude/history.jsonl`, session 5bd3e1de).
 | Minecraft, Forge, LWJGL | 1.20.1, 47.4.18, 3.3.1 | File `mmc-pack.json` |
 | Java | Eclipse Temurin 17.0.19 for aarch64 at `~/jdk17/jdk-17.0.19+10/bin/java` | File `instance.cfg` and the JDK's `release` file |
 | JVM arguments | Flag `-Dorg.lwjgl.system.allocator=system` | File `instance.cfg` |
-| Memory | 4096 MB minimum, 8192 MB maximum | File `instance.cfg` |
+| Memory | 4096 MB minimum, 8192 MB maximum. In the sessions of June and July AllTheLeaks reported 90% heap use within a minute of each join, and the game then ran normally | File `instance.cfg`, game logs |
 | Managed pack | No. The instance is not linked to the `.mrpack` and is kept up to date by hand | Key `ManagedPack=false` in `instance.cfg` |
 | Server list | One entry, `127.0.0.1` | File `servers.dat` |
 
@@ -38,11 +39,14 @@ memory note).
 
 ## Mods
 
-The instance's `mods/` has 259 entries (2026-10-31). Next to the pack it holds:
+The instance's `mods/` has 259 entries (2026-10-31). It still has the builds from before the mod update
+of 2026-10-31: 54 of the 204 index entries with a client side and three bundled jars (Connectivity,
+Cupboard and Enchanting Plus) differ by file name, among them JEI 15.20.0.132 where the pack has
+15.74.0.233. Next to the pack it holds:
 
-- The three jars that the server runs outside the pack: AllTheLeaks, BrassAmber BattleTowers and the
-  Cataclysm Spellbooks fork build, with the same SHA-1 as on the server (see
-  [mod set](mod-set.md#three-jars-outside-the-pack)).
+- AllTheLeaks, BrassAmber BattleTowers and the Cataclysm Spellbooks fork build, with the same SHA-1 as
+  on the server. Up to 3.0.5 no pack had them. Since 3.0.6 the pack bundles the first and the last, and
+  BattleTowers is still in no pack (see [mod set](mod-set.md#jars-outside-the-index)).
 - FancyMenu 3.9.6, Konkrete 1.8.0 and Melody 1.0.3 for the main menu (see below).
 - Nostalgic Tweaks 2.0.0-beta.922 for the old swing (see [combat](../content/combat.md#swing-animation)).
 - Simple Voice Chat 2.6.20.
@@ -107,10 +111,23 @@ resources and Moonlight's dynamic assets. The `.mrpack` has no resource packs.
 |---|---|---|---|
 | 2026-06-27 21:05 | File `crash-2026-06-27_21.05.26-fml.txt` | FancyMenu needs Melody | Melody added |
 | 2026-06-27 21:24 | File `crash-2026-06-27_21.24.45-client.txt` | Asgard Shield Reloaded: "Registry Object not present: asr:diamond_giant_sword" | Not recorded, no repeat |
-| 2026-06-29 05:09, 05:20 and 06:16 | Three client reports | Upstream Cataclysm Spellbooks against Cataclysm 3.31 (missing renderer class and method) | The fork build, see [mod set](mod-set.md#three-jars-outside-the-pack) |
+| 2026-06-29 05:09, 05:20 and 06:16 | Three client reports | Upstream Cataclysm Spellbooks against Cataclysm 3.31 (missing renderer class and method) | The fork build, see [mod set](mod-set.md#jars-outside-the-index) |
 | 2026-06-29 15:22 | File `crash-2026-06-29_15.22.56-fml.txt` | FancyMenu refuses WATERMeDIA 2.1.36 | WATERMeDIA disabled |
 
 There is no client crash report after 2026-06-29.
+
+## Test instance
+
+On 2026-10-31 the uploaded pack 3.0.6 went into a second Prism instance, `SkyTekx3-test` with the name
+"SkyTekx3 3.0.6 test", to see what a player gets. It holds the 204 index files with a client side, the 35 bundled
+jars and the other overrides, 239 jars in all, and for the second join BrassAmber BattleTowers, added by
+hand.
+Its `mmc-pack.json` is a copy of the owner's instance, and it has the same Java, JVM flag and 8 GB
+heap. The pack's datapacks under `world/` only matter on a server and were left out. The instance is
+not linked to the Modrinth project. The results are on [publish](publish.md#test-of-2026-10-31).
+
+The first launch stopped at Prism's Microsoft sign-in, which had expired (error AADSTS70000). The owner
+signed in again with a device code that evening.
 
 ## Other settings
 

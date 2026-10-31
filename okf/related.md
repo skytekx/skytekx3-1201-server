@@ -22,7 +22,7 @@ The history behind them is on [History](history.md).
 | Repo skytekx2-1122-server | The SkyTekx 2 server on 1.12.2 | GitHub `skytekx/skytekx2-1122-server`, local `~/git/skytekx2-1122-server` | Branch main at ee2cf4f (2024-12-25), plus four untracked audit files of 2026-06-26 and 2026-06-27 |
 | Fork skytekx/nyx | The Nyx port to 1.20.1 | GitHub | Port on branch `1.20.1`, no releases |
 | Fork skytekx/Cataclysm_Spellbooks | The Spellbooks port to Cataclysm 3.31 | GitHub | Port on branch `1.20.1`, no releases |
-| Modrinth project skytekx3 | The public pack listing | Web page `modrinth.com/modpack/skytekx3` | Not public. The API answers 404 |
+| Modrinth project skytekx3 | The pack listing | Web page `modrinth.com/modpack/skytekx3` | A draft with versions 3.0.0 to 3.0.4 and 3.0.6. An anonymous API call answers 404 |
 | Prism instance SkyTekx3 | The owner's game client | The build machine | See [Client](modpack/client.md) |
 
 ## This repo on GitHub
@@ -70,8 +70,9 @@ fork has a release or a tag.
 - The fork [skytekx/nyx](https://github.com/skytekx/nyx) of Ellpeck/Nyx was created on 2026-06-29 at
   14:25 after the owner asked at 14:23 to fork and port Nyx. Branch `1.20.1` holds 7e5714f (14:49, the
   client side night atmosphere) and 5ef1fdb (15:50, the full content mod). The default branch is still
-  upstream's code of 2021. The pack index downloads Nyx from a release `v1.20.1-1.0.0` of this fork,
-  which does not exist (HTTP 404), see [Nyx](content/nyx.md). The fork shows the upstream description
+  upstream's code of 2021. Up to d3391bf the pack index downloaded Nyx from a release `v1.20.1-1.0.0`
+  of this fork, which does not exist (HTTP 404). The pack bundles the jar instead, see
+  [Nyx](content/nyx.md). The fork shows the upstream description
   "Commission for Drakallen", and the permission file `modrinth-permissions/nyx-1.20.1-1.0.0.jar.md`
   wrongly reads it as a commission for this pack.
 - The fork [skytekx/Cataclysm_Spellbooks](https://github.com/skytekx/Cataclysm_Spellbooks) of the
@@ -79,7 +80,7 @@ fork has a release or a tag.
   owner ruled at 06:25 to patch Spellbooks instead of Cataclysm. Branch `1.20.1` holds one commit,
   36d1cee (06:54), "Port to stock L_Ender's Cataclysm 3.31". The jar built from it keeps the upstream
   name `cataclysm_spellbooks-1.2.9-1.20.1.jar` and exists only in the server's `mods/` and the owner's
-  client, see [Mod set](modpack/mod-set.md#three-jars-outside-the-pack).
+  client, see [Mod set](modpack/mod-set.md#jars-outside-the-index).
 
 ## The compat mod source
 
@@ -119,7 +120,7 @@ The owner asked for a small website on the newly bought domain skytekx.com on 20
 | The guide step `ln -s arclight-forge-1.20.1-1.0.6-6de9fec.jar arclight.jar` | A clone already holds `arclight.jar` as a tracked symlink to the hardened jar. The step fails with "File exists", and forcing it drops the crash fix | Commit 8b1c231, see [Arclight runtime](server/arclight.md) |
 | The guide itself | It never fills `mods/`, so a server built from it has no mods | Website `index.html:376-430` |
 | Java 21 crashes Arclight with `IInventoryBridge` | Unproven. The only Java 21 boot failed on a missing mod, see [Arclight runtime](server/arclight.md#java-17-only) | Files `boot.log` and `boot6.log` |
-| Mod counts 232 and 245+ | The badge and the credits page say 232, the text says 245+. The pack of 3.0.5 has 216 index entries and 33 bundled jars | Website `index.html:457-483`, `credits-1201.html` |
+| Mod counts 232 and 245+ | The badge and the credits page say 232, the text says 245+. The pack of 3.0.6 has 216 index entries and 35 bundled jars | Website `index.html:457-483`, `credits-1201.html` |
 | "The rest of the ts3.party community", "the ts3.party crew" | The community is ts4.party since the owner's ruling of 2026-06-29 10:00 | Website i18n keys `server.lead` and `credits.lead` |
 | Link previews "Hexxit × Tekkit × SkyFactory, reborn on Minecraft 1.20.1" | On 2026-06-30 04:54 the owner shortened the subtitle to "Hexxit × Tekkit × SkyFactory". The `og:description` and `twitter:description` tags kept the long form | Website `index.html` meta tags |
 
@@ -129,8 +130,8 @@ The owner asked for a small website on the newly bought domain skytekx.com on 20
   The script `tools/publish_modrinth.py` created it as a draft and uploads versions as betas.
 - On 2026-10-31 the API returned 404 for the slug and the id, a search for "skytekx" found nothing, and
   the web page showed "Project not found". The project is not public.
-- Uploads of 3.0.0, 3.0.1 and 3.0.3 are recorded in memory, 3.0.4 only in the old change log. Whether
-  3.0.5 went up cannot be seen without the token.
+- With the owner's token the API shows the draft with versions 3.0.0 to 3.0.4 (2026-06-27 to
+  2026-06-29) and 3.0.6 (2026-10-31 20:27). Version 3.0.5 never went up.
 - What blocks a public release is on [Publish](modpack/publish.md). Every public pointer to the
   project is dead until then: the website button, the GitHub repo description and, until 2026-10-31, the
   README.

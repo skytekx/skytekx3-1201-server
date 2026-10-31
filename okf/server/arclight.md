@@ -105,15 +105,17 @@ unpacked in the user's home directory. Debian and Ubuntu install the package und
 ## Mods and plugins
 
 Forge loads jars from `mods/` only. The folder `local-mods/` is the tracked store for jars that are not
-on Modrinth or were built here. It is not a mods folder. Its 33 jars reach the server because copies
+on Modrinth or were built here. It is not a mods folder. Its 35 jars reach the server because copies
 sit in `mods/`, and the debug log lists mod candidates under `mods/` only.
 
 Git ignores `mods/`. On the build machine it holds 236 jars since the mod update of 2026-10-31:
 
 - The server side of `modrinth.index.json`.
 - Copies of the `local-mods/` jars.
-- Three jars that exist nowhere else in the repo: `alltheleaks-1.1.1+1.20.1-forge.jar`,
-  `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` and `cataclysm_spellbooks-1.2.9-1.20.1.jar`.
+- One jar that exists nowhere else in the repo, `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` (BrassAmber
+  BattleTowers). Up to 2026-10-31 `alltheleaks-1.1.1+1.20.1-forge.jar` and
+  `cataclysm_spellbooks-1.2.9-1.20.1.jar` were in that position too. Since 782126f they are in
+  `local-mods/`.
 
 Ten of these jars are patched in place by `tools/patch_mods.py`, so they differ from the published
 files. Copy this folder as it is to a new host. Details are on [Mod set](../modpack/mod-set.md) and

@@ -54,8 +54,11 @@ branch `master` still equals upstream from 2021 (995d3b4). In this repo the jar 
 a265655.
 
 Copies of the same jar sit in the server's `mods/`, in the owner's Prism instance (see
-[client](../modpack/client.md)) and twice in the `.mrpack`: once as an index entry and once under
-`overrides/mods/`, because `tools/build_mrpack.py` bundles every jar in `local-mods/`.
+[client](../modpack/client.md)) and in the `.mrpack` under `overrides/mods/`, because
+`tools/build_mrpack.py` bundles every jar in `local-mods/`. Up to d3391bf the index listed it as well,
+with a download from the GitHub release `v1.20.1-1.0.0` of skytekx/nyx. That release does not exist
+(HTTP 404 and no releases at all, checked 2026-10-31), so a launcher aborted the whole install on this
+file. Commit d3391bf dropped the entry.
 
 ## Configuration
 
@@ -81,11 +84,6 @@ Skylands, and about every second full moon becomes a blood moon.
 
 ## Open points
 
-- The download URL in `modrinth.index.json` points at the GitHub release `v1.20.1-1.0.0` of
-  skytekx/nyx. That release does not exist (HTTP 404 and no releases at all, checked 2026-10-31), so a
-  launcher that installs the `.mrpack` aborts on this file. Either publish the release with this jar
-  (SHA-1 above) or drop the index entry, since the jar also ships under `overrides/mods/`. See
-  [publish](../modpack/publish.md).
 - Whether lunar events should also run in the Skylands was never ruled. Commit 44fdf98 turned
   them on there on 2026-10-31, together with a blood moon chance of 0.5. Whether both should
   stay beyond the Halloween map is an owner decision.

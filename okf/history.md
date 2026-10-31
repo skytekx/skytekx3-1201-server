@@ -18,7 +18,7 @@ session 5bd3e1de).
 |---|---|---|---|---|---|
 | SkyTekx | 1.7.10 | KCauldron, shipped through Technic | 2019 | 120 by the website count | Repo `skytekx/skytekx-1710-server` |
 | SkyTekx 2 | 1.12.2 | Forge 14.23.5.2860 on Mohist 1.12.2-320 | 2023 to 2024 | 209 jars by the audit, 224 by the website badge | Repo `skytekx/skytekx2-1122-server` |
-| SkyTekx 3 | 1.20.1 | Forge 47.4.18 on Arclight 1.20.1 1.0.6 | Since 2026 | 217 index entries and 33 bundled jars | Repo `skytekx/skytekx3-1201-server` |
+| SkyTekx 3 | 1.20.1 | Forge 47.4.18 on Arclight 1.20.1 1.0.6 | Since 2026 | 216 index entries and 35 bundled jars | Repo `skytekx/skytekx3-1201-server` |
 
 The repo names carry the Minecraft version as a code: 1710, 1122 and 1201. The GitHub organisation
 `skytekx` holds all three, see [Related repos and services](related.md).

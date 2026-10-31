@@ -54,10 +54,15 @@ evidence and the page with the details. The rulings behind the first section are
 - AsgardShieldReloaded 0.2 crashed the server twice when a creeper exploded next to a player
   (2026-06-27 20:43 and 21:16). Remove it, patch it or accept the risk. See
   [Combat](content/combat.md#known-crash-asgard-shield-reloaded).
-- Three jars run on the server but are in no pack: AllTheLeaks, BrassAmber BattleTowers and the
-  Cataclysm Spellbooks fork build. Ship, replace or drop them. Dropping BattleTowers or Spellbooks from
-  an existing world removes their blocks and items. See
-  [Mod set](modpack/mod-set.md#three-jars-outside-the-pack).
+- BrassAmber BattleTowers runs on the server but is in no pack, and in the install test of 2026-10-31
+  a client without it could not join. It is All Rights Reserved and only on CurseForge. Ask its author
+  for a grant, have players add it by hand, or drop it, which removes its blocks and items from an
+  existing world. AllTheLeaks and the Cataclysm Spellbooks build are bundled since 782126f. See
+  [Mod set](modpack/mod-set.md#jars-outside-the-index).
+- Pack 3.0.6 ships JEI 15.74.0.233 from the update of 0a20b8c. EMI 1.1.24 cannot bridge it, drops 7,243
+  Chipped recipes, and in the install test the client ran out of its 8 GB heap after the join and
+  froze. JEI 15.20.0.132 showed neither. Roll JEI back in the index and on the server, or wait for an
+  EMI build that matches, then test again. See [Publish](modpack/publish.md#test-of-2026-10-31).
 - Six bundled jars are All Rights Reserved without a grant: Aether Genesis, Connectivity, Cupboard,
   Deadly World, Fireflies and Hexxit Additions. Ask for permission, replace or remove them before a
   public release. See [Publish](modpack/publish.md#what-blocks-a-release).
@@ -93,9 +98,6 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Defects to fix
 
-- The Nyx entry in `modrinth.index.json` downloads from a GitHub release that does not exist (HTTP 404),
-  so a launcher aborts the whole install. Publish release `v1.20.1-1.0.0` on `skytekx/nyx` or drop the
-  entry, since the jar also ships under `overrides/mods/`. See [Nyx](content/nyx.md#open-points).
 - The tracked world copies of the Skylands datapacks on the build machine are behind their sources
   since the commits of 2026-10-31 (1c6f8d4, 1cc9702, 50824a3 and bcb113c). They belong to the old world,
   which stays as it was. The Halloween world on the Mac mini has current copies. Sync and commit them
@@ -114,12 +116,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The systemd unit sets `KillMode=none` and stops through an asynchronous `mcrcon` call, so systemd
   neither waits for the save nor stops a JVM whose RCON stop failed. A synchronous stop is documented as
   an untested candidate. See [Deploy on Debian](server/deploy.md#stopping-and-restarting).
-- The pack builder `tools/build_mrpack.py` hard-codes paths of the build machine and of a deleted
-  session, and writes Forge 47.4.6 into the index while the server runs 47.4.18. Since 41d15c4 it
-  packs only tracked files, but it reads them from disk. Seven of the nine drifted configs below went
-  into the 3.0.6 build as they are on disk (the two Chunky task records are skipped). See
-  [Publish](modpack/publish.md#junk-in-the-build) and
-  [Tools](modpack/tools.md#build-the-mrpack).
 - A vanilla 1.20.1 race drops a queued chunk write when the same chunk is read back during it
   (`ConcurrentModificationException` in `IOWorker`, once per Skylands pregen on the Mac mini). Nothing
   was lost so far. A fix would copy the queued tag in `IOWorker.loadAsync`, in the hardened Arclight
@@ -185,14 +181,12 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Docs and housekeeping
 
-- Stale texts outside the OKF. `docs/MODPACK_DESCRIPTION.md` lists Better Combat and Radium, says Twilight
-  Forest is not bundled, credits a handle and says "kitchen-sink". The changelog in
-  `tools/publish_modrinth.py:90` is the one of 3.0.4, and the summaries in `tools/build_mrpack.py:31` and
-  `tools/publish_modrinth.py:67` say "kitchen-sink". See [Publish](modpack/publish.md#what-blocks-a-release).
+- Stale texts outside the OKF. The file `docs/MODPACK_DESCRIPTION.md` and the body on Modrinth list
+  Better Combat and Radium, say Twilight Forest is not bundled, credit a handle and say
+  "kitchen-sink", and the project description on Modrinth says it too. The changelog of 3.0.6 and the
+  summaries in the scripts are current since 7f5ae03 and 5aeb24d. See [Publish](modpack/publish.md#what-blocks-a-release).
 - Two notes still say Nyx is gone, `kubejs/server_scripts/recipe_fixes.js:28` and the Nyx rows of
   `docs/RECIPE_PORT.md`. See [Nyx](content/nyx.md#open-points).
-- The folder `modrinth-permissions/` still has files for Ruins and skytekx-worldgen, none for
-  skytekx-compat, and its README counts 34 bundled jars where the pack has 33.
 - The GitHub repo description says "kitchen-sink" and points at a Modrinth project that is not public.
   See [Related repos and services](related.md#this-repo-on-github).
 - The website still names the ts3.party community in two lead texts, counts different mod totals in

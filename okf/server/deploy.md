@@ -46,7 +46,7 @@ not 21 is on [Arclight runtime](arclight.md#java-17-only).
 A clone alone does not run the server. Copy these from the reference install on the build machine.
 
 - The mod folder `mods/`. It holds the 236 jars the server really runs, including ten jars patched in
-  place and three jars that exist nowhere else in the repo (see
+  place and BrassAmber BattleTowers, which exists nowhere else in the repo (see
   [Arclight runtime](arclight.md#mods-and-plugins)). Copy it as it is.
 - The plugin jar `plugins/EssentialsX-2.22.0.jar` and the folder `plugins/Essentials/`. Its user data
   (`userdata/`, `usermap.bin`, `uuids.bin`) only belongs on the new host if the world moves along. See
@@ -69,11 +69,11 @@ the index means four steps.
    index.
 2. Copy the `local-mods/` jars into `mods/`.
 3. Run `python3 tools/patch_mods.py`.
-4. Decide what to do about the three jars that are on the build machine but in no pack, see
-   [Mod set](../modpack/mod-set.md).
+4. Add BrassAmber BattleTowers, which is on the build machine but in no pack, see
+   [Mod set](../modpack/mod-set.md#jars-outside-the-index).
 
-The Nyx entry of the index downloads from a GitHub release that does not exist (HTTP 404 on
-2026-10-31). The same jar sits in `local-mods/`. The tool landscape is on [Tools](../modpack/tools.md).
+Every index entry downloads from the Modrinth CDN since d3391bf. The tool landscape is on
+[Tools](../modpack/tools.md).
 
 ## RCON and mcrcon
 

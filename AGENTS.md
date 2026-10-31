@@ -27,8 +27,8 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   folder `plugins/` is not ignored, and it holds player data in `plugins/Essentials/userdata/`, so read
   `git status` before every commit. Real secrets live in the ansible vault.
 - Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, nine of them patched in
-  place, the bundled jars from `local-mods/` (one of them patched too) and three jars that are in no
-  pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change into `mods/` by
+  place, the bundled jars from `local-mods/` (one of them patched too) and BrassAmber BattleTowers,
+  which is in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change into `mods/` by
   hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
   [Mod set](okf/modpack/mod-set.md).
 - Unify materials through `config/almostunified/` and tags, not by editing recipes mod by mod.
@@ -142,8 +142,9 @@ These rules hold for the README, this file and the OKF wiki.
   the loader. The jar declares `javafml` and loads on Forge.
 - The update script takes betas by default. Pass `--channels release` for release builds only, and keep
   Cataclysm at 3.31, the version the Cataclysm Spellbooks build on the server was ported to.
-- The pack build packs only the files git tracks under `config/`, `kubejs/` and `defaultconfigs/`, but
-  it reads them from disk. Commit or restore runtime rewrites of tracked configs before a build.
+- The pack build takes every override from git HEAD, so commit what should ship before a build.
+  Runtime rewrites that are not committed stay out of the pack. Test a new pack in a fresh instance and
+  stay in the world until EMI has reloaded before an upload.
 - Client-only mods in the server's `mods/` stop the boot. They belong in `client-only-mods/`.
 - After a wipe, always pregenerate, or the first players pay the worldgen cost.
 - Retired designs stay retired: the `skytekx:surface_spread` structure placement of the old

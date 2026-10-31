@@ -169,6 +169,7 @@ untouched in `world/` on the build machine, with the 3.0.5 datapacks. The Mac mi
 | Icon | The file `server-icon-halloween.png`, copied over `server-icon.png` on the Mac |
 | Lunar events | Blood moons on about every second full moon (`bloodMoonChance` 0.5), and Nyx events in the Skylands too |
 | Skylands | Pumpkin patches in 1 of 8 island chunks and small groups of jack o'lanterns in 1 of 32 |
+| Spawn protection | 0 since 2026-10-31 22:49. With the default of 16 and one op on the server, nobody but the op could break or place blocks within 16 blocks of the spawn, where every new player lands (spawn radius 10) |
 
 The spawn spot came from a biome map of the patch on an 8 block grid, to keep the 10 block spawn
 radius inside the biome and off the pond in its northwest corner. In a fresh world the three file

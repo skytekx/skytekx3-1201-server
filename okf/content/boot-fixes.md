@@ -87,7 +87,7 @@ move a pack to the end are on [world reset](../server/world-reset.md).
 
 ## Jar patches
 
-The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (218
+The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (325
 lines). It finds each jar by a glob next to the script, so the repo path does not matter, and it is
 idempotent: a second run prints `noop` for every jar.
 
@@ -103,10 +103,13 @@ idempotent: a second run prints `noop` for every jar.
 | TiCEX (`*[Tt]icex*.jar`) | Drops the `ticex:catalyst_*` part and station slot from `blitz_gun` and the four `singular_gem` armour pieces, and 7 catalyst stats from the reconstruction material | TaCz is not installed and Re:Avaritia did not satisfy the gem tools, so these tools failed to load |
 | CoFH Core (`cofh_core*.jar`) | Moves `MultiPlayerGameModeMixin` from the common list to the client list | A client class does not exist on a dedicated server |
 | Medieval Embroidery (`Medieval_Embroidery*.jar`) | Rewrites 5 entity type tags with optional entries | They name a griffin entity that is never registered |
+| Asgard Shield Reloaded (`AsgardShieldReloaded*.jar`) | In `EventHandler`, turns both reads of `Player.swingingArm` (`f_20912_`) into calls of `getUsedItemHand()` (`m_7655_`), two instructions of three bytes each | Not a boot fix. The field stays null until a player swings after a login or a respawn, so a hit on such a player threw `Invalid hand null` and did no damage. All 37 hits between players on 2026-10-31 from 22:37 on failed this way |
 
-Ten jars are patched. Nine of them come from the index, and exactly these nine no longer match their
-SHA-1 in `modrinth.index.json` (checked 2026-10-31). The tenth, Traverse, is a bundled jar, and the copy
-in `mods/` differs from the one in `local-mods/` because only `mods/` is patched.
+Eleven jars are patched. Ten of them come from the index, and exactly these ten no longer match their
+SHA-1 in `modrinth.index.json` (checked 2026-10-31, Asgard Shield Reloaded since 22:47). The eleventh,
+Traverse, is a bundled jar, and the copy in `mods/` differs from the one in `local-mods/` because only
+`mods/` is patched. Players get the unpatched jars. That is enough for Asgard Shield Reloaded too,
+because both of its patched handlers return early on the client.
 
 Run it after anything that downloads jars into `mods/`:
 

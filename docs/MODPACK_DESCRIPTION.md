@@ -1,22 +1,40 @@
-# SkyTekx3
+SkyTekx 3 is the third generation of SkyTekx. It mixes the tech of Tekkit, the adventure of Hexxit and the sky islands of SkyFactory on Minecraft 1.20.1, and it brings its own Skylands, a dimension of floating islands.
 
-**SkyTekx3** is the gen-3 rebuild of the **SkyTekx** modpack on **Minecraft 1.20.1 (Forge)** — a *Hexxit + Tekkit + SkyFactory*-style kitchen-sink blending **tech, magic, and adventure** into one cohesive world.
+SkyTekx began in 2019 on Minecraft 1.7.10, and SkyTekx 2 followed on 1.12.2. This generation keeps as many mods of those packs as it can, or their successors, and adds newer ones.
 
-Originally a 1.7.10 Technic pack, then a 1.12.2 hybrid server, SkyTekx now lands on modern Forge with its identity intact: **Tinkers' Construct**, **Botania**, the **Thermal series**, **Draconic Evolution**, **Applied Energistics 2**, **Industrial Foregoing**, **Mekanism**, **Create**, the **Aether**, **Hexxit Gear**, and a hand-curated adventure + RPG layer.
+## Tech, magic and adventure
 
-## What's inside
-- **Tech:** Create (+ addons), Mekanism, Thermal Expansion/Foundation/Dynamics, Applied Energistics 2, Industrial Foregoing, Draconic Evolution, Railcraft Reborn.
-- **Tinkering:** Tinkers' Construct + Tool Leveling, Spartan Weaponry, Epic Knights, Better Combat.
-- **Magic:** Botania, Ars Nouveau, Iron's Spells 'n Spellbooks, Forbidden & Arcanus, Reliquary, Hexxit Gear.
-- **Adventure & RPG:** Apotheosis (affix loot + enchanting), L2 Hostility (elite mobs), When Dungeons Arise, YUNG's Better Dungeons, Blue Skies, the Aether, Alex's Mobs.
-- **World & life:** Pam's HarvestCraft 2, Farmer's Delight, Naturalist, Mo'Creatures, Aquaculture 2, Supplementaries, Decocraft.
-- **Quality of life:** EMI, Jade, Xaero's Minimap & World Map, Waystones, Sophisticated Backpacks, Carry On, Simple Voice Chat.
+Tech comes from Create, Mekanism, the Thermal series, Applied Energistics 2, Immersive Engineering, Industrial Foregoing, Ender IO, Extreme Reactors, Draconic Evolution, Railcraft Reborn, CC: Tweaked and Ad Astra.
 
-## Consistency first
-SkyTekx3 keeps the original's hallmark of **conflict-free recipes**: **AlmostUnified** collapses every duplicate ore/ingot to one canonical item, **Polymorph** resolves crafting-grid collisions, and **KubeJS** carries over the pack's hand-tuned recipe fixes — so a kitchen-sink this large still feels deliberate.
+Magic comes from Botania, Ars Nouveau, Blood Magic, Ars Magica Legacy, Forbidden & Arcanus and Reliquary.
 
-## Performance
-Ships the modern Forge optimization stack — FerriteCore, ModernFix, Radium, EntityCulling — so the pack stays smooth despite its size.
+Adventure comes from Twilight Forest, the Aether with Deep Aether and Aether Redux, Blue Skies, Cataclysm, Apotheosis, L2 Hostility, Hexxit Gear, SlashBlade Resharped, Spartan Weaponry and Epic Knights.
 
----
-*Built by kleberbaum. A few CurseForge-only mods from the classic pack (e.g. Twilight Forest) are not bundled; you can add them locally if you like.*
+For daily life there are Farmer's Delight, Quark, Supplementaries, Waystones, Sophisticated Backpacks and Simple Voice Chat.
+
+## The Skylands
+
+This dimension of floating islands above an empty void replaces the skyblock plugin of SkyTekx 2. Its fourteen island biomes, from desert and badlands to jungle and snowy taiga, carry the ores and mobs of the Overworld. Villages, swamp huts and structures from When Dungeons Arise stand on the islands, and ships, towers and temples from When Dungeons Arise and Cataclysm float in the sky above them, together with a hot air balloon. Chocobos spawn on the islands.
+
+To get there, build or fly up to Y 319, the build limit of the Overworld. You arrive at the bottom of the Skylands on a small dirt platform and climb or fly up to the islands from there. Fall off an island and you come out at Y 300 above the same spot in the Overworld, still falling.
+
+SkyTekx is a server first and a modpack second. The Skylands come as datapacks for a server world, and When Dungeons Arise and several other structure mods only install on servers, so a singleplayer world has none of them.
+
+## What makes it SkyTekx
+
+- Tinkers' Construct stays, with Tinkers' Reforged and more add-ons. Keeping it is one reason this generation runs on 1.20.1.
+- Chocobos are back with ChocoCraft, a core mod of SkyTekx.
+- Nyx, the moon mod of SkyTekx 2, had no release for 1.20.1, so it was ported for this pack. It brings harvest moons, blood moons, star showers, falling meteors and meteor gear.
+- The oreberries of the old packs return with OreBerries Replanted.
+- Melee works as in 1.7. A server script removes the attack cooldown, so every click hits at full strength with any weapon. The optional Nostalgic Tweaks can bring back the old swing animation in its settings.
+- As in SkyTekx 2, three mods deal with recipe conflicts. AlmostUnified picks one item for each of 47 materials, so every recipe gives the same copper, tin or steel, whichever mod it comes from. Polymorph lets you choose when two recipes fit the same crafting grid, and KubeJS runs the pack's own scripts.
+
+## Requirements
+
+- Minecraft 1.20.1 with Forge 47.4.18.
+- Java 17.
+- At least 12 GB of memory for the game. A test client with 8 GB ran out of memory after it joined, and one with 12 GB did not. That is far more than the usual launcher default, so raise it in the settings of your instance.
+
+## Credits
+
+SkyTekx is a modpack by ts4.party, the TeamSpeak for party, formerly known as ts3.party. Supported by netsnek.com.

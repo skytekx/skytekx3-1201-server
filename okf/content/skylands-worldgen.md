@@ -351,7 +351,7 @@ These owner rulings are tracked in [open items](../open-items.md). Only the firs
 implemented, on 2026-10-31.
 
 - On 2026-06-29 11:40 the owner ruled out Battle Towers with the explosion golem in the Skylands. On
-  11:52 he called Battle Towers essential, and on 12:01 he named BrassAmber BattleTowers as the
+  11:52 they called Battle Towers essential, and on 12:01 they named BrassAmber BattleTowers as the
   successor. The jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` is installed on the server only. Its land and
   core towers use the biome tag `#minecraft:is_overworld`, which includes the 14 island biomes, so
   towers could start on islands, and a scan found one whose foundation reached Y 1. Commit 1c6f8d4
@@ -382,7 +382,7 @@ implemented, on 2026-10-31.
 - 2026-06-30, night: a thinning pass (87f885f) removed six raw Dungeons Arise majors that duplicated
   floaters and the two heaviest Cataclysm builds (acropolis, soul_black_smith) from the Skylands tags.
   The owner ruled at 03:48 that removed structures must keep generating in their native dimensions,
-  which they do. At 03:57 he asked for common friendly structures, so commit 6c5b986 (04:18) made the
+  which they do. At 03:57 they asked for common friendly structures, so commit 6c5b986 (04:18) made the
   sets denser: floaters from spacing 44 to 32, island ground from 18 to 14 and villages from 34 to 24.
 - 2026-06-30 04:18: a keep_kayra was found at Y 0, so the Dungeons Arise major and minor sets also moved
   to `surface_spread` (29bc494). The rule of that time said that every set reaching a Skylands biome

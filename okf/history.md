@@ -10,7 +10,7 @@ timestamp: 2026-10-31
 
 SkyTekx is a server first and a modpack second. Each generation mixed the tech of Tekkit, the
 adventure of Hexxit and the sky islands of SkyFactory on a hybrid server that runs Forge mods and Bukkit
-plugins side by side. The owner of this repo is the original author. On 2026-06-26 he asked to
+plugins side by side. The owner of this repo is the original author. On 2026-06-26 they asked to
 "create an updated version of this modpack, I am the original author" (`~/.claude/history.jsonl`,
 session 5bd3e1de).
 

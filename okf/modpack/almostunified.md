@@ -13,7 +13,7 @@ picks one item per material and tag, rewrites recipe outputs to that item and dr
 become duplicates. It plays the role that UniDict played in SkyTekx 2.
 
 On 2026-06-27 10:34 the owner asked that recipes never conflict, as in the old SkyTekx, and on
-2026-06-29 13:59 he asked for one copper for everything (`~/.claude/history.jsonl`, session 5bd3e1de).
+2026-06-29 13:59 they asked for one copper for everything (`~/.claude/history.jsonl`, session 5bd3e1de).
 
 ## How the recipe layers fit together
 

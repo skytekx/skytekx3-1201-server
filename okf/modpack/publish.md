@@ -27,7 +27,7 @@ Commit b23a72f raised `versionId` to 3.0.6 after the mod update, and 222ee72 did
 `tools/publish_modrinth.py` with a new changelog. Pack 3.0.6 waits for the owner's go before any upload.
 
 The owner asked to publish on 2026-06-27 20:46 and again on 2026-06-29 17:04, and to make the project
-public on 2026-06-29 10:11. On 2026-06-30 18:16 he noted that it was still not public because of the
+public on 2026-06-29 10:11. On 2026-06-30 18:16 they noted that it was still not public because of the
 permissions page on Modrinth, and at 18:20 asked for a folder with the needed files
 (`~/.claude/history.jsonl`, session 5bd3e1de). That folder is
 [modrinth-permissions/](../../modrinth-permissions) (commit 7995a0a).

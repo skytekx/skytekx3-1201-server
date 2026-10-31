@@ -8,7 +8,7 @@ timestamp: 2026-10-31
 
 # Combat
 
-On 2026-06-29 12:10 the owner said he dislikes the sword swing animations of this pack and of newer
+On 2026-06-29 12:10 the owner said they dislike the sword swing animations of this pack and of newer
 Minecraft and wants combat to feel like 1.7 (`~/.claude/history.jsonl`, session 5bd3e1de). SkyTekx 1
 ran on 1.7.10, where every click hit at full strength. The pack gets close to that with one server
 script and a few mod choices.

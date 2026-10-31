@@ -12,7 +12,7 @@ Players move between the overworld and the [Skylands](skylands-worldgen.md) vert
 the Aether mod. There is no portal and no command. On 2026-06-30 04:24 the owner made this the primary
 way to switch dimensions: flying or pillaring high enough in the overworld must land the player on a
 dirt block at Y 0 in the Skylands, and falling out of the Skylands must lead back to the overworld
-(`~/.claude/history.jsonl`, session 5bd3e1de). On 2026-10-31 16:58 he restated it: stacking dirt or any
+(`~/.claude/history.jsonl`, session 5bd3e1de). On 2026-10-31 16:58 they restated it: stacking dirt or any
 other block high enough must take the player to the flying islands (session c0e872d8). The page keeps
 its old file name `aether-fall.md` so that existing links work.
 

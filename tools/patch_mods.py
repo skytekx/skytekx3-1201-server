@@ -13,7 +13,7 @@ Fixes third-party boot WARN/ERROR spam that can only be addressed inside the mod
 The Bird's Nests crash itself is fixed durably by a mixin in the skytekx worldgen mod (local-mods/),
 not here. Bukkit/EssentialsX hybrid warning is intentionally left as-is.
 """
-import zipfile, json, glob, io, os
+import zipfile, json, glob, io, os, struct
 
 MODS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "mods"))
 
@@ -177,6 +177,105 @@ def patch_nested_min_version(outer_jar, inner_jar_substr, inner_mixins):
     return _rewrite(outer_jar, mutate)
 
 
+_OPLEN = {op: 2 for op in (0x10, 0x12, *range(0x15, 0x1a), *range(0x36, 0x3b), 0xa9, 0xbc)}
+_OPLEN.update({op: 3 for op in (0x11, 0x13, 0x14, 0x84, *range(0x99, 0xa9), *range(0xb2, 0xb9),
+                                 0xbb, 0xbd, 0xc0, 0xc1, 0xc6, 0xc7)})
+_OPLEN.update({0xc5: 4, 0xb9: 5, 0xba: 5, 0xc8: 5, 0xc9: 5})
+
+
+def _insn_len(code, pc):
+    """Length of the JVM instruction at pc, including the switch padding and the wide forms."""
+    op = code[pc]
+    if op in (0xaa, 0xab):
+        p = pc + 1 + (-(pc + 1) % 4)
+        if op == 0xaa:
+            low, high = struct.unpack(">ii", code[p + 4:p + 12])
+            return p + 12 + 4 * (high - low + 1) - pc
+        return p + 8 + 8 * struct.unpack(">i", code[p + 4:p + 8])[0] - pc
+    if op == 0xc4:
+        return 6 if code[pc + 1] == 0x84 else 4
+    return _OPLEN.get(op, 1)
+
+
+def _constant_pool(data):
+    """Parse the constant pool of a class file. Returns the entries and the offset after them."""
+    count = struct.unpack(">H", data[8:10])[0]
+    cp, p, i = [None] * count, 10, 1
+    while i < count:
+        tag = data[p]
+        if tag == 1:
+            n = struct.unpack(">H", data[p + 1:p + 3])[0]
+            cp[i], p = (1, data[p + 3:p + 3 + n].decode("utf-8", "replace")), p + 3 + n
+        elif tag in (3, 4):
+            cp[i], p = (tag,), p + 5
+        elif tag in (5, 6):
+            cp[i], p, i = (tag,), p + 9, i + 1
+        elif tag in (7, 8, 16, 19, 20):
+            cp[i], p = (tag, struct.unpack(">H", data[p + 1:p + 3])[0]), p + 3
+        elif tag in (9, 10, 11, 12, 17, 18):
+            cp[i], p = (tag, *struct.unpack(">HH", data[p + 1:p + 5])), p + 5
+        elif tag == 15:
+            cp[i], p = (tag,), p + 4
+        else:
+            raise ValueError(f"unknown constant pool tag {tag}")
+        i += 1
+    return cp, p
+
+
+def _code_ranges(data, p, cp):
+    """Yield (start, length) of the bytecode of every method, starting after the constant pool."""
+    p += 6
+    p += 2 + 2 * struct.unpack(">H", data[p:p + 2])[0]
+    for members in ("fields", "methods"):
+        n, p = struct.unpack(">H", data[p:p + 2])[0], p + 2
+        for _ in range(n):
+            attrs, p = struct.unpack(">H", data[p + 6:p + 8])[0], p + 8
+            for _ in range(attrs):
+                name, size = struct.unpack(">HI", data[p:p + 6])
+                if members == "methods" and cp[name][1] == "Code":
+                    yield p + 14, struct.unpack(">I", data[p + 10:p + 14])[0]
+                p += 6 + size
+
+
+def swap_field_for_getter(jar, inner, owner, field, getter, desc, expect):
+    """Turn every `getfield owner.field` of one class into `invokevirtual owner.getter desc`.
+
+    Both instructions are three bytes long and leave the same type on the stack, so the class keeps
+    its size, its stack map frames and its max stack. The getter must already be in the constant pool.
+    Patches only when exactly `expect` reads are found, so a changed mod version is left alone."""
+    def mutate(name, data):
+        if name != inner:
+            return None
+        cp, end = _constant_pool(data)
+
+        def ref(i):
+            _, cls, nat = cp[i]
+            return cp[cp[cls][1]][1], cp[cp[nat][1]][1], cp[cp[nat][2]][1]
+        fields = [i for i, e in enumerate(cp) if e and e[0] == 9 and ref(i)[:2] == (owner, field)]
+        methods = [i for i, e in enumerate(cp) if e and e[0] == 10 and ref(i) == (owner, getter, desc)]
+        if len(fields) != 1 or len(methods) != 1:
+            print(f"  skip {inner}: {field} or {getter} not in the constant pool")
+            return None
+        hits = []
+        for start, size in _code_ranges(data, end, cp):
+            pc = 0
+            while pc < size:
+                at = start + pc
+                if data[at] == 0xb4 and struct.unpack(">H", data[at + 1:at + 3])[0] == fields[0]:
+                    hits.append(at)
+                pc += _insn_len(data[start:start + size], pc)
+        if not hits:
+            return None
+        if len(hits) != expect:
+            print(f"  skip {inner}: {len(hits)} reads of {field}, expected {expect}")
+            return None
+        out = bytearray(data)
+        for at in hits:
+            out[at:at + 3] = bytes([0xb6]) + struct.pack(">H", methods[0])
+        return bytes(out)
+    return _rewrite(jar, mutate)
+
+
 def main():
     print("patch_mods: applying jar-level boot fixes")
     add_min_version(find_jar("doomangelring*.jar"), "doomangelring.forge.mixins.json")
@@ -211,6 +310,14 @@ def main():
                 "forge/tags/entity_types/predators.json",
                 "minecraft/tags/entity_types/powder_snow_walkable_mobs.json"):
         make_tag_optional(mej, "data/" + tag)
+
+    # Asgard Shield Reloaded 0.2 reads Player.swingingArm (f_20912_) in its attack handlers. The field
+    # stays null until the player swings after a login or a respawn, so a hit on such a player threw
+    # "Invalid hand null" and was lost (2026-10-31 22:37, all PvP hits failed). The server copy reads
+    # getUsedItemHand() (m_7655_) instead, which is never null and is the hand a blocking shield is in.
+    swap_field_for_getter(find_jar("AsgardShieldReloaded*.jar"), "me/mangregory/asr/util/handlers/EventHandler.class",
+                          "net/minecraft/world/entity/player/Player", "f_20912_", "m_7655_",
+                          "()Lnet/minecraft/world/InteractionHand;", expect=2)
     print("patch_mods: done")
 
 

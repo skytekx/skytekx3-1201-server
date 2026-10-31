@@ -81,10 +81,12 @@ The fill replaces whatever is in that 3x3 area at Y 0, including blocks a player
   23:29:23).
 - The shared pack also booted on throwaway vanilla and BuildTools Spigot 1.20.1 servers on 2026-07-12
   ([log](../log.md), 2026-07-12 entry). The logs of those test servers were not kept.
-- No player has joined since the rework. The last boot (`logs/2026-07-12-1.log.gz`, Done at 23:26:00)
-  and `logs/latest.log` (up to 2026-07-13 15:45) contain no join line. So neither direction has been
-  tested in game with the datapack functions. The memory note of the rework says the same
-  (`project_skytekx3_vanilla_skylands.md:22`).
+- Nobody has tried the travel in game since the rework. On the build machine the last boot
+  (`logs/2026-07-12-1.log.gz`, Done at 23:26:00) and `logs/latest.log` (up to 2026-07-13 15:45) contain
+  no join line. On the Mac mini the only join up to 2026-10-31 21:05 was the install test client from
+  20:41 to 20:52, which froze after the join (see [publish](../modpack/publish.md#test-of-2026-10-31)).
+  So neither direction has been tested in game with the datapack functions. The memory note of the
+  rework says the same (`project_skytekx3_vanilla_skylands.md:22`).
 - The owner confirmed the way down on 2026-06-30 04:24 ("great"), but that was the older Java handler.
 
 To test, join the server, jump off an island and fall below Y 0, then pillar or fly above Y 319 in the

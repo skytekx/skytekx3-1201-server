@@ -68,10 +68,10 @@ file and `update-check: false` in the Essentials config is a candidate that wait
 
 ## Mac mini
 
-Git does not have `plugins/`, so the Mac mini gets it from this checkout through `macos/sync-to-mac.sh`.
-The script leaves the player files in `plugins/Essentials/userdata/` alone unless it runs
-with `--with-world`. Without the folder the server has no `/gm` and no other Essentials command. See
-[macOS host](../server/macos.md).
+Git only tracks `plugins/PluginMetrics/config.yml`, so the Mac mini gets the plugin jar and its folder
+from this checkout through `macos/sync-to-mac.sh`. The script leaves the player files in
+`plugins/Essentials/userdata/` alone unless it runs with `--with-world`. Without the folder the server
+has no `/gm` and no other Essentials command. See [macOS host](../server/macos.md).
 
 ## Open points
 

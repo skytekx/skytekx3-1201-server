@@ -102,8 +102,9 @@ so it shows in the process list while they run.
 The `ExecStop` command returns as soon as the server has accepted `stop`. Saving takes another 5 to 9
 seconds (see [Stop path](logs-and-crashes.md#stop-path)). With `KillMode=none` systemd kills no
 process. It marks the unit as stopped while the JVM is still saving, and it leaves the JVM running if
-the RCON stop failed. Wait until the java process is gone (`pgrep -f arclight.jar`) before you start
-the unit again or touch `world/`. Current systemd versions also warn that `KillMode=none` is deprecated.
+the RCON stop failed. Wait until the java process is gone (`pgrep -f 'java .*arclight[.]jar nogui'`)
+before you start the unit again or touch `world/`. Current systemd versions also warn that
+`KillMode=none` is deprecated.
 
 A synchronous `ExecStop` would close both gaps. It sends `stop` and then waits for the main process to
 exit. This line is a candidate and has not been tested.

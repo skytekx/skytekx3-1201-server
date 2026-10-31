@@ -34,9 +34,9 @@ with 7cea753.
 ## The override datapack
 
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
-source folder, the sync script does not touch it, and `tools/build_mrpack.py` does not ship it. Git
-ignores `world/`, but the pack was force added, so it is tracked: 126 files, 125 data files plus
-`pack.mcmeta` (pack format 15).
+source folder, and the sync script does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
+the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
+is tracked: 126 files, 125 data files plus `pack.mcmeta` (pack format 15).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -147,8 +147,8 @@ writes the two Skylands packs. Run `patch_mods.py` only if jars are downloaded a
 `mods/` with `resolve_all.py`. See [macOS host](../server/macos.md),
 [world reset](../server/world-reset.md) and [deploy](../server/deploy.md).
 
-A server built from the `.mrpack` gets neither the fixes pack nor the jar patches. It boots with the
-old errors until both are added by hand.
+A server built from the `.mrpack` gets the fixes pack since 3.0.6 (2883e32), but none of the jar
+patches. It boots with the errors they silence until the patches are added by hand.
 
 Related: [logs and crashes](../server/logs-and-crashes.md), [mod set](../modpack/mod-set.md),
 [compat mod](compat-mod.md), [world reset](../server/world-reset.md).

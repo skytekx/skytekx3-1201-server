@@ -1,6 +1,6 @@
 # SkyTekx Compat
 
-Bundled file: `skytekx-compat-2.0.0.jar`
+Bundled file: `skytekx-compat-2.1.0.jar`
 Status: OK
 
 ## Paste into the Modrinth attribution form

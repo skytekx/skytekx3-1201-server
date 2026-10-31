@@ -20,7 +20,7 @@ region scans that checked the Halloween world on the Mac mini the same evening. 
 | 2 | Update, `update_mods.py` | 151 | Lists or applies newer Modrinth builds of the index entries | Public Modrinth API | The index, `mods/` and `client-only-mods/` |
 | 2 (legacy) | Resolve, `resolve_all.py` | 108 | Resolves a fixed slug list to the newest releases | Modrinth token, the old scratch folder | Jars in `mods/` and a scratch file whose folder no longer exists |
 | 3 | Patch, `patch_mods.py` | 218 | Re-applies the boot fixes inside mod jars | Python 3 | Jars in `mods/` |
-| 4 | Build, `build_mrpack.py` | 84 | Rewrites the index and zips the `.mrpack` from git HEAD | A git checkout | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
+| 4 | Build, `build_mrpack.py` | 102 | Rewrites the index and zips the `.mrpack` from git HEAD, with the server list of the clients | A git checkout | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
 | 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
@@ -105,10 +105,10 @@ put new jars into `mods/`. The patches are listed on [boot fixes](../content/boo
 python3 tools/build_mrpack.py
 ```
 
-The script [build_mrpack.py](../../tools/build_mrpack.py) does three things:
+The script [build_mrpack.py](../../tools/build_mrpack.py) does four things:
 
 1. It reads the mod list from the committed index (`git show HEAD:modrinth.index.json`) and writes
-   `modrinth.index.json` back with its `VERSION`, its `FORGE` build and its summary: `versionId` 3.0.6,
+   `modrinth.index.json` back with its `VERSION`, its `FORGE` build and its summary: `versionId` 3.0.7,
    Forge 47.4.18 and the tagline of skytekx.com. The file ends with a newline, as `update_mods.py`
    writes it.
 2. It moves every jar whose index entry has server env `unsupported` from `mods/` to
@@ -117,6 +117,11 @@ The script [build_mrpack.py](../../tools/build_mrpack.py) does three things:
    `git archive`: `config/` without `config/chunky/tasks/`, `kubejs/`, `defaultconfigs/`, the two
    Skylands datapack sources and `world/datapacks/skytekx3_fixes/` under `overrides/world/datapacks/`,
    and the jars of `local-mods/` under `overrides/mods/`.
+4. Since d6c7d97 it adds `client-overrides/servers.dat`, the server list of the clients, built from
+   `SERVERS` as uncompressed NBT. It holds one entry, SkyTekx at `hex.skytekx.com`, in 58 bytes, and the
+   NBT reader of `void_scan.py` reads it back as that entry. The client mod Modflared, an index entry
+   since ca131c3, opens the Cloudflare Tunnel behind that address. An instance that is updated to a
+   pack with this file loses its own server entries.
 
 Up to 3.0.5 it packed the working tree, not git. The 3.0.5 file therefore holds 14 untracked config
 files, among them `config/avaritia-common.toml` of a removed mod, and the Spark profiler's temporary
@@ -124,8 +129,9 @@ native libraries and recordings under `config/spark/tmp/`. Commit e641c18 limite
 but still read them from disk, so a first 3.0.6 build at 19:09 carried seven configs that server boots
 had rewritten. Since ce31f6f every override comes from git HEAD, so commit what should ship before a
 build. It does not ship the jar patches or BrassAmber BattleTowers. To raise the version, edit
-`VERSION` in this script and in `publish_modrinth.py`. Pack 3.0.6 was built this way on 2026-10-31 at
-20:19 (67,245,989 bytes, 808 entries, no client-only jar moved).
+`VERSION` in this script and in `publish_modrinth.py`, and to change the server list, edit `SERVERS`.
+Pack 3.0.6 was built this way on 2026-10-31 at 20:19 (67,245,989 bytes, 808 entries, no client-only jar
+moved) and pack 3.0.7 at 21:54:18 (67,246,343 bytes, 809 entries).
 
 ## Publish to Modrinth
 
@@ -142,9 +148,11 @@ process list. It takes the body from `docs/MODPACK_DESCRIPTION.md` and the summa
 draft with the slug `skytekx3`, the categories adventure, magic and technology and the license All
 Rights Reserved (lines 80 to 101). The version goes up as a featured beta with status listed, and the
 script then compares the SHA-512 of the uploaded file with the local build (lines 103 to 127). Since
-5b30934 the script names 3.0.6 and its changelog describes that release. It had kept the changelog of
-3.0.4 through 3.0.5. With `--texts` the script replaces the summary and the body of the existing
-project with the two files and stops. That is how the texts of 2026-06-27 were replaced on 2026-10-31.
+9341d4c the script names 3.0.7 and its changelog describes that release, as 5b30934 did for 3.0.6.
+Before that it had kept the changelog of 3.0.4 through 3.0.5. With `--texts` the script replaces the
+summary and the body of the existing project with the two files and stops. That is how the texts of
+2026-06-27 were replaced on 2026-10-31 at 21:25, and how the section on joining the server reached the
+project at about 21:56.
 The state of the project and its blockers are on [publish](publish.md).
 
 ## RCON
@@ -217,7 +225,8 @@ dc8b470 (2026-07-12) raised the version to 3.0.5, added the index fallback and t
 `resolve_all.py`, then `patch_mods.py`, `build_mrpack.py` and `publish_modrinth.py --go`, with the
 resolver's scratch file as the hand over. On 2026-10-31 `update_mods.py` took over the resolver's job
 and ran once with `--apply` (257d4c1 and 092140d). The same day the region scans were added, and the
-version went to 3.0.6 in both pack scripts (3860591 and 5b30934).
+version went to 3.0.6 in both pack scripts (3860591 and 5b30934). In the evening the builder started to
+write the server list of the clients (d6c7d97), and the version went to 3.0.7 (9341d4c).
 
 Related: [mod set](mod-set.md), [publish](publish.md), [boot fixes](../content/boot-fixes.md),
 [secrets](../server/secrets.md), [deploy](../server/deploy.md).

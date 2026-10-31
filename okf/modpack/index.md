@@ -8,9 +8,10 @@ timestamp: 2026-10-31
 
 # Modpack
 
-SkyTekx 3 is a Forge 1.20.1 pack. Its version 3.0.6 went up to the Modrinth project on 2026-10-31, and
-the project is still a draft (see [publish](publish.md)). Its mods come from the Modrinth index and
-from 35 bundled jars, and the server runs them on Arclight together with one Bukkit plugin (see
+SkyTekx 3 is a Forge 1.20.1 pack. Its versions 3.0.6 and 3.0.7 went up to the Modrinth project on
+2026-10-31, the second with the client mod Modflared for the public address, and the project is still
+a draft (see [publish](publish.md)). Its mods come from the Modrinth index and from 35 bundled jars,
+and the server runs them on Arclight together with one Bukkit plugin (see
 [server](../server/index.md)). What was built for the pack itself, such as the Skylands, is under
 [content](../content/index.md).
 
@@ -21,7 +22,7 @@ from 35 bundled jars, and the server runs them on Arclight together with one Buk
 | [KubeJS](kubejs.md) | The four server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |
 | [Plugins](plugins.md) | The Bukkit layer on Arclight, which is EssentialsX alone, with its permissions and its metrics |
 | [Tools](tools.md) | The scripts in `tools/`, from datapack sync and mod updates through jar patches and the build to the Modrinth upload and RCON |
-| [Client](client.md) | The owner's Prism instance on Asahi Linux, its Java flag, the custom main menu and the client crash history |
+| [Client](client.md) | The owner's Prism instance on Asahi Linux, its Java flag, the custom main menu, the client crash history and how a player joins from outside the LAN |
 | [Publish](publish.md) | The Modrinth project, what blocks a public release, the release steps and the version history |
 
 ## Recipe layers

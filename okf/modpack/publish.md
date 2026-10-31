@@ -9,9 +9,11 @@ timestamp: 2026-10-31
 # Publish
 
 SkyTekx 3 is meant to be installed from Modrinth as the modpack `skytekx3`. On 2026-10-31 the project
-is still a draft, so only its team can see and install it. Pack 3.0.6 is uploaded, installs cleanly and
-reaches the main menu, but in the test of 2026-10-31 it could not play on this server, see
-[test of 2026-10-31](#test-of-2026-10-31).
+is still a draft, so only its team can see it on Modrinth, but the file of 3.0.7 loads from the
+Modrinth CDN for anyone who has its link. Pack 3.0.6 installs cleanly and reaches the main menu, but in
+the test of 2026-10-31 it only played on this server with BrassAmber BattleTowers added by hand and a
+12 GB heap, see [test of 2026-10-31](#test-of-2026-10-31). Pack 3.0.7 followed that evening with the
+client mod Modflared and `hex.skytekx.com` in the server list, see [version history](#version-history).
 
 ## State on 2026-10-31
 
@@ -19,10 +21,12 @@ reaches the main menu, but in the test of 2026-10-31 it could not play on this s
 |---|---|---|
 | Modrinth project | Slug `skytekx3`, id `KqKLuzBj`, status draft, created 2026-06-27 | API with the token, 2026-10-31 |
 | Public visibility | None. An anonymous GET of `api.modrinth.com/v2/project/skytekx3` returns 404 | Checked 2026-10-31 |
-| Versions uploaded | 3.0.0 to 3.0.4 (2026-06-27 to 2026-06-29) and 3.0.6 (version id `Gi0aBofN`, 2026-10-31 20:27). 3.0.5 never went up | API with the token, 2026-10-31 |
-| Current build | File `SkyTekx3-3.0.6.mrpack`, 67,245,989 bytes, 808 entries, built 2026-10-31 at 20:19:59 from 8e11bbc, not in git. Commit 192084f holds the index it wrote. The file on the Modrinth CDN has the same SHA-512 | Repo root, upload of 20:27 |
-| Index in the build | 216 entries, all on `cdn.modrinth.com`, `versionId` 3.0.6, Forge 47.4.18. Identical to `modrinth.index.json` at 192084f | Build of 20:19 |
-| Project texts | Replaced on 2026-10-31 at 21:25 with `docs/MODPACK_SUMMARY.txt` and `docs/MODPACK_DESCRIPTION.md`. The API returns both unchanged | Project PATCH and GET with the token, 2026-10-31 |
+| Versions uploaded | 3.0.0 to 3.0.4 (2026-06-27 to 2026-06-29), 3.0.6 (version id `Gi0aBofN`, 2026-10-31 20:27) and 3.0.7 (version id `LRkF99Pz`, 2026-10-31 21:55, a featured beta). 3.0.5 never went up | API with the token, 2026-10-31 |
+| Current build | File `SkyTekx3-3.0.7.mrpack`, 67,246,343 bytes, 809 entries, built 2026-10-31 at 21:54:18 from 9341d4c, not in git. Commit 15430ce holds the index it wrote. Modrinth reports the same SHA-512 for the uploaded file | Repo root, upload of 21:55 |
+| Index in the build | 217 entries, all on `cdn.modrinth.com`, `versionId` 3.0.7, Forge 47.4.18. Identical to `modrinth.index.json` at 15430ce | Build of 21:54 |
+| Server list in the build | Entry `client-overrides/servers.dat`, 58 bytes, with the one server SkyTekx at `hex.skytekx.com` | Build of 21:54 |
+| Public file | The [CDN link of 3.0.7](https://cdn.modrinth.com/data/KqKLuzBj/versions/LRkF99Pz/SkyTekx3-3.0.7.mrpack) answers with all 67,246,343 bytes, although the project is a draft | Checked 2026-10-31 |
+| Project texts | Replaced on 2026-10-31 at 21:25 with `docs/MODPACK_SUMMARY.txt` and `docs/MODPACK_DESCRIPTION.md`, and again at about 21:56 after c18bab4 added the section "Joining the server" to the body. The API returns both unchanged | Project PATCH and GET with the token, 2026-10-31 |
 
 The owner asked to publish on 2026-06-27 20:46 and again on 2026-06-29 17:04, and to make the project
 public on 2026-06-29 10:11. On 2026-06-30 18:16 they noted that it was still not public because of the
@@ -30,6 +34,8 @@ permissions page on Modrinth, and at 18:20 asked for a folder with the needed fi
 (`~/.claude/history.jsonl`, session 5bd3e1de). That folder is
 [modrinth-permissions/](../../modrinth-permissions) (commit 62ada38). On 2026-10-31 at 20:09 the owner
 linked the project page and asked to update the pack and test it. Version 3.0.6 went up at 20:27.
+At 21:48 they chose a pack 3.0.7 with Modflared as the way in from the internet, and it went up at
+21:55.
 
 ## Test of 2026-10-31
 
@@ -58,23 +64,27 @@ Two more runs of the same instance followed that evening.
 | JEI 15.20.0.132, 8 GB | Forge refused to start. Tinkers' Construct needs JEI 15.59.0.210 or newer, Tinkers' Reforged 15.56.0.204 and Polymorph 15.57.0.207, so the old JEI cannot come back |
 | JEI 15.74.0.233, 12 GB (`MaxMemAlloc` 12288) | Joined at 21:12:07. The JEI import took 3,253 ms and hit the same 7,243 `AbstractMethodError`s, but AllTheLeaks printed no 90% line, there was no full GC and no `OutOfMemoryError`, and the heap settled at about 9.3 GB |
 
-So 3.0.6 needs a 12 GB heap, and EMI still lacks the Chipped recipes.
+So 3.0.6 needs a 12 GB heap, and EMI still lacks the Chipped recipes. No install test of 3.0.7 is
+recorded. It differs from 3.0.6 only by Modflared and the server list and has the same JEI and EMI
+builds.
 
 ## What blocks a release
 
 1. Six bundled jars are All Rights Reserved without a redistribution grant: Aether Genesis,
    Connectivity, Cupboard, Deadly World, Fireflies and Hexxit Additions
-   (`modrinth-permissions/README.md`). All six are still in 3.0.6. Modrinth review rejects them, so they
+   (`modrinth-permissions/README.md`). All six are still in 3.0.7. Modrinth review rejects them, so they
    need written permission, a replacement or removal.
-2. BrassAmber BattleTowers is in no pack, and the server refuses a client without it. It is All Rights
-   Reserved and only on CurseForge. Bundling it needs a grant from its author, otherwise each player
-   adds it by hand, or the server drops it, which goes against the ruling of 2026-06-29 that Battle
-   Towers are essential. See [mod set](mod-set.md#jars-outside-the-index).
-3. With JEI 15.74.0.233 and EMI 1.1.24 a client with an 8 GB heap runs out of memory and freezes after
+2. With JEI 15.74.0.233 and EMI 1.1.24 a client with an 8 GB heap runs out of memory and freezes after
    the first join, and EMI drops the Chipped recipes. A 12 GB heap avoids the freeze. JEI 15.20.0.132
    cannot come back, because three mods need newer builds. The dropped recipes need a Chipped build
    that does not call the new JEI method, or an EMI build that implements it, then an owner decision
    and a new test.
+
+Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
+hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so
+bundling it would need a grant from its author. Since about 21:56 the Modrinth body tells players to
+get it from CurseForge. See [mod set](mod-set.md#jars-outside-the-index).
+
 Fixed on 2026-10-31: the stale project texts (21:25, the new summary and body credit ts4.party,
 name no person or handle and drop "kitchen-sink", Better Combat and Radium), the Nyx entry that downloaded from a GitHub release that does not exist (74faf22,
 the jar is bundled), the two jars the server ran outside the pack (507a8f2, AllTheLeaks and the
@@ -84,17 +94,21 @@ boots had rewritten on disk (ce31f6f, the builder reads git HEAD).
 ## What a player gets
 
 - Every index entry with its client env, from the Modrinth CDN, unpatched. The server runs nine of
-  them patched, which only matters on the server.
+  them patched, which only matters on the server. Since 3.0.7 this includes Modflared, which opens the
+  Cloudflare Tunnel to `hex.skytekx.com`, see [client](client.md#mac-mini).
 - The 35 bundled jars under `overrides/mods/`.
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
-  KubeJS files in 3.0.6 (3.0.5 shipped 550 config files from disk). They include the FancyMenu layout,
-  but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
+  KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
+  FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
 - The two Skylands datapacks and, since 2883e32, the `skytekx3_fixes` datapack under
   `overrides/world/datapacks/`. That path fits a server folder whose world is called `world`. A
   singleplayer save keeps its datapacks in `saves/<world>/datapacks/`, so a singleplayer world gets
   none of them unless the player copies them by hand.
 - Forge 47.4.18, the build the server runs inside Arclight (a36207c, 47.4.6 before).
-- No resource pack, none of the jar patches and no BrassAmber BattleTowers.
+- Since 3.0.7 a server list under `client-overrides/servers.dat` with the one entry SkyTekx at
+  `hex.skytekx.com`. An instance that is updated to 3.0.7 gets this file in place of its own server
+  list, so its own entries are lost. The changelog of 3.0.7 says so.
+- No resource pack, none of the jar patches and no BrassAmber BattleTowers, which players add by hand.
 
 ## Junk in the build
 
@@ -111,26 +125,31 @@ therefore holds:
 Commit e641c18 limited the script to the files git tracks under `config/`, `kubejs/` and
 `defaultconfigs/` and skipped `config/chunky/tasks/`, but it still read them from disk. A first 3.0.6
 build at 19:09 therefore carried seven configs that server boots had rewritten. Since ce31f6f every
-override comes from git HEAD through `git archive`, and the build of 20:19 has none of the files above.
+override comes from git HEAD through `git archive`, and the builds of 20:19 and 21:54 have none of the
+files above.
 
 ## Release steps
 
 On the build machine, after the blockers are fixed:
 
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
-   write the changelog in `publish_modrinth.py`.
+   write the changelog in `publish_modrinth.py`. If the public address changes, change `SERVERS` in
+   `build_mrpack.py` as well.
 2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Then build
    with `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`.
-3. Import the `.mrpack` into a fresh Prism instance and join the server with it. On Asahi Linux add the
-   JVM flag from [client](client.md#java-and-the-asahi-flag). Stay in the world until EMI logs
-   "Reloaded EMI" and the heap settles. The 90% message of AllTheLeaks at the join is normal. A heap
-   that stays full is not.
+3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap, add BrassAmber BattleTowers by
+   hand as players do, and join the server with it. On Asahi Linux add the JVM flag from
+   [client](client.md#java-and-the-asahi-flag) and join by the Mac mini's LAN address, since Modflared
+   cannot open the tunnel on Linux on ARM. Stay in the world until EMI logs "Reloaded EMI" and the heap
+   settles. The 90% message of AllTheLeaks at the join is normal. A heap that stays full is not.
 4. Load the token from the vault (see [secrets](../server/secrets.md)) into `MODRINTH_TOKEN` and run
    the dry run: `python3 tools/publish_modrinth.py`.
 5. Upload: `python3 tools/publish_modrinth.py --go`. The version goes up as a featured beta, and the
    script compares the SHA-512 of the uploaded file with the local build.
-6. In the Modrinth web UI, update the description and the body and submit the project for review. Only
-   then does it become public (memory `project_skytekx2_modpack.md:31`). The project has an icon.
+6. If `docs/MODPACK_SUMMARY.txt` or `docs/MODPACK_DESCRIPTION.md` changed, replace the project texts
+   with `python3 tools/publish_modrinth.py --texts`. To make the project public, submit it for review in
+   the Modrinth web UI. Only then does it become public (memory `project_skytekx2_modpack.md:31`). The
+   project has an icon.
 
 The builder needs the git checkout, and the Mac mini's copy has no `.git` folder, so packs are built on
 the build machine, see [tools](tools.md#mac-mini).
@@ -146,8 +165,9 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.0.4 | 2026-06-29 17:29 | 50,921,945 B | 213 | 32 | 97 more mods, among them Nyx, Aether, Cataclysm, Mekanism addons and Immersive Engineering. Its datapack needed the unbundled skytekx-worldgen mod |
 | 3.0.5 | 2026-07-12 23:40 | 65,487,506 B | 216 | 33 | Vanilla Skylands rework with the Forge pack split, skytekx-compat, Aether Genesis, Medieval Embroidery, SlashBlade Resharped, The One Probe, Ruins removed |
 | 3.0.6 | 2026-10-31 20:19 | 67,245,989 B | 216 | 35 | The mod update of 2026-10-31, Skylands fixes (no Battle Towers, strongholds, illager campsites, floating petrified roots or windmill fields under the islands), Halloween pumpkins and blood moons, the fixes datapack, Forge 47.4.18. Uploaded at 20:27 as `Gi0aBofN`. Freezes after the join with an 8 GB heap, see [test](#test-of-2026-10-31) |
+| 3.0.7 | 2026-10-31 21:54 | 67,246,343 B | 217 | 35 | Modflared 1.2.0+release.61 as a client only index entry and the server list `client-overrides/servers.dat` with `hex.skytekx.com`, for the Cloudflare Tunnel. Every other file as in 3.0.6. Uploaded at 21:55 as `LRkF99Pz` |
 
-Versions 3.0.0 to 3.0.4 and 3.0.6 are on Modrinth. 3.0.5 was built but never uploaded. None of the
+Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43
 (1092a5b) and dropped again before the push, with the note that it ships via Modrinth (reflog, c1a199b
 and the reset to 1250515).

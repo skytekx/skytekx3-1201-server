@@ -12,8 +12,10 @@ On 2026-06-30 04:15 the owner asked for every error and warning at server boot t
 (`~/.claude/history.jsonl`, session 5bd3e1de). Until then a boot logged 152 ERRORs, almost all of them
 third-party data files that do not parse on 1.20.1. Three commits brought that down to 3, and it has
 stayed at 3 since: d5e1449 (05:26, to about 27), d14ea2b (06:21, to 10) and 7cea753 (07:05, to 3). The
-warnings were not cleared. The last boot still logged 304 WARN lines. The counts per boot and the three
-accepted errors are on [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline).
+warnings were not cleared. The last boot on the build machine (2026-07-12 23:25) still logged 304 WARN
+lines, and the boots on the Mac mini of 2026-10-31 logged 344 to 387, or 1,658 at the first boot of the
+new world. The counts per boot and the three accepted errors are on
+[logs and crashes](../server/logs-and-crashes.md#boot-error-baseline).
 
 The fixes come in five kinds:
 

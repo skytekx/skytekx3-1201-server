@@ -1,7 +1,7 @@
 ---
 type: Runbook
 title: Logs and crashes
-description: Where the server logs live, how to read a run, the crash history with root causes and fixes, the stop path and the boot error baseline of the last complete boot.
+description: Where the server logs live, how to read a run, the crash history with root causes and fixes, the stop path, the boot error baseline and the error counts of each recent boot.
 tags: [server, logs, crashes, debugging, arclight]
 timestamp: 2026-10-31
 ---
@@ -66,7 +66,7 @@ How a run ended shows in its last lines.
 
 - A clean RCON stop logs `[Rcon: Stopping the server]`. It ends with Arclight's exit thread line
   `3 threads not shutting down correctly, force exiting`, 5 to 9 seconds after `Stopping server` in
-  every logged RCON stop.
+  every logged RCON stop. Two of the RCON stops on the Mac mini counted 5 threads instead.
 - Lines from the `Server Shutdown Thread` mean a signal stop (SIGTERM, SIGINT) or a watchdog halt. See
   [Stop path](#stop-path).
 - A crash report with the same time stamp means a crash.
@@ -246,8 +246,12 @@ The hardened jar only catches the iterator exceptions. So the rules are these.
 
 ## Boot error baseline
 
-The last complete boot started on 2026-07-12 at 23:25:09 and reached `Done` at 23:26:00
-(`logs/2026-07-12-1.log.gz`). Counted up to the `Done` line it shows this.
+A clean boot reaches `Done` with 0 FATAL lines and the 3 accepted ERROR lines listed below. That is
+the baseline. WARN lines are not part of it, because their number moves with the mod set and jumps at
+the first boot of a new world or of new mods, so each boot below has its own WARN count.
+
+The last complete boot on the build machine started on 2026-07-12 at 23:25:09 and reached `Done` at
+23:26:00 (`logs/2026-07-12-1.log.gz`). Counted up to the `Done` line it shows this.
 
 | Level | Count | Notes |
 |---|---:|---|
@@ -265,11 +269,11 @@ The three accepted errors are these.
 - Essentials warns that it runs on a hybrid server ("You are running a server that does not properly
   support Bukkit plugins", line 3185). This is accepted, since EssentialsX is the plugin layer.
 
-The WARNs come mostly from LootDataManager (109, of them 108 loot table validation problems in
-`cataclysm_spellbooks` entity tables and 1 in `deadlyworld`), Mantle (36, a deprecated JSON key in
-Mystical Agradditions recipes for Tinkers), mixin (35, missing refmaps and overwrite conflicts), KubeJS
-(31), Aether Redux (30, duplicate biome holders), Create (15) and Apotheosis Adventure (8), plus a tail
-of smaller loggers.
+The 304 WARNs of that boot come mostly from LootDataManager (109, of them 108 loot table validation
+problems in `cataclysm_spellbooks` entity tables and 1 in `deadlyworld`), Mantle (36, a deprecated JSON
+key in Mystical Agradditions recipes for Tinkers), mixin (35, missing refmaps and overwrite conflicts),
+KubeJS (31), Aether Redux (30, duplicate biome holders), Create (15) and Apotheosis Adventure (8), plus
+a tail of smaller loggers.
 
 KubeJS loaded 4 of 4 server scripts with 0 errors. Its summary line reads "Added 2 recipes, removed 0
 recipes, modified 14 recipes, with 17 failed recipes" (`logs/kubejs/server.log`, 23:25:52). The 17
@@ -282,8 +286,9 @@ of 2026-06-30 08:09, 2026-07-12 18:11 and 2026-07-12 23:25 all show 3. The boot 
 Re:Avaritia removal (2026-06-30 08:08) showed 9, the usual 3 plus 6 one-time `Unidentified mapping`
 errors that cleared on the next boot. How the fixes work is on [Boot fixes](../content/boot-fixes.md).
 
-Boot WARNs settled at 303 to 331 per boot from 2026-06-29 15:36 on. One-time spikes follow added mods,
-when registry IDs are remapped: 21,437 at 2026-06-29 00:22 and 1,393 at 2026-06-30 06:06.
+On the build machine, boot WARNs settled at 303 to 331 per boot from 2026-06-29 15:36 on. One-time
+spikes follow added mods, when registry IDs are remapped: 21,437 at 2026-06-29 00:22, 443 at 16:38 the
+same day, 1,393 at 2026-06-30 06:06 and 548 at 06:54.
 
 The six boots on the Mac mini of 2026-10-31 are the first with the mod update of that day, and all six
 keep the baseline. Counted up to their `Done` lines:

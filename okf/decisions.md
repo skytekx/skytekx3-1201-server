@@ -124,7 +124,7 @@ These rules apply to every later change.
 | 2026-06-27 21:46 | Loot chances roughly like SkyTekx 2, not three Hexxit flowers side by side | Open | [KubeJS](modpack/kubejs.md#open-rulings) |
 | 2026-06-28 22:55 | Every advancement shows its real name | Partial. A resource pack with 66 Spartan Weaponry names exists, untracked, unshipped and not enabled | [Client](modpack/client.md#resource-packs) |
 | 2026-06-29 12:10 | Sword swing like in 1.7 | Partial. The attack cooldown is gone on the server. The old swing animation depends on Nostalgic Tweaks, which each client may or may not have | [Combat](content/combat.md) |
-| 2026-06-30 04:15 | Resolve every error and warning at server boot | Partial. Boot ERRORs went from 152 to 3 accepted ones, WARNs stay at about 300 | [Boot fixes](content/boot-fixes.md) |
+| 2026-06-30 04:15 | Resolve every error and warning at server boot | Partial. Boot ERRORs went from 152 to 3 accepted ones. WARNs were not cleared, with 303 to 331 per boot on the build machine and 344 to 387 on the Mac mini after the first boot of its new world | [Boot fixes](content/boot-fixes.md) |
 
 ## Client and main menu
 

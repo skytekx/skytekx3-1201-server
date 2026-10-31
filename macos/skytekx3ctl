@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Control the SkyTekx3 server on macOS.
 #   macos/skytekx3ctl status          launchd state, online players, tick times
-#   macos/skytekx3ctl start | stop    load the launchd job, or stop the server cleanly and keep it down (sudo)
+#   macos/skytekx3ctl start           enable and load the launchd job (sudo)
+#   macos/skytekx3ctl stop            stop the server cleanly, it stays down across reboots until start (sudo)
 #   macos/skytekx3ctl restart         RCON "stop", launchd starts the server again right away
 #   macos/skytekx3ctl rcon <command>  run one console command over RCON
 #   macos/skytekx3ctl log             follow logs/latest.log
@@ -16,14 +17,19 @@ rcon() { /usr/bin/python3 "$DIR/tools/rcon.py" 127.0.0.1 "$(prop rcon.port)" "$(
 
 case "${1:-status}" in
   start)
+    # stop disables the job. Enable it again, or the bootstrap fails and the next boot skips it too.
+    sudo launchctl enable system/$LABEL
     sudo launchctl bootstrap system "$PLIST" 2>/dev/null || sudo launchctl kickstart system/$LABEL ;;
   stop)
+    # disable keeps launchd from loading the job at the next boot, so the server stays down until
+    # "start", also when the power fails in the middle of a restore or a world wipe.
     # bootout sends SIGTERM, which ServerMac.sh turns into an RCON "stop", and returns before the job
     # has exited. Wait until the JVM is gone and launchd has removed the job, so "start" can load it.
+    sudo launchctl disable system/$LABEL
     sudo launchctl bootout system/$LABEL 2>/dev/null || true
     for _ in $(seq 1 100); do
       if ! pgrep -f 'java .*arclight[.]jar nogui' >/dev/null && ! launchctl print system/$LABEL >/dev/null 2>&1; then
-        echo "Server stopped"
+        echo "Server stopped. It stays down, also across reboots, until: macos/skytekx3ctl start"
         exit 0
       fi
       sleep 2
@@ -34,6 +40,9 @@ case "${1:-status}" in
     rcon stop ;;
   status)
     launchctl print system/$LABEL 2>/dev/null | grep -E '^\s*(state|pid|runs|last exit code) =' || echo "launchd job not loaded"
+    case "$(launchctl print-disabled system 2>/dev/null || true)" in
+      *"\"$LABEL\" => disabled"*) echo "launchd job disabled by stop, the server stays down across reboots until start" ;;
+    esac
     rcon list 2>/dev/null || echo "RCON not answering (server booting or stopped)"
     rcon "forge tps" 2>/dev/null | tail -n 3 || true ;;
   rcon)

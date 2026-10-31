@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install the SkyTekx3 launchd jobs on macOS: the server, the RCON guard and the nightly backup.
 # Run once from the server directory with sudo:   sudo macos/install.sh
-# Running it again reloads all three jobs, which restarts a running server.
+# Running it again reloads all three jobs, which restarts a running server and starts a stopped one.
 set -euo pipefail
 [ "$(id -u)" = 0 ] || { echo "Run with sudo: sudo $0"; exit 1; }
 
@@ -36,6 +36,9 @@ for job in com.skytekx.rcon-guard com.skytekx.server com.skytekx.backup; do
       sleep 2
     done
   fi
+  # skytekx3ctl stop disables the server job so that it stays down across reboots. A disabled job
+  # cannot be loaded, so enable each job first.
+  launchctl enable "system/$job"
   launchctl bootstrap system "$dst"
   echo "Loaded $job"
 done

@@ -4,7 +4,7 @@
 - splits client-only jars out of the server mods/ dir
 - zips overrides (config, kubejs, defaultconfigs) + index into the .mrpack
 """
-import json, os, shutil, zipfile, sys
+import json, os, shutil, subprocess, zipfile, sys
 
 REPO = "/home/snekmin/git/skytekx3-1201-server"
 SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
@@ -54,15 +54,17 @@ out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
 if os.path.exists(out): os.remove(out)
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
     z.write(REPO+"/modrinth.index.json", "modrinth.index.json")
-    # overrides: config, kubejs, defaultconfigs
-    for sub in ("config", "kubejs", "defaultconfigs"):
-        base = os.path.join(REPO, sub)
-        if not os.path.isdir(base): continue
-        for root, _, fns in os.walk(base):
-            for fn in fns:
-                full = os.path.join(root, fn)
-                rel = os.path.relpath(full, REPO)
-                z.write(full, "overrides/"+rel)
+    # overrides: config, kubejs, defaultconfigs. Only files git tracks, so leftovers of the build
+    # machine stay out (Spark profiler temp files, configs of removed mods). The Chunky task records
+    # are tracked by mistake and only hold the build machine's pregen state.
+    tracked = subprocess.run(["git", "-C", REPO, "ls-files", "-z", "config", "kubejs", "defaultconfigs"],
+                             check=True, capture_output=True).stdout.decode().split("\0")
+    packed = 0
+    for rel in sorted(t for t in tracked if t):
+        full = os.path.join(REPO, rel)
+        if rel.startswith("config/chunky/tasks/") or not os.path.isfile(full): continue
+        z.write(full, "overrides/"+rel); packed += 1
+    print("overrides from git:", packed, "files")
     # Skylands dimension datapacks -> ship into the server's world/datapacks/
     # shared pack is vanilla safe, forge pack carries the mod integrations
     for src, name in (("skylands-datapack", "skytekx3_skylands"),

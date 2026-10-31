@@ -244,10 +244,10 @@ the Mac mini dials out to Cloudflare, so no port has to be open.
 | Part | Setup |
 |---|---|
 | Tunnel | Named `skytekx3-mac-mini`, in the Cloudflare account of the zone skytekx.com and configured on Cloudflare's side. Its only route sends `hex-tunnel.skytekx.com` to `tcp://localhost:25565` |
-| DNS | The name `hex-tunnel.skytekx.com` is a proxied CNAME to the tunnel. The player address `hex.skytekx.com` has only a TXT record, `cloudflared-route=hex-tunnel.skytekx.com` |
+| DNS | The name `hex-tunnel.skytekx.com` is a proxied CNAME to the tunnel. The player address `hex.skytekx.com` has a TXT record, `cloudflared-route=hex-tunnel.skytekx.com`, and since 2026-10-31 22:08 the address 192.0.2.1, unproxied. That documentation address answers nothing, but without an address Minecraft stops at "Unknown host" before Modflared reads the TXT record. Since 22:15 `play.skytekx.com` has the same two records, as a second name for the same server |
 | Connector | Homebrew's cloudflared 2026.10.7 in `/opt/homebrew/bin`. The LaunchDaemon `com.skytekx.cloudflared` ([plist](../../macos/com.skytekx.cloudflared.plist)) runs [run-skytekx-tunnel.sh](../../macos/run-skytekx-tunnel.sh) from `~/.cloudflared/` as the server user at boot, with `KeepAlive`. It logs to `~/Library/Logs/skytekx-cloudflared.log` |
 | Token | The file `~/.cloudflared/skytekx.token`, mode 600. The wrapper hands it to cloudflared through the environment. It is not in the repo, see [Secrets](secrets.md) |
-| Setup script | The script [cf_tunnel.py](../../tools/cf_tunnel.py) creates or updates the tunnel, its route and both DNS records and writes the token to a file. Every step is idempotent |
+| Setup script | The script [cf_tunnel.py](../../tools/cf_tunnel.py) creates or updates the tunnel, its route, the CNAME and the TXT and A records of both player names and writes the token to a file. Every step is idempotent |
 
 Players join through the client mod Modflared (Forge 1.20.1, 1.2.0+release.61, MIT, client only). It
 reads the TXT record of `hex.skytekx.com` and runs the game connection through the route with its own

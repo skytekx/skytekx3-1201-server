@@ -78,8 +78,9 @@ to the JVM as before, and `stop` is typed into the console.
 ### Tests of 2026-10-31
 
 Each path ran once on the Mac mini between 19:26 and 19:36. Each stop went through RCON, none logged a
-line from the `Server Shutdown Thread`, and each of the four boots reached `Done` with 0 FATAL, 3 ERROR
-and 344 WARN lines, the baseline of [Logs and crashes](logs-and-crashes.md#boot-error-baseline).
+line from the `Server Shutdown Thread`, and each of the four boots reached `Done` with the baseline of
+0 FATAL and 3 accepted ERROR lines (see [Logs and crashes](logs-and-crashes.md#boot-error-baseline)) and
+with 344 WARN lines.
 
 | Test | Started | Result |
 |---|---|---|
@@ -209,10 +210,10 @@ the mean tick time once a minute.
 | Skylands pregen, second run | 10.49 to 10.63 GB | 436% to 951% | 0.9 to 2.7 ms | 20 | None |
 | Idle after the second run | 10.63 GB | About 33% | 0.1 ms | 20 | None |
 
-The boot under launchd at 18:54:57 reached `Done` in 32 seconds with 0 FATAL, 3 ERROR and 387 WARN
-lines, the baseline of [Logs and crashes](logs-and-crashes.md#boot-error-baseline). The first boot of
-the fresh world at 18:07 had the same 3 ERRORs and 1,658 WARNs. 1,316 of those were Forge filling the
-new `world/serverconfig/` files with defaults.
+The boot under launchd at 18:54:57 reached `Done` in 32 seconds with the baseline of 0 FATAL and 3
+accepted ERROR lines (see [Logs and crashes](logs-and-crashes.md#boot-error-baseline)) and 387 WARN
+lines. The first boot of the fresh world at 18:07 had the same 3 ERRORs and 1,658 WARNs, 1,316 of them
+from Forge filling the new `world/serverconfig/` files with defaults.
 
 The Overworld region folder held 618 MB at radius 1500 and the first Skylands run 785 MB at radius
 3000. At that density a radius of 5000 would take about 6.8 GB for the Overworld alone and about 1.5

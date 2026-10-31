@@ -56,17 +56,19 @@ These values were not measured.
 - Only one player account ever joined, so the memory and tick cost of 20 players is unknown.
 - No run had GC logging enabled.
 
-The launchers in the repo set an 11G heap. That is `ServerLinux.sh:10` and line 23 of the systemd unit,
-both with `-Xms` equal to `-Xmx` and with `-XX:+AlwaysPreTouch`, which commits the whole heap at start.
-The comment in `ServerLinux.sh` says the size is tuned for a 16 GB host such as the M4 Mac mini and
-leaves about 5 GB for the OS. It goes back to 2026-06-27, when the owner asked whether an M4 Mac mini
-with 8 GB could serve 20 players (12:07) and then noted that only the 16 GB model exists (12:21).
+The Linux launchers in the repo set an 11G heap. That is `ServerLinux.sh:10` and line 23 of the systemd
+unit, both with `-Xms` equal to `-Xmx` and with `-XX:+AlwaysPreTouch`, which commits the whole heap at
+start. The comment in `ServerLinux.sh` says the size is tuned for a 16 GB host such as the M4 Mac mini
+and leaves about 5 GB for the OS. It goes back to 2026-06-27, when the owner asked whether an M4 Mac
+mini with 8 GB could serve 20 players (12:07) and then noted that only the 16 GB model exists (12:21).
+The macOS launcher `ServerMac.sh`, which has run the server on that Mac mini since 2026-10-31, sets 9G.
 
 Only the two runs of 2026-07-12 used an 11 GiB heap. Netty's `maxDirectMemory` of 11,811,160,064 bytes
 in their debug logs shows it. Whether Aikar's flags were active in those runs cannot be told from the
-logs. Metaspace for about 235 mod jars, the code cache, thread stacks and direct buffers all come on top
-of the heap. On a 16 GB host an 11 GB heap leaves little room for them and the OS. The Mac mini
-launcher sets its own heap, see [Mac mini (macOS, launchd) deployment](macos.md).
+logs. Metaspace for 236 mod jars, the code cache, thread stacks and direct buffers all come on top of
+the heap. On a 16 GB host an 11 GB heap leaves little room for them and the OS. With the 9G heap of
+`ServerMac.sh` the JVM on the Mac mini stayed at 10.1 to 10.7 GB resident without swap during and
+after the pregens of 2026-10-31, see [Mac mini (macOS, launchd) deployment](macos.md#measured-numbers).
 
 ## How the worldgen profile was taken
 
@@ -140,7 +142,7 @@ The remaining levers are operational. Their state on 2026-10-31 is in the table.
 
 | Lever | State |
 |---|---|
-| Pregenerate wider, radius 5000 or more per dimension, so players rarely hit live worldgen | Not done. The pregen covers radius 1000, see [World reset](world-reset.md#pregen-numbers) |
+| Pregenerate wider, radius 5000 or more per dimension, so players rarely hit live worldgen | Not done. The Halloween world on the Mac mini covers radius 1500 in the Overworld and 3000 in the Skylands, the old world on the build machine radius 1000 in both, see [World reset](world-reset.md#pregen-numbers) |
 | Lower `view-distance` and `simulation-distance` from 10 and 10 to 8 and 6, which cuts the chunk fan-out each player drags around | Not done (`server.properties.example:50` and `:59`) |
 | Keep `/locate` sweeps and big pregens off the live server | A sweep tripped the watchdog on 2026-06-29 at 19:41 |
 | Do not cut content mods for worldgen | Holds, the profile shows no payoff |

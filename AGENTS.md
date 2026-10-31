@@ -101,9 +101,9 @@ macos/skytekx3ctl rcon "<command>"                            # On the Mac mini,
 - Commits are authored by the human who drives the work, not by the AI. Add no `Co-Authored-By`
   trailers for the agent.
 - Use Conventional Commits in the Commitizen style, multi-line, with a body that explains why.
-  - Types in use are `feat`, `fix`, `perf`, `chore`, `docs` and `refactor`.
-  - Scopes in use are `skylands`, `worldgen`, `mods`, `server`, `content`, `recipes`, `combat`,
-    `config`, `tools`, `deploy`, `release` and `okf`.
+  - Types in use are `feat`, `fix`, `perf`, `chore` and `docs`.
+  - Scopes in use are `skylands`, `worldgen`, `mods`, `pack`, `server`, `macos`, `content`, `recipes`,
+    `combat`, `config`, `tools`, `deploy`, `release` and `okf`.
 - Commit messages carry no em dashes, no en dashes, no hyphens used as dashes and no semicolons.
 - Keep commits granular, one concern per commit, such as a mod group, a script or a config area.
 - The default branch is `master`.

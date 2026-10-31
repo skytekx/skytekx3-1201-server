@@ -44,8 +44,8 @@ for 2026-10-31) and are cited by local time.
 
 | Path | Role |
 |---|---|
-| Source folder [skylands-datapack/](../../skylands-datapack) | Shared source pack, vanilla safe (71 files, pack_format 15) |
-| Source folder [skylands-datapack-forge/](../../skylands-datapack-forge) | Forge only source pack with the mod structures (28 files) |
+| Source folder [skylands-datapack/](../../skylands-datapack) | Shared source pack, vanilla safe (74 files, pack_format 15) |
+| Source folder [skylands-datapack-forge/](../../skylands-datapack-forge) | Forge only source pack with the mod structures (32 files) |
 | World copy `world/datapacks/skytekx3_skylands/` | Runtime copy of the shared pack that the server reads |
 | World copy `world/datapacks/skytekx3_skylands_forge/` | Runtime copy of the Forge pack |
 | Script [tools/sync_skylands_datapack.sh](../../tools/sync_skylands_datapack.sh) | Mirrors both sources into the world copies |
@@ -252,9 +252,10 @@ Nobody has checked that in game.
    (`.gitignore:2`), so new files there need `git add -f`.
 
 The script `tools/build_mrpack.py` ships both source packs into the `.mrpack` as
-`overrides/world/datapacks/skytekx3_skylands` and `overrides/world/datapacks/skytekx3_skylands_forge`
-(lines 64 to 74). Earlier on 2026-10-31 both world copies matched their sources (`diff -rq` empty).
-The changes of 2026-10-31 below are not synced into this machine's world (checked 18:16).
+`overrides/world/datapacks/skytekx3_skylands` and `overrides/world/datapacks/skytekx3_skylands_forge`,
+from git HEAD since 3a398b1. Earlier on 2026-10-31 both world copies matched their sources
+(`diff -rq` empty). The changes of 2026-10-31 below are not synced into this machine's world (checked
+18:16).
 
 ## Checking a change
 

@@ -156,9 +156,9 @@ untouched in `world/` on the build machine, with the 3.0.5 datapacks. The Mac mi
 | Item | Value |
 |---|---|
 | Seed | -6309212766548435273 |
-| World spawn | 308 64 392, on grass inside a Biomes O' Plenty pumpkin patch 454 blocks from 0,0 |
-| MOTD | `§6§lSkyTekx3 §5§lHalloween` and `§dA Party Hexxit Deluxe Server` on the second line |
-| Icon | `server-icon-halloween.png` copied over `server-icon.png` on the Mac |
+| World spawn | 308 64 392, on grass inside a Biomes O' Plenty pumpkin patch about 499 blocks from 0,0 |
+| MOTD | First line `§6§lSkyTekx3 §5§lHalloween`, second line `§dA Party Hexxit Deluxe Server` |
+| Icon | The file `server-icon-halloween.png`, copied over `server-icon.png` on the Mac |
 | Lunar events | Blood moons on about every second full moon (`bloodMoonChance` 0.5), and Nyx events in the Skylands too |
 | Skylands | Pumpkin patches in 1 of 8 island chunks and small groups of jack o'lanterns in 1 of 32 |
 

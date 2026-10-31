@@ -25,9 +25,9 @@ evidence and the page with the details. The rulings behind the first section are
   at position 119, before the ChocoCraft mod pack, so its four overrides lose. A fresh world loads the
   file packs last (commit 1c6f8d4), which should fix it, but nobody checked in game. See
   [Skylands worldgen](content/skylands-worldgen.md#known-defect-the-chococraft-overrides-lose).
-- Skylands travel in singleplayer (2026-06-29 19:33). The `.mrpack` puts the datapacks under
-  `overrides/world/datapacks/`, which a singleplayer save never reads, and the fixes pack is not in it at
-  all. See [Skylands travel](content/aether-fall.md#open-points).
+- Skylands travel in singleplayer (2026-06-29 19:33). The `.mrpack` puts the datapacks, since 3c2662e
+  the fixes pack too, under `overrides/world/datapacks/`, which a singleplayer save never reads. See
+  [Skylands travel](content/aether-fall.md#open-points).
 - A public Modrinth project (2026-06-29 10:11). Six bundled jars are All Rights Reserved without a grant,
   the Nyx download fails, three server jars are in no pack, and the texts are stale. See
   [Publish](modpack/publish.md#what-blocks-a-release).

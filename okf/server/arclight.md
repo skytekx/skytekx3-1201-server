@@ -81,8 +81,9 @@ why the server must stop over RCON, see [Stop path](#stop-path).
 
 ## Java 17 only
 
-Run the server on Java 17. Every boot that reached `Done` ran Temurin 17.0.19 (Eclipse Adoptium) on
-aarch64, as all six crash reports and every ModLauncher start line show.
+Run the server on Java 17. Every boot on the build machine that reached `Done` ran Temurin 17.0.19
+(Eclipse Adoptium) on aarch64, as all six crash reports and every ModLauncher start line there show.
+On the Mac mini every boot of 2026-10-31 ran Temurin 17.0.21, as the ModLauncher start lines show.
 
 Older docs gave a different reason, a Java 21 crash with `IInventoryBridge` `NoClassDefFound`. The logs
 do not support it. The only Java 21 boot (Red Hat OpenJDK 21.0.11, `boot.log`, 2026-06-27 12:01) failed

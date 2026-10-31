@@ -22,7 +22,7 @@ The history behind them is on [History](history.md).
 | Repo skytekx2-1122-server | The SkyTekx 2 server on 1.12.2 | GitHub `skytekx/skytekx2-1122-server`, local `~/git/skytekx2-1122-server` | Branch main at ee2cf4f (2024-12-25), plus four untracked audit files of 2026-06-26 and 2026-06-27 |
 | Fork skytekx/nyx | The Nyx port to 1.20.1 | GitHub | Port on branch `1.20.1`, no releases |
 | Fork skytekx/Cataclysm_Spellbooks | The Spellbooks port to Cataclysm 3.31 | GitHub | Port on branch `1.20.1`, no releases |
-| Modrinth project skytekx3 | The pack listing | Web page `modrinth.com/modpack/skytekx3` | A draft with versions 3.0.0 to 3.0.4 and 3.0.6. An anonymous API call answers 404 |
+| Modrinth project skytekx3 | The pack listing | Web page `modrinth.com/modpack/skytekx3` | A draft with versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7. An anonymous API call answers 404 |
 | Prism instance SkyTekx3 | The owner's game client | The build machine | See [Client](modpack/client.md) |
 
 ## This repo on GitHub
@@ -115,12 +115,12 @@ The owner asked for a small website on the newly bought domain skytekx.com on 20
 
 | Claim | Fact | Evidence |
 |---|---|---|
-| "Join the public server", "join at skytekx.com" | No Minecraft server answers at skytekx.com. The domain points at Cloudflare proxy addresses, there is no `_minecraft._tcp` SRV record and no `mc.` or `play.` host, and TCP 25565 timed out | DNS over HTTPS and a TCP check on 2026-10-31, see [Deploy](server/deploy.md#dns) |
+| "Join the public server", "join at skytekx.com" | No Minecraft server answers at skytekx.com. The domain points at Cloudflare proxy addresses, there is no `_minecraft._tcp` SRV record and no `mc.` or `play.` host, and TCP 25565 timed out. Since 2026-10-31 21:13 the server is public as `hex.skytekx.com`, through a Cloudflare Tunnel and only for clients with Modflared | DNS over HTTPS and a TCP check on 2026-10-31, see [Deploy](server/deploy.md#dns) |
 | The button "Play on Modrinth" | The project page answers "Project not found" | Modrinth API and web page, 2026-10-31 |
 | The guide step `ln -s arclight-forge-1.20.1-1.0.6-6de9fec.jar arclight.jar` | A clone already holds `arclight.jar` as a tracked symlink to the hardened jar. The step fails with "File exists", and forcing it drops the crash fix | Commit 88552a9, see [Arclight runtime](server/arclight.md) |
 | The guide itself | It never fills `mods/`, so a server built from it has no mods | Website `index.html:376-430` |
 | Java 21 crashes Arclight with `IInventoryBridge` | Unproven. The only Java 21 boot failed on a missing mod, see [Arclight runtime](server/arclight.md#java-17-only) | Files `boot.log` and `boot6.log` |
-| Mod counts 232 and 245+ | The badge and the credits page say 232, the text says 245+. The pack of 3.0.6 has 216 index entries and 35 bundled jars | Website `index.html:457-483`, `credits-1201.html` |
+| Mod counts 232 and 245+ | The badge and the credits page say 232, the text says 245+. The pack of 3.0.7 has 217 index entries and 35 bundled jars | Website `index.html:457-483`, `credits-1201.html` |
 | "The rest of the ts3.party community", "the ts3.party crew" | The community is ts4.party since the owner's ruling of 2026-06-29 10:00 | Website i18n keys `server.lead` and `credits.lead` |
 | Link previews "Hexxit × Tekkit × SkyFactory, reborn on Minecraft 1.20.1" | On 2026-06-30 04:54 the owner shortened the subtitle to "Hexxit × Tekkit × SkyFactory". The `og:description` and `twitter:description` tags kept the long form | Website `index.html` meta tags |
 
@@ -131,7 +131,7 @@ The owner asked for a small website on the newly bought domain skytekx.com on 20
 - On 2026-10-31 the API returned 404 for the slug and the id, a search for "skytekx" found nothing, and
   the web page showed "Project not found". The project is not public.
 - With the owner's token the API shows the draft with versions 3.0.0 to 3.0.4 (2026-06-27 to
-  2026-06-29) and 3.0.6 (2026-10-31 20:27). Version 3.0.5 never went up.
+  2026-06-29), 3.0.6 (2026-10-31 20:27) and 3.0.7 (21:55). Version 3.0.5 never went up.
 - What blocks a public release is on [Publish](modpack/publish.md). Every public pointer to the
   project is dead until then: the website button, the GitHub repo description and, until 2026-10-31, the
   README.

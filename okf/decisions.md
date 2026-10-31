@@ -76,12 +76,12 @@ These rules apply to every later change.
 | Date | Ruling | Status | Where it lives |
 |---|---|---|---|
 | 2026-06-27 17:29 | Build Twilight Forest from source, and look for GitHub builds of mods that are only on CurseForge | Done. Twilight Forest is a bundled jar in `local-mods/` | [Mod set](modpack/mod-set.md#bundled-jars) |
-| 2026-06-27 17:29, repeated 2026-06-29 | Take mods from Modrinth first, then GitHub, CurseForge only as a last resort | Partial. All 216 index files come from the Modrinth CDN since 74faf22. BrassAmber BattleTowers runs from a CurseForge jar outside the pack | [Mod set](modpack/mod-set.md) |
+| 2026-06-27 17:29, repeated 2026-06-29 | Take mods from Modrinth first, then GitHub, CurseForge only as a last resort | Partial. All index files come from the Modrinth CDN since 74faf22, 217 of them since ca131c3. BrassAmber BattleTowers runs from a CurseForge jar outside the pack, and since 2026-10-31 21:48 players add it by hand from CurseForge | [Mod set](modpack/mod-set.md) |
 | 2026-06-28 23:15 and 23:18 | Bring back chocobos, a core mod of SkyTekx | Done. ChocoCraft is in the index | [Skylands worldgen](content/skylands-worldgen.md#chocobos) |
 | 2026-06-29 00:33 | No Chance Cubes, although the original pack had them | Done | [Mod set](modpack/mod-set.md) |
 | 2026-06-29 05:39 | Add Mekanism Generators | Done | File `modrinth.index.json` |
 | 2026-06-29 06:25 | Patch Cataclysm Spellbooks instead of Cataclysm, in a fork of the archived repo in the skytekx organisation | Done. The fork `skytekx/Cataclysm_Spellbooks` holds the port, and the pack bundles its build since 507a8f2. The fork has no release | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
-| 2026-06-29 11:52 and 12:00 | Battle Towers are essential, and BrassAmber BattleTowers is the successor | Partial. The jar sits only in the server's `mods/`. It is All Rights Reserved and only on CurseForge, and in the install test of 2026-10-31 a client without it could not join | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
+| 2026-06-29 11:52 and 12:00 | Battle Towers are essential, and BrassAmber BattleTowers is the successor | Partial. The jar sits only in the server's `mods/`. It is All Rights Reserved and only on CurseForge, and in the install test of 2026-10-31 a client without it could not join. Since 21:48 that day players add it by hand | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
 | 2026-06-29 12:05 and 12:26 | Search as deep as possible for the old mods or their successors | Done as a best effort. A batch of 69 jars arrived at 12:47 | [Mod set](modpack/mod-set.md) |
 | 2026-06-29 13:46 and 14:11 | Add the Aether, Hexxit Additions, the Aether add-ons of Better Minecraft and XP Tomes | Done. Hexxit Additions is one of the six permission blockers | [Publish](modpack/publish.md#what-blocks-a-release) |
 | 2026-06-29 14:23 and 15:02 | Fork Nyx and port it completely, for client and server | Done. The fork has no release, so the pack bundles the jar and the index entry with the dead link is gone since 74faf22 | [Nyx](content/nyx.md) |
@@ -90,6 +90,7 @@ These rules apply to every later change.
 | 2026-06-30 05:49 | Install the mod that provides a feature before making the feature optional | Done. SlashBlade Resharped, Re:Avaritia, Medieval Embroidery, The One Probe and Aether Genesis came in | [Boot fixes](content/boot-fixes.md) |
 | 2026-06-30 08:05 | Remove Re:Avaritia, it does nothing | Done in bd5f18b | [Mod set](modpack/mod-set.md#parked-and-removed-mods) |
 | 2026-10-31 16:58 | Check the installed mods for updates | Done. 55 Modrinth updates, one new dependency and three bundled jars landed in 092140d and 4917ab8. The updated set boots on the Mac mini with the baseline of 3 ERRORs, and 12 of the new builds are betas. The JEI build 15.74.0.233 breaks EMI's JEI bridge, and a client with it ran out of an 8 GB heap in the install test | [Mod set](modpack/mod-set.md#update-of-2026-10-31) |
+| 2026-10-31 21:48 | Keep BrassAmber BattleTowers on the server and let players add the jar by hand | Done. The Modrinth body says so since about 21:56. At about 21:50 the owner asked for the jar to send it to players over Telegram, and it was copied for them | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
 
 ## Skylands worldgen and travel
 
@@ -140,12 +141,12 @@ These rules apply to every later change.
 | Date | Ruling | Status | Where it lives |
 |---|---|---|---|
 | 2026-06-27 11:04 | Keep the Modrinth token in an ansible vault | Done. The token was also pasted in clear text and needs rotation | [Secrets](server/secrets.md) |
-| 2026-06-27 11:50 and 20:46 | Publish the pack on Modrinth with the token | Partial. Versions 3.0.0 to 3.0.4 and 3.0.6 are uploaded, but the project is still a draft | [Publish](modpack/publish.md#state-on-2026-10-31) |
+| 2026-06-27 11:50 and 20:46 | Publish the pack on Modrinth with the token | Partial. Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are uploaded, but the project is still a draft | [Publish](modpack/publish.md#state-on-2026-10-31) |
 | 2026-06-27 18:23 | Do not publish the version with Chocolate Quest Repoured yet | Superseded by "yes pls publish" at 20:46 | [Publish](modpack/publish.md#version-history) |
 | 2026-06-29 10:11 | Update the Modrinth description and make the project public | Open. Six All Rights Reserved jars block the review | [Publish](modpack/publish.md#what-blocks-a-release) |
 | 2026-06-29 17:04 | Commit everything and publish again | Done. Pack 3.0.4 went up on 2026-06-29 at 17:33 | [Publish](modpack/publish.md#version-history) |
 | 2026-06-30 18:20 | A folder with the files the Modrinth permissions page asks for | Done in 62ada38, brought up to date in f4c2093. Six blockers remain | [Publish](modpack/publish.md#what-blocks-a-release) |
-| 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join. With 12 GB it plays, and the Modrinth texts ask for that since 21:25 | [Publish](modpack/publish.md#test-of-2026-10-31) |
+| 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join. With 12 GB it plays, and the Modrinth texts ask for that since 21:25. Version 3.0.7 of 21:55 only adds Modflared and the server list | [Publish](modpack/publish.md#test-of-2026-10-31) |
 
 ## Git and docs
 
@@ -178,9 +179,11 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 | 2026-07-12 18:04 | Start the server on the build machine | Done. Runs from 18:11 and 23:25 | [Logs and crashes](server/logs-and-crashes.md) |
 | 2026-10-31 16:02 | Turn off and disable everything on the Mac mini that is not essential and uses CPU or RAM | Done. Third party agents and login items, Spotlight, Siri, media analysis, location services and Bluetooth are off | [Mac mini](server/macos.md#host) |
 | 2026-10-31 16:12 | The Mac mini becomes a Minecraft server for the time being | Done. It runs the server under launchd since 2026-10-31 18:54 | [Mac mini](server/macos.md) |
-| 2026-10-31 16:33 and 16:34 | Finalize, test and deploy on the Mac mini. A server version exists already, so optimize everything for the Mac mini | Done. Deployed under launchd with the RCON guard and a daily backup. Restart, stop, start, backup and a reboot were tested between 19:26 and 19:36. Public access waits for a router forward and a DNS record | [Mac mini](server/macos.md#tests-of-2026-10-31) |
-| 2026-10-31 20:58, 21:08 and 21:09 | A public address over a Cloudflare Tunnel, `hex.skytekx.com`, as fast as possible, because players are waiting | Done at 21:13. Players need the client mod Modflared, and voice chat stays in the LAN | [Mac mini](server/macos.md#public-access) |
-| 2026-10-31 20:56 and 21:17 | Install Prism and the pack on the second MacBook as well | Done at 21:31, joined through the tunnel. The sign-in and the first launch are left to the person at that Mac | [Client](modpack/client.md#second-mac) |
+| 2026-10-31 16:33 and 16:34 | Finalize, test and deploy on the Mac mini. A server version exists already, so optimize everything for the Mac mini | Done. Deployed under launchd with the RCON guard and a daily backup. Restart, stop, start, backup and a reboot were tested between 19:26 and 19:36. Public access came at 21:13 through a Cloudflare Tunnel, since the uplink allows no port forward | [Mac mini](server/macos.md#tests-of-2026-10-31) |
+| 2026-10-31 20:58, 21:08 and 21:09 | A public address over a Cloudflare Tunnel, `hex.skytekx.com`, as fast as possible, because players are waiting | Done at 21:13. Players need the client mod Modflared, which pack 3.0.7 brings since 21:55, and voice chat stays in the LAN | [Mac mini](server/macos.md#public-access) |
+| 2026-10-31 20:56 and 21:17 | Install Prism and the pack on the second MacBook as well | Done at 21:31 and set up to join through the tunnel. Its files already match 3.0.7 plus BattleTowers. The sign-in and the first launch are left to the person at that Mac, so nobody has joined from it yet | [Client](modpack/client.md#second-mac) |
+| 2026-10-31 21:48 | Let players in with a pack 3.0.7 that brings Modflared and lists `hex.skytekx.com`, instead of a relay on an owner server or playit.gg. Voice chat stays off the internet | Done. Built at 21:54 and uploaded to the Modrinth draft at 21:55 as `LRkF99Pz`. Nobody has joined through Modflared yet | [Publish](modpack/publish.md#version-history), [Mac mini](server/macos.md#public-access) |
+| 2026-10-31 21:48 | Keep the whitelist off now that the address is public | Done. The whitelist was already off and stays off | [Server](server/index.md#facts-at-a-glance) |
 | 2026-10-31 17:47 | Use the Mac mini for computation to speed up the work | Done. The checks behind 1f8f4ef, both Skylands pregens and the region scans ran there | [Mac mini](server/macos.md) |
 
 Related: [OKF index](index.md), [Open items](open-items.md), [Change log](log.md),

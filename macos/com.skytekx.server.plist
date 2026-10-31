@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  SkyTekx3 server as a launchd system daemon, so it starts at boot with nobody logged in.
+  macos/install.sh fills in __SERVER_DIR__, __USER__ and __HOME__ and copies it to /Library/LaunchDaemons.
+
+  ProcessType Interactive: without it launchd applies its default light resource limits, which
+  throttle CPU and disk I/O of the job. KeepAlive true restarts the server after a crash and after an
+  in-game or RCON "stop" (that makes "stop" act as a restart). Use macos/skytekx3ctl stop to really stop it.
+  launchd sends SIGTERM on bootout, shutdown and reboot. ServerMac.sh turns it into an RCON "stop", so
+  the JVM never gets the signal. ExitTimeOut gives that stop 180 s before launchd sends SIGKILL.
+  Stdout is dropped because log4j already writes logs/latest.log and logs/debug.log. Stderr keeps
+  JVM level failures (a bad flag, a missing Java 17) that happen before logging starts.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.skytekx.server</string>
+  <key>UserName</key>
+  <string>__USER__</string>
+  <key>GroupName</key>
+  <string>staff</string>
+  <key>WorkingDirectory</key>
+  <string>__SERVER_DIR__</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__SERVER_DIR__/ServerMac.sh</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>__HOME__</string>
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+    <key>PATH</key>
+    <string>/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>ExitTimeOut</key>
+  <integer>180</integer>
+  <key>ProcessType</key>
+  <string>Interactive</string>
+  <key>SoftResourceLimits</key>
+  <dict>
+    <key>NumberOfFiles</key>
+    <integer>65536</integer>
+  </dict>
+  <key>HardResourceLimits</key>
+  <dict>
+    <key>NumberOfFiles</key>
+    <integer>65536</integer>
+  </dict>
+  <key>StandardInPath</key>
+  <string>/dev/null</string>
+  <key>StandardOutPath</key>
+  <string>/dev/null</string>
+  <key>StandardErrorPath</key>
+  <string>__SERVER_DIR__/logs/launchd-stderr.log</string>
+</dict>
+</plist>

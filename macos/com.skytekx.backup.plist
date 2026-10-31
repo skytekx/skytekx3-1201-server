@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Daily world backup at 05:00 (macos/backup.sh), as the server user. Archives land in
+  __HOME__/skytekx3-backups, the newest 3 are kept. One status line per run goes to logs/backup.log.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.skytekx.backup</string>
+  <key>UserName</key>
+  <string>__USER__</string>
+  <key>GroupName</key>
+  <string>staff</string>
+  <key>WorkingDirectory</key>
+  <string>__SERVER_DIR__</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__SERVER_DIR__/macos/backup.sh</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>__HOME__</string>
+    <key>PATH</key>
+    <string>/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>5</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>__SERVER_DIR__/logs/backup.log</string>
+  <key>StandardErrorPath</key>
+  <string>__SERVER_DIR__/logs/backup.log</string>
+</dict>
+</plist>

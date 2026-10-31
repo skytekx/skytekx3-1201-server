@@ -9,6 +9,9 @@ DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RUN_USER="${SUDO_USER:-$(stat -f %Su "$DIR")}"
 RUN_HOME="$(dscl . -read "/Users/$RUN_USER" NFSHomeDirectory | awk '{print $2}')"
 [ -x "$(/usr/libexec/java_home -F -v 17 2>/dev/null)/bin/java" ] || { echo "Java 17 is missing (brew install --cask temurin@17)"; exit 1; }
+# The clean stop (ServerMac.sh) and the backup reach RCON through /usr/bin/python3, which only runs
+# once the Command Line Tools are installed. Without it every stop ends in the SIGTERM fallback.
+/usr/bin/python3 -c pass >/dev/null 2>&1 || { echo "python3 is missing (xcode-select --install, it brings /usr/bin/python3)"; exit 1; }
 [ -f "$DIR/server.properties" ] || { echo "server.properties is missing (copy server.properties.example)"; exit 1; }
 mkdir -p "$DIR/logs" && chown "$RUN_USER":staff "$DIR/logs"
 

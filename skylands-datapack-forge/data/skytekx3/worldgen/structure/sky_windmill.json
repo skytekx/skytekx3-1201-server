@@ -1,14 +1,15 @@
 {
   "type": "minecraft:jigsaw",
   "start_pool": "dungeons_arise:prairie/illager_windmill/illager_windmill_start",
+  "start_jigsaw_name": "dungeons_arise:illager_windmill_1",
   "size": 7,
   "biomes": "#skytekx3:has_structure/sky_floaters",
   "adapt_noise": false,
   "spawn_overrides": {},
-  "max_distance_from_center": 114,
+  "max_distance_from_center": 34,
   "step": "surface_structures",
   "start_height": {
-    "absolute": 140
+    "absolute": 171
   },
   "use_expansion_hack": false
 }

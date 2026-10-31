@@ -41,12 +41,12 @@ The host setup from scratch (packages, user, mcrcon, clone) is in the README sec
 | Heap | An 11G heap in `ServerLinux.sh` and the systemd unit. The Mac mini launcher `ServerMac.sh` sets 9G, since macOS needs about 3 GB of the 16 GB |
 | Mods | 236 jars in `mods/`, which git does not hold. Copy the folder as it is |
 | Plugins | EssentialsX 2.22.0 and nothing else |
-| Players | Up to 39 (`max-players=39`), online mode on, whitelist off |
+| Players | Up to 39 (`max-players=39`), online mode on, whitelist off. The owner kept the whitelist off for the public address on 2026-10-31 at 21:48 |
 | Ports | Game on 25565/tcp, Simple Voice Chat on 24454/udp, RCON on 65535/tcp, which must never be exposed |
 | Stopping | RCON `stop`, never a signal |
 | World | The Halloween world of 2026-10-31 on the Mac mini, pregenerated to radius 1500 in the Overworld and 3000 in the Skylands. The old world stays on the build machine (518 MB, last saved on 2026-07-13 at 15:45) |
 | Last complete boot | 2026-10-31 at 19:35:14 on the Mac mini under launchd after a test reboot, `Done` after 35 s with 0 FATAL, 3 ERROR and 344 WARN lines |
-| Public address | `hex.skytekx.com` through the Cloudflare Tunnel `skytekx3-mac-mini` since 2026-10-31 21:13, joined with the client mod Modflared, see [Mac mini](macos.md#public-access) |
+| Public address | The name `hex.skytekx.com` through the Cloudflare Tunnel `skytekx3-mac-mini` since 2026-10-31 21:13, joined with the client mod Modflared, which pack 3.0.7 brings, see [Mac mini](macos.md#public-access) |
 
 ## Rules that prevent the known failures
 

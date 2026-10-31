@@ -249,12 +249,26 @@ the Mac mini dials out to Cloudflare, so no port has to be open.
 | Setup script | The script [cf_tunnel.py](../../tools/cf_tunnel.py) creates or updates the tunnel, its route and both DNS records and writes the token to a file. Every step is idempotent |
 
 Players join through the client mod Modflared (Forge 1.20.1, 1.2.0+release.61, MIT, client only). It
-reads the TXT record of `hex.skytekx.com`, downloads its own copy of cloudflared from Cloudflare on the
-first connect, and runs the game connection through the route. Without Modflared the name does not
-resolve. On Apple Silicon Macs that copy is an Intel build, so Rosetta 2 must be installed
-(`softwareupdate --install-rosetta --agree-to-license`). Pack 3.0.6 does not contain Modflared, so
-players add the jar by hand. Simple Voice Chat needs 24454/udp, which the tunnel does not carry, so
-voice chat only works in the LAN.
+reads the TXT record of `hex.skytekx.com` and runs the game connection through the route with its own
+copy of cloudflared. At every start it asks the GitHub API for the newest cloudflared, and it downloads
+it on the first start. Without Modflared the name does not resolve. Pack 3.0.7 brings Modflared as a
+client only index entry (ca131c3) and lists `hex.skytekx.com` in its server list (d6c7d97). Pack 3.0.6
+does not contain Modflared, so its players add the jar by hand. Simple Voice Chat needs 24454/udp,
+which the tunnel does not carry, so voice chat only works in the LAN. On 2026-10-31 at 21:48 the owner
+chose the pack with Modflared, not a relay on an owner server or playit.gg, and with it no voice chat
+over the internet. They also kept the whitelist off.
+
+Where Modflared runs was read from the bytecode of 1.2.0+release.61 with javap and not tested in a
+running game. Its enum `CloudflaredDownload` maps Windows and Linux on x86 and amd64 and macOS on
+x86_64 and aarch64 to a cloudflared download.
+
+- Both macOS entries download `cloudflared-darwin-amd64.tgz`, an Intel build, so an Apple Silicon Mac
+  needs Rosetta 2 (`softwareupdate --install-rosetta --agree-to-license`).
+- Linux on ARM, such as the build machine, matches no entry. There `CloudflaredDownload.find()` throws
+  an `IllegalStateException`, "Cloudflared could not be downloaded because no binary file was found for
+  the current operating system". It throws inside the future that `TunnelManager.prepareBinary()`
+  starts at client setup, whose `whenComplete` handler only logs it. So the game starts normally, a
+  join to `hex.skytekx.com` fails, and a join by the LAN address works.
 
 What was checked on 2026-10-31:
 

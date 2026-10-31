@@ -129,6 +129,16 @@ out. The instance is not linked to the Modrinth project. The results are on
 The first launch stopped at Prism's Microsoft sign-in, which had expired (error AADSTS70000). The owner
 signed in again with a device code that evening.
 
+## Second Mac
+
+On 2026-10-31 at 20:56 the owner asked to install Prism and the pack on their second MacBook as well.
+By 21:31 it had Prism Launcher 11.1.1 (universal build, notarized), Temurin 17.0.21 for arm64 and the
+instance SkyTekx3, all in its user's home folder and installed without sudo. The instance holds the
+files of 3.0.6, BrassAmber BattleTowers and Modflared, 241 jars, with a heap of 4096 to 12288 MB and
+the Modrinth project and version ids in `instance.cfg`. Its network cannot reach the Mac mini's LAN
+address, so its server list has the one entry `hex.skytekx.com`. The Microsoft sign-in and the first
+launch are left to the person at that Mac.
+
 ## Other settings
 
 - The optional telemetry of Minecraft is off, `telemetryOptInExtra:false` (`options.txt:85`).
@@ -137,9 +147,11 @@ signed in again with a device code that evening.
 
 ## Mac mini
 
-The client stays on the MacBook. To play on the Mac mini server, add its address to the server list and
-open the ports there: 25565 over TCP for the game and 24454 over UDP for Simple Voice Chat
-(`config/voicechat/voicechat-server.properties:9`). See [macOS host](../server/macos.md).
+The client stays on the MacBook. In the LAN it joins the Mac mini server by its LAN address. From
+anywhere else it joins `hex.skytekx.com` through the Cloudflare Tunnel, which needs the client mod
+Modflared in the instance. Simple Voice Chat uses 24454 over UDP
+(`config/voicechat/voicechat-server.properties:9`), which the tunnel does not carry, so voice chat
+only works in the LAN. See [macOS host](../server/macos.md#public-access).
 
 Related: [mod set](mod-set.md), [combat](../content/combat.md), [publish](publish.md),
 [logs and crashes](../server/logs-and-crashes.md).

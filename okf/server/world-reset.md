@@ -137,7 +137,7 @@ pregen shows up as a config change. Chunky's `continueOnRestart` is false
 
 ## Fresh world
 
-A new `world/level.dat` changes two things.
+A new `world/level.dat` changes three things.
 
 - The seed changes. The example `server.properties.example` leaves `level-seed` empty, so a fresh world
   gets a random seed. To keep the current terrain, read the seed with `/seed` before the old world goes
@@ -149,6 +149,10 @@ A new `world/level.dat` changes two things.
 - The new world has no fixes pack. The script `tools/sync_skylands_datapack.sh` writes only the two
   Skylands packs, so copy `world/datapacks/skytekx3_fixes/` from the checkout into the new world before
   its first boot, as was done on the Mac mini.
+- The new world gets Forge's default server config, with `removeErroringEntities = false`. Set it to
+  true in `world/serverconfig/forge-server.toml` with the server down, or a BattleTowers obelisk can
+  stop the server again, see
+  [Logs and crashes](logs-and-crashes.md#a-battletowers-obelisk-on-the-mac-mini-2026-10-31-211233).
 
 ```text
 /datapack disable "file/skytekx3_fixes"

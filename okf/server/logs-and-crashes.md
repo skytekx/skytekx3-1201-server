@@ -186,6 +186,25 @@ first boot on it was 21:55 that evening. Details are on [Arclight runtime](arcli
 hides the symptom. A signal stop still runs the shutdown hook beside the server thread, see
 [Stop path](#stop-path).
 
+### A BattleTowers obelisk on the Mac mini (2026-10-31 21:12:33)
+
+The report `crash-2026-10-31_21.12.33-server.txt` ("Ticking entity") came 26 seconds after a test
+client joined at 21:12:07. A `ba_bt:land_obelisk` at 392.5 68 408.5, about 76 blocks from the world
+spawn, threw `IndexOutOfBoundsException: Index 7 out of bounds for length 7` in
+`BTAbstractObelisk.checkSpawners` (`BTAbstractObelisk.java:567`, report line 13). The bug is in
+BrassAmber BattleTowers 3.0.0-beta3.2.1, and launchd started the server again at 21:12:42.
+
+The fix is Forge's `removeErroringEntities = true` in `world/serverconfig/forge-server.toml` on the
+Mac mini. An entity that throws in its tick is then removed instead of stopping the server, so this
+obelisk goes the next time it throws, and its tower loses it. Arclight's mixins leave Forge's entity
+tick guard alone, so the setting works on this server.
+
+The first edit at 21:13 did not hold. Forge writes its in-memory server config back to the file at
+every stop, and the file's time matched the `Finished unloading server configs` line of the stop at
+21:35:48. The value was set again with the JVM gone at 21:35:54 and holds since the boot that reached
+`Done` at 21:36:32. So edit files in `world/serverconfig/` only while the server is down. The setting
+lives in the world, so a new world needs it again, and the old world on the build machine lacks it.
+
 ### Launch failures without a report
 
 These runs died before Forge could write a crash report.

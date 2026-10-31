@@ -3244,6 +3244,21 @@
         "https://cdn.modrinth.com/data/7tEfOcA7/versions/toOvLp8Y/mezz_config-1.20.1-forge-0.6.10.jar"
       ],
       "fileSize": 386107
+    },
+    {
+      "path": "mods/modflared-1.2.0+release.61.jar",
+      "hashes": {
+        "sha1": "9289085224ee0adec0893fe3b24256c5e9b02550",
+        "sha512": "8d795af67b8660c9c0876d5c052fb17275dbbc7c98423b87e92415f8c47e5db1464bbbdb05520e5472b6f63b55ed2e51e2059c32f41915b6573e53b525e59dbf"
+      },
+      "env": {
+        "client": "required",
+        "server": "unsupported"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/uRHq6kbO/versions/6sx0Vsi0/modflared-1.2.0%2Brelease.61.jar"
+      ],
+      "fileSize": 70066
     }
   ],
   "dependencies": {

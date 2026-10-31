@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
   Daily world backup at 05:00 (macos/backup.sh), as the server user. Archives land in
-  __HOME__/skytekx3-backups, the newest 3 are kept. One status line per run goes to logs/backup.log.
+  __HOME__/skytekx3-backups, the newest 3 are kept. The status lines of each run go to logs/backup.log.
 -->
 <plist version="1.0">
 <dict>

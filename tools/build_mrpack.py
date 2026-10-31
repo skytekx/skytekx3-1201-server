@@ -22,7 +22,7 @@ index = {
     "game": "minecraft",
     "versionId": VERSION,
     "name": "SkyTekx3",
-    "summary": "Hexxit + Tekkit + SkyFactory-style tech/magic/adventure kitchen-sink — the gen-3 rebuild of SkyTekx on 1.20.1.",
+    "summary": "Hexxit × Tekkit × SkyFactory, reborn on Minecraft 1.20.1.",   # The tagline of skytekx.com
     "files": files,
     "dependencies": {"minecraft": "1.20.1", "forge": FORGE},
 }

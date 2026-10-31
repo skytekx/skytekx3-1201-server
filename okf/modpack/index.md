@@ -8,14 +8,14 @@ timestamp: 2026-10-31
 
 # Modpack
 
-SkyTekx 3 is a Forge 1.20.1 pack, version 3.0.5. Its mods come from the Modrinth index and from 33
-bundled jars, and the server runs them on Arclight together with one Bukkit plugin (see
+SkyTekx 3 is a Forge 1.20.1 pack, version 3.0.6, which is on Modrinth as a draft since 2026-10-31
+(see [publish](publish.md)). Its mods come from the Modrinth index and from 35 bundled jars, and the server runs them on Arclight together with one Bukkit plugin (see
 [server](../server/index.md)). What was built for the pack itself, such as the Skylands, is under
 [content](../content/index.md).
 
 | Page | What it covers |
 |---|---|
-| [Mod set](mod-set.md) | The Modrinth index, the bundled jars, the sides, the three jars outside the pack, the parked mods and the mod update of 2026-10-31 |
+| [Mod set](mod-set.md) | The Modrinth index, the bundled jars, the sides, the jars outside the index, the parked mods and the mod update of 2026-10-31 |
 | [AlmostUnified](almostunified.md) | One item per material across the tech mods, the successor of UniDict |
 | [KubeJS](kubejs.md) | The four server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |
 | [Plugins](plugins.md) | The Bukkit layer on Arclight, which is EssentialsX alone, with its permissions and its metrics |

@@ -17,7 +17,7 @@ docs, commit messages or logs. This page only says where they are.
 | Secret | Where it lives | Who uses it |
 |---|---|---|
 | RCON password | The live `server.properties` on each host, `unit.conf` on a systemd host, and the vault as `vault_rcon_password` | The stop path through mcrcon or `tools/rcon.py`, and admins |
-| Modrinth personal access token | The vault as `vault_modrinth_pat` | The scripts `tools/resolve_all.py` and `tools/publish_modrinth.py`, which take it as their first command line argument |
+| Modrinth personal access token | The vault as `vault_modrinth_pat` | The scripts `tools/resolve_all.py`, which takes it as its first command line argument, and `tools/publish_modrinth.py`, which reads `MODRINTH_TOKEN` since 8e11bbc |
 | Vault password | Outside git, meant for `ansible/.vault_pass.txt`, which does not exist yet | The `ansible-vault` tool |
 
 The vault key names come from `systemd/unit.conf.example:2`, `server.properties.example:42` and notes
@@ -75,6 +75,11 @@ remain in plain text in the build machine's local prompt history, and the vault 
 local memory note of that assistant. Treat both as exposed. Before the next publish, revoke the token
 on Modrinth, create a new one, rekey the vault with `ansible-vault rekey` and store the new token in it.
 
+On 2026-10-31 at 20:09 the owner pasted a Modrinth token into a prompt to have 3.0.6 uploaded. The
+assistant kept it for the upload in a file in its temporary scratch folder, readable only by the
+owner's account, and deleted that file at the end of the session. The token stays in the prompt
+history and in that session's transcript. Revoke it on Modrinth and keep its successor in the vault.
+
 The login password of the Mac mini's admin account was pasted into a prompt on 2026-10-31 at 16:02. It
 is also the account's sudo password, and the assistant passed it to `sudo -S` on the remote command
 line during the setup of that day. So it sits in the same prompt history and in that session's
@@ -90,6 +95,7 @@ machine, see [Related repos](../related.md).
 
 The old page said that nothing secret is committed, that the tools read the Modrinth token from the
 vault, and that the vault password file sits in the repo root. Only the first statement holds. The
-tools take the token as an argument, and the configured path resolves to `ansible/.vault_pass.txt`.
+tools took the token as an argument (`resolve_all.py` still does), and the configured path resolves to
+`ansible/.vault_pass.txt`.
 
 Related: [Deploy](deploy.md), [Publish](../modpack/publish.md), [Tools](../modpack/tools.md).

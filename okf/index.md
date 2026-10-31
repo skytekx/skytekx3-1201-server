@@ -19,12 +19,12 @@ people who work on it. The lineage is on [History](history.md).
 | Area | State | Details |
 |---|---|---|
 | Repo | Local master holds all commits of 2026-10-31 on top of GitHub's master 940f07e of 2026-07-12. None of them is pushed | [Related repos and services](related.md#this-repo-on-github) |
-| Work of 2026-10-31 | Mod update (217 index entries), Halloween worldgen and server icon, Nyx blood moons in the Skylands, Battle Towers, strongholds, the illager campsite, petrified roots and windmill fields kept off the islands, the move to the Mac mini and pack 3.0.6 | [Mod set](modpack/mod-set.md#update-of-2026-10-31), [Skylands worldgen](content/skylands-worldgen.md#changes-of-2026-10-31), [Mac mini](server/macos.md) |
+| Work of 2026-10-31 | Mod update (216 index entries), Halloween worldgen and server icon, Nyx blood moons in the Skylands, Battle Towers, strongholds, the illager campsite, petrified roots and windmill fields kept off the islands, the move to the Mac mini and pack 3.0.6 on Modrinth | [Mod set](modpack/mod-set.md#update-of-2026-10-31), [Skylands worldgen](content/skylands-worldgen.md#changes-of-2026-10-31), [Mac mini](server/macos.md) |
 | Host | An Apple M4 Mac mini with 16 GB under launchd since 2026-10-31, reachable in the LAN only. Restart, stop, start, backup and a reboot were tested that evening | [Mac mini](server/macos.md) |
 | Last complete boot | 2026-10-31 19:35:14 on the Mac mini after the test reboot, `Done` after 35 s with 0 FATAL, 3 ERROR and 344 WARN lines. The Mac's logs are not in the repo | [Logs and crashes](server/logs-and-crashes.md#boot-error-baseline) |
 | World | The Halloween world on the Mac mini, created on 2026-10-31 at 18:07, pregenerated to radius 1500 in the Overworld and 3000 in the Skylands and first backed up at 19:34. The build machine's old world was last saved on 2026-07-13 15:45 and stays as it is | [World reset and pregen](server/world-reset.md), [Mac mini](server/macos.md#the-halloween-world) |
-| Pack | Version 3.0.6 was built on 2026-10-31 at 19:09 from tracked files and is not uploaded and not in git. It waits for the owner's go | [Publish](modpack/publish.md#state-on-2026-10-31) |
-| Modrinth | The project `skytekx3` is a draft and not public. Six All Rights Reserved jars and a broken Nyx download block a release | [Publish](modpack/publish.md#what-blocks-a-release) |
+| Pack | Version 3.0.6 was built from git HEAD on 2026-10-31 at 20:19 and uploaded to the Modrinth draft at 20:27. It installs, but a client needs BrassAmber BattleTowers added by hand to join, and with an 8 GB heap it froze after the join (JEI 15.74.0.233 against EMI 1.1.24) | [Publish](modpack/publish.md#test-of-2026-10-31) |
+| Modrinth | The project `skytekx3` is a draft and not public. Six All Rights Reserved jars, BattleTowers outside the pack, the JEI failure and the stale project texts block a release | [Publish](modpack/publish.md#what-blocks-a-release) |
 | Public address | None. The Mac mini needs a router forward for 25565/tcp and 24454/udp and a DNS record without the Cloudflare proxy. The domain skytekx.com only serves the website | [Mac mini](server/macos.md#public-access) |
 | Website | Live on skytekx.com, last changed on 2026-06-30. Some claims on it are wrong | [Related repos and services](related.md#the-website-skytekxcom) |
 | Players | Only the owner's account ever joined. Load with 20 players is unmeasured | [Server](server/index.md#load-and-players) |
@@ -36,10 +36,10 @@ What is still open, from owner rulings that were never built to unverified claim
 
 | Part | Value |
 |---|---|
-| Game | Minecraft 1.20.1 with Forge 47.4.18 inside Arclight 1.20.1 1.0.6. The pack index pins Forge 47.4.6 for clients |
+| Game | Minecraft 1.20.1 with Forge 47.4.18 inside Arclight 1.20.1 1.0.6. The pack index asks clients for the same Forge build since a36207c |
 | Server jar | The symlink `arclight.jar` on the hardened `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, built from `patches/` |
 | Java | Java 17. The Mac mini runs Temurin 17.0.21, and every boot on the build machine that reached `Done` ran Temurin 17.0.19 |
-| Mods | 217 Modrinth entries in `modrinth.index.json` and 33 bundled jars in `local-mods/`. The server's `mods/` holds 236 jars that git does not track |
+| Mods | 216 Modrinth entries in `modrinth.index.json` and 35 bundled jars in `local-mods/`. The server's `mods/` holds 236 jars that git does not track |
 | Plugins | EssentialsX 2.22.0 and nothing else |
 | Recipe layers | AlmostUnified, Polymorph and KubeJS, the successors of UniDict, NoMoreRecipeConflict and CraftTweaker in SkyTekx 2 |
 | Own content | The Skylands dimension as a pure datapack, travel between it and the Overworld, the Nyx port, 1.7 style combat, the boot fixes and the small SkyTekx Compat mod |
@@ -76,7 +76,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | Page | What it covers |
 |---|---|
 | [Modpack](modpack/index.md) | What the pack is made of and the recipe layers |
-| [Mod set](modpack/mod-set.md) | The index, the bundled jars, the server's mods folder, the jars outside the pack and how to change the set |
+| [Mod set](modpack/mod-set.md) | The index, the bundled jars, the server's mods folder, the jars outside the index and how to change the set |
 | [AlmostUnified](modpack/almostunified.md) | One item per material across the tech mods |
 | [KubeJS](modpack/kubejs.md) | The four server scripts and how to work with Rhino |
 | [Plugins](modpack/plugins.md) | EssentialsX, its files, permissions, metrics and update checks |
@@ -131,4 +131,5 @@ The first index of 2026-06-29 said that the pack was published on Modrinth as 3.
 crashes Arclight, that LuckPerms, Multiverse and WorldEdit ride along with EssentialsX, and that the
 index plus `local-mods/` are the source of truth for the mods. The Modrinth project was never public,
 the Java 21 claim rests on one failed boot that had another cause, EssentialsX is the only plugin, and
-the server runs three jars that are in neither. The wiki was rebuilt from the evidence on 2026-10-31.
+the server ran three jars that were in neither, two of which the pack bundles since 507a8f2. The wiki
+was rebuilt from the evidence on 2026-10-31.

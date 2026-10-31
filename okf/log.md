@@ -85,7 +85,7 @@ was done. The times below come from the prompts and the logs. The lineage before
 - From 05:09 to 06:16 the owner's client crashed three times on Cataclysm Spellbooks against stock
   Cataclysm 3.31. At 06:25 the owner ruled to patch Spellbooks, not Cataclysm, and to fork the archived
   Spellbooks repo. The fork `skytekx/Cataclysm_Spellbooks` got its port at 06:54, and the built jar went
-  into the server's `mods/` only, see [Mod set](modpack/mod-set.md#three-jars-outside-the-pack).
+  into the server's `mods/` only, see [Mod set](modpack/mod-set.md#jars-outside-the-index).
 - At 06:42 the owner asked for a website on skytekx.com. Its repo `skytekx-web` started at 11:41, see
   [Related repos and services](related.md#the-website-skytekxcom).
 - Between 08:26 and 09:12 the owner ruled that no structure may stand on the y=0 floor above the void.
@@ -288,7 +288,8 @@ logs stay on the Mac and are not in the repo.
   during that pregen. The chunk is complete in the region file, see
   [Logs and crashes](server/logs-and-crashes.md#chunk-save-race-during-pregen).
 - Pack 3.0.6 got its version at 18:57 (3860591) and its publish script at 19:03 (5b30934). At 19:09 the
-  builder was fixed to pack tracked files only (e641c18) and the pack was built. It is not uploaded.
+  builder was fixed to pack tracked files only (e641c18) and the pack was built. That build was never
+  uploaded.
 - The scans of 19:20 found no structure piece below Y 24, no petrified roots and all 10 windmills
   whole, see [Mac mini](server/macos.md#pregen-and-worldgen-checks).
 - Between 19:26 and 19:36 restart, stop, start, backup and a reboot were tested. `launchctl bootout`
@@ -296,6 +297,24 @@ logs stay on the Mac and are not in the repo.
   The first backup (688 MB) was written at 19:34. See [Mac mini](server/macos.md#tests-of-2026-10-31).
 - At 20:00 a checksum dry run of the sync showed 15 config files that differ between the checkout and
   the Mac, see [Open items](open-items.md#defects-to-fix).
+- At 20:09 the owner linked the Modrinth project and asked to update the pack and test it. With the
+  owner's token the draft showed versions 3.0.0 to 3.0.4, so 3.0.5 had never gone up. Between 20:17 and
+  20:20 the dead Nyx download left the index (74faf22), AllTheLeaks and the Cataclysm Spellbooks build
+  joined `local-mods/` (507a8f2), the permission files were brought up to date (f4c2093), and the
+  builder started to read git HEAD (ce31f6f), to ask for Forge 47.4.18 (a36207c), to use the website's
+  tagline (b3ec68c) and to ship the fixes datapack (2883e32). The publish script reads the token from
+  the environment since 8e11bbc.
+- Pack 3.0.6 was built again at 20:19:59 (67,245,989 bytes, index in 192084f) and went up to the
+  Modrinth draft at 20:27 as version `Gi0aBofN`. The CDN copy has the same SHA-512.
+- The install test downloaded all 216 index files with matching hashes. Prism's Microsoft sign-in had
+  expired, and the owner signed in again. The client reached the main menu, but its join at 20:38:51
+  was refused because BrassAmber BattleTowers is in no pack. The owner sent a screenshot of that screen
+  at 20:39. With BattleTowers added by hand the client joined at 20:41:31.
+- After the join EMI dropped 7,246 JEI recipes, 7,243 of them Chipped recipes that hit an
+  `AbstractMethodError` against JEI 15.74.0.233. AllTheLeaks reported 90% heap use at 20:42:05, and the
+  owner asked about it at 20:43. The 8 GB heap stayed full, and EMI's reload died with an
+  `OutOfMemoryError` at 20:46:33. The owner's sessions of June and July with JEI 15.20.0.132 had the
+  90% message but neither failure. See [Publish](modpack/publish.md#test-of-2026-10-31).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

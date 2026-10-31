@@ -16,11 +16,11 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 |---|---|---|
 | Pack version | 3.0.6 | Field `versionId` in `modrinth.index.json`, set in commit 3860591 |
 | Minecraft | 1.20.1 | Index `dependencies` |
-| Forge in the index | 47.4.6 | Index `dependencies`, `tools/build_mrpack.py:12` |
+| Forge in the index | 47.4.18 since a36207c, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 217 since commit 092140d, of which 216 download from `cdn.modrinth.com` and 1 from GitHub (Nyx). 216 before | File `modrinth.index.json` |
-| Size of the index downloads | 952,759,925 bytes, 933,046,213 before commit 092140d | Sum of `fileSize` |
-| Bundled jars | 33 in `local-mods/` | Tracked in git |
+| Index entries | 216 since 74faf22, all from `cdn.modrinth.com`. From 092140d on there were 217, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 952,341,086 bytes since 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
+| Bundled jars | 35 in `local-mods/` since 507a8f2, 33 before | Tracked in git |
 | Jars the server loads | 236 in `mods/` after the update, 235 before | Counted 2026-10-31 |
 
 ## Update of 2026-10-31
@@ -75,16 +75,15 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 33 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (201 after the update, 200 before), the other 32 `local-mods/` jars, and 3 jars that exist nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder [local-mods/](../../local-mods) | Yes | 35 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (200), the 35 `local-mods/` jars, and BrassAmber BattleTowers, which exists nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 16 jars kept off the server: the 15 index entries with server env `unsupported`, and Nostalgic Tweaks, moved by hand |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
 Forge only loads `mods/`. The `local-mods/` jars reach the server because they were copied into
-`mods/`. Nyx is both an index entry and a bundled jar, which is why 33 bundled jars give only 32 extra
-copies. All copies are byte identical, except Traverse, which `tools/patch_mods.py` patches in `mods/`
-only. Nine index jars are patched as well, so their SHA-1 no longer matches the index. Players get the
-unpatched jars. See [boot fixes](../content/boot-fixes.md).
+`mods/`. Up to 74faf22 Nyx was both an index entry and a bundled jar. All copies are byte identical,
+except Traverse, which `tools/patch_mods.py` patches in `mods/` only. Nine index jars are patched as
+well, so their SHA-1 no longer matches the index. Players get the unpatched jars. See [boot fixes](../content/boot-fixes.md).
 
 The comment at `.gitignore:32` says that `mods/` is reproducible from the index and fetched on deploy.
 No tool does that today, see [tools](tools.md).
@@ -110,7 +109,7 @@ that offers optional files can leave them out. JEI and EMI are both in the index
 
 ## Bundled jars
 
-The 33 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`):
+The 35 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`):
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
@@ -121,27 +120,31 @@ The 33 jars in `local-mods/` (origins from each jar's manifest and from `modrint
 - 4 were built locally from source: Aether Genesis (2026-06-30), Nyx (2026-06-29, see
   [Nyx](../content/nyx.md)), SkyTekx Compat (2026-07-12, see [compat mod](../content/compat-mod.md)) and
   Twilight Forest (2026-06-27).
+- 2 joined on 2026-10-31 (507a8f2): AllTheLeaks, whose build is not on Modrinth, and the Cataclysm
+  Spellbooks build from the fork skytekx/Cataclysm_Spellbooks, see below.
 
 Six of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies and Hexxit Additions (`modrinth-permissions/README.md`). They block a
 public Modrinth listing, see [publish](publish.md).
 
-## Three jars outside the pack
+## Jars outside the index
 
-The server's `mods/` and the owner's client (same SHA-1) hold three jars that are in neither the index
-nor `local-mods/`, so a fresh clone and the 3.0.5 `.mrpack` lack them:
+Up to 2026-10-31 the server's `mods/` and the owner's client (same SHA-1) held three jars that were in
+neither the index nor `local-mods/`, so a fresh clone and the packs up to 3.0.5 lacked them:
 
-| Jar | What it is | License | Source |
-|---|---|---|---|
-| Jar `alltheleaks-1.1.1+1.20.1-forge.jar` | Memory leak fixes (AllTheLeaks) | MIT | Not on Modrinth |
-| Jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` | BrassAmber BattleTowers, the successor the owner named on 2026-06-29 12:01 | All Rights Reserved | CurseForge only |
-| Jar `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm Spellbooks, built 2026-06-29 06:46 from the fork skytekx/Cataclysm_Spellbooks, commit 36d1cee | MIT | The fork has no release. Modrinth has a different upstream file that does not carry the fix |
+| Jar | What it is | License | Source | Since 2026-10-31 |
+|---|---|---|---|---|
+| Jar `alltheleaks-1.1.1+1.20.1-forge.jar` | Memory leak fixes (AllTheLeaks) | MIT | Not on Modrinth | In `local-mods/` (507a8f2) |
+| Jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` | BrassAmber BattleTowers, the successor the owner named on 2026-06-29 12:01 | All Rights Reserved | CurseForge only | Still only in the server's `mods/` |
+| Jar `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm Spellbooks, built 2026-06-29 06:46 from the fork skytekx/Cataclysm_Spellbooks, commit 36d1cee | MIT | The fork has no release. Modrinth has a different upstream file that does not carry the fix | In `local-mods/` (507a8f2) |
 
 The owner ruled on 2026-06-29 06:25 to patch Spellbooks rather than Cataclysm, because the upstream
-Spellbooks crashed the client against stock Cataclysm 3.31. BattleTowers and Spellbooks add content
-that a client needs, so a player who installs 3.0.5 most likely cannot join this server. Moving
-AllTheLeaks and the Spellbooks fork build into `local-mods/` is safe (both MIT). BattleTowers needs a
-redistribution grant or an owner decision. BattleTowers is also tied to an open ruling, see
+Spellbooks crashed the client against stock Cataclysm 3.31. BattleTowers is the last jar outside the
+pack, and a client needs it. In the install test of 2026-10-31 a fresh install of 3.0.6 booted, but
+the join failed with "Your client is missing the following mods" and named Brass-Amber BattleTowers.
+All 177 registry entries the client lacked belong to it. Bundling it needs a redistribution grant or
+an owner decision, see [publish](publish.md#what-blocks-a-release).
+BattleTowers is also tied to an open ruling, see
 [Skylands worldgen](../content/skylands-worldgen.md#open-rulings).
 
 ## Parked and removed mods
@@ -191,8 +194,9 @@ hard coded list and would bring back Radium, Rubidium, memoryleakfix and Better 
 ## Mac mini
 
 The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with `rsync --delete`. The
-folder already holds the patched jars and the three jars outside the pack, and since 2026-10-31 also the
-new builds of the update above. Do not rebuild `mods/` from the index or from `resolve_all.py`. See [macOS host](../server/macos.md).
+folder already holds the patched jars and BattleTowers, and since 2026-10-31 also the new builds of the
+update above. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
+[macOS host](../server/macos.md).
 
 ## History
 
@@ -200,7 +204,8 @@ The index held 213 entries in mrpack 3.0.4 (2026-06-29), 216 after commit d14ea2
 Resharped, Re:Avaritia and Medieval Embroidery), 217 after 7cea753 (The One Probe) and 216 again after
 bd5f18b (Re:Avaritia out). Commit 940f07e only raised `versionId` to 3.0.5. The `.mrpack` of 3.0.5 holds
 an index that is byte identical to the one at commit 940f07e. On 2026-10-31 the update above moved 55
-entries to newer builds and added mezz_config (092140d), 217 entries in all.
+entries to newer builds and added mezz_config (092140d), 217 entries in all. Commit 74faf22 dropped
+the Nyx entry, whose jar is bundled anyway, which leaves 216.
 
 Related: [AlmostUnified](almostunified.md), [KubeJS](kubejs.md), [publish](publish.md),
 [tools](tools.md), [client](client.md), [Arclight](../server/arclight.md).

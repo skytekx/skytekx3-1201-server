@@ -76,20 +76,20 @@ These rules apply to every later change.
 | Date | Ruling | Status | Where it lives |
 |---|---|---|---|
 | 2026-06-27 17:29 | Build Twilight Forest from source, and look for GitHub builds of mods that are only on CurseForge | Done. Twilight Forest is a bundled jar in `local-mods/` | [Mod set](modpack/mod-set.md#bundled-jars) |
-| 2026-06-27 17:29, repeated 2026-06-29 | Take mods from Modrinth first, then GitHub, CurseForge only as a last resort | Partial. 216 of the 217 index files come from the Modrinth CDN and one from GitHub (Nyx, HTTP 404). BrassAmber BattleTowers runs from a CurseForge jar outside the pack | [Mod set](modpack/mod-set.md) |
+| 2026-06-27 17:29, repeated 2026-06-29 | Take mods from Modrinth first, then GitHub, CurseForge only as a last resort | Partial. All 216 index files come from the Modrinth CDN since 74faf22. BrassAmber BattleTowers runs from a CurseForge jar outside the pack | [Mod set](modpack/mod-set.md) |
 | 2026-06-28 23:15 and 23:18 | Bring back chocobos, a core mod of SkyTekx | Done. ChocoCraft is in the index | [Skylands worldgen](content/skylands-worldgen.md#chocobos) |
 | 2026-06-29 00:33 | No Chance Cubes, although the original pack had them | Done | [Mod set](modpack/mod-set.md) |
 | 2026-06-29 05:39 | Add Mekanism Generators | Done | File `modrinth.index.json` |
-| 2026-06-29 06:25 | Patch Cataclysm Spellbooks instead of Cataclysm, in a fork of the archived repo in the skytekx organisation | Partial. The fork `skytekx/Cataclysm_Spellbooks` holds the port, but its jar runs only on the server and the owner's client | [Mod set](modpack/mod-set.md#three-jars-outside-the-pack) |
-| 2026-06-29 11:52 and 12:00 | Battle Towers are essential, and BrassAmber BattleTowers is the successor | Partial. The jar sits only in the server's `mods/`. It is All Rights Reserved and only on CurseForge | [Mod set](modpack/mod-set.md#three-jars-outside-the-pack) |
+| 2026-06-29 06:25 | Patch Cataclysm Spellbooks instead of Cataclysm, in a fork of the archived repo in the skytekx organisation | Done. The fork `skytekx/Cataclysm_Spellbooks` holds the port, and the pack bundles its build since 507a8f2. The fork has no release | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
+| 2026-06-29 11:52 and 12:00 | Battle Towers are essential, and BrassAmber BattleTowers is the successor | Partial. The jar sits only in the server's `mods/`. It is All Rights Reserved and only on CurseForge, and in the install test of 2026-10-31 a client without it could not join | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
 | 2026-06-29 12:05 and 12:26 | Search as deep as possible for the old mods or their successors | Done as a best effort. A batch of 69 jars arrived at 12:47 | [Mod set](modpack/mod-set.md) |
 | 2026-06-29 13:46 and 14:11 | Add the Aether, Hexxit Additions, the Aether add-ons of Better Minecraft and XP Tomes | Done. Hexxit Additions is one of the six permission blockers | [Publish](modpack/publish.md#what-blocks-a-release) |
-| 2026-06-29 14:23 and 15:02 | Fork Nyx and port it completely, for client and server | Done. The download link in the index returns HTTP 404 | [Nyx](content/nyx.md) |
+| 2026-06-29 14:23 and 15:02 | Fork Nyx and port it completely, for client and server | Done. The fork has no release, so the pack bundles the jar and the index entry with the dead link is gone since 74faf22 | [Nyx](content/nyx.md) |
 | 2026-06-29 15:02 | Take only the essentials of the Better Minecraft pack BMC4 for now | Done with the batch of 15:15. VanillaBackport stopped the boot at 15:19 and was parked | [Mod set](modpack/mod-set.md#parked-and-removed-mods) |
 | 2026-06-30 00:23 to 00:46 | Drop the Ruins mod, salvage its flying structures first | Done in ac261f1. The Ruins balloon had become a self-contained vanilla structure in 8afbfe1 and stayed | [Performance](server/performance.md#skylands-structure-density) |
 | 2026-06-30 05:49 | Install the mod that provides a feature before making the feature optional | Done. SlashBlade Resharped, Re:Avaritia, Medieval Embroidery, The One Probe and Aether Genesis came in | [Boot fixes](content/boot-fixes.md) |
 | 2026-06-30 08:05 | Remove Re:Avaritia, it does nothing | Done in bd5f18b | [Mod set](modpack/mod-set.md#parked-and-removed-mods) |
-| 2026-10-31 16:58 | Check the installed mods for updates | Done. 55 Modrinth updates, one new dependency and three bundled jars landed in 092140d and 4917ab8. The updated set boots on the Mac mini with the baseline of 3 ERRORs, and 12 of the new builds are betas | [Mod set](modpack/mod-set.md#update-of-2026-10-31) |
+| 2026-10-31 16:58 | Check the installed mods for updates | Done. 55 Modrinth updates, one new dependency and three bundled jars landed in 092140d and 4917ab8. The updated set boots on the Mac mini with the baseline of 3 ERRORs, and 12 of the new builds are betas. The JEI build 15.74.0.233 breaks EMI's JEI bridge, and a client with it ran out of an 8 GB heap in the install test | [Mod set](modpack/mod-set.md#update-of-2026-10-31) |
 
 ## Skylands worldgen and travel
 
@@ -133,18 +133,19 @@ These rules apply to every later change.
 | 2026-06-27 19:58 | Add the client to the owner's Prism Launcher | Done | [Client](modpack/client.md) |
 | 2026-06-27 20:49 to 21:49 | The old SkyTekx start menu with its logo, from the old repo's assets, without a resource pack | Partial. A FancyMenu layout with logo and background ships in `config/`, but the FancyMenu jars are not in the pack and the old buttons were not rebuilt | [Client](modpack/client.md#main-menu) |
 | 2026-06-27 21:15 | Start in the normal view a pack user should see, not in a modification mode | Unknown. FancyMenu's customization overlay is off in the repo, which is the likely answer | [Client](modpack/client.md#main-menu) |
-| 2026-06-30 13:55 | Fix the client as well, not only the server | Partial. The owner's client was updated by hand and joined on 2026-07-01. The drift between pack and server remains | [Mod set](modpack/mod-set.md#three-jars-outside-the-pack) |
+| 2026-06-30 13:55 | Fix the client as well, not only the server | Partial. The owner's client was updated by hand and joined on 2026-07-01. The drift between pack and server remains | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
 
 ## Publishing
 
 | Date | Ruling | Status | Where it lives |
 |---|---|---|---|
 | 2026-06-27 11:04 | Keep the Modrinth token in an ansible vault | Done. The token was also pasted in clear text and needs rotation | [Secrets](server/secrets.md) |
-| 2026-06-27 11:50 and 20:46 | Publish the pack on Modrinth with the token | Partial. Uploads of 3.0.0, 3.0.1 and 3.0.3 are recorded, but the project is still a draft | [Publish](modpack/publish.md#state-on-2026-10-31) |
+| 2026-06-27 11:50 and 20:46 | Publish the pack on Modrinth with the token | Partial. Versions 3.0.0 to 3.0.4 and 3.0.6 are uploaded, but the project is still a draft | [Publish](modpack/publish.md#state-on-2026-10-31) |
 | 2026-06-27 18:23 | Do not publish the version with Chocolate Quest Repoured yet | Superseded by "yes pls publish" at 20:46 | [Publish](modpack/publish.md#version-history) |
 | 2026-06-29 10:11 | Update the Modrinth description and make the project public | Open. Six All Rights Reserved jars block the review | [Publish](modpack/publish.md#what-blocks-a-release) |
-| 2026-06-29 17:04 | Commit everything and publish again | Partial. Pack 3.0.4 was built, its upload cannot be checked | [Publish](modpack/publish.md#version-history) |
-| 2026-06-30 18:20 | A folder with the files the Modrinth permissions page asks for | Done in 62ada38. The folder is out of date and six blockers remain | [Publish](modpack/publish.md#what-blocks-a-release) |
+| 2026-06-29 17:04 | Commit everything and publish again | Done. Pack 3.0.4 went up on 2026-06-29 at 17:33 | [Publish](modpack/publish.md#version-history) |
+| 2026-06-30 18:20 | A folder with the files the Modrinth permissions page asks for | Done in 62ada38, brought up to date in f4c2093. Six blockers remain | [Publish](modpack/publish.md#what-blocks-a-release) |
+| 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join | [Publish](modpack/publish.md#test-of-2026-10-31) |
 
 ## Git and docs
 
@@ -165,7 +166,7 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 |---|---|---|---|
 | 2026-06-29 06:42 | A website for SkyTekx on skytekx.com | Done. Last change on 2026-06-30 18:14 | [Related repos and services](related.md#the-website-skytekxcom) |
 | 2026-06-29 09:54 | Say that a public server runs on skytekx.com, explain self-hosting like the old READMEs, link GitHub | Partial. The text is on the site, but skytekx.com has no Minecraft record and port 25565 is closed | [Related repos and services](related.md#claims-on-the-site-that-are-wrong-on-2026-10-31) |
-| 2026-06-29 11:02 | Drop the "kitchen sink" phrase | Done on the site and in the README. The GitHub repo description, `docs/MODPACK_DESCRIPTION.md`, `tools/build_mrpack.py:31` and `tools/publish_modrinth.py:67` still use it | [Publish](modpack/publish.md#what-blocks-a-release) |
+| 2026-06-29 11:02 | Drop the "kitchen sink" phrase | Partial. Gone from the site, the README, the index summary and the scripts since b3ec68c. The GitHub repo description, `docs/MODPACK_DESCRIPTION.md` and the Modrinth project texts still use it | [Publish](modpack/publish.md#what-blocks-a-release) |
 | 2026-06-30 10:13 | Do not ask, deploy straight to Cloudflare, then commit and push | Done for the website work of that day | [Related repos and services](related.md#the-website-skytekxcom) |
 
 ## Hosting

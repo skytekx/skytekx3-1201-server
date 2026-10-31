@@ -51,6 +51,15 @@ the same 90% message from AllTheLeaks less than a minute after each join, but no
 an EMI reload of about 27 s and play for up to two and a half hours. JEI 15.74.0.233 came in with the
 mod update of 092140d. The server on the Mac mini runs it too.
 
+Two more runs of the same instance followed that evening.
+
+| Run | Result |
+|---|---|
+| JEI 15.20.0.132, 8 GB | Forge refused to start. Tinkers' Construct needs JEI 15.59.0.210 or newer, Tinkers' Reforged 15.56.0.204 and Polymorph 15.57.0.207, so the old JEI cannot come back |
+| JEI 15.74.0.233, 12 GB (`MaxMemAlloc` 12288) | Joined at 21:12:07. The JEI import took 3,253 ms and hit the same 7,243 `AbstractMethodError`s, but AllTheLeaks printed no 90% line, there was no full GC and no `OutOfMemoryError`, and the heap settled at about 9.3 GB |
+
+So 3.0.6 needs a 12 GB heap, and EMI still lacks the Chipped recipes.
+
 ## What blocks a release
 
 1. Six bundled jars are All Rights Reserved without a redistribution grant: Aether Genesis,
@@ -62,10 +71,10 @@ mod update of 092140d. The server on the Mac mini runs it too.
    adds it by hand, or the server drops it, which goes against the ruling of 2026-06-29 that Battle
    Towers are essential. See [mod set](mod-set.md#jars-outside-the-index).
 3. With JEI 15.74.0.233 and EMI 1.1.24 a client with an 8 GB heap runs out of memory and freezes after
-   the first join, and EMI drops the Chipped recipes. With JEI 15.20.0.132 neither happened. The
-   dropped recipes are caused by the JEI update. The memory failure most likely is too, but a test with
-   JEI 15.20.0.132 has to show it. Rolling JEI back in the index and on the server, or an EMI build that
-   matches JEI 15.74, needs the owner's decision and a new test.
+   the first join, and EMI drops the Chipped recipes. A 12 GB heap avoids the freeze. JEI 15.20.0.132
+   cannot come back, because three mods need newer builds. The dropped recipes need a Chipped build
+   that does not call the new JEI method, or an EMI build that implements it, then an owner decision
+   and a new test.
 Fixed on 2026-10-31: the stale project texts (21:25, the new summary and body credit ts4.party,
 name no person or handle and drop "kitchen-sink", Better Combat and Radium), the Nyx entry that downloaded from a GitHub release that does not exist (74faf22,
 the jar is bundled), the two jars the server ran outside the pack (507a8f2, AllTheLeaks and the

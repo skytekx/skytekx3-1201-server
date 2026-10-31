@@ -317,6 +317,26 @@ logs stay on the Mac and are not in the repo.
   owner asked about it at 20:43. The 8 GB heap stayed full, and EMI's reload died with an
   `OutOfMemoryError` at 20:46:33. The owner's sessions of June and July with JEI 15.20.0.132 had the
   90% message but neither failure. See [Publish](modpack/publish.md#test-of-2026-10-31).
+- At 20:56 the owner asked to install Prism and the pack on their second MacBook as well, at 20:58
+  for a public address over a Cloudflare Tunnel, and at 21:08 and 21:09 for `hex.skytekx.com` as fast
+  as possible, because players were waiting. tracepath from the Mac mini showed carrier grade NAT on its
+  mobile uplink, so a port forward was out.
+- Two more runs of the test client narrowed the freeze down. JEI 15.20.0.132 cannot come back, because
+  Forge refused to start with it: Tinkers' Construct needs JEI 15.59.0.210 or newer, Tinkers' Reforged
+  15.56.0.204 and Polymorph 15.57.0.207. With JEI 15.74.0.233 and a 12 GB heap the client joined at
+  21:12:07 without running out of memory. See [Publish](modpack/publish.md#test-of-2026-10-31).
+- At 21:12:33 a BattleTowers obelisk 76 blocks from spawn stopped the server with a ticking entity
+  crash, 26 seconds after a test client joined. launchd restarted it at 21:12:42. The fix
+  `removeErroringEntities = true` was first written while the server ran and lost at the next stop,
+  so it was set again with the server down at 21:35:54. The boot of 21:36:32 keeps it. See
+  [Logs and crashes](server/logs-and-crashes.md#a-battletowers-obelisk-on-the-mac-mini-2026-10-31-211233).
+- At 21:13 the Cloudflare Tunnel `skytekx3-mac-mini` went live. A server list ping through it from the
+  build machine answered, and `hex.skytekx.com` carries the TXT record for the client mod Modflared.
+  See [Mac mini](server/macos.md#public-access).
+- At 21:17 the owner gave the address of the second MacBook. By 21:31 it had Prism, Java 17 and the
+  pack with BattleTowers and Modflared, see [Client](modpack/client.md#second-mac).
+- From 21:22:01 to 21:28:43 the Ethernet link of the Mac mini was down. The server kept running and the
+  tunnel reconnected by itself. See [Mac mini](server/macos.md#link-drop-of-2026-10-31).
 - At 21:25 the summary and the body of the Modrinth draft were replaced with the rewritten
   `docs/MODPACK_SUMMARY.txt` and `docs/MODPACK_DESCRIPTION.md`. They credit ts4.party, name no person
   or handle, drop "kitchen-sink" and ask for 12 GB of memory. The publish script got `--texts` for

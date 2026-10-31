@@ -145,7 +145,7 @@ These rules apply to every later change.
 | 2026-06-29 10:11 | Update the Modrinth description and make the project public | Open. Six All Rights Reserved jars block the review | [Publish](modpack/publish.md#what-blocks-a-release) |
 | 2026-06-29 17:04 | Commit everything and publish again | Done. Pack 3.0.4 went up on 2026-06-29 at 17:33 | [Publish](modpack/publish.md#version-history) |
 | 2026-06-30 18:20 | A folder with the files the Modrinth permissions page asks for | Done in 62ada38, brought up to date in f4c2093. Six blockers remain | [Publish](modpack/publish.md#what-blocks-a-release) |
-| 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join | [Publish](modpack/publish.md#test-of-2026-10-31) |
+| 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join. With 12 GB it plays, and the Modrinth texts ask for that since 21:25 | [Publish](modpack/publish.md#test-of-2026-10-31) |
 
 ## Git and docs
 
@@ -179,6 +179,8 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 | 2026-10-31 16:02 | Turn off and disable everything on the Mac mini that is not essential and uses CPU or RAM | Done. Third party agents and login items, Spotlight, Siri, media analysis, location services and Bluetooth are off | [Mac mini](server/macos.md#host) |
 | 2026-10-31 16:12 | The Mac mini becomes a Minecraft server for the time being | Done. It runs the server under launchd since 2026-10-31 18:54 | [Mac mini](server/macos.md) |
 | 2026-10-31 16:33 and 16:34 | Finalize, test and deploy on the Mac mini. A server version exists already, so optimize everything for the Mac mini | Done. Deployed under launchd with the RCON guard and a daily backup. Restart, stop, start, backup and a reboot were tested between 19:26 and 19:36. Public access waits for a router forward and a DNS record | [Mac mini](server/macos.md#tests-of-2026-10-31) |
+| 2026-10-31 20:58, 21:08 and 21:09 | A public address over a Cloudflare Tunnel, `hex.skytekx.com`, as fast as possible, because players are waiting | Done at 21:13. Players need the client mod Modflared, and voice chat stays in the LAN | [Mac mini](server/macos.md#public-access) |
+| 2026-10-31 20:56 and 21:17 | Install Prism and the pack on the second MacBook as well | Done at 21:31, joined through the tunnel. The sign-in and the first launch are left to the person at that Mac | [Client](modpack/client.md#second-mac) |
 | 2026-10-31 17:47 | Use the Mac mini for computation to speed up the work | Done. The checks behind 1f8f4ef, both Skylands pregens and the region scans ran there | [Mac mini](server/macos.md) |
 
 Related: [OKF index](index.md), [Open items](open-items.md), [Change log](log.md),

@@ -135,14 +135,15 @@ python3 tools/publish_modrinth.py --go    # creates the project if missing, uplo
 
 The script [publish_modrinth.py](../../tools/publish_modrinth.py) reads the token from
 `MODRINTH_TOKEN`. A token as the first argument still works, but other local users can read it in the
-process list. It takes the body from `docs/MODPACK_DESCRIPTION.md`. A new project is created as a
+process list. It takes the body from `docs/MODPACK_DESCRIPTION.md` and the summary from
+`docs/MODPACK_SUMMARY.txt`. A new project is created as a
 draft with the slug `skytekx3`, the categories adventure, magic and technology and the license All
-Rights Reserved (lines 66 to 87). The version goes up as a featured beta with status listed, and the
-script then compares the SHA-512 of the uploaded file with the local build (lines 89 to 113). Since
+Rights Reserved (lines 80 to 101). The version goes up as a featured beta with status listed, and the
+script then compares the SHA-512 of the uploaded file with the local build (lines 103 to 127). Since
 5b30934 the script names 3.0.6 and its changelog describes that release. It had kept the changelog of
-3.0.4 through 3.0.5. The script sets the description and the body only when it creates a project, so
-the existing project keeps its texts of 2026-06-27. The state of the project and its blockers are on
-[publish](publish.md).
+3.0.4 through 3.0.5. With `--texts` the script replaces the summary and the body of the existing
+project with the two files and stops. That is how the texts of 2026-06-27 were replaced on 2026-10-31.
+The state of the project and its blockers are on [publish](publish.md).
 
 ## RCON
 

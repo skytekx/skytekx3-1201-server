@@ -1,237 +1,277 @@
 ---
 type: Runbook
 title: Performance and worldgen profiling
-description: Spark profile of live chunk generation — the lag is vanilla-noise-bound, not memory, no single mod is the villain, but the Skylands is over-saturated with structures.
-tags: [performance, worldgen, profiling, spark]
-timestamp: 2026-06-30
+description: Spark profiles of live chunk generation, measured heap and tick data, the open performance levers and the Skylands structure density history. Lag comes from vanilla terrain noise and garbage collection, not from a single mod.
+tags: [performance, worldgen, profiling, spark, memory, server]
+timestamp: 2026-10-31
 ---
 
 # Performance and worldgen profiling
 
-Profiled the **running** server (Arclight 1.20.1, Forge 47.4.18) under forced fresh worldgen to find
-what makes chunk loading lag. Short version: **the cost is vanilla terrain noise + JVM overhead, not a
-mod.** There is no mod to delete for a worldgen win. Pregen wider instead. A later follow-up
-([section 6](#6-skylands-structure-density-and-the-per-structure-spike-2026-06-30-follow-up)) found one
-real, structure-side win: the **Skylands is over-saturated** and the densest/redundant/heaviest sets can
-be thinned for a GC and chunk-gen reliability gain.
+On 2026-06-29 at 22:11 the owner asked for a performance report, because chunk loading had lagged
+badly, and at 22:30 asked for it to live in the OKF. At 23:41 the owner wanted to know which mod wastes
+the most performance, ready to remove exactly that mod. The answer is none. Chunk generation costs
+vanilla terrain noise plus JVM overhead, and no mod is worth removing for worldgen. A follow-up on
+2026-06-30 found one structural lever, the density of structures in the Skylands.
 
-## 1. Memory is *not* the bottleneck (confirmed)
+The owner's standing rule since 2026-06-30 01:20 is to decide in favour of speed and reliability. Two
+and a half hours later the owner also asked for chocobos and friendly structures to be common in the
+Skylands. The structure density went up for that, and a pregen pays the extra cost once.
 
-| Fact | Value |
+## Test setup
+
+All numbers on this page come from the build machine, not from a server host.
+
+| Item | Value |
 |---|---|
-| Physical RAM | 62 GB, ~23 GB available |
-| Server heap | `-Xms4G -Xmx8G` (8 GB max) |
-| "Swap" | zram — compressed RAM, not disk. Its `used` figure is normal and harmless. |
-| Idle TPS | 20.0 across 5s/10s/1m/5m/15m |
-| Idle MSPT | 0.2 / 0.3 / 0.4 / 2.3 ms (10s), 0.2 / 0.3 / 1.5 / 8.8 ms (1m) |
+| Machine | Apple M1 Max laptop, 10 CPU cores, 62 GB RAM (about 23 GB free), Asahi Linux on aarch64 with 16K pages |
+| Swap | Compressed RAM (zram), not disk, so its used figure is harmless |
+| JVM | Temurin 17.0.19 with `-Xms4G -Xmx8G` and nothing else, so the default G1 collector without Aikar's flags |
+| Server | Arclight 1.20.1 1.0.6 (the hardened jar), Forge 47.4.18, 213 index mods at the time |
+| Players | None or one |
+| Profiles | 2026-06-29 at 23:49 and 23:57, 2026-06-30 at 01:28 |
 
-The heap is comfortable and there is no disk swapping. Lag during exploration is **worldgen-bound**: the
-server is CPU-busy generating chunks, not starved for memory. During the profiled generation TPS held at
-**20.0** the whole time — Chunky throttles itself to protect the tick, so worldgen cost shows up as a
-backlog/latency for the player crossing fresh terrain, not as a TPS drop on the gauge.
+## Heap and memory
 
-## 2. How it was profiled
+These values were measured.
 
-Spark (`spark profiler start --thread *`, async engine, 4 ms interval), capturing **all** threads while
-[Chunky](world-reset.md) was forced to generate **fresh, un-pregenned** chunks far from the pregenned
-core (which is only ±1000 from spawn):
+- At idle the memory value that AllTheLeaks logs (its C value, see
+  [Logs and crashes](logs-and-crashes.md)) stays between about 2,550 and 2,900 MB. The run from
+  2026-06-30 08:09 to 2026-07-03 21:01 logged 343 samples, usually 10 minutes apart with gaps of up to
+  13 hours, and showed no growth (2,558 to 2,886 MB). The two runs of 2026-07-12, the second of which
+  lasted into 2026-07-13, stayed between 2,641 and 2,879 MB.
+- The run of 2026-06-29 that regenerated every dimension logged higher values, 3,173 to 4,187 MB
+  between 17:27 and 19:37.
+- When the watchdog fired in that run (19:41:20), the crash report showed 1,099 MiB free of 8,192 MiB.
+  The used part includes garbage that was not yet collected.
+- No log contains an OutOfMemoryError, a full code cache or a GC overhead message.
+- TPS stayed at 20.0 in all eight Spark health reports. Only the 15-minute average dipped to 19.94
+  around 01:31 on 2026-06-30. Idle MSPT on 2026-06-29 at 23:46 was 0.2, 0.3, 0.4 and 2.3 ms (minimum,
+  median, 95th percentile, maximum over 10 seconds) and 0.2, 0.3, 1.5 and 8.8 ms over one minute.
+  Across the seven reports between 2026-06-29 22:52 and 2026-06-30 01:34 no tick took longer than
+  10.8 ms. One report on 2026-06-27 showed 12.0 ms.
 
-- **Overworld** — squares at `30000,30000` (r160) then `60000,60000` (r480); ~31 chunks/s.
-  Report: <https://spark.lucko.me/jI5VCGQTd6> (~156 s, 60 threads, 203,957 nodes).
-- **Skylands** (`skytekx3:skylands`, the custom dim players explore) — `40000,40000` (r480) then
-  `80000,80000` (r640); ~115 chunks/s (mostly void, so much cheaper per chunk).
-  Report: <https://spark.lucko.me/1JnrEfYpST> (~115 s, 34 threads, 29,752 nodes).
+These values were not measured.
 
-Self-time was attributed per source from spark's embedded `class_sources` map (the "Sources" view): each
-stack frame's exclusive time is charged to the mod that owns the running class.
+- Only one player account ever joined, so the memory and tick cost of 20 players is unknown.
+- No run had GC logging enabled.
 
-## 3. Where the time goes (Spark Sources, self-time)
+The launchers in the repo set an 11G heap. That is `ServerLinux.sh:10` and line 23 of the systemd unit,
+both with `-Xms` equal to `-Xmx` and with `-XX:+AlwaysPreTouch`, which commits the whole heap at start.
+The comment in `ServerLinux.sh` says the size is tuned for a 16 GB host such as the M4 Mac mini and
+leaves about 5 GB for the OS. It goes back to 2026-06-27, when the owner asked whether an M4 Mac mini
+with 8 GB could serve 20 players (12:07) and then noted that only the 16 GB model exists (12:21).
 
-Both dimensions tell the same story. Worldgen runs on the `Worker-Main` pool (**67–69 %** of all
-samples); the rest is GC + JIT + chunk IO. By *source*:
+Only the two runs of 2026-07-12 used an 11 GiB heap. Netty's `maxDirectMemory` of 11,811,160,064 bytes
+in their debug logs shows it. Whether Aikar's flags were active in those runs cannot be told from the
+logs. Metaspace for about 235 mod jars, the code cache, thread stacks and direct buffers all come on top
+of the heap. On a 16 GB host an 11 GB heap leaves little room for them and the OS. The Mac mini
+launcher sets its own heap, see [Mac mini (macOS, launchd) deployment](macos.md).
+
+## How the worldgen profile was taken
+
+Spark ran `spark profiler start --thread *` with the async engine and a 4 ms interval, so it captured
+all threads. Meanwhile Chunky generated fresh chunks far away from the pregenerated core, which covers
+radius 1000 around spawn.
+
+- In the Overworld it generated a square at 30000,30000 (radius 160) and most of one at 60000,60000
+  (radius 480, stopped at 3,296 of 3,721 chunks) at about 33 chunks per second (Chunky's median running
+  rate). Spark report `jI5VCGQTd6` (about 156 s, 60 threads, 203,957 nodes).
+- In the Skylands (`skytekx3:skylands`, the dimension players explore) it generated 40000,40000 (radius
+  480) and 80000,80000 (radius 640) at 115 to 124 chunks per second on average. Most of it is void, so
+  each chunk is cheap. Spark report `1JnrEfYpST` (about 115 s, 34 threads, 29,752 nodes).
+
+Self time was charged to the mod that owns the running class. Each Spark report embeds a
+`class_sources` map for that, which its Sources view shows.
+
+Spark keeps uploaded reports only for a limited time. On 2026-10-31 all three reports of this page
+returned HTTP 404 from the Spark upload store, so the figures here are the only record left. A new
+profile needs a new Spark run.
+
+## Where the time goes
+
+Both dimensions tell the same story. Worldgen runs on the `Worker-Main` pool, which takes 67 to 69
+percent of all samples. The rest is garbage collection, JIT compilation and chunk IO.
 
 | Source | Overworld | Skylands | What it is |
 |---|---:|---:|---|
-| **Minecraft (vanilla)** | **49.6 %** | **61.7 %** | Terrain noise (Simplex/Perlin/Improved), aquifers, density functions, biome climate R-tree, ore placement |
-| **libjvm.so (native)** | 23.8 % | 17.9 % | JVM itself: G1 GC, C2 JIT compilation, native glue |
-| **JDK stdlib** | 11.5 % | 8.3 % | `java.util` / `java.lang.Math` called *from* the gen above |
-| libzip / libc / native | ~4 % | ~5 % | Jar/zip reads, C runtime |
-| **Starlight** | 0.85 % | 3.02 % | Lighting engine — a **performance mod** (faster than vanilla light) |
+| Minecraft (vanilla) | 49.6 % | 61.7 % | Terrain noise (Simplex, Perlin, Improved), aquifers, density functions, the biome climate R-tree, ore placement |
+| JVM native code (libjvm.so) | 23.8 % | 17.9 % | The JVM itself with the G1 collector, C2 JIT compilation and native glue |
+| JDK standard library | 11.5 % | 8.3 % | Calls into `java.util` and `java.lang.Math` from the generation above |
+| Other native code (libzip, libc) | About 4 % | About 5 % | Jar and zip reads, C runtime |
+| Starlight | 0.85 % | 3.02 % | Lighting engine, a performance mod that is faster than vanilla light |
 | ModernFix | 0.82 % | 0.52 % | Performance mod |
-| Biolith | 0.63 % | 0.05 % | Biome-placement library (BoP / TerraBlender backend) |
-| Zeta + Quark | ~0.97 % | — | Quark + its lib |
-| YUNG's API | 0.23 % | 0.35 % | Structure framework (Better Dungeons/Mineshafts/Strongholds) |
-| TerraBlender | 0.19 % | — | Biome region manager |
-| **skytekx-worldgen (custom)** | <0.01 % | <0.01 % | Our `surface_spread` placement + the Skylands floaters (then ~14, now 22) — **invisible** |
+| Biolith | 0.63 % | 0.05 % | Biome placement library behind Biomes O' Plenty and TerraBlender |
+| Zeta and Quark | About 0.97 % | Not seen | Quark and its library |
+| YUNG's API | 0.23 % | 0.35 % | Structure framework of YUNG's Better Dungeons, Mineshafts and Strongholds |
+| TerraBlender | 0.19 % | Not seen | Biome region manager |
+| SkyTekx worldgen mod, retired 2026-07-12 | Under 0.01 % | Under 0.01 % | Its `surface_spread` placement and the floaters of that time |
 
-Top *classes* by self-time are almost entirely vanilla noise: `Aquifer$NoiseBasedAquifer` (8.4 %,
-overworld), `SimplexNoise` (4.9 % / 17.9 %), `ImprovedNoise`, `PerlinNoise`, `Mth`, the
-`Climate$RTree` biome lookup (~5.5 %, overworld), `NoiseChunk` / `DensityFunctions`, `OreFeature`.
+The top classes by self time are nearly all vanilla noise. They are `Aquifer$NoiseBasedAquifer` (8.4 %
+in the Overworld), `SimplexNoise` (4.9 % and 17.9 %), `ImprovedNoise`, `PerlinNoise`, `Mth`, the
+`Climate$RTree` biome lookup (about 5.5 % in the Overworld), `NoiseChunk`, `DensityFunctions` and
+`OreFeature`.
 
-## 4. Worst offender — verdict
+## Verdict: no villain mod
 
-**There is no villain mod.** The single biggest mod-attributed cost is **Starlight** (0.85 % overworld,
-3.0 % Skylands) and it is a *performance* mod — removing it would make lighting **slower**, not faster.
-Next are ModernFix and FerriteCore, also perf mods. Everything else mod-side is noise (<1 %).
+- The biggest cost charged to a mod is Starlight with 0.85 % in the Overworld and 3.0 % in the Skylands.
+  It is a performance mod, so removing it would make lighting slower. ModernFix and FerriteCore come
+  next, also performance mods. Everything else on the mod side stays below 1 %.
+- Removing any single content mod would buy less than 1 % of worldgen time and cost real content.
+- Mods inflate one vanilla cost indirectly. Biomes O' Plenty, TerraBlender and Biolith register many
+  biomes, which enlarges the climate R-tree search that vanilla runs per column (about 5.5 % of the
+  Overworld pass). That cost is small, and Biomes O' Plenty is core to the pack, so it stays.
+- Structure mods (When Dungeons Arise, L_Ender's Cataclysm, YUNG's, Repurposed Structures) barely
+  register on average, below 0.25 %, because structures are sparse. Each one places in a single burst,
+  though. If players report a stutter right when a new structure appears, suspect those.
 
-- **Removing any one content mod buys <1 % of worldgen time** while costing real content. Not worth it.
-- The one place mods *indirectly* inflate a vanilla cost is the **biome climate R-tree** (~5.5 % of the
-  overworld pass): Biomes O Plenty + TerraBlender + Biolith register a large biome list, which enlarges
-  the multi-noise search vanilla runs per column. But that R-tree code is vanilla, the cost is small, and
-  BoP is core pack identity — cutting it loses dozens of biomes for a few percent. **Keep it.**
-- Structure mods (When Dungeons Arise, L_Ender's Cataclysm, YUNG's, Repurposed Structures) barely register
-  on *average* (<0.25 %) because structures are sparse, but each places in one burst — so if a player
-  reports a **stutter** specifically when a new structure spawns, those are the suspects, not the average.
+This is the inherent cost of a pack this size doing vanilla noise terrain. The fix is operational, not
+subtractive.
 
-Honest bottom line: this is the inherent cost of a 213-mod 1.20.1 pack doing **vanilla noise terrain**.
-The fix is operational, not subtractive.
+## Levers
 
-## 5. Concrete fixes
+The worldgen accelerators are already installed, which is why generation is as fast as it is. Noisium
+2.3.0, Saturn 0.1.3 and ChunkOpt 1.0.2 speed up the noise and feature generation that dominates.
+FerriteCore 6.0.1, ModernFix 5.27.51 and Starlight 1.1.2 cover memory and lighting. Keep all of them.
+No server-side port of Lithium is installed. Radium crashed Arclight on 2026-06-27 (see
+[Logs and crashes](logs-and-crashes.md)), and neither Canary nor ServerCore is in the pack.
 
-The worldgen-acceleration mods are **already installed** — this is why generation is as fast as it is:
+The remaining levers are operational. Their state on 2026-10-31 is in the table.
 
-- **Noisium 2.3.0**, **Saturn 0.1.3**, **ChunkOpt 1.0.2** — speed up the noise/feature gen that dominates.
-- **FerriteCore 6.0.1**, **ModernFix 5.27.51**, **Starlight 1.1.2** — memory + lighting. Keep all of them.
+| Lever | State |
+|---|---|
+| Pregenerate wider, radius 5000 or more per dimension, so players rarely hit live worldgen | Not done. The pregen covers radius 1000, see [World reset](world-reset.md#pregen-numbers) |
+| Lower `view-distance` and `simulation-distance` from 10 and 10 to 8 and 6, which cuts the chunk fan-out each player drags around | Not done (`server.properties.example:50` and `:59`) |
+| Keep `/locate` sweeps and big pregens off the live server | A sweep tripped the watchdog on 2026-06-29 at 19:41 |
+| Do not cut content mods for worldgen | Holds, the profile shows no payoff |
+| Remove the Ruins mod, whose flush thread threw on `RuinsPositionsFile.txt` every few minutes | Done in `ac261f1` on 2026-06-30. It was an IO bug, not a CPU cost |
 
-So the levers that remain are operational:
+## Skylands structure density
 
-1. **Pregen wider.** The pregenned core is only ±1000. Extend it so players rarely hit live worldgen —
-   `chunky radius 5000`+ per dimension (overworld + `skytekx3:skylands`). See [world reset](world-reset.md).
-2. **Lower `view-distance` / `simulation-distance`** in `server.properties` (currently both **10**). Each
-   step down cuts the per-tick chunk-load fan-out a player drags around. 8/6 is a comfortable server pair.
-3. **Don't cut content mods for worldgen** — the profile shows no payoff. If you *must* trim, the biome
-   libs (BoP/TerraBlender/Biolith) are the only ones touching a measurable vanilla cost, and even they are
-   ~5 % at most and load-bearing for the biome set.
-4. **The `ruins` mod was removed** (commit `ac261f1`). It used to throw a `RuinsPositionsFile.txt` flush
-   crash roughly every 5 min (an IO/threading bug, not worldgen CPU) that spammed the log — that noise is
-   now gone.
+### The audit of 2026-06-30
 
-Related: [Arclight runtime](arclight.md), [world reset / pregen](world-reset.md), [deploy](deploy.md).
+After the first profile the Ruins mod was removed, and the Skylands floater set grew from 14 to 22
+entries (7 new When Dungeons Arise floaters and the Cataclysm `abandoned_temple`). A follow-up then
+checked how crowded the Skylands had become and whether one structure spikes chunk generation, with
+L_Ender's Cataclysm as the suspect (commit `a0edacd`, 2026-06-30 01:34).
 
-## 6. Skylands structure density and the per-structure spike (2026-06-30 follow-up)
+A `/locate` hit means the structure really generates there, because the command runs each structure's
+generation checks. Sweeps of `execute in skytekx3:skylands positioned ... run locate structure ...` from
+four distant centres showed four overlapping layers. The table shows that night's state, and every row
+has changed since.
 
-After the first pass, two things changed: the `ruins` mod was removed and the `skylands_floaters` set
-grew from 14 to **22** entries (7 new When Dungeons Arise + 1 Cataclysm `abandoned_temple`). Re-audited
-specifically for (a) how crowded the Skylands actually is and (b) whether any single structure — the fear
-being **L_Ender's Cataclysm** — spikes chunk-gen.
+| Layer at the time | Placement | Spacing in chunks | Density found with `/locate` |
+|---|---|---|---|
+| Floaters, 22 custom `sky_*` structures in `skytekx3:skylands_floaters` | Random spread | 44, separation 12 | Any floater about every 335 blocks |
+| Dungeons Arise ground structures, 10 in `skytekx3:skylands_ground` | Surface spread from the SkyTekx mod | 18, separation 6 | One about every 288 blocks, the densest layer |
+| Raw Dungeons Arise majors, 8 in `dungeons_arise:major_structures` | Random spread | 60, separation 50 | Present, and 6 of the 8 duplicate a floater |
+| Villages and swamp huts | Surface spread from the SkyTekx mod | 34 for villages, 32 for swamp huts | Plains, savanna, taiga and swamp variants present |
+| Cataclysm acropolis and soul black smith | Cataclysm's own sets | 80 and 60 | Both present, a smith as close as 57 blocks |
 
-### 6.1 What actually generates in the Skylands
+From four random points the nearest structure was 32, 48, 128 and 248 blocks away. The theoretical
+combined density, the sum of one over spacing squared across the active sets, came to about one
+structure per 210 blocks. That is about 2.5 times denser than the vanilla Overworld village grid with
+one village per about 544 blocks.
 
-`/locate` runs each structure's generation-point check, so a hit means it really generates there. Sweeping
-`/locate` (via `execute in skytekx3:skylands positioned … run locate structure …`) from four far centers
-shows the Skylands is fed by **four overlapping layers**, not just the 22 floaters:
+The audit named two problems.
 
-| Layer | Set / placement | Spacing (chunks) | Lived density (empirical `/locate`) |
-|---|---|---:|---|
-| Floaters (22 custom `sky_*`) | `skytekx3:skylands_floaters` random_spread | 44 / 12 | any floater ~every **335 blocks** (avg) |
-| Ground DA (10) | `skytekx3:skylands_ground` surface_spread | **18 / 6** | one ~every **288 blocks** — densest layer |
-| Raw DA majors (8) | `dungeons_arise:major_structures` random_spread | 60 / 50 | present, **6 of 8 duplicate a floater** |
-| Villages + swamp hut | `minecraft:villages` / `swamp_huts` surface_spread | 34 / 32 | plains/savanna/taiga + swamp present |
-| Cataclysm (2) | `cataclysm:acropolis` / `soul_black_smith` | 80 / 60 | both present (smith located as close as 57 b) |
+- The raw Dungeons Arise layer was redundant. Its `has_structure/*_biomes` tags had been extended with
+  the 14 Skylands biomes (`replace: false`), so the raw majors also placed on island surfaces. Six
+  existed both as a `sky_*` floater and as a raw surface build: aviary, bandit_towers,
+  thornborn_towers, heavenly_conqueror, heavenly_challenger and heavenly_rider.
+- The heavy Cataclysm builds generated in the sky. Their biome tags included the Skylands biomes,
+  although the plan was that the big non-jigsaw Cataclysm builds would not float.
 
-Empirical **nearest-any-structure from a random point: 32 / 48 / 128 / 248 blocks** across four bases.
-Theoretical combined density (sum of `1/spacing²` over the active sets) ≈ **one structure per ~210 blocks**
-— about 2.5× denser than the vanilla overworld village grid (one per ~544 blocks). The Skylands is
-**over-saturated**: the floaters cannot feel special when there is a DA hut or a village every few hundred
-blocks under them.
+### The per-structure spike, measured
 
-Two concrete problems:
-
-- **Redundant raw-DA layer.** The DA `has_structure/*_biomes` tags were edited `replace:false` to add the
-  14 Skylands biomes, so the raw `dungeons_arise:` majors place on island surfaces *in addition to* the
-  custom floaters. Six exist BOTH as a `sky_*` floater AND as a raw surface build (`aviary`,
-  `bandit_towers`, `thornborn_towers`, `heavenly_conqueror`, `heavenly_challenger`, `heavenly_rider`) —
-  pure duplication.
-- **Heavy Cataclysm builds are in the sky.** `cataclysm:acropolis` (spacing 80) and
-  `cataclysm:soul_black_smith` (spacing 60) both generate in the Skylands — their `*_biomes` tags include
-  the Skylands biomes — despite the intent that the big non-jigsaw Cataclysm builds would not float.
-
-### 6.2 The per-structure spike — measured
-
-Profiled fresh generation of a structure-dense Skylands region (`120000,120000`, r480, ~3,700 chunks):
-<https://spark.lucko.me/fwMefVlnFM>, compared to the earlier sparse Skylands pass.
+Spark profiled fresh generation of a dense Skylands region at 120000,120000 (radius 480, 3,721 chunks)
+in report `fwMefVlnFM`, which has expired as well. The comparison is the sparse Skylands pass above.
 
 | Metric | Sparse Skylands | Dense Skylands |
 |---|---:|---:|
-| Worldgen throughput (Chunky) | ~115 chunks/s | **~47 chunks/s** |
-| GC (GC Thread + G1 Conc + Refine) | ~14 % | **~39 %** |
-| `libjvm.so` (native, mostly GC/JIT) | 17.9 % | 41.4 % |
-| Vanilla structure/jigsaw/template assembly | 0.44 % | 1.40 % |
-| **Cataclysm own code** | 0.01 % | **0.00 %** |
-| **DungeonsArise own code** | 0.00 % | **0.00 %** |
+| Chunky throughput, average | 115 to 124 chunks/s | 79 chunks/s |
+| Garbage collection (GC threads, G1 concurrent, refinement) | About 14 % | About 39 % |
+| JVM native code, mostly GC and JIT | 17.9 % | 41.4 % |
+| Vanilla structure, jigsaw and template assembly | 0.44 % | 1.40 % |
+| Cataclysm's own code | 0.01 % | 0.00 % |
+| Dungeons Arise's own code | 0.00 % | 0.00 % |
 
-**Cataclysm verdict: not guilty on CPU.** Cataclysm (and DA) structures are data-driven — assembled by
-*vanilla* jigsaw/template code — so the mods' own code is ~0 %, and even total structure assembly is only
-1.4 % in a saturated region. No single structure is a CPU bomb.
+Cataclysm is not guilty on CPU. Cataclysm and Dungeons Arise structures are data, assembled by vanilla
+jigsaw and template code, so the mods' own code costs about nothing. Even all structure assembly
+together stays at 1.4 % in a saturated region. No single structure is a CPU bomb.
 
-But the saturated region generates **~2.4× slower** and **triples GC pressure** (≈39 % of samples vs
-≈14 %). The cost of over-saturation is not CPU in one method — it is allocation churn (jigsaw template
-block-infos, palettes, block-state writes) feeding the garbage collector, plus the block-volume of big
-builds. More concurrent heavy placements = more GC pauses + slower chunk gen = exactly the chunk-loading
-stalls behind the earlier reliability incident.
+The saturated region still generated more slowly, and its garbage collection samples nearly tripled.
+The dense run took 47 seconds for 3,721 chunks, and Chunky's running rate dipped to 38 chunks per second
+on the way. The cost of density is allocation churn from jigsaw template block lists, palettes and block
+state writes, plus the block volume of big builds. More heavy placements at once mean more GC pauses and
+slower chunk generation, and that is how chunk loading stalls under load.
 
-### 6.3 Decisive fix — thin the Skylands (performance + reliability)
+### What was decided
 
-The Skylands does not need a structure every ~210 blocks. These are **spacing/tag-only** edits, so they
-affect only **not-yet-generated** chunks — non-destructive and reversible. Apply in BOTH
-`skylands-datapack/` and the runtime `world/datapacks/skytekx3_skylands/`, then
-[regen/pregen](world-reset.md):
+- The audit proposed to widen the ground set from 18 to 32 chunks (separation 6 to 10), to take the
+  raw Dungeons Arise duplicates and the two Cataclysm builds out of the Skylands, and optionally to
+  widen the floaters from 44 to 50. It projected about one structure per 280 blocks.
+- The owner chose the lowest-regret slice (`b07466b`, 2026-06-30 03:37). It deleted the Skylands biome
+  tags of the six duplicates and of the acropolis and the soul black smith, 16 files across the two
+  datapack copies of that time. Worldgen registries only rebind on a restart, not on `/reload`. After a
+  restart none of the eight located in the Skylands any more. All eight still located in their native
+  dimensions: aviary in the End midlands and highlands, bandit_towers in Overworld badlands,
+  thornborn_towers in the Overworld, heavenly_conqueror and heavenly_challenger in the Overworld and the
+  End, heavenly_rider in Overworld jungles, forests and savannas and the End, the acropolis in warm
+  oceans and the soul black smith in the Nether. The boot was clean with 0 FATAL. No pregen measured
+  the effect of this change. At 03:48 the owner confirmed that removed structures must keep generating
+  in their native dimensions.
+- At 03:55 and 03:57 the owner asked for chocobos and friendly structures (villagers, adventure houses)
+  to be common in the Skylands. Commit `801edb4` (04:18) then made the Skylands denser for traversal.
+  Floaters went from 44 to 32 chunks, the ground set from 18 to 14 and villages from 34 to 24. The
+  audit's widening steps were never applied.
+- On 2026-07-12 the Skylands moved to pure vanilla placement. Every set went back to random spread, and
+  biome gating keeps structures off the void, see [Skylands worldgen](../content/skylands-worldgen.md).
 
-1. **Widen the densest layer.** `skylands_ground` spacing **18 → 32**, separation **6 → 10**. Cuts the
-   dominant ground-structure density by ~68 % (one per ~288 → ~512 blocks, in line with villages).
-2. **Drop the redundant raw-DA layer.** Remove the 14 Skylands biomes from the 8 DA `has_structure/*_biomes`
-   tags (`aviary`, `bandit_towers`, `thornborn_towers`, `heavenly_conqueror`, `heavenly_challenger`,
-   `heavenly_rider`, `mechanical_nest`, `keep_kayra`). The `sky_*` floaters already provide that content in
-   the air; the raw surface copies are duplication.
-3. **Pull the heavy Cataclysm builds out of the Skylands.** Remove the Skylands biomes from
-   `cataclysm:acropolis_biomes` and `cataclysm:soul_black_smith_biomes`. These are the largest builds by
-   block-volume and do not fit the floating-island theme. The intended Cataclysm presence, the
-   `sky_abandoned_temple` floater, stays.
-4. **Optional:** `skylands_floaters` spacing **44 → 50** to make the floaters rarer and more special.
+### Current structure sets
 
-Projected combined density after (1)+(2)+(3): ~one structure per **~280 blocks** (from ~210), with the two
-heavy Cataclysm builds and the entire redundant raw-DA surface layer gone — which is where the GC and
-throughput win comes from, not the raw count alone.
+Since 2026-07-12 these sets drive the Skylands. All of them use vanilla random spread (checked in
+`skylands-datapack/` and `skylands-datapack-forge/` on 2026-10-31).
 
-> Status: **light-touch subset applied 2026-06-30** (see [6.4](#64-applied-light-touch-subset-2026-06-30)).
-> The owner chose the lowest-regret slice: pull the redundant raw-DA duplicates and the two heavy Cataclysm
-> builds out of the Skylands, but keep the dense `skylands_ground` layer, the floater spacing, and the
-> villages as-is. The spacing widen (step 1) and the optional floater widen (step 4) were **not** applied.
+| Set | Pack | Spacing and separation | Entries |
+|---|---|---|---|
+| Skylands floaters (`skytekx3:skylands_floaters`) | Forge pack, which overrides the shared one | 32 and 8 | 22, the 21 mod floaters plus the balloon |
+| Skylands floaters, vanilla build | Shared pack | 32 and 8 | 1, the sky balloon |
+| Skylands ground (`skytekx3:skylands_ground`) | Forge pack | 14 and 5 | 10 Dungeons Arise surface structures |
+| Villages (`minecraft:villages`) | Shared pack | 24 and 8, vanilla is 34 and 8 | 5 village types |
+| Swamp huts (`minecraft:swamp_huts`) | Shared pack | 32 and 8, the vanilla values | 1 |
+| Dungeons Arise majors (`dungeons_arise:major_structures`) | Forge pack | 60 and 50, as in the jar | 27 of the jar's 31 |
+| Dungeons Arise minors (`dungeons_arise:minor_structures`) | Forge pack | 35 and 25, as in the jar | 1 of 6, the abandoned temple |
 
-### 6.4 Applied: light-touch subset (2026-06-30)
+The Skylands pregen rate tracks this density. Chunky's median rate was 128.6 chunks per second for the
+Skylands regen of 2026-06-29, before the density changes, and 83.2 after the rework of 2026-07-12 (see
+[World reset](world-reset.md#pregen-numbers)). The two runs covered different terrain, so this is an
+observation, not a controlled test.
 
-Applied only steps 2 and 3, scoped to the structures that are pure duplication or the heaviest builds, and
-left the rest of the density alone. The edit is **tag-deletion only** in both `skylands-datapack/` and the
-runtime `world/datapacks/skytekx3_skylands/` (16 files), so it affects only **not-yet-generated** Skylands
-chunks and is fully reversible.
+### Side effect in the Overworld
 
-**Removed from the Skylands** (deleted their `has_structure/*_biomes` Skylands tag in both copies):
+Structure sets are global. A set places its structures in every dimension whose biomes match the
+structures' own biome tags. The shared pack adds the Skylands biomes to the tags of the ten ground
+structures with `replace: false`, so the tags keep their Overworld biomes from the Dungeons Arise jar
+(plains, meadows, forests, beaches, jungles, taigas, savannas and hills). The Overworld therefore gets
+these structures on the 14 chunk grid of the ground set. In the jar nine of them sit in the Dungeons
+Arise sets, 35 or 60 chunks apart, and the small prairie house does not generate at all, because no set
+in the jar lists it. The village set at 24 also applies to the Overworld, which gives about twice as
+many villages as vanilla. Both effects hold at least since the move to random spread on 2026-07-12.
+Nobody has measured what they cost in Overworld generation. Whether the Overworld should keep this
+density is an open question for the owner.
 
-| Structure | Why removed | Still generates in |
-|---|---|---|
-| `dungeons_arise:aviary` | duplicate of a `sky_*` floater | The End (`end_midlands/highlands`) |
-| `dungeons_arise:bandit_towers` | duplicate of a floater | overworld badlands |
-| `dungeons_arise:thornborn_towers` | duplicate of a floater | overworld (native tag) |
-| `dungeons_arise:heavenly_conqueror` | duplicate of a floater | overworld + End |
-| `dungeons_arise:heavenly_challenger` | duplicate of a floater | overworld + End |
-| `dungeons_arise:heavenly_rider` | duplicate of a floater | overworld jungle/forest/savanna + End |
-| `cataclysm:acropolis` | heavy build, off-theme in the sky | overworld `warm_ocean` |
-| `cataclysm:soul_black_smith` | heavy build, off-theme in the sky | the Nether |
+## History
 
-**Kept** (unchanged): the 22 `sky_*` floaters, the `skylands_ground` DA layer (spacing 18), the raw-only DA
-majors `keep_kayra` + `mechanical_nest`, all minor DA huts, the villages + swamp hut, and the
-`sky_abandoned_temple` Cataclysm floater.
+- The old version of this page gave the dense Skylands throughput as about 47 chunks per second and
+  called the region about 2.4 times slower. The log shows 3,721 chunks in 47 seconds, which is 79 chunks
+  per second on average. The dense region was about 1.5 times slower than the sparse pass. The GC
+  figures come from the Spark reports and are unchanged.
+- The old page attributed worldgen to the skytekx-worldgen mod and its `surface_spread` placement. Both
+  were retired on 2026-07-12. The mod shrank to skytekx-compat, see
+  [Compat mod](../content/compat-mod.md).
+- The old heap table showed only the build machine's `-Xms4G -Xmx8G` without saying that the launchers
+  use 11G.
 
-**Verified** after a server restart (worldgen registries rebind only on restart, **not** on `/reload`):
-all 8 removed structures now return *"Could not find ... nearby"* when `/locate`-d in `skytekx3:skylands`,
-while every kept structure (incl. `sky_balloon`, `keep_kayra`, `mechanical_nest`, `wishing_well`) still
-locates there, and all 8 removed structures still locate in their **native** dimensions (so nothing was
-deleted from the game, only un-duplicated out of the sky). Boot clean: `Done (5.475s)`, 0 FATAL.
-
-**Effect:** removes the entire redundant raw-DA surface layer plus the two largest-block-volume Cataclysm
-builds from the Skylands. That is exactly the over-saturation that [6.2](#62-the-per-structure-spike--measured)
-tied to GC pressure (jigsaw template allocation) and slower chunk gen, so the win is on the
-allocation/throughput axis rather than CPU. A full before/after pregen was **not** re-run for this small
-subset (the dense-vs-sparse profile in 6.2 already quantifies the mechanism, and the remaining ground DA +
-village layers keep the lived density only modestly below the ~1 per 210 blocks baseline). The bigger
-levers (the `skylands_ground` 18→32 widen) remain available in 6.3 if a future pass wants more headroom.
+Related: [Arclight runtime](arclight.md), [World reset](world-reset.md), [Deploy](deploy.md),
+[Logs and crashes](logs-and-crashes.md), [Skylands worldgen](../content/skylands-worldgen.md).

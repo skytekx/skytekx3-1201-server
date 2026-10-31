@@ -1,18 +1,24 @@
 ---
 type: Index
 title: Content
-description: The custom mods and features unique to SkyTekx 3.
-tags: [content, custom]
-timestamp: 2026-06-29
+description: The content built for SkyTekx 3 itself, from the Skylands dimension and its travel to the Nyx port, the combat script, the boot fixes and the compat mod.
+tags: [content, index]
+timestamp: 2026-10-31
 ---
 
 # Content
 
-The bespoke content built for SkyTekx 3 (everything else is curated upstream mods — see
-[mod set](../modpack/mod-set.md)).
+Most of SkyTekx 3 is upstream mods, listed under [mod set](../modpack/mod-set.md). These pages cover
+what was built or changed for the pack itself.
 
-- **[Nyx](nyx.md)** — the ported night/lunar content mod (`skytekx/nyx`).
-- **[Skylands worldgen](skylands-worldgen.md)** — the custom floating-islands dimension, pure vanilla datapack with void-biome structure gating.
-- **[Aether fall](aether-fall.md)** — drop off an island → fall to the overworld.
+| Page | What it covers |
+|---|---|
+| [Skylands worldgen](skylands-worldgen.md) | The floating islands dimension `skytekx3:skylands`, a pure datapack that also runs on unmodded Spigot, with its biomes, structure sets and the chocobo setup |
+| [Skylands travel](aether-fall.md) | Falling off an island into the overworld and climbing past Y 319 into the Skylands, done with datapack functions |
+| [Nyx](nyx.md) | The moon mod by Ellpeck, forked and ported to 1.20.1 |
+| [Combat](combat.md) | The 1.7 style melee: a KubeJS script that removes the attack cooldown, plus the client side swing |
+| [Boot fixes](boot-fixes.md) | The override datapack, the jar patches and the other fixes that took the boot from 152 errors to 3 |
+| [SkyTekx Compat](compat-mod.md) | The pack's own Forge mod, now only a crash guard for Bird's Nests |
 
-These are exercised by the [world-reset / pregen](../server/world-reset.md) flow.
+The Skylands pages tie in with [world reset](../server/world-reset.md), which wipes and pregenerates
+dimensions. Rulings that are still open are collected in [open items](../open-items.md).

@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Plugins
-description: The Bukkit plugin layer that Arclight actually runs, which is EssentialsX 2.22.0 alone, its untracked files, its permissions, and the metrics and update checks it brings.
+description: The Bukkit plugin layer that Arclight actually runs, which is EssentialsX 2.22.0 and, on the Mac mini since 2026-10-31, LuckPerms 5.5.71, their untracked files, the permissions, and the metrics and update checks they bring.
 tags: [modpack, server, plugins, essentialsx, arclight]
 timestamp: 2026-10-31
 ---
@@ -10,12 +10,13 @@ timestamp: 2026-10-31
 
 The server runs on Arclight, a hybrid that loads Forge mods and Bukkit plugins side by side (see
 [Arclight](../server/arclight.md)). SkyTekx 2 ran EssentialsX, LuckPerms, Multiverse and WorldEdit.
-Only EssentialsX is installed, and the README says so since its rewrite of 2026-10-31.
+The checkout holds only EssentialsX, and the README says so since its rewrite of 2026-10-31. The Mac mini
+also runs LuckPerms since 2026-10-31 22:34, see [permissions](#permissions).
 
 | Plugin | Version | State |
 |---|---|---|
 | EssentialsX | 2.22.0 | Installed, loaded at every boot since 2026-06-28 |
-| LuckPerms | None | Not installed |
+| LuckPerms | 5.5.71 (Bukkit) | On the Mac mini only, since 2026-10-31 22:34. Not in the checkout |
 | Multiverse | None | Not installed. The Skylands is a datapack dimension, see [Skylands worldgen](../content/skylands-worldgen.md) |
 | WorldEdit | None | Not installed |
 
@@ -55,6 +56,22 @@ effect when that option is false (the config's own comments, lines 265 to 268 an
 server with players who are not operators, either set the option to false and review the list, or
 install a permissions plugin.
 
+The Mac mini got the second way. At 22:34 on 2026-10-31 LuckPerms-Bukkit 5.5.71 went into its `plugins/`
+(Modrinth version `b0mk8uS6`, SHA-512 checked against the API), and the server restarted. LuckPerms keeps
+its data in an H2 database in `plugins/LuckPerms/` on the Mac. The group `default`, which every player
+is in, holds 38 nodes of EssentialsX, each with the prefix `essentials.`: `tpa`, `tpaccept`, `tpdeny`,
+`tpahere`, `tpacancel`, `tpauto`, `home`, `sethome`, `sethome.multiple`, `delhome`, `back`,
+`back.ondeath`, `spawn`, `warp`, `warp.list`, `msg`, `mail`, `mail.send`, `ignore`, `me`, `afk`, `list`,
+`seen`, `realname`, `motd`, `rules`, `help`, `helpop`, `ping`, `getpos`, `compass`, `depth`, `suicide`,
+`balance`, `balancetop`, `pay`, `worth` and `signs.use.*`. The admin commands stay with operators.
+`essentials.spawn` has no effect, because the EssentialsSpawn module that brings `/spawn` is not
+installed. Change the set over RCON with `lp group default permission set <node>` or `unset <node>`,
+or with `/lp editor` in game as an operator.
+
+Breaking blocks and hitting players have nothing to do with these permissions. When both failed on
+2026-10-31, the causes were the spawn protection and a bug in Asgard Shield Reloaded, see the
+[change log](../log.md#2026-10-31-the-mac-mini-and-the-halloween-world).
+
 ## Metrics and update checks
 
 - The bStats switch in `plugins/bStats/config.yml` is `enabled: true`, so plugins that use bStats,
@@ -79,8 +96,8 @@ the folder the server has no `/gm` and no other Essentials command. See [macOS h
 
 - The plugin layer is not tracked. Committing the jar and a reviewed `config.yml` would make a fresh
   clone complete.
-- The permissions setup above leaves every player who is not an operator with almost no Essentials
-  commands.
+- LuckPerms and its database exist only on the Mac mini. A new host needs the jar and the 38 nodes
+  again, see above.
 - The bStats metrics and the update check are on, see above.
 
 Related: [Arclight](../server/arclight.md), [deploy](../server/deploy.md),

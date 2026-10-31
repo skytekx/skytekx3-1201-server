@@ -18,7 +18,7 @@ PrivateTmp=true
 ReadWriteDirectories=/opt/minecraft-server/server/skytekx3-1201-server
 WorkingDirectory=/opt/minecraft-server/server/skytekx3-1201-server
 
-; NOTE: Arclight 1.20.1 requires Java 17 (crashes on 21). Install java-17-openjdk on the host.
+; NOTE: Java 17 is the only version with a successful boot on record (okf/server/arclight.md). Install java-17-openjdk on the host.
 ExecStart=/usr/lib/jvm/java-17-openjdk/bin/java \
   -Xms11G -Xmx11G \
   -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 \

@@ -43,12 +43,14 @@ for f in files:
 print("client-only moved out of server mods/:", len(moved), moved)
 
 # --- overrides: (folder in git, folder in the pack) ---
-# The Skylands datapacks go to the server's world/datapacks/. The shared pack is vanilla safe, the
-# forge pack carries the mod integrations. Bundled jars (built from source or not on Modrinth) go to mods/.
+# The datapacks go to the server's world/datapacks/. The shared Skylands pack is vanilla safe, the
+# forge pack carries the mod integrations, and the fixes pack replaces broken data of other mods.
+# Bundled jars (built from source or not on Modrinth) go to mods/.
 OVERRIDES = [
     ("config", "config"), ("kubejs", "kubejs"), ("defaultconfigs", "defaultconfigs"),
     ("skylands-datapack", "world/datapacks/skytekx3_skylands"),
     ("skylands-datapack-forge", "world/datapacks/skytekx3_skylands_forge"),
+    ("world/datapacks/skytekx3_fixes", "world/datapacks/skytekx3_fixes"),
     ("local-mods", "mods"),
 ]
 # The Chunky task records are tracked by mistake and only hold the build machine's pregen state.

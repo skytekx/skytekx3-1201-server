@@ -58,3 +58,6 @@ RuinsPositionsFile.txt
 boot*.log
 srv.log
 installer_stripped.jar.log
+
+# --- Python bytecode of tools/ ---
+__pycache__/

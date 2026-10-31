@@ -147,8 +147,9 @@ A new `world/level.dat` changes three things.
   them earlier, the vanilla commands below move a pack to the end. They have not been tested on this
   server, so check the result with `/datapack list enabled`.
 - The new world has no fixes pack. The script `tools/sync_skylands_datapack.sh` writes only the two
-  Skylands packs, so copy `world/datapacks/skytekx3_fixes/` from the checkout into the new world before
-  its first boot, as was done on the Mac mini.
+  Skylands packs. On the Mac mini, run `macos/sync-to-mac.sh` before the first boot, which mirrors
+  `world/datapacks/skytekx3_fixes/` into the new world since 7a47a22. On other hosts, copy that folder
+  from the checkout into the new world by hand, as was done for the Halloween world.
 - The new world gets Forge's default server config, with `removeErroringEntities = false`. Set it to
   true in `world/serverconfig/forge-server.toml` with the server down, or a BattleTowers obelisk can
   stop the server again, see
@@ -185,8 +186,8 @@ mod defaults. None of them mentions SkyTekx or the Skylands. Check
 - The archive `~/skylands-prewipe-2026-07-12.tgz` on the build machine (127 MB, 2026-07-12 23:23) holds
   the Skylands before the vanilla rework.
 - The Halloween world lives in `world/` on the Mac mini. The launchd job `com.skytekx.backup` archives
-  it every day at 05:00 into `~/skytekx3-backups` and keeps the newest three. It skips the run when
-  less than 4 GB are free. See [Mac mini](macos.md).
+  it every day at 05:00 into `~/skytekx3-backups` and keeps the newest three. It skips the run unless
+  the disk has room for an archive as large as the newest one plus 4 GB. See [Mac mini](macos.md).
 
 ## History
 

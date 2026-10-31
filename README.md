@@ -188,10 +188,12 @@ cut and the server stays down.
 
 ```bash
 brew install --cask temurin@17
+xcode-select --install     # Brings /usr/bin/python3, which the clean stop and the backup need for RCON
 ```
 
 The first copy comes from the build machine, which holds the checkout and `mods/`. With `--with-world`
-it also brings `world/` and the live files such as `server.properties`.
+it also brings `world/` and the live files such as `server.properties`. It refuses when the Mac already
+has a world, unless `--overwrite-world` is given too.
 
 ```bash
 macos/sync-to-mac.sh user@mac-mini --with-world
@@ -211,8 +213,8 @@ world backup every day at 05:00. Run the server and its tools through `macos/sky
 ```bash
 macos/skytekx3ctl status            # launchd state, players and tick times
 macos/skytekx3ctl restart           # RCON stop, launchd starts the server again
-macos/skytekx3ctl stop              # Stops it over RCON and keeps it down (sudo)
-macos/skytekx3ctl start             # Starts it again (sudo)
+macos/skytekx3ctl stop              # Stops it over RCON and keeps it down, also across reboots (sudo)
+macos/skytekx3ctl start             # Enables the job and starts it again (sudo)
 macos/skytekx3ctl rcon "list"       # One console command
 ```
 
@@ -225,8 +227,8 @@ macos/sync-to-mac.sh user@mac-mini
 ssh -t user@mac-mini 'cd ~/skytekx3-1201-server && tools/sync_skylands_datapack.sh && macos/skytekx3ctl start'
 ```
 
-Without `--with-world` the sync never touches the world, the player data, `server.properties` or the
-other live files. It does copy `config/`, and since the mod update of 2026-10-31 the Mac's configs
+Without `--with-world` the sync never touches the world (but for the fixes datapack), the player
+data, `server.properties` or the other live files. It does copy `config/`, and since the mod update of 2026-10-31 the Mac's configs
 differ from the checkout. Check every sync with a checksum dry run first, see
 [Mac mini](okf/server/macos.md#deploy-and-update).
 

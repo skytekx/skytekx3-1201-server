@@ -70,9 +70,10 @@ file and `update-check: false` in the Essentials config is a candidate that wait
 ## Mac mini
 
 Git only tracks `plugins/PluginMetrics/config.yml`, so the Mac mini gets the plugin jar and its folder
-from this checkout through `macos/sync-to-mac.sh`. The script leaves the player files in
-`plugins/Essentials/userdata/` alone unless it runs with `--with-world`. Without the folder the server
-has no `/gm` and no other Essentials command. See [macOS host](../server/macos.md).
+from this checkout through `macos/sync-to-mac.sh`. Unless it runs with `--with-world`, the script
+copies only `config.yml` from `plugins/Essentials/` and leaves the rest alone, because Essentials keeps
+player data and in-game changes there (`userdata/`, `usermap.bin`, `uuids.bin`, kits, warps). Without
+the folder the server has no `/gm` and no other Essentials command. See [macOS host](../server/macos.md).
 
 ## Open points
 

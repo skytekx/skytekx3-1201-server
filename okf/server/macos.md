@@ -47,14 +47,14 @@ That points to a power cut, and autorestart brought the Mac back.
 
 | File | Role |
 |---|---|
-| Script `ServerMac.sh` | The launcher. Java 17, a 9G heap, Aikar's G1 flags, a 512M code cache, headless AWT, an open file limit of 10240, and the SIGTERM handling described below |
+| Script `ServerMac.sh` | The launcher. Java 17, a 9G heap, Aikar's G1 flags, a 512M code cache, headless AWT, a soft limit of 10240 open files when the shell has less (launchd's 65536 stays), and the SIGTERM handling described below. The Mac mini still runs the version before the fixes of 2026-10-31 evening until the next watched restart |
 | Plist `macos/com.skytekx.server.plist` | LaunchDaemon `com.skytekx.server`. Runs `ServerMac.sh` as the server user at boot, `KeepAlive` true, `ThrottleInterval` 30, `ExitTimeOut` 180, `ProcessType` Interactive, 65536 open files, stdout to `/dev/null`, stderr to `logs/launchd-stderr.log` |
 | Plist `macos/com.skytekx.rcon-guard.plist` | LaunchDaemon `com.skytekx.rcon-guard`. Runs as root at boot and loads the pf anchor |
-| Rules `macos/pf-rcon-guard.conf` | The anchor rules: pass TCP 65535 on `lo0`, drop it on every other interface |
+| Rules `macos/pf-rcon-guard.conf` | The anchor rules: pass TCP 65535 on `lo0`, drop new connections to it (SYN without ACK) on every other interface. The loaded anchor still drops every packet to 65535 until `install.sh` runs again |
 | Plist `macos/com.skytekx.backup.plist` | LaunchDaemon `com.skytekx.backup`. Runs `macos/backup.sh` daily at 05:00 as the server user |
-| Script `macos/backup.sh` | Pauses saving over RCON, flushes, archives `world/` to `~/skytekx3-backups`, keeps the newest 3, skips the run below 4 GB free |
+| Script `macos/backup.sh` | Pauses saving over RCON, flushes, archives `world/` to `~/skytekx3-backups`, keeps the newest 3. It skips the run unless the disk has room for an archive as large as the newest one plus 4 GB, and a failed run removes its partial archive and turns saving back on |
 | Script `macos/skytekx3ctl` | The commands `status`, `start`, `stop`, `restart`, `rcon <command>`, `log` and `backup` |
-| Script `macos/install.sh` | Run with sudo. Sets the power options, fills in the plist placeholders, installs the pf anchor and loads the three jobs. A second run reloads them, which restarts the server cleanly. It waits until each old job is gone before it loads the new one |
+| Script `macos/install.sh` | Run with sudo. Checks for Java 17 and `/usr/bin/python3`, sets the power options, fills in the plist placeholders, installs the pf anchor, enables the three jobs and loads them. A second run reloads them, which restarts a running server cleanly and starts a stopped one. It waits until each old job is gone before it loads the new one. The tunnel job is installed by hand, see [Public access](#public-access) |
 | Script `macos/sync-to-mac.sh` | Run on the build machine. Pushes the checkout to the Mac mini |
 
 ## Stop and restart
@@ -71,8 +71,8 @@ to the JVM as before, and `stop` is typed into the console.
 |---|---|
 | Status, players and tick times | Run `macos/skytekx3ctl status` |
 | Restart | Run `macos/skytekx3ctl restart`. It sends RCON `stop`, and `KeepAlive` starts the server again |
-| Stop and keep it down | Run `macos/skytekx3ctl stop`. It boots the job out, which stops the server over RCON, and waits up to 200 s until the JVM has exited and launchd has removed the job |
-| Start after a stop | Run `macos/skytekx3ctl start` |
+| Stop and keep it down | Run `macos/skytekx3ctl stop`. It disables the job, so the server stays down across reboots, boots it out, which stops the server over RCON, and waits up to 200 s until the JVM has exited and launchd has removed the job |
+| Start after a stop | Run `macos/skytekx3ctl start`. It enables the job and loads it |
 | Console command | Run `macos/skytekx3ctl rcon "<command>"`. RCON replies longer than 4 KB are cut off by `tools/rcon.py` |
 | Follow the log | Run `macos/skytekx3ctl log` |
 
@@ -108,14 +108,17 @@ application firewall cannot filter by port, so pf does it. The job `com.skytekx.
 
 Verified on 2026-10-31 from the build machine: before the guard, port 65535 accepted connections from
 the LAN. With the guard it times out, while 25565 stays open and RCON over loopback works. The anchor
-also survives a reload of the main ruleset with `pfctl -f /etc/pf.conf`.
+also survives a reload of the main ruleset with `pfctl -f /etc/pf.conf`. That test ran with the first
+rule, which dropped every packet to 65535, also the replies to the Mac's own outgoing connections from
+that port. The rule in the repo drops only new connections. `pfctl -nvf` accepts it, but it is not
+loaded yet.
 
 ## Deploy and update
 
 First deploy, on the build machine:
 
 ```bash
-macos/sync-to-mac.sh user@mac-mini --with-world   # Only for a first copy that brings a world
+macos/sync-to-mac.sh user@mac-mini --with-world   # Only for a first copy, refused when the Mac has a world
 ```
 
 Then on the Mac mini, once:
@@ -134,11 +137,14 @@ macos/sync-to-mac.sh user@mac-mini
 ssh -t user@mac-mini 'cd ~/skytekx3-1201-server && tools/sync_skylands_datapack.sh && macos/skytekx3ctl start'
 ```
 
-Without `--with-world` the sync never touches live state: `world/`, the EssentialsX user data,
-`server.properties` (it holds the RCON password), ops, whitelist, bans, caches, `eula.txt`, `local/`,
-`server-icon.png` and the Chunky task records in `config/chunky/tasks/`. It mirrors `mods/` and the
-two Skylands datapack sources exactly, so removed files disappear on the Mac too. Other deletions are
-done by hand. The script never copies `ansible/` or the vault password file. Run
+Without `--with-world` the sync never touches live state: `world/` except the fixes pack,
+everything in `plugins/Essentials/` but `config.yml`, `server.properties` (it holds the RCON
+password), ops, whitelist, bans, caches, `eula.txt`, `local/`, `server-icon.png` and the Chunky task
+records in `config/chunky/tasks/`. It mirrors `mods/` and the two Skylands datapack sources exactly, so
+removed files disappear on the Mac too, and it mirrors `world/datapacks/skytekx3_fixes/` straight into
+the Mac's world, which takes effect at the next restart or `/minecraft:reload`. With `--with-world` it
+refuses to run when the Mac already has `world/level.dat`, unless `--overwrite-world` is given too.
+Other deletions are done by hand. The script never copies `ansible/` or the vault password file. Run
 `tools/sync_skylands_datapack.sh` on the Mac after a datapack change. It mirrors the sources into
 `world/datapacks/`.
 

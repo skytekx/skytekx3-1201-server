@@ -106,10 +106,10 @@ evidence and the page with the details. The rulings behind the first section are
   which stays as it was. The Halloween world on the Mac mini has current copies. Sync and commit them
   only if the old world comes back. See
   [World reset and pregen](server/world-reset.md#datapacks-and-pack-order).
-- A new world does not get the fixes pack. The sync script writes only the two Skylands packs into
-  `world/datapacks/`, and `macos/sync-to-mac.sh` skips `world/` unless it runs with `--with-world`. Copy
-  `world/datapacks/skytekx3_fixes/` by hand, as was done for the Halloween world on the Mac mini. See
-  [World reset and pregen](server/world-reset.md#fresh-world).
+- A new world on a host other than the Mac mini does not get the fixes pack. The script
+  `tools/sync_skylands_datapack.sh` writes only the two Skylands packs into `world/datapacks/`. Since
+  7a47a22 `macos/sync-to-mac.sh` mirrors the fixes pack into the Mac mini's world, elsewhere it is
+  copied by hand. See [World reset and pregen](server/world-reset.md#fresh-world).
 - The owner's Prism instance is behind the server. It still has the old builds of Polymorph, Balm,
   Waystones and Simple Voice Chat among others and needs the new jars before the next join. See
   [Client](modpack/client.md#mods).

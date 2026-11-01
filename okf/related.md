@@ -23,7 +23,7 @@ The history behind them is on [History](history.md).
 | Fork skytekx/nyx | The Nyx port to 1.20.1 | GitHub | Port on branch `1.20.1`, no releases |
 | Fork skytekx/Cataclysm_Spellbooks | The Spellbooks port to Cataclysm 3.31 | GitHub | Port on branch `1.20.1`, no releases |
 | Modrinth project skytekx3 | The pack listing | Web page `modrinth.com/modpack/skytekx3` | A draft with versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7. An anonymous API call answers 404 |
-| Prism instance SkyTekx3 | The owner's game client | The build machine | See [Client](modpack/client.md) |
+| Prism instance SkyTekx3-test | The owner's game client since 2026-10-31. The older instance `SkyTekx3` was last launched on 2026-07-12 | The build machine | See [Client](modpack/client.md#test-instance) |
 
 ## This repo on GitHub
 

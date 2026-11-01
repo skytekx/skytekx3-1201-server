@@ -214,8 +214,8 @@ hard coded list and would bring back Radium, Rubidium, memoryleakfix and Better 
 ## Mac mini
 
 The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with `rsync --delete`. The
-folder already holds the patched jars and BattleTowers, and since 2026-10-31 also the new builds of the
-update above. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
+folder already holds the patched jars and BattleTowers, since 2026-10-31 also the new builds of the
+update above and since 2026-11-01 Falling Meteors Reimagined. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
 [macOS host](../server/macos.md).
 
 ## History

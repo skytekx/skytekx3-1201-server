@@ -22,6 +22,7 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import twilightforest.init.TFFeatureModifiers;
 import twilightforest.util.BoundingBoxUtils;
+import twilightforest.world.components.structures.UtilityPiece;
 import twilightforest.world.components.structures.util.DecorationClearance;
 
 import java.util.List;
@@ -162,7 +163,10 @@ public class AvoidLandmarkModifier extends PlacementModifier {
 	private boolean placementIsBlocked(BlockPos blockPos, StructureStart startForStructure, BlockPos featureDistanceXZ, float chunkClearanceRadius) {
 		if (chunkClearanceRadius <= 0) {
 			for (StructurePiece piece : startForStructure.getPieces()) {
-				// TODO custom-density-terraforming: skip `piece instanceof UtilityPiece utilityPiece && utilityPiece.allowFeatures` here once UtilityPiece exists (4.8 7dac0cd13, ea5db78ed)
+				if (piece instanceof UtilityPiece utilityPiece && utilityPiece.allowFeatures) {
+					continue;
+				}
+
 				if (BoundingBoxUtils.greatestAxalDistance(piece.getBoundingBox(), blockPos) <= this.additionalClearance) {
 					return true;
 				}

@@ -61,6 +61,7 @@ import twilightforest.client.model.block.leaves.BakedLeavesModel;
 import twilightforest.client.model.block.patch.PatchModelLoader;
 import twilightforest.client.renderer.TFSkyRenderer;
 import twilightforest.client.renderer.TFWeatherRenderer;
+import twilightforest.client.renderer.entity.MagicPaintingRenderer;
 import twilightforest.client.renderer.entity.ShieldLayer;
 import twilightforest.client.renderer.tooltip.PotionFlaskTooltipComponent;
 import twilightforest.compat.curios.CuriosCompat;
@@ -258,6 +259,12 @@ public class TFClientEvents {
 
 		if (!mc.isPaused()) {
 			BugModelAnimationHelper.animate();
+
+			// Magic painting lightning layers fade out from the last tick a sky flash was active
+			if (mc.level != null && mc.level.getSkyFlashTime() > 0) {
+				MagicPaintingRenderer.lastLightning = mc.level.getGameTime();
+			}
+
 			DimensionSpecialEffects info = DimensionSpecialEffectsManager.getForType(TwilightForestMod.prefix("renderer"));
 
 			// add weather box if needed

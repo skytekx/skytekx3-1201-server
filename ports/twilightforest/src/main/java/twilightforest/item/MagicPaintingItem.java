@@ -79,9 +79,9 @@ public class MagicPaintingItem extends Item {
             if (tag != null && tag.contains("EntityTag", 10)) {
                 CompoundTag entityTag = tag.getCompound("EntityTag");
                 MagicPaintingVariants.getVariant(level.registryAccess(), entityTag.getString("variant")).ifPresent((variant) -> {
-                    ResourceLocation location = new ResourceLocation(entityTag.getString("variant"));
+                    ResourceLocation location = MagicPaintingVariants.getVariantResourceLocation(level.registryAccess(), variant);
                     components.add(Component.translatable(location.toLanguageKey("magic_painting", "title")).withStyle(ChatFormatting.YELLOW));
-                    components.add(Component.translatable(location.toLanguageKey("magic_painting", "author")).withStyle(ChatFormatting.GRAY));
+                    components.add(Component.empty().withStyle(ChatFormatting.GRAY).append(variant.author()));
                     components.add(Component.translatable("painting.dimensions", Mth.positiveCeilDiv(variant.width(), 16), Mth.positiveCeilDiv(variant.height(), 16)));
                 });
             }

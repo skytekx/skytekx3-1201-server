@@ -209,6 +209,21 @@
             }
           ],
           "name": "minecraft:potion"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "twilightforest:brittle_potion_flask"
         }
       ],
       "rolls": 2.0
@@ -344,6 +359,11 @@
             }
           ],
           "name": "minecraft:obsidian",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:greater_potion_flask",
           "weight": 25
         }
       ],

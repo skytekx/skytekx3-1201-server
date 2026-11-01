@@ -210,8 +210,6 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(WIP).add(
 				TFBlocks.KEEPSAKE_CASKET.get().asItem(),
 				TFBlocks.CANDELABRA.get().asItem(),
-				TFItems.BRITTLE_FLASK.get(),
-				TFItems.GREATER_FLASK.get(),
 				TFItems.CUBE_OF_ANNIHILATION.get(),
 				TFBlocks.WROUGHT_IRON_FENCE.get().asItem()
 		);

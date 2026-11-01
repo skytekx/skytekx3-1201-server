@@ -20,6 +20,7 @@ import twilightforest.enums.HollowLogVariants;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.item.ArcticArmorItem;
+import twilightforest.item.PotionFlaskContents;
 import twilightforest.util.ColorUtil;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -405,8 +406,10 @@ public final class ColorHandler {
 								: 0xFFFFFF,
 				TFItems.ARCTIC_HELMET.get(), TFItems.ARCTIC_CHESTPLATE.get(), TFItems.ARCTIC_LEGGINGS.get(), TFItems.ARCTIC_BOOTS.get());
 
-		event.register((stack, tintIndex) ->
-						tintIndex > 0 ? -1 : PotionUtils.getColor(stack),
-				TFItems.BRITTLE_FLASK.get(), TFItems.GREATER_FLASK.get());
+		event.register((stack, tintIndex) -> {
+			if (tintIndex > 0) return -1;
+			if (!PotionFlaskContents.of(stack).hasPotion()) return -1;
+			return PotionUtils.getColor(stack);
+		}, TFItems.BRITTLE_FLASK.get(), TFItems.GREATER_FLASK.get());
 	}
 }

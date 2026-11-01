@@ -49,6 +49,7 @@ public class TFDamageTypes {
     public static final ResourceKey<DamageType> FALLING_ICE = create("falling_ice");
     public static final ResourceKey<DamageType> MOONWORM = create("moonworm"); //Moonworm
     public static final ResourceKey<DamageType> ACID_RAIN = create("acid_rain"); //Acid rain Enforcement
+    public static final ResourceKey<DamageType> FAILED_CHALLENGE = create("failed_challenge"); //Being an absolute loser
 
     public static ResourceKey<DamageType> create(String name) {
         return ResourceKey.create(Registries.DAMAGE_TYPE, TwilightForestMod.prefix(name));
@@ -103,5 +104,6 @@ public class TFDamageTypes {
         context.register(FALLING_ICE, new DamageType("fallingBlock", 0.1F));
         context.register(MOONWORM, new DamageType("twilightforest.moonworm", 0.0F));
         context.register(ACID_RAIN, new DamageType("twilightforest.acid_rain", 0.0F));
+        context.register(FAILED_CHALLENGE, new DamageType("twilightforest.failedChallenge", 0.0F));
     }
 }

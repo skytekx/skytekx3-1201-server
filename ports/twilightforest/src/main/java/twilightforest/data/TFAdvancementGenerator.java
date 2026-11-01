@@ -22,6 +22,8 @@ import twilightforest.TwilightForestMod;
 import twilightforest.advancements.*;
 import twilightforest.block.Experiment115Block;
 import twilightforest.init.*;
+import twilightforest.item.BrittleFlaskItem;
+import twilightforest.item.PotionFlaskContents;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import java.util.function.Consumer;
@@ -426,7 +428,7 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 						Component.translatable("advancement.twilightforest.full_mettle_alchemist"),
 						Component.translatable("advancement.twilightforest.full_mettle_alchemist.desc"),
 						null, FrameType.CHALLENGE, true, true, true)
-				.addCriterion("drink_4_harming", DrinkFromFlaskTrigger.Instance.drankPotion(4, MinMaxBounds.Ints.atMost(7), Potions.STRONG_HARMING))
+				.addCriterion("drink_4_harming", DrinkFromFlaskTrigger.Instance.drankPotion(3, MinMaxBounds.Ints.atMost(6), Potions.STRONG_HARMING))
 				.rewards(AdvancementRewards.Builder.experience(100))
 				.save(consumer, "twilightforest:full_mettle_alchemist");
 
@@ -528,10 +530,8 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 	}
 
 	private ItemStack flaskWithHarming() {
-		ItemStack itemstack = new ItemStack(TFItems.GREATER_FLASK.get());
-		CompoundTag compoundtag = itemstack.getOrCreateTag();
-		compoundtag.putInt("Uses", 4);
-		compoundtag.putString("Potion", ForgeRegistries.POTIONS.getKey(Potions.STRONG_HARMING).toString());
+		ItemStack itemstack = new ItemStack(TFItems.BRITTLE_FLASK.get());
+		new PotionFlaskContents(Potions.STRONG_HARMING, null, null, BrittleFlaskItem.DOSES, 0).applyTo(itemstack);
 		return itemstack;
 	}
 

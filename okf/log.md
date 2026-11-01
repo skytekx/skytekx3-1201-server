@@ -431,6 +431,18 @@ logs stay on the Mac and are not in the repo.
   player file at 04:40:04 with nobody online. The two newer files are kept in `~/skytekx3-backups/` on
   the Mac mini. Minecraft keeps only the previous autosave of a player, so such a copy has to happen
   before the player joins again. At 05:00 the backup job ran for the first time (742 MB in 20 s).
+- At 05:52 the owner ruled that Get It Together Drops leaves the pack and that Falling Meteors
+  Reimagined 2.5 joins the server and both MacBooks, with meteors only in the overworld and none on the
+  sky islands. skytekx-compat 2.1.3 holds that rule in a mixin and also answers the modifier queries of
+  Infernal Mobs on the server thread, the source of the `Async chunk entity get` warnings. On the test
+  server a thrown summoner called a meteor in the overworld and none in the Skylands, the Nether or the
+  End, and the 61 queries of a joining client all ran on the server thread. The server stopped at
+  06:10:10 with nobody online. Get It Together Drops 1.3 and skytekx-compat 2.1.2 moved to
+  `~/skytekx3-backups/jars-orig/`, Falling Meteors and skytekx-compat 2.1.3 came in (235 jars), and
+  `merge-radius.item` in `spigot.yml` went from 2.5 to 0.5, since Arclight would otherwise have kept
+  merging dropped items at 2.5 (a4bcaf7). The server was up at 06:11:04 at 20 TPS with only the known
+  boot errors. Both MacBooks got the jar, and a game that was already running has to restart before it
+  joins. See [SkyTekx Compat](content/compat-mod.md#history).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

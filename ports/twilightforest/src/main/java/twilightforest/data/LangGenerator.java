@@ -197,6 +197,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.BOLD_STONE_PILLAR, "Bold Stone Pillar");
 		this.addBlock(TFBlocks.CANDELABRA, "Candelabra");
 		this.addBlock(TFBlocks.WROUGHT_IRON_FENCE, "Wrought Iron Fence");
+		this.addBlock(TFBlocks.CORONATION_CARPET, "Coronation Carpet");
 		this.add("block.twilightforest.wrought_iron_fence.cap", "Right-click with an Iron Ingot or Nugget to add a finial");
 
 		this.addBlock(TFBlocks.KEEPSAKE_CASKET, "Keepsake Casket");

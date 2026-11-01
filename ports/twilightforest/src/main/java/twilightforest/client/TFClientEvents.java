@@ -54,6 +54,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.block.GiantBlock;
 import twilightforest.block.MiniatureStructureBlock;
 import twilightforest.block.entity.GrowingBeanstalkBlockEntity;
+import twilightforest.client.model.block.carpet.RoyalRagsModelLoader;
 import twilightforest.client.model.block.connected.ConnectedTextureModelLoader;
 import twilightforest.client.model.block.forcefield.ForceFieldModelLoader;
 import twilightforest.client.model.block.giantblock.GiantBlockModelLoader;
@@ -93,6 +94,7 @@ public class TFClientEvents {
 			event.register("giant_block", GiantBlockModelLoader.INSTANCE);
 			event.register("force_field", ForceFieldModelLoader.INSTANCE);
 			event.register("connected_texture_block", ConnectedTextureModelLoader.INSTANCE);
+			event.register("royal_rags", RoyalRagsModelLoader.INSTANCE);
 		}
 
 		@SubscribeEvent

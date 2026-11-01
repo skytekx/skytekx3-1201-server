@@ -6,23 +6,60 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
+import twilightforest.init.TFFeatures;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class RedCanopyMushroomFeature extends CanopyMushroomFeature {
-    private int altHeads = 0;
+    public static final int VANILLA_CAP = 0;
+    public static final int SMOOTH_CAP = 1;
+    public static final int SPHEROID_CAP = 2;
+    public static final int FLAT_CAP = 3;
 
-    public RedCanopyMushroomFeature(Codec<HugeMushroomFeatureConfiguration> featureConfigurationCodec) {
+    /**
+     * The cap style is fixed per Feature instance instead of being rolled into a field in place(), which raced between worldgen threads.
+     * The 33/33/33/1 roll moved into the twilightforest:weighted_list configured feature mushroom/red_canopy_mushroom:
+     * 0: Vanilla, 33% Chance, styled big red mushroom cap,
+     * 1: Smooth, 33% Chance, kinda like the ones on a mushroom castle,
+     * 2: Spheroid, 33% Chance, same style of cap as you'd find in TF version 1.17, for example
+     * 3: Flat, 1% chance, same as the brown mushroom one, these used to be in older versions of TF
+     */
+    private final int enumHead;
+
+    public RedCanopyMushroomFeature(Codec<HugeMushroomFeatureConfiguration> featureConfigurationCodec, int enumHead) {
         super(featureConfigurationCodec);
+        this.enumHead = enumHead;
     }
 
-    @Override
-    public boolean place(FeaturePlaceContext<HugeMushroomFeatureConfiguration> context) {
-        this.altHeads = context.random().nextInt(100) + 1; //Roll the dice on the style of cap
-        return super.place(context);
+    /**
+     * Backs the legacy twilightforest:canopy_red_mushroom feature id that 4.3 placed directly and that datapacks may still reference.
+     * It rolls the cap style per placement with the old 33/33/33/1 odds and delegates to the matching fixed-cap feature,
+     * so nothing is stored on the Feature instance that every worldgen thread shares.
+     */
+    public static class AnyCap extends Feature<HugeMushroomFeatureConfiguration> {
+        public AnyCap(Codec<HugeMushroomFeatureConfiguration> featureConfigurationCodec) {
+            super(featureConfigurationCodec);
+        }
+
+        @Override
+        public boolean place(FeaturePlaceContext<HugeMushroomFeatureConfiguration> context) {
+            int altHeads = context.random().nextInt(100) + 1; //Roll the dice on the style of cap
+            Feature<HugeMushroomFeatureConfiguration> variant;
+            if (altHeads <= 33) {
+                variant = TFFeatures.CANOPY_RED_VANILLA_MUSHROOM.get();
+            } else if (altHeads <= 66) {
+                variant = TFFeatures.CANOPY_RED_SMOOTH_MUSHROOM.get();
+            } else if (altHeads <= 99) {
+                variant = TFFeatures.CANOPY_RED_SPHEROID_MUSHROOM.get();
+            } else {
+                variant = TFFeatures.CANOPY_RED_FLAT_MUSHROOM.get();
+            }
+            return variant.place(context);
+        }
     }
 
     @Override
@@ -40,19 +77,13 @@ public class RedCanopyMushroomFeature extends CanopyMushroomFeature {
         return 10 + random.nextInt(2);
     }
 
-    /**
-     * 33% Chance to get a vanilla - styled big red mushroom cap,
-     * 33% chance for it to be a "smooth" cap, kinda like the ones on a mushroom castle,
-     * 33% chance it's the same style of cap as you'd find in TF version 1.17, for example
-     * 1% chance for it to be a flat cap, same as the brown mushroom one, these used to be in older versions of TF
-     */
     @Override
     protected void makeCap(LevelAccessor levelAccessor, RandomSource random, BlockPos pos, int height, BlockPos.MutableBlockPos mutableBlockPos, HugeMushroomFeatureConfiguration featureConfiguration) {
-        if (this.altHeads <= 33) {
+        if (this.enumHead == VANILLA_CAP) {
             this.makeVanillaCap(levelAccessor, random, pos, height, mutableBlockPos, featureConfiguration);
-        } else if (this.altHeads <= 66) {
+        } else if (this.enumHead == SMOOTH_CAP) {
             this.makeSmoothCap(levelAccessor, random, pos, height, mutableBlockPos, featureConfiguration);
-        } else if (this.altHeads <= 99) {
+        } else if (this.enumHead == SPHEROID_CAP) {
             this.makeSpheroidCap(levelAccessor, random, pos, height, mutableBlockPos, featureConfiguration);
         } else super.makeCap(levelAccessor, random, pos, height, mutableBlockPos, featureConfiguration);
     }

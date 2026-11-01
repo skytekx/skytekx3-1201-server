@@ -26,10 +26,12 @@ public class StrongholdPieces {
 			new StrongholdPieceWeight(StrongholdTreasureRoomComponent::new, 5, 1, 4),
 			new StrongholdPieceWeight(StrongholdBossRoomComponent::new, 15, 1, 4)};
 
+	// Per-generation state. The weights in pieceWeightArray are templates that are copied in prepareStructurePieces, and
+	// totalWeight/lastPieceMade are instance fields (they were static), so strongholds generated on different worldgen threads don't share counters.
 	private List<StrongholdPieceWeight> pieceList;
-	static int totalWeight = 0;
+	private int totalWeight = 0;
 
-	private static StrongholdPieceWeight lastPieceMade;
+	private StrongholdPieceWeight lastPieceMade;
 
 	/**
 	 * sets up Arrays with the Structure pieces and their weights
@@ -38,8 +40,7 @@ public class StrongholdPieces {
 		pieceList = new ArrayList<>();
 
 		for (StrongholdPieceWeight piece : pieceWeightArray) {
-			piece.instancesSpawned = 0;
-			pieceList.add(piece);
+			pieceList.add(piece.recount());
 		}
 	}
 

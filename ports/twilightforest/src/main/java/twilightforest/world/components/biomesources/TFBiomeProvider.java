@@ -59,7 +59,9 @@ public class TFBiomeProvider extends BiomeSource {
 
 	@Override
 	protected Stream<Holder<Biome>> collectPossibleBiomes() {
-		return this.biomeList.values().stream().flatMap(TerrainColumn::getBiomes);
+		// biomeList is a HashMap keyed by identity-hashed ResourceKeys, so its iteration order can change between JVM runs.
+		// possibleBiomes() feeds the per-step feature ordering, which decides feature decoration seeds; sort it for determinism.
+		return this.biomeList.values().stream().sorted(Comparator.comparing(TerrainColumn::getResourceKey)).flatMap(TerrainColumn::getBiomes);
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public class TFBiomeProvider extends BiomeSource {
 	}
 
 	public Optional<TerrainColumn> getTerrainColumn(ResourceKey<Biome> biome) {
-		return this.biomeList.values().stream().filter(p -> p.is(biome)).findFirst();
+		return Optional.ofNullable(this.biomeList.get(biome));
 	}
 
 	public <T> T getBiomeValue(ResourceKey<Biome> biome, Function<TerrainColumn, T> function, T other) {

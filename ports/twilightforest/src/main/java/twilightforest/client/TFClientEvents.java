@@ -47,10 +47,12 @@ import net.minecraftforge.client.DimensionSpecialEffectsManager;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import twilightforest.FoliageColorHandler;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.GiantBlock;
@@ -116,6 +118,17 @@ public class TFClientEvents {
 			new TFSkyRenderer();
 			new TFWeatherRenderer();
 			event.register(TwilightForestMod.prefix("renderer"), new TwilightForestRenderInfo(128.0F, false, DimensionSpecialEffects.SkyType.NONE, false, false));
+		}
+	}
+
+	/**
+	 * Drops the cached foliage colour handlers when anything leaves a client level, which covers leaving a world and
+	 * switching dimensions or servers, so handlers resolved against an old biome registry are not reused (#2361).
+	 */
+	@SubscribeEvent
+	public static void clearFoliageColorCache(EntityLeaveLevelEvent event) {
+		if (event.getLevel().isClientSide()) {
+			FoliageColorHandler.clearCache();
 		}
 	}
 

@@ -26,6 +26,7 @@ public class StrongholdPieceWeight {
 		this.pieceWeight = weight;
 		this.instancesLimit = limit;
 		this.minimumDepth = minDepth;
+		this.instancesSpawned = 0;
 	}
 
 	public boolean isDeepEnough(int depth) {
@@ -36,4 +37,10 @@ public class StrongholdPieceWeight {
 		return this.instancesLimit == 0 || this.instancesSpawned < this.instancesLimit;
 	}
 
+	/**
+	 * @return a fresh copy with its spawn counter at zero, so each stronghold being generated counts its own pieces
+	 */
+	public StrongholdPieceWeight recount() {
+		return new StrongholdPieceWeight(this.factory, this.pieceWeight, this.instancesLimit, this.minimumDepth);
+	}
 }

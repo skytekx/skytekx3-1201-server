@@ -34,8 +34,9 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		this.rcoords = nbt.getIntArray("roomCoords");
 
 		// recreate maze object
-		maze = new TFMaze(getMazeSize(), getMazeSize(), RandomSource.create());
-		setFixedMazeSeed();
+		RandomSource random = RandomSource.create(this.getMazeSeed());
+		maze = new TFMaze(getMazeSize(), getMazeSize(), random);
+		this.configureMaze();
 
 		// blank out rcoords above 1 so that the room generation works properly
 		//TODO: re-do this. :)
@@ -44,10 +45,10 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		}
 
 		// recreate rooms
-		this.addRoomsToMaze(this.rcoords[0], this.rcoords[1], (this.rcoords.length + 1) / 2);
+		this.addRoomsToMaze(this.rcoords[0], this.rcoords[1], (this.rcoords.length + 1) / 2, random);
 
 		// regenerate maze
-		maze.generateRecursiveBacktracker(0, 0);
+		maze.generateRecursiveBacktracker(0, 0, random);
 	}
 
 	public MinotaurMazeComponent(int index, int x, int y, int z, int entranceX, int entranceZ, int level, RandomSource random) {
@@ -56,23 +57,24 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		this.level = level;
 		this.boundingBox = TFLandmark.getComponentToAddBoundingBox(x, y, z, -getRadius(), 0, -getRadius(), getRadius() * 2 + 2, 5, getRadius() * 2 + 2, Direction.SOUTH, false);
 
+		// set the seed to a fixed value based on this maze's x and z
+		random.setSeed(this.getMazeSeed());
+
 		// make maze object
 		maze = new TFMaze(getMazeSize(), getMazeSize(), random);
-
-		// set the seed to a fixed value based on this maze's x and z
-		setFixedMazeSeed();
+		this.configureMaze();
 
 		// rooms
 		int nrooms = 7;
 		rcoords = new int[nrooms * 2];
 
-		addRoomsToMaze(entranceX, entranceZ, nrooms);
+		addRoomsToMaze(entranceX, entranceZ, nrooms, random);
 
 		// make actual maze
-		maze.generateRecursiveBacktracker(0, 0);
+		maze.generateRecursiveBacktracker(0, 0, random);
 	}
 
-	private void addRoomsToMaze(int entranceX, int entranceZ, int nrooms) {
+	private void addRoomsToMaze(int entranceX, int entranceZ, int nrooms, RandomSource rand) {
 		// make one entrance room always
 		rcoords[0] = entranceX;
 		rcoords[1] = entranceZ;
@@ -82,8 +84,8 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		for (int i = 1; i < nrooms; i++) {
 			int rx, rz;
 			do {
-				rx = maze.rand.nextInt(getMazeSize() - 2) + 1;
-				rz = maze.rand.nextInt(getMazeSize() - 2) + 1;
+				rx = rand.nextInt(getMazeSize() - 2) + 1;
+				rz = rand.nextInt(getMazeSize() - 2) + 1;
 			} while (isNearRoom(rx, rz, rcoords, i == 1 ? 7 : 4));
 
 			maze.carveRoom1(rx, rz);
@@ -93,8 +95,8 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		}
 	}
 
-	private void setFixedMazeSeed() {
-		maze.setSeed(this.boundingBox.minX() * 90342903L + this.boundingBox.minY() * 90342903L ^ this.boundingBox.minZ());
+	private long getMazeSeed() {
+		return this.boundingBox.minX() * 90342903L + this.boundingBox.minY() * 90342903L ^ this.boundingBox.minZ();
 	}
 
 	public MinotaurMazeComponent(int index, int x, int y, int z, int level, RandomSource random) {
@@ -281,6 +283,13 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		generateBox(world, sbb, 1, 5, 1, getDiameter(), 5, getDiameter(), TFBlocks.MAZESTONE.get().defaultBlockState(), stone, onlyReplaceCeiling);
 		generateBox(world, sbb, 1, 0, 1, getDiameter(), 0, getDiameter(), TFBlocks.MAZESTONE_MOSAIC.get().defaultBlockState(), stone, false);
 
+		maze.copyToStructure(world, manager, generator, 1, 2, 1, this, sbb, rand);
+	}
+
+	/**
+	 * Configured once when the piece is built or loaded instead of in postProcess, which runs concurrently for the chunks this piece spans.
+	 */
+	private void configureMaze() {
 		maze.headBlockState = TFBlocks.DECORATIVE_MAZESTONE.get().defaultBlockState();
 		maze.wallBlockState = TFBlocks.MAZESTONE_BRICK.get().defaultBlockState();
 		maze.rootBlockState = TFBlocks.DECORATIVE_MAZESTONE.get().defaultBlockState();
@@ -291,8 +300,6 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		maze.head = 1;
 		maze.roots = 1;
 		maze.oddBias = 4;
-
-		maze.copyToStructure(world, manager, generator, 1, 2, 1, this, sbb);
 	}
 
 	public int getMazeSize() {

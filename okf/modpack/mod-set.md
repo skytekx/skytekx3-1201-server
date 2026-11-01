@@ -174,6 +174,26 @@ holds the Forge port of Falling Meteors. A copy of either jar under a SkyTekx ac
 redistribution, so it needs the authors' permission first, as the bundled jars on
 [publish](publish.md#what-blocks-a-release) do.
 
+## Backpack
+
+Since 2026-11-01 08:09 the server runs `backpack-1.20.1-2.0.1.1.jar` instead of Sophisticated
+Backpacks and Sophisticated Core. It is our port of Eydamos Backpack 2.0.1, the backpack mod of
+SkyTekx2, to Forge 1.20.1 (mod id `backpack`, 164,729 bytes, SHA-256
+1205ec8790110cdc3f10ac558776da96ce06f8121873dc81c027994e01505d2d). The owner asked for it at 03:54,
+see [Decisions](../decisions.md). Its source sits in the local repo `skytekx-backpack`, which has no
+remote. It brings the normal and big backpacks in 16 colors, the workbench backpacks, the ender
+backpack that opens the player's ender chest, bound and tanned leather, and the 2.0.1 recipes. There
+is no back slot. Contents live in the world as `world/data/backpack_<uuid>.dat`, one file per
+backpack.
+
+The original is LGPL-2.1, and so is the port. The jar carries the license and a notice of the
+changes. Whoever passes the jar on also has to offer its source, so the build writes
+`backpack-1.20.1-2.0.1.1-sources.zip` next to it, which has to travel with the jar. Like Falling
+Meteors it is not in the pack yet, and a client without it cannot join.
+
+Sophisticated Backpacks and Sophisticated Core sit in `~/skytekx3-backups/jars-orig/` on the Mac mini
+and on the build machine. Their entries are still in `modrinth.index.json` until the next pack.
+
 ## Parked and removed mods
 
 The folder `disabled-mods/` holds 8 jars that are in neither the index nor `mods/`:
@@ -223,7 +243,7 @@ hard coded list and would bring back Radium, Rubidium, memoryleakfix and Better 
 
 The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with `rsync --delete`. The
 folder already holds the patched jars and BattleTowers, since 2026-10-31 also the new builds of the
-update above and since 2026-11-01 Falling Meteors Reimagined. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
+update above, since 2026-11-01 Falling Meteors Reimagined and the Backpack port. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
 [macOS host](../server/macos.md).
 
 ## History

@@ -15,9 +15,6 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Rulings not yet built
 
-- No mob explosion damage to blocks in the Skylands (ruling of 2026-06-29 11:40). No gamerule, script,
-  datapack or config does this, and the vanilla `mobGriefing` rule is global. It needs a KubeJS
-  explosion handler or a mod. See [Skylands worldgen](content/skylands-worldgen.md#open-rulings).
 - Loot chances roughly like SkyTekx 2 and not three Hexxit flowers side by side (2026-06-27 21:46).
   Nothing overrides the Hexbiscus placement, and the loot part of `kubejs/server_scripts/gameplay.js`
   points at a script that was never written. See [KubeJS](modpack/kubejs.md#open-rulings).

@@ -42,7 +42,7 @@ import java.util.Objects;
 public class Troll extends Monster implements RangedAttackMob {
 
 	private static final EntityDataAccessor<Boolean> ROCK_FLAG = SynchedEntityData.defineId(Troll.class, EntityDataSerializers.BOOLEAN);
-	private static final AttributeModifier ROCK_MODIFIER = new AttributeModifier("Rock follow boost", 24, AttributeModifier.Operation.ADDITION);
+	private static final AttributeModifier ROCK_MODIFIER = new AttributeModifier("Rock follow boost", 8, AttributeModifier.Operation.ADDITION);
 
 	private RangedAttackGoal aiArrowAttack;
 	private MeleeAttackGoal aiAttackOnCollide;
@@ -50,9 +50,9 @@ public class Troll extends Monster implements RangedAttackMob {
 	@Nullable
 	private BlockState rock;
 
-	public Troll(EntityType<? extends Troll> type, Level world) {
-		super(type, world);
-		this.rockCooldown = 300;
+	public Troll(EntityType<? extends Troll> type, Level level) {
+		super(type, level);
+		this.rockCooldown = 300 + this.getRandom().nextInt(100);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class Troll extends Monster implements RangedAttackMob {
 	public static AttributeSupplier.Builder registerAttributes() {
 		return Monster.createMonsterAttributes()
 				.add(Attributes.MAX_HEALTH, 30.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.28D)
+				.add(Attributes.MOVEMENT_SPEED, 0.25D)
 				.add(Attributes.ATTACK_DAMAGE, 7.0D);
 	}
 
@@ -122,13 +122,16 @@ public class Troll extends Monster implements RangedAttackMob {
 
 	@Override
 	public double getPassengersRidingOffset() {
-		return super.getPassengersRidingOffset() + 1.75D;
+		// 4.8 holds the rock at 1.25x the troll's height (getPassengerAttachmentPoint), lower than 4.3's 0.75x + 1.75
+		return this.getBbHeight() * 1.25D;
 	}
 
 	@Override
 	public void positionRider(Entity entity, Entity.MoveFunction callback) {
 		super.positionRider(entity, callback);
-		entity.setXRot(this.getXRot());
+		// the held rock turns with the troll; ThrownBlockRenderer uses this yaw
+		entity.setYRot(this.yBodyRot);
+		entity.yRotO = this.yBodyRotO;
 	}
 
 	@Override
@@ -247,7 +250,7 @@ public class Troll extends Monster implements RangedAttackMob {
 			if (!this.getPassengers().isEmpty() && Objects.requireNonNull(this.getFirstPassenger()).getType() == TFEntities.THROWN_BLOCK.get()) {
 				this.getFirstPassenger().discard();
 			}
-			this.rockCooldown = 300;
+			this.rockCooldown = 300 + this.getRandom().nextInt(100);
 			this.rock = null;
 		}
 	}

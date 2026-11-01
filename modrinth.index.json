@@ -2646,6 +2646,36 @@
       "fileSize": 540665
     },
     {
+      "path": "mods/spartantoolkit-1.20.1-1.6.1.jar",
+      "hashes": {
+        "sha1": "46c73554ce8282057824fae275f4f0cb0220c029",
+        "sha512": "8a42954de192c24ac9b099375a4eee8839444f118f964e8d4812eda827c4d03ad2a78d10a878500cd85dc50b80c94d0499b2980ae29212fc6a580534d54ddbb8"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/7R2BqYPs/versions/dUvEozRY/spartantoolkit-1.20.1-1.6.1.jar"
+      ],
+      "fileSize": 87097
+    },
+    {
+      "path": "mods/spartantwilight-1.20.1-3.1.1.jar",
+      "hashes": {
+        "sha1": "806890c4a427f7b47ee8c5ae3479e6e650f0fba6",
+        "sha512": "f3d83a88b76e327713424297d413639b2173800905dc1ffd26e02dd0dff5632e22449bf0310141e950c609b812f281bb55559d304828797a29696831958f11e4"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/Uvofz0Ui/versions/mo1TPvb0/spartantwilight-1.20.1-3.1.1.jar"
+      ],
+      "fileSize": 473906
+    },
+    {
       "path": "mods/SpartanWeaponry-1.20.1-forge-3.2.1-all.jar",
       "hashes": {
         "sha1": "187977cf09972df5773c92b8af5fd342a9d726cb",

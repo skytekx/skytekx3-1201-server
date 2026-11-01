@@ -50,8 +50,12 @@ public class FireReactEnchantment extends LootOnlyEnchantment {
 	@Override
 	public void doPostHurt(LivingEntity user, @Nullable Entity attacker, int level) {
 		RandomSource random = user.getRandom();
-		if (attacker != null && shouldHit(level, random, attacker)) {
-			attacker.setSecondsOnFire(2 + (random.nextInt(level) * 3));
+		// 4.8 gates both the ignite and the durability cost only on the 0.15 x level chance,
+		// so the armor still pays for a proc against a fire-immune attacker
+		if (attacker != null && level > 0 && random.nextFloat() < 0.15F * (float) level) {
+			if (!attacker.fireImmune()) {
+				attacker.setSecondsOnFire(2 + (random.nextInt(level) * 3));
+			}
 			// like Thorns, every proc costs the enchanted armor 2 durability
 			ChillAuraEnchantment.damageEnchantedItem(this, user);
 		}

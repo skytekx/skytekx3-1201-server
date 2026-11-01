@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.KeepsakeCasketBlock;
-import twilightforest.block.entity.KeepsakeCasketBlockEntity;
+import twilightforest.block.entity.SkullChestBlockEntity;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.enums.BlockLoggingEnum;
@@ -52,7 +52,7 @@ import java.util.List;
  * Charm of Life, Charm of Keeping and Keepsake Casket handling.
  * <p>
  * All state that has to survive between the death and the respawn of a player (kept items, the charm that was used,
- * the damage of the consumed casket and whether the casket broke) lives in the player's persisted NBT
+ * and the damage of the consumed casket) lives in the player's persisted NBT
  * ({@link #getPlayerData(Player)}), which Forge copies onto the respawned player. Nothing is kept in static fields,
  * so several players dying at once can no longer swap or lose each other's charm state.
  */
@@ -61,7 +61,8 @@ public class CharmEvents {
 
 	public static final String CHARM_INV_TAG = "TFCharmInventory";
 	public static final String CASKET_DAMAGE_TAG = "CasketDamage";
-	//stores if the casket was too damaged to hold the player's items, so we can tell them on respawn
+	//set by builds before the Skull Chest fallback, when a too damaged casket broke and dropped the player's items.
+	//nothing sets it anymore, it is only read so a player who died with such a casket still gets told on respawn
 	public static final String CASKET_BROKEN_TAG = "CasketBroken";
 	//stores the charm of keeping that was used, so the effect can be played on respawn
 	public static final String CONSUMED_CHARM_TAG = "CharmStack";
@@ -101,6 +102,7 @@ public class CharmEvents {
 	public static void returnItemsOnRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
 		if (!event.isEndConquered()) {
+			//legacy: a casket that broke before the Skull Chest fallback existed
 			if (getPlayerData(serverPlayer).contains(CASKET_BROKEN_TAG)) {
 				serverPlayer.sendSystemMessage(Component.translatable("block.twilightforest.casket.broken").withStyle(ChatFormatting.RED));
 				getPlayerData(serverPlayer).remove(CASKET_BROKEN_TAG);
@@ -267,44 +269,42 @@ public class CharmEvents {
 			FluidState fluidState = level.getFluidState(immutablePos);
 
 			damage = Math.max(0, Math.min(2, damage));
-			if (player.getRandom().nextFloat() <= 0.15F) {
-				if (damage >= 2) {
-					//the casket is too damaged to hold anything: it breaks, and the remaining items drop as usual
-					getPlayerData(player).putBoolean(CASKET_BROKEN_TAG, true);
-					TwilightForestMod.LOGGER.debug("{}'s Casket damage value was too high, alerting the player and dropping extra items", player.getName().getString());
-					return;
-				} else {
-					damage = damage + 1;
-					TwilightForestMod.LOGGER.debug("{}'s Casket was randomly damaged, applying new damage", player.getName().getString());
-				}
-			}
-
 			BlockState setState = TFBlocks.KEEPSAKE_CASKET.get().defaultBlockState()
 					.setValue(BlockLoggingEnum.MULTILOGGED, BlockLoggingEnum.getFromFluid(fluidState.getType()))
 					.setValue(KeepsakeCasketBlock.BREAKAGE, damage)
 					.setValue(KeepsakeCasketBlock.FACING, Direction.from2DDataValue(level.getRandom().nextInt(3)));
+
+			if (player.getRandom().nextFloat() <= 0.15F) {
+				if (damage >= 2) {
+					//the casket is too damaged to survive another death: it degrades into a Skull Chest, which still holds the items
+					setState = TFBlocks.SKULL_CHEST.get().withPropertiesOf(setState);
+					TwilightForestMod.LOGGER.debug("{}'s Casket damage value was too high, placing Skull Chest instead", player.getName().getString());
+				} else {
+					damage = damage + 1;
+					setState = setState.setValue(KeepsakeCasketBlock.BREAKAGE, damage);
+					TwilightForestMod.LOGGER.debug("{}'s Casket was randomly damaged, applying new damage", player.getName().getString());
+				}
+			}
 
 			if (!level.setBlockAndUpdate(immutablePos, setState)) {
 				TwilightForestMod.LOGGER.error("Could not place Keepsake Casket at {}", pos);
 				return;
 			}
 
-			if (!(level.getBlockEntity(immutablePos) instanceof KeepsakeCasketBlockEntity casket)) {
+			if (!(level.getBlockEntity(immutablePos) instanceof SkullChestBlockEntity casket)) {
 				TwilightForestMod.LOGGER.error("Failed to set Keepsake Casket data at {}", pos);
 				return;
 			}
 
 			if (TFConfig.COMMON_CONFIG.casketUUIDLocking.get()) {
 				//make it so only the player who died can open the chest if our config allows us
-				casket.playeruuid = player.getGameProfile().getId();
+				casket.owner = player.getGameProfile();
 			} else {
-				casket.playeruuid = null;
+				casket.owner = null;
 			}
 
 			//some names are way too long for the casket so we'll cut them down
 			String modifiedName = player.getName().getString().substring(0, Math.min(12, player.getName().getString().length()));
-			casket.name = player.getName().getString();
-			casket.casketname = modifiedName;
 			casket.setCustomName(Component.literal(modifiedName + "'s " + (level.getRandom().nextInt(1000) == 0 ? "Costco Casket" : casket.getDisplayName().getString())));
 
 			int casketCapacity = casket.getContainerSize();

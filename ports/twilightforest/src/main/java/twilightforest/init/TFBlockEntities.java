@@ -66,6 +66,8 @@ public class TFBlockEntities {
 	public static final RegistryObject<BlockEntityType<MoonwormBlockEntity>> MOONWORM = BLOCK_ENTITIES.register("moonworm", () ->
 			BlockEntityType.Builder.of(MoonwormBlockEntity::new, TFBlocks.MOONWORM.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<SkullChestBlockEntity>> SKULL_CHEST = BLOCK_ENTITIES.register("skull_chest", () ->
+			BlockEntityType.Builder.of(SkullChestBlockEntity::new, TFBlocks.SKULL_CHEST.get()).build(null));
 	public static final RegistryObject<BlockEntityType<KeepsakeCasketBlockEntity>> KEEPSAKE_CASKET = BLOCK_ENTITIES.register("keepsake_casket", () ->
 			BlockEntityType.Builder.of(KeepsakeCasketBlockEntity::new, TFBlocks.KEEPSAKE_CASKET.get()).build(null));
 
@@ -132,7 +134,8 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(TF_HANGING_SIGN.get(), HangingSignRenderer::new);
 		BlockEntityRenderers.register(TF_CHEST.get(), TwilightChestRenderer::new);
 		BlockEntityRenderers.register(TF_TRAPPED_CHEST.get(), TwilightChestRenderer::new);
-		BlockEntityRenderers.register(KEEPSAKE_CASKET.get(), CasketTileEntityRenderer::new);
+		BlockEntityRenderers.register(SKULL_CHEST.get(), SkullChestRenderer::new);
+		BlockEntityRenderers.register(KEEPSAKE_CASKET.get(), KeepsakeCasketRenderer::new);
 		BlockEntityRenderers.register(SKULL_CANDLE.get(), SkullCandleTileEntityRenderer::new);
 		BlockEntityRenderers.register(REACTOR_DEBRIS.get(), ReactorDebrisRenderer::new);
 		BlockEntityRenderers.register(RED_THREAD.get(), RedThreadRenderer::new);

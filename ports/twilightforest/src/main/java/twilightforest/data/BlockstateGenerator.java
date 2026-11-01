@@ -463,7 +463,8 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		builtinEntity(TFBlocks.MINING_TRAPPED_CHEST.get(), "twilightforest:block/wood/planks_mine_0");
 		builtinEntity(TFBlocks.SORTING_TRAPPED_CHEST.get(), "twilightforest:block/wood/planks_sort_0");
 
-		casketStuff();
+		casketStuff(TFBlocks.SKULL_CHEST.get());
+		casketStuff(TFBlocks.KEEPSAKE_CASKET.get());
 		stonePillar();
 		candelabra();
 
@@ -721,10 +722,10 @@ public class BlockstateGenerator extends BlockModelBuilders {
 				.with(DirectionalBlock.FACING, Direction.EAST).setModels(new ConfiguredModel(east));
 	}
 
-	private void casketStuff() {
-		var builder = getVariantBuilder(TFBlocks.KEEPSAKE_CASKET.get());
+	private void casketStuff(Block block) {
+		var builder = getVariantBuilder(block);
 
-		var empty = models().getBuilder(name(TFBlocks.KEEPSAKE_CASKET.get())).parent(new ModelFile.UncheckedModelFile("builtin/entity")).texture("particle", "minecraft:block/netherite_block");
+		var empty = models().getBuilder(name(block)).parent(new ModelFile.UncheckedModelFile("builtin/entity")).texture("particle", "minecraft:block/netherite_block");
 		var obsidian = models().withExistingParent("casket_obsidian", prefix("block/casket_solid_template")).texture("top", new ResourceLocation("block/obsidian")).texture("side", new ResourceLocation("block/obsidian"));
 		var stone = models().withExistingParent("casket_stone", prefix("block/casket_solid_template")).texture("top", new ResourceLocation("block/stone")).texture("side", new ResourceLocation("block/stone"));
 		var basalt = models().withExistingParent("casket_basalt", prefix("block/casket_solid_template")).texture("top", new ResourceLocation("block/basalt_top")).texture("side", new ResourceLocation("block/basalt_side"));

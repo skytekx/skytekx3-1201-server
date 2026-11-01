@@ -461,6 +461,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 		charmRecipe(consumer, "charm_of_life_2", TFItems.CHARM_OF_LIFE_2, TFItems.CHARM_OF_LIFE_1);
 
 		SpecialRecipeBuilder.special(TFRecipes.MOONWORM_QUEEN_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("moonworm_queen_repair_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.CASKET_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("casket_repair_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.MAGIC_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("magic_map_cloning_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.MAZE_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("maze_map_cloning_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.EMPERORS_CLOTH_RECIPE.get()).save(consumer, TwilightForestMod.prefix("emperors_cloth_recipe").toString());

@@ -230,6 +230,9 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_HURT = createEvent("entity.twilightforest.skeleton_druid.hurt");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_SHOOT = createEvent("entity.twilightforest.skeleton_druid.shoot");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_STEP = createEvent("entity.twilightforest.skeleton_druid.step");
+	public static final RegistryObject<SoundEvent> SKULL_CHEST_CLOSE = createEvent("block.twilightforest.skull_chest.close");
+	public static final RegistryObject<SoundEvent> SKULL_CHEST_LOCKED = createEvent("block.twilightforest.skull_chest.locked");
+	public static final RegistryObject<SoundEvent> SKULL_CHEST_OPEN = createEvent("block.twilightforest.skull_chest.open");
 	public static final RegistryObject<SoundEvent> SLIDER = createEvent("block.twilightforest.slider.move");
 	public static final RegistryObject<SoundEvent> SLIME_BEETLE_AMBIENT = createEvent("entity.twilightforest.slime_beetle.ambient");
 	public static final RegistryObject<SoundEvent> SLIME_BEETLE_DEATH = createEvent("entity.twilightforest.slime_beetle.death");

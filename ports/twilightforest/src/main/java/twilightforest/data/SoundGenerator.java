@@ -331,6 +331,9 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.REACTOR_AMBIENT, SoundEvents.PORTAL_AMBIENT);
 		this.generateExistingSoundWithSubtitle(TFSounds.REAPPEAR_BLOCK, SoundEvents.DISPENSER_DISPENSE);
 		this.generateExistingSoundWithSubtitle(TFSounds.REAPPEAR_POOF, SoundEvents.ITEM_PICKUP);
+		this.generateNewSoundWithSubtitle(TFSounds.SKULL_CHEST_CLOSE, "random/casket/close", 1);
+		this.generateExistingSoundWithSubtitle(TFSounds.SKULL_CHEST_LOCKED, SoundEvents.CHEST_LOCKED);
+		this.generateNewSoundWithSubtitle(TFSounds.SKULL_CHEST_OPEN, "random/casket/open", 1, 1.0F, 1.25F);
 		this.generateNewSoundWithSubtitle(TFSounds.SLIDER, "random/creakgo2", 1);
 		this.generateExistingSoundWithSubtitle(TFSounds.SMOKER_START, SoundEvents.COMPARATOR_CLICK);
 		this.generateExistingSoundWithSubtitle(TFSounds.TIME_CORE, SoundEvents.COMPARATOR_CLICK);

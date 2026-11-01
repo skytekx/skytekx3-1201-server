@@ -214,6 +214,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.TWISTED_STONE_PILLAR.get());
 		dropSelf(TFBlocks.BOLD_STONE_PILLAR.get());
 		dropWhenSilkTouch(TFBlocks.EMPTY_CANOPY_BOOKSHELF.get());
+		add(TFBlocks.SKULL_CHEST.get(), skullChest());
 		add(TFBlocks.KEEPSAKE_CASKET.get(), casketInfo(TFBlocks.KEEPSAKE_CASKET.get()));
 		dropSelf(TFBlocks.CANDELABRA.get());
 		dropSelf(TFBlocks.WROUGHT_IRON_FENCE.get());
@@ -539,6 +540,11 @@ public class BlockLootTables extends BlockLootSubProvider {
 	// [VanillaCopy] super.droppingWithChancesAndSticks, but non-silk touch parameter can be an item instead of a block
 	private LootTable.Builder silkAndStick(Block block, ItemLike nonSilk, float... nonSilkFortune) {
 		return createSilkTouchOrShearsDispatchTable(block, this.applyExplosionCondition(block, LootItem.lootTableItem(nonSilk.asItem())).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, nonSilkFortune))).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when((HAS_SHEARS.or(HAS_SILK_TOUCH)).invert()).add(applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
+	}
+
+	//the block drops itself in SkullChestBlock.playerWillDestroy, so the loot table stays empty
+	private static LootTable.Builder skullChest() {
+		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)));
 	}
 
 	private static LootTable.Builder casketInfo(Block block) {

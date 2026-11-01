@@ -23,13 +23,16 @@ import twilightforest.compat.RecipeViewerConstants;
 import twilightforest.compat.jei.categories.CrumbleHornCategory;
 import twilightforest.compat.jei.categories.JEIUncraftingCategory;
 import twilightforest.compat.jei.categories.TransformationPowderCategory;
+import twilightforest.compat.jei.extension.CasketRepairExtension;
 import twilightforest.compat.jei.extension.MoonwormQueenExtension;
 import twilightforest.compat.jei.renderers.*;
+import twilightforest.compat.jei.subtype.CasketSubtypeInterpreter;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFMenuTypes;
 import twilightforest.init.TFRecipes;
 import twilightforest.inventory.UncraftingMenu;
+import twilightforest.item.recipe.CasketRepairRecipe;
 import twilightforest.item.recipe.MoonwormQueenRepairRecipe;
 
 import java.util.Collections;
@@ -60,6 +63,11 @@ public class JEICompat implements IModPlugin {
 	}
 
 	@Override
+	public void registerItemSubtypes(ISubtypeRegistration registration) {
+		registration.registerSubtypeInterpreter(TFItems.KEEPSAKE_CASKET.get(), CasketSubtypeInterpreter.INSTANCE);
+	}
+
+	@Override
 	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
 		registration.addRecipeTransferHandler(UncraftingMenu.class, TFMenuTypes.UNCRAFTING.get(), RecipeTypes.CRAFTING, 11, 9, 20, 36);
 	}
@@ -87,6 +95,7 @@ public class JEICompat implements IModPlugin {
 		// the repair recipe is special, so JEI only lists it in the crafting category once something can draw it.
 		// A data pack that removes the recipe also removes the display (#2320)
 		registration.getCraftingCategory().addCategoryExtension(MoonwormQueenRepairRecipe.class, recipe -> new MoonwormQueenExtension());
+		registration.getCraftingCategory().addCategoryExtension(CasketRepairRecipe.class, CasketRepairExtension::new);
 	}
 
 	@Override

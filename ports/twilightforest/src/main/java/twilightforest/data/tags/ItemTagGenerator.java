@@ -215,7 +215,6 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		);
 
 		tag(WIP).add(
-				TFBlocks.KEEPSAKE_CASKET.get().asItem(),
 				TFBlocks.CANDELABRA.get().asItem(),
 				TFItems.CUBE_OF_ANNIHILATION.get()
 		);

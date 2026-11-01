@@ -4,6 +4,8 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
+import twilightforest.TwilightForestMod;
+import twilightforest.init.TFBlocks;
 
 import java.util.function.Consumer;
 
@@ -19,5 +21,9 @@ public class UncraftingGenerator {
 		UncraftingRecipeBuilder.uncrafting(Items.WRITTEN_BOOK).setCost(0)
 				.pattern("B")
 				.define('B', Items.BOOK).save(consumer);
+
+		UncraftingRecipeBuilder.uncrafting(TFBlocks.KEEPSAKE_CASKET.get()).setCost(0)
+				.pattern("C")
+				.define('C', TFBlocks.SKULL_CHEST.get()).save(consumer, TwilightForestMod.prefix("relinquish_keepsakes"));
 	}
 }

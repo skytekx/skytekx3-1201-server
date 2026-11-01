@@ -3,9 +3,11 @@ package twilightforest.compat.jei;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -110,5 +112,14 @@ public class JEICompat implements IModPlugin {
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
 		registration.addRecipeClickArea(UncraftingScreen.class, 34, 33, 27, 20, JEIUncraftingCategory.UNCRAFTING);
 		registration.addRecipeClickArea(UncraftingScreen.class, 115, 33, 27, 20, RecipeTypes.CRAFTING);
+		// JEI's own recipe book handler only covers the vanilla screens, so keep its overlays off the open recipe book.
+		// The book starts up to 149 pixels left of the GUI and its category tabs stick out up to 32 pixels further.
+		registration.addGuiContainerHandler(UncraftingScreen.class, new IGuiContainerHandler<UncraftingScreen>() {
+			@Override
+			public List<Rect2i> getGuiExtraAreas(UncraftingScreen screen) {
+				if (!screen.getRecipeBookComponent().isVisible()) return List.of();
+				return List.of(new Rect2i(screen.getGuiLeft() - 182, screen.getGuiTop(), 182, screen.getYSize()));
+			}
+		});
 	}
 }

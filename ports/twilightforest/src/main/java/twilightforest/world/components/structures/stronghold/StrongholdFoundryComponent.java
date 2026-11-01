@@ -21,6 +21,8 @@ import twilightforest.init.TFStructurePieceTypes;
 public class StrongholdFoundryComponent extends StructureTFStrongholdComponent {
 
 	int entranceLevel;
+	// New foundries are always stone (the random deepslate variant was dropped upstream). The flag is still read and
+	// written so a foundry saved with it set keeps its material and does not switch to stone at a chunk border.
 	boolean deepslateVer;
 
 	public StrongholdFoundryComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
@@ -42,7 +44,6 @@ public class StrongholdFoundryComponent extends StructureTFStrongholdComponent {
 
 	@Override
 	public BoundingBox generateBoundingBox(Direction facing, int x, int y, int z) {
-		this.deepslateVer = RandomSource.create().nextBoolean();
 		if (y > -15) {
 			this.entranceLevel = 3;
 			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -20, 0, 18, 25, 18, facing);
@@ -190,7 +191,7 @@ public class StrongholdFoundryComponent extends StructureTFStrongholdComponent {
 			int dz = massRandom.nextInt(9) + 5;
 			int dy = massRandom.nextInt(13) + 10;
 
-			if (this.getBlock(world, dx, dy, dz, sbb).getBlock() != Blocks.AIR) {
+			if (!this.getBlock(world, dx, dy, dz, sbb).isAir()) {
 				this.placeBlock(world, state, dx, dy, dz, sbb);
 				// we have succeeded, stop looping
 				break;

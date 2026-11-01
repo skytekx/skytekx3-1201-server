@@ -84,20 +84,27 @@ public class HedgeMazeComponent extends TFStructureComponentOld {
 		int nrooms = MSIZE / 3;
 		int[] rcoords = new int[nrooms * 2];
 
-		for (int i = 0; i < nrooms; i++) {
-			int rx, rz;
-			do {
-				rx = rand.nextInt(MSIZE - 2) + 1;
-				rz = rand.nextInt(MSIZE - 2) + 1;
-			} while (isNearRoom(rx, rz, rcoords));
+		// The rooms can wall off part of the maze from the backtracker's start cell; those cells are never visited and
+		// stay walled in, leaving the maze incomplete (#2035). Re-roll the rooms with the same seeded RNG until every
+		// cell has been carved; the first roll is the same as before, so most mazes do not change.
+		while (!maze.allCellsNonZero()) {
+			maze.resetCells();
+			rcoords = new int[nrooms * 2];
+			for (int i = 0; i < nrooms; i++) {
+				int rx, rz;
+				do {
+					rx = rand.nextInt(MSIZE - 2) + 1;
+					rz = rand.nextInt(MSIZE - 2) + 1;
+				} while (isNearRoom(rx, rz, rcoords));
 
-			maze.carveRoom1(rx, rz);
+				maze.carveRoom1(rx, rz);
 
-			rcoords[i * 2] = rx;
-			rcoords[i * 2 + 1] = rz;
+				rcoords[i * 2] = rx;
+				rcoords[i * 2 + 1] = rz;
+			}
+
+			maze.generateRecursiveBacktracker(0, 0, rand);
 		}
-
-		maze.generateRecursiveBacktracker(0, 0, rand);
 
 		maze.add4Exits();
 
@@ -193,7 +200,17 @@ public class HedgeMazeComponent extends TFStructureComponentOld {
 		int rx = x + rand.nextInt(diameter) - (diameter / 2);
 		int rz = z + rand.nextInt(diameter) - (diameter / 2);
 
-		placeTreasureAtCurrentPosition(world, rx, FLOOR_LEVEL, rz, TFLootTables.HEDGE_MAZE, sbb);
+		// face the chest towards the middle of the room instead of always south (#2024)
+		int xDiff = x - rx;
+		int zDiff = z - rz;
+
+		BlockPos pos = new BlockPos(getWorldX(rx, rz), getWorldY(FLOOR_LEVEL), getWorldZ(rx, rz));
+		if (sbb.isInside(pos) && world.getBlockState(pos).getBlock() != Blocks.CHEST) {
+			Direction facing;
+			if (Math.abs(xDiff) > Math.abs(zDiff)) facing = xDiff < 0 ? Direction.WEST : Direction.EAST;
+			else facing = zDiff < 0 ? Direction.NORTH : Direction.SOUTH;
+			TFLootTables.HEDGE_MAZE.generateChest(world, pos, facing, false);
+		}
 	}
 
 	/**

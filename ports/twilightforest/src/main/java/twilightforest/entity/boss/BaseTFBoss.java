@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -35,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import twilightforest.TFConfig;
 import twilightforest.advancements.TFAdvancements;
 import twilightforest.entity.EnforcedHomePoint;
+import twilightforest.entity.boss.bar.ServerTFBossBar;
 import twilightforest.loot.TFLootTables;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.UpdateDeathTimePacket;
@@ -50,6 +50,8 @@ import java.util.Optional;
  * Common base of the Twilight Forest bosses (backported from TF 4.8). It owns the logic 4.3 copied into every boss: the home point,
  * the peaceful despawn back into a boss spawner, the loot chest buffer, marking the home structure as conquered and the boss bar.
  * <p>
+ * The boss bar is a {@link ServerTFBossBar}, so each boss picks an RGB colour in {@link #getBossBarColor()}.
+ * <p>
  * Death animations play on the client in {@link #tickDeathAnimation()}, driven by the vanilla {@link #deathTime} counter, which
  * {@link UpdateDeathTimePacket} syncs to players that start tracking a boss that is already dying.
  * <p>
@@ -58,7 +60,7 @@ import java.util.Optional;
 public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, EnforcedHomePoint {
 	private static final EntityDataAccessor<Optional<GlobalPos>> HOME_POINT = SynchedEntityData.defineId(BaseTFBoss.class, EntityDataSerializers.OPTIONAL_GLOBAL_POS);
 
-	private final ServerBossEvent bossEvent;
+	private final ServerTFBossBar bossEvent;
 	private final NonNullList<ItemStack> dyingInventory = NonNullList.withSize(IBossLootBuffer.CONTAINER_SIZE, ItemStack.EMPTY);
 	// Players credited with the hurt_boss trigger when this boss dies. Like the per-boss lists 4.3 kept, it is not saved.
 	private final List<ServerPlayer> hurtBy = new ArrayList<>();
@@ -286,7 +288,7 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 
 	}
 
-	public ServerBossEvent getBossBar() {
+	public ServerTFBossBar getBossBar() {
 		return this.bossEvent;
 	}
 
@@ -300,15 +302,19 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 		this.getBossBar().setProgress(this.getHealth() / this.getMaxHealth());
 	}
 
-	protected ServerBossEvent createBossBar() {
-		return new ServerBossEvent(this.getBossBarTitle(), this.getBossBarColor(), this.getBossBarOverlay());
+	protected ServerTFBossBar createBossBar() {
+		return new ServerTFBossBar(this.getBossBarTitle(), this.getBossBarColor(), this.getBossBarOverlay());
 	}
 
 	public Component getBossBarTitle() {
 		return this.getDisplayName();
 	}
 
-	public abstract BossEvent.BossBarColor getBossBarColor();
+	/**
+	 * The RGB colour of the boss bar. A boss that changes it mid-fight sends the new style with
+	 * {@link ServerTFBossBar#updateStyle}.
+	 */
+	public abstract int getBossBarColor();
 
 	public BossEvent.BossBarOverlay getBossBarOverlay() {
 		return BossEvent.BossBarOverlay.PROGRESS;

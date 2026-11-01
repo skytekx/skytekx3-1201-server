@@ -18,7 +18,8 @@ public class TFPacketHandler {
 	// .2: SpawnCharmPacket is registered after ParticlePacket, which shifts the discriminator of every later packet.
 	// .3: SyncUncraftingTableConfigPacket carries disableIngredientSwitching after allowShapeless (4.8 f5ef5a835).
 	// .4: UpdateDeathTimePacket syncs a dying boss's deathTime to players that start tracking it (4.8 5b63f08d4).
-	private static final String PROTOCOL_VERSION = "2-skytekx.4";
+	// .5: AddTFBossBarPacket and UpdateTFBossBarStylePacket carry the RGB boss bars (4.8 15ab0d12a).
+	private static final String PROTOCOL_VERSION = "2-skytekx.5";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -49,5 +50,7 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, UpdateTFMultipartPacket.class, UpdateTFMultipartPacket::encode, UpdateTFMultipartPacket::new, UpdateTFMultipartPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, UpdateThrownPacket.class, UpdateThrownPacket::encode, UpdateThrownPacket::new, UpdateThrownPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, UpdateDeathTimePacket.class, UpdateDeathTimePacket::encode, UpdateDeathTimePacket::new, UpdateDeathTimePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, TFBossBarPacket.AddTFBossBarPacket.class, TFBossBarPacket.AddTFBossBarPacket::encode, TFBossBarPacket.AddTFBossBarPacket::new, TFBossBarPacket.AddTFBossBarPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, TFBossBarPacket.UpdateTFBossBarStylePacket.class, TFBossBarPacket.UpdateTFBossBarStylePacket::encode, TFBossBarPacket.UpdateTFBossBarStylePacket::new, TFBossBarPacket.UpdateTFBossBarStylePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 }

@@ -82,6 +82,7 @@ public class Lich extends BaseTFBoss {
 	private int popCooldown;
 	private int heldScepterTime;
 	private int spawnTime;
+	private int previousPhase = 1; // the phase the boss bar was last styled for, not saved: a reloaded Lich restyles on its first tick
 
 	public Lich(EntityType<? extends Lich> type, Level world) {
 		super(type, world);
@@ -641,28 +642,30 @@ public class Lich extends BaseTFBoss {
 		return !this.isShadowClone();
 	}
 
+	/**
+	 * Phase 1 shows the shield (gold, notched per shield) instead of health. Leaving it, the bar switches to the purple and then red
+	 * health bar without easing from the emptied shield bar.
+	 */
 	@Override
 	protected void tickBossBar() {
-		if (this.getPhase() == 1) {
-			this.getBossBar().setProgress((float) (this.getShieldStrength()) / (float) (INITIAL_SHIELD_STRENGTH));
-		} else {
-			this.getBossBar().setOverlay(BossEvent.BossBarOverlay.PROGRESS);
-			this.getBossBar().setProgress(this.getHealth() / this.getMaxHealth());
-			if (this.getPhase() == 2)
-				this.getBossBar().setColor(BossEvent.BossBarColor.PURPLE);
-			else
-				this.getBossBar().setColor(BossEvent.BossBarColor.RED);
-		}
-	}
-
-	@Override
-	public BossEvent.BossBarColor getBossBarColor() {
-		return BossEvent.BossBarColor.YELLOW;
+		this.getBossBar().setVisible(!this.isShadowClone());
+		int phase = this.getPhase();
+		if (phase == 1) this.getBossBar().setProgress((float) (this.getShieldStrength()) / (float) (INITIAL_SHIELD_STRENGTH));
+		else this.getBossBar().setProgress(this.getHealth() / this.getMaxHealth());
+		if (phase != this.previousPhase) this.getBossBar().updateStyle(this.getBossBarColor(), this.getBossBarOverlay(), this.previousPhase != 1);
+		this.previousPhase = phase;
 	}
 
 	@Override
 	public BossEvent.BossBarOverlay getBossBarOverlay() {
-		return BossEvent.BossBarOverlay.NOTCHED_6;
+		if (this.getShieldStrength() > 0) return BossEvent.BossBarOverlay.NOTCHED_6;
+		return super.getBossBarOverlay();
+	}
+
+	@Override
+	public int getBossBarColor() {
+		if (this.getShieldStrength() > 0) return 0xFFD800;
+		return this.getPhase() == 2 ? 0xBE23FF : 0xFF0000;
 	}
 
 	@Override

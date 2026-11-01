@@ -629,8 +629,8 @@ public class Naga extends BaseTFBoss {
 	}
 
 	@Override
-	public BossEvent.BossBarColor getBossBarColor() {
-		return BossEvent.BossBarColor.GREEN;
+	public int getBossBarColor() {
+		return 0x5E9916;
 	}
 
 	@Override

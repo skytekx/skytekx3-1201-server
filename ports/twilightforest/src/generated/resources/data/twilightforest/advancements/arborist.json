@@ -97,6 +97,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "canopy_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:canopy_drying_rack"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "canopy_fence": {
       "conditions": {
         "items": [
@@ -343,6 +355,18 @@
           {
             "items": [
               "twilightforest:dark_door"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "dark_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:dark_drying_rack"
             ]
           }
         ]
@@ -805,6 +829,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "mangrove_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:mangrove_drying_rack"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "mangrove_fence": {
       "conditions": {
         "items": [
@@ -1051,6 +1087,18 @@
           {
             "items": [
               "twilightforest:mining_door"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "mining_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:mining_drying_rack"
             ]
           }
         ]
@@ -1351,6 +1399,18 @@
           {
             "items": [
               "twilightforest:sorting_door"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "sorting_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:sorting_drying_rack"
             ]
           }
         ]
@@ -1813,6 +1873,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "time_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:time_drying_rack"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "time_fence": {
       "conditions": {
         "items": [
@@ -2065,6 +2137,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "transformation_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:transformation_drying_rack"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "transformation_fence": {
       "conditions": {
         "items": [
@@ -2299,6 +2383,18 @@
           {
             "items": [
               "twilightforest:twilight_oak_door"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "twilight_oak_drying_rack": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:twilight_oak_drying_rack"
             ]
           }
         ]
@@ -2554,6 +2650,9 @@
       "twilight_oak_banister"
     ],
     [
+      "twilight_oak_drying_rack"
+    ],
+    [
       "twilight_oak_boat"
     ],
     [
@@ -2621,6 +2720,9 @@
     ],
     [
       "canopy_banister"
+    ],
+    [
+      "canopy_drying_rack"
     ],
     [
       "canopy_bookshelf"
@@ -2698,6 +2800,9 @@
       "mangrove_banister"
     ],
     [
+      "mangrove_drying_rack"
+    ],
+    [
       "mangrove_boat"
     ],
     [
@@ -2765,6 +2870,9 @@
     ],
     [
       "dark_banister"
+    ],
+    [
+      "dark_drying_rack"
     ],
     [
       "dark_boat"
@@ -2836,6 +2944,9 @@
       "time_banister"
     ],
     [
+      "time_drying_rack"
+    ],
+    [
       "time_boat"
     ],
     [
@@ -2903,6 +3014,9 @@
     ],
     [
       "transformation_banister"
+    ],
+    [
+      "transformation_drying_rack"
     ],
     [
       "transformation_boat"
@@ -2974,6 +3088,9 @@
       "mining_banister"
     ],
     [
+      "mining_drying_rack"
+    ],
+    [
       "mining_boat"
     ],
     [
@@ -3041,6 +3158,9 @@
     ],
     [
       "sorting_banister"
+    ],
+    [
+      "sorting_drying_rack"
     ],
     [
       "sorting_boat"

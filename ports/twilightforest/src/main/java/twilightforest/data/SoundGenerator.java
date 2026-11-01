@@ -317,6 +317,8 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.DOOR_ACTIVATED, SoundEvents.COMPARATOR_CLICK);
 		this.generateExistingSoundWithSubtitle(TFSounds.DOOR_REAPPEAR, SoundEvents.FIRE_EXTINGUISH);
 		this.generateExistingSoundWithSubtitle(TFSounds.DOOR_VANISH, SoundEvents.FIRE_EXTINGUISH);
+		this.generateExistingSoundWithSubtitle(TFSounds.DRYING_RACK_ADD_ITEM, SoundEvents.ITEM_FRAME_ADD_ITEM);
+		this.generateExistingSoundWithSubtitle(TFSounds.DRYING_RACK_REMOVE_ITEM, SoundEvents.ITEM_FRAME_ADD_ITEM);
 		this.generateExistingSoundWithSubtitle(TFSounds.GHAST_TRAP_AMBIENT, SoundEvents.NOTE_BLOCK_HARP.get());
 		this.generateNewSoundWithSubtitle(TFSounds.GHAST_TRAP_ON, "mob/ur_ghast/trap_on", 5);
 		this.generateNewSoundWithSubtitle(TFSounds.GHAST_TRAP_SPINDOWN, "mob/ur_ghast/trap_spin_down", 1);

@@ -337,6 +337,19 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.save(consumer, locWood(name + "_banister"));
 	}
 
+	protected final void dryingRackBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends Block> result, Supplier<? extends Block> material) {
+		this.dryingRackBlock(consumer, name, result, material.get());
+	}
+
+	protected final void dryingRackBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends Block> result, Block material) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result.get())
+				.pattern("---")
+				.define('-', material)
+				.unlockedBy("has_item", has(material))
+				.group("drying_rack")
+				.save(consumer, locWood(name + "_drying_rack"));
+	}
+
 	protected final void chestBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends TFChestBlock> chest, Supplier<? extends TFTrappedChestBlock> trapped, Supplier<? extends Block> material) {
 		// The wooden chest tag also holds trapped chests (vanilla's and ours), which would make 8 planks around a trapped
 		// chest match both recipes below. Keep the tag so other mods' wooden chests still work, but leave the trapped

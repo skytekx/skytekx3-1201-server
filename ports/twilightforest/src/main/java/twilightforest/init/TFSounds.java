@@ -81,6 +81,8 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> DOOR_ACTIVATED = createEvent("block.twilightforest.door.activate");
 	public static final RegistryObject<SoundEvent> DOOR_REAPPEAR = createEvent("block.twilightforest.door.reappear");
 	public static final RegistryObject<SoundEvent> DOOR_VANISH = createEvent("block.twilightforest.door.vanish");
+	public static final RegistryObject<SoundEvent> DRYING_RACK_ADD_ITEM = createEvent("block.twilightforest.drying_rack.add_item");
+	public static final RegistryObject<SoundEvent> DRYING_RACK_REMOVE_ITEM = createEvent("block.twilightforest.drying_rack.remove_item");
 	public static final RegistryObject<SoundEvent> DWARF_RABBIT_AMBIENT = createEvent("entity.twilightforest.dwarf_rabbit.ambient");
 	public static final RegistryObject<SoundEvent> DWARF_RABBIT_DEATH = createEvent("entity.twilightforest.dwarf_rabbit.death");
 	public static final RegistryObject<SoundEvent> DWARF_RABBIT_HURT = createEvent("entity.twilightforest.dwarf_rabbit.hurt");

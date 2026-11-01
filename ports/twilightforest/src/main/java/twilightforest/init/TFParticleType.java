@@ -48,6 +48,7 @@ public class TFParticleType {
 	public static final RegistryObject<SimpleParticleType> LOG_CORE_PARTICLE = PARTICLE_TYPES.register("log_core_particle", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> CLOUD_PUFF = PARTICLE_TYPES.register("cloud_puff", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> SHIELD_BREAK = PARTICLE_TYPES.register("shield_break", () -> new SimpleParticleType(false));
+	public static final RegistryObject<SimpleParticleType> DRYING_RACK = PARTICLE_TYPES.register("drying_rack", () -> new SimpleParticleType(false));
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
@@ -74,5 +75,6 @@ public class TFParticleType {
 		event.registerSpriteSet(TFParticleType.LOG_CORE_PARTICLE.get(), LogCoreParticle.Factory::new);
 		event.registerSpriteSet(TFParticleType.CLOUD_PUFF.get(), CloudPuffParticle.Factory::new);
 		event.registerSpriteSet(TFParticleType.SHIELD_BREAK.get(), CustomTextureParticle.ShieldBreak::new);
+		event.registerSpriteSet(TFParticleType.DRYING_RACK.get(), DryingRackParticle.Provider::new);
 	}
 }

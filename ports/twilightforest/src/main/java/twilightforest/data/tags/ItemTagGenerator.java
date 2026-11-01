@@ -33,6 +33,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> STRIPPED_WOOD = makeForgeTag("stripped_wood");
 
 	public static final TagKey<Item> BANISTERS = create("banisters");
+	public static final TagKey<Item> DRYING_RACKS = create("drying_racks");
 
 	public static final TagKey<Item> PAPER = makeForgeTag("paper");
 
@@ -87,6 +88,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> REPAIRS_ICE_TOOLS = create("repairs_ice_tools");
 
 	public static final TagKey<Item> IMMUNE_TO_THORNS = create("immune_to_thorns");
+	public static final TagKey<Item> RENDER_LOWER_ON_DRYING_RACK = create("lower_on_drying_rack");
 	public static final TagKey<Item> TROPHIES = create("trophies");
 	public static final TagKey<Item> EMPERORS_CLOTH_APPLICABLE = create("emperors_cloth_applicable");
 
@@ -157,6 +159,15 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 
 		this.copy(BlockTagGenerator.TOWERWOOD, TOWERWOOD);
 		this.copy(BlockTagGenerator.BANISTERS, BANISTERS);
+		this.copy(BlockTagGenerator.DRYING_RACKS, DRYING_RACKS);
+
+		// 4.8 also lists the gelatinous slime drops, which arrive with the dried foods
+		tag(RENDER_LOWER_ON_DRYING_RACK)
+				.add(TFItems.ZOMBIE_SKULL_CANDLE.get(), TFItems.SKELETON_SKULL_CANDLE.get(), TFItems.WITHER_SKELETON_SKULL_CANDLE.get(), TFItems.CREEPER_SKULL_CANDLE.get(), TFItems.PLAYER_SKULL_CANDLE.get(), TFItems.PIGLIN_SKULL_CANDLE.get())
+				.add(Items.POINTED_DRIPSTONE, Items.RECOVERY_COMPASS, Items.CLOCK, Items.SPYGLASS, Items.TRIDENT)
+				.addTag(ItemTags.BANNERS)
+				.addTag(Tags.Items.TOOLS)
+				.remove(Tags.Items.TOOLS_SHIELDS);
 
 		tag(PAPER).add(Items.PAPER);
 		tag(Tags.Items.FEATHERS).add(Items.FEATHER).add(TFItems.RAVEN_FEATHER.get());

@@ -39,12 +39,12 @@ public class TemplateMarkerHandlers {
 	public static final RegistryObject<TemplateMarkerHandlerType> BLOCK_PLACEMENT = TEMPLATE_MARKER_HANDLER_TYPES.register("block_placement", () -> () -> BlockPlaceMarkerHandler.CODEC);
 	public static final RegistryObject<TemplateMarkerHandlerType> HANDLER_SWITCH = TEMPLATE_MARKER_HANDLER_TYPES.register("handler_switch", () -> () -> SwitchMarkerHandler.CODEC);
 	public static final RegistryObject<TemplateMarkerHandlerType> ROTATION = TEMPLATE_MARKER_HANDLER_TYPES.register("rotation", () -> () -> RotationMarkerHandler.CODEC);
-	// TF 4.8 also registers "drying_rack" (DryingRackMarkerHandler) here; it arrives with the drying rack block
+	public static final RegistryObject<TemplateMarkerHandlerType> DRYING_RACK = TEMPLATE_MARKER_HANDLER_TYPES.register("drying_rack", () -> () -> DryingRackMarkerHandler.CODEC);
 	public static final RegistryObject<TemplateMarkerHandlerType> PAINTING = TEMPLATE_MARKER_HANDLER_TYPES.register("painting", () -> () -> PaintingMarkerHandler.CODEC);
 	public static final RegistryObject<TemplateMarkerHandlerType> LOOT = TEMPLATE_MARKER_HANDLER_TYPES.register("loot", () -> () -> LootMarkerHandler.CODEC);
 
 	// TF 4.8 registers its first list here, twilightforest:camp_marker_handlers. It arrives with the Traveller camps, together with the
-	// drying racks and camp loot tables that list references
+	// camp loot tables that list references
 	public static void bootstrap(BootstapContext<TemplateMarkerHandlerList> context) {
 	}
 }

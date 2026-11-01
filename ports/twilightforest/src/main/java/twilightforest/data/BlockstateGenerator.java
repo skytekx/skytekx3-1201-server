@@ -890,6 +890,27 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		banisterVanilla(TFBlocks.BAMBOO_BANISTER.get(), "bamboo_planks", "bamboo");
 		banisterVanilla(TFBlocks.CHERRY_BANISTER.get(), "cherry_planks", "cherry");
 
+		dryingRack(TFBlocks.TWILIGHT_OAK_DRYING_RACK.get(), "planks_twilight_oak", "twilight_oak");
+		dryingRack(TFBlocks.CANOPY_DRYING_RACK.get(), "planks_canopy", "canopy");
+		dryingRack(TFBlocks.MANGROVE_DRYING_RACK.get(), "planks_mangrove", "mangrove");
+		dryingRack(TFBlocks.DARK_DRYING_RACK.get(), "planks_darkwood", "darkwood");
+		dryingRack(TFBlocks.TIME_DRYING_RACK.get(), "planks_time", "time");
+		dryingRack(TFBlocks.TRANSFORMATION_DRYING_RACK.get(), "planks_trans", "trans");
+		dryingRack(TFBlocks.MINING_DRYING_RACK.get(), "planks_mine", "mine");
+		dryingRack(TFBlocks.SORTING_DRYING_RACK.get(), "planks_sort", "sort");
+
+		dryingRackVanilla(TFBlocks.OAK_DRYING_RACK.get(), "oak_planks", "oak");
+		dryingRackVanilla(TFBlocks.SPRUCE_DRYING_RACK.get(), "spruce_planks", "spruce");
+		dryingRackVanilla(TFBlocks.BIRCH_DRYING_RACK.get(), "birch_planks", "birch");
+		dryingRackVanilla(TFBlocks.JUNGLE_DRYING_RACK.get(), "jungle_planks", "jungle");
+		dryingRackVanilla(TFBlocks.ACACIA_DRYING_RACK.get(), "acacia_planks", "acacia");
+		dryingRackVanilla(TFBlocks.DARK_OAK_DRYING_RACK.get(), "dark_oak_planks", "dark_oak");
+		dryingRackVanilla(TFBlocks.CRIMSON_DRYING_RACK.get(), "crimson_planks", "crimson");
+		dryingRackVanilla(TFBlocks.WARPED_DRYING_RACK.get(), "warped_planks", "warped");
+		dryingRackVanilla(TFBlocks.VANGROVE_DRYING_RACK.get(), "mangrove_planks", "vanilla_mangrove");
+		dryingRackVanilla(TFBlocks.BAMBOO_DRYING_RACK.get(), "bamboo_planks", "bamboo");
+		dryingRackVanilla(TFBlocks.CHERRY_DRYING_RACK.get(), "cherry_planks", "cherry");
+
 		final ResourceLocation MOSS = TwilightForestMod.prefix("block/mosspatch");
 		final ResourceLocation MOSS_OVERHANG = TwilightForestMod.prefix("block/moss_overhang");
 		final ResourceLocation TALL_GRASS = new ResourceLocation("block/grass");

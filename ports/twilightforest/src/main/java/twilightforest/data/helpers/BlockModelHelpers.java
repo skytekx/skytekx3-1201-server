@@ -11,6 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.BanisterBlock;
+import twilightforest.block.DryingRackBlock;
 
 import java.util.function.Consumer;
 
@@ -409,6 +410,38 @@ public abstract class BlockModelHelpers extends BlockStateProvider {
 			return ConfiguredModel.builder()
 					.modelFile(models().withExistingParent(banisterDir + name(banister) + "_" + variant, TwilightForestMod.prefix("banister_" + variant)).texture("texture", tex0)).rotationY(yRot).build();
 		}, BanisterBlock.WATERLOGGED);
+	}
+
+	protected void dryingRack(DryingRackBlock rack, String texName, String woodVariant) {
+		String rackDir = "block/wood/rack/" + woodVariant + "/";
+
+		ResourceLocation tex0 = prefix("block/wood/" + texName + "_0");
+		ResourceLocation tex1 = prefix("block/wood/" + texName + "_1");
+		ResourceLocation tex2 = prefix("block/wood/" + texName + "_2");
+		ResourceLocation tex3 = prefix("block/wood/" + texName + "_3");
+
+		getVariantBuilder(rack).forAllStatesExcept(state -> {
+			Direction facing = state.getValue(DryingRackBlock.FACING);
+			int yRot = (int) facing.toYRot();
+
+			return ConfiguredModel.builder()
+					.weight(10).modelFile(models().withExistingParent(rackDir + name(rack), TwilightForestMod.prefix("template_drying_rack")).texture("texture", tex0)).rotationY(yRot).nextModel()
+					.weight(10).modelFile(models().withExistingParent(rackDir + name(rack) + "_1", TwilightForestMod.prefix("template_drying_rack")).texture("texture", tex1)).rotationY(yRot).nextModel()
+					.weight(1).modelFile(models().withExistingParent(rackDir + name(rack) + "_2", TwilightForestMod.prefix("template_drying_rack")).texture("texture", tex2)).rotationY(yRot).nextModel()
+					.weight(1).modelFile(models().withExistingParent(rackDir + name(rack) + "_3", TwilightForestMod.prefix("template_drying_rack")).texture("texture", tex3)).rotationY(yRot).build();
+		}, DryingRackBlock.WATERLOGGED);
+	}
+
+	protected void dryingRackVanilla(DryingRackBlock rack, String texName, String woodVariant) {
+		String rackDir = "block/wood/rack/" + woodVariant + "/";
+		ResourceLocation tex = new ResourceLocation("block/" + texName);
+
+		getVariantBuilder(rack).forAllStatesExcept(state -> {
+			Direction facing = state.getValue(DryingRackBlock.FACING);
+			int yRot = (int) facing.toYRot();
+
+			return ConfiguredModel.builder().modelFile(models().withExistingParent(rackDir + name(rack), TwilightForestMod.prefix("template_drying_rack")).texture("texture", tex)).rotationY(yRot).build();
+		}, DryingRackBlock.WATERLOGGED);
 	}
 
 	protected void bisectedStairsBlock(RegistryObject<StairBlock> block, ResourceLocation side, ResourceLocation end, ResourceLocation middle) {

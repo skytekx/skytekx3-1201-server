@@ -257,6 +257,27 @@ public class ItemModelGenerator extends ItemModelProvider {
 		withExistingParent(TFBlocks.BAMBOO_BANISTER.getId().toString(), prefix("item/banister_item")).texture("texture", "minecraft:block/bamboo_planks");
 		withExistingParent(TFBlocks.CHERRY_BANISTER.getId().toString(), prefix("item/banister_item")).texture("texture", "minecraft:block/cherry_planks");
 
+		woodBlock(TFBlocks.OAK_DRYING_RACK.get(), "rack/oak");
+		woodBlock(TFBlocks.SPRUCE_DRYING_RACK.get(), "rack/spruce");
+		woodBlock(TFBlocks.BIRCH_DRYING_RACK.get(), "rack/birch");
+		woodBlock(TFBlocks.JUNGLE_DRYING_RACK.get(), "rack/jungle");
+		woodBlock(TFBlocks.ACACIA_DRYING_RACK.get(), "rack/acacia");
+		woodBlock(TFBlocks.DARK_OAK_DRYING_RACK.get(), "rack/dark_oak");
+		woodBlock(TFBlocks.CRIMSON_DRYING_RACK.get(), "rack/crimson");
+		woodBlock(TFBlocks.WARPED_DRYING_RACK.get(), "rack/warped");
+		woodBlock(TFBlocks.VANGROVE_DRYING_RACK.get(), "rack/vanilla_mangrove");
+		woodBlock(TFBlocks.BAMBOO_DRYING_RACK.get(), "rack/bamboo");
+		woodBlock(TFBlocks.CHERRY_DRYING_RACK.get(), "rack/cherry");
+
+		woodBlock(TFBlocks.TWILIGHT_OAK_DRYING_RACK.get(), "rack/twilight_oak");
+		woodBlock(TFBlocks.CANOPY_DRYING_RACK.get(), "rack/canopy");
+		woodBlock(TFBlocks.MANGROVE_DRYING_RACK.get(), "rack/mangrove");
+		woodBlock(TFBlocks.DARK_DRYING_RACK.get(), "rack/darkwood");
+		woodBlock(TFBlocks.TIME_DRYING_RACK.get(), "rack/time");
+		woodBlock(TFBlocks.TRANSFORMATION_DRYING_RACK.get(), "rack/trans");
+		woodBlock(TFBlocks.MINING_DRYING_RACK.get(), "rack/mine");
+		woodBlock(TFBlocks.SORTING_DRYING_RACK.get(), "rack/sort");
+
 		toBlock(TFBlocks.TWILIGHT_OAK_LOG.get());
 		toBlock(TFBlocks.STRIPPED_TWILIGHT_OAK_LOG.get());
 		toBlock(TFBlocks.TWILIGHT_OAK_WOOD.get());

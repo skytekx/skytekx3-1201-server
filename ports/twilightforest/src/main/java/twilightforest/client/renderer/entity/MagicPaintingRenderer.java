@@ -16,10 +16,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import twilightforest.client.MagicPaintingTextureManager;
 import twilightforest.entity.MagicPainting;
 import twilightforest.init.custom.MagicPaintingVariants;
@@ -31,6 +34,12 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
+    // Game time of the last tick a lightning sky flash was active, updated by TFClientEvents
+    public static long lastLightning = 0L;
+
+    // 1.20.1 TextureAtlasSprite.getU/getV take 0-16 instead of 1.20.2+'s 0-1, the UV math below stays in 0-1 like upstream
+    private static final double SPRITE_UV_SCALE = 16.0D;
+
     public MagicPaintingRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
     }
@@ -45,7 +54,7 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
         stack.scale(0.0625F, 0.0625F, 0.0625F);
         VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(painting)));
 
-        this.renderPainting(stack, vertexconsumer, painting, paintingVariant);
+        this.renderPainting(stack, vertexconsumer, painting, paintingVariant, partialTicks);
         stack.popPose();
         super.render(painting, yaw, partialTicks, stack, buffer, packedLight);
     }
@@ -55,7 +64,7 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
         return MagicPaintingTextureManager.ATLAS_LOCATION;
     }
 
-    private void renderPainting(PoseStack stack, VertexConsumer vertex, MagicPainting painting, MagicPaintingVariant variant) {
+    private void renderPainting(PoseStack stack, VertexConsumer vertex, MagicPainting painting, MagicPaintingVariant variant, float partialTicks) {
         ResourceLocation textureLocation = MagicPaintingVariants.getVariantResourceLocation(painting.level().registryAccess(), variant);
 
         int width = variant.width();
@@ -64,25 +73,25 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
         int heightAsBlock = height / 16;
 
         PoseStack.Pose pose = stack.last();
-        Matrix4f matrix4f = pose.pose();
-        Matrix3f matrix3f = pose.normal();
 
-        float x = (float)(-width) / 2.0F;
-        float y = (float)(-height) / 2.0F;
+        float x = (float) (-width) / 2.0F;
+        float y = (float) (-height) / 2.0F;
         float z = 0.5F;
 
-        double widthFactor = 16.0D / (double)widthAsBlock;
-        double heightFactor = 16.0D / (double)heightAsBlock;
+        double widthFactor = 1.0D / (double) widthAsBlock;
+        double heightFactor = 1.0D / (double) heightAsBlock;
 
         Direction direction = painting.getDirection();
         int posX = painting.getBlockX();
         int posZ = painting.getBlockZ();
 
         for (MagicPaintingVariant.Layer layer : variant.layers()) {
-            float alpha = this.getAlpha(layer.opacityModifier(), painting);
+            float alpha = this.getAlpha(layer.opacityModifier(), painting, partialTicks);
             if (alpha <= 0.0F) continue;
 
             Parallax parallax = layer.parallax();
+
+            boolean localLighting = layer.localLighting();
 
             int layerWidth = parallax != null ? parallax.width() : width;
             int layerHeight = parallax != null ? parallax.height() : height;
@@ -90,14 +99,14 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
             double layerWidthAsBlock = layerWidth / 16.0D;
             double layerHeightAsBlock = layerHeight / 16.0D;
 
-            double layerWidthFactor = 16.0D / layerWidthAsBlock;
-            double layerHeightFactor = 16.0D / layerHeightAsBlock;
+            double layerWidthFactor = 1.0D / layerWidthAsBlock;
+            double layerHeightFactor = 1.0D / layerHeightAsBlock;
 
-            double widthDiff = parallax != null ? (widthFactor - layerWidthFactor) * (double)widthAsBlock * 0.5D : 0.0D;
-            double widthOffset = widthDiff != 0.0D ? this.getWidthOffset(parallax, painting, widthDiff) : 0.0D;
+            double widthDiff = parallax != null ? (widthFactor - layerWidthFactor) * (double) widthAsBlock * 0.5D : 0.0D;
+            double widthOffset = widthDiff != 0.0D ? this.getWidthOffset(parallax, painting, widthDiff, partialTicks) : 0.0D;
 
-            double heightDiff = parallax != null ? (heightFactor - layerHeightFactor) * (double)heightAsBlock * 0.5D : 0.0D;
-            double heightOffset = heightDiff != 0.0D ? this.getHeightOffset(parallax, painting, heightDiff) : 0.0D;
+            double heightDiff = parallax != null ? (heightFactor - layerHeightFactor) * (double) heightAsBlock * 0.5D : 0.0D;
+            double heightOffset = heightDiff != 0.0D ? this.getHeightOffset(parallax, painting, heightDiff, partialTicks) : 0.0D;
 
             TextureAtlasSprite layerTexture = MagicPaintingTextureManager.instance.getLayerSprite(textureLocation, layer);
 
@@ -114,94 +123,122 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
                     if (direction == Direction.EAST) posZ = Mth.floor(painting.getZ() + (double) ((xMax + xMin) / 2.0F / 16.0F));
 
                     int light = layer.fullbright() ? 15728850 : LevelRenderer.getLightColor(painting.level(), new BlockPos(posX, Mth.floor(painting.getY() + (double) ((yMax + yMin) / 2.0F / 16.0F)), posZ));
-                    float xEnd = layerTexture.getU(layerWidthFactor * (double) (widthAsBlock - k) + widthOffset);
-                    float xStart = layerTexture.getU(layerWidthFactor * (double) (widthAsBlock - (k + 1)) + widthOffset);
-                    float yEnd = layerTexture.getV(layerHeightFactor * (double) (heightAsBlock - l) + heightOffset);
-                    float yStart = layerTexture.getV(layerHeightFactor * (double) (heightAsBlock - (l + 1)) + heightOffset);
-                    this.vertex(matrix4f, matrix3f, vertex, xMax, yMin, -z, xStart, yEnd, 0, 0, -1, light, alpha);
-                    this.vertex(matrix4f, matrix3f, vertex, xMin, yMin, -z, xEnd, yEnd, 0, 0, -1, light, alpha);
-                    this.vertex(matrix4f, matrix3f, vertex, xMin, yMax, -z, xEnd, yStart, 0, 0, -1, light, alpha);
-                    this.vertex(matrix4f, matrix3f, vertex, xMax, yMax, -z, xStart, yStart, 0, 0, -1, light, alpha);
+                    float xEnd = layerTexture.getU((layerWidthFactor * (double) (widthAsBlock - k) + widthOffset) * SPRITE_UV_SCALE);
+                    float xStart = layerTexture.getU((layerWidthFactor * (double) (widthAsBlock - (k + 1)) + widthOffset) * SPRITE_UV_SCALE);
+                    float yEnd = layerTexture.getV((layerHeightFactor * (double) (heightAsBlock - l) + heightOffset) * SPRITE_UV_SCALE);
+                    float yStart = layerTexture.getV((layerHeightFactor * (double) (heightAsBlock - (l + 1)) + heightOffset) * SPRITE_UV_SCALE);
+                    this.vertex(pose, vertex, xMax, yMin, -z, xStart, yEnd, 0, 0, -1, light, alpha, localLighting);
+                    this.vertex(pose, vertex, xMin, yMin, -z, xEnd, yEnd, 0, 0, -1, light, alpha, localLighting);
+                    this.vertex(pose, vertex, xMin, yMax, -z, xEnd, yStart, 0, 0, -1, light, alpha, localLighting);
+                    this.vertex(pose, vertex, xMax, yMax, -z, xStart, yStart, 0, 0, -1, light, alpha, localLighting);
                 }
             }
         }
 
-        TextureAtlasSprite backSprite = MagicPaintingTextureManager.instance.getBackSprite();
-        float u0 = backSprite.getU0();
-        float u1 = backSprite.getU1();
-        float v0 = backSprite.getV0();
-        float v1 = backSprite.getV1();
-        float u01 = backSprite.getU0();
-        float u11 = backSprite.getU1();
-        float v01 = backSprite.getV0();
-        float v = backSprite.getV(1.0D);
-        float u02 = backSprite.getU0();
-        float u = backSprite.getU(1.0D);
-        float v02 = backSprite.getV0();
-        float v11 = backSprite.getV1();
+        TextureAtlasSprite backSprite = MagicPaintingTextureManager.instance.getBackSprite(variant);
 
+        // The back texture is a 4x4 grid of block-sized tiles: columns are left / middle / right / single-wide, rows are top / middle / bottom / single-high
         for (int w = 0; w < widthAsBlock; ++w) {
+            boolean leftBorder = w == 0;
+            boolean rightBorder = w == widthAsBlock - 1;
+            float wShift = (leftBorder ? (rightBorder ? 3 : 0) : (rightBorder ? 2 : 1)) * 0.25F;
+
+            float u0 = backSprite.getU(wShift * SPRITE_UV_SCALE);
+            float u1 = backSprite.getU((wShift + 0.25F) * SPRITE_UV_SCALE);
+            float u = Mth.lerp(0.0625F, u0, u1);
+            float uI = Mth.lerp(0.0625F, u1, u0);
+
+            float xMax = x + (float) ((w + 1) * 16);
+            float xMin = x + (float) (w * 16);
+
+            if (direction == Direction.NORTH) posX = Mth.floor(painting.getX() + (double) ((xMax + xMin) / 2.0F / 16.0F));
+            if (direction == Direction.WEST) posZ = Mth.floor(painting.getZ() - (double) ((xMax + xMin) / 2.0F / 16.0F));
+            if (direction == Direction.SOUTH) posX = Mth.floor(painting.getX() - (double) ((xMax + xMin) / 2.0F / 16.0F));
+            if (direction == Direction.EAST) posZ = Mth.floor(painting.getZ() + (double) ((xMax + xMin) / 2.0F / 16.0F));
+
             for (int h = 0; h < heightAsBlock; ++h) {
-                float xMax = x + (float)((w + 1) * 16);
-                float xMin = x + (float)(w * 16);
-                float yMax = y + (float)((h + 1) * 16);
-                float yMin = y + (float)(h * 16);
+                boolean bottomBorder = h == 0;
+                boolean topBorder = h == heightAsBlock - 1;
+                float hShift = (bottomBorder ? (topBorder ? 3 : 2) : (topBorder ? 0 : 1)) * 0.25F;
 
-                if (direction == Direction.NORTH) posX = Mth.floor(painting.getX() + (double) ((xMax + xMin) / 2.0F / 16.0F));
-                if (direction == Direction.WEST) posZ = Mth.floor(painting.getZ() - (double) ((xMax + xMin) / 2.0F / 16.0F));
-                if (direction == Direction.SOUTH) posX = Mth.floor(painting.getX() - (double) ((xMax + xMin) / 2.0F / 16.0F));
-                if (direction == Direction.EAST) posZ = Mth.floor(painting.getZ() + (double) ((xMax + xMin) / 2.0F / 16.0F));
+                float v0 = backSprite.getV(hShift * SPRITE_UV_SCALE);
+                float v1 = backSprite.getV((hShift + 0.25F) * SPRITE_UV_SCALE);
+                float v = Mth.lerp(0.0625F, v0, v1);
+                float vI = Mth.lerp(0.0625F, v1, v0);
 
-                int light = LevelRenderer.getLightColor(painting.level(), new BlockPos(posX, Mth.floor(painting.getY() + (double)((yMax + yMin) / 2.0F / 16.0F)), posZ));
+                float yMax = y + (float) ((h + 1) * 16);
+                float yMin = y + (float) (h * 16);
 
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMax, z, u1, v0, 0, 0, 1, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMax, z, u0, v0, 0, 0, 1, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMin, z, u0, v1, 0, 0, 1, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMin, z, u1, v1, 0, 0, 1, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMax, -z, u01, v01, 0, 1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMax, -z, u11, v01, 0, 1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMax, z, u11, v, 0, 1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMax, z, u01, v, 0, 1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMin, z, u01, v01, 0, -1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMin, z, u11, v01, 0, -1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMin, -z, u11, v, 0, -1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMin, -z, u01, v, 0, -1, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMax, z, u, v02, -1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMin, z, u, v11, -1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMin, -z, u02, v11, -1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMax, yMax, -z, u02, v02, -1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMax, -z, u, v02, 1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMin, -z, u, v11, 1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMin, z, u02, v11, 1, 0, 0, light, 1.0F);
-                this.vertex(matrix4f, matrix3f, vertex, xMin, yMax, z, u02, v02, 1, 0, 0, light, 1.0F);
+                int light = LevelRenderer.getLightColor(painting.level(), new BlockPos(posX, Mth.floor(painting.getY() + (double) ((yMax + yMin) / 2.0F / 16.0F)), posZ));
+
+                // Back
+                this.vertex(pose, vertex, xMax, yMax, z, u1, v0, 0, 0, 1, light, false);
+                this.vertex(pose, vertex, xMin, yMax, z, u0, v0, 0, 0, 1, light, false);
+                this.vertex(pose, vertex, xMin, yMin, z, u0, v1, 0, 0, 1, light, false);
+                this.vertex(pose, vertex, xMax, yMin, z, u1, v1, 0, 0, 1, light, false);
+
+                // Top
+                this.vertex(pose, vertex, xMax, yMax, -z, u1, v0, 0, 1, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMax, -z, u0, v0, 0, 1, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMax, z, u0, v, 0, 1, 0, light, false);
+                this.vertex(pose, vertex, xMax, yMax, z, u1, v, 0, 1, 0, light, false);
+
+                // Bottom
+                this.vertex(pose, vertex, xMax, yMin, z, u1, vI, 0, -1, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMin, z, u0, vI, 0, -1, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMin, -z, u0, v1, 0, -1, 0, light, false);
+                this.vertex(pose, vertex, xMax, yMin, -z, u1, v1, 0, -1, 0, light, false);
+
+                // Left
+                this.vertex(pose, vertex, xMax, yMax, z, uI, v0, -1, 0, 0, light, false);
+                this.vertex(pose, vertex, xMax, yMin, z, uI, v1, -1, 0, 0, light, false);
+                this.vertex(pose, vertex, xMax, yMin, -z, u1, v1, -1, 0, 0, light, false);
+                this.vertex(pose, vertex, xMax, yMax, -z, u1, v0, -1, 0, 0, light, false);
+
+                // Right
+                this.vertex(pose, vertex, xMin, yMax, -z, u0, v0, 1, 0, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMin, -z, u0, v1, 1, 0, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMin, z, u, v1, 1, 0, 0, light, false);
+                this.vertex(pose, vertex, xMin, yMax, z, u, v0, 1, 0, 0, light, false);
             }
         }
     }
 
-    protected void vertex(Matrix4f matrix4f, Matrix3f matrix3f, VertexConsumer vertex, float x, float y, float z, float u, float v, int normX, int normY, int normZ, int light, float a) {
-        vertex.vertex(matrix4f, x, y, z).color(255, 255, 255, (int)(255.0F * a)).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(matrix3f, normX, normY, normZ).endVertex();
+    protected void vertex(PoseStack.Pose pose, VertexConsumer vertex, float x, float y, float z, float u, float v, int normX, int normY, int normZ, int light, boolean localLighting) {
+        this.vertex(pose, vertex, x, y, z, u, v, normX, normY, normZ, light, 1.0F, localLighting);
     }
 
-    protected double getWidthOffset(@Nullable Parallax parallax, MagicPainting painting, double widthDiff) {
+    protected void vertex(PoseStack.Pose pose, VertexConsumer vertex, float x, float y, float z, float u, float v, int normX, int normY, int normZ, int light, float a, boolean localLighting) {
+        vertex.vertex(pose.pose(), x, y, z).color(255, 255, 255, (int) (255.0F * a)).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light);
+
+        // Local lighting keeps the untransformed normal, so the layer is shaded as if it always faced the same way instead of following the painting's facing
+        if (localLighting)
+            vertex.normal(normX, normY, normZ);
+        else
+            vertex.normal(pose.normal(), normX, normY, normZ);
+
+        vertex.endVertex();
+    }
+
+    protected double getWidthOffset(@Nullable Parallax parallax, MagicPainting painting, double widthDiff, float partialTicks) {
         if (parallax != null) switch (parallax.type()) {
             case VIEW_ANGLE -> {
-                float partialTick = Minecraft.getInstance().getPartialTick();
                 Vec3 camPos = Minecraft.getInstance().cameraEntity != null ?
-                        Minecraft.getInstance().cameraEntity.getEyePosition(partialTick) :
+                        Minecraft.getInstance().cameraEntity.getEyePosition(partialTicks) :
                         Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
                 Vec3 paintPos = painting.position().relative(painting.getDirection().getOpposite(), 1.0D);
 
                 double x = camPos.x - paintPos.x;
                 double z = camPos.z - paintPos.z;
-                double yRot = Mth.wrapDegrees((float)(Mth.atan2(z, x) * (double)(180F / (float)Math.PI)) - 90.0F - painting.getYRot());
+                double yRot = Mth.wrapDegrees((float) (Mth.atan2(z, x) * (double) (180F / (float) Math.PI)) - 90.0F - painting.getYRot());
                 return widthDiff + Mth.clamp(yRot * parallax.multiplier() * widthDiff, -widthDiff, widthDiff);
             }
             case SINE_TIME -> {
-                return widthDiff + (Math.sin((painting.tickCount + Minecraft.getInstance().getPartialTick()) * parallax.multiplier()) * widthDiff);
+                return widthDiff + (Math.sin((painting.tickCount + partialTicks) * parallax.multiplier()) * widthDiff);
             }
             case LINEAR_TIME -> {
-                double trueTick = (painting.tickCount + Minecraft.getInstance().getPartialTick()) * parallax.multiplier();
+                double trueTick = (painting.tickCount + partialTicks) * parallax.multiplier();
                 double wholeDiff = widthDiff * 2.0D;
                 return widthDiff + (parallax.multiplier() > 0.0D ? -widthDiff + (trueTick % wholeDiff) : widthDiff - (trueTick % wholeDiff));
             }
@@ -209,12 +246,11 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
         return 0.0D;
     }
 
-    protected double getHeightOffset(@Nullable Parallax parallax, MagicPainting painting, double heightDiff) {
+    protected double getHeightOffset(@Nullable Parallax parallax, MagicPainting painting, double heightDiff, float partialTicks) {
         if (parallax != null) switch (parallax.type()) {
             case VIEW_ANGLE -> {
-                float partialTick = Minecraft.getInstance().getPartialTick();
                 Vec3 camPos = Minecraft.getInstance().cameraEntity != null ?
-                        Minecraft.getInstance().cameraEntity.getEyePosition(partialTick) :
+                        Minecraft.getInstance().cameraEntity.getEyePosition(partialTicks) :
                         Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
                 Vec3 paintPos = painting.position().relative(painting.getDirection().getOpposite(), 1.0D);
@@ -223,15 +259,15 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
                 double y = camPos.y - paintPos.y;
                 double z = camPos.z - paintPos.z;
                 double pythagoras = Math.sqrt(x * x + z * z);
-                double xRot = Mth.wrapDegrees((float)(-(Mth.atan2(y, pythagoras) * (double)(180F / (float)Math.PI))));
+                double xRot = Mth.wrapDegrees((float) (-(Mth.atan2(y, pythagoras) * (double) (180F / (float) Math.PI))));
 
                 return heightDiff - Mth.clamp(xRot * parallax.multiplier() * heightDiff, -heightDiff, heightDiff);
             }
             case SINE_TIME -> {
-                return heightDiff - (Math.cos((painting.tickCount + Minecraft.getInstance().getPartialTick()) * parallax.multiplier()) * heightDiff);
+                return heightDiff - (Math.cos((painting.tickCount + partialTicks) * parallax.multiplier()) * heightDiff);
             }
             case LINEAR_TIME -> {
-                double trueTick = (painting.tickCount + Minecraft.getInstance().getPartialTick()) * parallax.multiplier();
+                double trueTick = (painting.tickCount + partialTicks) * parallax.multiplier();
                 double wholeDiff = heightDiff * 2.0D;
                 return heightDiff - (parallax.multiplier() > 0.0D ? -heightDiff + (trueTick % wholeDiff) : heightDiff - (trueTick % wholeDiff));
             }
@@ -239,47 +275,88 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
         return 0.0D;
     }
 
-    protected static final float ONE_SECOND = 1.0F / 1200F;
+    protected static final float DAY_LENGTH = 24000.0F;
 
-    protected float getAlpha(@Nullable OpacityModifier opacityModifier, MagicPainting painting) {
+    protected float getAlpha(@Nullable OpacityModifier opacityModifier, MagicPainting painting, float partialTicks) {
+        if (opacityModifier == null) return 1.0F;
+
         float a = 1.0F;
-        if (opacityModifier != null) switch (opacityModifier.type()) {
+        switch (opacityModifier.type()) {
             case DISTANCE -> {
                 Vec3 camPos = Optional.ofNullable(Minecraft.getInstance().cameraEntity).map(Entity::getEyePosition).orElse(Minecraft.getInstance().gameRenderer.getMainCamera().getPosition());
-                a = (float) (opacityModifier.invert() ? opacityModifier.multiplier() - camPos.distanceTo(painting.position()) : camPos.distanceTo(painting.position()) - opacityModifier.multiplier());
+                a = fromTo(opacityModifier.from(), opacityModifier.to(), (float) camPos.distanceTo(painting.position()));
             }
-            case WEATHER -> {
-                float partialTick = Minecraft.getInstance().getPartialTick();
-                a = (painting.level().getRainLevel(partialTick) + painting.level().getThunderLevel(partialTick)) * 0.5F * Math.abs(opacityModifier.multiplier());
-                if (opacityModifier.invert()) a = 1.0F - a;
-            }
+            case WEATHER -> a = painting.level().getRainLevel(partialTicks);
+            case STORM -> a = (painting.level().getRainLevel(partialTicks) + painting.level().getThunderLevel(partialTicks)) * 0.5F;
             case LIGHTNING -> {
                 if (painting.level() instanceof ClientLevel clientLevel) {
-                    a = clientLevel.getSkyFlashTime() * opacityModifier.multiplier();
-                    if (opacityModifier.invert()) a = 1.0F - a;
+                    long sinceLightning = clientLevel.getGameTime() - lastLightning;
+                    // A flash recorded in another world (higher game time) must not light the layer up after switching worlds
+                    if (sinceLightning < 0L) {
+                        a = 0.0F;
+                    } else {
+                        a = 1.0F - ((float) sinceLightning - partialTicks) * opacityModifier.multiplier();
+                        if (a > 0.0F) a = a * a;
+                    }
                 }
             }
             case DAY_TIME -> {
-                float dayTime =  Math.abs(painting.level().getTimeOfDay(Minecraft.getInstance().getPartialTick()) - 0.5F) * 2.0F;
-                if (opacityModifier.invert()) dayTime = 1.0F - dayTime;
-                a = (float) Math.pow(dayTime, opacityModifier.multiplier());
-            }
-            case DAY_TIME_SHARP -> {
-                float dayTime =  Math.abs(painting.level().getTimeOfDay(Minecraft.getInstance().getPartialTick()) - 0.5F) * 2.0F;
-                if (opacityModifier.invert()) dayTime = 1.0F - dayTime;
-                float threshold = 1.0F - opacityModifier.multiplier();
+                if (painting.level() instanceof ClientLevel level) {
+                    // Upstream feeds the raw day counter in here, which only lines up with the 0-24000 range on the first day, so wrap it to the time of day
+                    float time = Math.floorMod(level.dimensionType().fixedTime().orElse(level.getDayTime()), (long) DAY_LENGTH) + partialTicks;
 
-                if (threshold > 1.0F - ONE_SECOND) threshold = 1.0F - ONE_SECOND;
-                else if (threshold < ONE_SECOND) threshold = ONE_SECOND;
-
-                if (dayTime < threshold) a = 0.0F;
-                else if (dayTime <= threshold + ONE_SECOND) a = (dayTime - threshold) / ONE_SECOND;
+                    if (opacityModifier.from() < opacityModifier.to()) {
+                        a = 1.0F - Math.abs(((time - opacityModifier.from()) / (opacityModifier.to() - opacityModifier.from())) - 0.5F) * 2.0F;
+                    } else {
+                        if (time < opacityModifier.to()) time += DAY_LENGTH;
+                        a = 1.0F - Math.abs(((time - opacityModifier.from()) / (opacityModifier.to() + DAY_LENGTH - opacityModifier.from())) - 0.5F) * 2.0F;
+                    }
+                }
             }
-            case SINE_TIME -> {
-                a = (float)(Math.sin((painting.tickCount + Minecraft.getInstance().getPartialTick()) * opacityModifier.multiplier())) * 0.5F + 0.5F;
-                if (opacityModifier.invert()) a = 1.0F - a;
+            case SINE_TIME -> a = (float) (Math.sin((painting.tickCount + partialTicks) * opacityModifier.multiplier())) * 0.5F + 0.5F;
+            case HEALTH -> {
+                if (Minecraft.getInstance().getCameraEntity() instanceof LivingEntity living) {
+                    a = fromTo(opacityModifier.from(), opacityModifier.to(), living.getHealth());
+                }
+            }
+            case HUNGER -> {
+                if (Minecraft.getInstance().getCameraEntity() instanceof Player player) {
+                    FoodData food = player.getFoodData();
+                    a = fromTo(opacityModifier.from(), opacityModifier.to(), (float) food.getFoodLevel());
+                }
+            }
+            case HOLDING_ITEM -> {
+                if (Minecraft.getInstance().getCameraEntity() instanceof LivingEntity living) {
+                    ItemStack key = opacityModifier.item();
+                    if (!living.isHolding(stack -> ItemStack.isSameItemSameTags(stack, key)))
+                        a = 0.0F;
+                }
+            }
+            case MOB_EFFECT_CATEGORY -> {
+                if (Minecraft.getInstance().getCameraEntity() instanceof LivingEntity living) {
+                    boolean flag = false;
+                    if (opacityModifier.effectCategory().isPresent()) {
+                        for (MobEffectInstance effect : living.getActiveEffects()) {
+                            if (effect.getEffect().getCategory() == opacityModifier.effectCategory().get()) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+                    a = flag ? 1.0F : 0.0F;
+                }
             }
         }
-        return Mth.clamp(a, 0.0F, 1.0F);
+
+        a = Mth.clamp(a, 0.0F, 1.0F);
+        if (opacityModifier.type().powerOfMultiplier()) a = (float) Math.pow(a, opacityModifier.multiplier());
+        if (opacityModifier.invert()) a = 1.0F - a;
+        a = a * (opacityModifier.max() - opacityModifier.min()) + opacityModifier.min();
+        return a;
+    }
+
+    protected static float fromTo(float from, float to, float value) {
+        if (from < to) return (value - from) / (to - from);
+        else return (from - value) / (from - to);
     }
 }

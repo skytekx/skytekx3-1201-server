@@ -23,7 +23,8 @@ public class TFPacketHandler {
 	// .7: SyncQuestsPacket (data pack driven Questing Ram quest, 4.8 02875d8a3) is registered before SyncUncraftingTableConfigPacket.
 	// .8: MagicMapPacket feature ids carry a conquered flag in their top bit (4.8 e67ac0be2).
 	// .9: WipeOreMeterPacket (client to server) for the finished Ore Meter.
-	private static final String PROTOCOL_VERSION = "2-skytekx.9";
+	// .10: the synced twilightforest:magic_paintings registry gains author, back_texture, local_lighting and the 4.8 opacity modifier fields.
+	private static final String PROTOCOL_VERSION = "2-skytekx.10";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,

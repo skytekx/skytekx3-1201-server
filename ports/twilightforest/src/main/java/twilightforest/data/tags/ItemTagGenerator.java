@@ -222,8 +222,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 				TFBlocks.NAGA_COURTYARD_MINIATURE_STRUCTURE.get().asItem(),
 				TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE.get().asItem(),
 				TFBlocks.AURORALIZED_GLASS.get().asItem(),
-				TFBlocks.SLIDER.get().asItem(),
-				TFItems.MAGIC_PAINTING.get()
+				TFBlocks.SLIDER.get().asItem()
 		);
 
 		tag(KOBOLD_PACIFICATION_BREADS).add(Items.BREAD);

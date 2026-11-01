@@ -11,6 +11,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -56,6 +57,10 @@ public class MagicPainting extends HangingEntity {
 
     public void setVariant(String variant) {
         this.entityData.set(DATA_PAINTING_VARIANT_ID, variant);
+    }
+
+    public void setVariant(ResourceKey<MagicPaintingVariant> variant) {
+        this.setVariant(variant.location().toString());
     }
 
     public Optional<MagicPaintingVariant> getVariant() {
@@ -107,7 +112,13 @@ public class MagicPainting extends HangingEntity {
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
-        this.setVariant(tag.contains("variant") ? tag.getString("variant") : EMPTY);
+        if (tag.contains("variant")) {
+            String variant = tag.getString("variant");
+            // A variant that is no longer registered (removed datapack, renamed id) falls back to the default instead of becoming an invisible 1x1 entity
+            this.setVariant(MagicPaintingVariants.getVariant(this.level().registryAccess(), variant).isPresent() ? variant : MagicPaintingVariants.DEFAULT.location().toString());
+        } else {
+            this.setVariant(EMPTY);
+        }
         this.direction = Direction.from2DDataValue(tag.getByte("facing"));
         super.readAdditionalSaveData(tag);
         this.setDirection(this.direction);
@@ -133,10 +144,7 @@ public class MagicPainting extends HangingEntity {
                 }
             }
 
-            this.spawnAtLocation(Util.make(new ItemStack(TFItems.MAGIC_PAINTING.get()), stack -> {
-                CompoundTag tag = stack.getOrCreateTagElement("EntityTag");
-                tag.putString("variant", this.entityData.get(DATA_PAINTING_VARIANT_ID));
-            }));
+            this.spawnAtLocation(this.getPickResult());
         }
     }
 
@@ -173,6 +181,15 @@ public class MagicPainting extends HangingEntity {
 
     @Override
     public ItemStack getPickResult() {
-        return new ItemStack(TFItems.MAGIC_PAINTING.get());
+        ItemStack itemStack = new ItemStack(TFItems.MAGIC_PAINTING.get());
+        String variant = this.entityData.get(DATA_PAINTING_VARIANT_ID);
+        if (!variant.equals(EMPTY)) itemStack.getOrCreateTagElement("EntityTag").putString("variant", variant);
+        return itemStack;
+    }
+
+    // Public so structure pieces (the Lich Tower magic gallery) can orient a painting before adding it to the world
+    @Override
+    public void setDirection(Direction faceDirection) {
+        super.setDirection(faceDirection);
     }
 }

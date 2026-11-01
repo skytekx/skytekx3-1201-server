@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TFConfig;
@@ -458,7 +460,6 @@ public class TFCreativeTabs {
 				output.accept(TFItems.MUSIC_DISC_HOME.get());
 				output.accept(TFItems.MUSIC_DISC_MAKER.get());
 				output.accept(TFItems.MUSIC_DISC_SUPERSTITIOUS.get());
-				parameters.holders().lookup(MagicPaintingVariants.REGISTRY_KEY).ifPresent((lookup) -> createPaintings(output, lookup));
 				output.accept(TFItems.NAGA_BANNER_PATTERN.get());
 				output.accept(TFItems.LICH_BANNER_PATTERN.get());
 				output.accept(TFItems.MINOSHROOM_BANNER_PATTERN.get());
@@ -622,6 +623,13 @@ public class TFCreativeTabs {
 
 	private static final Comparator<Holder<MagicPaintingVariant>> MAGIC_COMPARATOR = Comparator.comparing(Holder::value, Comparator.<MagicPaintingVariant>comparingInt((variant) ->
 			variant.height() * variant.width()).thenComparing(MagicPaintingVariant::width));
+
+	public static void addToTabs(BuildCreativeModeTabContentsEvent event) {
+		// Magic paintings only come from structures, so like 4.8 they sit with the operator-only items
+		if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS && event.hasPermissions()) {
+			event.getParameters().holders().lookup(MagicPaintingVariants.REGISTRY_KEY).ifPresent((lookup) -> createPaintings(event, lookup));
+		}
+	}
 
 	private static void createPaintings(CreativeModeTab.Output output, HolderLookup.RegistryLookup<MagicPaintingVariant> lookup) {
 		lookup.listElements().sorted(MAGIC_COMPARATOR).forEach((holder) -> {

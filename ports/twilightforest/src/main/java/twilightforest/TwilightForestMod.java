@@ -146,6 +146,7 @@ public class TwilightForestMod {
 		modbus.addListener(this::registerExtraStuff);
 		modbus.addListener(this::setRegistriesForDatapack);
 		modbus.addListener(CapabilityList::registerCapabilities);
+		modbus.addListener(TFCreativeTabs::addToTabs);
 
 		if (ModList.get().isLoaded("curios")) {
 			Bindings.getForgeBus().get().addListener(CuriosCompat::keepCurios);

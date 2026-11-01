@@ -8,12 +8,15 @@ import com.mojang.authlib.minecraft.client.ObjectMapper;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilEnvironment;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,6 +37,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -418,7 +422,7 @@ public class TFConfig {
 		public final ForgeConfigSpec.IntValue cloudBlockPrecipitationDistanceClient;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> giantSkinUUIDs;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> auroraBiomes;
-		private final List<ResourceLocation> validAuroraBiomes = new ArrayList<>();
+		private final List<Holder<Biome>> validAuroraBiomes = new ArrayList<>();
 		public final ForgeConfigSpec.BooleanValue spawnCharmAnimationAsTotem;
 	}
 
@@ -465,14 +469,15 @@ public class TFConfig {
 	}
 
 	//Forge's biome registry doesn't contain biomes done via datapacks, so we have to use registryaccess
-	public static List<ResourceLocation> getValidAuroraBiomes(RegistryAccess access) {
+	//Holders are cached so the client tick doesn't have to look the camera's biome up in the registry every tick
+	public static List<Holder<Biome>> getValidAuroraBiomes(RegistryAccess access) {
 		if (CLIENT_CONFIG.validAuroraBiomes.isEmpty() && !CLIENT_CONFIG.auroraBiomes.get().isEmpty()) {
 			CLIENT_CONFIG.auroraBiomes.get().forEach(s -> {
-				ResourceLocation key = ResourceLocation.tryParse(s);
-				if (key == null || !access.registryOrThrow(Registries.BIOME).containsKey(key)) {
+				Optional<? extends Holder<Biome>> holder = Optional.ofNullable(ResourceLocation.tryParse(s)).flatMap(key -> access.registryOrThrow(Registries.BIOME).getHolder(ResourceKey.create(Registries.BIOME, key)));
+				if (holder.isEmpty()) {
 					TwilightForestMod.LOGGER.warn("Biome {} in Twilight Forest's validAuroraBiomes config option is not a valid biome. Skipping!", s);
 				} else {
-					CLIENT_CONFIG.validAuroraBiomes.add(key);
+					CLIENT_CONFIG.validAuroraBiomes.add(holder.get());
 				}
 			});
 		}

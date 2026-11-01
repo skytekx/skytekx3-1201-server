@@ -28,11 +28,17 @@ import java.util.*;
 public class EntityRenderer implements IIngredientRenderer<EntityType> {
 
 	private static final Set<EntityType<?>> IGNORED_ENTITIES = new HashSet<>();
+	// Shared between all renderers and dropped whenever a screen closes (see JEICompat), so the cached entities
+	// never outlive the level they were created in (#2488)
+	private static final Map<EntityType<?>, Entity> ENTITY_MAP = new HashMap<>();
 	private final int size;
-	private final Map<EntityType<?>, Entity> ENTITY_MAP = new HashMap<>();
 
 	public EntityRenderer(int size) {
 		this.size = size;
+	}
+
+	public static void clearEntityCache() {
+		if (!ENTITY_MAP.isEmpty()) ENTITY_MAP.clear();
 	}
 
 	@Override
@@ -56,8 +62,8 @@ public class EntityRenderer implements IIngredientRenderer<EntityType> {
 				if (type == EntityType.PLAYER) {
 					entity = Minecraft.getInstance().player;
 				} else {
-					// entity is created with the client world, but the entity map is thrown away when JEI restarts so they should be okay I think
-					entity = this.ENTITY_MAP.computeIfAbsent(type, t -> t.create(level));
+					// entity is created with the client world, the entity map is cleared whenever a screen closes so they never outlive it
+					entity = ENTITY_MAP.computeIfAbsent(type, t -> t.create(level));
 				}
 				// only can draw living entities, plus non-living ones don't get recipes anyways
 				if (entity instanceof LivingEntity livingEntity) {
@@ -79,12 +85,12 @@ public class EntityRenderer implements IIngredientRenderer<EntityType> {
 					} catch (Exception e) {
 						TwilightForestMod.LOGGER.error("Error drawing entity " + ForgeRegistries.ENTITY_TYPES.getKey(type), e);
 						IGNORED_ENTITIES.add(type);
-						this.ENTITY_MAP.remove(type);
+						ENTITY_MAP.remove(type);
 					}
 				} else {
 					// not living, so might as well skip next time
 					IGNORED_ENTITIES.add(type);
-					this.ENTITY_MAP.remove(type);
+					ENTITY_MAP.remove(type);
 				}
 			}
 		}

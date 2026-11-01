@@ -18,7 +18,6 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -228,6 +227,15 @@ public class TFClientEvents {
 	private static int aurora = 0;
 	private static int lastAurora = 0;
 
+	// [4.8 HolderMatcher] compares reference holders by registry key, so a holder cached from an earlier RegistryAccess (e.g. before switching servers) still matches
+	private static <T> boolean holdersMatch(Holder<T> a, Holder<T> b) {
+		if (a == b) return true;
+		if (a.kind() == Holder.Kind.DIRECT || b.kind() == Holder.Kind.DIRECT) {
+			return a.value() == b.value();
+		}
+		return b.unwrapKey().map(a::is).orElseGet(() -> a.unwrapKey().map(b::is).orElse(false));
+	}
+
 	@SubscribeEvent
 	public static void clientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
@@ -247,7 +255,7 @@ public class TFClientEvents {
 			if (Minecraft.getInstance().level != null && Minecraft.getInstance().cameraEntity != null && !TFConfig.getValidAuroraBiomes(Minecraft.getInstance().level.registryAccess()).isEmpty()) {
 				RegistryAccess access = Minecraft.getInstance().level.registryAccess();
 				Holder<Biome> biome = Minecraft.getInstance().level.getBiome(Minecraft.getInstance().cameraEntity.blockPosition());
-				if (TFConfig.getValidAuroraBiomes(access).contains(access.registryOrThrow(Registries.BIOME).getKey(biome.value())))
+				if (TFConfig.getValidAuroraBiomes(access).stream().anyMatch(valid -> holdersMatch(valid, biome)))
 					aurora++;
 				else
 					aurora--;
@@ -341,14 +349,16 @@ public class TFClientEvents {
 	}
 
 	@SubscribeEvent
-	public static void unrenderHeadWithTrophies(RenderLivingEvent<?, ?> event) {
+	public static void unrenderHeadWithTrophies(RenderLivingEvent.Pre<?, ?> event) {
 		ItemStack stack = event.getEntity().getItemBySlot(EquipmentSlot.HEAD);
 		boolean visible = !(stack.getItem() instanceof TrophyItem) && !(stack.getItem() instanceof SkullCandleItem) && !areCuriosEquipped(event.getEntity());
-
-		if (!visible && event.getRenderer().getModel() instanceof HeadedModel headedModel) {
-			headedModel.getHead().visible = false;
+		boolean isPlayer = event.getEntity() instanceof Player;
+		// Renderer models are shared by every entity of a type, so the head has to be made visible again as well, or one trophy wearer leaves all of them headless (#2147).
+		// PlayerRenderer resets part visibility itself before this event, so keep whatever it (or mods like Better Combat, which hide the head in first person) decided (#2267).
+		if (event.getRenderer().getModel() instanceof HeadedModel headedModel) {
+			headedModel.getHead().visible = visible && (!isPlayer || headedModel.getHead().visible);
 			if (event.getRenderer().getModel() instanceof HumanoidModel<?> humanoidModel) {
-				humanoidModel.hat.visible = false;
+				humanoidModel.hat.visible = visible && (!isPlayer || humanoidModel.hat.visible);
 			}
 		}
 	}

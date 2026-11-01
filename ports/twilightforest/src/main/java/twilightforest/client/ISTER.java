@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -79,6 +80,8 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 	private KnightmetalShieldModel shield = new KnightmetalShieldModel(Minecraft.getInstance().getEntityModels().bakeLayer(TFModelLayers.KNIGHTMETAL_SHIELD));
 	private Map<BossVariant, GenericTrophyModel> trophies = TrophyTileEntityRenderer.createTrophyRenderers(Minecraft.getInstance().getEntityModels());
 	private Map<SkullBlock.Type, SkullModelBase> skulls = SkullBlockRenderer.createSkullRenderers(Minecraft.getInstance().getEntityModels());
+	// Dummy block entities used to look up the renderer for EntityBlock items (critters etc.), created once per block instead of every frame
+	private final Map<Block, BlockEntity> itemBlockEntities = new HashMap<>();
 
 	// Use the cached INSTANCE.get instead
 	private ISTER() {
@@ -167,9 +170,12 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 				}
 			} else {
 				if (block instanceof EntityBlock be) {
-					BlockEntity blockEntity = be.newBlockEntity(BlockPos.ZERO, block.defaultBlockState());
+					BlockEntity blockEntity = this.itemBlockEntities.computeIfAbsent(block, b -> be.newBlockEntity(BlockPos.ZERO, b.defaultBlockState()));
 					if (blockEntity != null) {
-						Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity).render(null, 0, ms, buffers, light, overlay);
+						BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+						if (renderer != null) {
+							renderer.render(null, 0, ms, buffers, light, overlay);
+						}
 					}
 				}
 			}

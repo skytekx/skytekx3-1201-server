@@ -134,9 +134,11 @@ The first launch stopped at Prism's Microsoft sign-in, which had expired (error 
 signed in again with a device code that evening.
 
 Since then this instance is the owner's game client. It has a 12 GB heap, and on 2026-11-01 it held
-240 jars. Falling Meteors Reimagined was added by hand at 05:54. It still carries skytekx-compat 2.0.0,
-which does not matter on a client, since the compat mod only changes server code. Prism last launched it
-on 2026-11-01 at 06:04, and its play time was 8.0 hours, against 39.1 hours in `SkyTekx3` up to July.
+240 jars. Falling Meteors Reimagined was added by hand at 05:54. At 08:00 Sophisticated Backpacks and
+Sophisticated Core moved to `~/skytekx3-backups/client-SkyTekx3-test-mods-orig/` and the Backpack port
+came in, which leaves 239 jars, see [Mod set](mod-set.md#backpack). It still carries skytekx-compat
+2.0.0, which does not matter on a client, since the compat mod only changes server code. Prism last
+launched it on 2026-11-01 at 08:00 for the backpack test on the test server, and its play time was 8.0 hours, against 39.1 hours in `SkyTekx3` up to July.
 
 ## Second Mac
 

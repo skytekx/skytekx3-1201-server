@@ -30,9 +30,10 @@ import java.util.Optional;
  *   "type": "twilightforest:landmark",
  *   "wrapped": { "type": "minecraft:jigsaw", ... },
  *   "decoration_clearance": {                      // optional, every decoration is allowed if absent
- *     "chunk_clearance_radius": 1,
+ *     "chunk_clearance_radius": 1.0,               // 0 to 8; 0 clears around each structure piece instead of a square
  *     "allow_biome_surface_decorations": false,
  *     "allow_biome_underground_decorations": true,
+ *     "allow_biome_vegetation": true,              // optional, defaults to true
  *     "adjust_structure_elevation": false
  *   },
  *   "center_in_chunk": true                        // optional, unused by the wrapper

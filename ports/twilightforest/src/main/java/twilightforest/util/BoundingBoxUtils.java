@@ -1,6 +1,8 @@
 package twilightforest.util;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.core.Vec3i;
 
@@ -61,5 +63,15 @@ public class BoundingBoxUtils {
 
 	public static BoundingBox cloneWithAdjustments(BoundingBox box, int x1, int y1, int z1, int x2, int y2, int z2) {
 		return new BoundingBox(box.minX() + x1, box.minY() + y1, box.minZ() + z1, box.maxX() + x2, box.maxY() + y2, box.maxZ() + z2);
+	}
+
+	public static BlockPos clampedInside(BoundingBox box, BlockPos toClamp) {
+		return new BlockPos(Mth.clamp(toClamp.getX(), box.minX(), box.maxX()), Mth.clamp(toClamp.getY(), box.minY(), box.maxY()), Mth.clamp(toClamp.getZ(), box.minZ(), box.maxZ()));
+	}
+
+	// Chebyshev distance from pos to the box; 0 when pos is inside it
+	public static int greatestAxalDistance(BoundingBox box, BlockPos pos) {
+		BlockPos clamped = clampedInside(box, pos);
+		return Math.max(Math.max(Math.abs(clamped.getX() - pos.getX()), Math.abs(clamped.getY() - pos.getY())), Math.abs(clamped.getZ() - pos.getZ()));
 	}
 }

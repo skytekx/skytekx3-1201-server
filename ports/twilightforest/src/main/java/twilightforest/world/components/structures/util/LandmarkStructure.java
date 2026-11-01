@@ -74,12 +74,17 @@ public abstract class LandmarkStructure extends Structure implements DecorationC
     }
 
     @Override
+    public boolean isGrassDecoAllowed() {
+        return this.decorationConfig.vegetation();
+    }
+
+    @Override
     public boolean shouldAdjustToTerrain() {
         return this.decorationConfig.adjustElevation();
     }
 
     @Override
-    public int chunkClearanceRadius() {
+    public float chunkClearanceRadius() {
         return this.decorationConfig.chunkClearanceRadius();
     }
 }

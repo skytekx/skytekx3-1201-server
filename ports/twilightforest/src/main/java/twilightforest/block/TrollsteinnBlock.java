@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -19,6 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.Map;
 
 public class TrollsteinnBlock extends Block {
+	public static final int LIGHT_THRESHOLD = 7;
 	private static final BooleanProperty DOWN_LIT = BooleanProperty.create("down");
 	private static final BooleanProperty UP_LIT = BooleanProperty.create("up");
 	private static final BooleanProperty NORTH_LIT = BooleanProperty.create("north");
@@ -33,8 +35,6 @@ public class TrollsteinnBlock extends Block {
 			.put(Direction.WEST, WEST_LIT)
 			.put(Direction.EAST, EAST_LIT).build();
 
-	private static final int LIGHT_THRESHOLD = 7;
-
 	public TrollsteinnBlock(Properties properties) {
 		super(properties);
 
@@ -42,6 +42,18 @@ public class TrollsteinnBlock extends Block {
 				.setValue(DOWN_LIT, false).setValue(UP_LIT, false)
 				.setValue(NORTH_LIT, false).setValue(SOUTH_LIT, false)
 				.setValue(WEST_LIT, false).setValue(EAST_LIT, false));
+	}
+
+	/**
+	 * Computation from vanilla function updateSkyBrightness in Level.java.
+	 * The client's own sky darkness differs from the server's, so placement prediction uses this
+	 * to pick the same faces as the server and the block no longer flickers when placed at night (#2078).
+	 */
+	public static int calculateServerSkyDarken(Level level) {
+		double rainEffect = 1.0 - (double) (level.getRainLevel(1.0F) * 5.0F) / 16.0;
+		double thunderEffect = 1.0 - (double) (level.getThunderLevel(1.0F) * 5.0F) / 16.0;
+		double dayCycleEffect = 0.5 + 2.0 * Mth.clamp(Mth.cos(level.getTimeOfDay(1.0F) * (float) (Math.PI * 2)), -0.25, 0.25);
+		return (int) ((1.0 - dayCycleEffect * rainEffect * thunderEffect) * 11.0);
 	}
 
 	@Override
@@ -75,7 +87,10 @@ public class TrollsteinnBlock extends Block {
 	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
 		BlockState ret = defaultBlockState();
 		for (Map.Entry<Direction, BooleanProperty> e : PROPERTY_MAP.entrySet()) {
-			int light = ctx.getLevel().getMaxLocalRawBrightness(ctx.getClickedPos().relative(e.getKey()));
+			Level level = ctx.getLevel();
+			BlockPos pos = ctx.getClickedPos();
+			int light = level.getMaxLocalRawBrightness(pos.relative(e.getKey()),
+					level.isClientSide() ? calculateServerSkyDarken(level) : level.getSkyDarken());
 			ret = ret.setValue(e.getValue(), light > LIGHT_THRESHOLD);
 		}
 		return ret;

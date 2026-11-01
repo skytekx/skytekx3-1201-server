@@ -17,6 +17,7 @@ public class TFCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("twilightforest")
                 .executes(TFCommand::run)
+                .then(TFTeleportCommand.register())
                 .then(CenterCommand.register())
                 .then(ConquerCommand.register())
                 .then(GenerateBookCommand.register())

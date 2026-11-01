@@ -1,5 +1,6 @@
 package twilightforest.world.components.processors;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,11 +21,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // Despite the name, any facts about actual Box Cutters being involved are lies
 public final class BoxCuttingProcessor extends StructureProcessor {
-    public static final Codec<BoxCuttingProcessor> CODEC = BoundingBox.CODEC.listOf().xmap(BoxCuttingProcessor::new, p -> p.cutouts);
+    // TF 4.8 writes the boxes under "boxes". The bare list 4.3 used here ends up under "value" in a processor_type entry, so that form is still read.
+    public static final Codec<BoxCuttingProcessor> CODEC = Codec.mapEither(BoundingBox.CODEC.listOf().fieldOf("boxes"), BoundingBox.CODEC.listOf().fieldOf("value"))
+            .<List<BoundingBox>>xmap(either -> either.map(Function.identity(), Function.identity()), Either::left)
+            .xmap(BoxCuttingProcessor::new, p -> p.cutouts)
+            .codec();
 
     public final List<BoundingBox> cutouts;
 

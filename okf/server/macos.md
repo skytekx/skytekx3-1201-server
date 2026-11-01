@@ -47,10 +47,10 @@ That points to a power cut, and autorestart brought the Mac back.
 
 | File | Role |
 |---|---|
-| Script `ServerMac.sh` | The launcher. Java 17, a 9G heap, Aikar's G1 flags, a 512M code cache, headless AWT, a soft limit of 10240 open files when the shell has less (launchd's 65536 stays), and the SIGTERM handling described below. The Mac mini still runs the version before the fixes of 2026-10-31 evening until the next watched restart |
+| Script `ServerMac.sh` | The launcher. Java 17, a 9G heap, Aikar's G1 flags, a 512M code cache, headless AWT, a soft limit of 10240 open files when the shell has less (launchd's 65536 stays), and the SIGTERM handling described below. The Mac mini runs this version since 2026-11-01 02:51. The one before the fixes of 2026-10-31 evening is kept as `~/skytekx3-backups/ServerMac.sh.before-2026-11-01` |
 | Plist `macos/com.skytekx.server.plist` | LaunchDaemon `com.skytekx.server`. Runs `ServerMac.sh` as the server user at boot, `KeepAlive` true, `ThrottleInterval` 30, `ExitTimeOut` 180, `ProcessType` Interactive, 65536 open files, stdout to `/dev/null`, stderr to `logs/launchd-stderr.log` |
 | Plist `macos/com.skytekx.rcon-guard.plist` | LaunchDaemon `com.skytekx.rcon-guard`. Runs as root at boot and loads the pf anchor |
-| Rules `macos/pf-rcon-guard.conf` | The anchor rules: pass TCP 65535 on `lo0`, drop new connections to it (SYN without ACK) on every other interface. The loaded anchor still drops every packet to 65535 until `install.sh` runs again |
+| Rules `macos/pf-rcon-guard.conf` | The anchor rules: pass TCP 65535 on `lo0`, drop new connections to it (SYN without ACK) on every other interface. The Mac mini loads these rules since `install.sh` ran again on 2026-11-01 at 02:51. Before that its anchor dropped every packet to 65535 |
 | Plist `macos/com.skytekx.backup.plist` | LaunchDaemon `com.skytekx.backup`. Runs `macos/backup.sh` daily at 05:00 as the server user |
 | Script `macos/backup.sh` | Pauses saving over RCON, flushes, archives `world/` to `~/skytekx3-backups`, keeps the newest 3. It skips the run unless the disk has room for an archive as large as the newest one plus 4 GB, and a failed run removes its partial archive and turns saving back on |
 | Script `macos/skytekx3ctl` | The commands `status`, `start`, `stop`, `restart`, `rcon <command>`, `log` and `backup` |

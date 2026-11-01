@@ -1,20 +1,14 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,31 +16,31 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.TFConfig;
-import twilightforest.advancements.TFAdvancements;
-import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.TFPart;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStructures;
-import twilightforest.loot.TFLootTables;
 import twilightforest.util.EntityUtil;
-import twilightforest.util.LandmarkUtil;
 import twilightforest.util.WorldUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
+public class Hydra extends BaseTFBoss {
 
 	private static final int TICKS_BEFORE_HEALING = 1000;
 	private static final int HEAD_RESPAWN_TICKS = 100;
@@ -58,8 +52,6 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 	private static final int SECONDARY_FLAME_CHANCE = 10;
 	private static final int SECONDARY_MORTAR_CHANCE = 16;
 
-	private static final EntityDataAccessor<Optional<GlobalPos>> HOME_POINT = SynchedEntityData.defineId(Hydra.class, EntityDataSerializers.OPTIONAL_GLOBAL_POS);
-
 	private final HydraPart[] partArray;
 
 	public final int numHeads = 7;
@@ -69,11 +61,9 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 	private final HydraSmallPart leftLeg;
 	private final HydraSmallPart rightLeg;
 	private final HydraSmallPart tail;
-	private final ServerBossEvent bossInfo = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
 	private float randomYawVelocity = 0f;
 
 	private int ticksSinceDamaged = 0;
-	private final List<ServerPlayer> hurtBy = new ArrayList<>();
 
 	public boolean renderFakeHeads = true;
 
@@ -105,18 +95,6 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 
 	}
 
-	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.getEntityData().define(HOME_POINT, Optional.empty());
-	}
-
-	@Override
-	public void setCustomName(@Nullable Component name) {
-		super.setCustomName(name);
-		this.bossInfo.setName(this.getDisplayName());
-	}
-
 	public static AttributeSupplier.Builder registerAttributes() {
 		return Mob.createMobAttributes()
 				.add(Attributes.MAX_HEALTH, MAX_HEALTH)
@@ -124,30 +102,36 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 	}
 
 	@Override
-	public void startSeenByPlayer(ServerPlayer player) {
-		super.startSeenByPlayer(player);
-		this.bossInfo.addPlayer(player);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		this.bossInfo.removePlayer(player);
-	}
-
-	@Override
 	public void checkDespawn() {
 		if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-			this.level().setBlockAndUpdate(this.blockPosition().offset(0, 1, 0), TFBlocks.HYDRA_BOSS_SPAWNER.get().defaultBlockState());
-			this.discard();
-			for (HydraHeadContainer container : hc) {
+			for (HydraHeadContainer container : this.hc) {
 				if (container.headEntity != null) {
 					container.headEntity.discard();
 				}
 			}
-		} else {
-			super.checkDespawn();
 		}
+		super.checkDespawn();
+	}
+
+	// The Hydra does not pathfind: it turns towards its target and attacks with its heads
+	@Override
+	public boolean isPathFinding() {
+		return false;
+	}
+
+	@Override
+	protected PathNavigation createNavigation(Level level) {
+		return new GroundPathNavigation(this, level) {
+			@Override
+			public Path createPath(BlockPos pos, int accuracy) {
+				return null;
+			}
+
+			@Override
+			protected boolean canUpdatePath() {
+				return false;
+			}
+		};
 	}
 
 	// [Vanilla Copy] from LivingEntity. Hydra doesn't like the one from EntityLiving for whatever reason
@@ -249,26 +233,19 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 
 				}
 			}
-
-			this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
 		}
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
-		this.saveHomePointToNbt(compound);
-		compound.putByte("NumHeads", (byte) this.countActiveHeads());
 		super.addAdditionalSaveData(compound);
+		compound.putByte("NumHeads", (byte) this.countActiveHeads());
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.loadHomePointFromNbt(compound);
 		this.activateNumberOfHeads(compound.getByte("NumHeads"));
-		if (this.hasCustomName()) {
-			this.bossInfo.setName(this.getDisplayName());
-		}
 	}
 
 	// TODO modernize this more (old AI copypasta still kind of here)
@@ -276,6 +253,7 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 
 	@Override
 	protected void customServerAiStep() {
+		super.customServerAiStep();
 		this.xxa = 0.0F;
 		this.zza = 0.0F;
 		float f = 48.0F;
@@ -644,9 +622,6 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 
 	@Override
 	public boolean hurt(DamageSource src, float damage) {
-		if (src.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
-			this.hurtBy.add(player);
-		}
 		return src.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && super.hurt(src, damage);
 	}
 
@@ -720,31 +695,6 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 	}
 
 	@Override
-	public void die(DamageSource cause) {
-		super.die(cause);
-		// mark the lair as defeated
-		if (!this.level().isClientSide()) {
-			this.bossInfo.setProgress(0.0F);
-			LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.HYDRA_LAIR, true);
-			for (ServerPlayer player : this.hurtBy) {
-				TFAdvancements.HURT_BOSS.trigger(player, this);
-			}
-
-			TFLootTables.entityDropsIntoContainer(this, cause, TFBlocks.MANGROVE_CHEST.get().defaultBlockState(), EntityUtil.bossChestLocation(this));
-		}
-	}
-
-	@Override
-	protected boolean shouldDropLoot() {
-		return !TFConfig.COMMON_CONFIG.bossDropChests.get();
-	}
-
-	@Override
-	public boolean removeWhenFarAway(double distance) {
-		return false;
-	}
-
-	@Override
 	public boolean isOnFire() {
 		return false;
 	}
@@ -775,15 +725,16 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 			}
 		}
 
+		// experience already dropped in die(); removing the hydra as killed deposits its loot chest
 		if (this.deathTime == 200) {
-			if (this.level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
-				int reward = ForgeEventFactory.getExperienceDrop(this, this.lastHurtByPlayer, this.getExperienceReward());
-				ExperienceOrb.award((ServerLevel) this.level(), this.position(), reward);
-			}
-
-			this.discard();
+			this.remove(RemovalReason.KILLED);
 		}
 
+		if (this.level().isClientSide()) this.tickDeathAnimation();
+	}
+
+	@Override
+	public void tickDeathAnimation() {
 		for (int i = 0; i < 10; ++i) {
 			double vx = this.getRandom().nextGaussian() * 0.02D;
 			double vy = this.getRandom().nextGaussian() * 0.02D;
@@ -798,37 +749,27 @@ public class Hydra extends Mob implements Enemy, EnforcedHomePoint {
 	}
 
 	@Override
-	public boolean isPushedByFluid(FluidType type) {
-		return false;
-	}
-
-	@Override
-	protected float getWaterSlowDown() {
-		return 1.0F;
-	}
-
-	@Override
-	protected boolean canRide(Entity entity) {
-		return false;
-	}
-
-	@Override
-	public boolean canChangeDimensions() {
-		return false;
-	}
-
-	@Override
-	public @Nullable GlobalPos getRestrictionPoint() {
-		return this.getEntityData().get(HOME_POINT).orElse(null);
-	}
-
-	@Override
-	public void setRestrictionPoint(@Nullable GlobalPos pos) {
-		this.getEntityData().set(HOME_POINT, Optional.ofNullable(pos));
-	}
-
-	@Override
 	public int getHomeRadius() {
 		return 20;
+	}
+
+	@Override
+	public ResourceKey<Structure> getHomeStructure() {
+		return TFStructures.HYDRA_LAIR;
+	}
+
+	@Override
+	public Block getDeathContainer(RandomSource random) {
+		return TFBlocks.MANGROVE_CHEST.get();
+	}
+
+	@Override
+	public Block getBossSpawner() {
+		return TFBlocks.HYDRA_BOSS_SPAWNER.get();
+	}
+
+	@Override
+	public BossEvent.BossBarColor getBossBarColor() {
+		return BossEvent.BossBarColor.BLUE;
 	}
 }

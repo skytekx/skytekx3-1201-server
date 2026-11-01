@@ -1,51 +1,42 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
-import org.jetbrains.annotations.Nullable;
-import twilightforest.TFConfig;
-import twilightforest.advancements.TFAdvancements;
 import twilightforest.client.renderer.TFWeatherRenderer;
 import twilightforest.entity.ai.control.NoClipMoveControl;
-import twilightforest.entity.ai.goal.GhastguardHomedFlightGoal;
+import twilightforest.entity.ai.goal.UrGhastAttackGoal;
 import twilightforest.entity.ai.goal.UrGhastFlightGoal;
+import twilightforest.entity.ai.goal.UrGhastLookGoal;
 import twilightforest.entity.monster.CarminiteGhastguard;
 import twilightforest.entity.monster.CarminiteGhastling;
-import twilightforest.entity.projectile.UrGhastFireball;
 import twilightforest.init.*;
-import twilightforest.loot.TFLootTables;
-import twilightforest.network.ParticlePacket;
-import twilightforest.network.TFPacketHandler;
 import twilightforest.util.EntityUtil;
-import twilightforest.util.LandmarkUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,32 +45,40 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//ghastguards already set home points so theres no need to here
-public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
+/**
+ * Before the 4.8 boss refactor the Ur-Ghast extended the Carminite Ghastguard (and so the vanilla Ghast). It now extends
+ * {@link BaseTFBoss} and carries the bits of those classes it used: the attack/look goals, the attack status synced to the
+ * renderer, the trap target reset, flying movement and the Ghast's eye height.
+ */
+public class UrGhast extends BaseTFBoss {
 	private static final Vec3 DYING_DECENT = new Vec3(0.0D, -0.03D, 0.0D);
-	private static final EntityDataAccessor<Boolean> DATA_TANTRUM = SynchedEntityData.defineId(UrGhast.class, EntityDataSerializers.BOOLEAN);
-	private final NonNullList<ItemStack> dyingInventory = NonNullList.withSize(27, ItemStack.EMPTY);
+	public static final int DEATH_ANIMATION_DURATION = 90;
 
-	private List<BlockPos> trapLocations;
+	// 0 = idle, 1 = eyes open / tracking player, 2 = shooting fireball
+	private static final EntityDataAccessor<Byte> ATTACK_STATUS = SynchedEntityData.defineId(UrGhast.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Byte> ATTACK_TIMER = SynchedEntityData.defineId(UrGhast.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Byte> ATTACK_PREVTIMER = SynchedEntityData.defineId(UrGhast.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Boolean> DATA_IS_CHARGING = SynchedEntityData.defineId(UrGhast.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> DATA_TANTRUM = SynchedEntityData.defineId(UrGhast.class, EntityDataSerializers.BOOLEAN);
+
+	private final List<BlockPos> trapLocations = new ArrayList<>();
 	private int nextTantrumCry;
+	private UrGhastAttackGoal attackGoal;
+	private int inTrapCounter;
 
 	private float damageUntilNextPhase = 10; // how much damage can we take before we toggle tantrum mode
-	private final ServerBossEvent bossInfo = new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
-	private final List<ServerPlayer> hurtBy = new ArrayList<>();
 
-	public UrGhast(EntityType<? extends UrGhast> type, Level world) {
-		super(type, world);
-		this.wanderFactor = 32.0F;
+	public UrGhast(EntityType<? extends UrGhast> type, Level level) {
+		super(type, level);
 		this.noPhysics = true;
 		this.setInTantrum(false);
 		this.xpReward = 317;
 		this.moveControl = new NoClipMoveControl(this);
 	}
 
-	@Override
-	public void setCustomName(@Nullable Component name) {
-		super.setCustomName(name);
-		this.bossInfo.setName(this.getDisplayName());
+	// the ghast trap resets our target while it pulls us in (as it does for Carminite Ghastguards)
+	public void setInTrap() {
+		this.inTrapCounter = 10;
 	}
 
 	public static AttributeSupplier.Builder registerAttributes() {
@@ -92,6 +91,10 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
+		this.getEntityData().define(ATTACK_STATUS, (byte) 0);
+		this.getEntityData().define(ATTACK_TIMER, (byte) 0);
+		this.getEntityData().define(ATTACK_PREVTIMER, (byte) 0);
+		this.getEntityData().define(DATA_IS_CHARGING, false);
 		this.getEntityData().define(DATA_TANTRUM, false);
 	}
 
@@ -101,27 +104,10 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 
 	@Override
 	protected void registerGoals() {
-		super.registerGoals();
-		this.trapLocations = new ArrayList<>();
-		this.goalSelector.availableGoals.removeIf(e -> e.getGoal() instanceof GhastguardHomedFlightGoal);
 		this.goalSelector.addGoal(5, new UrGhastFlightGoal(this));
-	}
-
-	@Override
-	public boolean removeWhenFarAway(double dist) {
-		return false;
-	}
-
-	@Override
-	public void checkDespawn() {
-		if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-			if (this.isRestrictionPointValid(this.level().dimension()) && this.level().isLoaded(this.getRestrictionPoint().pos())) {
-				this.level().setBlockAndUpdate(this.getRestrictionPoint().pos(), TFBlocks.UR_GHAST_BOSS_SPAWNER.get().defaultBlockState());
-			}
-			this.discard();
-		} else {
-			super.checkDespawn();
-		}
+		this.goalSelector.addGoal(7, new UrGhastLookGoal(this));
+		this.goalSelector.addGoal(7, this.attackGoal = new UrGhastAttackGoal(this));
+		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
 	}
 
 	@Override
@@ -140,22 +126,19 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 	}
 
 	@Override
-	public SoundEvent getFireSound() {
-		return TFSounds.UR_GHAST_SHOOT.get();
-	}
-
-	@Override
-	public SoundEvent getWarnSound() {
-		return TFSounds.UR_GHAST_WARN.get();
+	public int getAmbientSoundInterval() {
+		return 160; // inherited from the Carminite Ghastguard before
 	}
 
 	@Override
 	public void aiStep() {
 		super.aiStep();
 
-		if (!this.level().isClientSide()) {
-			this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
-		} else {
+		if (this.level().isClientSide()) {
+			if (this.getRandom().nextBoolean()) {
+				this.level().addParticle(DustParticleOptions.REDSTONE, this.getX() + (this.getRandom().nextDouble() - 0.5D) * this.getBbWidth(), this.getY() + this.getRandom().nextDouble() * this.getBbHeight() - 0.25D, this.getZ() + (this.getRandom().nextDouble() - 0.5D) * this.getBbWidth(), 0.0D, 0.0D, 0.0D);
+			}
+
 			if (this.isInTantrum() && !this.isDeadOrDying()) {
 				this.level().addParticle(TFParticleType.BOSS_TEAR.get(),
 						this.getX() + (this.getRandom().nextDouble() - 0.5D) * this.getBbWidth() * 0.75D,
@@ -188,17 +171,14 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 		boolean attackSuccessful;
 
 		if ("fireball".equals(source.getMsgId()) && source.getEntity() instanceof Player) {
-			// 'hide' fireball attacks so that we don't take 1000 damage.
+			// a fireball reflected by a player: take it as plain thrown damage, since we ignore fire damage.
+			// (as a Ghast subclass this used to trip the vanilla reflected-fireball check and deal 1000 damage)
 			attackSuccessful = super.hurt(this.damageSources().thrown(source.getEntity(), source.getDirectEntity()), damage);
 		} else {
 			attackSuccessful = super.hurt(source, damage);
 		}
 
 		float lastDamage = oldHealth - this.getHealth();
-
-		if (source.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
-			this.hurtBy.add(player);
-		}
 
 		if (!this.level().isClientSide()) {
 			if (this.hurtTime == this.hurtDuration && !this.isDeadOrDying()) {
@@ -305,6 +285,17 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 	protected void customServerAiStep() {
 		super.customServerAiStep();
 
+		if (this.inTrapCounter > 0) {
+			this.inTrapCounter--;
+			this.setTarget(null);
+		}
+
+		int status = this.getTarget() != null && !this.isInTantrum() ? 1 : 0;
+
+		this.getEntityData().set(ATTACK_STATUS, (byte) status);
+		this.getEntityData().set(ATTACK_TIMER, (byte) this.attackGoal.attackTimer);
+		this.getEntityData().set(ATTACK_PREVTIMER, (byte) this.attackGoal.prevAttackTimer);
+
 		// despawn mini ghasts that are in our AABB
 		for (CarminiteGhastling ghast : this.level().getEntitiesOfClass(CarminiteGhastling.class, this.getBoundingBox().inflate(1.0D))) {
 			ghast.spawnAnim();
@@ -339,6 +330,26 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 				this.doTantrumDamageEffects();
 			}
 		}
+	}
+
+	public int getAttackStatus() {
+		return this.getEntityData().get(ATTACK_STATUS);
+	}
+
+	public int getAttackTimer() {
+		return this.getEntityData().get(ATTACK_TIMER);
+	}
+
+	public int getPrevAttackTimer() {
+		return this.getEntityData().get(ATTACK_PREVTIMER);
+	}
+
+	public boolean isCharging() {
+		return this.getEntityData().get(DATA_IS_CHARGING);
+	}
+
+	public void setCharging(boolean charging) {
+		this.getEntityData().set(DATA_IS_CHARGING, charging);
 	}
 
 	//If we have a home position, use that for scanning, otherwise use our current position
@@ -395,45 +406,6 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 	}
 
 	@Override
-	public void spitFireball() {
-		double offsetX = this.getTarget().getX() - this.getX();
-		double offsetY = this.getTarget().getBoundingBox().minY + this.getTarget().getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
-		double offsetZ = this.getTarget().getZ() - this.getZ();
-
-		UrGhastFireball entityFireball = new UrGhastFireball(this.level(), this, offsetX, offsetY, offsetZ, 1);
-		double shotSpawnDistance = 8.5D;
-		Vec3 lookVec = this.getViewVector(1.0F);
-		entityFireball.setPos(
-				this.getX() + lookVec.x() * shotSpawnDistance,
-				this.getY() + this.getBbHeight() / 2.0F + lookVec.y() * shotSpawnDistance + 2.0D,
-				this.getZ() + lookVec.z() * shotSpawnDistance
-		);
-		this.level().addFreshEntity(entityFireball);
-
-		for (int i = 0; i < 2; i++) {
-			entityFireball = new UrGhastFireball(this.level(), this, offsetX + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 8, offsetY, offsetZ + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 8, 1);
-			entityFireball.setPos(
-					this.getX() + lookVec.x() * shotSpawnDistance,
-					this.getY() + this.getBbHeight() / 2.0F + lookVec.y() * shotSpawnDistance,
-					this.getZ() + lookVec.z() * shotSpawnDistance
-			);
-			this.level().addFreshEntity(entityFireball);
-		}
-	}
-
-	@Override
-	public void startSeenByPlayer(ServerPlayer player) {
-		super.startSeenByPlayer(player);
-		this.bossInfo.addPlayer(player);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		this.bossInfo.removePlayer(player);
-	}
-
-	@Override
 	public boolean isOnFire() {
 		return false;
 	}
@@ -464,33 +436,20 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
-		compound.putBoolean("inTantrum", this.isInTantrum());
-		this.addDeathItemsSaveData(compound);
 		super.addAdditionalSaveData(compound);
+		compound.putBoolean("inTantrum", this.isInTantrum());
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		this.setInTantrum(compound.getBoolean("inTantrum"));
-		this.readDeathItemsSaveData(compound);
-		if (this.hasCustomName()) {
-			this.bossInfo.setName(this.getDisplayName());
-		}
 	}
 
 	@Override
 	public void die(DamageSource cause) {
 		super.die(cause);
-		// mark the tower as defeated
 		if (this.level() instanceof ServerLevel serverLevel) {
-			this.bossInfo.setProgress(0.0F);
-			IBossLootBuffer.saveDropsIntoBoss(this, TFLootTables.createLootParams(this, true, cause).create(LootContextParamSets.ENTITY), serverLevel);
-			LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.DARK_TOWER, true);
-			for (ServerPlayer player : this.hurtBy) {
-				TFAdvancements.HURT_BOSS.trigger(player, this);
-			}
-
 			LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
 			if (lightningbolt != null) {
 				lightningbolt.moveTo(this.position().add(0.0D, this.getBbHeight() * 0.5F, 0.0D));
@@ -501,11 +460,97 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 	}
 
 	@Override
-	protected void tickDeath() {
-		++this.deathTime;
-		int maxDeath = 80;
+	public Vec3 getDeltaMovement() {
+		return this.isDeadOrDying() ? DYING_DECENT : super.getDeltaMovement();
+	}
+
+	/**
+	 * Something is deeply wrong with the calculations based off of this value, so let's set it high enough that it's ignored.
+	 */
+	@Override
+	public int getMaxHeadXRot() {
+		return 500;
+	}
+
+	// the Ghast's eye height, which the Ur-Ghast had before the refactor
+	@Override
+	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+		return 2.6F;
+	}
+
+	@Override
+	protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
+	}
+
+	//[VanillaCopy] of FlyingMob.travel
+	@Override
+	public void travel(Vec3 vec3) {
+		if (this.isControlledByLocalInstance()) {
+			if (this.isInWater()) {
+				this.moveRelative(0.02F, vec3);
+				this.move(MoverType.SELF, this.getDeltaMovement());
+				this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
+			} else if (this.isInLava()) {
+				this.moveRelative(0.02F, vec3);
+				this.move(MoverType.SELF, this.getDeltaMovement());
+				this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+			} else {
+				BlockPos ground = this.getBlockPosBelowThatAffectsMyMovement();
+				float f = 0.91F;
+				if (this.onGround()) {
+					f = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
+				}
+
+				float f1 = 0.16277137F / (f * f * f);
+				f = 0.91F;
+				if (this.onGround()) {
+					f = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
+				}
+
+				this.moveRelative(this.onGround() ? 0.1F * f1 : 0.02F, vec3);
+				this.move(MoverType.SELF, this.getDeltaMovement());
+				this.setDeltaMovement(this.getDeltaMovement().scale(f));
+			}
+		}
+
+		this.calculateEntityAnimation(false);
+	}
+
+	@Override
+	public boolean onClimbable() {
+		return false;
+	}
+
+	@Override
+	public int getHomeRadius() {
+		return 64;
+	}
+
+	@Override
+	public ResourceKey<Structure> getHomeStructure() {
+		return TFStructures.DARK_TOWER;
+	}
+
+	@Override
+	public Block getDeathContainer(RandomSource random) {
+		return TFBlocks.DARK_CHEST.get();
+	}
+
+	@Override
+	public Block getBossSpawner() {
+		return TFBlocks.UR_GHAST_BOSS_SPAWNER.get();
+	}
+
+	@Override
+	public boolean isDeathAnimationFinished() {
+		return this.deathTime >= DEATH_ANIMATION_DURATION;
+	}
+
+	@Override
+	public void tickDeathAnimation() {
 		// extra death explosions
-		if (this.deathTime <= maxDeath / 2) {
+		int third = DEATH_ANIMATION_DURATION / 3;
+		if (this.deathTime <= third) {
 			float bbWidth = this.getBbWidth();
 			float bbHeight = this.getBbHeight();
 			for (int k = 0; k < 12; k++) {
@@ -520,75 +565,32 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 						d, d1, d2
 				);
 			}
-		} else if (this.level() instanceof ServerLevel) {
-			if (this.deathTime >= maxDeath && !this.isRemoved()) {
-				this.level().broadcastEntityEvent(this, (byte) 60);
-				this.remove(Entity.RemovalReason.KILLED);
-				return;
-			}
+		} else {
 			Vec3 start = this.position().add(0.0D, this.getBbHeight() * 0.5F, 0.0D);
 			Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
 			Vec3 diff = end.subtract(start);
 
-			int deathTime2 = this.deathTime - (maxDeath / 2) + 1;
-			double factor = (double) deathTime2 / (double) (maxDeath / 2);
+			int deathTime2 = this.deathTime - third + 1;
+			double factor = (double) deathTime2 / (double) (third * 2);
 			Vec3 particlePos = start.add(diff.scale(factor)).add(Math.sin(deathTime2 * Math.PI * 0.1D), Math.sin(deathTime2 * Math.PI * 0.05D), Math.cos(deathTime2 * Math.PI * 0.1125D));//Some sine waves to make it pretty
 
-			ParticlePacket particlePacket = new ParticlePacket();
-			if (this.deathTime >= maxDeath - 2) {
-				for (int i = 0; i < 40; i++) {
-					double x = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-					double y = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-					double z = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-					particlePacket.queueParticle(ParticleTypes.POOF, false, end.add(x, y, z), Vec3.ZERO);
-				}
-			}
 			for (int i = 0; i < 40; i++) {
 				double x = (this.random.nextDouble() - 0.5D) * 0.05D * i;
 				double y = (this.random.nextDouble() - 0.5D) * 0.05D * i;
 				double z = (this.random.nextDouble() - 0.5D) * 0.05D * i;
-				particlePacket.queueParticle(DustParticleOptions.REDSTONE, false, particlePos.add(x, y, z), Vec3.ZERO);
+				this.level().addParticle(DustParticleOptions.REDSTONE, false, particlePos.x() + x, particlePos.y() + y, particlePos.z() + z, 0.0D, 0.0D, 0.0D);
 			}
-			TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
 		}
 	}
 
 	@Override
-	public Vec3 getDeltaMovement() {
-		return this.isDeadOrDying() ? DYING_DECENT : super.getDeltaMovement();
+	public void handleEntityEvent(byte id) {
+		// no poof when the body is already gone; 4.8 overrides LivingEntity.makePoofParticles, which is private in 1.20.1
+		if (id != 60) super.handleEntityEvent(id);
 	}
 
 	@Override
-	public void remove(RemovalReason reason) {
-		if (reason.equals(RemovalReason.KILLED) && this.level() instanceof ServerLevel serverLevel) {
-			IBossLootBuffer.depositDropsIntoChest(this, TFBlocks.DARK_CHEST.get().defaultBlockState(), EntityUtil.bossChestLocation(this), serverLevel);
-		}
-		super.remove(reason);
-	}
-
-	@Override
-	protected boolean shouldDropLoot() {
-		return !TFConfig.COMMON_CONFIG.bossDropChests.get();
-	}
-
-	// Don't attack (or even think about attacking) things while we're throwing a tantrum
-	@Override
-	public boolean shouldAttack(LivingEntity living) {
-		return !this.isInTantrum();
-	}
-
-	@Override
-	protected boolean canRide(Entity entityIn) {
-		return false;
-	}
-
-	@Override
-	public boolean canChangeDimensions() {
-		return false;
-	}
-
-	@Override
-	public NonNullList<ItemStack> getItemStacks() {
-		return this.dyingInventory;
+	public BossEvent.BossBarColor getBossBarColor() {
+		return BossEvent.BossBarColor.RED;
 	}
 }

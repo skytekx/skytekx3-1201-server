@@ -17,7 +17,8 @@ public class TFPacketHandler {
 	// .1: UpdateTFMultipartPacket is keyed by part entity id and always carries the part's synched data.
 	// .2: SpawnCharmPacket is registered after ParticlePacket, which shifts the discriminator of every later packet.
 	// .3: SyncUncraftingTableConfigPacket carries disableIngredientSwitching after allowShapeless (4.8 f5ef5a835).
-	private static final String PROTOCOL_VERSION = "2-skytekx.3";
+	// .4: UpdateDeathTimePacket syncs a dying boss's deathTime to players that start tracking it (4.8 5b63f08d4).
+	private static final String PROTOCOL_VERSION = "2-skytekx.4";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -47,5 +48,6 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, UpdateShieldPacket.class, UpdateShieldPacket::encode, UpdateShieldPacket::new, UpdateShieldPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, UpdateTFMultipartPacket.class, UpdateTFMultipartPacket::encode, UpdateTFMultipartPacket::new, UpdateTFMultipartPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, UpdateThrownPacket.class, UpdateThrownPacket::encode, UpdateThrownPacket::new, UpdateThrownPacket.Handler::onMessage);
+		CHANNEL.registerMessage(id++, UpdateDeathTimePacket.class, UpdateDeathTimePacket::encode, UpdateDeathTimePacket::new, UpdateDeathTimePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 }

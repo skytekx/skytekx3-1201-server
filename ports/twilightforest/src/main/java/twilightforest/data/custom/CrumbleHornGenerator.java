@@ -15,6 +15,7 @@ public class CrumbleHornGenerator extends CrumbleHornProvider {
 	@Override
 	public void registerTransforms() {
 		addTransform(Blocks.STONE_BRICKS, Blocks.CRACKED_STONE_BRICKS);
+		addTransform(Blocks.INFESTED_STONE_BRICKS, Blocks.INFESTED_CRACKED_STONE_BRICKS);
 		addTransform(Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS);
 		addTransform(Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS, Blocks.BLACKSTONE);
 		addTransform(Blocks.NETHER_BRICKS, Blocks.CRACKED_NETHER_BRICKS);
@@ -23,10 +24,15 @@ public class CrumbleHornGenerator extends CrumbleHornProvider {
 		addTransform(TFBlocks.MAZESTONE_BRICK.get(), TFBlocks.CRACKED_MAZESTONE.get());
 		addTransform(TFBlocks.UNDERBRICK.get(), TFBlocks.CRACKED_UNDERBRICK.get());
 		addTransform(TFBlocks.DEADROCK.get(), TFBlocks.CRACKED_DEADROCK.get());
+		addTransform(TFBlocks.CRACKED_DEADROCK.get(), TFBlocks.WEATHERED_DEADROCK.get());
 		addTransform(TFBlocks.TOWERWOOD.get(), TFBlocks.CRACKED_TOWERWOOD.get());
 		addTransform(TFBlocks.CASTLE_BRICK.get(), TFBlocks.CRACKED_CASTLE_BRICK.get());
+		addTransform(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK.get());
 		addTransform(TFBlocks.NAGASTONE_PILLAR.get(), TFBlocks.CRACKED_NAGASTONE_PILLAR.get());
 		addTransform(TFBlocks.ETCHED_NAGASTONE.get(), TFBlocks.CRACKED_ETCHED_NAGASTONE.get());
+		addTransform(TFBlocks.CASTLE_BRICK_STAIRS.get(), TFBlocks.CRACKED_CASTLE_BRICK_STAIRS.get());
+		addTransform(TFBlocks.NAGASTONE_STAIRS_LEFT.get(), TFBlocks.CRACKED_NAGASTONE_STAIRS_LEFT.get());
+		addTransform(TFBlocks.NAGASTONE_STAIRS_RIGHT.get(), TFBlocks.CRACKED_NAGASTONE_STAIRS_RIGHT.get());
 		addTransform(Blocks.STONE, Blocks.COBBLESTONE);
 		addTransform(Blocks.COBBLESTONE, Blocks.GRAVEL);
 		addTransform(Blocks.SANDSTONE, Blocks.SAND);
@@ -42,6 +48,12 @@ public class CrumbleHornGenerator extends CrumbleHornProvider {
 		addTransform(Blocks.OXIDIZED_CUT_COPPER, Blocks.WEATHERED_CUT_COPPER);
 		addTransform(Blocks.WEATHERED_CUT_COPPER, Blocks.EXPOSED_CUT_COPPER);
 		addTransform(Blocks.EXPOSED_CUT_COPPER, Blocks.CUT_COPPER);
+		addTransform(Blocks.OXIDIZED_CUT_COPPER_STAIRS, Blocks.WEATHERED_CUT_COPPER_STAIRS);
+		addTransform(Blocks.WEATHERED_CUT_COPPER_STAIRS, Blocks.EXPOSED_CUT_COPPER_STAIRS);
+		addTransform(Blocks.EXPOSED_CUT_COPPER_STAIRS, Blocks.CUT_COPPER_STAIRS);
+		addTransform(Blocks.OXIDIZED_CUT_COPPER_SLAB, Blocks.WEATHERED_CUT_COPPER_SLAB);
+		addTransform(Blocks.WEATHERED_CUT_COPPER_SLAB, Blocks.EXPOSED_CUT_COPPER_SLAB);
+		addTransform(Blocks.EXPOSED_CUT_COPPER_SLAB, Blocks.CUT_COPPER_SLAB);
 		addDissolve(Blocks.GRAVEL);
 		addDissolve(Blocks.DIRT);
 		addDissolve(Blocks.SAND);

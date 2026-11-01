@@ -142,8 +142,10 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 						null, FrameType.GOAL, true, true, false)
 				.addCriterion("all_knights", KillAllPhantomsTrigger.Instance.killThemAll())
 				.addCriterion("trophy", InventoryChangeTrigger.TriggerInstance.hasItems(TFBlocks.KNIGHT_PHANTOM_TROPHY.get()))
+				// kept so players who earned progress_knights through it in 4.3 keep it (AdvancementProgress.update drops progress of removed criteria on load); Knight Phantoms are not in #multiplayer_inclusive_entities, so it is no longer granted
+				.addCriterion("was_in_fight", HurtBossTrigger.Instance.hurtBoss(EntityPredicate.Builder.entity().of(TFEntities.KNIGHT_PHANTOM.get())))
 				.addCriterion("previous_progression", this.advancementTrigger(trophy_pedestal))
-				.requirements(new CountRequirementsStrategy(2, 1))
+				.requirements(new CountRequirementsStrategy(3, 1))
 				.save(consumer, "twilightforest:progress_knights");
 
 		Advancement trap = Advancement.Builder.advancement().parent(knights).display(

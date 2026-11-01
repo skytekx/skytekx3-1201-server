@@ -249,6 +249,19 @@
     "deferred": [
      "block-and-chain-fixes: b5953b081 block and chain model/texture rework (block_and_chain.png, SpikeBlockModel/ChainModel UVs 32x16, BlockChainGoblinModel, isAlive gate in BlockChainGoblinRenderer) not ported by block-and-chain-fixes. It is in neither the inventory nor the carryover list, and asset-model-texture-fixes and client-visual-fixes already shipped, so it needs a later client-visual follow-up. Until then the thrown block uses 4.3's blockgoblin.png and UVs, and the classic goblin renderer still draws chain links while the goblin is dying. Cosmetic only."
     ]
+   },
+   {
+    "bundle": "multiplayer-boss-scaling",
+    "ids": [
+     "multiplayer-boss-scaling"
+    ],
+    "deferred": [
+     "multiplayer-boss-scaling: twilightforest:looting_rolls (loot number provider, LootingEnchantNumberProvider, upstream f67973125 'make Knight Phantoms use the entity loot system') is listed in this feature's new_registry_ids but was not ported. It is used only by the knight_phantom entity loot table, and LootingEnchantNumberProvider.java is in knight-phantom-rework's paths_48, so it goes to knight-phantom-rework. Port it there together with the knight_phantom entity table (pools knight_phantom_weapon, knight_phantom_armor, knight_phantom_rare_armor: BinomialDistributionGenerator over looting_rolls wrapping MultiplayerBasedNumberProvider.rollsForPlayers(...)). The multiplayer half already exists: reuse twilightforest:multiplayer_rolls (TFLoot.MULTIPLAYER_ROLLS, MultiplayerBasedNumberProvider.rollsForPlayers) instead of adding a second provider. Register looting_rolls on TFLoot.NUMBERS with a Gson Serializer, as multiplayer_rolls is.",
+     "knight-phantom-rework: the nearby-player KILL_ALL_PHANTOMS grant that the knight-phantom-rework spec lists ('KILL_ALL_PHANTOMS is granted to nearby players') is already integrated by multiplayer-boss-scaling (30882a1): KnightPhantom.die triggers it for the killer and for every ServerPlayer within 32 blocks of the treasure. When die() is rewritten from f67973125/HEAD, keep exactly one such loop; do not add it a second time. Also do not bring back the HURT_BOSS loops or BaseTFBoss.getPlayersWhoHurtMe(); multiplayer-boss-scaling removed them from KnightPhantom and BaseTFBoss.",
+     "knight-phantom-rework / progress_knights: unlike 4.8, the progress_knights advancement keeps its hurt_boss was_in_fight criterion (in the same OR group as all_knights and trophy, CountRequirementsStrategy(3, 1)). It is kept only for save compatibility: AdvancementProgress.update drops the saved progress of removed criteria on load, and in 4.3 most members of a group clear completed progress_knights only through was_in_fight. It is no longer granted, because Knight Phantoms are not in #twilightforest:multiplayer_inclusive_entities. Do not remove it when porting 4.8's advancement generator changes.",
+     "All later boss features (hydra-death-and-named-heads, lich-fight-fixes, ur-ghast-tweaks, knight-phantom-rework and any new boss): hurt_boss (the was_in_fight criteria) is now granted only through the #twilightforest:multiplayer_inclusive_entities tag and MultiplayerInclusivityCapability (EntityEvents.grantGroupAdvancementIfNeeded). A boss that should give hurt_boss credit must be in that tag; do not add per-boss TFAdvancements.HURT_BOSS triggers.",
+     "Pack config (outside ports/): multiplayerFightAdjuster defaults to NONE, as upstream. Nothing changes in play until the server sets multiplayerFightAdjuster = \"MORE_LOOT_AND_HEALTH\" (or MORE_LOOT / MORE_HEALTH) at the top level of config/twilightforest-common.toml; Forge adds the key with NONE on the first boot."
+    ]
    }
   ]
  }

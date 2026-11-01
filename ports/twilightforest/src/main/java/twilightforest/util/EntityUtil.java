@@ -135,6 +135,14 @@ public class EntityUtil {
 
 	//copy of Mob.doHurtTarget, allows for using a custom DamageSource instead of the generic Mob Attack one
 	public static boolean properlyApplyCustomDamageSource(Mob entity, Entity victim, DamageSource source) {
+		return properlyApplyCustomDamageSource(entity, victim, source, null);
+	}
+
+	/**
+	 * @param flingSound if not null, a hit victim is also flung upwards in the attacker's direction and this sound plays (a charging
+	 *                   Minotaur or Minoshroom)
+	 */
+	public static boolean properlyApplyCustomDamageSource(Mob entity, Entity victim, DamageSource source, @Nullable SoundEvent flingSound) {
 		float f = (float)entity.getAttributeValue(Attributes.ATTACK_DAMAGE);
 		float f1 = (float)entity.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
 		if (victim instanceof LivingEntity) {
@@ -152,6 +160,11 @@ public class EntityUtil {
 			if (f1 > 0.0F && victim instanceof LivingEntity) {
 				((LivingEntity)victim).knockback(f1 * 0.5F, Mth.sin(entity.getYRot() * ((float)Math.PI / 180F)), -Mth.cos(entity.getYRot() * ((float)Math.PI / 180F)));
 				entity.setDeltaMovement(entity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+			}
+
+			if (flingSound != null) {
+				victim.push(entity.getDirection().getStepX(), 0.35D, entity.getDirection().getStepZ());
+				entity.playSound(flingSound, 1.0F, 1.0F);
 			}
 
 			if (victim instanceof Player player) {

@@ -1,16 +1,13 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -19,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -34,23 +32,19 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.TFConfig;
-import twilightforest.advancements.TFAdvancements;
-import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.TFPart;
 import twilightforest.entity.ai.control.NagaMoveControl;
 import twilightforest.entity.ai.goal.AttemptToGoHomeGoal;
@@ -60,16 +54,16 @@ import twilightforest.entity.ai.goal.SimplifiedAttackGoal;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStructures;
-import twilightforest.loot.TFLootTables;
-import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.ThrowPlayerPacket;
 import twilightforest.util.EntityUtil;
-import twilightforest.util.LandmarkUtil;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
-public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer {
+public class Naga extends BaseTFBoss {
+	private static final int DEATH_ANIMATION_DURATION = 24;
+	private static final int DEATH_PARTICLES_DURATION = 100;
 
 	private static final int TICKS_BEFORE_HEALING = 600;
 	private static final int MAX_SEGMENTS = 12;
@@ -84,15 +78,11 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	private int ticksSinceDamaged = 0;
 	private int damageDuringCurrentStun = 0;
 	public float stunlessRedOverlayProgress = 0.0F;
-	private final List<ServerPlayer> hurtBy = new ArrayList<>();
-	private final NonNullList<ItemStack> dyingInventory = NonNullList.withSize(27, ItemStack.EMPTY);
 
-	private final ServerBossEvent bossInfo = new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.NOTCHED_10);
 	private static final UUID MOVEMENT_SPEED_UUID = UUID.fromString("1fe84ad2-3b63-4922-ade7-546aae84a9e1");
 	private static final EntityDataAccessor<Boolean> DATA_DAZE = SynchedEntityData.defineId(Naga.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_CHARGE = SynchedEntityData.defineId(Naga.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_STUNLESS = SynchedEntityData.defineId(Naga.class, EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Optional<GlobalPos>> HOME_POINT = SynchedEntityData.defineId(Naga.class, EntityDataSerializers.OPTIONAL_GLOBAL_POS);
 
 	public Naga(EntityType<? extends Naga> type, Level level) {
 		super(type, level);
@@ -112,7 +102,6 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 		this.getEntityData().define(DATA_DAZE, false);
 		this.getEntityData().define(DATA_CHARGE, false);
 		this.getEntityData().define(DATA_STUNLESS, false);
-		this.getEntityData().define(HOME_POINT, Optional.empty());
 	}
 
 	public boolean isDazed() {
@@ -326,9 +315,6 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 			this.getMovementAI().forceCircle();
 			this.damageDuringCurrentStun = 0;
 		}
-
-		// BOSS BAR!
-		this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
 	}
 
 	public boolean shouldDestroyAllBlocks() {
@@ -368,9 +354,6 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 			this.ticksSinceDamaged = 0;
 			if (this.isDazed()) {
 				this.damageDuringCurrentStun += amount;
-			}
-			if (source.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
-				this.hurtBy.add(player);
 			}
 			return true;
 		} else {
@@ -429,22 +412,7 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	@Override
-	public void checkDespawn() {
-		if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-			if (this.isRestrictionPointValid(this.level().dimension()) && this.level().isLoaded(this.getRestrictionPoint().pos())) {
-				this.level().setBlockAndUpdate(this.getRestrictionPoint().pos(), TFBlocks.NAGA_BOSS_SPAWNER.get().defaultBlockState());
-			}
-			this.discard();
-		} else {
-			super.checkDespawn();
-		}
-	}
-
-	@Override
 	public void remove(RemovalReason reason) {
-		if (reason.equals(RemovalReason.KILLED) && this.level() instanceof ServerLevel serverLevel) {
-			IBossLootBuffer.depositDropsIntoChest(this, this.getRandom().nextBoolean() ? TFBlocks.TWILIGHT_OAK_CHEST.get().defaultBlockState() : TFBlocks.CANOPY_CHEST.get().defaultBlockState(), EntityUtil.bossChestLocation(this), serverLevel);
-		}
 		super.remove(reason);
 		if (this.level() instanceof ServerLevel) {
 			for (NagaSegment seg : this.bodySegments) {
@@ -543,119 +511,6 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag compound) {
-		this.saveHomePointToNbt(compound);
-		this.addDeathItemsSaveData(compound);
-		super.addAdditionalSaveData(compound);
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
-		this.readDeathItemsSaveData(compound);
-		this.loadHomePointFromNbt(compound);
-		if (this.hasCustomName()) {
-			this.bossInfo.setName(this.getDisplayName());
-		}
-	}
-
-	@Override
-	public void die(DamageSource cause) {
-		super.die(cause);
-		// mark the courtyard as defeated
-		if (this.level() instanceof ServerLevel serverLevel) {
-			this.bossInfo.setProgress(0.0F);
-			this.setDazed(false);
-			LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.NAGA_COURTYARD, true);
-			for (ServerPlayer player : this.hurtBy) {
-				TFAdvancements.HURT_BOSS.trigger(player, this);
-			}
-
-			IBossLootBuffer.saveDropsIntoBoss(this, TFLootTables.createLootParams(this, true, cause).create(LootContextParamSets.ENTITY), serverLevel);
-		}
-	}
-
-	@Override
-	protected void tickDeath() {
-		++this.deathTime;
-		if (!this.level().isClientSide() && !this.isRemoved()) {
-			int renderEnd = 24;
-			int maxDeath = renderEnd + 120;
-			if (this.deathTime >= renderEnd) {
-				if (this.deathTime == renderEnd) {
-					SoundEvent soundevent = this.getDeathSound();
-					if (soundevent != null) {
-						this.playSound(soundevent, this.getSoundVolume() * 1.2F, this.getVoicePitch() * 0.75F);
-					}
-					this.level().broadcastEntityEvent(this, (byte) 60);
-				} else if (this.deathTime >= maxDeath) {
-					this.remove(Entity.RemovalReason.KILLED);
-				} else {
-					Vec3 start = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
-					Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
-					Vec3 diff = end.subtract(start);
-
-					ParticlePacket particlePacket = new ParticlePacket();
-					if (this.deathTime >= maxDeath - 3) {
-						for (int i = 0; i < 40; i++) {
-							double x = (this.getRandom().nextDouble() - 0.5D) * 0.075D * i;
-							double y = (this.getRandom().nextDouble() - 0.5D) * 0.075D * i;
-							double z = (this.getRandom().nextDouble() - 0.5D) * 0.075D * i;
-							particlePacket.queueParticle(ParticleTypes.POOF, false, end.add(x, y, z), Vec3.ZERO);
-						}
-					}
-
-					double angle = Math.atan2(end.z - start.z, end.x - start.x) * Mth.RAD_TO_DEG + 180D;
-
-					double xMul = angle % 180.0D;
-					xMul = Math.min(xMul, 180.0D - xMul);
-					xMul = Math.pow((xMul / 90.0D), 1.5D) * 2.0D;
-
-					double zMul = (angle + 90.0D) % 180.0D;
-					zMul = Math.min(zMul, 180.0D - zMul);
-					zMul = Math.pow((zMul / 90.0D), 1.5D) * 2.0D;
-
-					for (int p = 0; p < 4; p++) {
-						int trailTime = (this.deathTime - renderEnd) - p + 1;//Plus one cuz the math makes it reach the correct spot at 120 ticks, but the method ends at 119
-						if (trailTime < 0) continue;
-						for (double d = 0.0D; d < 1.0D; d += 0.25D) {
-							double preciseTime = trailTime - d;
-							if (preciseTime < 0.0D) continue;
-							double factor = preciseTime / (double) (maxDeath - renderEnd);
-							Vec3 particlePos = start.add(diff.scale(factor)).add(Math.sin(preciseTime * Math.PI * 0.075D) * xMul, Math.sin(preciseTime * Math.PI * 0.025D) * 0.1D, Math.cos(preciseTime * Math.PI * 0.0625D) * zMul);//Some sine waves to make it slither-y;
-							BlockHitResult blockhitresult = this.level().clip(new ClipContext(particlePos.add(0.0D, 2.0D, 0.0D), particlePos.subtract(0.0D, 3.0D, 0.0D), ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, null));
-							particlePacket.queueParticle(ParticleTypes.COMPOSTER, false, blockhitresult.getLocation().add(0.0D, 0.15D, 0.0D), Vec3.ZERO);
-						}
-					}
-					TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void handleEntityEvent(byte id) {
-		if (id == 60) {
-			Vec3 pos = this.position();
-			float width = this.getBbWidth();
-			float height = this.getBbHeight();
-			for (int k = 0; k < 20; k++) {
-				this.level().addParticle(this.getRandom().nextBoolean() ? ParticleTypes.EXPLOSION : ParticleTypes.EXPLOSION_EMITTER,
-						(pos.x() + this.getRandom().nextFloat() * width * 2.0F) - width,
-						pos.y() + this.getRandom().nextFloat() * height,
-						(pos.z() + this.getRandom().nextFloat() * width * 2.0F) - width,
-						this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D);
-			}
-		}
-		super.handleEntityEvent(id);
-	}
-
-	@Override
-	protected boolean shouldDropLoot() {
-		return !TFConfig.COMMON_CONFIG.bossDropChests.get();
-	}
-
-	@Override
 	public boolean isMultipartEntity() {
 		return true;
 	}
@@ -673,70 +528,113 @@ public class Naga extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	@Override
-	public void startSeenByPlayer(ServerPlayer player) {
-		super.startSeenByPlayer(player);
-		this.bossInfo.addPlayer(player);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		this.bossInfo.removePlayer(player);
-	}
-
-	@Override
-	public void setCustomName(@Nullable Component name) {
-		super.setCustomName(name);
-		this.bossInfo.setName(this.getDisplayName());
-	}
-
-	@Override
 	public float getStepHeight() {
 		return 2.0F;
 	}
 
 	@Override
-	public boolean removeWhenFarAway(double distance) {
-		return false;
-	}
-
-	@Override
-	protected boolean canRide(Entity entity) {
-		return false;
-	}
-
-	@Override
-	public boolean isPushedByFluid(FluidType type) {
-		return false;
-	}
-
-	@Override
-	protected float getWaterSlowDown() {
-		return 1.0F;
-	}
-
-	@Override
-	public boolean canChangeDimensions() {
-		return false;
-	}
-
-	@Override
-	public NonNullList<ItemStack> getItemStacks() {
-		return this.dyingInventory;
-	}
-
-	@Override
-	public @Nullable GlobalPos getRestrictionPoint() {
-		return this.getEntityData().get(HOME_POINT).orElse(null);
-	}
-
-	@Override
-	public void setRestrictionPoint(@Nullable GlobalPos pos) {
-		this.getEntityData().set(HOME_POINT, Optional.ofNullable(pos));
-	}
-
-	@Override
 	public int getHomeRadius() {
 		return 40;
+	}
+
+	@Override
+	public ResourceKey<Structure> getHomeStructure() {
+		return TFStructures.NAGA_COURTYARD;
+	}
+
+	@Override
+	public Block getDeathContainer(RandomSource random) {
+		return random.nextBoolean() ? TFBlocks.TWILIGHT_OAK_CHEST.get() : TFBlocks.CANOPY_CHEST.get();
+	}
+
+	@Override
+	public Block getBossSpawner() {
+		return TFBlocks.NAGA_BOSS_SPAWNER.get();
+	}
+
+	@Override
+	public void die(DamageSource cause) {
+		super.die(cause);
+		if (!this.level().isClientSide()) {
+			this.setDazed(false);
+		}
+	}
+
+	@Override
+	public boolean isDeathAnimationFinished() {
+		return this.deathTime >= DEATH_ANIMATION_DURATION + DEATH_PARTICLES_DURATION;
+	}
+
+	@Override
+	public void tickDeathAnimation() {
+		if (this.deathTime >= DEATH_ANIMATION_DURATION) {
+			Vec3 start = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+			Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
+			Vec3 diff = end.subtract(start);
+
+			double angle = Math.atan2(end.z - start.z, end.x - start.x) * Mth.RAD_TO_DEG + 180D;
+
+			double xMul = angle % 180.0D;
+			xMul = Math.min(xMul, 180.0D - xMul);
+			xMul = Math.pow((xMul / 90.0D), 1.5D) * 2.0D;
+
+			double zMul = (angle + 90.0D) % 180.0D;
+			zMul = Math.min(zMul, 180.0D - zMul);
+			zMul = Math.pow((zMul / 90.0D), 1.5D) * 2.0D;
+
+			for (int p = 1; p <= 4; p++) {
+				int trailTime = (this.deathTime - DEATH_ANIMATION_DURATION) - p;
+				if (trailTime < 0) continue;
+				for (double d = 0.0D; d < 1.0D; d += 0.25D) {
+					double preciseTime = trailTime - d;
+					if (preciseTime < 0.0D) continue;
+					double factor = preciseTime / (double) DEATH_PARTICLES_DURATION;
+					Vec3 particlePos = start.add(diff.scale(factor)).add(Math.sin(preciseTime * Math.PI * 0.075D) * xMul, Math.sin(preciseTime * Math.PI * 0.025D) * 0.1D, Math.cos(preciseTime * Math.PI * 0.0625D) * zMul);//Some sine waves to make it slither-y;
+					BlockHitResult blockhitresult = this.level().clip(new ClipContext(particlePos.add(0.0D, 2.0D, 0.0D), particlePos.subtract(0.0D, 3.0D, 0.0D), ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, null));
+					particlePos = blockhitresult.getLocation().add(0.0D, 0.15D, 0.0D);
+					this.level().addParticle(ParticleTypes.COMPOSTER, false, particlePos.x(), particlePos.y(), particlePos.z(), 0.0D, 0.0D, 0.0D);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		// 4.8 overrides LivingEntity.makePoofParticles, which is private in 1.20.1, so the death poof (event 60) is replaced here
+		if (id == 60) {
+			this.makePoofParticles();
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
+
+	private void makePoofParticles() {
+		SoundEvent deathSound = this.getDeathSound();
+		// played locally: a null-player Entity.playSound is not heard on the client
+		if (deathSound != null && !this.isSilent()) this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), deathSound, this.getSoundSource(), this.getSoundVolume() * 1.25F, this.getVoicePitch() * 0.25F, false);
+		this.makePoofAt(this.position());
+	}
+
+	// Made separate so that the NagaSegments can do it as well
+	public void makePoofAt(Vec3 pos) {
+		float width = this.getBbWidth();
+		float height = this.getBbHeight();
+		for (int k = 0; k < 20; k++) {
+			this.level().addParticle(ParticleTypes.EXPLOSION,
+					(pos.x() + this.getRandom().nextFloat() * width * 2.0F) - width,
+					pos.y() + this.getRandom().nextFloat() * height,
+					(pos.z() + this.getRandom().nextFloat() * width * 2.0F) - width,
+					this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D);
+		}
+	}
+
+	@Override
+	public BossEvent.BossBarColor getBossBarColor() {
+		return BossEvent.BossBarColor.GREEN;
+	}
+
+	@Override
+	public BossEvent.BossBarOverlay getBossBarOverlay() {
+		return BossEvent.BossBarOverlay.NOTCHED_10;
 	}
 }

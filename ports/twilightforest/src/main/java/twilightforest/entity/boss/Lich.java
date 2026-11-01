@@ -1,17 +1,14 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -19,8 +16,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -41,44 +38,38 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractCandleBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.TFConfig;
-import twilightforest.advancements.TFAdvancements;
 import twilightforest.block.LightableBlock;
 import twilightforest.data.tags.DamageTypeTagGenerator;
-import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.ai.goal.*;
 import twilightforest.entity.monster.LichMinion;
 import twilightforest.init.*;
-import twilightforest.loot.TFLootTables;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.util.EntityUtil;
-import twilightforest.util.LandmarkUtil;
 import twilightforest.util.WorldUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer {
+public class Lich extends BaseTFBoss {
+	public static final int DEATH_ANIMATION_DURATION = 175; //How many ticks until the body disappears
+	public static final int DEATH_ANIMATION_POINT_A = 50;
+	private static final int DEATH_ANIMATION_POINT_B = 70;
 
 	private static final EntityDataAccessor<Boolean> IS_CLONE = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Integer> SHIELD_STRENGTH = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> MINIONS_LEFT = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> ATTACK_TYPE = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Optional<GlobalPos>> HOME_POINT = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.OPTIONAL_GLOBAL_POS);
 
-	private final NonNullList<ItemStack> dyingInventory = NonNullList.withSize(27, ItemStack.EMPTY);
-
+	private static final ItemParticleOption BONE_PARTICLE = new ItemParticleOption(ParticleTypes.ITEM, Items.BONE.getDefaultInstance());
 	public static final int MAX_SHADOW_CLONES = 2;
 	public static final int INITIAL_SHIELD_STRENGTH = 6;
 	public static final int MAX_ACTIVE_MINIONS = 3;
@@ -91,8 +82,6 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	private int popCooldown;
 	private int heldScepterTime;
 	private int spawnTime;
-	private final ServerBossEvent bossInfo = new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_6);
-	private final List<ServerPlayer> hurtBy = new ArrayList<>();
 
 	public Lich(EntityType<? extends Lich> type, Level world) {
 		super(type, world);
@@ -123,7 +112,6 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 		this.getEntityData().define(SHIELD_STRENGTH, INITIAL_SHIELD_STRENGTH);
 		this.getEntityData().define(MINIONS_LEFT, INITIAL_MINIONS_TO_SUMMON);
 		this.getEntityData().define(ATTACK_TYPE, 0);
-		this.getEntityData().define(HOME_POINT, Optional.empty());
 	}
 
 	@Override
@@ -161,61 +149,22 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
-		this.saveHomePointToNbt(compound);
+		super.addAdditionalSaveData(compound);
 		compound.putBoolean("ShadowClone", this.isShadowClone());
 		compound.putInt("ShieldStrength", this.getShieldStrength());
 		compound.putInt("MinionsToSummon", this.getMinionsToSummon());
-		this.addDeathItemsSaveData(compound);
-		super.addAdditionalSaveData(compound);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.readDeathItemsSaveData(compound);
-		this.loadHomePointFromNbt(compound);
 		this.setShadowClone(compound.getBoolean("ShadowClone"));
 		this.setShieldStrength(compound.getInt("ShieldStrength"));
 		this.setMinionsToSummon(compound.getInt("MinionsToSummon"));
-
-		if (this.hasCustomName()) {
-			this.bossInfo.setName(this.getDisplayName());
-		}
-	}
-
-	@Override
-	public void setCustomName(@Nullable Component name) {
-		super.setCustomName(name);
-		this.bossInfo.setName(this.getDisplayName());
-	}
-
-	@Override
-	public void startSeenByPlayer(ServerPlayer player) {
-		super.startSeenByPlayer(player);
-		this.bossInfo.addPlayer(player);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		this.bossInfo.removePlayer(player);
 	}
 
 	@Override
 	public void aiStep() {
-		if (!this.level().isClientSide()) {
-			if (this.getPhase() == 1) {
-				this.bossInfo.setProgress((float) (this.getShieldStrength()) / (float) (INITIAL_SHIELD_STRENGTH));
-			} else {
-				this.bossInfo.setOverlay(BossEvent.BossBarOverlay.PROGRESS);
-				this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
-				if (this.getPhase() == 2)
-					this.bossInfo.setColor(BossEvent.BossBarColor.PURPLE);
-				else
-					this.bossInfo.setColor(BossEvent.BossBarColor.RED);
-			}
-		}
-
 		super.aiStep();
 
 		if (this.isDeadOrDying()) return;
@@ -333,10 +282,6 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 				this.teleportToSightOfEntity(this.getTarget());
 			}
 
-			if (src.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
-				this.hurtBy.add(player);
-			}
-
 			return true;
 		} else {
 			return false;
@@ -344,150 +289,10 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	@Override
-	public void lavaHurt() {
-		if (!this.fireImmune()) {
-			this.setSecondsOnFire(5);
-			if (this.hurt(this.damageSources().lava(), 4F)) {
-				this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.random.nextFloat() * 0.4F);
-				EntityUtil.killLavaAround(this);
-			}
-		}
-	}
-
-	@Override
 	public void die(DamageSource cause) {
 		super.die(cause);
-		// mark the tower as defeated
-		if (this.level() instanceof ServerLevel serverLevel && !this.isShadowClone()) {
-			this.bossInfo.setProgress(0.0F);
-			LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.LICH_TOWER, true);
-			for (ServerPlayer player : this.hurtBy) {
-				TFAdvancements.HURT_BOSS.trigger(player, this);
-			}
-
+		if (!this.level().isClientSide() && !this.isShadowClone()) {
 			this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-			IBossLootBuffer.saveDropsIntoBoss(this, TFLootTables.createLootParams(this, true, cause).create(LootContextParamSets.ENTITY), serverLevel);
-		}
-	}
-
-	private static final ItemParticleOption BONE_PARTICLE = new ItemParticleOption(ParticleTypes.ITEM, Items.BONE.getDefaultInstance());
-
-	@Override
-	protected void tickDeath() {
-		++this.deathTime;
-
-		if (this.level() instanceof ServerLevel) {
-			int maxDeath = 175;//How many ticks until the body disappears
-			if (this.deathTime <= 50) {
-				boolean done = this.deathTime == 50;
-				boolean hurt = this.deathTime % 17 == 0;
-
-				if (hurt) this.playHurtSound(this.damageSources().generic());
-				if (done) {
-					SoundEvent soundevent = this.getDeathSound();
-					if (soundevent != null) {
-						this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
-					}
-				}
-
-				Vec3 pos = this.position();
-				ParticlePacket particlePacket = new ParticlePacket();
-
-				for (int i = 0; i < (hurt ? 12 : 3); i++) {
-					double x = (this.random.nextDouble() - 0.5D) * 0.7D;
-					double y = this.random.nextDouble() * this.getBbHeight();
-					double z = (this.random.nextDouble() - 0.5D) * 0.7D;
-					particlePacket.queueParticle(this.random.nextBoolean() || hurt ? BONE_PARTICLE : ParticleTypes.SMOKE, false, pos.add(x, y, z), Vec3.ZERO);
-				}
-
-				if (hurt) {
-					double x = (this.random.nextDouble() - 0.5D) * 0.7D;
-					double y = this.random.nextDouble() * this.getBbHeight();
-					double z = (this.random.nextDouble() - 0.5D) * 0.7D;
-					for (int i = 0; i < 7; i++) {
-						double x1 = x + (this.random.nextDouble() - 0.5D) * 0.1D;
-						double y1 = y + (this.random.nextDouble() - 0.5D) * 0.1D;
-						double z1 = z + (this.random.nextDouble() - 0.5D) * 0.1D;
-						particlePacket.queueParticle(this.random.nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, false, pos.add(x1, y1, z1), Vec3.ZERO);
-					}
-				}
-
-				if (done) {
-					for (int i = 0; i < 32; i++) {
-						double x = (this.random.nextDouble() - 0.5D) * 0.7D;
-						double y = this.random.nextDouble() * this.getBbHeight();
-						double z = (this.random.nextDouble() - 0.5D) * 0.7D;
-						particlePacket.queueParticle(this.random.nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, false, pos.add(x, y, z), Vec3.ZERO);
-					}
-				}
-
-				TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
-			} else if (this.deathTime == 70) {
-				ParticlePacket particlePacket = new ParticlePacket();
-				for (int i = 0; i < 3; i++) {
-					double x = (this.random.nextDouble() - 0.5D) * 0.75D;
-					double z = (this.random.nextDouble() - 0.5D) * 0.75D;
-					particlePacket.queueParticle(ParticleTypes.CLOUD, false, this.position().add(x, 0.0D, z), Vec3.ZERO);
-				}
-
-				TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
-			} else if (this.deathTime > 70) {
-				boolean flag = this.deathTime >= maxDeath && !this.isRemoved();
-
-				Vec3 start = this.position().add(0.0D, 0.45F, 0.0D);
-				Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
-				int deathTime2 = this.deathTime - 70;
-				double factor = (double) deathTime2 / 105.0D;
-				double powFactor = Math.pow(factor, 2.0D) * 2.0D;
-				double expandFactor = (Math.cos((factor + 0.5D) * Math.PI * 2) + 1.0D) * 0.5D;
-				Vec3 particlePos = start.add(end.subtract(start).scale(Math.min(((double) deathTime2 / 70.0D) * 1.25D, 1.0D)));
-				ParticlePacket particlePacket = new ParticlePacket();
-				if (this.deathTime >= maxDeath - 3) {
-					for (int i = 0; i < 40; i++) {
-						double x = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-						double y = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-						double z = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-						particlePacket.queueParticle(this.random.nextBoolean() ? TFParticleType.OMINOUS_FLAME.get() : ParticleTypes.POOF, false, end.add(x, y, z), Vec3.ZERO);
-					}
-				}
-				if (flag) {
-					for (int i = 0; i < 16; i++) {
-						double x = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-						double y = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-						double z = (this.random.nextDouble() - 0.5D) * 0.075D * i;
-						particlePacket.queueParticle(ParticleTypes.POOF, false, start.add(x, y, z), Vec3.ZERO);
-					}
-				}
-				for (double i = 0.0D; i < 1.0D; i += 0.2D) {
-					double x = Math.sin((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.25D;
-					double z = Math.cos((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.25D;
-					particlePacket.queueParticle(TFParticleType.OMINOUS_FLAME.get(), false, particlePos.add(x, -0.25D, z), Vec3.ZERO);
-				}
-
-				TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
-
-				if (flag) this.remove(RemovalReason.KILLED);
-			}
-		}
-	}
-
-	@Override
-	public void remove(RemovalReason removalReason) {
-		if (removalReason.equals(RemovalReason.KILLED) && !this.isShadowClone() && this.level() instanceof ServerLevel serverLevel) {
-			IBossLootBuffer.depositDropsIntoChest(this, this.random.nextBoolean() ? TFBlocks.TWILIGHT_OAK_CHEST.get().defaultBlockState() : TFBlocks.CANOPY_CHEST.get().defaultBlockState(), EntityUtil.bossChestLocation(this), serverLevel);
-		}
-		super.remove(removalReason);
-	}
-
-	@Override
-	public void checkDespawn() {
-		if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.isShadowClone()) {
-			if (this.isRestrictionPointValid(this.level().dimension()) && this.level().isLoaded(this.getRestrictionPoint().pos())) {
-				this.level().setBlockAndUpdate(this.getRestrictionPoint().pos(), TFBlocks.LICH_BOSS_SPAWNER.get().defaultBlockState());
-			}
-			this.discard();
-		} else {
-			super.checkDespawn();
 		}
 	}
 
@@ -737,7 +542,7 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	public void setShadowClone(boolean shadowClone) {
-		this.bossInfo.setVisible(!shadowClone);
+		this.getBossBar().setVisible(!shadowClone);
 		this.getEntityData().set(IS_CLONE, shadowClone);
 	}
 
@@ -791,16 +596,6 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	@Override
-	public boolean removeWhenFarAway(double dist) {
-		return false;
-	}
-
-	@Override
-	protected boolean shouldDropLoot() {
-		return !TFConfig.COMMON_CONFIG.bossDropChests.get();
-	}
-
-	@Override
 	public boolean displayFireAnimation() {
 		return this.deathTime <= 0 && super.displayFireAnimation();
 	}
@@ -817,42 +612,135 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 	}
 
 	@Override
-	protected boolean canRide(Entity entity) {
-		return false;
-	}
-
-	@Override
-	public boolean isPushedByFluid(FluidType type) {
-		return false;
-	}
-
-	@Override
-	protected float getWaterSlowDown() {
-		return 1.0F;
-	}
-
-	@Override
-	public boolean canChangeDimensions() {
-		return false;
-	}
-
-	@Override
-	public NonNullList<ItemStack> getItemStacks() {
-		return this.dyingInventory;
-	}
-
-	@Override
-	public @Nullable GlobalPos getRestrictionPoint() {
-		return this.getEntityData().get(HOME_POINT).orElse(null);
-	}
-
-	@Override
-	public void setRestrictionPoint(@Nullable GlobalPos pos) {
-		this.getEntityData().set(HOME_POINT, Optional.ofNullable(pos));
-	}
-
-	@Override
 	public int getHomeRadius() {
 		return 20;
+	}
+
+	@Override
+	public ResourceKey<Structure> getHomeStructure() {
+		return TFStructures.LICH_TOWER;
+	}
+
+	@Override
+	public Block getDeathContainer(RandomSource random) {
+		return random.nextBoolean() ? TFBlocks.TWILIGHT_OAK_CHEST.get() : TFBlocks.CANOPY_CHEST.get();
+	}
+
+	@Override
+	public Block getBossSpawner() {
+		return TFBlocks.LICH_BOSS_SPAWNER.get();
+	}
+
+	@Override
+	protected boolean shouldCreateSpawner() {
+		return !this.isShadowClone();
+	}
+
+	@Override
+	protected boolean shouldSpawnLoot() {
+		return !this.isShadowClone();
+	}
+
+	@Override
+	protected void tickBossBar() {
+		if (this.getPhase() == 1) {
+			this.getBossBar().setProgress((float) (this.getShieldStrength()) / (float) (INITIAL_SHIELD_STRENGTH));
+		} else {
+			this.getBossBar().setOverlay(BossEvent.BossBarOverlay.PROGRESS);
+			this.getBossBar().setProgress(this.getHealth() / this.getMaxHealth());
+			if (this.getPhase() == 2)
+				this.getBossBar().setColor(BossEvent.BossBarColor.PURPLE);
+			else
+				this.getBossBar().setColor(BossEvent.BossBarColor.RED);
+		}
+	}
+
+	@Override
+	public BossEvent.BossBarColor getBossBarColor() {
+		return BossEvent.BossBarColor.YELLOW;
+	}
+
+	@Override
+	public BossEvent.BossBarOverlay getBossBarOverlay() {
+		return BossEvent.BossBarOverlay.NOTCHED_6;
+	}
+
+	@Override
+	public boolean isDeathAnimationFinished() {
+		return this.deathTime >= DEATH_ANIMATION_DURATION;
+	}
+
+	@Override
+	public void tickDeathAnimation() {
+		if (this.isShadowClone()) return;
+
+		if (this.deathTime <= DEATH_ANIMATION_POINT_A) {
+			boolean done = this.deathTime == DEATH_ANIMATION_POINT_A;
+			boolean hurt = this.deathTime % 17 == 0;
+
+			if (hurt) {
+				this.playLocalSound(this.getHurtSound(this.damageSources().generic()));
+			}
+			if (done) {
+				this.playLocalSound(this.getDeathSound());
+			}
+
+			Vec3 pos = this.position();
+
+			for (int i = 0; i < (hurt ? 12 : 3); i++) {
+				double x = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+				double y = this.getRandom().nextDouble() * this.getBbHeight();
+				double z = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+				this.level().addParticle(this.getRandom().nextBoolean() || hurt ? BONE_PARTICLE : ParticleTypes.SMOKE, false, pos.x() + x, pos.y() + y, pos.z() + z, 0.0D, 0.0D, 0.0D);
+			}
+
+			if (hurt) {
+				double x = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+				double y = this.getRandom().nextDouble() * this.getBbHeight();
+				double z = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+				for (int i = 0; i < 7; i++) {
+					double x1 = x + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
+					double y1 = y + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
+					double z1 = z + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
+					this.level().addParticle(this.getRandom().nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, false, pos.x() + x1, pos.y() + y1, pos.z() + z1, 0.0D, 0.0D, 0.0D);
+				}
+			}
+
+			if (done) {
+				for (int i = 0; i < 32; i++) {
+					double x = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+					double y = this.getRandom().nextDouble() * this.getBbHeight();
+					double z = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+					this.level().addParticle(this.getRandom().nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, false, pos.x() + x, pos.y() + y, pos.z() + z, 0.0D, 0.0D, 0.0D);
+				}
+			}
+		} else if (this.deathTime == DEATH_ANIMATION_POINT_B) {
+			Vec3 pos = this.position();
+			for (int i = 0; i < 3; i++) {
+				double x = (this.getRandom().nextDouble() - 0.5D) * 0.75D;
+				double z = (this.getRandom().nextDouble() - 0.5D) * 0.75D;
+				this.level().addParticle(ParticleTypes.CLOUD, false, pos.x() + x, pos.y(), pos.z() + z, 0.0D, 0.0D, 0.0D);
+			}
+		} else if (this.deathTime > DEATH_ANIMATION_POINT_B) {
+			Vec3 start = this.position().add(0.0D, 0.45F, 0.0D);
+			Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
+			int deathTime2 = this.deathTime - DEATH_ANIMATION_POINT_B;
+			double factor = (double) deathTime2 / 105.0D;
+			double powFactor = Math.pow(factor, 2.0D) * 2.0D;
+			double expandFactor = (Math.cos((factor + 0.5D) * Math.PI * 2) + 1.0D) * 0.5D;
+			Vec3 particlePos = start.add(end.subtract(start).scale(Math.min(((double) deathTime2 / (double) DEATH_ANIMATION_POINT_B) * 1.25D, 1.0D)));
+
+			for (double i = 0.0D; i < 1.0D; i += 0.2D) {
+				double x = Math.sin((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.25D;
+				double z = Math.cos((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.25D;
+				this.level().addParticle(TFParticleType.OMINOUS_FLAME.get(), false, particlePos.x() + x, particlePos.y() - 0.25D, particlePos.z() + z, 0.0D, 0.0D, 0.0D);
+			}
+		}
+	}
+
+	private void playLocalSound(@Nullable SoundEvent sound) {
+		if (sound != null && !this.isSilent()) {
+			this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), sound, SoundSource.HOSTILE, this.getSoundVolume(), this.getVoicePitch(), false);
+		}
 	}
 }

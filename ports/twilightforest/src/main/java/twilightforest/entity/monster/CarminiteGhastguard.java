@@ -27,7 +27,6 @@ import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.ai.goal.GhastguardAttackGoal;
 import twilightforest.entity.ai.goal.GhastguardHomedFlightGoal;
 import twilightforest.entity.ai.goal.GhastguardRandomFlyGoal;
-import twilightforest.entity.boss.UrGhast;
 import twilightforest.init.TFSounds;
 
 import java.util.Optional;
@@ -62,7 +61,7 @@ public class CarminiteGhastguard extends Ghast implements EnforcedHomePoint {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(5, new GhastguardHomedFlightGoal(this));
-		if (!(this instanceof UrGhast)) this.goalSelector.addGoal(5, new GhastguardRandomFlyGoal(this));
+		this.goalSelector.addGoal(5, new GhastguardRandomFlyGoal(this));
 		this.goalSelector.addGoal(7, new Ghast.GhastLookGoal(this));
 		this.goalSelector.addGoal(7, attackAI = new GhastguardAttackGoal(this));
 		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -188,7 +187,8 @@ public class CarminiteGhastguard extends Ghast implements EnforcedHomePoint {
 		}
 	}
 
-	public static boolean ghastSpawnHandler(EntityType<? extends CarminiteGhastguard> entityType, LevelAccessor accessor, MobSpawnType type, BlockPos pos, RandomSource random) {
+	// also used for the Ur-Ghast, which no longer extends the Ghastguard
+	public static boolean ghastSpawnHandler(EntityType<? extends Mob> entityType, LevelAccessor accessor, MobSpawnType type, BlockPos pos, RandomSource random) {
 		return accessor.getDifficulty() != Difficulty.PEACEFUL && checkMobSpawnRules(entityType, accessor, type, pos, random);
 	}
 

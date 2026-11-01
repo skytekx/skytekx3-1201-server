@@ -1,17 +1,13 @@
 package twilightforest.loot;
 
 import com.google.common.collect.Sets;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -20,12 +16,8 @@ import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
-import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
-import twilightforest.entity.boss.IBossLootBuffer;
 
 import java.util.Collections;
 import java.util.Set;
@@ -135,32 +127,6 @@ public class TFLootTables {
 			return id;
 		} else {
 			throw new IllegalArgumentException(id + " is already a registered built-in loot table");
-		}
-	}
-
-	@Deprecated //move to using IBossLootBuffer.saveDropsIntoBoss instead
-	public static void entityDropsIntoContainer(LivingEntity entity, DamageSource source, BlockState blockContaining, BlockPos placement) {
-		if (entity.level() instanceof ServerLevel serverLevel && TFConfig.COMMON_CONFIG.bossDropChests.get() && IBossLootBuffer.canDropLoot(serverLevel)) {
-			LootTable table = serverLevel.getServer().getLootData().getLootTable(entity.getLootTable());
-			LootParams params = createLootParams(entity, true, source).create(LootContextParamSets.ENTITY);
-			BlockPos chestPos = IBossLootBuffer.placeLootChest(serverLevel, blockContaining, placement);
-			if (chestPos != null && serverLevel.getBlockEntity(chestPos) instanceof Container container) {
-				ObjectArrayList<ItemStack> stacks = table.getRandomItems(params);
-				table.fill(container, params, entity.getLootTableSeed());
-				//if our loot stack size is bigger than the chest, drop everything else outside of it. Dont want to lose any loot now do we?
-				if (stacks.size() > IBossLootBuffer.CONTAINER_SIZE) {
-					for (ItemStack stack : stacks.subList(IBossLootBuffer.CONTAINER_SIZE, stacks.size())) {
-						ItemEntity item = new ItemEntity(serverLevel, chestPos.above().getX(), chestPos.above().getY(), chestPos.above().getZ(), stack);
-						item.setExtendedLifetime();
-						item.setNoPickUpDelay();
-						serverLevel.addFreshEntity(item);
-					}
-				}
-			} else {
-				//no room for a chest anywhere above the placement, so drop the loot into the world instead of losing it
-				Vec3 dropPos = Vec3.atCenterOf(placement);
-				table.getRandomItems(params, entity.getLootTableSeed(), stack -> IBossLootBuffer.dropLootItem(serverLevel, dropPos, stack));
-			}
 		}
 	}
 

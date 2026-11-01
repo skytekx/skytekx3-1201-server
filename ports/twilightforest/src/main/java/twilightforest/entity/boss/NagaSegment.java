@@ -1,7 +1,6 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -11,11 +10,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.TFPart;
+import twilightforest.init.TFSounds;
 
 import java.util.List;
 
@@ -73,18 +72,10 @@ public class NagaSegment extends TFPart<Naga> {
 		if (this.deathCounter > 0) {
 			this.deathCounter--;
 			if (this.deathCounter <= 0) {
-				Vec3 pos = this.position();
-				float width = this.getBbWidth();
-				float height = this.getBbHeight();
-				for (int k = 0; k < 20; k++) {
-					this.level().addParticle(this.random.nextBoolean() ? ParticleTypes.EXPLOSION : ParticleTypes.EXPLOSION_EMITTER,
-							(pos.x() + this.random.nextFloat() * width * 2.0F) - width,
-							pos.y() + this.random.nextFloat() * height,
-							(pos.z() + this.random.nextFloat() * width * 2.0F) - width,
-							this.random.nextGaussian() * 0.02D, this.random.nextGaussian() * 0.02D, this.random.nextGaussian() * 0.02D);
-				}
-
-				this.getParent().deathTime = 0;
+				Naga naga = this.getParent();
+				naga.makePoofAt(this.position());
+				naga.playSound(TFSounds.NAGA_HURT.get(), 0.25F, (naga.getVoicePitch() * 0.75F) + (0.5F * naga.getRandom().nextFloat()));
+				naga.deathTime = 0;
 				this.deactivate();
 			}
 		}

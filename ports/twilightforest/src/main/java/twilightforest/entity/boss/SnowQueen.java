@@ -1,20 +1,15 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -30,18 +25,16 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.TFConfig;
-import twilightforest.advancements.TFAdvancements;
-import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.IBreathAttacker;
 import twilightforest.entity.TFPart;
 import twilightforest.entity.ai.goal.HoverBeamGoal;
@@ -49,23 +42,17 @@ import twilightforest.entity.ai.goal.HoverSummonGoal;
 import twilightforest.entity.ai.goal.HoverThenDropGoal;
 import twilightforest.entity.monster.IceCrystal;
 import twilightforest.init.*;
-import twilightforest.loot.TFLootTables;
 import twilightforest.util.EntityUtil;
-import twilightforest.util.LandmarkUtil;
 import twilightforest.util.WorldUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomePoint {
+public class SnowQueen extends BaseTFBoss implements IBreathAttacker {
 
 	private static final int MAX_SUMMONS = 6;
 	private static final EntityDataAccessor<Boolean> BEAM_FLAG = SynchedEntityData.defineId(SnowQueen.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Byte> PHASE_FLAG = SynchedEntityData.defineId(SnowQueen.class, EntityDataSerializers.BYTE);
-	private static final EntityDataAccessor<Optional<GlobalPos>> HOME_POINT = SynchedEntityData.defineId(SnowQueen.class, EntityDataSerializers.OPTIONAL_GLOBAL_POS);
 
-	private final ServerBossEvent bossInfo = new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
 	private static final int MAX_DAMAGE_WHILE_BEAMING = 25;
 	private static final float BREATH_DAMAGE = 4.0F;
 
@@ -77,8 +64,6 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 	private int successfulDrops;
 	private int maxDrops;
 	private int damageWhileBeaming;
-
-	private final List<ServerPlayer> hurtBy = new ArrayList<>();
 
 	public SnowQueen(EntityType<? extends SnowQueen> type, Level world) {
 		super(type, world);
@@ -127,7 +112,6 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 		super.defineSynchedData();
 		this.getEntityData().define(BEAM_FLAG, false);
 		this.getEntityData().define(PHASE_FLAG, (byte) 0);
-		this.getEntityData().define(HOME_POINT, Optional.empty());
 	}
 
 	@Override
@@ -148,9 +132,7 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 	@Override
 	public void aiStep() {
 		super.aiStep();
-		if (!this.level().isClientSide()) {
-			this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
-		} else {
+		if (this.level().isClientSide()) {
 			this.spawnParticles();
 		}
 	}
@@ -244,43 +226,6 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 		}
 	}
 
-	@Override
-	public boolean removeWhenFarAway(double distance) {
-		return false;
-	}
-
-	@Override
-	public void checkDespawn() {
-		if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-			if (this.isRestrictionPointValid(this.level().dimension()) && this.level().isLoaded(this.getRestrictionPoint().pos())) {
-				this.level().setBlockAndUpdate(this.getRestrictionPoint().pos(), TFBlocks.SNOW_QUEEN_BOSS_SPAWNER.get().defaultBlockState());
-			}
-			this.discard();
-		} else {
-			super.checkDespawn();
-		}
-	}
-
-	@Override
-	public void die(DamageSource cause) {
-		super.die(cause);
-		// mark the tower as defeated
-		if (!this.level().isClientSide()) {
-			this.bossInfo.setProgress(0.0F);
-			LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.AURORA_PALACE, true);
-			for (ServerPlayer player : this.hurtBy) {
-				TFAdvancements.HURT_BOSS.trigger(player, this);
-			}
-
-			TFLootTables.entityDropsIntoContainer(this, cause, TFBlocks.TWILIGHT_OAK_CHEST.get().defaultBlockState(), EntityUtil.bossChestLocation(this));
-		}
-	}
-
-	@Override
-	protected boolean shouldDropLoot() {
-		return !TFConfig.COMMON_CONFIG.bossDropChests.get();
-	}
-
 	private void applyShieldCollisions(Entity collider) {
 		List<Entity> list = this.level().getEntities(collider, collider.getBoundingBox().inflate(-0.2F, -0.2F, -0.2F));
 
@@ -334,23 +279,7 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 		if (result && this.getCurrentPhase() == Phase.BEAM) {
 			this.damageWhileBeaming += damage;
 		}
-
-		if (source.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
-			this.hurtBy.add(player);
-		}
 		return result;
-
-	}
-
-	@Override
-	public void lavaHurt() {
-		if (!this.fireImmune()) {
-			this.setSecondsOnFire(5);
-			if (this.hurt(this.damageSources().lava(), 4F)) {
-				this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.random.nextFloat() * 0.4F);
-				EntityUtil.killLavaAround(this);
-			}
-		}
 	}
 
 	private Vec3 getIceShieldPosition(int idx) {
@@ -469,59 +398,6 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 	}
 
 	@Override
-	public void setCustomName(@Nullable Component name) {
-		super.setCustomName(name);
-		this.bossInfo.setName(this.getDisplayName());
-	}
-
-	@Override
-	public void startSeenByPlayer(ServerPlayer player) {
-		super.startSeenByPlayer(player);
-		this.bossInfo.addPlayer(player);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		this.bossInfo.removePlayer(player);
-	}
-
-	@Override
-	public void addAdditionalSaveData(CompoundTag compound) {
-		this.saveHomePointToNbt(compound);
-		super.addAdditionalSaveData(compound);
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
-		this.loadHomePointFromNbt(compound);
-		if (this.hasCustomName()) {
-			this.bossInfo.setName(this.getDisplayName());
-		}
-	}
-
-	@Override
-	protected boolean canRide(Entity entity) {
-		return false;
-	}
-
-	@Override
-	public boolean isPushedByFluid(FluidType type) {
-		return false;
-	}
-
-	@Override
-	protected float getWaterSlowDown() {
-		return 1.0F;
-	}
-
-	@Override
-	public boolean canChangeDimensions() {
-		return false;
-	}
-
-	@Override
 	public boolean isMultipartEntity() {
 		return true;
 	}
@@ -542,17 +418,27 @@ public class SnowQueen extends Monster implements IBreathAttacker, EnforcedHomeP
 	}
 
 	@Override
-	public @Nullable GlobalPos getRestrictionPoint() {
-		return this.getEntityData().get(HOME_POINT).orElse(null);
-	}
-
-	@Override
-	public void setRestrictionPoint(@Nullable GlobalPos pos) {
-		this.getEntityData().set(HOME_POINT, Optional.ofNullable(pos));
-	}
-
-	@Override
 	public int getHomeRadius() {
 		return 20;
+	}
+
+	@Override
+	public ResourceKey<Structure> getHomeStructure() {
+		return TFStructures.AURORA_PALACE;
+	}
+
+	@Override
+	public Block getDeathContainer(RandomSource random) {
+		return TFBlocks.TWILIGHT_OAK_CHEST.get();
+	}
+
+	@Override
+	public Block getBossSpawner() {
+		return TFBlocks.SNOW_QUEEN_BOSS_SPAWNER.get();
+	}
+
+	@Override
+	public BossEvent.BossBarColor getBossBarColor() {
+		return BossEvent.BossBarColor.WHITE;
 	}
 }

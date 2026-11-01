@@ -2,11 +2,20 @@ package twilightforest.world.components.feature.trees.treeplacers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import org.jetbrains.annotations.Nullable;
 
-public record BranchesConfig(int branchCount, int randomAddBranches, double length, double randomAddLength,
+import java.util.Optional;
+
+/**
+ * @param branchProvider the block the branches are built from (4.8 builds them from wood instead of logs). When absent, branches use the tree's trunk provider like 4.3 did.
+ */
+public record BranchesConfig(@Nullable BlockStateProvider branchProvider, int branchCount, int randomAddBranches, double length, double randomAddLength,
                              double spacingYaw, double downwardsPitch) {
+    // branch_provider is optional so tree configs written against 4.3 keep loading unchanged
     public static final Codec<BranchesConfig> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
+                    BlockStateProvider.CODEC.optionalFieldOf("branch_provider").forGetter(o -> Optional.ofNullable(o.branchProvider)),
                     Codec.intRange(0, 16).fieldOf("count_minimum").forGetter(o -> o.branchCount),
                     Codec.intRange(0, 16).fieldOf("random_add_count").orElse(0).forGetter(o -> o.randomAddBranches),
                     Codec.doubleRange(1, 24).fieldOf("length").forGetter(o -> o.length),
@@ -15,7 +24,11 @@ public record BranchesConfig(int branchCount, int randomAddBranches, double leng
                     Codec.doubleRange(0, 0.5).fieldOf("spacing_yaw").orElse(0.3d).forGetter(o -> o.spacingYaw),
                     // Tilt - Float between 0 and 1 where 0 is straight up, 0.5 is straight out and 1 is straight down.
                     Codec.doubleRange(0, 1).fieldOf("downwards_pitch").orElse(0.2d).forGetter(o -> o.downwardsPitch)
-            ).apply(instance, BranchesConfig::new)
+            ).apply(instance, (branchProvider, branchCount, randomAddBranches, length, randomAddLength, spacingYaw, downwardsPitch) ->
+                    new BranchesConfig(branchProvider.orElse(null), branchCount, randomAddBranches, length, randomAddLength, spacingYaw, downwardsPitch))
     );
 
+    public BranchesConfig(int branchCount, int randomAddBranches, double length, double randomAddLength, double spacingYaw, double downwardsPitch) {
+        this(null, branchCount, randomAddBranches, length, randomAddLength, spacingYaw, downwardsPitch);
+    }
 }

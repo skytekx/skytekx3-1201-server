@@ -166,7 +166,7 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 					if (tag.getInt("CandleAmount") <= 0) tag.putInt("CandleAmount", 1);
 					Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
 							AbstractSkullCandleBlock.candleColorToCandle(AbstractSkullCandleBlock.CandleColors.colorFromInt(tag.getInt("CandleColor")))
-									.defaultBlockState().setValue(CandleBlock.CANDLES, tag.getInt("CandleAmount")), ms, buffers, light, overlay, ModelData.EMPTY, RenderType.cutout());
+									.defaultBlockState().setValue(CandleBlock.CANDLES, tag.getInt("CandleAmount")), ms, buffers, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());
 				}
 			} else {
 				if (block instanceof EntityBlock be) {

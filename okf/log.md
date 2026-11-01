@@ -426,6 +426,11 @@ logs stay on the Mac and are not in the repo.
   39f7c05), and `macos/install.sh` ran again, which loaded the pf rules that only drop new connections
   to RCON. The server was up at 02:52:03 with the 3 accepted boot errors. From the LAN 25565 answered
   and 65535 timed out. See [Mac mini](server/macos.md).
+- At 04:32:47 the owner burned to death with keepInventory off and lost 110 of 138 items, and none
+  were left on the ground. On the owner's ask the `.dat_old` of the 04:32:04 autosave replaced the
+  player file at 04:40:04 with nobody online. The two newer files are kept in `~/skytekx3-backups/` on
+  the Mac mini. Minecraft keeps only the previous autosave of a player, so such a copy has to happen
+  before the player joins again. At 05:00 the backup job ran for the first time (742 MB in 20 s).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

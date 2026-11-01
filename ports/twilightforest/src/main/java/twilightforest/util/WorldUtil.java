@@ -9,15 +9,25 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class WorldUtil {
 	private WorldUtil() {}
+
+	/**
+	 * The Overworld seed from the save's WorldOptions. The legacy biome layers and the landmark grid of the Twilight Forest dimension are seeded with it.
+	 * Only valid while a server is running.
+	 */
+	public static long getOverworldSeed() {
+		return Objects.requireNonNull(ServerLifecycleHooks.getCurrentServer()).getWorldData().worldGenOptions().seed();
+	}
 
 	/**
 	 * Inclusive of edges

@@ -3,7 +3,7 @@ package twilightforest.world.components.layer.vanillalegacy.context;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.LinearCongruentialGenerator;
 import net.minecraft.world.level.biome.Biome;
-import twilightforest.init.TFDimensionSettings;
+import twilightforest.util.WorldUtil;
 import twilightforest.world.components.layer.vanillalegacy.area.LazyArea;
 import twilightforest.world.components.layer.vanillalegacy.Area;
 
@@ -17,7 +17,7 @@ public class LazyAreaContext implements BigContext<LazyArea> {
 	private final long seed;
 
 	public LazyAreaContext(int maxCache, long salt) {
-		this.seed = mixSeed(TFDimensionSettings.seed, salt);
+		this.seed = mixSeed(WorldUtil.getOverworldSeed(), salt);
 		this.cache = new ConcurrentHashMap<>();
 		this.evictionQueue = new LinkedBlockingQueue<>();
 		this.maxCache = maxCache;

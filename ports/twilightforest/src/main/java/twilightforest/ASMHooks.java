@@ -52,7 +52,6 @@ import twilightforest.block.WroughtIronFenceBlock;
 import twilightforest.client.TFClientSetup;
 import twilightforest.events.ToolEvents;
 import twilightforest.init.TFBlocks;
-import twilightforest.init.TFDimensionSettings;
 import twilightforest.entity.TFPart;
 import twilightforest.init.TFItems;
 import twilightforest.item.GiantItem;
@@ -67,16 +66,6 @@ import java.util.*;
 
 @SuppressWarnings({"JavadocReference", "unused", "RedundantSuppression", "deprecation"})
 public class ASMHooks {
-
-	/**
-	 * Injection Point:<br>
-	 * {@link net.minecraft.world.level.levelgen.WorldOptions#WorldOptions(long, boolean, boolean, Optional)} <br>
-	 * [BEFORE FIRST PUTFIELD]
-	 */
-	public static long seed(long seed) {
-		TFDimensionSettings.seed = seed;
-		return seed;
-	}
 
 	/**
 	 * Injection Point:<br>

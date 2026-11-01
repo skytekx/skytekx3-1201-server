@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import twilightforest.client.model.entity.HelmetCrabModel;
 import twilightforest.entity.monster.HelmetCrab;
 
 /**
@@ -16,6 +17,7 @@ import twilightforest.entity.monster.HelmetCrab;
 @OnlyIn(Dist.CLIENT)
 public class NewHelmetCrabModel extends HierarchicalModel<HelmetCrab> {
     public final ModelPart root;
+	public final ModelPart crab;
 	public final ModelPart body;
 	public final ModelPart leftClaw;
 	public final ModelPart rightClaw;
@@ -27,15 +29,16 @@ public class NewHelmetCrabModel extends HierarchicalModel<HelmetCrab> {
     public NewHelmetCrabModel(ModelPart root) {
         this.root = root;
 
-        this.body = root.getChild("body");
+        this.crab = root.getChild("crab");
+        this.body = this.crab.getChild("body");
 
         this.rightClaw = body.getChild("right_claw");
         this.leftClaw = body.getChild("left_claw");
 
-        this.rightLeg1 = root.getChild("right_leg_1");
-        this.rightLeg2 = root.getChild("right_leg_2");
-        this.leftLeg1 = root.getChild("left_leg_1");
-        this.leftLeg2 = root.getChild("left_leg_2");
+        this.rightLeg1 = this.crab.getChild("right_leg_1");
+        this.rightLeg2 = this.crab.getChild("right_leg_2");
+        this.leftLeg1 = this.crab.getChild("left_leg_1");
+        this.leftLeg2 = this.crab.getChild("left_leg_2");
 
     }
 
@@ -43,7 +46,9 @@ public class NewHelmetCrabModel extends HierarchicalModel<HelmetCrab> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition partRoot = mesh.getRoot();
 
-        var body = partRoot.addOrReplaceChild("body", CubeListBuilder.create()
+        var crab = partRoot.addOrReplaceChild("crab", CubeListBuilder.create(), PartPose.ZERO);
+
+        var body = crab.addOrReplaceChild("body", CubeListBuilder.create()
                         .texOffs(0, 9)
                         .addBox(-2.5F, -4.0F, -2.5F, 5.0F, 4.0F, 5.0F)
                         .texOffs(58, 0)
@@ -74,22 +79,22 @@ public class NewHelmetCrabModel extends HierarchicalModel<HelmetCrab> {
                         .addBox(-1.0F, -3.0F, -5.0F, 2.0F, 4.0F, 5.0F),
                 PartPose.offsetAndRotation(3.0F, 0.0F, -3.0F, 0.0F, -0.39269908169872414F, 0.0F));
 
-        partRoot.addOrReplaceChild("right_leg_1", CubeListBuilder.create()
+        crab.addOrReplaceChild("right_leg_1", CubeListBuilder.create()
                         .texOffs(32, 15)
                         .addBox(-6.0F, -1.0F, -1.0F, 6.0F, 2.0F, 2.0F),
                 PartPose.offsetAndRotation(-2.0F, 21.0F, 0.0F, 0.2181661564992912F, 0.4363323129985824F, -0.4363323129985824F));
 
-        partRoot.addOrReplaceChild("left_leg_1", CubeListBuilder.create()
+        crab.addOrReplaceChild("left_leg_1", CubeListBuilder.create()
                         .texOffs(48, 19)
                         .addBox(0.0F, -1.0F, -1.0F, 6.0F, 2.0F, 2.0F),
                 PartPose.offsetAndRotation(2.0F, 21.0F, 0.0F, 0.2181661564992912F, -0.4363323129985824F, 0.4363323129985824F));
 
-        partRoot.addOrReplaceChild("right_leg_2", CubeListBuilder.create()
+        crab.addOrReplaceChild("right_leg_2", CubeListBuilder.create()
                         .texOffs(32, 19)
                         .addBox(-6.0F, -1.0F, -1.0F, 6.0F, 2.0F, 2.0F),
                 PartPose.offsetAndRotation(-2.0F, 21.0F, -1.5F, 0.2181661564992912F, 0.0F, -0.4363323129985824F));
 
-        partRoot.addOrReplaceChild("left_leg_2", CubeListBuilder.create()
+        crab.addOrReplaceChild("left_leg_2", CubeListBuilder.create()
                         .texOffs(48, 15)
                         .addBox(0.0F, -1.0F, -1.0F, 6.0F, 2.0F, 2.0F),
                 PartPose.offsetAndRotation(2.0F, 21.0F, -1.5F, 0.2181661564992912F, 0.0F, 0.4363323129985824F));
@@ -106,7 +111,7 @@ public class NewHelmetCrabModel extends HierarchicalModel<HelmetCrab> {
     @Override
     public void setupAnim(HelmetCrab entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        this.body.yRot = netHeadYaw / (180F / (float) Math.PI);
+        this.crab.yRot = netHeadYaw / (180F / (float) Math.PI);
         this.body.xRot = headPitch / (180F / (float) Math.PI);
         float f6 = ((float) Math.PI / 4F);
         this.rightLeg1.zRot = -f6 * 0.74F;
@@ -138,5 +143,12 @@ public class NewHelmetCrabModel extends HierarchicalModel<HelmetCrab> {
         this.rightClaw.yRot = 0.319531F;
         this.rightClaw.yRot += (Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F) / 2;
 
+    }
+
+    @Override
+    public void prepareMobModel(HelmetCrab entity, float limbSwing, float limbSwingAmount, float partialTick) {
+        this.root().getAllParts().forEach(ModelPart::resetPose);
+        super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
+        this.crab.zRot = HelmetCrabModel.getDeathRoll(entity, partialTick);
     }
 }

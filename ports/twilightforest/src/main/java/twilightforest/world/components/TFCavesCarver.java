@@ -32,7 +32,6 @@ import java.util.function.Function;
 public class TFCavesCarver extends WorldCarver<CaveCarverConfiguration> {
 
 	private final boolean isHighlands;
-	private final RandomSource rand = RandomSource.create();
 
 	public TFCavesCarver(Codec<CaveCarverConfiguration> codec, boolean isHighlands) {
 		super(codec);
@@ -98,6 +97,11 @@ public class TFCavesCarver extends WorldCarver<CaveCarverConfiguration> {
 				if (aquifer.shouldScheduleFluidUpdate() && !blockstate2.getFluidState().isEmpty()) {
 					access.markPosForPostprocessing(pos);
 				}
+
+				// Carvers run concurrently on the worldgen threads, so a RandomSource shared through a field trips
+				// LegacyRandomSource's ThreadingDetector ("Accessing LegacyRandomSource from multiple threads").
+				// Derive a positional random per carved block instead, like upstream does (8ef9e3894).
+				RandomSource rand = ctx.randomState().oreRandom().at(pos);
 
 				//here's the code for preventing floating water and making dirt roofs. Enjoy :)
 				for (Direction facing : Direction.values()) {

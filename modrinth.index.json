@@ -2976,6 +2976,21 @@
       "fileSize": 119348
     },
     {
+      "path": "mods/twilightdelight-2.2.8.jar",
+      "hashes": {
+        "sha1": "c8ba971b683d9982999c3ddcb18eaaa645f2093e",
+        "sha512": "49867923a427411a74caf451ce07fc7872632cb234da66867bc62730f51c1a9ffeadacd91a65f17e6cbd10b972aad5ef9feecb77db10f887d9284603f892cff0"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/d6cSefpO/versions/YqN4ZHXo/twilightdelight-2.2.8.jar"
+      ],
+      "fileSize": 1682572
+    },
+    {
       "path": "mods/valhelsia_core-forge-1.20.1-1.1.2.jar",
       "hashes": {
         "sha1": "5e88feef805d15ffbe3c0918f53d6ed213a7dc6a",

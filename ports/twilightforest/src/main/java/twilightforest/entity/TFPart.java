@@ -132,8 +132,7 @@ public abstract class TFPart<T extends Entity> extends PartEntity<T> {
 				this.dimensions.width,
 				this.dimensions.height,
 				this.dimensions.fixed,
-				getEntityData().isDirty(),
-				getEntityData().isDirty() ? getEntityData().packDirty() : null);
+				getEntityData().packDirty());
 
 	}
 
@@ -143,9 +142,9 @@ public abstract class TFPart<T extends Entity> extends PartEntity<T> {
 		final float w = data.width();
 		final float h = data.height();
 		this.setSize(data.fixed() ? EntityDimensions.fixed(w, h) : EntityDimensions.scalable(w, h));
-		this.refreshDimensions();
-		if (data.dirty())
+		if (data.data() != null)
 			getEntityData().assignValues(data.data());
+		this.refreshDimensions();
 	}
 
 	public static void assignPartIDs(Entity parent) {

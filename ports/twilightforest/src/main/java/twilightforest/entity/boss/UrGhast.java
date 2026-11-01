@@ -405,7 +405,7 @@ public class UrGhast extends CarminiteGhastguard implements IBossLootBuffer {
 		Vec3 lookVec = this.getViewVector(1.0F);
 		entityFireball.setPos(
 				this.getX() + lookVec.x() * shotSpawnDistance,
-				this.getY() + this.getBbHeight() / 2.0F + lookVec.y() * shotSpawnDistance,
+				this.getY() + this.getBbHeight() / 2.0F + lookVec.y() * shotSpawnDistance + 2.0D,
 				this.getZ() + lookVec.z() * shotSpawnDistance
 		);
 		this.level().addFreshEntity(entityFireball);

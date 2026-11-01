@@ -187,11 +187,15 @@ public class AlphaYeti extends Monster implements RangedAttackMob, IHostileMount
 			return false;
 		}
 
-		this.canRampage = true;
 		if (source.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
 			this.hurtBy.add(player);
 		}
-		return super.hurt(source, amount);
+		boolean flag = super.hurt(source, amount);
+
+		if (flag) {
+			this.canRampage = true;
+		}
+		return flag;
 	}
 
 	@Override

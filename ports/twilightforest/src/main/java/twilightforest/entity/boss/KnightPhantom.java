@@ -235,7 +235,9 @@ public class KnightPhantom extends FlyingMob implements Enemy, EnforcedHomePoint
 
 				// make treasure for killing the last knight
 				// This one won't receive the same loot treatment like the other bosses because this chest is supposed to reward for all of them instead of just the last one killed
-				TFLootTables.STRONGHOLD_BOSS.generateChest(serverLevel, treasurePos, Direction.NORTH, false);
+				if (IBossLootBuffer.canDropLoot(serverLevel)) {
+					TFLootTables.STRONGHOLD_BOSS.generateChest(serverLevel, treasurePos, Direction.NORTH, false);
+				}
 
 				//trigger criteria for killing every phantom in a group
 				if (cause.getEntity() instanceof ServerPlayer player) {

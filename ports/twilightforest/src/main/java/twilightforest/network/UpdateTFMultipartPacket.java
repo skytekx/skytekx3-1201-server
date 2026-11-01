@@ -7,50 +7,54 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.NetworkEvent;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.entity.TFPart;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Syncs the position, size and synched data of every {@link TFPart} of a multipart entity. Parts are keyed by their entity id rather
+ * than their index, so when the client and server part arrays differ the unknown parts are skipped instead of the data shifting onto
+ * the wrong part or running past the end of the list.
+ */
 public class UpdateTFMultipartPacket {
 
-	private int id;
-	private Entity entity;
-	private int len;
-	private final List<PartDataHolder> data = new ArrayList<>();
+	private final int entityId;
+	private final Map<Integer, PartDataHolder> data;
 
 	public UpdateTFMultipartPacket(FriendlyByteBuf buf) {
-		this.id = buf.readInt();
-		this.len = buf.readInt();
-		for (int i = 0; i < len; i++) {
-			if (buf.readBoolean()) {
-				data.add(PartDataHolder.decode(buf));
-			}
+		this.entityId = buf.readInt();
+		this.data = new HashMap<>();
+		int id;
+		while ((id = buf.readInt()) > 0) {
+			this.data.put(id, PartDataHolder.decode(buf));
 		}
 	}
 
 	public UpdateTFMultipartPacket(Entity entity) {
-		this.entity = entity;
+		this.entityId = entity.getId();
+		this.data = new HashMap<>();
+		PartEntity<?>[] parts = entity.getParts();
+		if (parts != null) {
+			for (PartEntity<?> part : parts) {
+				if (part instanceof TFPart<?> tfPart) {
+					this.data.put(tfPart.getId(), tfPart.writeData());
+				}
+			}
+		}
 	}
 
 	public void encode(FriendlyByteBuf buf) {
-		buf.writeInt(this.entity.getId());
-		PartEntity<?>[] parts = this.entity.getParts();
-		// We assume the client and server part arrays are identical, else everything will crash and burn. Don't even bother handling it.
-		if (parts != null) {
-			buf.writeInt(parts.length);
-			for (PartEntity<?> part : parts) {
-				if (part instanceof TFPart<?> tfPart) {
-					buf.writeBoolean(true);
-					tfPart.writeData().encode(buf);
-				} else {
-					buf.writeBoolean(false);
-				}
-			}
-		} else {
-			buf.writeInt(0);
-		}
+		buf.writeInt(this.entityId);
+		this.data.forEach((id, data) -> {
+			buf.writeInt(id);
+			data.encode(buf);
+		});
+		buf.writeInt(-1);
 	}
 
 	public static class Handler {
@@ -63,16 +67,16 @@ public class UpdateTFMultipartPacket {
 					Level world = Minecraft.getInstance().level;
 					if (world == null)
 						return;
-					Entity ent = world.getEntity(message.id);
+					Entity ent = world.getEntity(message.entityId);
 					if (ent != null && ent.isMultipartEntity()) {
 						PartEntity<?>[] parts = ent.getParts();
 						if (parts == null)
 							return;
-						int index = 0;
 						for (PartEntity<?> part : parts) {
 							if (part instanceof TFPart<?> tfPart) {
-								tfPart.readData(message.data.get(index));
-								index++;
+								PartDataHolder data = message.data.get(tfPart.getId());
+								if (data != null)
+									tfPart.readData(data);
 							}
 						}
 					}
@@ -91,8 +95,7 @@ public class UpdateTFMultipartPacket {
 								 float width,
 								 float height,
 								 boolean fixed,
-								 boolean dirty,
-								 List<SynchedEntityData.DataValue<?>> data) {
+								 @Nullable List<SynchedEntityData.DataValue<?>> data) {
 
 
 		public void encode(FriendlyByteBuf buffer) {
@@ -104,18 +107,15 @@ public class UpdateTFMultipartPacket {
 			buffer.writeFloat(this.width);
 			buffer.writeFloat(this.height);
 			buffer.writeBoolean(this.fixed);
-			buffer.writeBoolean(this.dirty);
-			if (this.dirty) {
-				for(SynchedEntityData.DataValue<?> datavalue : this.data) {
+			if (this.data != null) {
+				for (SynchedEntityData.DataValue<?> datavalue : this.data) {
 					datavalue.write(buffer);
 				}
-
-				buffer.writeByte(255);
 			}
+			buffer.writeByte(255);
 		}
 
 		static PartDataHolder decode(FriendlyByteBuf buffer) {
-			boolean dirty;
 			return new PartDataHolder(
 					buffer.readDouble(),
 					buffer.readDouble(),
@@ -125,8 +125,7 @@ public class UpdateTFMultipartPacket {
 					buffer.readFloat(),
 					buffer.readFloat(),
 					buffer.readBoolean(),
-					dirty = buffer.readBoolean(),
-					dirty ? unpack(buffer) : null
+					unpack(buffer)
 			);
 		}
 

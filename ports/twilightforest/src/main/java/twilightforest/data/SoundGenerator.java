@@ -303,6 +303,7 @@ public class SoundGenerator extends TFSoundProvider {
 
 		this.generateNewSoundWithSubtitle(TFSounds.BEANSTALK_GROWTH, "random/beanstalk_grow", 1);
 		this.generateExistingSoundWithSubtitle(TFSounds.BLOCK_ANNIHILATED, SoundEvents.FIRE_EXTINGUISH);
+		this.generateExistingSoundWithSubtitle(TFSounds.BOOKSHELF_CONVERTS, SoundEvents.ZOMBIE_VILLAGER_CURE);
 		this.generateExistingSoundWithSubtitle(TFSounds.BOSS_CHEST_APPEAR, SoundEvents.EVOKER_PREPARE_SUMMON);
 		this.generateExistingSoundWithSubtitle(TFSounds.BUG_SQUISH, SoundEvents.SLIME_SQUISH_SMALL);
 		this.generateExistingSoundWithSubtitle(TFSounds.BUILDER_CREATE, SoundEvents.COMPARATOR_CLICK);

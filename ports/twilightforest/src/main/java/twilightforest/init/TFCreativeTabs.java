@@ -206,6 +206,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.LIVEROOT_BLOCK.get());
 				output.accept(TFBlocks.MANGROVE_ROOT.get());
 				output.accept(TFBlocks.CANOPY_BOOKSHELF.get());
+				output.accept(TFBlocks.CHISELED_CANOPY_BOOKSHELF.get());
 				output.accept(TFBlocks.CANOPY_WINDOW.get());
 				output.accept(TFBlocks.CANOPY_WINDOW_PANE.get());
 				output.accept(TFBlocks.TIME_LOG_CORE.get());

@@ -2,6 +2,7 @@ package twilightforest.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.PackOutput;
@@ -384,6 +385,40 @@ public class BlockstateGenerator extends BlockModelBuilders {
 			int books = s.getValue(TomeSpawnerBlock.BOOK_STAGES);
 			return ConfiguredModel.builder().modelFile(models().cubeColumn("block/death_tome_spawner_" + books, prefix("block/wood/bookshelf_spawner/bookshelf_" + books), prefix("block/wood/planks_canopy_0"))).build();
 		}, TomeSpawnerBlock.SPAWNER);
+
+		MultiPartBlockStateBuilder builder = getMultipartBuilder(TFBlocks.CHISELED_CANOPY_BOOKSHELF.get());
+
+		List.of(Pair.of(Direction.NORTH, 0), Pair.of(Direction.EAST, 90), Pair.of(Direction.SOUTH, 180), Pair.of(Direction.WEST, 270)).forEach(pair -> {
+			Direction direction = pair.getFirst();
+			//add base block for each rotation
+			builder.part().uvLock(true).rotationY(pair.getSecond()).modelFile(models()
+					.withExistingParent("chiseled_canopy_bookshelf", "chiseled_bookshelf")
+					.texture("top", prefix("block/wood/chiseled_canopy_bookshelf_top"))
+					.texture("side", prefix("block/wood/chiseled_canopy_bookshelf_side"))).addModel()
+					.condition(HorizontalDirectionalBlock.FACING, direction).end();
+			//add each bookshelf part for each slot
+			List.of(
+					Pair.of(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_0_OCCUPIED, "_slot_top_left"),
+					Pair.of(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_1_OCCUPIED, "_slot_top_mid"),
+					Pair.of(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_2_OCCUPIED, "_slot_top_right"),
+					Pair.of(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_3_OCCUPIED, "_slot_bottom_left"),
+					Pair.of(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_4_OCCUPIED, "_slot_bottom_mid"),
+					Pair.of(BlockStateProperties.CHISELED_BOOKSHELF_SLOT_5_OCCUPIED, "_slot_bottom_right")
+			).forEach(pair1 -> {
+				//filled part
+				builder.part().uvLock(true).rotationY(pair.getSecond()).modelFile(models()
+								.withExistingParent("chiseled_canopy_bookshelf_occupied" + pair1.getSecond(), "template_chiseled_bookshelf" + pair1.getSecond())
+								.texture("texture", prefix("block/wood/chiseled_canopy_bookshelf_occupied"))).addModel()
+						.nestedGroup().condition(HorizontalDirectionalBlock.FACING, direction).condition(pair1.getFirst(), true).end();
+				//empty part
+				builder.part().uvLock(true).rotationY(pair.getSecond()).modelFile(models()
+								.withExistingParent("chiseled_canopy_bookshelf_empty" + pair1.getSecond(), "template_chiseled_bookshelf" + pair1.getSecond())
+								.texture("texture", prefix("block/wood/chiseled_canopy_bookshelf_empty"))).addModel()
+						.nestedGroup().condition(HorizontalDirectionalBlock.FACING, direction).condition(pair1.getFirst(), false).end();
+			});
+		});
+
+		itemModels().getBuilder("chiseled_canopy_bookshelf").parent(models().orientable("chiseled_canopy_bookshelf_inventory", prefix("block/wood/chiseled_canopy_bookshelf_side"), prefix("block/wood/chiseled_canopy_bookshelf_empty"), prefix("block/wood/chiseled_canopy_bookshelf_top")));
 
 		getMultipartBuilder(TFBlocks.WROUGHT_IRON_FENCE.get())
 				.part().modelFile(models().getExistingFile(prefix("wrought_iron_fence_post"))).addModel().condition(WroughtIronFenceBlock.POST, WroughtIronFenceBlock.PostState.POST).end()

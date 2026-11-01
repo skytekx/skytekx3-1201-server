@@ -21,12 +21,14 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
 import twilightforest.client.renderer.TFWeatherRenderer;
 import twilightforest.entity.ai.control.NoClipMoveControl;
 import twilightforest.entity.ai.goal.UrGhastAttackGoal;
@@ -75,9 +77,9 @@ public class UrGhast extends BaseTFBoss {
 		this.moveControl = new NoClipMoveControl(this);
 	}
 
-	// the ghast trap resets our target while it pulls us in (as it does for Carminite Ghastguards)
+	// the ghast trap resets our target while it pulls us in, and its damage does not count towards switching tantrum phases
 	public void setInTrap() {
-		this.inTrapCounter = 10;
+		this.inTrapCounter = 20;
 	}
 
 	public static AttributeSupplier.Builder registerAttributes() {
@@ -149,9 +151,14 @@ public class UrGhast extends BaseTFBoss {
 		}
 	}
 
+	private boolean isReflectedFireball(DamageSource source) {
+		return source.getDirectEntity() instanceof LargeFireball && source.getEntity() instanceof Player;
+	}
+
+	// we are immune to fire, but a fireball a player knocked back at us still hurts
 	@Override
-	public boolean isInvulnerableTo(DamageSource src) {
-		return src.is(DamageTypes.IN_WALL) || src.is(DamageTypeTags.IS_FIRE) || super.isInvulnerableTo(src);
+	public boolean isInvulnerableTo(DamageSource source) {
+		return !this.isReflectedFireball(source) && (source.is(DamageTypes.IN_WALL) || source.is(DamageTypeTags.IS_FIRE) || super.isInvulnerableTo(source));
 	}
 
 	@Override
@@ -166,21 +173,13 @@ public class UrGhast extends BaseTFBoss {
 			damage /= 10;
 		}
 
-		float oldHealth = getHealth();
-		boolean attackSuccessful;
-
-		if ("fireball".equals(source.getMsgId()) && source.getEntity() instanceof Player) {
-			// a fireball reflected by a player: take it as thrown damage, since we are immune to fire damage.
-			// The player stays the causing entity so they get hurt_boss and kill credit.
-			attackSuccessful = super.hurt(this.damageSources().thrown(source.getDirectEntity(), source.getEntity()), damage);
-		} else {
-			attackSuccessful = super.hurt(source, damage);
-		}
-
+		float oldHealth = this.getHealth();
+		boolean hurt = super.hurt(source, damage);
 		float lastDamage = oldHealth - this.getHealth();
 
 		if (!this.level().isClientSide()) {
-			if (this.hurtTime == this.hurtDuration && !this.isDeadOrDying()) {
+			// damage taken while a ghast trap holds us does not count towards the next phase
+			if (this.hurtTime == this.hurtDuration && !this.isDeadOrDying() && this.inTrapCounter <= 0) {
 				this.damageUntilNextPhase -= lastDamage;
 
 				if (this.damageUntilNextPhase <= 0) {
@@ -189,7 +188,7 @@ public class UrGhast extends BaseTFBoss {
 			}
 		}
 
-		return attackSuccessful;
+		return hurt;
 	}
 
 	private void switchPhase() {
@@ -203,7 +202,7 @@ public class UrGhast extends BaseTFBoss {
 	}
 
 	public void resetDamageUntilNextPhase() {
-		damageUntilNextPhase = 18;
+		this.damageUntilNextPhase = 18;
 	}
 
 	private void startTantrum() {
@@ -216,8 +215,8 @@ public class UrGhast extends BaseTFBoss {
 				lightningbolt.setVisualOnly(true);
 				serverLevel.addFreshEntity(lightningbolt);
 			}
+			this.spawnGhastsAtTraps(serverLevel);
 		}
-		this.spawnGhastsAtTraps();
 	}
 
 	@Override
@@ -229,7 +228,7 @@ public class UrGhast extends BaseTFBoss {
 	/**
 	 * Spawn ghasts at two of the traps
 	 */
-	public void spawnGhastsAtTraps() {
+	public void spawnGhastsAtTraps(ServerLevel level) {
 		// spawn ghasts around two of the traps
 		List<BlockPos> ghastSpawns = new ArrayList<>(this.trapLocations);
 		Collections.shuffle(ghastSpawns);
@@ -238,14 +237,14 @@ public class UrGhast extends BaseTFBoss {
 
 		for (int i = 0; i < numSpawns; i++) {
 			BlockPos spawnCoord = ghastSpawns.get(i);
-			this.spawnMinionGhastsAt(spawnCoord.getX(), spawnCoord.getY(), spawnCoord.getZ());
+			this.spawnMinionGhastsAt(level, spawnCoord.getX(), spawnCoord.getY(), spawnCoord.getZ());
 		}
 	}
 
 	/**
 	 * Spawn up to 6 minion ghasts around the indicated area
 	 */
-	private void spawnMinionGhastsAt(int x, int y, int z) {
+	private void spawnMinionGhastsAt(ServerLevel level, int x, int y, int z) {
 		int tries = 24;
 		int spawns = 0;
 		int maxSpawns = 6;
@@ -254,23 +253,24 @@ public class UrGhast extends BaseTFBoss {
 		int rangeY = 8;
 
 		// lightning strike
-		LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, this.level());
+		LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
 		bolt.setPos(x, y + 4, z);
 		bolt.setVisualOnly(true);
-		this.level().addFreshEntity(bolt);
+		level.addFreshEntity(bolt);
 
 		for (int i = 0; i < tries; i++) {
-			CarminiteGhastling minion = TFEntities.CARMINITE_GHASTLING.get().create(this.level());
+			CarminiteGhastling minion = TFEntities.CARMINITE_GHASTLING.get().create(level);
 
 			double sx = x + ((this.getRandom().nextDouble() - this.getRandom().nextDouble()) * rangeXZ);
 			double sy = y + (this.getRandom().nextDouble() * rangeY);
 			double sz = z + ((this.getRandom().nextDouble() - this.getRandom().nextDouble()) * rangeXZ);
 
-			minion.moveTo(sx, sy, sz, this.level().getRandom().nextFloat() * 360.0F, 0.0F);
+			minion.moveTo(sx, sy, sz, level.getRandom().nextFloat() * 360.0F, 0.0F);
 			minion.makeBossMinion();
-
-			if (minion.checkSpawnRules(this.level(), MobSpawnType.MOB_SUMMONED)) {
-				this.level().addFreshEntity(minion);
+			// summoned minions go through finalizeSpawn and its Forge event like other spawned mobs
+			ForgeEventFactory.onFinalizeSpawn(minion, level, level.getCurrentDifficultyAt(minion.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
+			if (minion.checkSpawnRules(level, MobSpawnType.MOB_SUMMONED)) {
+				level.addFreshEntity(minion);
 				minion.spawnAnim();
 			}
 

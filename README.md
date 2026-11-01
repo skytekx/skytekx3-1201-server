@@ -100,8 +100,9 @@ symlink on that jar. A stock Arclight release brings back the crash at shutdown 
 
 ### Provide the mods
 
-Git does not hold `mods/`. Copy the folder from a running install as it is. It holds 236 jars, among
-them jars patched in place and BrassAmber BattleTowers, which exists nowhere else in the repo, see
+Git does not hold `mods/`. Copy the folder from a running install as it is. It holds 235 jars, among
+them jars patched in place, BrassAmber BattleTowers and Falling Meteors Reimagined, which exist nowhere
+else in the repo, see
 [Mod set](okf/modpack/mod-set.md#jars-outside-the-index).
 
 No script restores `mods/` from the pinned index yet. Do not use `tools/resolve_all.py` for it, because
@@ -112,7 +113,7 @@ it ignores the index and installs whatever is newest, including Radium, which cr
    index.
 2. Copy the jars from `local-mods/` into `mods/`.
 3. Run `python3 tools/patch_mods.py`.
-4. Add BrassAmber BattleTowers, which is in no pack.
+4. Add BrassAmber BattleTowers and Falling Meteors Reimagined, which are in no pack.
 
 The plugin jar `plugins/EssentialsX-2.22.0.jar` and its folder `plugins/Essentials/` are not in git
 either. Copy them along, or the server has no `/gm` and no other Essentials command.

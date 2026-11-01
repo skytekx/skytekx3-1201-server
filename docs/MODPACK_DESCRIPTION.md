@@ -41,6 +41,8 @@ The server list of the pack holds hex.skytekx.com. The server sits behind a Clou
 
 The server also runs Brass-Amber BattleTowers, which is not on Modrinth, and the server turns away a client without it. Download version 3.0.0-beta3.2.1 for Forge 1.20.1 from CurseForge and put the jar into the mods folder of your instance.
 
+The same goes for Falling Meteors Reimagined, a 1.20.1 fork of the old Falling Meteors. Download `meteors-2.5-forge.jar` from its CurseForge page (falling-meteors) and put it into the mods folder as well. Meteors only fall in the overworld, never on the sky islands.
+
 ## Credits
 
 SkyTekx is a modpack by ts4.party, the TeamSpeak for party, formerly known as ts3.party. Supported by netsnek.com.

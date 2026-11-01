@@ -99,7 +99,7 @@ of 3.0.7).
 | Required | Required | 153 | Content mods |
 | Optional | Optional | 25 | Nostalgic Tweaks, JEI, mezz_config and other tweaks and libraries |
 | Required | Unsupported | 16 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
-| Unsupported | Required | 12 | AI Improvements, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, Get It Together Drops, LootJS, Nether Portal Fix, Noisium, Repurposed Structures |
+| Unsupported | Required | 11 | AI Improvements, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures |
 | Required | Optional | 6 | CreativeCore, EMI, Enchantment Descriptions, GeckoLib, Xaero's Minimap and World Map |
 | Optional | Required | 5 | AlmostUnified, Create, FallingTree, Kleeslabs, Special Mobs |
 
@@ -140,8 +140,8 @@ neither the index nor `local-mods/`, so a fresh clone and the packs up to 3.0.5 
 | Jar `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm Spellbooks, built 2026-06-29 06:46 from the fork skytekx/Cataclysm_Spellbooks, commit 36d1cee | MIT | The fork has no release. Modrinth has a different upstream file that does not carry the fix | In `local-mods/` (507a8f2) |
 
 The owner ruled on 2026-06-29 06:25 to patch Spellbooks rather than Cataclysm, because the upstream
-Spellbooks crashed the client against stock Cataclysm 3.31. BattleTowers is the last jar outside the
-pack, and a client needs it. In the install test of 2026-10-31 a fresh install of 3.0.6 booted, but
+Spellbooks crashed the client against stock Cataclysm 3.31. BattleTowers was then the last jar outside
+the pack, and a client needs it. In the install test of 2026-10-31 a fresh install of 3.0.6 booted, but
 the join failed with "Your client is missing the following mods" and named Brass-Amber BattleTowers.
 All 177 registry entries the client lacked belong to it. Bundling it would need a redistribution grant.
 On 2026-10-31 at 21:48 the owner decided to keep it on the server and to have players add the jar by
@@ -152,6 +152,19 @@ fd9fc82fbdca5364992ec1b6518e3eb8d5bdc8ab), identical to the jar in `mods/`. At a
 asked for the jar to send it to players over Telegram, and it was copied for them.
 BattleTowers is also tied to an open ruling, see
 [Skylands worldgen](../content/skylands-worldgen.md#open-rulings).
+
+Since 2026-11-01 06:10 the server also runs Falling Meteors Reimagined 2.5 by menoXD, a Forge 1.20.1
+fork of AlexDGr8r's Falling Meteors from Hexxit. The owner asked for it at 05:52 together with the
+removal of Get It Together Drops, on the server and on both MacBooks, with meteors only in the
+overworld. skytekx-compat 2.1.3 enforces that, see
+[SkyTekx Compat](../content/compat-mod.md#falling-meteors-only-in-the-overworld). The jar
+`meteors-2.5-forge.jar` (CurseForge project 1489468, file 8137833, uploaded 2026-05-24, 1,173,120
+bytes, SHA-1 a9d3117be3bc39120ee93b08352a9e1c8f54efd1) declares `GNU LGPL v2.1 or later` in its
+`mods.toml`, while the CurseForge project field says All Rights Reserved. It is not on Modrinth and
+not in the pack. Like BattleTowers it sits only in the server's `mods/`, and players add it by hand.
+A client without it cannot join, because it adds blocks, items and entities. Its code has no
+mixins, no network or process calls and no class loading, and it touches the world only through
+Forge events, its entities and its saved data.
 
 ## Parked and removed mods
 

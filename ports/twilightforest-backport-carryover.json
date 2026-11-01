@@ -182,6 +182,23 @@
      "translation-refresh: translations for keys that later backported features add are not merged yet. Re-run ports/twilightforest/tools/merge_upstream_lang.py <upstream clone> after those features add their en_us keys"
     ]
    }
+  ],
+  "3": [
+   {
+    "bundle": "structure-debug-commands+landmark-wrapped-structure-types+avoid-landmark-grid-placement",
+    "ids": [
+     "structure-debug-commands",
+     "landmark-wrapped-structure-types",
+     "avoid-landmark-grid-placement"
+    ],
+    "deferred": [
+     "hollow-tree-structure, fallen-trunk-structure, camp-structure, giant-house-split: the 4.8 codec reshape was NOT ported. LandmarkStructure and ProgressionStructure keep 4.3's flat codecs, so hand-convert every 4.8 worldgen/structure/*.json: flatten decoration_clearance{} into top-level chunk_clearance_radius (int 1-8), allow_biome_surface_decorations, allow_biome_underground_decorations and adjust_structure_elevation, and drop allow_biome_vegetation; flatten hint_creature{} into top-level hint_item (1.20.1 ItemStack with id/Count/tag) and hint_mob; flatten controlled_spawns{}; drop structure_icon. Only the new twilightforest:landmark and twilightforest:progression wrapper types take the nested 4.8 blocks. The 4.8 structure_set JSONs for camp, fallen_trunk and hollow_tree that use twilightforest:avoid_landmark_grid copy over unchanged.",
+     "progression-protection-overhaul / lich-tower-revamp (whichever adds ProgressionPiece): in twilightforest/command/DisplayPiecesCommand.java replace `piece instanceof TFStructureComponent shieldablePiece && shieldablePiece.isComponentProtected()` with `piece instanceof ProgressionPiece shieldablePiece && shieldablePiece.isComponentProtected()` (4.8 8eb565e12), so TwilightJigsawPiece pieces are coloured lime.",
+     "40a7f57e3 (LandmarkStructure.findValidGenerationPoint override using TFBiomeProvider.getMainBiome at the grid-tile centre) is not on 4.3; LandmarkWrappedStructure and ProgressionWrappedStructure inherit vanilla Structure.findValidGenerationPoint until it is ported.",
+     "magic-map-improvements (B07, makes ProgressionStructure extend ConquerableStructure): keep ProgressionWrappedStructure.generate() as an override and do not make ConquerableStructure.generate final. 4.3's ConquerableStructure.generate keeps the LegacyLandmarkPlacements.chunkHasLandmarkCenter gate, which would silently reject random_spread-placed wrappers in the TF dimension. The wrapper's explicit `implements CustomStructureData` then becomes redundant and may be dropped.",
+     "wrapper JSON blocks (hint_creature.hint_item, decoration_clearance, avoid_additional_structures) decode with 1.20.1's lenient optionalFieldOf: a 4.8-format hint_item (lowercase count or components) or any other parse error inside an optional block silently reads as absent instead of failing the datapack like 4.8 (DFU 8 strict optionals). Write hint_item in the 1.20.1 ItemStack format (id/Count/tag)."
+    ]
+   }
   ]
  }
 }

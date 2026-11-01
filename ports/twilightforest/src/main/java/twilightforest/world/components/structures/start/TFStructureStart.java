@@ -7,6 +7,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import twilightforest.util.LandmarkUtil;
 
 public class TFStructureStart extends StructureStart {
 	private boolean conquered = false;
@@ -33,6 +34,7 @@ public class TFStructureStart extends StructureStart {
 		if (this.conquered != flag) {
 			ChunkPos chunkPos = this.getChunkPos();
 			level.getChunk(chunkPos.x, chunkPos.z).setUnsaved(true);
+			LandmarkUtil.forgetConquered(chunkPos);
 		}
 
 		this.conquered = flag;

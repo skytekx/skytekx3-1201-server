@@ -16,6 +16,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.material.MapColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,16 @@ public final class Codecs {
     public static final Codec<Direction> ONLY_HORIZONTAL = Direction.CODEC.comapFlatMap(direction -> direction.getAxis() != Direction.Axis.Y ? DataResult.success(direction) : DataResult.error(() -> "Horizontal direction only!", direction), Function.identity());
     public static final Codec<Float> FLOAT_STRING = Codec.STRING.comapFlatMap(Codecs::parseString2Float, f -> Float.toString(f));
     public static final Codec<Character> CHARACTER_CODEC = new CharacterCodec();
+
+    /**
+     * TF 4.8's MapColor codec, {@code {"id": <map colour id>, "color": <rgb>}}. 1.20.1 cannot create a MapColor without
+     * overwriting the vanilla colour table, and a map pixel only stores the id anyway, so the id picks the vanilla MapColor
+     * and {@code color} is written for reference but not used when reading.
+     */
+    public static final Codec<MapColor> COLOR_CODEC = RecordCodecBuilder.<Pair<Integer, Integer>>create(instance -> instance.group(
+            Codec.INT.fieldOf("id").forGetter(Pair::getFirst),
+            Codec.INT.fieldOf("color").forGetter(Pair::getSecond)
+    ).apply(instance, Pair::of)).comapFlatMap(Codecs::validateMapColor, color -> Pair.of(color.id, color.col));
 
     public static final Codec<Climate.ParameterList<Holder<Biome>>> CLIMATE_SYSTEM = ExtraCodecs.nonEmptyList(RecordCodecBuilder.<Pair<Climate.ParameterPoint, Holder<Biome>>>create((instance) -> instance.group(Climate.ParameterPoint.CODEC.fieldOf("parameters").forGetter(Pair::getFirst), Biome.CODEC.fieldOf("biome").forGetter(Pair::getSecond)).apply(instance, Pair::of)).listOf()).xmap(Climate.ParameterList::new, Climate.ParameterList::values);
 
@@ -49,6 +60,11 @@ public final class Codecs {
         } catch (Throwable e) {
             return DataResult.error(e::getMessage);
         }
+    }
+
+    private static DataResult<MapColor> validateMapColor(Pair<Integer, Integer> idAndColor) {
+        int id = idAndColor.getFirst();
+        return id > 0 && id <= 63 && MapColor.byId(id) != MapColor.NONE ? DataResult.success(MapColor.byId(id)) : DataResult.error(() -> "Provided MapColor is not a valid MapColor: " + id);
     }
 
     public static <E> DataResult<Pair<E, E>> arrayToPair(List<E> list) {

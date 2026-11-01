@@ -39,8 +39,10 @@ import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.ai.goal.QuestRamEatWoolGoal;
 import twilightforest.entity.passive.quest.ram.QuestingRamCurrentContext;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
+import twilightforest.util.LandmarkUtil;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -142,6 +144,9 @@ public class QuestRam extends Animal implements EnforcedHomePoint {
 		for (ServerPlayer player : this.level().getEntitiesOfClass(ServerPlayer.class, getBoundingBox().inflate(16.0D, 16.0D, 16.0D))) {
 			TFAdvancements.QUEST_RAM_COMPLETED.trigger(player);
 		}
+
+		// The reward is handed out only once, so the grove counts as conquered from here on (shows on the Magic Map)
+		LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.QUEST_GROVE, true);
 	}
 
 	@Override

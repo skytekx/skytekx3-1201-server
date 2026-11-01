@@ -14,13 +14,13 @@ import net.minecraft.world.level.levelgen.structure.*;
 import twilightforest.data.tags.BiomeTagGenerator;
 import twilightforest.init.TFStructureTypes;
 import twilightforest.world.components.structures.QuestGrove;
-import twilightforest.world.components.structures.util.LandmarkStructure;
+import twilightforest.world.components.structures.util.ConquerableStructure;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class QuestGroveStructure extends LandmarkStructure {
+public class QuestGroveStructure extends ConquerableStructure {
     public static final Codec<QuestGroveStructure> CODEC = RecordCodecBuilder.create(instance -> landmarkCodec(instance).apply(instance, QuestGroveStructure::new));
 
     public QuestGroveStructure(DecorationConfig decorationConfig, StructureSettings structureSettings) {

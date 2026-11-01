@@ -1025,6 +1025,7 @@
   "item.twilightforest.mangrove_boat": "Mangrove Boat",
   "item.twilightforest.mangrove_chest_boat": "Mangrove Chest Boat",
   "item.twilightforest.maze_map": "Blank Maze Map",
+  "item.twilightforest.maze_map.y_level": "Y level %s",
   "item.twilightforest.maze_map_focus": "Maze Map Focus",
   "item.twilightforest.maze_slime_spawn_egg": "Maze Slime Spawn Egg",
   "item.twilightforest.maze_wafer": "Maze Wafer",

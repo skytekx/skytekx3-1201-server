@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 // Rewraps vanilla SPacketMaps to properly expose our custom decorations
+// featureData is TFMagicMapData#serializeFeatures: 3 bytes per landmark (feature id with the conquered flag in its top bit, x, z)
 public class MagicMapPacket {
 	private final byte[] featureData;
 	private final ClientboundMapItemDataPacket inner;
@@ -57,10 +58,13 @@ public class MagicMapPacket {
 
 						// Cheat and put tfDecorations into main collection so they are called by renderer
 						// However, ensure they come before vanilla's markers, so player markers go above feature markers.
+						// Drop the previous TF markers first: a packet without a vanilla decoration update keeps the old collection,
+						// and a landmark marker that changed (e.g. was conquered) would otherwise stay on the map twice.
 						Map<String, MapDecoration> saveVanilla = new LinkedHashMap<>(mapdata.decorations);
+						saveVanilla.values().removeIf(decoration -> decoration instanceof TFMagicMapData.TFMapDecoration);
 						mapdata.decorations.clear();
 
-						for (TFMagicMapData.TFMapDecoration tfDecor : mapdata.tfDecorations) {
+						for (TFMagicMapData.TFMapDecoration tfDecor : mapdata.tfDecorations.values()) {
 							mapdata.decorations.put(tfDecor.toString(), tfDecor);
 						}
 

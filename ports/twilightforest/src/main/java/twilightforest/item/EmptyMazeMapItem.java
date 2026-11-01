@@ -26,6 +26,8 @@ public class EmptyMazeMapItem extends ComplexItem {
 		if (!player.getAbilities().instabuild) {
 			itemstack1.shrink(1);
 		}
+		player.awardStat(Stats.ITEM_USED.get(this));
+		player.level().playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
 
 		if (itemstack1.isEmpty()) {
 			return InteractionResultHolder.success(itemstack);
@@ -34,8 +36,6 @@ public class EmptyMazeMapItem extends ComplexItem {
 				player.drop(itemstack, false);
 			}
 
-			player.awardStat(Stats.ITEM_USED.get(this));
-			player.level().playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
 			return InteractionResultHolder.success(itemstack1);
 		}
 	}

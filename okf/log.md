@@ -410,6 +410,17 @@ logs stay on the Mac and are not in the repo.
   and three about the mod's entries that the world still mapped. The owner's client runs with the jar
   disabled since 01:42, and at the owner's request the jar was deleted on the second MacBook at
   01:45. See [Mod set](modpack/mod-set.md#history).
+- skytekx-compat 2.1.1 (built at 01:47, source commits f6c0c41 to 630fca4) fixes three findings of a
+  review of 2.1.0. A swamp hut on an island rim could drop its stilts into the void, the sky stone of a
+  meteorite reaches 8 blocks below its box, and `/place structure` skipped every check. A fifth test
+  world from 01:53 to 01:57 held the same 135 starts as the fourth and no block below Y 13. See
+  [SkyTekx Compat](content/compat-mod.md#history).
+- A review of 2.1.1 from 01:55 to 02:23 found two more gaps, and skytekx-compat 2.1.2 (source commits
+  7a1a308 to 26a493d of 02:31) closes them. A meteorite counts from 9 blocks below its center, since
+  AE2's decay pass copies its lowest sky stone one block down, and a swamp hut stilt over a column
+  without island ground under it is left out. A sixth test world from 02:41 to 02:45 matched the
+  fifth. A hut over carved stilt columns dropped 44 oak logs below Y 13 with 2.1.1 and none with
+  2.1.2. The server repo bundles 2.1.2 since 593e227. 2.1.1 never left the test server.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

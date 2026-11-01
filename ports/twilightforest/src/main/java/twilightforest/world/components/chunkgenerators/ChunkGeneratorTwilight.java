@@ -1,5 +1,7 @@
 package twilightforest.world.components.chunkgenerators;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -38,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import twilightforest.init.TFBiomes;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFLandmark;
+import twilightforest.init.TFStructures;
 import twilightforest.util.LegacyLandmarkPlacements;
 import twilightforest.util.Vec2i;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
@@ -45,7 +48,9 @@ import twilightforest.world.components.chunkgenerators.warp.*;
 import twilightforest.world.components.structures.TFStructureComponent;
 import twilightforest.world.components.structures.placements.BiomeForcedLandmarkPlacement;
 import twilightforest.world.components.structures.start.TFStructureStart;
+import twilightforest.world.components.structures.type.HedgeMazeStructure;
 import twilightforest.world.components.structures.type.HollowHillStructure;
+import twilightforest.world.components.structures.type.NagaCourtyardStructure;
 import twilightforest.world.components.structures.util.ControlledSpawns;
 
 import java.util.*;
@@ -76,6 +81,10 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	private final Optional<TFTerrainWarp> warper;
 
 	private static final BlockState[] EMPTY_COLUMN = new BlockState[0];
+
+	// Ground level of recently levelled Hedge Maze and Naga Courtyard arenas, keyed by landmark centre chunk.
+	// Every chunk of an arena needs the same value, and sampling it costs 16 base height lookups.
+	private final Cache<Long, Integer> arenaGroundLevels = CacheBuilder.newBuilder().maximumSize(64).build();
 
 	public ChunkGeneratorTwilight(ChunkGenerator delegate, Holder<NoiseGeneratorSettings> noiseGenSettings, boolean genDarkForestCanopy, Optional<Integer> darkForestCanopyHeight, Map<ResourceKey<Biome>, ImmutableSet<TFLandmark>> biomeLandmarkOverrides) {
 		super(delegate);
@@ -356,7 +365,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 
 	@Override
 	public void buildSurface(WorldGenRegion world, StructureManager manager, RandomState random, ChunkAccess chunk) {
-		this.deformTerrainForFeature(world, chunk);
+		this.deformTerrainForFeature(world, random, chunk);
 
 		super.buildSurface(world, manager, random, chunk);
 
@@ -408,7 +417,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		//do we do anything with this? we need to implement it for some reason
 	}
 
-	protected final void deformTerrainForFeature(WorldGenRegion primer, ChunkAccess chunk) {
+	protected final void deformTerrainForFeature(WorldGenRegion primer, RandomState random, ChunkAccess chunk) {
 		Vec2i featureRelativePos = new Vec2i();
 		TFLandmark nearFeature = LegacyLandmarkPlacements.getNearestLandmark(primer.getCenter().x, primer.getCenter().z, primer, featureRelativePos);
 
@@ -435,11 +444,13 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 				}
 			}
 		} else if (nearFeature == TFLandmark.HEDGE_MAZE || nearFeature == TFLandmark.NAGA_COURTYARD || nearFeature == TFLandmark.QUEST_GROVE) {
+			int arenaGroundLevel = this.getArenaGroundLevel(primer, random, nearFeature, primer.getCenter().getMinBlockX() + relativeFeatureX, primer.getCenter().getMinBlockZ() + relativeFeatureZ);
+
 			for (int xInChunk = 0; xInChunk < 16; xInChunk++) {
 				for (int zInChunk = 0; zInChunk < 16; zInChunk++) {
 					int featureDX = xInChunk - relativeFeatureX;
 					int featureDZ = zInChunk - relativeFeatureZ;
-					flattenTerrainForFeature(primer, nearFeature.size, xInChunk, zInChunk, featureDX, this.getSeaLevel(), featureDZ);
+					flattenTerrainForFeature(primer, nearFeature.size, xInChunk, zInChunk, featureDX, arenaGroundLevel, featureDZ);
 				}
 			}
 		} else if (nearFeature == TFLandmark.YETI_CAVE) {
@@ -459,10 +470,39 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		// done!
 	}
 
-	private static void flattenTerrainForFeature(WorldGenRegion primer, int size, int x, int z, int dx, int dy, int dz) {
+	/**
+	 * First air level of the ground levelled for a Hedge Maze, Naga Courtyard or Quest Grove centred at (centerX, centerZ).
+	 * Since TF 4.8 the Hedge Maze and the Naga Courtyard follow the terrain, so their structure decides the height. It is the same
+	 * deterministic sample of the generator's base height their findGenerationPoint places them at, which keeps the levelled ground
+	 * and the structure in step even though they are computed at different chunk statuses.
+	 */
+	private int getArenaGroundLevel(WorldGenRegion primer, RandomState random, TFLandmark landmark, int centerX, int centerZ) {
+		if (landmark != TFLandmark.HEDGE_MAZE && landmark != TFLandmark.NAGA_COURTYARD)
+			return this.getSeaLevel() + 5;
+
+		long centerChunk = ChunkPos.asLong(SectionPos.blockToSectionCoord(centerX), SectionPos.blockToSectionCoord(centerZ));
+		Integer cached = this.arenaGroundLevels.getIfPresent(centerChunk);
+		if (cached != null)
+			return cached;
+
+		Structure structure = primer.registryAccess().registryOrThrow(Registries.STRUCTURE).get(landmark == TFLandmark.HEDGE_MAZE ? TFStructures.HEDGE_MAZE : TFStructures.NAGA_COURTYARD);
+		int groundLevel;
+		if (structure instanceof HedgeMazeStructure hedgeMaze) {
+			groundLevel = hedgeMaze.getArenaGroundLevel(this, primer, random, centerX, centerZ);
+		} else if (structure instanceof NagaCourtyardStructure courtyard) {
+			groundLevel = courtyard.getArenaGroundLevel(this, primer, random, centerX, centerZ);
+		} else {
+			groundLevel = this.getSeaLevel() + 5; // Structure missing or replaced by a datapack
+		}
+
+		this.arenaGroundLevels.put(centerChunk, groundLevel);
+		return groundLevel;
+	}
+
+	private static void flattenTerrainForFeature(WorldGenRegion primer, int size, int x, int z, int dx, int arenaGroundLevel, int dz) {
 
 		float squishFactor = 0f;
-		int mazeHeight = dy + 5;
+		int mazeHeight = arenaGroundLevel;
 		final int FEATURE_BOUNDARY = (size * 2 + 1) * 8 - 8;
 
 		if (dx <= -FEATURE_BOUNDARY) {

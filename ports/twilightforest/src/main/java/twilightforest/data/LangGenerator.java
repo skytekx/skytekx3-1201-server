@@ -170,6 +170,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addMessage("wip0", "This feature is a work in progress and may have bugs or unintended effects that may damage your world.");
 		this.addMessage("wip1", "Use with caution.");
 
+		this.addBlock(TFBlocks.MASON_JAR, "Mason Jar");
 		this.addBlock(TFBlocks.CICADA, "Cicada");
 		this.addBlock(TFBlocks.CICADA_JAR, "Cicada Jar");
 		this.addBlock(TFBlocks.FIREFLY, "Firefly");
@@ -1034,6 +1035,10 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.GHAST_TRAP_ON, "Ghast Trap buzzes");
 		this.addSubtitle(TFSounds.GHAST_TRAP_SPINDOWN, "Ghast Trap shuts off");
 		this.addSubtitle(TFSounds.GHAST_TRAP_WARMUP, "Ghast Trap warms up");
+		this.addSubtitle(TFSounds.JAR_INSERT, "Item inserted into jar");
+		this.addSubtitle(TFSounds.JAR_REMOVE, "Item removed from jar");
+		this.addSubtitle(TFSounds.JAR_LID_SWAP, "Changed jar lid");
+		this.addSubtitle(TFSounds.JAR_WIGGLE, "Jar wiggles");
 		this.addSubtitle(TFSounds.JET_ACTIVE, "Fire Jet flares");
 		this.addSubtitle(TFSounds.JET_POP, "Fire Jet pops");
 		this.addSubtitle(TFSounds.JET_START, "Fire Jet activates");

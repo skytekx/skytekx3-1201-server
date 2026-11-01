@@ -7,6 +7,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 
 public abstract class TFSoundProvider extends SoundDefinitionsProvider {
@@ -91,6 +92,14 @@ public abstract class TFSoundProvider extends SoundDefinitionsProvider {
 			definition.with(SoundDefinition.Sound.sound(new ResourceLocation(TwilightForestMod.ID, baseSoundDirectory + (numberOfSounds > 1 ? i : "")), SoundDefinition.SoundType.SOUND));
 		}
 		this.add(event, definition.subtitle("subtitles.block.generic.footsteps"));
+	}
+
+	public void makeNewGenericSound(RegistryObject<SoundEvent> event, String baseSoundDirectory, int numberOfSounds, @Nullable String type) {
+		SoundDefinition definition = SoundDefinition.definition();
+		for (int i = 1; i <= numberOfSounds; i++) {
+			definition.with(SoundDefinition.Sound.sound(new ResourceLocation(TwilightForestMod.ID, baseSoundDirectory + (numberOfSounds > 1 ? i : "")), SoundDefinition.SoundType.SOUND));
+		}
+		this.add(event, type != null ? definition.subtitle("subtitles.block.generic." + type) : definition);
 	}
 
 	public void makeMusicDisc(RegistryObject<SoundEvent> event, String discName) {

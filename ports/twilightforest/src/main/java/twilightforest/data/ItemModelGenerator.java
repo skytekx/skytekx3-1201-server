@@ -20,6 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
+import twilightforest.init.TFItemDisplayContexts;
 import twilightforest.init.TFItems;
 import twilightforest.item.Experiment115Item;
 
@@ -200,9 +201,9 @@ public class ItemModelGenerator extends ItemModelProvider {
 		toBlockModel(TFBlocks.MINOSHROOM_BOSS_SPAWNER.get(), prefix("block/boss_spawner"));
 		toBlockModel(TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get(), prefix("block/boss_spawner"));
 		toBlockModel(TFBlocks.FINAL_BOSS_BOSS_SPAWNER.get(), prefix("block/boss_spawner"));
-		toBlock(TFBlocks.FIREFLY_JAR.get());
+		toBlockModel(TFBlocks.FIREFLY_JAR.get(), prefix("item/mason_jar"));
 		toBlock(TFBlocks.FIREFLY_SPAWNER.get());
-		toBlock(TFBlocks.CICADA_JAR.get());
+		toBlockModel(TFBlocks.CICADA_JAR.get(), prefix("item/mason_jar"));
 		generated(TFBlocks.MOSS_PATCH.getId().getPath(), prefix("block/patch/moss"));
 		generated(TFBlocks.MAYAPPLE.getId().getPath(), prefix("block/mayapple"));
 		generated(TFBlocks.CLOVER_PATCH.getId().getPath(), prefix("block/patch/clover"));
@@ -456,11 +457,14 @@ public class ItemModelGenerator extends ItemModelProvider {
 		withExistingParent(TFItems.NAGA_TROPHY.getId().toString(), prefix("item/template_trophy"));
 		withExistingParent(TFItems.LICH_TROPHY.getId().toString(), prefix("item/template_trophy"));
 		withExistingParent(TFItems.MINOSHROOM_TROPHY.getId().toString(), prefix("item/template_trophy"));
-		withExistingParent(TFItems.HYDRA_TROPHY.getId().toString(), prefix("item/template_trophy"));
-		withExistingParent(TFItems.KNIGHT_PHANTOM_TROPHY.getId().toString(), prefix("item/template_trophy"));
+		withExistingParent(TFItems.HYDRA_TROPHY.getId().toString(), prefix("item/template_trophy")).transforms()
+				.transform(TFItemDisplayContexts.JARRED).translation(0, 0, 1).rotation(0, 180, 0).end().end();
+		withExistingParent(TFItems.KNIGHT_PHANTOM_TROPHY.getId().toString(), prefix("item/template_trophy")).transforms()
+				.transform(TFItemDisplayContexts.JARRED).scale(0.85F).rotation(0, 180, 0).end().end();
 		//ur-ghast and alpha yeti need special transforms
 		withExistingParent(TFItems.SNOW_QUEEN_TROPHY.getId().toString(), prefix("item/template_trophy"));
-		withExistingParent(TFItems.QUEST_RAM_TROPHY.getId().toString(), prefix("item/template_trophy"));
+		withExistingParent(TFItems.QUEST_RAM_TROPHY.getId().toString(), prefix("item/template_trophy")).transforms()
+				.transform(TFItemDisplayContexts.JARRED).scale(0.85F).rotation(0, 180, 0).end().end();
 		withExistingParent(TFItems.MYSTIC_CROWN.getId().toString(), prefix("item/template_trophy"));
 
 		withExistingParent(TFItems.CREEPER_SKULL_CANDLE.getId().toString(), prefix("item/template_skull_candle"));

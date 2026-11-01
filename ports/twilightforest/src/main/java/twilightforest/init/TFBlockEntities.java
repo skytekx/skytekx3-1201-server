@@ -136,6 +136,12 @@ public class TFBlockEntities {
 					TFBlocks.TIME_DRYING_RACK.get(), TFBlocks.TRANSFORMATION_DRYING_RACK.get(),
 					TFBlocks.MINING_DRYING_RACK.get(), TFBlocks.SORTING_DRYING_RACK.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<JarBlockEntity>> JAR = BLOCK_ENTITIES.register("jar", () ->
+			BlockEntityType.Builder.of(JarBlockEntity::new, TFBlocks.FIREFLY_JAR.get(), TFBlocks.CICADA_JAR.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<MasonJarBlockEntity>> MASON_JAR = BLOCK_ENTITIES.register("mason_jar", () ->
+			BlockEntityType.Builder.of(MasonJarBlockEntity::new, TFBlocks.MASON_JAR.get()).build(null));
+
 	@OnlyIn(Dist.CLIENT)
 	public static void registerTileEntityRenders() {
 		// tile entities
@@ -153,5 +159,7 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(REACTOR_DEBRIS.get(), ReactorDebrisRenderer::new);
 		BlockEntityRenderers.register(RED_THREAD.get(), RedThreadRenderer::new);
 		BlockEntityRenderers.register(DRYING_RACK.get(), DryingRackRenderer::new);
+		BlockEntityRenderers.register(JAR.get(), JarRenderer::new);
+		BlockEntityRenderers.register(MASON_JAR.get(), JarRenderer.MasonJarRenderer::new);
 	}
 }

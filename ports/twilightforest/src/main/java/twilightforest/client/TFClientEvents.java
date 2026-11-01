@@ -64,6 +64,7 @@ import twilightforest.client.model.item.TrollsteinnModel;
 import twilightforest.client.renderer.TFSkyRenderer;
 import twilightforest.client.renderer.entity.MagicPaintingRenderer;
 import twilightforest.client.renderer.entity.ShieldLayer;
+import twilightforest.client.renderer.tileentity.JarRenderer;
 import twilightforest.client.renderer.tooltip.PotionFlaskTooltipComponent;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.data.tags.ItemTagGenerator;
@@ -130,6 +131,19 @@ public class TFClientEvents {
 			event.register(TwilightForestMod.prefix("block/casket_obsidian"));
 			event.register(TwilightForestMod.prefix("block/casket_stone"));
 			event.register(TwilightForestMod.prefix("block/casket_basalt"));
+
+			for (JarRenderer.LidResource lid : JarRenderer.LID_LOCATION_LIST.get()) {
+				event.register(lid.modelLocation());
+			}
+		}
+
+		@SubscribeEvent
+		public static void cacheJarLids(ModelEvent.BakingCompleted event) {
+			JarRenderer.LIDS.clear();
+			for (JarRenderer.LidResource lid : JarRenderer.LID_LOCATION_LIST.get()) {
+				BakedModel model = event.getModels().get(lid.modelLocation());
+				if (model != null) JarRenderer.LIDS.put(lid.lid(), model);
+			}
 		}
 
 		@SubscribeEvent

@@ -17,7 +17,6 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -42,8 +41,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import twilightforest.advancements.TFAdvancements;
+import twilightforest.block.entity.JarBlockEntity;
+import twilightforest.block.entity.MasonJarBlockEntity;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStats;
 
@@ -136,15 +138,18 @@ public abstract class CritterBlock extends BaseEntityBlock implements SimpleWate
 	@Override
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (stack.getItem() == Items.GLASS_BOTTLE) {
+		// An empty Mason Jar catches the bug, keeping the jar's lid
+		if (stack.is(TFItems.MASON_JAR.get()) && MasonJarBlockEntity.getContents(stack).isEmpty()) {
 			if (this == TFBlocks.FIREFLY.get()) {
-				if (!player.isCreative()) stack.shrink(1);
-				player.getInventory().add(new ItemStack(TFBlocks.FIREFLY_JAR.get()));
+				ItemStack newStack = JarBlockEntity.setLid(new ItemStack(TFBlocks.FIREFLY_JAR.get()), JarBlockEntity.getLid(stack));
+				if (!player.getAbilities().instabuild) stack.shrink(1);
+				if (!player.getInventory().add(newStack)) player.drop(newStack, false);
 				level.setBlockAndUpdate(pos, state.getValue(WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
 				return InteractionResult.sidedSuccess(level.isClientSide());
 			} else if (this == TFBlocks.CICADA.get()) {
-				if (!player.isCreative()) stack.shrink(1);
-				player.getInventory().add(new ItemStack(TFBlocks.CICADA_JAR.get()));
+				ItemStack newStack = JarBlockEntity.setLid(new ItemStack(TFBlocks.CICADA_JAR.get()), JarBlockEntity.getLid(stack));
+				if (!player.getAbilities().instabuild) stack.shrink(1);
+				if (!player.getInventory().add(newStack)) player.drop(newStack, false);
 				if (level.isClientSide())
 					Minecraft.getInstance().getSoundManager().stop(TFSounds.CICADA.get().getLocation(), SoundSource.NEUTRAL);
 				level.setBlockAndUpdate(pos, state.getValue(WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());

@@ -57,6 +57,15 @@ evidence and the page with the details. The rulings behind the first section are
 - Packs 3.0.6 and 3.0.7 still hold Placeable Items, which the server dropped on 2026-11-01 (787cb1f).
   A client with the mod is refused at login, so every player disables it by hand until a pack 3.0.8
   without it goes up. See [Mod set](modpack/mod-set.md#history).
+- Falling Meteors Reimagined 2.5 runs on the server since 2026-11-01 06:11 and is in no pack. A client
+  without it cannot join, so every player adds the jar by hand, as with BattleTowers. Its `mods.toml`
+  declares LGPL 2.1 or later and its CurseForge project All Rights Reserved, so whether a pack 3.0.8
+  bundles it is the owner's choice. See [Mod set](modpack/mod-set.md#jars-outside-the-index).
+- The ruling of 2026-11-01 05:52 keeps meteors off the sky islands, but the mod's Alien Creepers spawn
+  through `data/meteors/forge/biome_modifier/add_alien_creeper_spawns.json` in every biome of
+  `#minecraft:is_overworld`, and that tag holds the 14 island biomes of the Skylands. Keep them there,
+  or override the modifier in a datapack so they spawn only in the main dimension. See
+  [SkyTekx Compat](content/compat-mod.md#falling-meteors-only-in-the-overworld).
 - AsgardShieldReloaded 0.2 crashed the server twice when a creeper exploded next to a player
   (2026-06-27 20:43 and 21:16). Remove it, patch it or accept the risk. See
   [Combat](content/combat.md#known-crash-asgard-shield-reloaded).
@@ -138,6 +147,13 @@ evidence and the page with the details. The rulings behind the first section are
   first boot on the Mac, and six are also among the drifted files of the item above. Review the Mac's
   versions and commit them, or make the sync skip configs. See
   [Mac mini](server/macos.md#deploy-and-update).
+- The owner reported on 2026-11-01 at 04:25 that dropped items often need several passes to be picked
+  up. Two suspects are gone since 06:11. Infernal Mobs' queries no longer park the network thread, and
+  dropped items merge within 0.5 blocks, no longer within the radius of 2 of Get It Together Drops. A
+  merge still hands the freshest pickup delay to the pile. Whether the reports stop is open, and the
+  time and place of a new case would narrow it down. See
+  [SkyTekx Compat](content/compat-mod.md#infernal-mobs-queries) and
+  [Arclight](server/arclight.md#configuration-files).
 
 ## Not verified
 

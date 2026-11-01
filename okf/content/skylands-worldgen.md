@@ -145,7 +145,7 @@ void lands at Y 0 by `WORLD_SURFACE_WG`, where the gradient makes the biome `sky
 column, so it is rejected even next to an island. The biome check cannot stop a structure that starts
 on an island and reaches past its edge. Its jigsaw children and `terrain_matching` pieces over the
 void follow the heightmap down to Y 0, and AE2 sinks a meteorite toward the lowest column nearby.
-Since 2026-11-01 skytekx-compat 2.1.0 stops all of these, see [the void floor](#the-void-floor).
+Since 2026-11-01 skytekx-compat stops all of these, see [the void floor](#the-void-floor).
 
 The only tags that list `skytekx3:sky_void` are these three, and they only hold structures with a fixed
 start height in the air:
@@ -431,6 +431,20 @@ cancelled when its first piece reaches below Y 13 or hangs over a void column, a
 the void lies within 15 blocks of its chunk. Structures whose biomes include `sky_void` are left
 alone: the floaters and the Keep Kayra and Mechanical Nest of When Dungeons Arise.
 
+Version 2.1.1 closed three gaps that the review of 2.1.0 found. A swamp hut, desert pyramid or jungle
+temple is also cancelled when any column under its box is void. The swamp hut sinks to the mean
+height of its footprint and the desert pyramid to its lowest column, which counts a void column as
+Y 0, and the swamp hut fills its stilts down to the ground. A meteorite is also cancelled when its sky
+stone, which reaches 8 blocks below its center, would reach below Y 13. The exemption for `sky_void`
+reads the structure's own biomes instead of the biome test its caller passes, so `/place structure`
+gets the same checks as the worldgen.
+
+Version 2.1.2 closes the two gaps that a review of 2.1.1 found. AE2's decay pass copies the lowest sky
+stone one block further down, so a meteorite now counts from 9 blocks below its center. The start
+check only sees the noise terrain, so a stilt over a column that is empty under the hut, below an
+overhang or where a carver cut the island, still reached Y 2. A column that a structure piece fills
+downward is now left out when the fill would not meet island ground at Y 13 or higher.
+
 The mod was tested on a throwaway copy of the server on the build machine, with the production seed
 and Chunky pregens around the spawn. The counts include the starts in chunks at the edge that are not
 full yet.
@@ -441,6 +455,8 @@ full yet.
 | 2 | meteorite rule, gate 0.5 | 16,129 | 123 | 16 | 0 |
 | 3 | gate 0.8 | 16,129 | 126 | 16 | 0 |
 | 4 | floaters exempt (db56da3), gate 0.8 | 16,129 | 135 | 25 | 0 |
+| 5 | 2.1.1 (630fca4), gate 0.8 | 16,129 | 135 | 25 | 0 |
+| 6 | 2.1.2 (26a493d), gate 0.8 | 16,129 | 135 | 25 | 0 |
 
 Test 3 held one Keep Kayra and no Mechanical Nest. The world of 23:13 held 13 and 12 in 82,948 full
 chunks, which makes about 2.5 and 2.3 per 16,129. The start check had also cancelled floaters whose
@@ -448,6 +464,29 @@ center hung over the void, so commit db56da3 of the mod exempts them. Test 4 hel
 Mechanical Nest. Below Y 24 its float scan found 18 bodies that hang from islands (island bottoms and
 amethyst geodes) and 5 specks of one or two blocks (clay, bone block, tin ore), but no part of a
 structure.
+
+Test 5 ran version 2.1.1 on the same seed and radius at 01:53 on 2026-11-01. Its starts match test 4
+kind by kind, with 3 Keep Kayra, 1 Mechanical Nest and the one meteorite at Y 71, so the new rules
+cancelled no start of the natural generation there. Then `/place structure` was tried over RCON in
+the 16 by 16 chunks around chunk 19, 24 (blocks 304, 384), which sorted into 73 interior, 31 rim and
+112 void chunks by 9 probe columns each. A swamp hut went into all 10 interior chunks tried, into 2 of
+10 rim chunks and into none of 3 void chunks. A plains village over the void failed, and a sky balloon
+over the void was placed, as intended. After these placements the scan still found no block below
+Y 13, so neither rim hut dropped its stilts into the void. An AE2 meteorite failed in all 6 interior
+chunks tried. No chunk of the area has a 3 by 3 chunk neighbourhood without a void probe column, so
+the 15 block rule most likely rejected them.
+
+Test 6 ran version 2.1.2 at 02:41, after the Skylands of the test world were deleted and generated
+again from the same seed (3 minutes 18 seconds, median 85.8 chunks per second against 84.7 in test
+5). Its starts, floaters, float scans and biome shares match test 5, and the `/place structure` set
+of test 5 gave the same results. For the stilts, the 15 columns where a swamp hut can put a stilt
+were carved out in chosen chunks before a hut was placed by command, once with 2.1.1 in the world
+of test 5 and once with 2.1.2 in the same chunks of the new world. Carving from Y 13 to 127 removes
+the blocks while the noise still reports terrain. With 2.1.1 the four stilts then reached Y 2, with
+44 oak logs below Y 13 in each of 2 chunks. With 2.1.2 the same chunks held only the 16 logs of the
+hut's corner posts. Carving only from Y 40 up leaves pits whose ground the stilts reach, and both
+versions placed the same 48 logs in those columns, posts included. The scan after these placements
+found no block below Y 13.
 
 ### Deploy of 2026-11-01
 

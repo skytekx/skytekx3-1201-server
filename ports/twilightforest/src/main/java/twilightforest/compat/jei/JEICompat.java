@@ -10,6 +10,7 @@ import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -21,6 +22,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.client.UncraftingScreen;
 import twilightforest.compat.RecipeViewerConstants;
 import twilightforest.compat.jei.categories.CrumbleHornCategory;
+import twilightforest.compat.jei.categories.DryingCategory;
 import twilightforest.compat.jei.categories.JEIUncraftingCategory;
 import twilightforest.compat.jei.categories.TransformationPowderCategory;
 import twilightforest.compat.jei.extension.CasketRepairExtension;
@@ -31,6 +33,7 @@ import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFMenuTypes;
 import twilightforest.init.TFRecipes;
+import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.inventory.UncraftingMenu;
 import twilightforest.item.recipe.CasketRepairRecipe;
 import twilightforest.item.recipe.MoonwormQueenRepairRecipe;
@@ -60,6 +63,10 @@ public class JEICompat implements IModPlugin {
 		}
 		registration.addRecipeCatalyst(new ItemStack(TFItems.TRANSFORMATION_POWDER.get()), TransformationPowderCategory.TRANSFORMATION);
 		registration.addRecipeCatalyst(new ItemStack(TFItems.CRUMBLE_HORN.get()), CrumbleHornCategory.CRUMBLE_HORN);
+
+		for (var block : BuiltInRegistries.BLOCK.getTagOrEmpty(BlockTagGenerator.DRYING_RACKS)) {
+			registration.addRecipeCatalyst(new ItemStack(block.value()), DryingCategory.DRYING);
+		}
 	}
 
 	@Override
@@ -88,6 +95,7 @@ public class JEICompat implements IModPlugin {
 		registration.addRecipeCategories(new JEIUncraftingCategory(registration.getJeiHelpers().getGuiHelper()));
 		registration.addRecipeCategories(new TransformationPowderCategory(registration.getJeiHelpers().getGuiHelper()));
 		registration.addRecipeCategories(new CrumbleHornCategory(registration.getJeiHelpers().getGuiHelper()));
+		registration.addRecipeCategories(new DryingCategory(registration.getJeiHelpers().getGuiHelper()));
 	}
 
 	@Override
@@ -106,6 +114,7 @@ public class JEICompat implements IModPlugin {
 		}
 		registration.addRecipes(TransformationPowderCategory.TRANSFORMATION, manager.getAllRecipesFor(TFRecipes.TRANSFORM_POWDER_RECIPE.get()));
 		registration.addRecipes(CrumbleHornCategory.CRUMBLE_HORN, manager.getAllRecipesFor(TFRecipes.CRUMBLE_RECIPE.get()));
+		registration.addRecipes(DryingCategory.DRYING, manager.getAllRecipesFor(TFRecipes.DRYING_RECIPE.get()));
 	}
 
 	@Override

@@ -251,6 +251,26 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.BAMBOO_BANISTER.get());
 		dropSelf(TFBlocks.CHERRY_BANISTER.get());
 
+		dropSelf(TFBlocks.OAK_DRYING_RACK.get());
+		dropSelf(TFBlocks.SPRUCE_DRYING_RACK.get());
+		dropSelf(TFBlocks.BIRCH_DRYING_RACK.get());
+		dropSelf(TFBlocks.JUNGLE_DRYING_RACK.get());
+		dropSelf(TFBlocks.ACACIA_DRYING_RACK.get());
+		dropSelf(TFBlocks.DARK_OAK_DRYING_RACK.get());
+		dropSelf(TFBlocks.CRIMSON_DRYING_RACK.get());
+		dropSelf(TFBlocks.WARPED_DRYING_RACK.get());
+		dropSelf(TFBlocks.VANGROVE_DRYING_RACK.get());
+		dropSelf(TFBlocks.BAMBOO_DRYING_RACK.get());
+		dropSelf(TFBlocks.CHERRY_DRYING_RACK.get());
+		dropSelf(TFBlocks.TWILIGHT_OAK_DRYING_RACK.get());
+		dropSelf(TFBlocks.CANOPY_DRYING_RACK.get());
+		dropSelf(TFBlocks.MANGROVE_DRYING_RACK.get());
+		dropSelf(TFBlocks.DARK_DRYING_RACK.get());
+		dropSelf(TFBlocks.TIME_DRYING_RACK.get());
+		dropSelf(TFBlocks.TRANSFORMATION_DRYING_RACK.get());
+		dropSelf(TFBlocks.MINING_DRYING_RACK.get());
+		dropSelf(TFBlocks.SORTING_DRYING_RACK.get());
+
 		add(TFBlocks.HOLLOW_OAK_LOG_HORIZONTAL.get(), hollowLog(TFBlocks.HOLLOW_OAK_LOG_HORIZONTAL.get()));
 		add(TFBlocks.HOLLOW_SPRUCE_LOG_HORIZONTAL.get(), hollowLog(TFBlocks.HOLLOW_SPRUCE_LOG_HORIZONTAL.get()));
 		add(TFBlocks.HOLLOW_BIRCH_LOG_HORIZONTAL.get(), hollowLog(TFBlocks.HOLLOW_BIRCH_LOG_HORIZONTAL.get()));

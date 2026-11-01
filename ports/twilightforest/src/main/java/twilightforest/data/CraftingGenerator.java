@@ -2,6 +2,8 @@ package twilightforest.data;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -13,6 +15,7 @@ import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
+import twilightforest.data.custom.DryingRecipeBuilder;
 import twilightforest.data.custom.NoSmithingTemplateRecipeBuilder;
 import twilightforest.data.custom.UncraftingGenerator;
 import twilightforest.data.helpers.CraftingDataHelper;
@@ -41,6 +44,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 		emptyMapRecipes(consumer);
 		woodRecipes(consumer);
 		fieryConversions(consumer);
+		dryingRecipes(consumer);
 
 		nagastoneRecipes(consumer);
 		darkTowerRecipes(consumer);
@@ -297,6 +301,24 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.pattern("P")
 				.unlockedBy("has_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
 				.save(consumer, TwilightForestMod.prefix("sticky_piston_maze_ver"));
+	}
+
+	private void dryingRecipes(Consumer<FinishedRecipe> consumer) {
+		DryingRecipeBuilder.drying(Ingredient.of(ItemTags.SAPLINGS), new ItemStack(Items.DEAD_BUSH), 6)
+				.unlockedBy("has_sapling", has(ItemTags.SAPLINGS))
+				.save(consumer, TwilightForestMod.prefix("drying/sapling_to_dead_bush"));
+
+		DryingRecipeBuilder.drying(Items.MUD, Items.CLAY, 6)
+				.unlockedBy("has_mud", has(Items.MUD))
+				.save(consumer, TwilightForestMod.prefix("drying/mud_to_clay"));
+
+		DryingRecipeBuilder.drying(Items.WET_SPONGE, Items.SPONGE, 2)
+				.unlockedBy("has_wet_sponge", has(Items.WET_SPONGE))
+				.save(consumer, TwilightForestMod.prefix("drying/sponge"));
+
+		DryingRecipeBuilder.drying(Items.KELP, Items.DRIED_KELP, 3)
+				.unlockedBy("has_kelp", has(Items.KELP))
+				.save(consumer, TwilightForestMod.prefix("drying/kelp"));
 	}
 
 	private void darkTowerRecipes(Consumer<FinishedRecipe> consumer) {
@@ -754,6 +776,27 @@ public class CraftingGenerator extends CraftingDataHelper {
 		banisterBlock(consumer, "vangrove", TFBlocks.VANGROVE_BANISTER, Blocks.MANGROVE_SLAB);
 		banisterBlock(consumer, "bamboo", TFBlocks.BAMBOO_BANISTER, Blocks.BAMBOO_SLAB);
 		banisterBlock(consumer, "cherry", TFBlocks.CHERRY_BANISTER, Blocks.CHERRY_SLAB);
+
+		dryingRackBlock(consumer, "canopy", TFBlocks.CANOPY_DRYING_RACK, TFBlocks.CANOPY_SLAB);
+		dryingRackBlock(consumer, "dark", TFBlocks.DARK_DRYING_RACK, TFBlocks.DARK_SLAB);
+		dryingRackBlock(consumer, "mangrove", TFBlocks.MANGROVE_DRYING_RACK, TFBlocks.MANGROVE_SLAB);
+		dryingRackBlock(consumer, "mining", TFBlocks.MINING_DRYING_RACK, TFBlocks.MINING_SLAB);
+		dryingRackBlock(consumer, "sorting", TFBlocks.SORTING_DRYING_RACK, TFBlocks.SORTING_SLAB);
+		dryingRackBlock(consumer, "time", TFBlocks.TIME_DRYING_RACK, TFBlocks.TIME_SLAB);
+		dryingRackBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_DRYING_RACK, TFBlocks.TRANSFORMATION_SLAB);
+		dryingRackBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_DRYING_RACK, TFBlocks.TWILIGHT_OAK_SLAB);
+
+		dryingRackBlock(consumer, "oak", TFBlocks.OAK_DRYING_RACK, Blocks.OAK_SLAB);
+		dryingRackBlock(consumer, "spruce", TFBlocks.SPRUCE_DRYING_RACK, Blocks.SPRUCE_SLAB);
+		dryingRackBlock(consumer, "birch", TFBlocks.BIRCH_DRYING_RACK, Blocks.BIRCH_SLAB);
+		dryingRackBlock(consumer, "jungle", TFBlocks.JUNGLE_DRYING_RACK, Blocks.JUNGLE_SLAB);
+		dryingRackBlock(consumer, "acacia", TFBlocks.ACACIA_DRYING_RACK, Blocks.ACACIA_SLAB);
+		dryingRackBlock(consumer, "dark_oak", TFBlocks.DARK_OAK_DRYING_RACK, Blocks.DARK_OAK_SLAB);
+		dryingRackBlock(consumer, "crimson", TFBlocks.CRIMSON_DRYING_RACK, Blocks.CRIMSON_SLAB);
+		dryingRackBlock(consumer, "warped", TFBlocks.WARPED_DRYING_RACK, Blocks.WARPED_SLAB);
+		dryingRackBlock(consumer, "vangrove", TFBlocks.VANGROVE_DRYING_RACK, Blocks.MANGROVE_SLAB);
+		dryingRackBlock(consumer, "bamboo", TFBlocks.BAMBOO_DRYING_RACK, Blocks.BAMBOO_SLAB);
+		dryingRackBlock(consumer, "cherry", TFBlocks.CHERRY_DRYING_RACK, Blocks.CHERRY_SLAB);
 
 		chestBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_CHEST, TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST, TFBlocks.TWILIGHT_OAK_PLANKS);
 		chestBlock(consumer, "canopy", TFBlocks.CANOPY_CHEST, TFBlocks.CANOPY_TRAPPED_CHEST, TFBlocks.CANOPY_PLANKS);

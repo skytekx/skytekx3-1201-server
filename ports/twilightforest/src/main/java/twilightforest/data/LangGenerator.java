@@ -403,6 +403,18 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.BAMBOO_BANISTER, "Bamboo Banister");
 		this.addBlock(TFBlocks.CHERRY_BANISTER, "Cherry Banister");
 
+		this.addBlock(TFBlocks.OAK_DRYING_RACK, "Oak Drying Rack");
+		this.addBlock(TFBlocks.SPRUCE_DRYING_RACK, "Spruce Drying Rack");
+		this.addBlock(TFBlocks.BIRCH_DRYING_RACK, "Birch Drying Rack");
+		this.addBlock(TFBlocks.JUNGLE_DRYING_RACK, "Jungle Drying Rack");
+		this.addBlock(TFBlocks.ACACIA_DRYING_RACK, "Acacia Drying Rack");
+		this.addBlock(TFBlocks.DARK_OAK_DRYING_RACK, "Dark Oak Drying Rack");
+		this.addBlock(TFBlocks.CRIMSON_DRYING_RACK, "Crimson Drying Rack");
+		this.addBlock(TFBlocks.WARPED_DRYING_RACK, "Warped Drying Rack");
+		this.addBlock(TFBlocks.VANGROVE_DRYING_RACK, "Mangrove Drying Rack");
+		this.addBlock(TFBlocks.BAMBOO_DRYING_RACK, "Bamboo Drying Rack");
+		this.addBlock(TFBlocks.CHERRY_DRYING_RACK, "Cherry Drying Rack");
+
 		this.createHollowLogs("oak", "Oak", false);
 		this.createHollowLogs("spruce", "Spruce", false);
 		this.createHollowLogs("birch", "Birch", false);
@@ -1013,6 +1025,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.DOOR_ACTIVATED, "Castle Door clicks");
 		this.addSubtitle(TFSounds.DOOR_REAPPEAR, "Castle Door reappears");
 		this.addSubtitle(TFSounds.DOOR_VANISH, "Castle Door vanishes");
+		this.addSubtitle(TFSounds.DRYING_RACK_ADD_ITEM, "Drying Rack Fills");
+		this.addSubtitle(TFSounds.DRYING_RACK_REMOVE_ITEM, "Drying Rack Empties");
 		this.addSubtitle(TFSounds.GHAST_TRAP_AMBIENT, "Ghast Trap dings");
 		this.addSubtitle(TFSounds.GHAST_TRAP_ON, "Ghast Trap buzzes");
 		this.addSubtitle(TFSounds.GHAST_TRAP_SPINDOWN, "Ghast Trap shuts off");
@@ -1200,6 +1214,13 @@ public class LangGenerator extends TFLangProvider {
 		this.addScreenMessage("progression_end.message", "This is the end of progression for now. The Final Castle that awaits on the plateau is still unfinished and a work in progress. If you would like to keep up with the mod's development you can join our %s.");
 		this.addScreenMessage("progression_end.discord", "Discord Server");
 
+		this.addScreenMessage("drying_jei", "Drying Rack");
+		this.addScreenMessage("drying_time", "%sm %ss");
+		this.addScreenMessage("drying_minutes", "%s Minutes");
+		this.addScreenMessage("drying_minute", "%s Minute");
+		this.addScreenMessage("drying_seconds", "%s Seconds");
+		this.addScreenMessage("drying_second", "%s Second");
+		this.addScreenMessage("drying_ticks", "%s ticks");
 		this.addScreenMessage("crumble_horn_jei", "Crumble Horn");
 		this.addScreenMessage("transformation_jei", "Transformation Powder");
 		this.addScreenMessage("uncrafting_jei", "Uncrafting");

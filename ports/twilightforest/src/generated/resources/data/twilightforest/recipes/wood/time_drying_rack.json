@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "drying_rack",
+  "key": {
+    "-": {
+      "item": "twilightforest:time_slab"
+    }
+  },
+  "pattern": [
+    "---"
+  ],
+  "result": {
+    "item": "twilightforest:time_drying_rack"
+  },
+  "show_notification": true
+}

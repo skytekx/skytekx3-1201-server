@@ -39,6 +39,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> STRIPPED_LOGS = BlockTags.create(new ResourceLocation("forge", "stripped_logs"));
 	public static final TagKey<Block> STRIPPED_WOOD = BlockTags.create(new ResourceLocation("forge", "stripped_wood"));
 	public static final TagKey<Block> BANISTERS = BlockTags.create(TwilightForestMod.prefix("banisters"));
+	public static final TagKey<Block> DRYING_RACKS = BlockTags.create(TwilightForestMod.prefix("drying_racks"));
 	public static final TagKey<Block> HOLLOW_LOGS_HORIZONTAL = BlockTags.create(TwilightForestMod.prefix("hollow_logs_horizontal"));
 	public static final TagKey<Block> HOLLOW_LOGS_VERTICAL = BlockTags.create(TwilightForestMod.prefix("hollow_logs_vertical"));
 	public static final TagKey<Block> HOLLOW_LOGS_CLIMBABLE = BlockTags.create(TwilightForestMod.prefix("hollow_logs_climbable"));
@@ -254,6 +255,19 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.TRANSFORMATION_BANISTER.get(),
 				TFBlocks.MINING_BANISTER.get(),
 				TFBlocks.SORTING_BANISTER.get()
+		);
+
+		tag(DRYING_RACKS).add(
+				TFBlocks.OAK_DRYING_RACK.get(), TFBlocks.SPRUCE_DRYING_RACK.get(),
+				TFBlocks.BIRCH_DRYING_RACK.get(), TFBlocks.JUNGLE_DRYING_RACK.get(),
+				TFBlocks.ACACIA_DRYING_RACK.get(), TFBlocks.DARK_OAK_DRYING_RACK.get(),
+				TFBlocks.CRIMSON_DRYING_RACK.get(), TFBlocks.WARPED_DRYING_RACK.get(),
+				TFBlocks.VANGROVE_DRYING_RACK.get(), TFBlocks.BAMBOO_DRYING_RACK.get(),
+				TFBlocks.CHERRY_DRYING_RACK.get(),
+				TFBlocks.TWILIGHT_OAK_DRYING_RACK.get(), TFBlocks.CANOPY_DRYING_RACK.get(),
+				TFBlocks.MANGROVE_DRYING_RACK.get(), TFBlocks.DARK_DRYING_RACK.get(),
+				TFBlocks.TIME_DRYING_RACK.get(), TFBlocks.TRANSFORMATION_DRYING_RACK.get(),
+				TFBlocks.MINING_DRYING_RACK.get(), TFBlocks.SORTING_DRYING_RACK.get()
 		);
 
 		tag(HOLLOW_LOGS_HORIZONTAL).add(
@@ -690,6 +704,9 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.SORTING_TRAPPED_CHEST.get(),
 				TFBlocks.HUGE_LILY_PAD.get()
 		).addTags(BANISTERS, HOLLOW_LOGS, TOWERWOOD);
+
+		// 4.8 lists DRYING_RACKS in the addTags call above; appending it here gives the same tag file
+		tag(BlockTags.MINEABLE_WITH_AXE).addTag(DRYING_RACKS);
 
 		tag(BlockTags.MINEABLE_WITH_HOE).add(
 				//vanilla doesnt use the leaves tag

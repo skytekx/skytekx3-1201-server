@@ -292,6 +292,18 @@ public class TFBlocks {
 	public static final RegistryObject<BanisterBlock> BAMBOO_BANISTER = registerBurningItem("bamboo_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(Blocks.BAMBOO_PLANKS)));
 	public static final RegistryObject<BanisterBlock> CHERRY_BANISTER = registerBurningItem("cherry_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(Blocks.CHERRY_PLANKS)));
 
+	public static final RegistryObject<DryingRackBlock> OAK_DRYING_RACK = register("oak_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.OAK_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> SPRUCE_DRYING_RACK = register("spruce_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.SPRUCE_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> BIRCH_DRYING_RACK = register("birch_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.BIRCH_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> JUNGLE_DRYING_RACK = register("jungle_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.JUNGLE_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> ACACIA_DRYING_RACK = register("acacia_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.ACACIA_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> DARK_OAK_DRYING_RACK = register("dark_oak_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.DARK_OAK_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> CRIMSON_DRYING_RACK = register("crimson_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.CRIMSON_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> WARPED_DRYING_RACK = register("warped_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.WARPED_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> VANGROVE_DRYING_RACK = register("vangrove_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.MANGROVE_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> BAMBOO_DRYING_RACK = register("bamboo_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.BAMBOO_SLAB, 0.5F)));
+	public static final RegistryObject<DryingRackBlock> CHERRY_DRYING_RACK = register("cherry_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(Blocks.CHERRY_SLAB, 0.5F)));
+
 	public static final BlockBehaviour.Properties TWILIGHT_OAK_LOG_PROPS = logProperties(MapColor.WOOD, MapColor.PODZOL).strength(2.0F).sound(SoundType.WOOD);
 	public static final BlockBehaviour.Properties CANOPY_LOG_PROPS = logProperties(MapColor.PODZOL, MapColor.COLOR_BROWN).strength(2.0F).sound(SoundType.WOOD);
 	public static final BlockBehaviour.Properties MANGROVE_LOG_PROPS = logProperties(MapColor.DIRT, MapColor.PODZOL).strength(2.0F).sound(SoundType.WOOD);
@@ -460,6 +472,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> TWILIGHT_OAK_HANGING_SIGN = BLOCKS.register("twilight_oak_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(TWILIGHT_OAK_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.TWILIGHT_OAK_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> TWILIGHT_OAK_WALL_HANGING_SIGN = BLOCKS.register("twilight_oak_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(TWILIGHT_OAK_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.TWILIGHT_OAK_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> TWILIGHT_OAK_BANISTER = registerBurningItem("twilight_oak_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(TWILIGHT_OAK_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> TWILIGHT_OAK_DRYING_RACK = register("twilight_oak_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(TWILIGHT_OAK_SLAB.get(), 0.5F)));
 
 	public static final RegistryObject<Block> CANOPY_PLANKS = register("canopy_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.PODZOL).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> CANOPY_STAIRS = register("canopy_stairs", () -> new StairBlock(() -> CANOPY_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(CANOPY_PLANKS.get())));
@@ -476,6 +489,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> CANOPY_HANGING_SIGN = BLOCKS.register("canopy_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(CANOPY_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.CANOPY_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> CANOPY_WALL_HANGING_SIGN = BLOCKS.register("canopy_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(CANOPY_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.CANOPY_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> CANOPY_BANISTER = registerBurningItem("canopy_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(CANOPY_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> CANOPY_DRYING_RACK = register("canopy_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(CANOPY_SLAB.get(), 0.5F)));
 	
 	public static final RegistryObject<Block> MANGROVE_PLANKS = register("mangrove_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.DIRT).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> MANGROVE_STAIRS = register("mangrove_stairs", () -> new StairBlock(() -> MANGROVE_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(MANGROVE_PLANKS.get())));
@@ -491,6 +505,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> MANGROVE_HANGING_SIGN = BLOCKS.register("mangrove_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(MANGROVE_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.MANGROVE_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> MANGROVE_WALL_HANGING_SIGN = BLOCKS.register("mangrove_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(MANGROVE_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.MANGROVE_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> MANGROVE_BANISTER = registerBurningItem("mangrove_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(MANGROVE_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> MANGROVE_DRYING_RACK = register("mangrove_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(MANGROVE_SLAB.get(), 0.5F)));
 	
 	public static final RegistryObject<Block> DARK_PLANKS = register("dark_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.COLOR_ORANGE).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> DARK_STAIRS = register("dark_stairs", () -> new StairBlock(() -> DARK_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(DARK_PLANKS.get())));
@@ -506,6 +521,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> DARK_HANGING_SIGN = BLOCKS.register("dark_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(DARK_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.DARK_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> DARK_WALL_HANGING_SIGN = BLOCKS.register("dark_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(DARK_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.DARK_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> DARK_BANISTER = registerBurningItem("dark_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(DARK_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> DARK_DRYING_RACK = register("dark_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(DARK_SLAB.get(), 0.5F)));
 	
 	public static final RegistryObject<Block> TIME_PLANKS = register("time_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.DIRT).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> TIME_STAIRS = register("time_stairs", () -> new StairBlock(() -> TIME_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(TIME_PLANKS.get())));
@@ -521,6 +537,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> TIME_HANGING_SIGN = BLOCKS.register("time_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(TIME_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.TIME_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> TIME_WALL_HANGING_SIGN = BLOCKS.register("time_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(TIME_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.TIME_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> TIME_BANISTER = registerBurningItem("time_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(TIME_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> TIME_DRYING_RACK = register("time_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(TIME_SLAB.get(), 0.5F)));
 	
 	public static final RegistryObject<Block> TRANSFORMATION_PLANKS = register("transformation_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> TRANSFORMATION_STAIRS = register("transformation_stairs", () -> new StairBlock(() -> TRANSFORMATION_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(TRANSFORMATION_PLANKS.get())));
@@ -536,6 +553,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> TRANSFORMATION_HANGING_SIGN = BLOCKS.register("transformation_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(TRANSFORMATION_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.TRANSFORMATION_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> TRANSFORMATION_WALL_HANGING_SIGN = BLOCKS.register("transformation_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(TRANSFORMATION_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.TRANSFORMATION_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> TRANSFORMATION_BANISTER = registerBurningItem("transformation_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(TRANSFORMATION_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> TRANSFORMATION_DRYING_RACK = register("transformation_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(TRANSFORMATION_SLAB.get(), 0.5F)));
 	
 	public static final RegistryObject<Block> MINING_PLANKS = register("mining_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.SAND).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> MINING_STAIRS = register("mining_stairs", () -> new StairBlock(() -> MINING_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(MINING_PLANKS.get())));
@@ -551,6 +569,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> MINING_HANGING_SIGN = BLOCKS.register("mining_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(MINING_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.MINING_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> MINING_WALL_HANGING_SIGN = BLOCKS.register("mining_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(MINING_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.MINING_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> MINING_BANISTER = registerBurningItem("mining_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(MINING_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> MINING_DRYING_RACK = register("mining_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(MINING_SLAB.get(), 0.5F)));
 	
 	public static final RegistryObject<Block> SORTING_PLANKS = register("sorting_planks", () -> new Block(BlockBehaviour.Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).mapColor(MapColor.PODZOL).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<StairBlock> SORTING_STAIRS = register("sorting_stairs", () -> new StairBlock(() -> SORTING_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(SORTING_PLANKS.get())));
@@ -566,6 +585,7 @@ public class TFBlocks {
 	public static final RegistryObject<CeilingHangingSignBlock> SORTING_HANGING_SIGN = BLOCKS.register("sorting_hanging_sign", () -> new TFCeilingHangingSignBlock(BlockBehaviour.Properties.copy(SORTING_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.SORTING_WOOD_TYPE));
 	public static final RegistryObject<WallHangingSignBlock> SORTING_WALL_HANGING_SIGN = BLOCKS.register("sorting_wall_hanging_sign", () -> new TFWallHangingSignBlock(BlockBehaviour.Properties.copy(SORTING_PLANKS.get()).noCollission().strength(1.0F), TFWoodTypes.SORTING_WOOD_TYPE));
 	public static final RegistryObject<BanisterBlock> SORTING_BANISTER = registerBurningItem("sorting_banister", () -> new BanisterBlock(BlockBehaviour.Properties.copy(SORTING_PLANKS.get())));
+	public static final RegistryObject<DryingRackBlock> SORTING_DRYING_RACK = register("sorting_drying_rack", () -> new DryingRackBlock(copyAndScaleProperties(SORTING_SLAB.get(), 0.5F)));
 
 	public static final RegistryObject<TFChestBlock> TWILIGHT_OAK_CHEST = registerBEWLR("twilight_oak_chest", () -> new TFChestBlock(BlockBehaviour.Properties.copy(TWILIGHT_OAK_PLANKS.get()).strength(2.5F)));
 	public static final RegistryObject<TFChestBlock> CANOPY_CHEST = registerBEWLR("canopy_chest", () -> new TFChestBlock(BlockBehaviour.Properties.copy(CANOPY_PLANKS.get()).strength(2.5F)));
@@ -643,6 +663,14 @@ public class TFBlocks {
 		RegistryObject<? extends Block> ret = BLOCKS.register(name, block);
 		TFItems.ITEMS.register(name, () -> new WroughtIronFenceItem(ret.get(), new Item.Properties()));
 		return (RegistryObject<T>) ret;
+	}
+
+	/**
+	 * A full copy of the block's properties with its destroy time and explosion resistance scaled. TF 4.8 widens the two
+	 * {@link BlockBehaviour.Properties} fields with an access transformer; the block's own getters return the same values.
+	 */
+	public static BlockBehaviour.Properties copyAndScaleProperties(Block block, float scale) {
+		return BlockBehaviour.Properties.copy(block).strength(block.defaultDestroyTime() * scale, block.getExplosionResistance() * scale);
 	}
 
 	private static BlockBehaviour.Properties logProperties(MapColor color) {

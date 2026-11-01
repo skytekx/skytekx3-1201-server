@@ -166,6 +166,14 @@ A client without it cannot join, because it adds blocks, items and entities. Its
 mixins, no network or process calls and no class loading, and it touches the world only through
 Forge events, its entities and its saved data.
 
+A Modrinth pack may also download files from `github.com`, but neither jar is there. On 2026-11-01 at
+06:30 the owner suggested loading both from GitHub. The GitHub API showed that the repo
+`BrassAmber-Mods/Brass_Amber_BattleTowers` holds 1.20.1 branches, but its releases carry jars only for
+1.18.2, and the repo names no license. menoXD's only public repo is a Spleef game, and no other repo
+holds the Forge port of Falling Meteors. A copy of either jar under a SkyTekx account would be a
+redistribution, so it needs the authors' permission first, as the bundled jars on
+[publish](publish.md#what-blocks-a-release) do.
+
 ## Parked and removed mods
 
 The folder `disabled-mods/` holds 8 jars that are in neither the index nor `mods/`:

@@ -3,9 +3,10 @@ package twilightforest.world.components.feature;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.valueproviders.ConstantInt;
-import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -15,8 +16,10 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import twilightforest.data.custom.stalactites.entry.Stalactite;
+import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.util.FeatureLogic;
 
+import java.util.List;
 import java.util.Map;
 
 public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
@@ -34,12 +37,24 @@ public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	public static boolean startSpike(WorldGenLevel level, BlockPos startPos, Stalactite config, RandomSource random, boolean hanging) {
-		UniformInt lengthBounds = UniformInt.of((int) (config.maxLength() * config.sizeVariation()), config.maxLength());
-
-		return startSpike(level, startPos, config.ores(), lengthBounds.sample(random), lengthBounds.getMinValue(), ConstantInt.of(4).sample(random), hanging, random);
+		return startSpike(level, startPos, config, random, hanging, Integer.MAX_VALUE);
 	}
 
-	public static boolean startSpike(WorldGenLevel level, BlockPos startPos, Map<Block, Integer> ore, int length, int lengthMinimum, int clearance, boolean hang, RandomSource random) {
+	/**
+	 * @param forcedMaxHeight Upper bound for the final spike length, used to keep stalagmites from growing out through the ceiling or topsoil above them
+	 */
+	public static boolean startSpike(WorldGenLevel level, BlockPos startPos, Stalactite config, RandomSource random, boolean hanging, int forcedMaxHeight) {
+		int maxInclusive = config.maxLength();
+		int minInclusive = (int) (maxInclusive * config.sizeVariation());
+
+		int length = Mth.randomBetweenInclusive(random, minInclusive, maxInclusive);
+
+		return startSpike(level, startPos, config.ores(), length, minInclusive, Math.min(maxInclusive, forcedMaxHeight), 4, hanging, random);
+	}
+
+	public static boolean startSpike(WorldGenLevel level, BlockPos startPos, Map<Block, Integer> ore, int length, int lengthMinimum, int lengthMaximum, int clearance, boolean hang, RandomSource random) {
+		if (lengthMaximum < Math.max(lengthMinimum, 1)) return false;
+
 		BlockPos.MutableBlockPos movingPos = startPos.mutable();
 		int clearedLength = 0;
 		int dY = hang ? -1 : 1;
@@ -69,7 +84,7 @@ public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
 
 		finalLength = Math.min(length, finalLength);
 
-		if (finalLength < lengthMinimum) return false;
+		if (finalLength < lengthMinimum || finalLength > lengthMaximum) return false;
 
 		return makeSpike(level, startPos, ore, finalLength, dY, random, hang);
 	}
@@ -81,15 +96,13 @@ public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
 		if (!hang) {
 			BlockPos below = startPos.below(2);
 			BlockState belowState = level.getBlockState(below);
-			if (!FeatureLogic.worldGenReplaceable(belowState) || !belowState.isFaceSturdy(level, below, Direction.UP)) return false;
+			if (!belowState.is(BlockTagGenerator.SUPPORTS_STALAGMITES) &&
+				(!FeatureLogic.worldGenReplaceable(belowState) || !belowState.isFaceSturdy(level, below, Direction.UP) || FeatureLogic.isBlockNotOk(belowState))) return false;
 		}
 
-		int highestWeight = 0;
-		if (ore.size() > 1) {
-			for (Map.Entry<Block, Integer> entry : ore.entrySet()) {
-				if (entry.getValue() > highestWeight) highestWeight = entry.getValue();
-			}
-		}
+		// Proper weighted pick between the ores of this spike. Built once per spike instead of once per block.
+		WeightedRandomList<WeightedEntry.Wrapper<Block>> weightedOres = ore.size() > 1 ? WeightedRandomList.create(ore.entrySet().stream().map(entry -> WeightedEntry.wrap(entry.getKey(), entry.getValue())).toList()) : null;
+		Block singleOre = ore.size() == 1 ? List.copyOf(ore.keySet()).get(0) : Blocks.STONE;
 
 		// let's see...
 		for (int dx = -diameter; dx <= diameter; dx++) {
@@ -106,17 +119,13 @@ public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
 				for (int i = -1; i < spikeLength; i++) {
 					BlockPos placement = startPos.offset(dx, i * dY, dz);
 
-					if (FeatureLogic.worldGenReplaceable(level.getBlockState(placement)) && (dY > 0 || placement.getY() < level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, placement.getX(), placement.getZ()) - 1))
-						if (ore.size() == 1) {
-							level.setBlock(placement, ore.keySet().stream().toList().get(0).defaultBlockState(), 3);
+					if (FeatureLogic.worldGenReplaceable(level.getBlockState(placement)) && (dY > 0 || placement.getY() < level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, placement.getX(), placement.getZ()) - 2)) {
+						if (weightedOres == null) {
+							level.setBlock(placement, singleOre.defaultBlockState(), Block.UPDATE_ALL);
 						} else {
-							for (Map.Entry<Block, Integer> entry : ore.entrySet()) {
-								if (random.nextInt(highestWeight) + 1 <= entry.getValue()) {
-									level.setBlock(placement, entry.getKey().defaultBlockState(), 3);
-									break;
-								}
-							}
+							level.setBlock(placement, weightedOres.getRandom(random).map(WeightedEntry.Wrapper::getData).orElse(Blocks.STONE).defaultBlockState(), Block.UPDATE_ALL);
 						}
+					}
 				}
 			}
 		}

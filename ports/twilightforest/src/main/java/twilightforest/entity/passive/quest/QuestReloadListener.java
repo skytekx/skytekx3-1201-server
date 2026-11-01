@@ -49,7 +49,14 @@ public class QuestReloadListener extends SimpleJsonResourceReloadListener {
 		QuestingRamContext ram = null;
 		for (var entry : entries) {
 			if (entry.getKey().getPath().equals("questing_ram")) {
-				DataResult<QuestingRamContext> result = QuestingRamContext.CODEC.parse(JsonOps.INSTANCE, entry.getValue());
+				DataResult<QuestingRamContext> result;
+				try {
+					result = QuestingRamContext.CODEC.parse(JsonOps.INSTANCE, entry.getValue());
+				} catch (RuntimeException e) {
+					// a broken quest file must never abort the data pack (re)load, which would stop a dedicated server's boot
+					TwilightForestMod.LOGGER.error("Couldn't parse Questing Ram quest {}", entry.getKey(), e);
+					continue;
+				}
 				if (result.result().isPresent()) {
 					ram = result.result().get();
 					TwilightForestMod.LOGGER.debug("Questing Ram quest set by mod {}", entry.getKey().getNamespace());

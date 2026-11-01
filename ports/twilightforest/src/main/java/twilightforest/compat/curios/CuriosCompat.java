@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -69,7 +70,7 @@ public class CuriosCompat {
 	public static void keepCurios(DropRulesEvent event) {
 		if (event.getEntity() instanceof Player player) {
 			CompoundTag playerData = CharmEvents.getPlayerData(player);
-			if (!player.level().isClientSide() && CharmEvents.charmUsed != null && playerData.contains(CharmEvents.CHARM_INV_TAG) && !playerData.getList(CharmEvents.CHARM_INV_TAG, 10).isEmpty()) {
+			if (!player.level().isClientSide() && playerData.contains(CharmEvents.CONSUMED_CHARM_TAG) && playerData.contains(CharmEvents.CHARM_INV_TAG) && !playerData.getList(CharmEvents.CHARM_INV_TAG, 10).isEmpty()) {
 				//Keep all Curios items
 				CuriosApi.getCuriosHelper().getEquippedCurios(player).ifPresent(modifiable -> {
 					for (int i = 0; i < modifiable.getSlots(); ++i) {
@@ -128,5 +129,20 @@ public class CuriosCompat {
 	public static boolean isSkullCurioEquipped(LivingEntity entity) {
 		Optional<SlotResult> slot = CuriosApi.getCuriosHelper().findFirstCurio(entity, stack -> stack.getItem() instanceof SkullCandleItem);
 		return slot.isPresent() && slot.get().slotContext() != null && slot.get().slotContext().visible();
+	}
+
+	/**
+	 * Consumes one of the given charm from the player's curio slots.
+	 *
+	 * @param saveItemToTag if true, the consumed charm is saved to the player's data so its effect can be played on respawn
+	 */
+	public static boolean findAndConsumeCurio(Item item, Player player, boolean saveItemToTag) {
+		Optional<SlotResult> slot = CuriosApi.getCuriosHelper().findFirstCurio(player, stack -> stack.is(item));
+		if (slot.isPresent()) {
+			if (saveItemToTag) CharmEvents.getPlayerData(player).put(CharmEvents.CONSUMED_CHARM_TAG, slot.get().stack().save(new CompoundTag()));
+			slot.get().stack().shrink(1);
+			return true;
+		}
+		return false;
 	}
 }

@@ -1,13 +1,20 @@
 package twilightforest.util;
 
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntComparators;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
@@ -94,5 +101,63 @@ public final class WorldUtil {
 		} else {
 			return level.getHeight(type, x, z);
 		}
+	}
+
+	/**
+	 * Terrain height for a structure footprint: samples the generator's first occupied height on a gridLength x gridLength grid
+	 * spread evenly over the box (edges inclusive), sorts the samples from highest to lowest and averages them with the weights
+	 * 1, 2, 3 and so on. Lower samples weigh more, so a hill or tree line at one edge cannot lift the whole structure.
+	 */
+	public static int adjustForTerrain(Structure.GenerationContext context, int xMin, int zMin, int xMax, int zMax, int gridLength, Heightmap.Types type) {
+		return adjustForTerrain(context.chunkGenerator(), context.heightAccessor(), context.randomState(), xMin, zMin, xMax, zMax, gridLength, type);
+	}
+
+	/**
+	 * Same as {@link #adjustForTerrain(Structure.GenerationContext, int, int, int, int, int, Heightmap.Types)}, for callers without a
+	 * structure generation context, such as a chunk generator that has to level the ground at the same height a structure picked.
+	 */
+	public static int adjustForTerrain(ChunkGenerator generator, LevelHeightAccessor heightAccessor, RandomState randomState, int xMin, int zMin, int xMax, int zMax, int gridLength, Heightmap.Types type) {
+		int subDivisions = gridLength - 1;
+		IntList heights = new IntArrayList(gridLength * gridLength);
+
+		for (int zStep = 0; zStep <= subDivisions; zStep++) {
+			int zPos = lerpDiscrete((float) zStep / subDivisions, zMin, zMax);
+			for (int xStep = 0; xStep <= subDivisions; xStep++) {
+				int xPos = lerpDiscrete((float) xStep / subDivisions, xMin, xMax);
+
+				heights.add(generator.getFirstOccupiedHeight(xPos, zPos, type, heightAccessor, randomState));
+			}
+		}
+
+		heights.sort(IntComparators.OPPOSITE_COMPARATOR); // sort from highest to lowest
+
+		double weightedSum = 0;
+		double totalWeight = 0;
+		for (int i = 0; i < heights.size(); i++) {
+			double weight = i + 1;
+			weightedSum += weight * heights.getInt(i);
+			totalWeight += weight;
+		}
+		return (int) Math.round(weightedSum / totalWeight);
+	}
+
+	/**
+	 * Samples {@link Heightmap.Types#WORLD_SURFACE_WG} over the chunk holding the given position, widened by radiusFromCenterChunk blocks on every side.
+	 */
+	public static int adjustForTerrain(Structure.GenerationContext context, int xInCenterChunk, int zInCenterChunk, int radiusFromCenterChunk, int gridLength) {
+		return adjustForTerrain(context.chunkGenerator(), context.heightAccessor(), context.randomState(), xInCenterChunk, zInCenterChunk, radiusFromCenterChunk, gridLength);
+	}
+
+	public static int adjustForTerrain(ChunkGenerator generator, LevelHeightAccessor heightAccessor, RandomState randomState, int xInCenterChunk, int zInCenterChunk, int radiusFromCenterChunk, int gridLength) {
+		int chunkOriginX = xInCenterChunk & ~0b1111;
+		int chunkOriginZ = zInCenterChunk & ~0b1111;
+
+		return adjustForTerrain(generator, heightAccessor, randomState, chunkOriginX - radiusFromCenterChunk, chunkOriginZ - radiusFromCenterChunk, chunkOriginX + 15 + radiusFromCenterChunk, chunkOriginZ + 15 + radiusFromCenterChunk, gridLength, Heightmap.Types.WORLD_SURFACE_WG);
+	}
+
+	// Mth.lerpDiscrete() of Minecraft 1.20.5+
+	private static int lerpDiscrete(float delta, int start, int end) {
+		int range = end - start;
+		return start + Mth.floor(delta * (float) (range - 1)) + (delta > 0.0F ? 1 : 0);
 	}
 }

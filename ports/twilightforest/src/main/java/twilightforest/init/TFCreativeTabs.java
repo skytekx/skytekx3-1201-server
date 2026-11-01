@@ -425,6 +425,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.IRONWOOD_INGOT.get());
 				output.accept(TFItems.STEELEAF_INGOT.get());
 				output.accept(TFItems.NAGA_SCALE.get());
+				output.accept(TFItems.WROUGHT_IRON_BAR.get());
 				output.accept(TFItems.ARMOR_SHARD.get());
 				output.accept(TFItems.ARMOR_SHARD_CLUSTER.get());
 				output.accept(TFItems.KNIGHTMETAL_INGOT.get());

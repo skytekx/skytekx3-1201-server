@@ -115,6 +115,13 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_windows", has(TFBlocks.CANOPY_WINDOW.get()))
 				.save(consumer);
 
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.WROUGHT_IRON_FENCE.get(), 3)
+				.pattern("###")
+				.pattern("###")
+				.define('#', ItemTagGenerator.WROUGHT_IRON_INGOTS)
+				.unlockedBy("has_wrought_iron", has(ItemTagGenerator.WROUGHT_IRON_INGOTS))
+				.save(consumer);
+
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.FIREFLY_JAR.get())
 				.requires(Ingredient.of(TFBlocks.FIREFLY.get()))
 				.requires(Ingredient.of(Items.GLASS_BOTTLE))

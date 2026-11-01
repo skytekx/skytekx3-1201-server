@@ -225,6 +225,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				.add(TFBlocks.POTTED_HOLLOW_OAK_SAPLING.get(), TFBlocks.POTTED_TIME_SAPLING.get(), TFBlocks.POTTED_TRANSFORMATION_SAPLING.get(), TFBlocks.POTTED_MINING_SAPLING.get(), TFBlocks.POTTED_SORTING_SAPLING.get())
 				.add(TFBlocks.POTTED_MAYAPPLE.get(), TFBlocks.POTTED_FIDDLEHEAD.get(), TFBlocks.POTTED_MUSHGLOOM.get(), TFBlocks.POTTED_THORN.get(), TFBlocks.POTTED_GREEN_THORN.get(), TFBlocks.POTTED_DEAD_THORN.get());
 
+		tag(BlockTags.WALLS).add(TFBlocks.WROUGHT_IRON_FENCE.get());
+
 		tag(BANISTERS).add(
 				TFBlocks.OAK_BANISTER.get(),
 				TFBlocks.SPRUCE_BANISTER.get(),

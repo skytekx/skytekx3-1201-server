@@ -46,6 +46,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> IRONWOOD_INGOTS = makeForgeTag("ingots/ironwood");
 	public static final TagKey<Item> KNIGHTMETAL_INGOTS = makeForgeTag("ingots/knightmetal");
 	public static final TagKey<Item> STEELEAF_INGOTS = makeForgeTag("ingots/steeleaf");
+	public static final TagKey<Item> WROUGHT_IRON_INGOTS = makeForgeTag("ingots/wrought_iron");
 
 	public static final TagKey<Item> STORAGE_BLOCKS_ARCTIC_FUR = makeForgeTag("storage_blocks/arctic_fur");
 	public static final TagKey<Item> STORAGE_BLOCKS_CARMINITE = makeForgeTag("storage_blocks/carminite");
@@ -166,6 +167,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(IRONWOOD_INGOTS).add(TFItems.IRONWOOD_INGOT.get());
 		tag(KNIGHTMETAL_INGOTS).add(TFItems.KNIGHTMETAL_INGOT.get());
 		tag(STEELEAF_INGOTS).add(TFItems.STEELEAF_INGOT.get());
+		tag(WROUGHT_IRON_INGOTS).add(TFItems.WROUGHT_IRON_BAR.get());
 
 		tag(Tags.Items.GEMS).addTag(CARMINITE_GEMS);
 
@@ -211,8 +213,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(WIP).add(
 				TFBlocks.KEEPSAKE_CASKET.get().asItem(),
 				TFBlocks.CANDELABRA.get().asItem(),
-				TFItems.CUBE_OF_ANNIHILATION.get(),
-				TFBlocks.WROUGHT_IRON_FENCE.get().asItem()
+				TFItems.CUBE_OF_ANNIHILATION.get()
 		);
 
 		tag(NYI).add(

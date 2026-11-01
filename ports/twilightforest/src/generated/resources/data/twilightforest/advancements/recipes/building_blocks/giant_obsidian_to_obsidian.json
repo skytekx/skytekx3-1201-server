@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "twilightforest:fiery_vial"
+            "items": [
+              "twilightforest:giant_obsidian"
+            ]
           }
         ]
       },
@@ -13,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "twilightforest:equipment/fiery_fiery_chestplate"
+        "recipe": "twilightforest:giant_obsidian_to_obsidian"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "twilightforest:equipment/fiery_fiery_chestplate"
+      "twilightforest:giant_obsidian_to_obsidian"
     ]
   },
   "sends_telemetry_event": false

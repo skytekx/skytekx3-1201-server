@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
@@ -18,6 +19,10 @@ import twilightforest.init.TFEntities;
 import twilightforest.init.TFSounds;
 
 public class Deer extends Animal {
+
+	// TF 4.8 drives this through #twilightforest:deer_tempt_items (wheat + apple, #2149);
+	// 4.3 has no tempt-item tags yet, so the same set is kept here until passive-tempt-tags lands.
+	private static final Ingredient TEMPT_ITEMS = Ingredient.of(Items.WHEAT, Items.APPLE);
 
 	public Deer(EntityType<? extends Deer> type, Level world) {
 		super(type, world);
@@ -28,7 +33,7 @@ public class Deer extends Animal {
 		goalSelector.addGoal(0, new FloatGoal(this));
 		goalSelector.addGoal(1, new PanicGoal(this, 2.0D));
 		goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
-		goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.WHEAT), false));
+		goalSelector.addGoal(3, new TemptGoal(this, 1.25D, TEMPT_ITEMS, false));
 		goalSelector.addGoal(4, new FollowParentGoal(this, 1.25D));
 		goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Player.class, 16.0F, 1.5D, 1.8D));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
@@ -40,6 +45,11 @@ public class Deer extends Animal {
 		return Mob.createMobAttributes()
 				.add(Attributes.MAX_HEALTH, 10.0)
 				.add(Attributes.MOVEMENT_SPEED, 0.2);
+	}
+
+	@Override
+	public boolean isFood(ItemStack stack) {
+		return TEMPT_ITEMS.test(stack);
 	}
 
 	@Override

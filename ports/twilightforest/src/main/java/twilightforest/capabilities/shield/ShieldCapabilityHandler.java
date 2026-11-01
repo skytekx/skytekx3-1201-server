@@ -1,6 +1,7 @@
 package twilightforest.capabilities.shield;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -161,7 +162,8 @@ public class ShieldCapabilityHandler implements IShieldCapability {
 	 * shield layer of a mob also disappears when its last shield breaks.
 	 */
 	private void sendUpdatePacket() {
-		if (!this.host.level().isClientSide())
+		// TRACKING_ENTITY_AND_SELF needs a ServerChunkCache, which other mods' server-side fake/schematic levels lack
+		if (this.host.level() instanceof ServerLevel)
 			TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this.host), new UpdateShieldPacket(this.host, this));
 	}
 

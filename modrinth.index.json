@@ -3081,6 +3081,21 @@
       "fileSize": 1682572
     },
     {
+      "path": "mods/TwilightTreehouses-1.20.1-1.0.2.1-forge.jar",
+      "hashes": {
+        "sha1": "db766c806d24c8078d24977f16c3abad24f7b9dd",
+        "sha512": "6f5d74ff0cc17acff864689d4eb47982db591f78a45369a7c6bcd773ce6dbbf55e09ca177bd454fd885968a2a8a216fae8456f207b434079ff93aa533c766342"
+      },
+      "env": {
+        "client": "optional",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/lkU3QIjf/versions/qIHQgFvX/TwilightTreehouses-1.20.1-1.0.2.1-forge.jar"
+      ],
+      "fileSize": 228315
+    },
+    {
       "path": "mods/valhelsia_core-forge-1.20.1-1.1.2.jar",
       "hashes": {
         "sha1": "5e88feef805d15ffbe3c0918f53d6ed213a7dc6a",

@@ -2871,6 +2871,21 @@
       "fileSize": 257178
     },
     {
+      "path": "mods/TF_Lost_Blocks-1.20.1-1.5.0.jar",
+      "hashes": {
+        "sha1": "15a5c6a211948d8bf4ef149c412ad348db24d0a6",
+        "sha512": "edc012166796ff37a2e337965ab3e1bb6b065da99db350968c1df673aaf9e218e0b2407d21d3c4bc07b50b592a7f32e242b12f3dfcf05a0d893989a1596b89cf"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/TyYh3b27/versions/GcmbYVPP/TF_Lost_Blocks-1.20.1-1.5.0.jar"
+      ],
+      "fileSize": 685802
+    },
+    {
       "path": "mods/thermal_dynamics-1.20.1-11.0.1.23.jar",
       "hashes": {
         "sha1": "7a9b3691dfca81e52d3e34738c6bc0a98b58bf93",

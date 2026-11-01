@@ -90,8 +90,12 @@ public class ReactorDebrisBlockEntity extends BlockEntity {
 
 		if (!reactorDebrisBlockEntity.willDisappear)
 			return;
-		reactorDebrisBlockEntity.timeAlive++;
-		if (reactorDebrisBlockEntity.timeAlive >= 60) {
+		if (reactorDebrisBlockEntity.timeAlive < 60)
+			reactorDebrisBlockEntity.timeAlive++;
+		// Only the server removes the debris and the client follows its block update. A block entity that exists only on
+		// the client (created lazily for debris saved by 4.3, which the server still holds without one) would otherwise
+		// remove a block the server keeps solid until a random tick clears it.
+		if (reactorDebrisBlockEntity.timeAlive >= 60 && !level.isClientSide()) {
 			level.destroyBlock(blockPos, false);
 		}
 	}

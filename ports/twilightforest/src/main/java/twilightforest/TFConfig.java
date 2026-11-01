@@ -402,6 +402,10 @@ public class TFConfig {
 					translation(config + "aurora_biomes").
 					comment("Defines which biomes the aurora shader effect will appear in. Leave the list empty to disable the effect.")
 					.defineList("auroraBiomes", List.of("twilightforest:glacier"), s -> s instanceof String);
+			spawnCharmAnimationAsTotem = builder.
+					translation(config + "totem_charm_animation").
+					comment("If true, Twilight Forest charm items will display similar to the totem of undying when used.").
+					define("totemCharmAnimation", false);
 		}
 
 		public final ForgeConfigSpec.BooleanValue silentCicadas;
@@ -415,6 +419,7 @@ public class TFConfig {
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> giantSkinUUIDs;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> auroraBiomes;
 		private final List<ResourceLocation> validAuroraBiomes = new ArrayList<>();
+		public final ForgeConfigSpec.BooleanValue spawnCharmAnimationAsTotem;
 	}
 
 	private static final String config = "config." + TwilightForestMod.ID;

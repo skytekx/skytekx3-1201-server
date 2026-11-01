@@ -39,6 +39,7 @@ import twilightforest.advancements.TFAdvancements;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.client.ClientInitiator;
 import twilightforest.command.TFCommand;
+import twilightforest.compat.CosmeticArmorCompat;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.compat.top.TopCompat;
 import twilightforest.item.recipe.UncraftingTableCondition;
@@ -145,6 +146,9 @@ public class TwilightForestMod {
 			Bindings.getForgeBus().get().addListener(CuriosCompat::keepCurios);
 			modbus.addListener(CuriosCompat::registerCurioRenderers);
 			modbus.addListener(CuriosCompat::registerCurioLayers);
+		}
+		if (ModList.get().isLoaded("cosmeticarmorreworked")) {
+			CosmeticArmorCompat.init();
 		}
 
 		BiomeGrassColors.init();

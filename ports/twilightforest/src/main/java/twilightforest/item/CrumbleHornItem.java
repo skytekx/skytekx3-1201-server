@@ -47,12 +47,7 @@ public class CrumbleHornItem extends Item {
 	@Override
 	public void onUseTick(Level level, LivingEntity living, ItemStack stack, int count) {
 		if (count > 10 && count % 5 == 0 && !living.level().isClientSide()) {
-			int crumbled = doCrumble(living.level(), living);
-
-			if (crumbled > 0) {
-				stack.hurtAndBreak(crumbled, living, (user) -> user.broadcastBreakEvent(living.getUsedItemHand()));
-			}
-
+			this.doCrumble(living.level(), living, stack);
 			living.level().playSound(null, living.getX(), living.getY(), living.getZ(), TFSounds.QUEST_RAM_AMBIENT.get(), living.getSoundSource(), 1.0F, 0.8F);
 		}
 	}
@@ -77,7 +72,7 @@ public class CrumbleHornItem extends Item {
 		return slotChanged || newStack.getItem() != oldStack.getItem();
 	}
 
-	private int doCrumble(Level world, LivingEntity living) {
+	private void doCrumble(Level world, LivingEntity living, ItemStack stack) {
 
 		final double range = 3.0D;
 		final double radius = 2.0D;
@@ -88,20 +83,20 @@ public class CrumbleHornItem extends Item {
 
 		AABB crumbleBox = new AABB(destVec.x() - radius, destVec.y() - radius, destVec.z() - radius, destVec.x() + radius, destVec.y() + radius, destVec.z() + radius);
 
-		return crumbleBlocksInAABB(world, living, crumbleBox);
+		this.crumbleBlocksInAABB(world, living, crumbleBox, stack);
 	}
 
-	private int crumbleBlocksInAABB(Level world, LivingEntity living, AABB box) {
-		int crumbled = 0;
+	private void crumbleBlocksInAABB(Level world, LivingEntity living, AABB box, ItemStack stack) {
 		for (BlockPos pos : WorldUtil.getAllInBB(box)) {
 			if (crumbleBlock(world, living, pos)) {
-				crumbled++;
 				if (living instanceof Player player && player instanceof ServerPlayer) {
 					player.awardStat(TFStats.BLOCKS_CRUMBLED.get());
 				}
+				// pay for every block as it crumbles, and stop as soon as the horn breaks
+				stack.hurtAndBreak(1, living, (user) -> user.broadcastBreakEvent(living.getUsedItemHand()));
+				if (stack.isEmpty() || stack.getDamageValue() >= stack.getMaxDamage()) break;
 			}
 		}
-		return crumbled;
 	}
 
 	private boolean crumbleBlock(Level world, LivingEntity living, BlockPos pos) {

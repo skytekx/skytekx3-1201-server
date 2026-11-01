@@ -25,10 +25,12 @@ public class Experiment115Item extends BlockItem {
 
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
+		// clicking an existing Experiment 115 is handled by the block itself, never place a new one next to it
+		if (context.getLevel().getBlockState(context.getClickedPos()).is(this.getBlock())) return InteractionResult.PASS;
 		Player player = context.getPlayer();
-		if (!player.isShiftKeyDown()) {
-			InteractionResult actionresulttype = this.place(new BlockPlaceContext(context));
-			return !actionresulttype.consumesAction() && this.isEdible() ? this.use(context.getLevel(), context.getPlayer(), context.getHand()).getResult() : actionresulttype;
+		if (player != null && !player.isShiftKeyDown()) {
+			InteractionResult result = this.place(new BlockPlaceContext(context));
+			return !result.consumesAction() && this.isEdible() ? this.use(context.getLevel(), context.getPlayer(), context.getHand()).getResult() : result;
 		}
 		return InteractionResult.PASS;
 	}

@@ -29,14 +29,16 @@ public class FortificationWandItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		if (stack.getDamageValue() == stack.getMaxDamage()) {
+		if (stack.getDamageValue() == stack.getMaxDamage() && !player.getAbilities().instabuild) {
 			return InteractionResultHolder.fail(stack);
 		}
 
 		if (!level.isClientSide()) {
 			player.getCapability(CapabilityList.SHIELDS).ifPresent(cap -> {
 				cap.replenishShields();
-				stack.hurt(1, level.getRandom(), null);
+				if (!player.getAbilities().instabuild) {
+					stack.hurt(1, level.getRandom(), null);
+				}
 			});
 		}
 

@@ -133,10 +133,14 @@ public class OreMagnetItem extends Item {
 		Vec3 lookVec = getOffsetLook(living, yawOffset, pitchOffset);
 		Vec3 destVec = srcVec.add(lookVec.x() * range, lookVec.y() * range, lookVec.z() * range);
 
-		return doMagnet(level, BlockPos.containing(srcVec), BlockPos.containing(destVec));
+		return doMagnet(level, BlockPos.containing(srcVec), BlockPos.containing(destVec), false);
 	}
 
-	public static int doMagnet(Level level, BlockPos usePos, BlockPos destPos) {
+	/**
+	 * @param sourceIsMineCore true when the Miner's Tree core is pulling, which uses its own exclusion tag
+	 *                         ({@link BlockTagGenerator#MINING_CORE_EXCLUDED}) instead of the ore magnet's.
+	 */
+	public static int doMagnet(Level level, BlockPos usePos, BlockPos destPos, boolean sourceIsMineCore) {
 		// FIXME Find a better place to invoke this!
 		initOre2BlockMap();
 
@@ -157,9 +161,9 @@ public class OreMagnetItem extends Item {
 					basePos = coord;
 				}
 				// This ordering is so that the base pos is found first before we pull ores - pushing ores away is a baaaaad idea!
-			} else if (foundPos == null && searchState.getBlock() != Blocks.AIR && isOre(searchState.getBlock()) && level.getBlockEntity(coord) == null) {
+			} else if (foundPos == null && searchState.getBlock() != Blocks.AIR && isOre(searchState.getBlock(), sourceIsMineCore) && level.getBlockEntity(coord) == null) {
 				attactedOreBlock = searchState;
-				replacementBlock = ORE_TO_BLOCK_REPLACEMENTS.getOrDefault(attactedOreBlock.getBlock(), Blocks.STONE).defaultBlockState();
+				replacementBlock = (sourceIsMineCore ? TREE_ORE_TO_BLOCK_REPLACEMENTS : MAGNET_ORE_TO_BLOCK_REPLACEMENTS).getOrDefault(attactedOreBlock.getBlock(), Blocks.STONE).defaultBlockState();
 				foundPos = coord;
 			}
 		}
@@ -234,8 +238,8 @@ public class OreMagnetItem extends Item {
 		}
 	}
 
-	private static boolean isOre(Block ore) {
-		return ORE_TO_BLOCK_REPLACEMENTS.containsKey(ore);
+	private static boolean isOre(Block ore, boolean core) {
+		return (core ? TREE_ORE_TO_BLOCK_REPLACEMENTS : MAGNET_ORE_TO_BLOCK_REPLACEMENTS).containsKey(ore);
 	}
 
 	// So it looks like we can't really access BlockTag contents until Datapack loading is complete (see `buildOreMagnetCache` method below)
@@ -243,7 +247,8 @@ public class OreMagnetItem extends Item {
 
 	// Switch over to ConcurrentHashMap if we run into any concurrency problems
 	private static boolean cacheNeedsBuild = true;
-	private static final HashMap<Block, Block> ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+	private static final HashMap<Block, Block> MAGNET_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+	private static final HashMap<Block, Block> TREE_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
 
 	private static void initOre2BlockMap() {
 		if (!cacheNeedsBuild)
@@ -264,11 +269,24 @@ public class OreMagnetItem extends Item {
 							Objects.requireNonNull(ForgeRegistries.BLOCKS.tags()).getTag(tag).forEach(ore -> {
 								//exclude ignored ores
 								if (!ore.defaultBlockState().is(BlockTagGenerator.ORE_MAGNET_IGNORE)) {
-									ORE_TO_BLOCK_REPLACEMENTS.put(ore, ground);
+									MAGNET_ORE_TO_BLOCK_REPLACEMENTS.put(ore, ground);
+								}
+								if (!ore.defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED)) {
+									TREE_ORE_TO_BLOCK_REPLACEMENTS.put(ore, ground);
 								}
 							}));
 				}
 			}
+		}
+
+		//Gonna need to special case this one as it isn't covered by tags.
+		//Ancient debris isn't exactly an ore, so it makes sense that the tag doesn't include it
+		if (!Blocks.ANCIENT_DEBRIS.defaultBlockState().is(BlockTagGenerator.ORE_MAGNET_IGNORE) && !MAGNET_ORE_TO_BLOCK_REPLACEMENTS.containsKey(Blocks.ANCIENT_DEBRIS)) {
+			MAGNET_ORE_TO_BLOCK_REPLACEMENTS.put(Blocks.ANCIENT_DEBRIS, Blocks.NETHERRACK);
+		}
+
+		if (!Blocks.ANCIENT_DEBRIS.defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED) && !TREE_ORE_TO_BLOCK_REPLACEMENTS.containsKey(Blocks.ANCIENT_DEBRIS)) {
+			TREE_ORE_TO_BLOCK_REPLACEMENTS.put(Blocks.ANCIENT_DEBRIS, Blocks.NETHERRACK);
 		}
 
 		cacheNeedsBuild = false;
@@ -278,7 +296,8 @@ public class OreMagnetItem extends Item {
 	public static void buildOreMagnetCache(AddReloadListenerEvent event) {
 		event.addListener((stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor) -> {
 			if (!cacheNeedsBuild) {
-				ORE_TO_BLOCK_REPLACEMENTS.clear();
+				MAGNET_ORE_TO_BLOCK_REPLACEMENTS.clear();
+				TREE_ORE_TO_BLOCK_REPLACEMENTS.clear();
 				cacheNeedsBuild = true;
 			}
 

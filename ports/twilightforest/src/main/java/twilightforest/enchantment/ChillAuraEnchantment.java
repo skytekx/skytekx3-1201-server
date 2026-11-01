@@ -12,9 +12,13 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import twilightforest.enums.TwilightArmorMaterial;
 import twilightforest.init.TFEnchantments;
 import twilightforest.init.TFMobEffects;
+
+import java.util.Map;
 
 public class ChillAuraEnchantment extends LootOnlyEnchantment {
 
@@ -25,7 +29,11 @@ public class ChillAuraEnchantment extends LootOnlyEnchantment {
 
 	@Override
 	public boolean canEnchant(ItemStack stack) {
-		return stack.getItem() instanceof ArmorItem || super.canEnchant(stack);
+		// Chill Aura contradicts the burning effect of Fiery armor
+		if (stack.getItem() instanceof ArmorItem armorItem) {
+			return armorItem.getMaterial() != TwilightArmorMaterial.ARMOR_FIERY;
+		}
+		return super.canEnchant(stack);
 	}
 
 	@Override
@@ -46,7 +54,23 @@ public class ChillAuraEnchantment extends LootOnlyEnchantment {
 	@Override
 	public void doPostHurt(LivingEntity user, Entity attacker, int level) {
 		if (attacker instanceof LivingEntity entity) {
-			doChillAuraEffect(entity, 200, level - 1, this.shouldHit(level, user.getRandom()));
+			boolean shouldHit = this.shouldHit(level, user.getRandom());
+			doChillAuraEffect(entity, 200, level - 1, shouldHit);
+			if (shouldHit) {
+				// like Thorns, every proc costs the enchanted armor 2 durability
+				damageEnchantedItem(this, user);
+			}
+		}
+	}
+
+	/**
+	 * [VanillaCopy] of the durability part of ThornsEnchantment.doPostHurt: damages a random piece of equipment
+	 * carrying the given enchantment by 2.
+	 */
+	public static void damageEnchantedItem(Enchantment enchantment, LivingEntity user) {
+		Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(enchantment, user);
+		if (entry != null) {
+			entry.getValue().hurtAndBreak(2, user, living -> living.broadcastBreakEvent(entry.getKey()));
 		}
 	}
 

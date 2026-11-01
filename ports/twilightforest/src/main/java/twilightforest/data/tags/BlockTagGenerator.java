@@ -78,6 +78,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> ROOT_ORES = BlockTags.create(new ResourceLocation("forge", "ores_in_ground/root"));
 
 	public static final TagKey<Block> TIME_CORE_EXCLUDED = BlockTags.create(TwilightForestMod.prefix("time_core_excluded"));
+	public static final TagKey<Block> MINING_CORE_EXCLUDED = BlockTags.create(TwilightForestMod.prefix("mining_tree_excluded"));
 
 	public static final TagKey<Block> PENGUINS_SPAWNABLE_ON = BlockTags.create(TwilightForestMod.prefix("penguins_spawnable_on"));
 	public static final TagKey<Block> GIANTS_SPAWNABLE_ON = BlockTags.create(TwilightForestMod.prefix("giants_spawnable_on"));
@@ -542,6 +543,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		);
 
 		tag(ORE_MAGNET_IGNORE).addTag(BlockTags.COAL_ORES);
+		tag(MINING_CORE_EXCLUDED).addTag(BlockTags.COAL_ORES);
 
 		tag(ROOT_GROUND).add(TFBlocks.ROOT_BLOCK.get());
 		tag(ROOT_ORES).add(TFBlocks.LIVEROOT_BLOCK.get());

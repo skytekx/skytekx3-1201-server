@@ -37,7 +37,7 @@ public class TwilightItemTier {
 			TwilightForestMod.prefix("giant"), List.of(Tiers.STONE), List.of(Tiers.IRON));
 
 	public static final Tier ICE = TierSortingRegistry.registerTier(
-			new ForgeTier(0, 32, 1.0F, 3.5F, 5, BlockTags.create(TwilightForestMod.prefix("needs_ice_tool")), () -> Ingredient.of(Blocks.PACKED_ICE)),
+			new ForgeTier(0, 32, 1.0F, 3.5F, 5, BlockTags.create(TwilightForestMod.prefix("needs_ice_tool")), () -> Ingredient.of(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE)), //there isnt an item tag for ice
 			TwilightForestMod.prefix("ice"), List.of(Tiers.WOOD), List.of());
 
 	public static final Tier GLASS = TierSortingRegistry.registerTier(

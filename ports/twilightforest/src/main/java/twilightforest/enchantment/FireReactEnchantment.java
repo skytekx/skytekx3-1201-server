@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
+import twilightforest.enums.TwilightArmorMaterial;
 import twilightforest.init.TFEnchantments;
 
 import javax.annotation.Nullable;
@@ -24,7 +25,11 @@ public class FireReactEnchantment extends LootOnlyEnchantment {
 
 	@Override
 	public boolean canEnchant(ItemStack stack) {
-		return stack.getItem() instanceof ArmorItem || super.canEnchant(stack);
+		// Fire React contradicts the freezing effect of Yeti armor
+		if (stack.getItem() instanceof ArmorItem armorItem) {
+			return armorItem.getMaterial() != TwilightArmorMaterial.ARMOR_YETI;
+		}
+		return super.canEnchant(stack);
 	}
 
 	@Override
@@ -47,6 +52,8 @@ public class FireReactEnchantment extends LootOnlyEnchantment {
 		RandomSource random = user.getRandom();
 		if (attacker != null && shouldHit(level, random, attacker)) {
 			attacker.setSecondsOnFire(2 + (random.nextInt(level) * 3));
+			// like Thorns, every proc costs the enchanted armor 2 durability
+			ChillAuraEnchantment.damageEnchantedItem(this, user);
 		}
 	}
 

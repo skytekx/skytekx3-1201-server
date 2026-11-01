@@ -236,6 +236,7 @@ public class TwilightForestMod {
 			fireblock.setFlammable(TFBlocks.LIVEROOT_BLOCK.get(), 5, 20);
 			fireblock.setFlammable(TFBlocks.EMPTY_CANOPY_BOOKSHELF.get(), 30, 20);
 			fireblock.setFlammable(TFBlocks.DEATH_TOME_SPAWNER.get(), 30, 20);
+			fireblock.setFlammable(TFBlocks.HUGE_STALK.get(), 5, 5);
 			fireblock.setFlammable(TFBlocks.TWILIGHT_OAK_WOOD.get(), 5, 5);
 			fireblock.setFlammable(TFBlocks.TWILIGHT_OAK_PLANKS.get(), 5, 20);
 			fireblock.setFlammable(TFBlocks.TWILIGHT_OAK_SLAB.get(), 5, 20);

@@ -22,6 +22,7 @@ import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.MagicPainting;
+import twilightforest.item.GlassSwordItem;
 import twilightforest.init.custom.MagicPaintingVariants;
 import twilightforest.util.MagicPaintingVariant;
 
@@ -603,6 +604,7 @@ public class TFCreativeTabs {
 		ItemStack loreSword = new ItemStack(TFItems.GLASS_SWORD.get());
 		CompoundTag tags = new CompoundTag();
 		tags.putBoolean("Unbreakable", true);
+		tags.putBoolean(GlassSwordItem.INFINITE_TAG, true);
 
 		ListTag lore = new ListTag();
 		lore.add(StringTag.valueOf("{\"translate\":\"item.twilightforest.glass_sword.desc\",\"italic\":false,\"color\":\"gray\"}"));

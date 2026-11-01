@@ -21,7 +21,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -61,7 +63,7 @@ public class FallenLeavesBlock extends TFPlantBlock {
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-		return SHAPE_BY_LAYER[0];
+		return Shapes.empty();
 	}
 
 	@Override
@@ -80,17 +82,22 @@ public class FallenLeavesBlock extends TFPlantBlock {
 	}
 
 	@Override
-	public boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext) {
-		int i = pState.getValue(LAYERS);
-		if (pUseContext.getItemInHand().is(this.asItem()) && i < MAX_HEIGHT) {
-			if (pUseContext.replacingClickedOnBlock()) {
-				return pUseContext.getClickedFace() == Direction.UP;
+	public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+		int i = state.getValue(LAYERS);
+		boolean waterBelow = context.getLevel().getBlockState(context.getClickedPos().below()).liquid();
+
+		if (!waterBelow) {
+			if (context.getItemInHand().is(this.asItem()) && i < MAX_HEIGHT) {
+				if (context.replacingClickedOnBlock()) {
+					return context.getClickedFace() == Direction.UP;
+				} else {
+					return true;
+				}
 			} else {
-				return true;
+				return i == 1;
 			}
-		} else {
-			return i == 1;
 		}
+		return false;
 	}
 
 	@Nullable
@@ -136,6 +143,9 @@ public class FallenLeavesBlock extends TFPlantBlock {
 	@Override
 	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
 		super.entityInside(state, level, pos, entity);
+		if (state.getValue(LAYERS) > 2) {
+			entity.makeStuckInBlock(state, new Vec3(1.0D - (0.05D * (state.getValue(LAYERS) - 2)), 1.0D, 1.0D - (0.05D * (state.getValue(LAYERS) - 2))));
+		}
 		if (entity instanceof LivingEntity && (entity.getDeltaMovement().x() != 0 || entity.getDeltaMovement().z() != 0) && level.getRandom().nextBoolean()) {
 			if(level.isClientSide()) {
 				int color = Minecraft.getInstance().getBlockColors().getColor(Blocks.OAK_LEAVES.defaultBlockState(), level, pos, 0);

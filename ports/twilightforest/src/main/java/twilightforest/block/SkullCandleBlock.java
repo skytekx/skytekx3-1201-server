@@ -49,10 +49,10 @@ public class SkullCandleBlock extends AbstractSkullCandleBlock {
 	private static final Int2ObjectMap<List<Vec3>> PARTICLE_OFFSETS = Util.make(() -> {
 		Int2ObjectMap<List<Vec3>> var0 = new Int2ObjectOpenHashMap<>();
 		var0.defaultReturnValue(ImmutableList.of());
-		var0.put(1, ImmutableList.of(new Vec3(0.5D, 1.0D, 0.5D)));
-		var0.put(2, ImmutableList.of(new Vec3(0.375D, 0.94D, 0.5D), new Vec3(0.625D, 1.0D, 0.44D)));
-		var0.put(3, ImmutableList.of(new Vec3(0.5D, 0.813D, 0.625D), new Vec3(0.375D, 0.94D, 0.5D), new Vec3(0.56D, 1.0D, 0.44D)));
-		var0.put(4, ImmutableList.of(new Vec3(0.44D, 0.813D, 0.56D), new Vec3(0.625D, 0.94D, 0.56D), new Vec3(0.375D, 0.94D, 0.375D), new Vec3(0.56D, 1.0D, 0.375D)));
+		var0.put(1, ImmutableList.of(new Vec3(0.5D, 0.96D, 0.5D)));
+		var0.put(2, ImmutableList.of(new Vec3(0.375D, 0.88D, 0.5D), new Vec3(0.625D, 0.96D, 0.44D)));
+		var0.put(3, ImmutableList.of(new Vec3(0.5D, 0.73D, 0.625D), new Vec3(0.375D, 0.88D, 0.5D), new Vec3(0.56D, 0.96D, 0.44D)));
+		var0.put(4, ImmutableList.of(new Vec3(0.44D, 0.73D, 0.56D), new Vec3(0.625D, 0.88D, 0.56D), new Vec3(0.375D, 0.88D, 0.375D), new Vec3(0.56D, 0.96D, 0.375D)));
 		return Int2ObjectMaps.unmodifiable(var0);
 	});
 

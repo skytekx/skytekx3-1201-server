@@ -26,7 +26,7 @@ public class MineLogCoreBlock extends SpecialMagicLogBlock {
 	@Override
 	void performTreeEffect(Level level, BlockPos pos, RandomSource rand) {
 		BlockPos dPos = WorldUtil.randomOffset(rand, pos, TFConfig.miningCoreRange);
-		int moved = OreMagnetItem.doMagnet(level, pos, dPos);
+		int moved = OreMagnetItem.doMagnet(level, pos, dPos, true);
 
 		if (moved > 0) {
 			level.playSound(null, pos, TFSounds.MAGNET_GRAB.get(), SoundSource.BLOCKS, 0.1F, 1.0F);

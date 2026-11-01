@@ -154,6 +154,8 @@ public class TFItems {
 	public static final RegistryObject<Item> MOON_DIAL = ITEMS.register("moon_dial", () -> new MoonDialItem(new Item.Properties()));
 	public static final RegistryObject<Item> EMPERORS_CLOTH = ITEMS.register("emperors_cloth", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> POCKET_WATCH = ITEMS.register("pocket_watch", () -> new PocketWatchItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> CROWN_SPLINTER = ITEMS.register("crown_splinter", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> MYSTIC_CROWN = ITEMS.register("mystic_crown", () -> new MysticCrownItem(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
 
 	public static final RegistryObject<Item> HUGE_LILY_PAD = ITEMS.register("huge_lily_pad", () -> new HugeLilyPadItem(TFBlocks.HUGE_LILY_PAD.get(), new Item.Properties()));
 	public static final RegistryObject<Item> HUGE_WATER_LILY = ITEMS.register("huge_water_lily", () -> new HugeWaterLilyItem(TFBlocks.HUGE_WATER_LILY.get(), new Item.Properties()));

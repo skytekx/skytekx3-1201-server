@@ -420,6 +420,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 		//ur-ghast and alpha yeti need special transforms
 		withExistingParent(TFItems.SNOW_QUEEN_TROPHY.getId().toString(), prefix("item/template_trophy"));
 		withExistingParent(TFItems.QUEST_RAM_TROPHY.getId().toString(), prefix("item/template_trophy"));
+		withExistingParent(TFItems.MYSTIC_CROWN.getId().toString(), prefix("item/template_trophy"));
 
 		withExistingParent(TFItems.CREEPER_SKULL_CANDLE.getId().toString(), prefix("item/template_skull_candle"));
 		withExistingParent(TFItems.PIGLIN_SKULL_CANDLE.getId().toString(), prefix("item/template_skull_candle"));
@@ -543,6 +544,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTex(TFItems.LAMP_OF_CINDERS);
 		singleTex(TFItems.EMPERORS_CLOTH);
 		singleTex(TFItems.POCKET_WATCH);
+		singleTex(TFItems.CROWN_SPLINTER);
 		singleTex(TFItems.ALPHA_YETI_FUR);
 		//yeti helmets cant be trimmed
 		singleTex(TFItems.YETI_HELMET);

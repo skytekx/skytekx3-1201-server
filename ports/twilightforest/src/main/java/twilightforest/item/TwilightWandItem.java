@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.entity.projectile.TwilightWandBolt;
+import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 
 import java.util.List;
@@ -35,7 +37,8 @@ public class TwilightWandItem extends Item {
 
 			if (!level.isClientSide()) {
 				level.addFreshEntity(new TwilightWandBolt(level, player));
-				if (!player.getAbilities().instabuild) {
+				// the Mystic Crown spares the charge 5% of the time
+				if (!player.getAbilities().instabuild && (!player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || level.getRandom().nextFloat() > 0.05F)) {
 					stack.hurt(1, level.getRandom(), null);
 				}
 			}

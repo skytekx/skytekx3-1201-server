@@ -591,6 +591,8 @@ public class LangGenerator extends TFLangProvider {
 		this.add("item.twilightforest.moon_dial.phase_unknown_fools", "404 moon not found");
 		this.addItem(TFItems.POCKET_WATCH, "Rabbit's Pocket Watch");
 		this.add("item.twilightforest.pocket_watch.desc", "It seems to always be running late");
+		this.addItem(TFItems.CROWN_SPLINTER, "Crown Splinter");
+		this.addItem(TFItems.MYSTIC_CROWN, "Mystic Crown");
 
 		this.addItem(TFItems.EMPERORS_CLOTH, "Emperor's Cloth");
 		this.add("item.twilightforest.emperors_cloth.desc", "Shrouded");

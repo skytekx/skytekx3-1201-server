@@ -123,7 +123,7 @@ public class TreeConfigurations {
 
 	public static final TreeConfiguration MANGROVE_TREE = new TreeConfiguration.TreeConfigurationBuilder(
 			BlockStateProvider.simple(TFBlocks.MANGROVE_LOG.get()),
-			new TrunkRiser(5, new BranchingTrunkPlacer(6, 4, 0, 1, new BranchesConfig(0, 3, 6, 2, 0.3, 0.25), false)),
+			new TrunkRiser(4, new BranchingTrunkPlacer(7, 4, 0, 1, new BranchesConfig(0, 3, 6, 2, 0.3, 0.25), false)),
 			BlockStateProvider.simple(TFBlocks.MANGROVE_LEAVES.get()),
 			new LeafSpheroidFoliagePlacer(2.5f, 1.5f, ConstantInt.of(0), 2, 0, -0.25f, (int) (LEAF_SHAG_FACTOR * 0.666f)),
 			new TwoLayersFeatureSize(4, 1, 1)

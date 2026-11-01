@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
@@ -24,6 +23,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
 import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
+import twilightforest.util.FeaturePlacers;
 
 import java.util.List;
 import java.util.OptionalInt;
@@ -71,7 +71,8 @@ public class DarkCanopyTreeFeature extends Feature<TreeConfiguration> {
 		for (int i = 0; i < 4; i ++) {
 			//We check against the TreeFeature's validTreePos method, to see if the tree can grow here, cuz the trunk placer uses this as well
 			//If we don't, some trees end up growing only one or two blocks tall
-			if (!TreeFeature.validTreePos(reader, pos.relative(Direction.UP, i))) return false;
+			// Flowers do not block the trunk either
+			if (!FeaturePlacers.validTreePos(reader, pos.relative(Direction.UP, i))) return false;
 		}
 
 		// do not grow next to another tree

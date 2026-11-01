@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HugeMushroomBlock;
@@ -38,7 +39,7 @@ public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature 
 
         for(int i = 0; i < height; ++i) {
             mutableBlockPos.set(pos).move(Direction.UP, i);
-            if (!levelAccessor.getBlockState(mutableBlockPos).isSolidRender(levelAccessor, mutableBlockPos)) {
+            if (this.isReplaceable(levelAccessor, mutableBlockPos)) {
                 this.setBlock(levelAccessor, mutableBlockPos, featureConfiguration.stemProvider.getState(random, pos));
 
                 if (bugsLeft > 0 && i > height / 2 && random.nextInt(10) == 9)
@@ -72,7 +73,7 @@ public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature 
         BlockPos.MutableBlockPos bugPos = new BlockPos.MutableBlockPos();
         bugPos.set(pos).move(direction);
 
-        if (levelAccessor.getBlockState(bugPos).isSolidRender(levelAccessor, bugPos)) {
+        if (!this.isReplaceable(levelAccessor, bugPos)) {
             return false;
         }
 
@@ -101,7 +102,9 @@ public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature 
                 blockstate = blockstate.setValue(HugeMushroomBlock.DOWN, true).setValue(HugeMushroomBlock.UP, true);//Seal up the ups and downs
             }
 
-            this.setBlock(levelAccessor, pixel, blockstate);
+            if (this.isReplaceable(levelAccessor, pixel)) {
+                this.setBlock(levelAccessor, pixel, blockstate);
+            }
         }
 
         int max = Math.max(src.getY(), dest.getY());
@@ -115,7 +118,9 @@ public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature 
 
             BlockPos blockPos = new BlockPos(dest.getX(), i, dest.getZ());
 
-            this.setBlock(levelAccessor, blockPos, blockstate);
+            if (this.isReplaceable(levelAccessor, blockPos)) {
+                this.setBlock(levelAccessor, blockPos, blockstate);
+            }
 
             if (bugsLeft > 0 && i > Math.min(src.getY(), dest.getY()) / 2 && random.nextInt(20) == 0)
                 if (this.addFirefly(levelAccessor, blockPos, random))
@@ -141,7 +146,7 @@ public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature 
                 boolean zMinMax = zIsMin || zIsMax;
                 if (!xMinMax || !zMinMax) {
                     mutableBlockPos.setWithOffset(pos, x, height, z);
-                    if (!levelAccessor.getBlockState(mutableBlockPos).isSolidRender(levelAccessor, mutableBlockPos)) {
+                    if (this.isReplaceable(levelAccessor, mutableBlockPos)) {
                         boolean xMinOrZ = xIsMin || zMinMax && x == 1 - i;
                         boolean xMaxOrZ = xIsMax || zMinMax && x == i - 1;
                         boolean zMinOrX = zIsMin || xMinMax && z == 1 - i;
@@ -157,5 +162,14 @@ public abstract class CanopyMushroomFeature extends AbstractHugeMushroomFeature 
                 }
             }
         }
+    }
+
+    /**
+     * Mushrooms only grow into blocks a tree could replace (never into structure blocks such as the Lich Tower's)
+     * and never into full solid blocks
+     */
+    public boolean isReplaceable(BlockGetter levelAccessor, BlockPos pos) {
+        BlockState blockState = levelAccessor.getBlockState(pos);
+        return FeatureLogic.isReplaceable(blockState, true) && !blockState.isSolidRender(levelAccessor, pos);
     }
 }

@@ -3,6 +3,7 @@ package twilightforest.world.components.feature.trees;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.core.Direction;
@@ -35,8 +36,8 @@ public class LargeWinterTreeFeature extends TFTreeFeature<TFTreeFeatureConfig> {
 			return false;
 		}
 
-		// check if we're on a valid block
-		if (!SnowTreeFeature.validTreePos(world, pos.below())) {
+		// check if we're on a valid block: the trunk position itself must be free, the ground below is not
+		if (!SnowTreeFeature.validTreePos(world, pos)) {
 			return false;
 		}
 
@@ -107,10 +108,15 @@ public class LargeWinterTreeFeature extends TFTreeFeature<TFTreeFeatureConfig> {
 
 	private void buildTrunk(LevelAccessor world, BiConsumer<BlockPos, BlockState> trunkPlacer, RandomSource rand, BlockPos pos, int treeHeight, TFTreeFeatureConfig config) {
 		for (int dy = 0; dy < treeHeight; dy++) {
-			FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(0, dy, 0), config.trunkProvider);
-			FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(1, dy, 0), config.trunkProvider);
-			FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(0, dy, 1), config.trunkProvider);
-			FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(1, dy, 1), config.trunkProvider);
+			// the 2x2 trunk turns the ground below its bottom logs into dirt, like vanilla's giant trees
+			if (FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(0, dy, 0), config.trunkProvider) && dy == 0)
+				world.setBlock(pos.offset(0, -1, 0), Blocks.DIRT.defaultBlockState(), 19);
+			if (FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(0, dy, 1), config.trunkProvider) && dy == 0)
+				world.setBlock(pos.offset(0, -1, 1), Blocks.DIRT.defaultBlockState(), 19);
+			if (FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(1, dy, 0), config.trunkProvider) && dy == 0)
+				world.setBlock(pos.offset(1, -1, 0), Blocks.DIRT.defaultBlockState(), 19);
+			if (FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(1, dy, 1), config.trunkProvider) && dy == 0)
+				world.setBlock(pos.offset(1, -1, 1), Blocks.DIRT.defaultBlockState(), 19);
 		}
 	}
 }

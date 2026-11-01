@@ -42,6 +42,27 @@ public class TFConfig {
 	public static Common COMMON_CONFIG;
 	public static Client CLIENT_CONFIG;
 
+	// Baked copies of config values that are read on hot paths (every Level#isRainingAt call, every magic tree
+	// core tick, the client weather tick), so those paths don't go through ForgeConfigSpec on each call.
+	// They are refreshed on every ModConfigEvent.Loading and ModConfigEvent.Reloading of our configs.
+	// Names follow TF 4.8's config.TFConfig. (upstream c50ef588a, 84ccdeec6, 333678333, a2b9fa06b)
+
+	// --- CLIENT ---
+	private static int clientCloudBlockPrecipitationDistance = -1;
+
+	// --- COMMON ---
+	public static int commonCloudBlockPrecipitationDistance = 32;
+
+	// -- Magic Trees --
+	public static boolean disableTimeCore = false;
+	public static int timeCoreRange = 16;
+	public static boolean disableTransformationCore = false;
+	public static int transformationCoreRange = 16;
+	public static boolean disableMiningCore = false;
+	public static int miningCoreRange = 16;
+	public static boolean disableSortingCore = false;
+	public static int sortingCoreRange = 16;
+
 	public static class Common {
 
 		public Common(ForgeConfigSpec.Builder builder) {
@@ -399,7 +420,25 @@ public class TFConfig {
 	private static final String config = "config." + TwilightForestMod.ID;
 
 	public static int getClientCloudBlockPrecipitationDistance() {
-		return (CLIENT_CONFIG.cloudBlockPrecipitationDistanceClient.get() == -1 ? COMMON_CONFIG.cloudBlockPrecipitationDistanceCommon : CLIENT_CONFIG.cloudBlockPrecipitationDistanceClient).get();
+		return clientCloudBlockPrecipitationDistance == -1 ? commonCloudBlockPrecipitationDistance : clientCloudBlockPrecipitationDistance;
+	}
+
+	private static void rebakeCommonOptions(Common config) {
+		commonCloudBlockPrecipitationDistance = config.cloudBlockPrecipitationDistanceCommon.get();
+
+		// Tree Cores
+		disableTimeCore = config.MAGIC_TREES.disableTime.get();
+		timeCoreRange = config.MAGIC_TREES.timeRange.get();
+		disableTransformationCore = config.MAGIC_TREES.disableTransformation.get();
+		transformationCoreRange = config.MAGIC_TREES.transformationRange.get();
+		disableMiningCore = config.MAGIC_TREES.disableMining.get();
+		miningCoreRange = config.MAGIC_TREES.miningRange.get();
+		disableSortingCore = config.MAGIC_TREES.disableSorting.get();
+		sortingCoreRange = config.MAGIC_TREES.sortingRange.get();
+	}
+
+	private static void rebakeClientOptions(Client config) {
+		clientCloudBlockPrecipitationDistance = config.cloudBlockPrecipitationDistanceClient.get();
 	}
 
 	@Nullable
@@ -438,6 +477,16 @@ public class TFConfig {
 	@SubscribeEvent
 	public static void onConfigReload(final ModConfigEvent event) {
 		if (Objects.equals(event.getConfig().getModId(), TwilightForestMod.ID)) {
+			// This listener sees Loading as well as Reloading, so the baked values are also set on startup
+			// and not only when a config is changed while the game is running. (upstream 333678333)
+			if (!(event instanceof ModConfigEvent.Unloading)) {
+				if (event.getConfig().getType() == ModConfig.Type.COMMON) {
+					rebakeCommonOptions(COMMON_CONFIG);
+				} else if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
+					rebakeClientOptions(CLIENT_CONFIG);
+				}
+			}
+
 			if (event.getConfig().getType() == ModConfig.Type.COMMON) {
 				//resends uncrafting settings to all players when the config is reloaded. This ensures all players have matching configs so things dont desync.
 				MinecraftServer server = ServerLifecycleHooks.getCurrentServer();

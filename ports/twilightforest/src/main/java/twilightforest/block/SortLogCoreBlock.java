@@ -31,7 +31,7 @@ public class SortLogCoreBlock extends SpecialMagicLogBlock {
 
 	@Override
 	public boolean doesCoreFunction() {
-		return !TFConfig.COMMON_CONFIG.MAGIC_TREES.disableSorting.get();
+		return !TFConfig.disableSortingCore;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class SortLogCoreBlock extends SpecialMagicLogBlock {
 		Map<List<IItemHandler>, Vec3> inputMap = new HashMap<>();
 		Map<IItemHandler, Vec3> outputMap = new HashMap<>();
 
-		for (BlockPos blockPos : WorldUtil.getAllAround(pos, TFConfig.COMMON_CONFIG.MAGIC_TREES.sortingRange.get())) { // Get every itemHandler from every block in the area
+		for (BlockPos blockPos : WorldUtil.getAllAround(pos, TFConfig.sortingCoreRange)) { // Get every itemHandler from every block in the area
 			if (!blockPos.equals(pos)) {
 				BlockEntity blockEntity = level.getBlockEntity(blockPos);
 				if (blockEntity != null) {

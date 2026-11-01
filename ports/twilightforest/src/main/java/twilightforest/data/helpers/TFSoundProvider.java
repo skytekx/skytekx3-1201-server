@@ -19,14 +19,22 @@ public abstract class TFSoundProvider extends SoundDefinitionsProvider {
 		generateNewSound(event, baseSoundDirectory, numberOfSounds, true);
 	}
 
+	public void generateNewSoundWithSubtitle(RegistryObject<SoundEvent> event, String baseSoundDirectory, int numberOfSounds, float volume, float pitch) {
+		generateNewSound(event, baseSoundDirectory, numberOfSounds, true, volume, pitch);
+	}
+
 	public void generateNewSound(RegistryObject<SoundEvent> event, String baseSoundDirectory, int numberOfSounds, boolean subtitle) {
+		generateNewSound(event, baseSoundDirectory, numberOfSounds, subtitle, 1.0F, 1.0F);
+	}
+
+	public void generateNewSound(RegistryObject<SoundEvent> event, String baseSoundDirectory, int numberOfSounds, boolean subtitle, float volume, float pitch) {
 		SoundDefinition definition = SoundDefinition.definition();
 		if (subtitle) {
 			String[] splitSoundName = event.getId().getPath().split("\\.", 3);
 			definition.subtitle("subtitles.twilightforest." + splitSoundName[0] + "." + splitSoundName[2]);
 		}
 		for (int i = 1; i <= numberOfSounds; i++) {
-			definition.with(SoundDefinition.Sound.sound(new ResourceLocation(TwilightForestMod.ID, baseSoundDirectory + (numberOfSounds > 1 ? i : "")), SoundDefinition.SoundType.SOUND));
+			definition.with(SoundDefinition.Sound.sound(new ResourceLocation(TwilightForestMod.ID, baseSoundDirectory + (numberOfSounds > 1 ? i : "")), SoundDefinition.SoundType.SOUND).volume(volume).pitch(pitch));
 		}
 		this.add(event, definition);
 	}

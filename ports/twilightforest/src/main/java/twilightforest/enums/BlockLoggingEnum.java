@@ -34,7 +34,9 @@ public enum BlockLoggingEnum implements StringRepresentable {
         this.fluid = fluid;
         this.name = name().toLowerCase(Locale.ROOT);
 
-        if (fluid != Fluids.EMPTY && block == Blocks.AIR) {
+        // 4.8 (1afc2996a): the fluid entries hold their liquid block, not air, so this used to register no fluid at all
+        // and the Keepsake Casket could never be waterlogged or lavalogged
+        if (fluid != Fluids.EMPTY && block.defaultBlockState().liquid()) {
             Ref.FLUIDS.put(fluid, this);
         }
         if(fluid == Fluids.EMPTY && block != Blocks.AIR) {

@@ -25,6 +25,7 @@ import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.MagicPainting;
 import twilightforest.item.GlassSwordItem;
+import twilightforest.item.KeepsakeCasketItem;
 import twilightforest.init.custom.MagicPaintingVariants;
 import twilightforest.util.MagicPaintingVariant;
 
@@ -329,7 +330,8 @@ public class TFCreativeTabs {
 				makeSkullCandle(output, TFItems.PIGLIN_SKULL_CANDLE.get());
 				output.accept(TFBlocks.DEATH_TOME_SPAWNER.get());
 				output.accept(TFBlocks.EMPTY_CANOPY_BOOKSHELF.get());
-				output.accept(TFBlocks.KEEPSAKE_CASKET.get());
+				createCaskets(output);
+				output.accept(TFBlocks.SKULL_CHEST.get());
 				output.accept(TFBlocks.SMOKER.get());
 				output.accept(TFBlocks.FIRE_JET.get());
 				output.accept(TFBlocks.MAZE_SLIME_BLOCK.get());
@@ -614,6 +616,15 @@ public class TFCreativeTabs {
 	private static void createSpawnEggsAlphabetical(CreativeModeTab.Output output) {
 		Collection<Item> eggs = TFEntities.SPAWN_EGGS.getEntries().stream().map(RegistryObject::get).toList();
 		eggs.forEach(output::accept);
+	}
+
+	//one casket per damage level
+	private static void createCaskets(CreativeModeTab.Output output) {
+		for (int i = 0; i < 3; i++) {
+			ItemStack stack = new ItemStack(TFItems.KEEPSAKE_CASKET.get());
+			KeepsakeCasketItem.setCasketDamage(stack, i);
+			output.accept(stack);
+		}
 	}
 
 	private static void makeSkullCandle(CreativeModeTab.Output output, ItemLike item) {

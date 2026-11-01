@@ -62,7 +62,7 @@ import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.DrinkFromFlaskTrigger;
 import twilightforest.block.*;
-import twilightforest.block.entity.KeepsakeCasketBlockEntity;
+import twilightforest.block.entity.SkullChestBlockEntity;
 import twilightforest.block.entity.SkullCandleBlockEntity;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.data.tags.EntityTagGenerator;
@@ -155,17 +155,13 @@ public class EntityEvents {
 	@SubscribeEvent
 	//if our casket is owned by someone and that player isnt the one breaking it, stop them
 	public static void onCasketBreak(BlockEvent.BreakEvent event) {
-		Block block = event.getState().getBlock();
 		Player player = event.getPlayer();
-		BlockEntity te = event.getLevel().getBlockEntity(event.getPos());
-		UUID checker;
-		if (block == TFBlocks.KEEPSAKE_CASKET.get()) {
-			if (te instanceof KeepsakeCasketBlockEntity casket) {
-				checker = casket.playeruuid;
-			} else checker = null;
-			if (checker != null) {
-				if (!((KeepsakeCasketBlockEntity) te).isEmpty()) {
-					if (!player.hasPermissions(3) || !player.getGameProfile().getId().equals(checker)) {
+		//covers the Keepsake Casket and the Skull Chest it degrades into
+		if (event.getState().getBlock() instanceof SkullChestBlock) {
+			BlockEntity te = event.getLevel().getBlockEntity(event.getPos());
+			if (te instanceof SkullChestBlockEntity casket) {
+				if (casket.owner != null && !casket.isEmpty()) {
+					if (!player.hasPermissions(3) || !casket.isOwner(player)) {
 						event.setCanceled(true);
 					}
 				}

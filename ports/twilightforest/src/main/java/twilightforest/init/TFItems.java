@@ -160,6 +160,7 @@ public class TFItems {
 	public static final RegistryObject<Item> CROWN_SPLINTER = ITEMS.register("crown_splinter", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> MYSTIC_CROWN = ITEMS.register("mystic_crown", () -> new MysticCrownItem(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
 
+	public static final RegistryObject<Item> KEEPSAKE_CASKET = ITEMS.register("keepsake_casket", () -> new KeepsakeCasketItem(TFBlocks.KEEPSAKE_CASKET.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> HUGE_LILY_PAD = ITEMS.register("huge_lily_pad", () -> new HugeLilyPadItem(TFBlocks.HUGE_LILY_PAD.get(), new Item.Properties()));
 	public static final RegistryObject<Item> HUGE_WATER_LILY = ITEMS.register("huge_water_lily", () -> new HugeWaterLilyItem(TFBlocks.HUGE_WATER_LILY.get(), new Item.Properties()));
 	public static final RegistryObject<Item> FALLEN_LEAVES = ITEMS.register("fallen_leaves", () -> new BlockItem(TFBlocks.FALLEN_LEAVES.get(), new Item.Properties()) {

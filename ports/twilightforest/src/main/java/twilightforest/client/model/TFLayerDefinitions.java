@@ -15,7 +15,7 @@ import twilightforest.client.model.entity.newmodels.*;
 import twilightforest.client.model.tileentity.*;
 import twilightforest.client.model.tileentity.legacy.*;
 import twilightforest.client.renderer.entity.TwilightBoatRenderer;
-import twilightforest.client.renderer.tileentity.CasketTileEntityRenderer;
+import twilightforest.client.renderer.tileentity.SkullChestRenderer;
 import twilightforest.entity.TwilightBoat;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -157,7 +157,8 @@ public class TFLayerDefinitions {
 
 		event.registerLayerDefinition(TFModelLayers.CICADA, CicadaModel::create);
 		event.registerLayerDefinition(TFModelLayers.FIREFLY, FireflyModel::create);
-		event.registerLayerDefinition(TFModelLayers.KEEPSAKE_CASKET, CasketTileEntityRenderer::create);
+		event.registerLayerDefinition(TFModelLayers.KEEPSAKE_CASKET, () -> SkullChestRenderer.create(true));
+		event.registerLayerDefinition(TFModelLayers.SKULL_CHEST, () -> SkullChestRenderer.create(false));
 		event.registerLayerDefinition(TFModelLayers.MOONWORM, MoonwormModel::create);
 
 		event.registerLayerDefinition(TFModelLayers.RED_THREAD, RedThreadModel::create);

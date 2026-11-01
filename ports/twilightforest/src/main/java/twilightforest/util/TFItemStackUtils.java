@@ -3,16 +3,14 @@ package twilightforest.util;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NumericTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import twilightforest.TwilightForestMod;
-import twilightforest.block.KeepsakeCasketBlock;
 import twilightforest.events.CharmEvents;
+import twilightforest.item.KeepsakeCasketItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +43,7 @@ public class TFItemStackUtils {
 	/**
 	 * Consumes one of the given item from the player's armor, main inventory or offhand (in that order).
 	 *
-	 * @param persistentTag the player's persisted data. If the consumed stack is a damaged Keepsake Casket, its damage is stored here under {@link CharmEvents#CASKET_DAMAGE_TAG}.
+	 * @param persistentTag the player's persisted data. If the consumed stack is a Keepsake Casket, its damage is stored here under {@link CharmEvents#CASKET_DAMAGE_TAG}.
 	 * @param saveItemToTag if true, the consumed stack is saved under {@link CharmEvents#CONSUMED_CHARM_TAG} so its effect can be played later
 	 */
 	public static boolean consumeInventoryItem(final Player player, final Item item, CompoundTag persistentTag, boolean saveItemToTag) {
@@ -58,15 +56,8 @@ public class TFItemStackUtils {
 		for (ItemStack stack : stacks) {
 			if (stack.is(item)) {
 				if (saveItemToTag) persistentTag.put(CharmEvents.CONSUMED_CHARM_TAG, stack.save(new CompoundTag()));
-				CompoundTag nbt = stack.getTag();
-				if (nbt != null && nbt.contains(BlockItem.BLOCK_STATE_TAG, Tag.TAG_COMPOUND)) {
-					CompoundTag stateTag = nbt.getCompound(BlockItem.BLOCK_STATE_TAG);
-					String breakage = KeepsakeCasketBlock.BREAKAGE.getName();
-					if (stateTag.contains(breakage)) {
-						//a casket broken by hand stores its damage as an int, the loot table's CopyBlockState stores it as a string
-						int damage = stateTag.get(breakage) instanceof NumericTag numeric ? numeric.getAsInt() : KeepsakeCasketBlock.BREAKAGE.getValue(stateTag.getString(breakage)).orElse(0);
-						persistentTag.putInt(CharmEvents.CASKET_DAMAGE_TAG, damage);
-					}
+				if (stack.getItem() instanceof KeepsakeCasketItem) {
+					persistentTag.putInt(CharmEvents.CASKET_DAMAGE_TAG, KeepsakeCasketItem.getCasketDamage(stack));
 				}
 				stack.shrink(1);
 				return true;

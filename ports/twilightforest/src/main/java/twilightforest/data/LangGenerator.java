@@ -203,7 +203,11 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.TERRORCOTTA_CURVES, "Terrorcotta Curves");
 		this.addBlock(TFBlocks.TERRORCOTTA_LINES, "Terrorcotta Lines");
 
+		this.addBlock(TFBlocks.SKULL_CHEST, "Skull Chest");
+		this.add("block.twilightforest.skull_chest.locked", "This Skull Chest can only be opened by %s!");
 		this.addBlock(TFBlocks.KEEPSAKE_CASKET, "Keepsake Casket");
+		this.add("block.twilightforest.chipped_keepsake_casket", "Chipped Keepsake Casket");
+		this.add("block.twilightforest.damaged_keepsake_casket", "Damaged Keepsake Casket");
 		this.add("block.twilightforest.casket.broken", "Your Keepsake Casket was too damaged to hold any more items. All items that would be stored in your casket were dropped on the ground.");
 		this.add("block.twilightforest.casket.locked", "This Casket can only be opened by %s!");
 		this.addBlock(TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE, "Miniature Lich Tower");
@@ -1023,6 +1027,9 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.REACTOR_AMBIENT, "Carminite Reactor whooshes");
 		this.addSubtitle(TFSounds.REAPPEAR_BLOCK, "Reappearing Block reappears");
 		this.addSubtitle(TFSounds.REAPPEAR_POOF, "Reappearing Block disappears");
+		this.addSubtitle(TFSounds.SKULL_CHEST_CLOSE, "Skull Chest closes");
+		this.addSubtitle(TFSounds.SKULL_CHEST_LOCKED, "Skull Chest clicks");
+		this.addSubtitle(TFSounds.SKULL_CHEST_OPEN, "Skull Chest opens");
 		this.addSubtitle(TFSounds.SLIDER, "Sliding Trap creaks");
 		this.addSubtitle(TFSounds.SMOKER_START, "Smoker activates");
 		this.addSubtitle(TFSounds.TIME_CORE, "Tree of Time ticks");

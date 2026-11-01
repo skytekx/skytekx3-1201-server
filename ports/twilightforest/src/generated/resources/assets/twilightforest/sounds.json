@@ -241,6 +241,30 @@
     ],
     "subtitle": "subtitles.twilightforest.block.reappearing_block.vanish"
   },
+  "block.twilightforest.skull_chest.close": {
+    "sounds": [
+      "twilightforest:random/casket/close"
+    ],
+    "subtitle": "subtitles.twilightforest.block.skull_chest.close"
+  },
+  "block.twilightforest.skull_chest.locked": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chest.locked"
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.block.skull_chest.locked"
+  },
+  "block.twilightforest.skull_chest.open": {
+    "sounds": [
+      {
+        "name": "twilightforest:random/casket/open",
+        "pitch": 1.25
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.block.skull_chest.open"
+  },
   "block.twilightforest.slider.move": {
     "sounds": [
       "twilightforest:random/creakgo2"

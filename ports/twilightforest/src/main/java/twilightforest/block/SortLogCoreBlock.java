@@ -31,7 +31,7 @@ public class SortLogCoreBlock extends SpecialMagicLogBlock {
 
 	@Override
 	public boolean doesCoreFunction() {
-		return !TFConfig.disableSortingCore;
+		return TFConfig.isMagicTreeCoreEnabled(TFConfig.disableSortingCore, TFConfig.sortingCoreRange);
 	}
 
 	@Override

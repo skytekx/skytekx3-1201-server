@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
+import twilightforest.TFConfig;
 import twilightforest.inventory.UncraftingMenu;
 
 import java.util.function.Supplier;
@@ -35,8 +36,16 @@ public class UncraftingGuiPacket {
 					switch (message.type) {
 						case 0 -> uncrafting.unrecipeInCycle++;
 						case 1 -> uncrafting.unrecipeInCycle--;
-						case 2 -> uncrafting.ingredientsInCycle++;
-						case 3 -> uncrafting.ingredientsInCycle--;
+						case 2 -> {
+							if (!TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableIngredientSwitching.get()) {
+								uncrafting.ingredientsInCycle++;
+							}
+						}
+						case 3 -> {
+							if (!TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableIngredientSwitching.get()) {
+								uncrafting.ingredientsInCycle--;
+							}
+						}
 						case 4 -> uncrafting.recipeInCycle++;
 						case 5 -> uncrafting.recipeInCycle--;
 					}

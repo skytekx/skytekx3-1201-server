@@ -16,7 +16,8 @@ public class TFPacketHandler {
 	// them fail to decode the changed packets later. Bump N (2-skytekx.2, ...) whenever a backported packet changes its wire format.
 	// .1: UpdateTFMultipartPacket is keyed by part entity id and always carries the part's synched data.
 	// .2: SpawnCharmPacket is registered after ParticlePacket, which shifts the discriminator of every later packet.
-	private static final String PROTOCOL_VERSION = "2-skytekx.2";
+	// .3: SyncUncraftingTableConfigPacket carries disableIngredientSwitching after allowShapeless (4.8 f5ef5a835).
+	private static final String PROTOCOL_VERSION = "2-skytekx.3";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,

@@ -4,12 +4,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeTier;
 import net.minecraftforge.common.TierSortingRegistry;
 import twilightforest.TwilightForestMod;
-import twilightforest.init.TFBlocks;
-import twilightforest.init.TFItems;
+import twilightforest.data.tags.ItemTagGenerator;
 
 import java.util.List;
 
@@ -17,27 +15,27 @@ public class TwilightItemTier {
 	// harvestLevel, maxUses, efficiency, damage, enchantability
 
 	public static final Tier IRONWOOD = TierSortingRegistry.registerTier(
-			new ForgeTier(2, 512, 6.5F, 2, 25, BlockTags.create(TwilightForestMod.prefix("needs_ironwood_tool")), () -> Ingredient.of(TFItems.IRONWOOD_INGOT.get())),
+			new ForgeTier(2, 512, 6.5F, 2, 25, BlockTags.create(TwilightForestMod.prefix("needs_ironwood_tool")), () -> Ingredient.of(ItemTagGenerator.REPAIRS_IRONWOOD_TOOLS)),
 			TwilightForestMod.prefix("ironwood"), List.of(Tiers.IRON), List.of(Tiers.DIAMOND));
 
 	public static final Tier FIERY = TierSortingRegistry.registerTier(
-			new ForgeTier(4, 1024, 9F, 4, 10, BlockTags.create(TwilightForestMod.prefix("needs_fiery_tool")), () -> Ingredient.of(TFItems.FIERY_INGOT.get())),
+			new ForgeTier(4, 1024, 9F, 4, 10, BlockTags.create(TwilightForestMod.prefix("needs_fiery_tool")), () -> Ingredient.of(ItemTagGenerator.REPAIRS_FIERY_TOOLS)),
 			TwilightForestMod.prefix("fiery"), List.of(Tiers.NETHERITE), List.of());
 
 	public static final Tier STEELEAF = TierSortingRegistry.registerTier(
-			new ForgeTier(3, 131, 8.0F, 3, 9, BlockTags.create(TwilightForestMod.prefix("needs_steeleaf_tool")), () -> Ingredient.of(TFItems.STEELEAF_INGOT.get())),
+			new ForgeTier(3, 131, 8.0F, 3, 9, BlockTags.create(TwilightForestMod.prefix("needs_steeleaf_tool")), () -> Ingredient.of(ItemTagGenerator.REPAIRS_STEELEAF_TOOLS)),
 			TwilightForestMod.prefix("steeleaf"), List.of(Tiers.DIAMOND), List.of(Tiers.NETHERITE));
 
 	public static final Tier KNIGHTMETAL = TierSortingRegistry.registerTier(
-			new ForgeTier(3, 512, 8.0F, 3, 8, BlockTags.create(TwilightForestMod.prefix("needs_knightmetal_tool")), () -> Ingredient.of(TFItems.KNIGHTMETAL_INGOT.get())),
+			new ForgeTier(3, 512, 8.0F, 3, 8, BlockTags.create(TwilightForestMod.prefix("needs_knightmetal_tool")), () -> Ingredient.of(ItemTagGenerator.REPAIRS_KNIGHTMETAL_TOOLS)),
 			TwilightForestMod.prefix("knightmetal"), List.of(Tiers.DIAMOND), List.of(Tiers.NETHERITE));
 
 	public static final Tier GIANT = TierSortingRegistry.registerTier(
-			new ForgeTier(1, 1024, 4.0F, 1.0F, 5, BlockTags.create(TwilightForestMod.prefix("needs_giant_tool")), () -> Ingredient.of(TFBlocks.GIANT_COBBLESTONE.get())),
+			new ForgeTier(1, 1024, 4.0F, 1.0F, 5, BlockTags.create(TwilightForestMod.prefix("needs_giant_tool")), () -> Ingredient.of(ItemTagGenerator.REPAIRS_GIANT_TOOLS)),
 			TwilightForestMod.prefix("giant"), List.of(Tiers.STONE), List.of(Tiers.IRON));
 
 	public static final Tier ICE = TierSortingRegistry.registerTier(
-			new ForgeTier(0, 32, 1.0F, 3.5F, 5, BlockTags.create(TwilightForestMod.prefix("needs_ice_tool")), () -> Ingredient.of(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE)), //there isnt an item tag for ice
+			new ForgeTier(0, 32, 1.0F, 3.5F, 5, BlockTags.create(TwilightForestMod.prefix("needs_ice_tool")), () -> Ingredient.of(ItemTagGenerator.REPAIRS_ICE_TOOLS)),
 			TwilightForestMod.prefix("ice"), List.of(Tiers.WOOD), List.of());
 
 	public static final Tier GLASS = TierSortingRegistry.registerTier(

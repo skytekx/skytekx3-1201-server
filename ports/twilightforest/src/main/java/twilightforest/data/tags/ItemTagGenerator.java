@@ -32,6 +32,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> STRIPPED_LOGS = makeForgeTag("stripped_logs");
 	public static final TagKey<Item> STRIPPED_WOOD = makeForgeTag("stripped_wood");
 
+	public static final TagKey<Item> BANISTERS = create("banisters");
+
 	public static final TagKey<Item> PAPER = makeForgeTag("paper");
 
 	public static final TagKey<Item> TOWERWOOD = create("towerwood");
@@ -67,6 +69,16 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> UNCRAFTING_IGNORES_COST = create("uncrafting_ignores_cost");
 
 	public static final TagKey<Item> KEPT_ON_DEATH = create("kept_on_death");
+
+	public static final TagKey<Item> REPAIRS_IRONWOOD_TOOLS = create("repairs_ironwood_tools");
+	public static final TagKey<Item> REPAIRS_STEELEAF_TOOLS = create("repairs_steeleaf_tools");
+	public static final TagKey<Item> REPAIRS_KNIGHTMETAL_TOOLS = create("repairs_knightmetal_tools");
+	public static final TagKey<Item> REPAIRS_FIERY_TOOLS = create("repairs_fiery_tools");
+	public static final TagKey<Item> REPAIRS_GIANT_TOOLS = create("repairs_giant_tools");
+	public static final TagKey<Item> REPAIRS_ICE_TOOLS = create("repairs_ice_tools");
+
+	public static final TagKey<Item> IMMUNE_TO_THORNS = create("immune_to_thorns");
+	public static final TagKey<Item> TROPHIES = create("trophies");
 
 	public ItemTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> provider, ExistingFileHelper helper) {
 		super(output, future, provider, helper);
@@ -133,6 +145,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 				.addTag(STORAGE_BLOCKS_KNIGHTMETAL).addTag(STORAGE_BLOCKS_STEELEAF);
 
 		this.copy(BlockTagGenerator.TOWERWOOD, TOWERWOOD);
+		this.copy(BlockTagGenerator.BANISTERS, BANISTERS);
 
 		tag(PAPER).add(Items.PAPER);
 		tag(Tags.Items.FEATHERS).add(Items.FEATHER).add(TFItems.RAVEN_FEATHER.get());
@@ -235,6 +248,23 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(UNCRAFTING_IGNORES_COST).addTag(Tags.Items.RODS_WOODEN);
 
 		tag(KEPT_ON_DEATH).add(TFItems.TOWER_KEY.get(), TFItems.PHANTOM_HELMET.get(), TFItems.PHANTOM_CHESTPLATE.get());
+
+		tag(REPAIRS_IRONWOOD_TOOLS).addTag(IRONWOOD_INGOTS);
+		tag(REPAIRS_STEELEAF_TOOLS).addTag(STEELEAF_INGOTS);
+		tag(REPAIRS_KNIGHTMETAL_TOOLS).addTag(KNIGHTMETAL_INGOTS);
+		tag(REPAIRS_FIERY_TOOLS).addTag(FIERY_INGOTS);
+		tag(REPAIRS_GIANT_TOOLS).add(TFBlocks.GIANT_COBBLESTONE.get().asItem());
+		tag(REPAIRS_ICE_TOOLS).add(Items.ICE, Items.PACKED_ICE, Items.BLUE_ICE);
+
+		tag(IMMUNE_TO_THORNS).add(TFBlocks.THORN_LEAVES.get().asItem(), TFBlocks.THORN_ROSE.get().asItem());
+
+		tag(TROPHIES).add(
+				TFItems.NAGA_TROPHY.get(), TFItems.LICH_TROPHY.get(),
+				TFItems.MINOSHROOM_TROPHY.get(), TFItems.HYDRA_TROPHY.get(),
+				TFItems.KNIGHT_PHANTOM_TROPHY.get(), TFItems.UR_GHAST_TROPHY.get(),
+				TFItems.ALPHA_YETI_TROPHY.get(), TFItems.SNOW_QUEEN_TROPHY.get());
+
+		tag(Tags.Items.MUSHROOMS).add(TFBlocks.MUSHGLOOM.get().asItem());
 
 		tag(ItemTags.PIGLIN_LOVED).add(TFItems.GOLDEN_MINOTAUR_AXE.get(), TFItems.CHARM_OF_KEEPING_3.get(), TFItems.CHARM_OF_LIFE_2.get(), TFItems.LAMP_OF_CINDERS.get());
 

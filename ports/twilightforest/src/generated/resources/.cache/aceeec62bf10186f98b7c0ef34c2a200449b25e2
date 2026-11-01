@@ -5,6 +5,7 @@ c365018bd78f1335cd4508b5d74bc4500ae951bd data/alexscaves/tags/blocks/underzealot
 21c5678245eaba6b9d0d5a52cf8b03948dd1d8d8 data/artifacts/tags/blocks/campsite_chests.json
 27fc8e32e0e71b8dcbb82f0ada3b954d906256b6 data/farmersdelight/tags/blocks/compost_activators.json
 58368024917f3977d742816bf7ea2eb9a1d5d1b7 data/farmersdelight/tags/blocks/heat_sources.json
+58b5e0d0eea5536fb5d46cc844c5b8b71bc34f86 data/forge/tags/blocks/bookshelves.json
 3d56c0ea016f639fad4fae4272d928867251da04 data/forge/tags/blocks/chests/wooden.json
 879fc86d9d7face7697fbbb62565885740fc7f41 data/forge/tags/blocks/fences.json
 879fc86d9d7face7697fbbb62565885740fc7f41 data/forge/tags/blocks/fences/wooden.json
@@ -110,5 +111,6 @@ aa9ca0bf521d8c6b198f2c25e4d5528917308d9f data/twilightforest/tags/blocks/timewoo
 548dfc9d7e2225c6f7d761216b3fafc120978f73 data/twilightforest/tags/blocks/transwood_logs.json
 fefe9165712fc88657d59e31e991a5e4ea7eed72 data/twilightforest/tags/blocks/tree_roots_skip.json
 bf847accd5b18676d59a86e224adcfc328d677e6 data/twilightforest/tags/blocks/trophies.json
+53df7d57255dd3eb5af7094e75d5c6cf8e7cbcb5 data/twilightforest/tags/blocks/trophy_pedestal_activation_blocks.json
 d94381f990d5908c2d71247b1b14946ef4a4ef3d data/twilightforest/tags/blocks/twilight_oak_logs.json
 1617d0033c8d1499f706c5966971b445f59be257 data/twilightforest/tags/blocks/worldgen_replaceables.json

@@ -252,8 +252,9 @@ public class Lich extends BaseTFBoss {
 	 * or down the stairs during the melee phase.
 	 */
 	public boolean isOutsideHomeRange(Vec3 pos) {
-		if (this.getRestrictionPoint() == null) return false;
-		BlockPos point = this.getRestrictionPoint().pos();
+		// A home point in another dimension (e.g. after a /tp) is no home here
+		if (!this.isRestrictionPointValid(this.level().dimension())) return false;
+		BlockPos point = Objects.requireNonNull(this.getRestrictionPoint()).pos();
 		if (this.getTarget() == null && pos.y() < point.getY() - 2) return true;
 		return point.distToCenterSqr(pos) > (HOME_ROOM_RADIUS * HOME_ROOM_RADIUS) || (this.getPhase() == 3 && pos.y() < point.getY() - 3);
 	}
@@ -461,8 +462,8 @@ public class Lich extends BaseTFBoss {
 	 * teleporting into the air.
 	 */
 	public void teleportHome() {
-		if (this.getRestrictionPoint() != null) {
-			BlockPos pos = this.getRestrictionPoint().pos();
+		if (this.isRestrictionPointValid(this.level().dimension())) {
+			BlockPos pos = Objects.requireNonNull(this.getRestrictionPoint()).pos();
 			if (this.level().getBlockState(pos.below(2)).isAir()) this.level().setBlockAndUpdate(pos.below(2), TFBlocks.BOLD_STONE_PILLAR.get().defaultBlockState()); // Ensure there's something to stand on, so we don't teleport infinitely
 			if (this.level().getBlockState(pos.below()).isAir()) pos = pos.below();
 			this.teleportToNoChecks(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);

@@ -248,6 +248,22 @@
      "First boot test of the TF dimension (any later worldgen feature that boot-tests it, e.g. landmark-density-terrain or lich-tower-revamp): TFBeardifier.WARP_NOISE_TO_DENSITY = 1/78 is exact only for scale-0.05 biomes. The warp slope per block is 2/32 * 2.5 * 96 / (0.9*scale + 0.1) / 8, so after scaling it is about 0.23 per block in Dark Forest and Dark Forest Center (scale 0.005: Dark Tower, Knight Stronghold), about 0.20 on the Final Plateau (0.025) and about 0.074 in the Highlands (0.25: Troll Cave), against 4.8's uniform 1/6. The x4 of positive noise is applied before the noise is added in computeInitialDensity, but toBeardDensity divides the whole interpolated value, so the beard strength can be off by up to about 4x for one or two blocks near the surface. Generate fresh chunks and look at a Lich Tower and Dark Tower entrance (BEARD_BOX floor fill), a Hedge Maze edge and a Knight Stronghold entrance mound. If the Dark Forest or Highlands beards look off, derive the factor per column from the TerrainColumn scale instead of using a constant.",
      "Bridge entry points for later terraformers (landmark-density-terrain, lich-tower-revamp, fallen-trunk-structure, naga-courtyard-terraces): implement twilightforest.world.components.structures.CustomDensitySource on the Structure; TFBeardifier.forStructuresInChunk gathers it in ChunkGeneratorTwilight.doFill. Per-piece beards use Forge 47's net.minecraftforge.common.world.PieceBeardifierModifier (there is no TF IPieceBeardifierModifier, contrary to the okf plan). Terraformers only act in ChunkGeneratorTwilight's own fill; when the warper is absent (non-TF biome source) the wrapped vanilla generator applies only the vanilla Beardifier."
     ]
+   },
+   {
+    "bundle": "twilight-jigsaw-framework",
+    "ids": [
+     "twilight-jigsaw-framework"
+    ],
+    "deferred": [
+     "template-marker-handlers: add Optional<Holder<TemplateMarkerHandlerList>> markerHandlers to TemplatePoolInstance between ignoreWorldWaterlog and randomizedProcessors, with JSON key marker_handlers. Until then the key is silently ignored when parsing. Also add the TwilightJigsawPiece field, its 'marker_handlers' NBT key and the handler loop in an override of handleDataMarker(String, BlockPos, WorldGenLevel, RandomSource, BoundingBox, ChunkGenerator, Rotation). In StructureTemplateDefinitionProvider, add the markerHandlers parameter to weightedPathTemplate/weightedRigidTemplate and add getMarkers().",
+     "progression-protection-overhaul (or lich-tower-revamp): TwilightJigsawPiece does not implement ProgressionPiece yet, because the interface does not exist in 4.3.",
+     "camp-structure / lich-tower-revamp / final-castle-template-hooks / naga-courtyard-terraces: the template_definition JSONs, their StructureDefinitionGenerator subclasses and DataGenerators registration. The _empty.json pool entry belongs to camp-structure.",
+     "lich-tower-revamp (or whichever feature needs it): the TwilightTemplateStructurePiece changes that 4.8 makes for every template piece were applied to jigsaw pieces only. These are setKnownShape(true) and placeFlag (8fe9054bf), postProcess overridden with the jigsaw-free placement (b6469cb16/dd7256de6), a final legacy handleDataMarker (f6f1ec19c), and getTemplateName() (31e253132). Existing 4.3 pieces keep vanilla behaviour.",
+     "structure-terrain-sampling: HeightAdjustment uses a private copy of 4.8's WorldUtil.adjustForTerrain(ctx, xMin, zMin, xMax, zMax, grid, heightmap) (TemplatePoolInstance.HeightAdjustment.sampleTerrainHeight). Once the WorldUtil overload lands, this can call it instead.",
+     "speleothem-config-datadriven: moving 4.3's StalactiteReloadListener onto CodecResourceReloadListener (upstream 0721aedeb) was not done.",
+     "camp-structure / lich-tower-revamp / final-castle-template-hooks / naga-courtyard-terraces: before copying 4.8 .nbt templates that contain minecraft:jigsaw blocks, check every nbt.final_state resolves on 1.20.1 + this fork; TwilightJigsawPiece's JigsawReplacementProcessor throws on an unresolvable final_state, so replace such states (review note on aaeb0df)."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
    }
   ],
   "4": [
@@ -273,6 +289,66 @@
      "All later boss features (hydra-death-and-named-heads, lich-fight-fixes, ur-ghast-tweaks, knight-phantom-rework and any new boss): hurt_boss (the was_in_fight criteria) is now granted only through the #twilightforest:multiplayer_inclusive_entities tag and MultiplayerInclusivityCapability (EntityEvents.grantGroupAdvancementIfNeeded). A boss that should give hurt_boss credit must be in that tag; do not add per-boss TFAdvancements.HURT_BOSS triggers.",
      "Pack config (outside ports/): multiplayerFightAdjuster defaults to NONE, as upstream. Nothing changes in play until the server sets multiplayerFightAdjuster = \"MORE_LOOT_AND_HEALTH\" (or MORE_LOOT / MORE_HEALTH) at the top level of config/twilightforest-common.toml; Forge adds the key with NONE on the first boot."
     ]
+   },
+   {
+    "bundle": "boss-base-class-refactor",
+    "ids": [
+     "boss-base-class-refactor"
+    ],
+    "deferred": [
+     "custom-rgb-boss-bars: BaseTFBoss still uses the vanilla ServerBossEvent, and getBossBarColor() returns BossEvent.BossBarColor. Swap these for ServerTFBossBar/TFBossBarPacket and an int colour. The Lich's per-phase bar changes are in Lich.tickBossBar(); move them to updateStyle as 15ab0d12a does.",
+     "multiplayer-boss-scaling: the hurt_boss credit currently lives in BaseTFBoss (actuallyHurt fills a list; postmortem, and KnightPhantom.die, trigger HURT_BOSS). Replace it with the MultiplayerInclusivityAttachment/EntityEvents version and delete the list.",
+     "knight-phantom-rework: only the last knight marks the stronghold conquered and makes the STRONGHOLD_BOSS chest (shouldSpawnLoot() is false). Still to port: the 4.8 postmortem/giveKnightLoot/IT_IS_OVER loot sharing, the dying ascent and untouchable size, KILL_ALL_PHANTOMS for nearby players, conquest on /kill, and returning false from hurt() for a shield block.",
+     "hydra-death-and-named-heads: MAX_HEADS, the HydraPart.markedDead death sequence, the HeadNames serializer and the NumHeads bitmask are not ported. Hydra.tickDeath already removes as KILLED at 200 and calls tickDeathAnimation() on the client.",
+     "ur-ghast-tweaks: done in this commit: the own attack/look goals, removing the ExplosionPower-era 1000-damage reflection (reflected fireballs now do normal damage through the old 'thrown' conversion in hurt()), and the 90-tick client death animation. Still to port: switching to 4.8's isReflectedFireball in isInvulnerableTo; inTrapCounter at 20 with trap damage not counting toward tantrum; EventHooks.finalizeMobSpawn for ghastlings; the fire/descending death rendering; and dropping the eye-height-2.6 and ambient-interval-160 overrides if 4.8's values are wanted.",
+     "lich-boss-rework: the Lich keeps 4.3's IS_CLONE/masterLich and has no teleport-home. Lich.placeSpawner and postRemoval are ready to override for candle relighting, as 4.8 does.",
+     "unassigned upstream tweak in 5db77f784: Snow Queen block breaking switched from ICE/PACKED_ICE to BlockTags.ICE. It is not in any feature and not ported."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   },
+   {
+    "bundle": "hydra-death-and-named-heads+ur-ghast-tweaks",
+    "ids": [
+     "hydra-death-and-named-heads",
+     "ur-ghast-tweaks"
+    ],
+    "deferred": [
+     "hydra-death-and-named-heads: 4.8 also changed the head and neck positions (Vec3 offsets, endY - 0.5, neck -1.8) in squashed commit 485d7e0a7. That belongs to the Hydra model rework, not this feature, so it is not ported. Two other 4.8 refactors of Hydra are also left out because they are outside this spec: moving heal and block destruction into customServerAiStep, and replacing numHeads with MAX_HEADS.",
+     "ur-ghast-tweaks: in 5db77f784, 4.8 removed the Carminite Ghastguard's trap target reset (CarminiteGhastguard.setInTrap and inTrapCounter). The fork keeps it because it is Ghastguard behaviour, not Ur-Ghast scope. 4.8's change to checkGhastsAtTraps (an AABB built from getCenter) is a 1.21 port artifact that shifts the box by 0.5 blocks, so the fork keeps the 4.3 AABB."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   },
+   {
+    "bundle": "new-mob-sounds+helmet-crab-rework+mob-balance-tweaks",
+    "ids": [
+     "new-mob-sounds",
+     "helmet-crab-rework",
+     "mob-balance-tweaks"
+    ],
+    "deferred": [
+     "hostile-wolf-variants (excluded): the WolfVariant half of upstream da8bf0b12, including HostileWolfRenderer and TransformPowderItem changes, needs the 1.20.5+ WolfVariant registry. Only the target-goal half is ported.",
+     "new-mob-sounds: 4.8 replaces a clamped player's hurt sound through a custom DamageEffects enum entry, which Forge 47 cannot add. The port plays the clamp next to the normal player hurt sound instead. A Mixin on Player.getHurtSound could match 4.8 exactly if that is ever wanted.",
+     "new-mob-sounds: 4.8 en_us subtitle rewording for mobs outside this feature is not ported. Examples: Tiny Bird chirps/sings/squeaks, Quest Ram -> Questing Ram, the knight_phantom axe/pickaxe label swap, hydra 'spews fire', lich_clone, minion, tear, block_and_chain, transformation_powder, kobold.munch. No feature id owns it; the closest is translation-refresh.",
+     "shika-senbei: TFSounds.DEER_EAT (entity.twilightforest.deer.eat, with subtitle) is registered and ready, but only shika-senbei's Deer.usePlayerItem will play it."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   },
+   {
+    "bundle": "passive-tempt-tags+shika-senbei+hostile-mount-fixes+ice-bomb-rework+death-tome-tweaks",
+    "ids": [
+     "passive-tempt-tags",
+     "shika-senbei",
+     "hostile-mount-fixes",
+     "ice-bomb-rework",
+     "death-tome-tweaks"
+    ],
+    "deferred": [
+     "shika-senbei: the fallen_trunk_loot entry (shika_senbei 2-6, weight 75, from bbd970a7d) belongs to fallen-trunk-structure, because that loot table does not exist in 4.3",
+     "death-tome-tweaks: the Peaceful gate (a841a573e, WorldUtil.getDifficulty plus LichTowerWingRoom trappable lectern and bookshelf rolls) belongs to the Lich Tower revamp / chiseled-canopy-bookshelf feature. 4.3 generates no lectern or bookshelf tome traps, and its TomeSpawnerBlock already skips Peaceful.",
+     "passive-tempt-tags: the 4.8 'tag.item.twilightforest.*_tempt_items' translations (LangGenerator.translateTag) depend on the recipe-viewer tag-translation support (4.8 REI/EMI compat), which 4.3 lacks. Not added.",
+     "hostile-mount-fixes: the 052f07619 grabbing hitbox (2.2x1.6) was tuned for the 1.20.3 passenger-attachment rework. 4.3's 2.25x1.25 is kept with getPassengersRidingOffset positioning, so no feature needs to pick this up."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
    }
   ]
  }

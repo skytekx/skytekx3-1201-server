@@ -180,6 +180,7 @@ def patch_nested_min_version(outer_jar, inner_jar_substr, inner_mixins):
 def main():
     print("patch_mods: applying jar-level boot fixes")
     add_min_version(find_jar("doomangelring*.jar"), "doomangelring.forge.mixins.json")
+    add_min_version(find_jar("tf_dnv-*.jar"), "mixins.tf_dnv.json")
     remove_mixins(find_jar("aether-redux*.jar"), "aether_redux.mixins.json",
                   ["common.block.GreenAercloudBlockMixin", "common.block.OrangeTreeMixin",
                    "common.block.PurpleAercloudBlockMixin"])

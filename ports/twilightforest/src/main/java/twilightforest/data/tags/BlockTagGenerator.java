@@ -687,6 +687,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.IRONWOOD_BLOCK.get(),
 				TFBlocks.DEATH_TOME_SPAWNER.get(),
 				TFBlocks.EMPTY_CANOPY_BOOKSHELF.get(),
+				TFBlocks.CHISELED_CANOPY_BOOKSHELF.get(),
 				TFBlocks.CANOPY_BOOKSHELF.get(),
 				TFBlocks.TWILIGHT_OAK_CHEST.get(),
 				TFBlocks.CANOPY_CHEST.get(),

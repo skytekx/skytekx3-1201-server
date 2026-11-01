@@ -353,6 +353,7 @@ public class LangGenerator extends TFLangProvider {
 		this.createWoodSet("canopy", "Canopy");
 		this.addBlock(TFBlocks.CANOPY_BOOKSHELF, "Canopy Bookshelf");
 		this.addBlock(TFBlocks.EMPTY_CANOPY_BOOKSHELF, "Empty Canopy Bookshelf");
+		this.addBlock(TFBlocks.CHISELED_CANOPY_BOOKSHELF, "Chiseled Canopy Bookshelf");
 		this.addBlock(TFBlocks.DEATH_TOME_SPAWNER, "Death Tome Spawner");
 
 		this.addBlock(TFBlocks.MANGROVE_LEAVES, "Mangrove Leaves");
@@ -1015,6 +1016,7 @@ public class LangGenerator extends TFLangProvider {
 
 		this.addSubtitle(TFSounds.BEANSTALK_GROWTH, "Ground rumbles");
 		this.addSubtitle(TFSounds.BLOCK_ANNIHILATED, "Block dissolves");
+		this.addSubtitle(TFSounds.BOOKSHELF_CONVERTS, "Chiseled Bookshelf converts");
 		this.addSubtitle(TFSounds.BOSS_CHEST_APPEAR, "Boss Chest appears");
 		this.addSubtitle(TFSounds.BUG_SQUISH, "Bug gets squished :(");
 		this.addSubtitle(TFSounds.BUILDER_CREATE, "Carminite Builder creates block");

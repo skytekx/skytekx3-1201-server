@@ -1,17 +1,21 @@
 package twilightforest.events;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.TFPortalBlock;
@@ -21,6 +25,8 @@ import twilightforest.capabilities.shield.IShieldCapability;
 import twilightforest.capabilities.thrown.YetiThrowCapability;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.UpdateShieldPacket;
+import twilightforest.world.TFTeleporter;
+import twilightforest.world.registration.TFGenerationSettings;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID)
 public class CapabilityEvents {
@@ -109,6 +115,22 @@ public class CapabilityEvents {
 		tagCompound.put(Player.PERSISTED_NBT_TAG, playerData); // commit
 
 		if (shouldBanishPlayer)
-			TFPortalBlock.attemptSendEntity(player, true, TFConfig.COMMON_CONFIG.DIMENSION.portalForNewPlayerSpawn.get()); // See ya hate to be ya
+			TFPortalBlock.attemptSendEntity(player, true, TFConfig.COMMON_CONFIG.DIMENSION.portalForNewPlayerSpawn.get(), getNewPlayerSpawn(player)); // See ya hate to be ya
+	}
+
+	/**
+	 * The surface spot in the Twilight Forest that a banished player is sent to and respawns at, so neither the arrival
+	 * nor the forced respawn point can be up in the air (no falling spawn-kills) or inside terrain.
+	 */
+	@Nullable
+	private static BlockPos getNewPlayerSpawn(Player player) {
+		if (player.getServer() == null || player.level().dimension().equals(TFGenerationSettings.DIMENSION_KEY))
+			return null;
+
+		ServerLevel twilight = player.getServer().getLevel(TFGenerationSettings.DIMENSION_KEY);
+		if (twilight == null)
+			return null;
+
+		return twilight.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, TFTeleporter.getScaledDestination(player, twilight));
 	}
 }

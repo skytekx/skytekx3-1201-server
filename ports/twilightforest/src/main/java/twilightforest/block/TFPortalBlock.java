@@ -254,6 +254,15 @@ public class TFPortalBlock extends HalfTransparentBlock implements LiquidBlockCo
 	}
 
 	public static void attemptSendEntity(Entity entity, boolean forcedEntry, boolean makeReturnPortal) {
+		attemptSendEntity(entity, forcedEntry, makeReturnPortal, null);
+	}
+
+	/**
+	 * @param twilightDestination if non-null and the entity is headed into the Twilight Forest, the position in the
+	 *                            Twilight Forest to arrive at (and, for forced entry, respawn at) instead of the scaled
+	 *                            entity position
+	 */
+	public static void attemptSendEntity(Entity entity, boolean forcedEntry, boolean makeReturnPortal, @Nullable BlockPos twilightDestination) {
 		if (!entity.isAlive() || entity.level().isClientSide()) {
 			return;
 		}
@@ -268,11 +277,12 @@ public class TFPortalBlock extends HalfTransparentBlock implements LiquidBlockCo
 		if (serverWorld == null)
 			return;
 
-		entity.changeDimension(serverWorld, makeReturnPortal ? new TFTeleporter(forcedEntry) : new NoReturnTeleporter());
+		BlockPos fixedDestination = destination == TFGenerationSettings.DIMENSION_KEY ? twilightDestination : null;
+		entity.changeDimension(serverWorld, makeReturnPortal ? new TFTeleporter(forcedEntry, fixedDestination) : new NoReturnTeleporter(fixedDestination));
 
 		if (destination == TFGenerationSettings.DIMENSION_KEY && entity instanceof ServerPlayer playerMP && forcedEntry) {
-			// set respawn point for TF dimension to near the arrival portal, only if we spawn here on world creation
-			playerMP.setRespawnPosition(destination, playerMP.blockPosition(), playerMP.getYRot(), true, false);
+			// set respawn point for TF dimension to the requested surface spot, or else near the arrival portal, only if we spawn here on world creation
+			playerMP.setRespawnPosition(destination, fixedDestination != null ? fixedDestination : playerMP.blockPosition(), playerMP.getYRot(), true, false);
 		}
 
 	}

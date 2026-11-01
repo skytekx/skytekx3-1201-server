@@ -443,6 +443,9 @@ logs stay on the Mac and are not in the repo.
   merging dropped items at 2.5 (a4bcaf7). The server was up at 06:11:04 at 20 TPS with only the known
   boot errors. Both MacBooks got the jar, and a game that was already running has to restart before it
   joins. See [SkyTekx Compat](content/compat-mod.md#history).
+- At 06:23 the build machine's `mods/` got the same swap, because `macos/sync-to-mac.sh` mirrors that
+  folder with `--delete` and would otherwise have brought the old jars back. Its 235 jars match the Mac
+  mini's by SHA-256. The two old jars sit in `~/skytekx3-backups/jars-orig/` on the build machine.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

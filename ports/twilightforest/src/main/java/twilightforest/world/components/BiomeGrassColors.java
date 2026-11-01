@@ -1,22 +1,25 @@
 package twilightforest.world.components;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects.GrassColorModifier;
 import twilightforest.TwilightForestMod;
+import twilightforest.util.LegacyLandmarkPlacements;
 
 public class BiomeGrassColors {
 
 	public static void init() {}
 
 	public static int getEnchantedColor(int x, int z) {
-		// center of the biome is at % 256 - 8
-		int cx = 256 * Math.round((x - 8) / 256F) + 8;
-		int cz = 256 * Math.round((z - 8) / 256F) - 8;
+		// the rings are centred on the landmark centre, which is where the Quest Grove sits
+		BlockPos center = LegacyLandmarkPlacements.getNearestCenterXZ(x >> 4, z >> 4);
+		int cx = center.getX();
+		int cz = center.getZ();
 
 		int dist = (int) Mth.sqrt((cx - x) * (cx - x) + (cz - z) * (cz - z));
-		int color = dist * 64;
+		int color = dist * 16;
 		color %= 512;
 
 		if (color > 255) {

@@ -42,13 +42,13 @@ public class TFDimensionSettings {
 				true, //natural
 				0.125D, //coordinate scale
 				true, //bed works
-				true, //respawn anchor works
+				false, //respawn anchor works
 				-32, // Minimum Y Level
 				32 + 256, // Height + Min Y = Max Y
 				32 + 256, // Logical Height
 				BlockTags.INFINIBURN_OVERWORLD, //infiburn
 				TwilightForestMod.prefix("renderer"), // DimensionRenderInfo
-				0f, // Wish this could be set to -0.05 since it'll make the world truly blacked out if an area is not sky-lit (see: Dark Forests) Sadly this also messes up night vision so it gets 0
+				0.01f, // ambient light, raised from 0 in TF 4.8
 				new DimensionType.MonsterSettings(false, false, UniformInt.of(0, 7), 7)
 		);
 	}

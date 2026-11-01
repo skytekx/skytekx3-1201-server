@@ -5,7 +5,7 @@
   "creature_spawn_probability": 0.2,
   "downfall": 1.0,
   "effects": {
-    "fog_color": 12648408,
+    "fog_color": 8549265,
     "foliage_color": 16745729,
     "grass_color": 12865827,
     "grass_color_modifier": "twilightforest:spooky_forest",
@@ -23,7 +23,7 @@
     },
     "sky_color": 2105930,
     "water_color": 12355671,
-    "water_fog_color": 329011
+    "water_fog_color": 12355671
   },
   "features": [
     [],

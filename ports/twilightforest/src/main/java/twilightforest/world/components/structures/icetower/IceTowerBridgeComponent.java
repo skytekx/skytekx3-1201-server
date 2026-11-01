@@ -21,24 +21,30 @@ import twilightforest.init.TFStructurePieceTypes;
 public class IceTowerBridgeComponent extends TFStructureComponentOld {
 
 	private final int length;
+	/**
+	 * Extra width of the box on one side of the bridge, so that no wing is placed right next to it. 0 for bridges saved by TF 4.3.
+	 */
+	private final int extraZlength;
 
 	public IceTowerBridgeComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		super(TFStructurePieceTypes.TFITBri.get(), nbt);
 		this.length = nbt.getInt("bridgeLength");
+		this.extraZlength = nbt.getInt("extraZlength");
 	}
 
-	public IceTowerBridgeComponent(int index, int x, int y, int z, int length, Direction direction) {
+	public IceTowerBridgeComponent(int index, int x, int y, int z, int length, int zLength, Direction direction) {
 		super(TFStructurePieceTypes.TFITBri.get(), index, x, y, z);
 		this.length = length;
 		this.setOrientation(direction);
-
-		this.boundingBox = TFLandmark.getComponentToAddBoundingBox(x, y, z, 0, 0, 0, length, 6, 5, direction, false);
+		this.extraZlength = zLength;
+		this.boundingBox = TFLandmark.getComponentToAddBoundingBox(x, y, z, 0, 0, -zLength, length, 6, 5 + zLength, direction, false);
 	}
 
 	@Override
 	protected void addAdditionalSaveData(StructurePieceSerializationContext ctx, CompoundTag tagCompound) {
 		super.addAdditionalSaveData(ctx, tagCompound);
 		tagCompound.putInt("bridgeLength", this.length);
+		tagCompound.putInt("extraZlength", this.extraZlength);
 	}
 
 	@Override
@@ -50,16 +56,19 @@ public class IceTowerBridgeComponent extends TFStructureComponentOld {
 
 	@Override
 	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
-		generateAirBox(world, sbb, 0, 1, 0, length, 5, 4);
+		// The bridge keeps its old world position and the extra box width lies before it, so everything is drawn extraZlength
+		// further in. TF 4.8 (ff41bff3f) moved the floor, ceiling and pillars but left the air box at 0..4, which hollows out
+		// the strip beside the bridge instead of the bridge itself; it is shifted along here.
+		generateAirBox(world, sbb, 0, 1, extraZlength, length, 5, extraZlength + 4);
 
 		// make floor/ceiling
-		generateBox(world, sbb, 0, 0, 0, length, 0, 4, deco.blockState, deco.blockState, false);
-		generateBox(world, sbb, 0, 6, 0, length, 6, 4, deco.blockState, deco.blockState, false);
+		generateBox(world, sbb, 0, 0, extraZlength, length, 0, extraZlength + 4, deco.blockState, deco.blockState, false);
+		generateBox(world, sbb, 0, 6, extraZlength, length, 6, extraZlength + 4, deco.blockState, deco.blockState, false);
 
 		// pillars
 		for (int x = 2; x < length; x += 3) {
-			generateBox(world, sbb, x, 1, 0, x, 5, 0, deco.pillarState, deco.pillarState, false);
-			generateBox(world, sbb, x, 1, 4, x, 5, 4, deco.pillarState, deco.pillarState, false);
+			generateBox(world, sbb, x, 1, extraZlength, x, 5, extraZlength, deco.pillarState, deco.pillarState, false);
+			generateBox(world, sbb, x, 1, extraZlength + 4, x, 5, extraZlength + 4, deco.pillarState, deco.pillarState, false);
 		}
 	}
 }

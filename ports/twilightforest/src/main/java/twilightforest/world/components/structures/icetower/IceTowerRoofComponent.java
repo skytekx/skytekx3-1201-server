@@ -28,7 +28,7 @@ public class IceTowerRoofComponent extends TowerRoofComponent {
 		this.setOrientation(wing.getOrientation());
 		// same size
 		this.size = wing.size; // assuming only square towers and roofs right now.
-		this.height = 12;
+		this.height = getRHeight(size, size); // the box has to hold the whole roof, or wings get placed into it
 
 		this.deco = wing.deco;
 
@@ -45,7 +45,7 @@ public class IceTowerRoofComponent extends TowerRoofComponent {
 		for (int x = 0; x < this.size; x++) {
 			for (int z = 0; z < this.size; z++) {
 				//int rHeight = this.size - (int) MathHelper.sqrt_float(x * z); // interesting office building pattern
-				int rHeight = Math.round(Mth.sqrt(x * x + z * z));
+				int rHeight = getRHeight(x, z);
 				//int rHeight = MathHelper.ceiling_float_int(Math.min(x * x / 9F, z * z / 9F));
 
 				for (int y = 0; y < rHeight; y++) {
@@ -54,5 +54,9 @@ public class IceTowerRoofComponent extends TowerRoofComponent {
 				}
 			}
 		}
+	}
+
+	private static int getRHeight(int x, int z) {
+		return Math.round(Mth.sqrt(x * x + z * z));
 	}
 }

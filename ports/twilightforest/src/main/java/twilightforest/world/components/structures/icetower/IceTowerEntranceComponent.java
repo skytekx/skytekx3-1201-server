@@ -27,7 +27,7 @@ public class IceTowerEntranceComponent extends IceTowerWingComponent {
 	}
 
 	@Override
-	protected boolean shouldHaveBase(RandomSource rand) {
+	protected boolean shouldHaveBase(StructurePieceAccessor list, RandomSource rand) {
 		return true;
 	}
 
@@ -37,16 +37,17 @@ public class IceTowerEntranceComponent extends IceTowerWingComponent {
 			this.deco = tfStructureComponent.deco;
 		}
 
-		// we should have a door where we started
-		addOpening(0, 1, size / 2, Rotation.CLOCKWISE_180);
+		// we should have a door where we started (TF 4.8 c2b950498 swapped the door and the front stairs, so that the door
+		// faces the bridge from the main tower)
+		addOpening(this.size - 1, 1, size / 2, Rotation.NONE);
 
 		// stairs
-		addStairs(list, rand, this.getGenDepth() + 1, this.size - 1, 1, size / 2, Rotation.NONE);
+		addStairs(list, rand, this.getGenDepth() + 1, 0, 1, size / 2, Rotation.CLOCKWISE_180);
 		addStairs(list, rand, this.getGenDepth() + 1, this.size / 2, 1, 0, Rotation.COUNTERCLOCKWISE_90);
 		addStairs(list, rand, this.getGenDepth() + 1, this.size / 2, 1, this.size - 1, Rotation.CLOCKWISE_90);
 
 		// should we build a base
-		this.hasBase = this.shouldHaveBase(rand);
+		this.hasBase = this.shouldHaveBase(list, rand);
 
 		// add a roof?
 		makeARoof(parent, list, rand);

@@ -48,6 +48,7 @@ import twilightforest.world.components.biomesources.TFBiomeProvider;
 import twilightforest.world.components.chunkgenerators.warp.*;
 import twilightforest.world.components.structures.HedgeMazeComponent;
 import twilightforest.world.components.structures.TFStructureComponent;
+import twilightforest.world.components.structures.UtilityPiece;
 import twilightforest.world.components.structures.courtyard.CourtyardMain;
 import twilightforest.world.components.structures.placements.BiomeForcedLandmarkPlacement;
 import twilightforest.world.components.structures.start.TFStructureStart;
@@ -890,6 +891,10 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	private static int getSpawnListIndexAt(StructureStart start, BlockPos pos) {
 		int highestFoundIndex = -1;
 		for (StructurePiece component : start.getPieces()) {
+			// Utility pieces build nothing (for example the one under an Aurora Palace wing base), so like in TF 4.8 they do not
+			// pick a spawn list; the position stays as it was without them.
+			if (component instanceof UtilityPiece)
+				continue;
 			if (component.getBoundingBox().isInside(pos)) {
 				if (component instanceof TFStructureComponent tfComponent) {
 					if (tfComponent.spawnListIndex > highestFoundIndex)

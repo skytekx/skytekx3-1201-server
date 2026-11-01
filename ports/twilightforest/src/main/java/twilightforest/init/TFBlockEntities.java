@@ -95,6 +95,12 @@ public class TFBlockEntities {
 					TFBlocks.DARK_CHEST.get(), TFBlocks.TIME_CHEST.get(), TFBlocks.TRANSFORMATION_CHEST.get(),
 					TFBlocks.MINING_CHEST.get(), TFBlocks.SORTING_CHEST.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<TFTrappedChestBlockEntity>> TF_TRAPPED_CHEST = BLOCK_ENTITIES.register("tf_trapped_chest", () ->
+			BlockEntityType.Builder.of(TFTrappedChestBlockEntity::new,
+					TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get(), TFBlocks.CANOPY_TRAPPED_CHEST.get(), TFBlocks.MANGROVE_TRAPPED_CHEST.get(),
+					TFBlocks.DARK_TRAPPED_CHEST.get(), TFBlocks.TIME_TRAPPED_CHEST.get(), TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(),
+					TFBlocks.MINING_TRAPPED_CHEST.get(), TFBlocks.SORTING_TRAPPED_CHEST.get()).build(null));
+
 	public static final RegistryObject<BlockEntityType<SkullCandleBlockEntity>> SKULL_CANDLE = BLOCK_ENTITIES.register("skull_candle", () ->
 			BlockEntityType.Builder.of(SkullCandleBlockEntity::new,
 					TFBlocks.ZOMBIE_SKULL_CANDLE.get(), TFBlocks.ZOMBIE_WALL_SKULL_CANDLE.get(),
@@ -123,6 +129,7 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(TF_SIGN.get(), SignRenderer::new);
 		BlockEntityRenderers.register(TF_HANGING_SIGN.get(), HangingSignRenderer::new);
 		BlockEntityRenderers.register(TF_CHEST.get(), TwilightChestRenderer::new);
+		BlockEntityRenderers.register(TF_TRAPPED_CHEST.get(), TwilightChestRenderer::new);
 		BlockEntityRenderers.register(KEEPSAKE_CASKET.get(), CasketTileEntityRenderer::new);
 		BlockEntityRenderers.register(SKULL_CANDLE.get(), SkullCandleTileEntityRenderer::new);
 		BlockEntityRenderers.register(RED_THREAD.get(), RedThreadRenderer::new);

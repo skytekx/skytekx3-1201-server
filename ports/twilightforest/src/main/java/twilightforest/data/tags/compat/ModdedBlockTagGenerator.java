@@ -44,8 +44,15 @@ public class ModdedBlockTagGenerator extends IntrinsicHolderTagsProvider<Block> 
 
 		tag(ARTIFACTS_CAMPSITE_CHESTS).addTag(BlockTagGenerator.TF_CHESTS);
 
-		//TODO add the TF trapped chests here once they exist (tf-wood-trapped-chests)
-		tag(CHEST_MOUNTED_STORAGE).addTag(BlockTagGenerator.TF_CHESTS);
+		tag(CHEST_MOUNTED_STORAGE).addTag(BlockTagGenerator.TF_CHESTS).add(
+				TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get(),
+				TFBlocks.CANOPY_TRAPPED_CHEST.get(),
+				TFBlocks.MANGROVE_TRAPPED_CHEST.get(),
+				TFBlocks.DARK_TRAPPED_CHEST.get(),
+				TFBlocks.TIME_TRAPPED_CHEST.get(),
+				TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(),
+				TFBlocks.MINING_TRAPPED_CHEST.get(),
+				TFBlocks.SORTING_TRAPPED_CHEST.get());
 		tag(PASSIVE_BOILER_HEATERS).addTag(BlockTagGenerator.STORAGE_BLOCKS_FIERY);
 		tag(TREE_ATTACHMENTS).add(
 				TFBlocks.TIME_LOG_CORE.get(), TFBlocks.TRANSFORMATION_LOG_CORE.get(),

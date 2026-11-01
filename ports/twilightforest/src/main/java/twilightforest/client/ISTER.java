@@ -44,7 +44,9 @@ import twilightforest.block.AbstractSkullCandleBlock;
 import twilightforest.block.AbstractTrophyBlock;
 import twilightforest.block.KeepsakeCasketBlock;
 import twilightforest.block.TFChestBlock;
+import twilightforest.block.TFTrappedChestBlock;
 import twilightforest.block.entity.KeepsakeCasketBlockEntity;
+import twilightforest.block.entity.TFTrappedChestBlockEntity;
 import twilightforest.block.entity.TwilightChestEntity;
 import twilightforest.client.model.TFModelLayers;
 import twilightforest.client.model.entity.KnightmetalShieldModel;
@@ -79,6 +81,16 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 		makeInstance(map, TFBlocks.TRANSFORMATION_CHEST);
 		makeInstance(map, TFBlocks.MINING_CHEST);
 		makeInstance(map, TFBlocks.SORTING_CHEST);
+	});
+	private final Map<Block, TFTrappedChestBlockEntity> trappedChestEntities = Util.make(new HashMap<>(), map -> {
+		makeTrappedInstance(map, TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.CANOPY_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.MANGROVE_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.DARK_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.TIME_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.TRANSFORMATION_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.MINING_TRAPPED_CHEST);
+		makeTrappedInstance(map, TFBlocks.SORTING_TRAPPED_CHEST);
 	});
 	private static final ResourceLocation LICH_TEXTURE = TwilightForestMod.getModelTexture("twilightlich64.png");
 
@@ -148,6 +160,8 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 				Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(this.casket, ms, buffers, light, overlay);
 			} else if (block instanceof TFChestBlock) {
 				Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(this.chestEntities.get(block), ms, buffers, light, overlay);
+			} else if (block instanceof TFTrappedChestBlock) {
+				Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(this.trappedChestEntities.get(block), ms, buffers, light, overlay);
 			} else if (block instanceof AbstractSkullCandleBlock candleBlock) {
 				GameProfile gameprofile = null;
 				if (stack.hasTag()) {
@@ -216,5 +230,10 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 	public static void makeInstance(Map<Block, TwilightChestEntity> map, RegistryObject<? extends ChestBlock> registryObject) {
 		ChestBlock block = registryObject.get();
 		map.put(block, new TwilightChestEntity(BlockPos.ZERO, block.defaultBlockState()));
+	}
+
+	public static void makeTrappedInstance(Map<Block, TFTrappedChestBlockEntity> map, RegistryObject<? extends ChestBlock> registryObject) {
+		ChestBlock block = registryObject.get();
+		map.put(block, new TFTrappedChestBlockEntity(BlockPos.ZERO, block.defaultBlockState()));
 	}
 }

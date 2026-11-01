@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "trapped_chest",
+  "key": {
+    "#": {
+      "item": "twilightforest:mining_planks"
+    },
+    "C": {
+      "tag": "forge:chests/trapped"
+    }
+  },
+  "pattern": [
+    "###",
+    "#C#",
+    "###"
+  ],
+  "result": {
+    "count": 2,
+    "item": "twilightforest:mining_trapped_chest"
+  },
+  "show_notification": true
+}

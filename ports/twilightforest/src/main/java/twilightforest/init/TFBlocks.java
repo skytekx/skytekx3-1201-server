@@ -573,6 +573,15 @@ public class TFBlocks {
 	public static final RegistryObject<TFChestBlock> MINING_CHEST = registerBEWLR("mining_chest", () -> new TFChestBlock(BlockBehaviour.Properties.copy(MINING_PLANKS.get()).strength(2.5F)));
 	public static final RegistryObject<TFChestBlock> SORTING_CHEST = registerBEWLR("sorting_chest", () -> new TFChestBlock(BlockBehaviour.Properties.copy(SORTING_PLANKS.get()).strength(2.5F)));
 
+	public static final RegistryObject<TFTrappedChestBlock> TWILIGHT_OAK_TRAPPED_CHEST = registerBEWLR("twilight_oak_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(TWILIGHT_OAK_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> CANOPY_TRAPPED_CHEST = registerBEWLR("canopy_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(CANOPY_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> MANGROVE_TRAPPED_CHEST = registerBEWLR("mangrove_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(MANGROVE_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> DARK_TRAPPED_CHEST = registerBEWLR("dark_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(DARK_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> TIME_TRAPPED_CHEST = registerBEWLR("time_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(TIME_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> TRANSFORMATION_TRAPPED_CHEST = registerBEWLR("transformation_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(TRANSFORMATION_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> MINING_TRAPPED_CHEST = registerBEWLR("mining_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(MINING_PLANKS.get()).strength(2.5F)));
+	public static final RegistryObject<TFTrappedChestBlock> SORTING_TRAPPED_CHEST = registerBEWLR("sorting_trapped_chest", () -> new TFTrappedChestBlock(BlockBehaviour.Properties.copy(SORTING_PLANKS.get()).strength(2.5F)));
+
 	//Flower Pots
 	public static final RegistryObject<FlowerPotBlock> POTTED_TWILIGHT_OAK_SAPLING = BLOCKS.register("potted_twilight_oak_sapling", () -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, TWILIGHT_OAK_SAPLING, BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)));
 	public static final RegistryObject<FlowerPotBlock> POTTED_CANOPY_SAPLING = BLOCKS.register("potted_canopy_sapling", () -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, CANOPY_SAPLING, BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)));

@@ -95,6 +95,102 @@
     {
       "type": "minecraft:single",
       "resource": "twilightforest:model/chest/sort/right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/twilight/trapped_twilight"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/twilight/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/twilight/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/canopy/trapped_canopy"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/canopy/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/canopy/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/mangrove/trapped_mangrove"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/mangrove/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/mangrove/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/darkwood/trapped_darkwood"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/darkwood/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/darkwood/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/time/trapped_time"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/time/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/time/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/trans/trapped_trans"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/trans/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/trans/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/mining/trapped_mining"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/mining/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/mining/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/sort/trapped_sort"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/sort/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "twilightforest:model/chest/sort/trapped_right"
     }
   ]
 }

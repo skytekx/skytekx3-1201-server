@@ -59,7 +59,6 @@ public class EntityLootTables extends EntityLootSubProvider {
 		add(TFEntities.SQUIRREL.get(), emptyLootTable());
 		add(TFEntities.DWARF_RABBIT.get(), fromEntityLootTable(EntityType.RABBIT));
 		add(TFEntities.HEDGE_SPIDER.get(), fromEntityLootTable(EntityType.SPIDER));
-		add(TFEntities.FIRE_BEETLE.get(), fromEntityLootTable(EntityType.CREEPER));
 		add(TFEntities.HOSTILE_WOLF.get(), fromEntityLootTable(EntityType.WOLF));
 		add(TFEntities.KING_SPIDER.get(), fromEntityLootTable(EntityType.SPIDER));
 		add(TFEntities.MIST_WOLF.get(), fromEntityLootTable(EntityType.WOLF));
@@ -85,6 +84,15 @@ public class EntityLootTables extends EntityLootSubProvider {
 		add(TFEntities.BIGHORN_SHEEP.get(), TFLootTables.BIGHORN_SHEEP_RED, sheepLootTableBuilderWithDrop(Blocks.RED_WOOL));
 		add(TFEntities.BIGHORN_SHEEP.get(), TFLootTables.BIGHORN_SHEEP_WHITE, sheepLootTableBuilderWithDrop(Blocks.WHITE_WOOL));
 		add(TFEntities.BIGHORN_SHEEP.get(), TFLootTables.BIGHORN_SHEEP_YELLOW, sheepLootTableBuilderWithDrop(Blocks.YELLOW_WOOL));
+
+		// Used to chain minecraft:entities/creeper, which made Fire Beetles drop music discs when shot by a skeleton (#2315)
+		add(TFEntities.FIRE_BEETLE.get(),
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1))
+								.add(LootItem.lootTableItem(Items.GUNPOWDER)
+										.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
+										.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))));
 
 		add(TFEntities.ARMORED_GIANT.get(),
 				LootTable.lootTable()

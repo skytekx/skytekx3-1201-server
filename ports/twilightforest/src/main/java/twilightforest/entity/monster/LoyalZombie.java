@@ -1,6 +1,10 @@
 package twilightforest.entity.monster;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -10,6 +14,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -31,7 +37,15 @@ import net.minecraft.world.phys.Vec3;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFSounds;
 
+import java.util.UUID;
+
 public class LoyalZombie extends TamableAnimal {
+
+	// Own baby flag instead of AgeableMob's age, so a baby loyal zombie never grows up
+	private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(LoyalZombie.class, EntityDataSerializers.BOOLEAN);
+	// Same id as the vanilla zombie's baby speed boost (4.8 uses the matching minecraft:baby id)
+	private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
 
 	public LoyalZombie(EntityType<? extends LoyalZombie> type, Level world) {
 		super(type, world);
@@ -49,6 +63,12 @@ public class LoyalZombie extends TamableAnimal {
 		this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
 		this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, true));
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.getEntityData().define(DATA_BABY_ID, false);
 	}
 
 	@Override
@@ -123,6 +143,18 @@ public class LoyalZombie extends TamableAnimal {
 	}
 
 	@Override
+	public void addAdditionalSaveData(CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
+		compound.putBoolean("IsBaby", this.isBaby());
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+		this.setBaby(compound.getBoolean("IsBaby"));
+	}
+
+	@Override
 	public boolean removeWhenFarAway(double distanceToClosestPlayer) {
 		return !this.isTame();
 	}
@@ -159,5 +191,39 @@ public class LoyalZombie extends TamableAnimal {
 
 	@Override
 	protected void dropExperience() {
+	}
+
+	@Override
+	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+		if (DATA_BABY_ID.equals(key)) {
+			this.refreshDimensions();
+		}
+
+		super.onSyncedDataUpdated(key);
+	}
+
+	@Override
+	public boolean isBaby() {
+		return this.getEntityData().get(DATA_BABY_ID);
+	}
+
+	@Override
+	public void setBaby(boolean baby) {
+		this.getEntityData().set(DATA_BABY_ID, baby);
+		if (!this.level().isClientSide()) {
+			AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+			if (attributeinstance != null) {
+				attributeinstance.removeModifier(SPEED_MODIFIER_BABY_UUID);
+				if (baby) {
+					attributeinstance.addTransientModifier(SPEED_MODIFIER_BABY);
+				}
+			}
+		}
+	}
+
+	// LivingEntity already halves the hitbox of babies through getScale(); 4.8 pins the baby eye height like the vanilla baby zombie
+	@Override
+	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
+		return this.isBaby() ? 0.93F : super.getStandingEyeHeight(pose, dimensions);
 	}
 }

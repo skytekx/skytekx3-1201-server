@@ -219,7 +219,9 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> SCEPTER_PEARL = createEvent("item.twilightforest.scepter.pearl");
 	//public static final RegistryObject<SoundEvent> SCEPTER_USE = createEvent("item.twilightforest.scepter.use");
 	public static final RegistryObject<SoundEvent> SHIELD_ADD = createEvent("entity.twilightforest.shield.add");
+	public static final RegistryObject<SoundEvent> SHIELD_BLOCK = createEvent("entity.twilightforest.fortification_shield.block");
 	public static final RegistryObject<SoundEvent> SHIELD_BREAK = createEvent("entity.twilightforest.shield.break");
+	public static final RegistryObject<SoundEvent> SHIELD_EXPIRE = createEvent("entity.twilightforest.fortification_shield.expire");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_AMBIENT = createEvent("entity.twilightforest.skeleton_druid.ambient");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_DEATH = createEvent("entity.twilightforest.skeleton_druid.death");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_HURT = createEvent("entity.twilightforest.skeleton_druid.hurt");

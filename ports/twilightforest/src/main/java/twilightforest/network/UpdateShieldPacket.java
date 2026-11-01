@@ -1,6 +1,7 @@
 package twilightforest.network;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,7 +43,10 @@ public class UpdateShieldPacket {
 
 		public static boolean onMessage(UpdateShieldPacket message, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
-				Entity entity = Minecraft.getInstance().level.getEntity(message.entityID);
+				ClientLevel level = Minecraft.getInstance().level;
+				if (level == null)
+					return;
+				Entity entity = level.getEntity(message.entityID);
 				if (entity instanceof LivingEntity) {
 					entity.getCapability(CapabilityList.SHIELDS).ifPresent(cap -> {
 						cap.setShields(message.temporaryShields, true);

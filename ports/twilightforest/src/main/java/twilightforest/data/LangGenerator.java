@@ -874,6 +874,8 @@ public class LangGenerator extends TFLangProvider {
 
 		this.addSubtitle(TFSounds.SHIELD_ADD, "Fortification Shield spawns");
 		this.addSubtitle(TFSounds.SHIELD_BREAK, "Fortification Shield breaks");
+		this.addSubtitle(TFSounds.SHIELD_BLOCK, "Fortification Shield deflects");
+		this.addSubtitle(TFSounds.SHIELD_EXPIRE, "Fortification Shield expires");
 
 		this.addSubtitle(TFSounds.SLIME_BEETLE_AMBIENT, "Slime Beetle chitters");
 		this.addSubtitle(TFSounds.SLIME_BEETLE_DEATH, "Slime Beetle dies");

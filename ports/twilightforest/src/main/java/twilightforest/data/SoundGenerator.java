@@ -209,8 +209,10 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateNewSoundWithSubtitle(TFSounds.REDCAP_DEATH, "mob/redcap/die", 3);
 		this.generateNewSoundWithSubtitle(TFSounds.REDCAP_HURT, "mob/redcap/hurt", 4);
 
-		this.generateExistingSoundWithSubtitle(TFSounds.SHIELD_ADD, SoundEvents.CHICKEN_EGG);
-		this.generateExistingSoundWithSubtitle(TFSounds.SHIELD_BREAK, SoundEvents.ITEM_BREAK);
+		this.generateNewSoundWithSubtitle(TFSounds.SHIELD_ADD, "random/scepter/shield_use", 1);
+		this.generateNewSoundWithSubtitle(TFSounds.SHIELD_BREAK, "random/scepter/shield_break", 1);
+		this.generateExistingSoundWithSubtitle(TFSounds.SHIELD_BLOCK, SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, 0.5F, 1.0F);
+		this.generateNewSoundWithSubtitle(TFSounds.SHIELD_EXPIRE, "random/scepter/shield_stop", 1);
 
 		this.generateExistingSoundWithSubtitle(TFSounds.SKELETON_DRUID_AMBIENT, SoundEvents.STRAY_AMBIENT);
 		this.generateExistingSoundWithSubtitle(TFSounds.SKELETON_DRUID_DEATH, SoundEvents.STRAY_DEATH);

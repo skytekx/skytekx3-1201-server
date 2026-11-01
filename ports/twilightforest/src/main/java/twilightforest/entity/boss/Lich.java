@@ -268,7 +268,7 @@ public class Lich extends BaseTFBoss {
 					this.gameEvent(GameEvent.ENTITY_DAMAGE);
 				}
 			} else {
-				this.playSound(TFSounds.SHIELD_BREAK.get(), 1.0F, this.getVoicePitch() * 2.0F);
+				this.playSound(TFSounds.SHIELD_BLOCK.get(), 0.5F, this.getVoicePitch() * 2.0F);
 				this.gameEvent(GameEvent.ENTITY_DAMAGE);
 				if (src.getEntity() instanceof LivingEntity living) {
 					this.setLastHurtByMob(living);
@@ -548,7 +548,8 @@ public class Lich extends BaseTFBoss {
 	}
 
 	public int getShieldStrength() {
-		return this.getEntityData().get(SHIELD_STRENGTH);
+		// Shadow clones have no shields of their own, so their shield layer stays empty.
+		return this.isShadowClone() ? 0 : this.getEntityData().get(SHIELD_STRENGTH);
 	}
 
 	public void setShieldStrength(int shieldStrength) {

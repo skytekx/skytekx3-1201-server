@@ -15,12 +15,12 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.tags.BlockTagGenerator;
+import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFSounds;
 
@@ -34,7 +34,7 @@ public class Penguin extends Bird {
 		goalSelector.addGoal(0, new FloatGoal(this));
 		goalSelector.addGoal(1, new PanicGoal(this, 1.75F));
 		goalSelector.addGoal(2, new BreedGoal(this, 1.0F));
-		goalSelector.addGoal(3, new TemptGoal(this, 0.75F, Ingredient.of(Items.COD), false));
+		goalSelector.addGoal(3, new TemptGoal(this, 0.75F, Ingredient.of(ItemTagGenerator.PENGUIN_TEMPT_ITEMS), false));
 		goalSelector.addGoal(4, new FollowParentGoal(this, 1.15F));
 		goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0F));
 		goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6F));
@@ -49,7 +49,7 @@ public class Penguin extends Bird {
 
 	@Override
 	public boolean isFood(ItemStack stack) {
-		return stack.is(Items.COD);
+		return stack.is(ItemTagGenerator.PENGUIN_TEMPT_ITEMS);
 	}
 
 	@Nullable

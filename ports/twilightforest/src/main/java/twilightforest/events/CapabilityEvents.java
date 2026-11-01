@@ -121,6 +121,11 @@ public class CapabilityEvents {
 	/**
 	 * The surface spot in the Twilight Forest that a banished player is sent to and respawns at, so neither the arrival
 	 * nor the forced respawn point can be up in the air (no falling spawn-kills) or inside terrain.
+	 * <p>
+	 * Local deviation from 4.8 (6da868af5): the column is the player's position scaled into the Twilight Forest
+	 * (coordinate_scale 0.125, so x8 horizontally), as 4.3's banish through the portal teleporter always did. 4.8 uses
+	 * the raw overworld X/Z instead ({@code player.blockPosition()}, since bb51f4ee6). Keeping 4.3's scaling lands new
+	 * players in the same region as players banished before this backport.
 	 */
 	@Nullable
 	private static BlockPos getNewPlayerSpawn(Player player) {

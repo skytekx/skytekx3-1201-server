@@ -22,7 +22,8 @@ public class TFPacketHandler {
 	// .6: StructureProtectionPacket carries a list of per-piece boxes with a protected flag instead of one start box (4.8 262daec10, 48ba590a9).
 	// .7: SyncQuestsPacket (data pack driven Questing Ram quest, 4.8 02875d8a3) is registered before SyncUncraftingTableConfigPacket.
 	// .8: MagicMapPacket feature ids carry a conquered flag in their top bit (4.8 e67ac0be2).
-	private static final String PROTOCOL_VERSION = "2-skytekx.8";
+	// .9: WipeOreMeterPacket (client to server) for the finished Ore Meter.
+	private static final String PROTOCOL_VERSION = "2-skytekx.9";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -56,5 +57,6 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, UpdateDeathTimePacket.class, UpdateDeathTimePacket::encode, UpdateDeathTimePacket::new, UpdateDeathTimePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, TFBossBarPacket.AddTFBossBarPacket.class, TFBossBarPacket.AddTFBossBarPacket::encode, TFBossBarPacket.AddTFBossBarPacket::new, TFBossBarPacket.AddTFBossBarPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, TFBossBarPacket.UpdateTFBossBarStylePacket.class, TFBossBarPacket.UpdateTFBossBarStylePacket::encode, TFBossBarPacket.UpdateTFBossBarStylePacket::new, TFBossBarPacket.UpdateTFBossBarStylePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, WipeOreMeterPacket.class, WipeOreMeterPacket::encode, WipeOreMeterPacket::new, WipeOreMeterPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 	}
 }

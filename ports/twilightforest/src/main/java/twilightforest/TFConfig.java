@@ -458,6 +458,10 @@ public class TFConfig {
 					translation(config + "aurora_biomes").
 					comment("Defines which biomes the aurora shader effect will appear in. Leave the list empty to disable the effect.")
 					.defineList("auroraBiomes", List.of("twilightforest:glacier"), s -> s instanceof String);
+			prettifyOreMeterGui = builder.
+					translation(config + "prettify_ore_meter_gui").
+					comment("Lines up the dashes and percentages in the Ore Meter GUI.").
+					define("prettifyOreMeterGui", true);
 			spawnCharmAnimationAsTotem = builder.
 					translation(config + "totem_charm_animation").
 					comment("If true, Twilight Forest charm items will display similar to the totem of undying when used.").
@@ -477,6 +481,7 @@ public class TFConfig {
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> giantSkinUUIDs;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> auroraBiomes;
 		private final List<Holder<Biome>> validAuroraBiomes = new ArrayList<>();
+		public final ForgeConfigSpec.BooleanValue prettifyOreMeterGui;
 		public final ForgeConfigSpec.BooleanValue spawnCharmAnimationAsTotem;
 	}
 

@@ -44,7 +44,7 @@ public class TFItems {
 	public static final RegistryObject<Item> FORTIFICATION_SCEPTER = ITEMS.register("fortification_scepter", () -> new FortificationWandItem(new Item.Properties().durability(9).rarity(Rarity.UNCOMMON)));
 	//items.register("Wand of Pacification [NYI]", new Item().setIconIndex(6).setTranslationKey("wandPacification").setMaxStackSize(1));
 	public static final RegistryObject<Item> MAGIC_PAINTING = ITEMS.register("magic_painting", () -> new MagicPaintingItem(new Item.Properties()));
-	public static final RegistryObject<Item> ORE_METER = ITEMS.register("ore_meter", () -> new OreMeterItem(new Item.Properties()));
+	public static final RegistryObject<Item> ORE_METER = ITEMS.register("ore_meter", () -> new OreMeterItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> FILLED_MAGIC_MAP = ITEMS.register("filled_magic_map", () -> new MagicMapItem(new Item.Properties()));
 	public static final RegistryObject<Item> FILLED_MAZE_MAP = ITEMS.register("filled_maze_map", () -> new MazeMapItem(false, new Item.Properties()));
 	public static final RegistryObject<Item> FILLED_ORE_MAP = ITEMS.register("filled_ore_map", () -> new MazeMapItem(true, new Item.Properties()));
@@ -303,6 +303,16 @@ public class TFItems {
 				}
 				return this.rotation;
 			}
+		});
+
+		ItemProperties.register(ORE_METER.get(), TwilightForestMod.prefix("active"), (stack, world, entity, idk) -> {
+			if (OreMeterItem.isLoading(stack)) {
+				//flicker while scanning, then stay on for the last 15 ticks
+				int totalLoadTime = OreMeterItem.getScanTime(OreMeterItem.getRange(stack));
+				int progress = OreMeterItem.getLoadProgress(stack);
+				return progress % 5 >= 2 + (int) (Math.random() * 2) && progress <= totalLoadTime - 15 ? 1 : 0;
+			}
+			return OreMeterItem.hasScanData(stack) ? 1 : 0;
 		});
 
 		ItemProperties.register(MOONWORM_QUEEN.get(), TwilightForestMod.prefix("alt"), (stack, world, entity, idk) -> {

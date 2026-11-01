@@ -83,6 +83,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 	public static final TagKey<Block> TIME_CORE_EXCLUDED = BlockTags.create(TwilightForestMod.prefix("time_core_excluded"));
 	public static final TagKey<Block> MINING_CORE_EXCLUDED = BlockTags.create(TwilightForestMod.prefix("mining_tree_excluded"));
+	public static final TagKey<Block> ORE_METER_TARGETABLE = BlockTags.create(TwilightForestMod.prefix("ore_meter_targetable"));
 
 	public static final TagKey<Block> PENGUINS_SPAWNABLE_ON = BlockTags.create(TwilightForestMod.prefix("penguins_spawnable_on"));
 	public static final TagKey<Block> GIANTS_SPAWNABLE_ON = BlockTags.create(TwilightForestMod.prefix("giants_spawnable_on"));
@@ -611,6 +612,22 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		tag(BlockTags.OVERWORLD_CARVER_REPLACEABLES).add(TFBlocks.TROLLSTEINN.get());
 
 		tag(TIME_CORE_EXCLUDED).add(Blocks.NETHER_PORTAL);
+
+		tag(ORE_METER_TARGETABLE)
+				.addTag(Tags.Blocks.ORES)
+				.addTag(BlockTags.BASE_STONE_OVERWORLD)
+				.addTag(BlockTags.BASE_STONE_NETHER)
+				.addTag(BlockTags.DIRT)
+				.addTag(Tags.Blocks.SAND)
+				.addTag(Tags.Blocks.SANDSTONE)
+				.addTag(BlockTags.TERRACOTTA)
+				.addTag(Tags.Blocks.GRAVEL)
+				.addTag(BlockTags.NYLIUM)
+				.addTag(ROOT_ORES)
+				.add(Blocks.BUDDING_AMETHYST)
+				.add(Blocks.CALCITE)
+				.add(Blocks.SOUL_SAND)
+				.add(Blocks.SOUL_SOIL);
 
 		tag(PENGUINS_SPAWNABLE_ON).add(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE);
 		tag(GIANTS_SPAWNABLE_ON).addTag(CLOUDS);

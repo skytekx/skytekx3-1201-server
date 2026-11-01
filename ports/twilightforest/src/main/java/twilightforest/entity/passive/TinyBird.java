@@ -5,6 +5,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
@@ -14,7 +15,9 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFSounds;
 import twilightforest.init.custom.TinyBirdVariant;
 
@@ -91,8 +94,13 @@ public class TinyBird extends FlyingBird {
 	public boolean isSpooked() {
 		if (this.getLastHurtByMob() != null) return true;
 		Player closestPlayer = this.level().getNearestPlayer(this.getX(), this.getY(), this.getZ(), 4.0D, true);
-		return closestPlayer != null
-				&& !SEEDS.test(closestPlayer.getMainHandItem())
-				&& !SEEDS.test(closestPlayer.getOffhandItem());
+		// TF 4.8 (336678496) dropped the negation here, so its tiny birds flee from players holding seeds and the tempt goal
+		// never gets a chance; keep 4.3's intent (only players without tempt items spook them) on top of the new tag.
+		return closestPlayer != null && !closestPlayer.isHolding(stack -> stack.is(this.getTemptItems()));
+	}
+
+	@Override
+	public TagKey<Item> getTemptItems() {
+		return ItemTagGenerator.TINY_BIRD_TEMPT_ITEMS;
 	}
 }

@@ -63,6 +63,13 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> NYI = create("nyi");
 
 	public static final TagKey<Item> KOBOLD_PACIFICATION_BREADS = create("kobold_pacification_breads");
+	public static final TagKey<Item> BOAR_TEMPT_ITEMS = create("boar_tempt_items");
+	public static final TagKey<Item> DEER_TEMPT_ITEMS = create("deer_tempt_items");
+	public static final TagKey<Item> DWARF_RABBIT_TEMPT_ITEMS = create("dwarf_rabbit_tempt_items");
+	public static final TagKey<Item> PENGUIN_TEMPT_ITEMS = create("penguin_tempt_items");
+	public static final TagKey<Item> RAVEN_TEMPT_ITEMS = create("raven_tempt_items");
+	public static final TagKey<Item> SQUIRREL_TEMPT_ITEMS = create("squirrel_tempt_items");
+	public static final TagKey<Item> TINY_BIRD_TEMPT_ITEMS = create("tiny_bird_tempt_items");
 
 	public static final TagKey<Item> BANNED_UNCRAFTING_INGREDIENTS = create("banned_uncrafting_ingredients");
 	public static final TagKey<Item> BANNED_UNCRAFTABLES = create("banned_uncraftables");
@@ -223,6 +230,13 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		);
 
 		tag(KOBOLD_PACIFICATION_BREADS).add(Items.BREAD);
+		tag(BOAR_TEMPT_ITEMS).addTag(Tags.Items.CROPS_CARROT).addTag(Tags.Items.CROPS_POTATO).addTag(Tags.Items.CROPS_BEETROOT);
+		tag(DEER_TEMPT_ITEMS).addTag(Tags.Items.CROPS_WHEAT).add(Items.APPLE);
+		tag(DWARF_RABBIT_TEMPT_ITEMS).addTag(Tags.Items.CROPS_CARROT).add(Items.GOLDEN_CARROT).add(Items.DANDELION);
+		tag(PENGUIN_TEMPT_ITEMS).addTag(ItemTags.FISHES);
+		tag(RAVEN_TEMPT_ITEMS).addTag(Tags.Items.SEEDS);
+		tag(SQUIRREL_TEMPT_ITEMS).addTag(Tags.Items.SEEDS);
+		tag(TINY_BIRD_TEMPT_ITEMS).addTag(Tags.Items.SEEDS);
 
 		tag(ItemTags.MUSIC_DISCS).add(
 				TFItems.MUSIC_DISC_FINDINGS.get(),

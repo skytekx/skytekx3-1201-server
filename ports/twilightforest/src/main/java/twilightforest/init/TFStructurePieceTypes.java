@@ -29,6 +29,7 @@ public class TFStructurePieceTypes {
     public static final RegistryObject<StructurePieceType> TFQuestGrove = registerPieceType("TFQuest1", QuestGrove::new);
     public static final RegistryObject<StructurePieceType> TFHydra = registerPieceType("TFHydra", HydraLairComponent::new);
     public static final RegistryObject<StructurePieceType> TFYeti = registerPieceType("TFYeti", YetiCaveComponent::new);
+    public static final RegistryObject<StructurePieceType> TFUtilityPiece = registerPieceType("TFUtilityPiece", UtilityPiece::new);
     public static final RegistryObject<StructurePieceType> TFJigsawTemplate = registerPieceType("TFJigsawTemplate", TwilightJigsawPiece::defaultDeserialize);
 
     // Mushroom Castle

@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
+import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
@@ -516,5 +517,11 @@ public abstract class StructureTFStrongholdComponent extends TFStructureComponen
 
 	public interface Factory<T extends StructureTFStrongholdComponent> {
 		T newInstance(int i, Direction facing, int x, int y, int z);
+	}
+
+	// Only the protected underground rooms are buried; the surface ruins and the access chamber keep the terrain they stand on
+	@Override
+	public TerrainAdjustment getTerrainAdjustment() {
+		return this.isComponentProtected() ? TerrainAdjustment.BURY : TerrainAdjustment.NONE;
 	}
 }

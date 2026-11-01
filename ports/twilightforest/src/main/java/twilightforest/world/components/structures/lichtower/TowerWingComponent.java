@@ -1880,4 +1880,9 @@ public class TowerWingComponent extends TFStructureComponentOld {
 			}
 		}
 	}
+
+	@Override
+	public int getGroundLevelDelta() {
+		return 1;
+	}
 }

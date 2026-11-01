@@ -421,6 +421,11 @@ logs stay on the Mac and are not in the repo.
   without island ground under it is left out. A sixth test world from 02:41 to 02:45 matched the
   fifth. A hut over carved stilt columns dropped 44 oak logs below Y 13 with 2.1.1 and none with
   2.1.2. The server repo bundles 2.1.2 since a76fbdd. 2.1.1 never left the test server.
+- At 02:49:59 a warning went out in chat, with only one player online. The server stopped at 02:51:09.
+  skytekx-compat 2.1.2 replaced 2.1.0, `ServerMac.sh` got the fixes of 2026-10-31 evening (c96aace,
+  cd33865), and `macos/install.sh` ran again, which loaded the pf rules that only drop new connections
+  to RCON. The server was up at 02:52:03 with the 3 accepted boot errors. From the LAN 25565 answered
+  and 65535 timed out. See [Mac mini](server/macos.md).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

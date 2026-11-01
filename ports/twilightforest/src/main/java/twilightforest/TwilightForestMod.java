@@ -106,6 +106,7 @@ public class TwilightForestMod {
 		TFBannerPatterns.BANNER_PATTERNS.register(modbus);
 		TFBlockEntities.BLOCK_ENTITIES.register(modbus);
 		TFBlocks.BLOCKS.register(modbus);
+		TFDensityFunctions.DENSITY_FUNCTION_TYPES.register(modbus);
 		TFLoot.CONDITIONS.register(modbus);
 		TFMenuTypes.CONTAINERS.register(modbus);
 		TFEnchantments.ENCHANTMENTS.register(modbus);

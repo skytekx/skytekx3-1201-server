@@ -258,7 +258,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 					sections.add(section);
 				}
 
-				return CompletableFuture.supplyAsync(() -> this.doFill(random, chunkAccess, mincell, maxcell), Util.backgroundExecutor()).whenCompleteAsync((chunk, throwable) -> {
+				return CompletableFuture.supplyAsync(() -> this.doFill(random, structureManager, chunkAccess, mincell, maxcell), Util.backgroundExecutor()).whenCompleteAsync((chunk, throwable) -> {
 					for (LevelChunkSection section : sections) {
 						section.release();
 					}
@@ -267,7 +267,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		}
 	}
 
-	private ChunkAccess doFill(RandomState random, ChunkAccess access, int min, int max) {
+	private ChunkAccess doFill(RandomState random, StructureManager structureManager, ChunkAccess access, int min, int max) {
 		NoiseSettings settings = noiseGeneratorSettings.value().noiseSettings();
 		int cellWidth = settings.getCellWidth();
 		int cellHeight = settings.getCellHeight();
@@ -278,6 +278,8 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		ChunkPos chunkpos = access.getPos();
 		int minX = chunkpos.getMinBlockX();
 		int minZ = chunkpos.getMinBlockZ();
+		// Structure beards and CustomDensitySource terraformers (TF 4.8's Beardifier hooks), null when no structure in the chunk adapts the terrain
+		@Nullable TFBeardifier beardifier = TFBeardifier.forStructuresInChunk(structureManager, chunkpos);
 		TFNoiseInterpolator interpolator = new TFNoiseInterpolator(cellCountX, max, cellCountZ, chunkpos, min, (columns, x, z, min1, max1, max12) -> fillNoiseColumn(x, z, min1, max1, max12));
 		List<TFNoiseInterpolator> list = Lists.newArrayList(interpolator);
 		list.forEach(noiseint -> noiseint.initialiseFirstX(random));
@@ -320,7 +322,8 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 								int mincellZ = minwidthZ & 15;
 								double widthdivZ = (double)widthZ / (double)cellWidth;
 								double noiseval = interpolator.updateZ(widthdivZ);
-								//BlockState state = this.updateNoiseAndGenerateBaseState(beardifier, this.emptyAquifier, NoiseModifier.PASS, minwidthX, minheight, minwidthZ, noiseval); //TODO
+								if (beardifier != null)
+									noiseval = beardifier.applyTo(noiseval, minwidthX, minheight, minwidthZ);
 								BlockState state = this.generateBaseState(noiseval, minheight);
 
 								if (state != Blocks.AIR.defaultBlockState()) {

@@ -58,7 +58,7 @@ public class YetiCaveStructure extends ConquerableStructure {
                         context.lookup(Registries.BIOME).getOrThrow(BiomeTagGenerator.VALID_YETI_CAVE_BIOMES),
                         Arrays.stream(MobCategory.values()).collect(Collectors.toMap(category -> category, category -> new StructureSpawnOverride(StructureSpawnOverride.BoundingBoxType.STRUCTURE, WeightedRandomList.create()))), // Landmarks have Controlled Mob spawning
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
-                        TerrainAdjustment.BURY
+                        TerrainAdjustment.NONE // ChunkGeneratorTwilight.deformTerrainForYetiLair shapes the cave's terrain
                 )
         );
     }

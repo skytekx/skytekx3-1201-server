@@ -70,6 +70,5 @@
     }
   },
   "step": "surface_structures",
-  "terrain_adaptation": "bury",
   "water_spawns": []
 }

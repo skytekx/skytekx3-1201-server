@@ -18,6 +18,7 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
+import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import org.jetbrains.annotations.Nullable;
@@ -255,5 +256,10 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		this.generateBox(world, sbb, mid - 2, 0, mid - 2, mid + 1, 3, mid + 1, Blocks.OBSIDIAN.defaultBlockState(), Blocks.OBSIDIAN.defaultBlockState(), false);
 		this.generateAirBox(world, sbb, mid - 1, 1, mid - 1, mid, 2, mid);
 		this.placeTreasureAtCurrentPosition(world, mid, 1, mid, TFLootTables.TROLL_GARDEN, false, sbb);
+	}
+
+	@Override
+	public TerrainAdjustment getTerrainAdjustment() {
+		return TerrainAdjustment.BURY;
 	}
 }

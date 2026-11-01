@@ -24,7 +24,9 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
+import net.minecraftforge.common.world.PieceBeardifierModifier;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 import twilightforest.loot.TFLootTables;
@@ -37,7 +39,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Deprecated
-public abstract class TFStructureComponentOld extends TFStructureComponent {
+public abstract class TFStructureComponentOld extends TFStructureComponent implements PieceBeardifierModifier {
 
 	protected static final BlockState AIR = Blocks.AIR.defaultBlockState();
 
@@ -582,5 +584,22 @@ public abstract class TFStructureComponentOld extends TFStructureComponent {
 	protected static BlockState getSlabState(BlockState inputBlockState, SlabType half) {
 		return inputBlockState
 				.setValue(SlabBlock.TYPE, half);
+	}
+
+	// Pieces build their own surroundings, so they opt in to terrain adaptation one by one instead of taking the structure's terrain_adaptation
+
+	@Override
+	public BoundingBox getBeardifierBox() {
+		return this.boundingBox;
+	}
+
+	@Override
+	public TerrainAdjustment getTerrainAdjustment() {
+		return TerrainAdjustment.NONE;
+	}
+
+	@Override
+	public int getGroundLevelDelta() {
+		return 0;
 	}
 }

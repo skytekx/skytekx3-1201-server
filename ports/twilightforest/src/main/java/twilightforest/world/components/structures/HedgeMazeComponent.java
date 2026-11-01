@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.CarvedPumpkinBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
@@ -229,5 +230,10 @@ public class HedgeMazeComponent extends TFStructureComponentOld {
 		super.addAdditionalSaveData(ctx, tagCompound);
 
 		BoundingBoxUtils.boundingBoxToExistingNBT(this.boundingBox, tagCompound);
+	}
+
+	@Override
+	public TerrainAdjustment getTerrainAdjustment() {
+		return TerrainAdjustment.BEARD_BOX;
 	}
 }

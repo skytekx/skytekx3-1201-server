@@ -99,6 +99,22 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_iron_bars", has(Blocks.IRON_BARS))
 				.save(consumer);
 
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.CANOPY_WINDOW.get(), 4)
+				.pattern("GPG")
+				.pattern("PPP")
+				.pattern("GPG")
+				.define('G', Tags.Items.GLASS)
+				.define('P', Ingredient.of(TFBlocks.CANOPY_PLANKS.get()))
+				.unlockedBy("has_planks", has(TFBlocks.CANOPY_PLANKS.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.CANOPY_WINDOW_PANE.get(), 16)
+				.pattern("GGG")
+				.pattern("GGG")
+				.define('G', Ingredient.of(TFBlocks.CANOPY_WINDOW.get()))
+				.unlockedBy("has_windows", has(TFBlocks.CANOPY_WINDOW.get()))
+				.save(consumer);
+
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.FIREFLY_JAR.get())
 				.requires(Ingredient.of(TFBlocks.FIREFLY.get()))
 				.requires(Ingredient.of(Items.GLASS_BOTTLE))

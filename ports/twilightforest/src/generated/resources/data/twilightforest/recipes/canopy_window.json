@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "forge:glass"
+    },
+    "P": {
+      "item": "twilightforest:canopy_planks"
+    }
+  },
+  "pattern": [
+    "GPG",
+    "PPP",
+    "GPG"
+  ],
+  "result": {
+    "count": 4,
+    "item": "twilightforest:canopy_window"
+  },
+  "show_notification": true
+}

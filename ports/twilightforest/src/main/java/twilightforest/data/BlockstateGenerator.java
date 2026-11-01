@@ -100,6 +100,9 @@ public class BlockstateGenerator extends BlockModelBuilders {
 					.condition(LadderBlock.FACING, d).condition(IronLadderBlock.RIGHT, true).end();
 		}
 
+		simpleBlock(TFBlocks.CANOPY_WINDOW.get(), this.models().cubeAll(this.name(TFBlocks.CANOPY_WINDOW.get()), this.blockTexture(TFBlocks.CANOPY_WINDOW.get())).renderType(CUTOUT));
+		paneBlockWithRenderType(TFBlocks.CANOPY_WINDOW_PANE.get(), prefix("block/" + TFBlocks.CANOPY_WINDOW.getId().getPath()), prefix("block/" + TFBlocks.CANOPY_WINDOW.getId().getPath()), CUTOUT);
+
 		towerBlocks();
 
 		simpleBlock(TFBlocks.FAKE_GOLD.get(), models().getExistingFile(new ResourceLocation("block/gold_block")));

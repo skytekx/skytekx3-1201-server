@@ -204,6 +204,8 @@ public class BlockLootTables extends BlockLootSubProvider {
 		add(TFBlocks.PIGLIN_WALL_SKULL_CANDLE.get(), createSingleItemTable(Blocks.PIGLIN_HEAD));
 
 		dropSelf(TFBlocks.IRON_LADDER.get());
+		dropWhenSilkTouch(TFBlocks.CANOPY_WINDOW.get());
+		dropWhenSilkTouch(TFBlocks.CANOPY_WINDOW_PANE.get());
 		dropSelf(TFBlocks.TWISTED_STONE.get());
 		dropSelf(TFBlocks.TWISTED_STONE_PILLAR.get());
 		dropSelf(TFBlocks.BOLD_STONE_PILLAR.get());

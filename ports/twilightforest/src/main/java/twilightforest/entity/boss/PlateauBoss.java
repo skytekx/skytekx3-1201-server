@@ -2,7 +2,6 @@ package twilightforest.entity.boss;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.monster.Monster;
@@ -44,7 +43,7 @@ public class PlateauBoss extends BaseTFBoss {
 	}
 
 	@Override
-	public BossEvent.BossBarColor getBossBarColor() {
-		return BossEvent.BossBarColor.WHITE;
+	public int getBossBarColor() {
+		return 0xFFFFFF;
 	}
 }

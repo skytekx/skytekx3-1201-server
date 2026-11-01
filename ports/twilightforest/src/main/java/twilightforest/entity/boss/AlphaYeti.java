@@ -11,7 +11,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -356,7 +355,7 @@ public class AlphaYeti extends BaseTFBoss implements RangedAttackMob, IHostileMo
 	}
 
 	@Override
-	public BossEvent.BossBarColor getBossBarColor() {
-		return BossEvent.BossBarColor.WHITE;
+	public int getBossBarColor() {
+		return 0xB4F0F0;
 	}
 }

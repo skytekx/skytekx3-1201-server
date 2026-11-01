@@ -67,6 +67,7 @@ import twilightforest.client.renderer.TFWeatherRenderer;
 import twilightforest.client.renderer.entity.ShieldLayer;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.data.tags.ItemTagGenerator;
+import twilightforest.entity.boss.bar.ClientTFBossBar;
 import twilightforest.events.HostileMountEvents;
 import twilightforest.init.TFItems;
 import twilightforest.item.*;
@@ -403,6 +404,17 @@ public class TFClientEvents {
 				BlockPos offsetPos = new BlockPos(pos.getX() & ~0b11, pos.getY() & ~0b11, pos.getZ() & ~0b11);
 				renderGiantHitOutline(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.lines()), Vec3.atLowerCornerOf(offsetPos).subtract(event.getCamera().getPosition()));
 			}
+		}
+	}
+
+	/**
+	 * Draws our RGB boss bars, which the vanilla overlay can only draw in its seven colours.
+	 */
+	@SubscribeEvent
+	public static void renderCustomBossBars(CustomizeGuiOverlayEvent.BossEventProgress event) {
+		if (event.getBossEvent() instanceof ClientTFBossBar bossEvent) {
+			event.setCanceled(true);
+			bossEvent.renderBossBar(event.getGuiGraphics(), event.getX(), event.getY());
 		}
 	}
 

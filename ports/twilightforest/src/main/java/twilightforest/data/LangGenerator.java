@@ -421,7 +421,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.LICH_BOSS_SPAWNER, "Lich Boss Spawner");
 		this.addBlock(TFBlocks.MINOSHROOM_BOSS_SPAWNER, "Minoshroom Boss Spawner");
 		this.addBlock(TFBlocks.HYDRA_BOSS_SPAWNER, "Hydra Boss Spawner");
-		this.addBlock(TFBlocks.KNIGHT_PHANTOM_BOSS_SPAWNER, "Knight Phantom Boss Spawner");
+		this.addBlock(TFBlocks.KNIGHT_PHANTOM_BOSS_SPAWNER, "Knight Phantoms Boss Spawner");
 		this.addBlock(TFBlocks.UR_GHAST_BOSS_SPAWNER, "Ur-Ghast Boss Spawner");
 		this.addBlock(TFBlocks.ALPHA_YETI_BOSS_SPAWNER, "Alpha Yeti Boss Spawner");
 		this.addBlock(TFBlocks.SNOW_QUEEN_BOSS_SPAWNER, "Snow Queen Boss Spawner");
@@ -631,6 +631,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addEntityAndEgg(TFEntities.ICE_CRYSTAL, "Ice Crystal");
 		this.addEntityAndEgg(TFEntities.KING_SPIDER, "King Spider");
 		this.addEntityAndEgg(TFEntities.KNIGHT_PHANTOM, "Knight Phantom");
+		this.add("entity.twilightforest.knight_phantom.plural", "Knight Phantoms");
 		this.addEntityAndEgg(TFEntities.KOBOLD, "Kobold");
 		this.addEntityAndEgg(TFEntities.LICH, "Lich");
 		this.addEntityAndEgg(TFEntities.MAZE_SLIME, "Maze Slime");

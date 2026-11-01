@@ -9,7 +9,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -438,7 +437,7 @@ public class SnowQueen extends BaseTFBoss implements IBreathAttacker {
 	}
 
 	@Override
-	public BossEvent.BossBarColor getBossBarColor() {
-		return BossEvent.BossBarColor.WHITE;
+	public int getBossBarColor() {
+		return 0x8CF0F0;
 	}
 }

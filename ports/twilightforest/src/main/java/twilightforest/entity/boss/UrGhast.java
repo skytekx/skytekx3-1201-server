@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
@@ -590,7 +589,7 @@ public class UrGhast extends BaseTFBoss {
 	}
 
 	@Override
-	public BossEvent.BossBarColor getBossBarColor() {
-		return BossEvent.BossBarColor.RED;
+	public int getBossBarColor() {
+		return 0xFF0000;
 	}
 }

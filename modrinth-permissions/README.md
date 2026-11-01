@@ -70,7 +70,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `parry-2.5.0.jar` | Shield Parry | LGPL-2.1 | Licensed | yes | - |
 | `refurbished_furniture-forge-1.20.1-1.0.20.jar` | MrCrayfish's Furniture Mod: Refurbished | Custom (MIT for source code; All Rights Reserved for assets) | Special permission | yes | - |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
-| `skytekx-compat-2.1.0.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
+| `skytekx-compat-2.1.2.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
 | `traverse-forge-7.0.12.jar` | Traverse Reforged | LGPL-3.0-only | Licensed | yes | - |
 | `trumpet_skeleton-1.2-forge-1.20.1.jar` | Trumpet Skeleton: Reforged | MIT | Licensed | yes | - |
 | `Tumbleweed-forge-1.20.1-0.5.5.jar` | Tumbleweed | LGPL-3.0-only | Licensed | yes | yes |

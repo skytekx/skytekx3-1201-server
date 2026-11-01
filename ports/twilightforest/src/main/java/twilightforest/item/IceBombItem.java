@@ -26,7 +26,7 @@ public class IceBombItem extends Item {
 				player.getItemInHand(hand).shrink(1);
 			}
 			IceBomb ice = new IceBomb(TFEntities.THROWN_ICE.get(), level, player);
-			ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -20.0F, 0.75F, 1.0F);
+			ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, 1.25F, 1.0F);
 			level.addFreshEntity(ice);
 		}
 

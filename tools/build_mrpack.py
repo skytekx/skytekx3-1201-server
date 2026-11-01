@@ -9,7 +9,7 @@
 import io, json, os, shutil, struct, subprocess, tarfile, zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.0.7"
+VERSION = "3.0.8"
 FORGE = "47.4.18"   # The Forge build that the server (inside Arclight) and the owner's client run
 
 def git(*args):
@@ -53,6 +53,8 @@ OVERRIDES = [
     ("skylands-datapack-forge", "world/datapacks/skytekx3_skylands_forge"),
     ("world/datapacks/skytekx3_fixes", "world/datapacks/skytekx3_fixes"),
     ("local-mods", "mods"),
+    # Sources of bundled LGPL ports, shipped next to their jars as the license asks.
+    ("licenses", "licenses"),
 ]
 # The Chunky task records are tracked by mistake and only hold the build machine's pregen state.
 SKIP = ("config/chunky/tasks/",)

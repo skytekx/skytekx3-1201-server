@@ -41,20 +41,17 @@ public class TripleBowItem extends BowItem {
 						ArrowItem arrowItem = itemstack.getItem() instanceof ArrowItem arrow ? arrow : (ArrowItem) Items.ARROW;
 						for (int j = -1; j < 2; j++) {
 							AbstractArrow abstractArrow = arrowItem.createArrow(level, itemstack, player);
-							abstractArrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * (3.0F - Math.abs(j)), 1.0F);
-							abstractArrow.setDeltaMovement(abstractArrow.getDeltaMovement().add(0.0D, 0.0075 * 20F * j, 0.0D));
+							abstractArrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.5F, 1.0F);
+							abstractArrow.setDeltaMovement(abstractArrow.getDeltaMovement().add(0.0D, 0.0075D * 20D * j, 0.0D));
 
-							if (j != 0) {
-								abstractArrow.setPos(abstractArrow.getX(), abstractArrow.getY() + 0.025F, abstractArrow.getZ());
-								abstractArrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-							} else if (flag1 || player.getAbilities().instabuild && (itemstack.getItem() == Items.SPECTRAL_ARROW || itemstack.getItem() == Items.TIPPED_ARROW)) {
+							if (j != 0 || flag1 || player.getAbilities().instabuild && (itemstack.getItem() == Items.SPECTRAL_ARROW || itemstack.getItem() == Items.TIPPED_ARROW)) {
 								abstractArrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 							}
 
 							if (f == 1.0F) abstractArrow.setCritArrow(true);
 
 							int p = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
-							if (p > 0) abstractArrow.setBaseDamage(abstractArrow.getBaseDamage() + j * 0.5D + 0.5D);
+							if (p > 0) abstractArrow.setBaseDamage(abstractArrow.getBaseDamage() + p * 0.5D + 0.5D);
 
 							int k = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
 							if (k > 0) abstractArrow.setKnockback(k);

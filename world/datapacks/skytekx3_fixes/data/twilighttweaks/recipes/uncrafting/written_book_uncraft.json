@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:false"
+    }
+  ],
+  "type": "twilightforest:uncrafting",
+  "cost": 2,
+  "input": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:written_book"
+    }
+  },
+  "key": {
+    "0": {
+      "item": "minecraft:book"
+    },
+    "1": {
+      "item": "minecraft:ink_sac"
+    }
+  },
+  "pattern": [
+    "01 "
+  ]
+}

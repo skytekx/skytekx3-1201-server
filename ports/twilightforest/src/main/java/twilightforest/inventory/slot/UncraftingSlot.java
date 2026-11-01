@@ -1,9 +1,13 @@
 package twilightforest.inventory.slot;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -86,6 +90,17 @@ public class UncraftingSlot extends Slot {
 		if (!inputStack.isEmpty()) {
 			if (player instanceof ServerPlayer server) {
 				TFAdvancements.UNCRAFT_ITEM.trigger(server, inputStack);
+			}
+			// hand back whatever is stored inside the item (filled shulker boxes etc.) instead of voiding it
+			CompoundTag blockEntityTag = BlockItem.getBlockEntityData(inputStack);
+			if (blockEntityTag != null && blockEntityTag.contains("Items", Tag.TAG_LIST)) {
+				ListTag items = blockEntityTag.getList("Items", Tag.TAG_COMPOUND);
+				for (int i = 0; i < items.size(); i++) {
+					ItemStack stack1 = ItemStack.of(items.getCompound(i));
+					if (!stack1.isEmpty() && !player.getInventory().add(stack1)) {
+						player.drop(stack1, false);
+					}
+				}
 			}
 			this.inputSlot.removeItem(0, this.uncraftingMatrix.numberOfInputItems);
 		}

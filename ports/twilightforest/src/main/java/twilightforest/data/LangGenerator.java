@@ -590,6 +590,9 @@ public class LangGenerator extends TFLangProvider {
 		this.add("item.twilightforest.moon_dial.phase_unknown", "Moon phase indeterminate");
 		this.add("item.twilightforest.moon_dial.phase_unknown_fools", "404 moon not found");
 
+		this.addItem(TFItems.EMPERORS_CLOTH, "Emperor's Cloth");
+		this.add("item.twilightforest.emperors_cloth.desc", "Shrouded");
+
 		this.addItem(TFItems.ORE_MAGNET, "Ore Magnet");
 		this.addItem(TFItems.CRUMBLE_HORN, "Crumble Horn");
 		this.addItem(TFItems.MOONWORM_QUEEN, "Moonworm Queen");

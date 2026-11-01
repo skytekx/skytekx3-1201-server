@@ -555,6 +555,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.ZOMBIE_SCEPTER.get());
 				output.accept(TFItems.FORTIFICATION_SCEPTER.get());
 				output.accept(TFItems.LAMP_OF_CINDERS.get());
+				output.accept(TFItems.EMPERORS_CLOTH.get());
 				output.accept(TFItems.ORE_MAGNET.get());
 				output.accept(TFItems.CRUMBLE_HORN.get());
 				output.accept(TFItems.PEACOCK_FEATHER_FAN.get());

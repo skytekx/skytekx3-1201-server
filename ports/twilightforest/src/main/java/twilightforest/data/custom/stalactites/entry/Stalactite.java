@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.lang.reflect.Type;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +43,8 @@ public record Stalactite(Map<Block, Integer> ores, float sizeVariation, int maxL
 
 		private Map<Block, Integer> deserializeBlockMap(JsonObject json) {
 			JsonArray array = GsonHelper.getAsJsonArray(json, "blocks");
-			Map<Block, Integer> map = new HashMap<>();
+			// Keep the datapack's order so the weighted ore pick is deterministic for a given seed
+			Map<Block, Integer> map = new LinkedHashMap<>();
 			array.forEach(jsonElement -> {
 				map.put(ForgeRegistries.BLOCKS.getValue(ResourceLocation.tryParse(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "block"))), GsonHelper.getAsInt(jsonElement.getAsJsonObject(), "weight"));
 			});

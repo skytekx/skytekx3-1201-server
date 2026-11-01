@@ -91,6 +91,10 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 	public static final TagKey<Block> TF_CHESTS = BlockTags.create(TwilightForestMod.prefix("chests"));
 
+	public static final TagKey<Block> DEADROCK = BlockTags.create(TwilightForestMod.prefix("deadrock"));
+
+	public static final TagKey<Block> SUPPORTS_STALAGMITES = BlockTags.create(TwilightForestMod.prefix("supports_stalagmites"));
+
 	public BlockTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
 		super(output, future, helper);
 	}
@@ -492,6 +496,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(CARMINITE_REACTOR_ORES).add(Blocks.NETHER_QUARTZ_ORE, Blocks.NETHER_GOLD_ORE);
 
+		tag(DEADROCK).add(TFBlocks.DEADROCK.get(), TFBlocks.CRACKED_DEADROCK.get(), TFBlocks.WEATHERED_DEADROCK.get());
+
 		tag(ANNIHILATION_INCLUSIONS) // This is NOT a blacklist! This is a whitelist
 				.add(Blocks.NETHER_PORTAL)
 				.add(TFBlocks.DEADROCK.get(), TFBlocks.CRACKED_DEADROCK.get(), TFBlocks.WEATHERED_DEADROCK.get())
@@ -782,6 +788,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.MINOSHROOM_BOSS_SPAWNER.get(), TFBlocks.HYDRA_BOSS_SPAWNER.get(),
 				TFBlocks.KNIGHT_PHANTOM_BOSS_SPAWNER.get(), TFBlocks.UR_GHAST_BOSS_SPAWNER.get(),
 				TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get(), TFBlocks.SNOW_QUEEN_BOSS_SPAWNER.get());
+
+		tag(SUPPORTS_STALAGMITES).addTag(DEADROCK).add(Blocks.PACKED_ICE);
 	}
 
 	private static Block[] getAllMinecraftOrTwilightBlocks(Predicate<Block> predicate) {

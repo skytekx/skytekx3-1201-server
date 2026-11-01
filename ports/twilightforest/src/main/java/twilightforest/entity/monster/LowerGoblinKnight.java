@@ -109,7 +109,7 @@ public class LowerGoblinKnight extends Monster {
 		data = super.finalizeSpawn(accessor, difficulty, reason, data, tag);
 
 		UpperGoblinKnight upper = new UpperGoblinKnight(TFEntities.UPPER_GOBLIN_KNIGHT.get(), this.level());
-		upper.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+		upper.moveTo(this.getX(), this.getY() + 1, this.getZ(), this.getYRot(), 0.0F);
 		upper.finalizeSpawn(accessor, difficulty, MobSpawnType.NATURAL, data, tag);
 		upper.startRiding(this);
 

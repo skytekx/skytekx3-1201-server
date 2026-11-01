@@ -90,6 +90,7 @@ public class TFLootTables {
 
 	public static final ResourceLocation CICADA_SQUISH_DROPS = register("blocks/cicada_squish");
 	public static final ResourceLocation FIREFLY_SQUISH_DROPS = register("blocks/firefly_squish");
+	public static final ResourceLocation MOONWORM_FAILED_TO_PLACE_DROPS = register("blocks/moonworm_failed_to_place");
 	public static final ResourceLocation MOONWORM_SQUISH_DROPS = register("blocks/moonworm_squish");
 
 	//public static final ResourceLocation ALL_BOSSES = register("entities/all_bosses");

@@ -67,7 +67,8 @@ public class HedgeBlock extends Block {
 
 	@Override
 	public void attack(BlockState state, Level level, BlockPos pos, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
+			player.hurt(level.damageSources().cactus(), DAMAGE);
 			level.scheduleTick(pos, this, 10);
 		}
 	}
@@ -101,7 +102,7 @@ public class HedgeBlock extends Block {
 	}
 
 	private boolean shouldDamage(Entity entity) {
-		return !(entity instanceof Spider || entity instanceof ItemEntity || entity.isIgnoringBlockTriggers());
+		return !(entity instanceof Spider || entity instanceof ItemEntity || entity.isIgnoringBlockTriggers() || entity.getVehicle() != null && !this.shouldDamage(entity.getVehicle()));
 	}
 
 	@Override

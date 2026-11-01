@@ -2856,6 +2856,21 @@
       "fileSize": 107533
     },
     {
+      "path": "mods/tf_dnv-1.2.3.jar",
+      "hashes": {
+        "sha1": "0e0bd548e5ae696606e30bf1f373dacde0ccd642",
+        "sha512": "f4d519147734811ed77fbb14bd552acecd187aa7b60dc518d645bf063b20ad9735aef1352547ec52a045c9ac02513d44d17c36ebbd475b621dcfdad2c74c07db"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/eDeSn4Ds/versions/FGqCqNkE/tf_dnv-1.2.3.jar"
+      ],
+      "fileSize": 257178
+    },
+    {
       "path": "mods/thermal_dynamics-1.20.1-11.0.1.23.jar",
       "hashes": {
         "sha1": "7a9b3691dfca81e52d3e34738c6bc0a98b58bf93",

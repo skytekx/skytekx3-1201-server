@@ -3,7 +3,7 @@ type: Feature
 title: Skylands worldgen
 description: The skytekx3:skylands floating islands dimension, a pure vanilla datapack generator that also runs on unmodded Spigot.
 tags: [content, worldgen, skylands, datapack]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Skylands worldgen
@@ -59,31 +59,54 @@ the overworld sky, lets beds work, disables respawn anchors and allows raids. Th
 (`data/skytekx3/worldgen/noise_settings/skylands.json`) turn aquifers and ore veins off and set the sea
 level to -64, so there is no sea and no free water from aquifers.
 
-A single 2D island mask drives the shape. The density function `skytekx3:skylands/island_mask` is
-`cache_2d` over a `shifted_noise` of the noise `skytekx3:island_mask` (first octave -7, amplitudes 1,
-0.7 and 0.35) with `xz_scale` 0.25 and `y_scale` 0, so every column has one mask value. The noise
-router uses that one reference three times:
-
-1. As the terrain gate. The 3D noise `skytekx3:island_blob` (first octave -6, amplitudes 1 and 0.5)
-   only counts where the mask is above 0.3.
-2. As a guaranteed core slab of solid ground at about Y 52 to 77 where the mask is high. Without it the
-   blob noise alone leaves about two thirds of the island columns empty (memory
-   `project_skytekx3_vanilla_skylands.md`).
-3. As the `continents` climate channel, so the biome source reads the mask as continentalness.
-
-A vertical falloff keeps the islands in a band, with density fading below about Y 28 and above about
-Y 90. In short:
+The terrain is the one of June 2026 again since 2026-10-31 (commit 1c7692d). `final_density` is the
+function of commit 0064c2f, unchanged:
 
 ```
-final_density = max( min(island_blob, (mask - 0.3) * 6),
-                     clamp((mask - 0.3) * 12.5, 0, 1) * slab(rises Y 38..56, falls Y 72..94) )
-              + falloff(rises Y 12..28, falls Y 90..128)
+final_density = island_blob(x, 2y, z) + min( gradient(Y 12: -2 to Y 28: -0.42),
+                                             gradient(Y 90: -0.42 to Y 128: -2) )
 ```
+
+The 3D noise `skytekx3:island_blob` (first octave -6, amplitudes 1 and 0.5) is read with `xz_scale` 1
+and `y_scale` 2. Between Y 28 and Y 90 a block is solid where the noise is above 0.42. The two gradients
+close the band, so no natural block is solid at Y 12 or below or at Y 128 or above. The noise settings
+keep `legacy_random_source` true, so a seed gives the same islands as in June.
+
+From 2026-07-12 to 2026-10-31 a 2D island mask with a guaranteed core slab shaped the islands (7670df4).
+That made them bigger, farther apart and flatter, which the owner rejected on 2026-10-31, see
+[changes of 2026-10-31](#changes-of-2026-10-31).
+
+The biome gate follows the terrain and does not shape it. The density function
+`skytekx3:skylands/island_column` takes the June density of a column at the 28 heights Y 16, 20 and so
+on up to Y 124, keeps the highest value, adds 0.8 and clamps the result to -2 and 2. The router reads it
+as `continents`, with a gradient that forces the void below Y 8:
+
+```
+continents = min( island_column, gradient(Y 4: -1 to Y 8: 2) )
+```
+
+- A column with island terrain reads at least about 0.8, above the 0.5 that separates `sky_void` from
+  the island biomes. The margin of 0.3 covers a thin sliver of terrain between two sampled heights,
+  which the sampling can miss by about 0.15 at most. A block takes its biome from a quart corner up to
+  about 6 blocks away, so without a margin the island rims would read `sky_void`.
+- The constant was 1.1 from 2026-10-31 23:01 and is 0.8 since 2026-11-01 (commit 07ff194). Throwaway
+  worlds of radius 1000 with the production seed were counted per 4 by 4 column. With 0.5, 7.40% of
+  all columns had terrain but read `sky_void`, so those rims lost their trees and snow. With 0.8 that
+  share is 0.16%, and 42.58% of all columns read an island biome without terrain. With 1.1 the world
+  of 23:13 read `sky_void` in only 0.51% of its columns. Over the void an island biome only changes
+  weather and sky color, because the [void floor](#the-void-floor) keeps structures off it, and no
+  test world had a block below Y 13.
+- `island_column` is a `flat_cache`, so a chunk computes it 25 times when it fills its biomes. The July
+  note that `flat_cache` gave terraces 4 blocks high was about the mask inside `final_density`. The gate
+  only feeds the biome source, which works on quart corners anyway.
+- Carvers read the biome at Y 0 of a chunk's corner, which the gradient makes `sky_void`. So `sky_void`
+  carries the same three carvers as the 14 island biomes, in the same order (d3e3407). Caves and canyons
+  then start in every chunk with the same seeds as in June. In the void they carve nothing, because air
+  is not replaceable.
 
 Design notes kept in memory `project_skytekx3_vanilla_skylands.md`:
 
-- The mask goes through `continents` because aquifer generation reads `erosion` and `depth`.
-- It uses `cache_2d`. The first try with `flat_cache` produced terraces 4 blocks high.
+- The gate goes through `continents` because aquifer generation reads `erosion` and `depth`.
 - The island biomes are tiling temperature and humidity ranges, not climate points. Points left a void
   halo around island edges.
 
@@ -91,8 +114,8 @@ Design notes kept in memory `project_skytekx3_vanilla_skylands.md`:
 
 The multi noise biome source in `data/skytekx3/dimension/skylands.json` has 15 entries:
 
-- The biome `skytekx3:sky_void` covers continentalness -2.0 to 0.5. It has no features, no carvers and
-  no mob spawns.
+- The biome `skytekx3:sky_void` covers continentalness -2.0 to 0.5. It has no features and no mob
+  spawns. Since 2026-10-31 it has the three carvers of the island biomes, see [terrain](#terrain).
 - Fourteen island biomes cover continentalness 0.5 to 2.0 and tile the temperature and humidity plane:
   badlands, birch forest, dark forest, desert, flower forest, forest, jungle, plains, savanna, snowy
   taiga, sunflower plains, swamp, taiga and windswept hills (all in the `skytekx3` namespace).
@@ -116,6 +139,13 @@ Vanilla checks the biome at a structure's start position before it places the st
 1.20.1-47.4.18 per memory `project_skytekx3_vanilla_skylands.md`). The void biome is in almost no
 `has_structure` tag, so every structure start above the void is rejected, modded ones included, with no
 extra code.
+
+Since 2026-10-31 the gate is the June terrain itself (see [terrain](#terrain)). A start above the
+void lands at Y 0 by `WORLD_SURFACE_WG`, where the gradient makes the biome `sky_void` in every
+column, so it is rejected even next to an island. The biome check cannot stop a structure that starts
+on an island and reaches past its edge. Its jigsaw children and `terrain_matching` pieces over the
+void follow the heightmap down to Y 0, and AE2 sinks a meteorite toward the lowest column nearby.
+Since 2026-11-01 skytekx-compat 2.1.0 stops all of these, see [the void floor](#the-void-floor).
 
 The only tags that list `skytekx3:sky_void` are these three, and they only hold structures with a fixed
 start height in the air:
@@ -278,6 +308,7 @@ chunks) in 3 minutes 31 seconds at a median of 83.2 chunks per second. The densi
 purpose on 2026-06-30 (commit 6c5b986) so that structures act as stepping stones between islands. The
 profiles are in [performance](../server/performance.md).
 
+
 The log of the last boot on the build machine shows 33 runtime warnings "Empty or non-existent pool:
 dungeons_arise:mechanical_nest/mechanical_nest_decoration" (logs/2026-07-12-1.log.gz). They come from
 the Dungeons Arise jar and have not caused a crash.
@@ -348,6 +379,65 @@ radius 3000 (142,129 chunks from 18:55 to 19:15). The same scans at 19:20 found 
 - All 10 windmills have both parts and their 33 mob pieces, with the lowest box at Y 139 and no field
   piece.
 
+### June terrain returns
+
+At 22:18 and 22:22 the owner reported that the islands no longer looked like in June. The fix of July
+had made them far bigger, farther apart and flatter, and the owner ruled that a fix must not change the
+size, shape or spacing of the islands. Commits 1c7692d, d3e3407 and 77a0259 of 22:59 bring back the
+June density, gate the biomes by the terrain and drop the island mask, see [terrain](#terrain).
+
+On the Mac mini the Skylands of the Halloween world were wiped at 23:01 (backup
+`~/skytekx3-backups/skylands-july-terrain-2026-10-31-2301.tgz`, 187,838,175 bytes) and pregenerated
+with Chunky around the spawn to radius 3000. At 23:17:24, after 114,315 of 142,129 chunks (80.43%), the
+server ran out of its 9 GB heap while it placed a structure piece in the Skylands
+(`crash-reports/crash-2026-10-31_23.17.24-server.txt`). Launchd restarted it at 23:17:31, since the
+job has `KeepAlive` true. Chunky does not resume a task after a restart here, so the rest of that world
+generated only where players went. A pregen of radius 1000 on the build machine with an 8 GB heap kept
+the old generation at about 3.0 GB after every full collection from 3,592 to 16,129 chunks, so the
+heap does not grow with the number of chunks.
+
+### The void floor
+
+At 23:10 the owner reported, with two screenshots, that the Skylands still generated things between
+the islands, especially flowers in the void. A scan of the June terrain at 23:13 found 60 of 528
+structure starts with pieces below Y 13 and 54,386 blocks below Y 13. Most came from the merchant
+camps of Dungeons Arise (29 of 29 starts), plains villages (11 of 21), taiga villages (9 of 15) and
+AE2 meteorites (7 of 16). The camps brought the rose bushes that looked like flowers in the void. The
+biome check of [no structures over the void](#no-structures-over-the-void) cannot catch these, because
+they start on an island:
+
+- A village street or house is a jigsaw child. Vanilla puts it at the first free height under its
+  parent's connector, which over the void is Y 0.
+- A merchant camp and a village street are `terrain_matching` pieces. Where they overhang an island
+  edge, their blocks follow the heightmap of their own column down to Y 0.
+- AE2 puts a meteorite at the mean height of the columns around it and sinks it toward the lowest one,
+  which next to the void is Y 0.
+
+skytekx-compat 2.1.0 adds three mixins that act only in this dimension, see
+[SkyTekx Compat](compat-mod.md#skylands-void-floor). A jigsaw child over a void column is rejected
+like a dead end. A block of a `terrain_matching` piece over a void column is dropped. A start is
+cancelled when its first piece reaches below Y 13 or hangs over a void column, and a meteorite when
+the void lies within 15 blocks of its chunk. Structures whose biomes include `sky_void` are left
+alone: the floaters and the Keep Kayra and Mechanical Nest of When Dungeons Arise.
+
+The mod was tested on a throwaway copy of the server on the build machine, with the production seed
+and Chunky pregens around the spawn. The counts include the starts in chunks at the edge that are not
+full yet.
+
+| Test | Mod and gate | Full chunks | Starts | Floaters | Blocks below Y 13 |
+|---|---|---|---|---|---|
+| 1 | first jar, gate 0.5 | 6,561 | 63 | 9 | 2,569, all of one meteorite at Y 9 |
+| 2 | meteorite rule, gate 0.5 | 16,129 | 123 | 16 | 0 |
+| 3 | gate 0.8 | 16,129 | 126 | 16 | 0 |
+| 4 | floaters exempt (db56da3), gate 0.8 | 16,129 | 135 | 25 | 0 |
+
+Test 3 held one Keep Kayra and no Mechanical Nest. The world of 23:13 held 13 and 12 in 82,948 full
+chunks, which makes about 2.5 and 2.3 per 16,129. The start check had also cancelled floaters whose
+center hung over the void, so commit db56da3 of the mod exempts them. Test 4 held 3 Keep Kayra and 1
+Mechanical Nest. Below Y 24 its float scan found 18 bodies that hang from islands (island bottoms and
+amethyst geodes) and 5 specks of one or two blocks (clay, bone block, tin ore), but no part of a
+structure.
+
 ## Open rulings
 
 These owner rulings are tracked in [open items](../open-items.md). Only the first one has been
@@ -400,6 +490,8 @@ implemented, on 2026-10-31.
   wiped (backup `~/skylands-prewipe-2026-07-12.tgz`, 126,854,054 bytes) and pregenerated to radius 1000.
 - 2026-10-31: Battle Towers, strongholds and the illager campsite left the islands (1c6f8d4), and
   Halloween pumpkin patches arrived (1cc9702), see [changes of 2026-10-31](#changes-of-2026-10-31).
+- 2026-10-31, 23:01: the June terrain came back (1c7692d, d3e3407, 77a0259), and the Skylands of the
+  Halloween world were wiped and generated again, see [changes of 2026-10-31](#changes-of-2026-10-31).
 
 Related: [Skylands travel](aether-fall.md), [world reset](../server/world-reset.md),
 [performance](../server/performance.md), [mod set](../modpack/mod-set.md), [decisions](../decisions.md).

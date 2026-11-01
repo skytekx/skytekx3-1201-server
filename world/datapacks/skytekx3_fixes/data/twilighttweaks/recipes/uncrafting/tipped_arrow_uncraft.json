@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:false"
+    }
+  ],
+  "type": "twilightforest:uncrafting",
+  "cost": 4,
+  "input": {
+    "count": 8,
+    "ingredient": {
+      "item": "minecraft:tipped_arrow"
+    }
+  },
+  "key": {
+    "0": {
+      "item": "minecraft:arrow"
+    }
+  },
+  "pattern": [
+    "000",
+    "0 0",
+    "000"
+  ]
+}

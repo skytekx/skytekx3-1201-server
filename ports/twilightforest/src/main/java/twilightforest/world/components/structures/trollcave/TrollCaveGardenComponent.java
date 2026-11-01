@@ -49,7 +49,12 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 	@Override
 	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
 		Predicate<Biome> highlands = biome -> biome == world.registryAccess().registryOrThrow(Registries.BIOME).get(TFBiomes.HIGHLANDS);
-		if (this.isBoundingBoxOutsideBiomes(world, highlands, blockPos)) {
+		// The structure pivot (blockPos) sits at the troll cave's minY (about y -20), which falls into the
+		// twilightforest:underground layer of the Highlands TerrainColumn, so sampling there never matches
+		// HIGHLANDS. Sample at sea level (0, quart 0) instead, like 4.3's getBiome(x, 0, z) did. Upstream 4.8
+		// (ecf49ebef) accepts HIGHLANDS_UNDERGROUND instead, but 4.3's underground biome is shared by every
+		// forest column, so accepting it here would stop rejecting gardens outside the Highlands.
+		if (this.isBoundingBoxOutsideBiomes(world, highlands, blockPos.atY(generator.getSeaLevel()))) {
 			return;
 		}
 

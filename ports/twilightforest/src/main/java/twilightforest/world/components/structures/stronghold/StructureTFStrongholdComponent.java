@@ -17,6 +17,8 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import twilightforest.world.components.structures.TFStructureComponentOld;
+import twilightforest.world.components.structures.selectors.KnightStonesRandomBlockSelectorFactory;
+import twilightforest.world.components.structures.selectors.StrongholdStonesRandomBlockSelectorFactory;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public abstract class StructureTFStrongholdComponent extends TFStructureComponen
 		super(type, i, x, y, z);
 		this.boundingBox = generateBoundingBox(facing, x, y, z);
 		this.setOrientation(facing);
+		// Unprotected (surface) pieces must not hand out the stronghold's controlled monster spawns
+		this.spawnListIndex = this.isComponentProtected() ? 0 : -1;
 	}
 
 	/**
@@ -473,14 +477,21 @@ public abstract class StructureTFStrongholdComponent extends TFStructureComponen
 	 * Place stronghold walls on dirt/grass/stone
 	 */
 	protected void placeUpperStrongholdWalls(WorldGenLevel world, BoundingBox sbb, int sx, int sy, int sz, int dx, int dy, int dz, RandomSource rand, StructurePiece.BlockSelector randomBlocks) {
+		// Ruins may keep stacking on top of any stone the stronghold places itself, not just plain stone bricks,
+		// otherwise they could never grow taller than a single block
+		List<BlockState> knightStones = KnightStonesRandomBlockSelectorFactory.make().getStates();
+		List<BlockState> strongholdStones = StrongholdStonesRandomBlockSelectorFactory.make().getStates();
+
 		for (int y = sy; y <= dy; ++y) {
 			for (int x = sx; x <= dx; ++x) {
 				for (int z = sz; z <= dz; ++z) {
 					boolean wall = y == sy || y == dy || x == sx || x == dx || z == sz || z == dz;
 					BlockState state = this.getBlock(world, x, y, z, sbb);
 
-					if ((!state.isAir() && (state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(BlockTags.DIRT)))
-							|| (state.isAir() && rand.nextInt(3) == 0) && this.getBlock(world, x, y - 1, z, sbb).getBlock() == Blocks.STONE_BRICKS) {
+					boolean isValidSurface = !state.isAir() && (state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(BlockTags.DIRT));
+					boolean isAirWithChance = state.isAir() && rand.nextInt(3) == 0;
+
+					if (isValidSurface || isAirWithChance && this.isRuinStoneBelow(world, x, y, z, sbb, knightStones, strongholdStones)) {
 						if (y == sy || y == dy) {
 							// do stronghold bricks for floor/ceiling
 							StructurePiece.BlockSelector strongBlocks = TFStructureComponentOld.getStrongholdStones();
@@ -496,6 +507,11 @@ public abstract class StructureTFStrongholdComponent extends TFStructureComponen
 				}
 			}
 		}
+	}
+
+	private boolean isRuinStoneBelow(WorldGenLevel world, int x, int y, int z, BoundingBox sbb, List<BlockState> knightStones, List<BlockState> strongholdStones) {
+		BlockState stateBelow = this.getBlock(world, x, y - 1, z, sbb).getBlock().defaultBlockState();
+		return knightStones.contains(stateBelow) || strongholdStones.contains(stateBelow);
 	}
 
 	public interface Factory<T extends StructureTFStrongholdComponent> {

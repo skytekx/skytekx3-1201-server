@@ -11,7 +11,6 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
-import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import twilightforest.util.LegacyLandmarkPlacements;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
@@ -45,14 +44,17 @@ public abstract class ConquerableStructure extends ProgressionStructure implemen
         GenerationContext structure$generationcontext = new GenerationContext(registryAccess, chunkGen, biomeSource, randomState, templateManager, pseed, chunkPos, heightAccessor, isValidBiome);
         Optional<GenerationStub> optional = this.findValidGenerationPoint(structure$generationcontext);
         if (optional.isPresent()) {
-            StructurePiecesBuilder structurepiecesbuilder = optional.get().getPiecesBuilder();
-            StructureStart structurestart = new TFStructureStart(this, chunkPos, references, structurepiecesbuilder.build());
+            StructureStart structurestart = this.createStart(chunkPos, references, optional.get());
             if (structurestart.isValid()) {
                 return structurestart;
             }
         }
 
         return StructureStart.INVALID_START;
+    }
+
+    protected StructureStart createStart(ChunkPos chunkPos, int references, GenerationStub generationStub) {
+        return new TFStructureStart(this, chunkPos, references, generationStub.getPiecesBuilder().build());
     }
 
     @Override

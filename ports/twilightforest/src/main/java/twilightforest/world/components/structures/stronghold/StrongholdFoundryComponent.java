@@ -46,13 +46,13 @@ public class StrongholdFoundryComponent extends StructureTFStrongholdComponent {
 	public BoundingBox generateBoundingBox(Direction facing, int x, int y, int z) {
 		if (y > -15) {
 			this.entranceLevel = 3;
-			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -20, 0, 18, 25, 18, facing);
+			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -20, 0, 18, 26, 18, facing);
 		} else if (y < -21) {
 			this.entranceLevel = 1;
-			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -6, 0, 18, 25, 18, facing);
+			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -6, 0, 18, 26, 18, facing);
 		} else {
 			this.entranceLevel = 2;
-			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -13, 0, 18, 25, 18, facing);
+			return StructureTFStrongholdComponent.getComponentToAddBoundingBox(x, y, z, -4, -13, 0, 18, 26, 18, facing);
 		}
 	}
 

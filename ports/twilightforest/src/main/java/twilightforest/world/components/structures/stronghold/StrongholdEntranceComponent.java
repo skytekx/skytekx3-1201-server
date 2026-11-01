@@ -16,7 +16,6 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFStructurePieceTypes;
-import twilightforest.util.BoundingBoxUtils;
 
 import java.util.List;
 
@@ -69,41 +68,6 @@ public class StrongholdEntranceComponent extends StructureTFStrongholdComponent 
 			if (!listContainsBossRoom(list)) {
 				TwilightForestMod.LOGGER.fatal("Did not find boss room from exit 3 - EPIC FAIL");
 			}
-			BoundingBox shieldBox = BoundingBoxUtils.clone(this.boundingBox);
-
-			int tStairs = 0;
-			int tCorridors = 0;
-			int deadEnd = 0;
-			int tRooms = 0;
-			int bossRooms = 0;
-
-			// compute and generate MEGASHIELD
-			for (StructurePiece component : list) {
-				shieldBox.encapsulate(component.getBoundingBox());
-
-
-				if (component instanceof StrongholdSmallStairsComponent && ((StrongholdSmallStairsComponent) component).hasTreasure) {
-					tStairs++;
-				}
-				if (component instanceof StrongholdTreasureCorridorComponent) {
-					tCorridors++;
-				}
-				if (component instanceof StrongholdDeadEndComponent) {
-					deadEnd++;
-				}
-				if (component instanceof StrongholdTreasureRoomComponent) {
-					tRooms++;
-				}
-				if (component instanceof StrongholdBossRoomComponent) {
-					bossRooms++;
-				}
-			}
-
-//		System.out.printf("MEGASHIELD computed!  %d, %d, %d to %d, %d, %d.\n", shieldBox.minX, shieldBox.minY, shieldBox.minZ, shieldBox.maxX, shieldBox.maxY, shieldBox.maxZ);
-//		System.out.printf("Stronghold at this point contains %d elements.\n", pieceList.size());
-//
-//		StructureTFStrongholdShield shield = new StructureTFStrongholdShield(shieldBox.minX - 1, shieldBox.minY, shieldBox.minZ - 1, shieldBox.maxX, shieldBox.maxY, shieldBox.maxZ);
-//		list.add(shield);
 
 			// add the upper stronghold
 			StructureTFStrongholdComponent accessChamber = new StrongholdAccessChamberComponent(2, this.getOrientation(), boundingBox.minX() + 8, boundingBox.minY() + 7, boundingBox.minZ() + 4);

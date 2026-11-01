@@ -1,5 +1,7 @@
 package twilightforest.util;
 
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.util.RandomSource;
@@ -11,6 +13,8 @@ import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public final class WorldUtil {
 	private WorldUtil() {}
@@ -39,6 +43,19 @@ public final class WorldUtil {
 		int dy = random.nextInt(ry * 2 + 1) - ry;
 		int dz = random.nextInt(rz * 2 + 1) - rz;
 		return pos.offset(dx, dy, dz);
+	}
+
+	public static <T> T getRandomElementWithWeights(List<Pair<T, Float>> list, RandomSource rng) {
+		float totalWeight = (float) list.stream().mapToDouble(Pair::getSecond).sum();
+		float randomValue = rng.nextFloat() * totalWeight;
+
+		for (Pair<T, Float> pair : list) {
+			randomValue -= pair.getSecond();
+			if (randomValue < 0) {
+				return pair.getFirst();
+			}
+		}
+		return Util.getRandom(list, rng).getFirst(); // This line should never be reached if the input list is valid
 	}
 
 	@Nullable

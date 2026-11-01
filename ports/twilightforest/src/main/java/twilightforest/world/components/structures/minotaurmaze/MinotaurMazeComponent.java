@@ -17,6 +17,7 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import twilightforest.init.TFBlocks;
 import twilightforest.world.components.structures.TFMaze;
 import twilightforest.world.components.structures.TFStructureComponentOld;
+import twilightforest.world.components.structures.selectors.MazestoneRandomBlockSelectoryFactory;
 import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructurePieceTypes;
 
@@ -295,7 +296,7 @@ public class MinotaurMazeComponent extends TFStructureComponentOld {
 		maze.wallBlockState = TFBlocks.MAZESTONE_BRICK.get().defaultBlockState();
 		maze.rootBlockState = TFBlocks.DECORATIVE_MAZESTONE.get().defaultBlockState();
 		maze.pillarBlockState = TFBlocks.CUT_MAZESTONE.get().defaultBlockState();
-		maze.wallBlocks = new MazestoneProcessor();
+		maze.wallBlocks = MazestoneRandomBlockSelectoryFactory.make();
 		maze.torchRarity = 0.05F;
 		maze.tall = 2;
 		maze.head = 1;

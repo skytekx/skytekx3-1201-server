@@ -399,7 +399,9 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 				.addCriterion("maze_wafer", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MAZE_WAFER.get()))
 				.addCriterion("experiment_115", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.EXPERIMENT_115.get()))
 				.addCriterion("torchberries", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.TORCHBERRIES.get()))
-				.requirements(new CountRequirementsStrategy(2, 2, 1, 1, 1, 1, 1))
+				.addCriterion("berry", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RASPBERRY.get(), TFItems.BLACKBERRY.get(), TFItems.BLUEBERRY.get(), TFItems.MALOBERRY.get()).build()))
+				.addCriterion("berry_medley", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.BERRY_MEDLEY.get()))
+				.requirements(new CountRequirementsStrategy(2, 2, 1, 1, 1, 1, 1, 1, 1))
 				.rewards(AdvancementRewards.Builder.experience(75))
 				.save(consumer, "twilightforest:twilight_dinner");
 

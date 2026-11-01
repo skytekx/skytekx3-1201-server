@@ -10,6 +10,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFItems;
 import twilightforest.loot.TFLootTables;
 
 import java.util.function.BiConsumer;
@@ -29,5 +30,13 @@ public class SpecialLootTables implements LootTableSubProvider {
                 LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(Items.ROTTEN_FLESH)).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
         ));
+        consumer.accept(TFLootTables.RASPBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.RASPBERRY.get()))));
+        consumer.accept(TFLootTables.BLUEBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.BLUEBERRY.get()))));
+        consumer.accept(TFLootTables.BLACKBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.BLACKBERRY.get()))));
+        consumer.accept(TFLootTables.MALOBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.MALOBERRY.get()))));
+        consumer.accept(TFLootTables.BLIGHTBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.BLIGHTBERRY.get()))));
+        consumer.accept(TFLootTables.DUSKBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.DUSKBERRY.get()))));
+        consumer.accept(TFLootTables.SKYBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.SKYBERRY.get()))));
+        consumer.accept(TFLootTables.STINGBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.STINGBERRY.get()))));
     }
 }

@@ -192,6 +192,18 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_item", has(TFItems.TORCHBERRIES.get()))
 				.save(consumer, TwilightForestMod.prefix("berry_torch"));
 
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TFItems.BERRY_MEDLEY.get())
+				.requires(Items.BOWL)
+				.requires(TFItems.RASPBERRY.get())
+				.requires(TFItems.BLUEBERRY.get())
+				.requires(TFItems.BLACKBERRY.get())
+				.requires(TFItems.MALOBERRY.get())
+				.unlockedBy("has_raspberry", has(TFItems.RASPBERRY.get()))
+				.unlockedBy("has_blueberry", has(TFItems.BLUEBERRY.get()))
+				.unlockedBy("has_blackberry", has(TFItems.BLACKBERRY.get()))
+				.unlockedBy("has_maloberry", has(TFItems.MALOBERRY.get()))
+				.save(consumer);
+
 		ConditionalRecipe.builder().addCondition(UncraftingTableCondition.INSTANCE).addRecipe(
 						ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.UNCRAFTING_TABLE.get())
 								.pattern("###")

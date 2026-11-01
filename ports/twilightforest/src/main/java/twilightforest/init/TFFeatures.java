@@ -16,6 +16,7 @@ public class TFFeatures {
 	public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, TwilightForestMod.ID);
 	
 	public static final RegistryObject<Feature<TFSmallLakeFeature.Configuration>> SMALL_LAKE = FEATURES.register("small_lake", () -> new TFSmallLakeFeature(TFSmallLakeFeature.Configuration.CODEC));
+	public static final RegistryObject<Feature<BerryBushConfig>> BERRY_BUSH = FEATURES.register("berry_bush", () -> new BerryBushFeature(BerryBushConfig.CODEC));
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> BIG_MUSHGLOOM = FEATURES.register("big_mushgloom", () -> new BigMushgloomFeature(HugeMushroomFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> CANOPY_BROWN_MUSHROOM = FEATURES.register("canopy_brown_mushroom", () -> new BrownCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC));
 	// No longer used by TF's own configured features (see WEIGHTED_LIST_SELECTOR + the four fixed-cap features below); kept registered so datapacks referencing the id still load

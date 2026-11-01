@@ -30,6 +30,7 @@ import twilightforest.data.tags.CustomTagGenerator;
 import twilightforest.entity.TwilightBoat;
 import twilightforest.enums.TwilightArmorMaterial;
 import twilightforest.item.*;
+import twilightforest.item.StackableEffectItem.StackableEffectInstance;
 import twilightforest.util.TwilightItemTier;
 
 public class TFItems {
@@ -101,6 +102,28 @@ public class TFItems {
 	public static final RegistryObject<Item> MAZE_WAFER = ITEMS.register("maze_wafer", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build())));
 	public static final RegistryObject<Item> SHIKA_SENBEI = ITEMS.register("shika_senbei", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationMod(1.0F).build())));
 	public static final RegistryObject<Item> MAZE_SLIME_BALL = ITEMS.register("maze_slime_ball", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> RASPBERRY = ITEMS.register("raspberry", () -> new StackableEffectItem());
+	public static final RegistryObject<Item> BLUEBERRY = ITEMS.register("blueberry", () -> new StackableEffectItem());
+	public static final RegistryObject<Item> BLACKBERRY = ITEMS.register("blackberry", () -> new StackableEffectItem());
+	public static final RegistryObject<Item> MALOBERRY = ITEMS.register("maloberry", () -> new StackableEffectItem());
+	public static final RegistryObject<Item> BLIGHTBERRY = ITEMS.register("blightberry", () -> new StackableEffectItem(
+		new StackableEffectInstance(MobEffects.REGENERATION, 8),
+		new StackableEffectInstance(MobEffects.POISON, 5, 0.75F),
+		new StackableEffectInstance(MobEffects.WITHER, 5, 0.15F)
+	));
+	public static final RegistryObject<Item> DUSKBERRY = ITEMS.register("duskberry", () -> new StackableEffectItem(
+		new StackableEffectInstance(MobEffects.NIGHT_VISION, 15),
+		new StackableEffectInstance(MobEffects.BLINDNESS, 3, 0.75F)
+	));
+	public static final RegistryObject<Item> SKYBERRY = ITEMS.register("skyberry", () -> new StackableEffectItem(
+		new StackableEffectInstance(MobEffects.JUMP, 8),
+		new StackableEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 3, 0.75F)
+	));
+	public static final RegistryObject<Item> STINGBERRY = ITEMS.register("stingberry", () -> new StackableEffectItem(
+		new StackableEffectInstance(MobEffects.DAMAGE_BOOST, 10),
+		new StackableEffectInstance(MobEffects.DIG_SLOWDOWN, 10, 0.75F)
+	));
+	public static final RegistryObject<Item> BERRY_MEDLEY = ITEMS.register("berry_medley", () -> new BowlFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(0.6F).build()).stacksTo(1)));
 	public static final RegistryObject<Item> ORE_MAGNET = ITEMS.register("ore_magnet", () -> new OreMagnetItem(new Item.Properties().durability(64)));
 	public static final RegistryObject<Item> CRUMBLE_HORN = ITEMS.register("crumble_horn", () -> new CrumbleHornItem(new Item.Properties().durability(1024).rarity(Rarity.RARE)));
 	public static final RegistryObject<Item> PEACOCK_FEATHER_FAN = ITEMS.register("peacock_feather_fan", () -> new PeacockFanItem(new Item.Properties().durability(1024).rarity(Rarity.RARE)));

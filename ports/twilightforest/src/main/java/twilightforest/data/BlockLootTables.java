@@ -2,6 +2,7 @@ package twilightforest.data;
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.CopyBlockState;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
@@ -31,6 +33,7 @@ import twilightforest.block.entity.MasonJarBlockEntity;
 import twilightforest.enums.HollowLogVariants;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
+import twilightforest.loot.TFLootTables;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -161,6 +164,14 @@ public class BlockLootTables extends BlockLootSubProvider {
 		add(TFBlocks.FIDDLEHEAD.get(), createShearsOnlyDrop(TFBlocks.FIDDLEHEAD.get()));
 		dropSelf(TFBlocks.MUSHGLOOM.get());
 		add(TFBlocks.TORCHBERRY_PLANT.get(), torchberryPlant(TFBlocks.TORCHBERRY_PLANT.get()));
+		addTFBush(TFBlocks.RASPBERRY_BUSH.get(), TFLootTables.RASPBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.BLUEBERRY_BUSH.get(), TFLootTables.BLUEBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.BLACKBERRY_BUSH.get(), TFLootTables.BLACKBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.MALOBERRY_BUSH.get(), TFLootTables.MALOBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.BLIGHTBERRY_BUSH.get(), TFLootTables.BLIGHTBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.DUSKBERRY_BUSH.get(), TFLootTables.DUSKBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.SKYBERRY_BUSH.get(), TFLootTables.SKYBERRY_BUSH_DROPS);
+		addTFBush(TFBlocks.STINGBERRY_BUSH.get(), TFLootTables.STINGBERRY_BUSH_DROPS);
 		add(TFBlocks.ROOT_STRAND.get(), block -> createShearsDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
 		add(TFBlocks.FALLEN_LEAVES.get(), this.fallenLeaves());
 		dropSelf(TFBlocks.SMOKER.get());
@@ -574,6 +585,27 @@ public class BlockLootTables extends BlockLootSubProvider {
 	//the block drops itself in SkullChestBlock.playerWillDestroy, so the loot table stays empty
 	private static LootTable.Builder skullChest() {
 		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)));
+	}
+
+	private void addTFBush(Block block, ResourceLocation berry) {
+		if (!(block instanceof TFBushBlock bush))
+			throw new IllegalArgumentException(block + " is not a TFBushBlock");
+
+		add(block,
+				LootTable.lootTable()
+						.withPool(
+								LootPool.lootPool()
+										.when(
+												LootItemBlockStatePropertyCondition.hasBlockStateProperties(bush)
+														.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TFBushBlock.AGE, 3))
+										)
+										.add(LootTableReference.lootTableReference(berry))
+						)
+						.withPool(
+								LootPool.lootPool()
+										.add(LootItem.lootTableItem(bush.asItem()))
+						)
+		);
 	}
 
 	private static LootTable.Builder casketInfo(Block block) {

@@ -1,6 +1,29 @@
 {
   "parent": "twilightforest:root",
   "criteria": {
+    "berry": {
+      "conditions": {
+        "item": {
+          "items": [
+            "twilightforest:raspberry",
+            "twilightforest:blackberry",
+            "twilightforest:blueberry",
+            "twilightforest:maloberry"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "berry_medley": {
+      "conditions": {
+        "item": {
+          "items": [
+            "twilightforest:berry_medley"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
     "cooked_meef": {
       "conditions": {
         "item": {
@@ -130,6 +153,12 @@
     ],
     [
       "torchberries"
+    ],
+    [
+      "berry"
+    ],
+    [
+      "berry_medley"
     ]
   ],
   "rewards": {

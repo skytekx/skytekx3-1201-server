@@ -283,6 +283,14 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.THORN_ROSE.get());
 				output.accept(TFBlocks.THORN_LEAVES.get());
 				output.accept(TFBlocks.HEDGE.get());
+				output.accept(TFBlocks.RASPBERRY_BUSH.get());
+				output.accept(TFBlocks.BLUEBERRY_BUSH.get());
+				output.accept(TFBlocks.BLACKBERRY_BUSH.get());
+				output.accept(TFBlocks.MALOBERRY_BUSH.get());
+				output.accept(TFBlocks.BLIGHTBERRY_BUSH.get());
+				output.accept(TFBlocks.DUSKBERRY_BUSH.get());
+				output.accept(TFBlocks.SKYBERRY_BUSH.get());
+				output.accept(TFBlocks.STINGBERRY_BUSH.get());
 				output.accept(TFItems.MASON_JAR.get().getDefaultInstance());
 				output.accept(TFItems.FIREFLY_JAR.get().getDefaultInstance());
 				output.accept(TFItems.CICADA_JAR.get().getDefaultInstance());
@@ -447,6 +455,14 @@ public class TFCreativeTabs {
 			.icon(() -> new ItemStack(TFBlocks.TWILIGHT_PORTAL_MINIATURE_STRUCTURE.get()))
 			.displayItems((parameters, output) -> {
 				output.accept(TFItems.TORCHBERRIES.get());
+				output.accept(TFItems.RASPBERRY.get());
+				output.accept(TFItems.BLUEBERRY.get());
+				output.accept(TFItems.BLACKBERRY.get());
+				output.accept(TFItems.MALOBERRY.get());
+				output.accept(TFItems.BLIGHTBERRY.get());
+				output.accept(TFItems.DUSKBERRY.get());
+				output.accept(TFItems.SKYBERRY.get());
+				output.accept(TFItems.STINGBERRY.get());
 				output.accept(TFItems.RAVEN_FEATHER.get());
 				output.accept(TFItems.MAGIC_MAP_FOCUS.get());
 				output.accept(TFItems.MAZE_MAP_FOCUS.get());
@@ -472,6 +488,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.FIERY_INGOT.get());
 				output.accept(TFItems.ARCTIC_FUR.get());
 				output.accept(TFItems.ALPHA_YETI_FUR.get());
+				output.accept(TFItems.BERRY_MEDLEY.get());
 				output.accept(TFItems.RAW_VENISON.get());
 				output.accept(TFItems.COOKED_VENISON.get());
 				output.accept(TFItems.RAW_MEEF.get());

@@ -211,6 +211,14 @@ public class ItemModelGenerator extends ItemModelProvider {
 		generated(TFBlocks.MUSHGLOOM.getId().getPath(), prefix("block/mushgloom"), prefix("block/mushgloom_head"));
 		generated(TFBlocks.TORCHBERRY_PLANT.getId().getPath(), prefix("block/torchberry_plant"));
 		generated(TFBlocks.ROOT_STRAND.getId().getPath(), prefix("block/root_strand"));
+		bushBlock(TFBlocks.RASPBERRY_BUSH.get());
+		bushBlock(TFBlocks.BLUEBERRY_BUSH.get());
+		bushBlock(TFBlocks.BLACKBERRY_BUSH.get());
+		bushBlock(TFBlocks.MALOBERRY_BUSH.get());
+		bushBlock(TFBlocks.BLIGHTBERRY_BUSH.get());
+		bushBlock(TFBlocks.DUSKBERRY_BUSH.get());
+		bushBlock(TFBlocks.SKYBERRY_BUSH.get());
+		bushBlock(TFBlocks.STINGBERRY_BUSH.get());
 		generated(TFBlocks.FALLEN_LEAVES.getId().getPath(), new ResourceLocation("block/oak_leaves"));
 		toBlock(TFBlocks.SMOKER.get());
 		toBlock(TFBlocks.FIRE_JET.get());
@@ -556,6 +564,18 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTex(TFItems.MEEF_STROGANOFF);
 		singleTex(TFItems.MAZE_WAFER);
 		singleTex(TFItems.SHIKA_SENBEI);
+		singleTex(TFItems.RASPBERRY);
+		singleTex(TFItems.BLUEBERRY);
+		singleTex(TFItems.BLACKBERRY);
+		singleTex(TFItems.MALOBERRY);
+		singleTex(TFItems.BLIGHTBERRY);
+		singleTex(TFItems.DUSKBERRY);
+		singleTex(TFItems.SKYBERRY);
+		singleTex(TFItems.STINGBERRY);
+		withExistingParent(TFItems.BERRY_MEDLEY.getId().getPath(), "item/generated")
+				.texture("particle", prefix("item/berry_medley"))
+				.texture("layer0", new ResourceLocation("item/bowl"))
+				.texture("layer1", prefix("item/berry_medley"));
 		singleTex(TFItems.MAGIC_MAP);
 		singleTex(TFItems.MAZE_MAP);
 		singleTex(TFItems.ORE_MAP);
@@ -843,6 +863,10 @@ public class ItemModelGenerator extends ItemModelProvider {
 
 	private void toBlock(Block b) {
 		toBlockModel(b, ForgeRegistries.BLOCKS.getKey(b).getPath());
+	}
+
+	private void bushBlock(Block b) {
+		toBlockModel(b, ForgeRegistries.BLOCKS.getKey(b).getPath() + "_0");
 	}
 
 	private void woodBlock(Block b, String variant) {

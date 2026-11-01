@@ -90,6 +90,15 @@ public class TFLootTables {
 	public static final ResourceLocation MOONWORM_FAILED_TO_PLACE_DROPS = register("blocks/moonworm_failed_to_place");
 	public static final ResourceLocation MOONWORM_SQUISH_DROPS = register("blocks/moonworm_squish");
 
+	public static final ResourceLocation RASPBERRY_BUSH_DROPS = register("blocks/raspberry_bush_berries");
+	public static final ResourceLocation BLUEBERRY_BUSH_DROPS = register("blocks/blueberry_bush_berries");
+	public static final ResourceLocation BLACKBERRY_BUSH_DROPS = register("blocks/blackberry_bush_berries");
+	public static final ResourceLocation MALOBERRY_BUSH_DROPS = register("blocks/maloberry_bush_berries");
+	public static final ResourceLocation BLIGHTBERRY_BUSH_DROPS = register("blocks/blightberry_bush_berries");
+	public static final ResourceLocation DUSKBERRY_BUSH_DROPS = register("blocks/duskberry_bush_berries");
+	public static final ResourceLocation SKYBERRY_BUSH_DROPS = register("blocks/skyberry_bush_berries");
+	public static final ResourceLocation STINGBERRY_BUSH_DROPS = register("blocks/stingberry_bush_berries");
+
 	//public static final ResourceLocation ALL_BOSSES = register("entities/all_bosses");
 
 	public final ResourceLocation lootTable;

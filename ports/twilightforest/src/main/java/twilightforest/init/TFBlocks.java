@@ -24,6 +24,7 @@ import twilightforest.enums.FireJetVariant;
 import twilightforest.enums.TowerDeviceVariant;
 import twilightforest.item.FurnaceFuelItem;
 import twilightforest.item.WroughtIronFenceItem;
+import twilightforest.loot.TFLootTables;
 import twilightforest.util.TFWoodTypes;
 import twilightforest.world.components.feature.trees.growers.*;
 
@@ -68,6 +69,16 @@ public class TFBlocks {
 	public static final RegistryObject<Block> ROPE = BLOCKS.register("rope", () -> new RopeBlock(BlockBehaviour.Properties.of().forceSolidOff().noOcclusion().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOL).strength(0.3F, 3.0F)));
 	public static final RegistryObject<GlassBlock> CANOPY_WINDOW = register("canopy_window", () -> new GlassBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, getter, pos, entity) -> false).isRedstoneConductor((state, getter, pos) -> false).isSuffocating((state, getter, pos) -> false).isViewBlocking((state, getter, pos) -> false)));
 	public static final RegistryObject<IronBarsBlock> CANOPY_WINDOW_PANE = register("canopy_window_pane", () -> new IronBarsBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion()));
+
+	//bushes
+	public static final RegistryObject<Block> RASPBERRY_BUSH = register("raspberry_bush", () -> new BerryBushBlock(TFLootTables.RASPBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> BLUEBERRY_BUSH = register("blueberry_bush", () -> new BerryBushBlock(TFLootTables.BLUEBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> BLACKBERRY_BUSH = register("blackberry_bush", () -> new BerryBushBlock(TFLootTables.BLACKBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> MALOBERRY_BUSH = register("maloberry_bush", () -> new BerryBushBlock(TFLootTables.MALOBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> BLIGHTBERRY_BUSH = register("blightberry_bush", () -> new DarkTowerBerryBushBlock(TFLootTables.BLIGHTBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> DUSKBERRY_BUSH = register("duskberry_bush", () -> new DarkTowerBerryBushBlock(TFLootTables.DUSKBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> SKYBERRY_BUSH = register("skyberry_bush", () -> new DarkTowerBerryBushBlock(TFLootTables.SKYBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
+	public static final RegistryObject<Block> STINGBERRY_BUSH = register("stingberry_bush", () -> new DarkTowerBerryBushBlock(TFLootTables.STINGBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.GRASS).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));
 
 	//naga courtyard
 	public static final RegistryObject<Block> NAGASTONE_HEAD = register("nagastone_head", () -> new TFHorizontalBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.STONE).requiresCorrectToolForDrops().sound(SoundType.STONE).strength(1.5F, 6.0F)));

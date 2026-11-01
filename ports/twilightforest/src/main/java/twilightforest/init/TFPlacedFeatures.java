@@ -53,6 +53,13 @@ public class TFPlacedFeatures {
 	public static final ResourceKey<PlacedFeature> PLACED_STONE_CIRCLE = registerKey("stone_circle");
 	public static final ResourceKey<PlacedFeature> PLACED_THORNS = registerKey("thorns");
 	public static final ResourceKey<PlacedFeature> PLACED_TORCH_BERRIES = registerKey("torch_berries");
+	public static final ResourceKey<PlacedFeature> PLACED_RASPBERRY_BUSHES = registerKey("raspberry_bushes");
+	public static final ResourceKey<PlacedFeature> PLACED_SWAMP_RASPBERRY_BUSHES = registerKey("swamp_raspberry_bushes");
+	public static final ResourceKey<PlacedFeature> PLACED_BLUEBERRY_BUSHES = registerKey("blueberry_bushes");
+	public static final ResourceKey<PlacedFeature> PLACED_SNOWY_BLUEBERRY_BUSHES = registerKey("snowy_blueberry_bushes");
+	public static final ResourceKey<PlacedFeature> PLACED_BLACKBERRY_BUSHES = registerKey("blackberry_bushes");
+	public static final ResourceKey<PlacedFeature> PLACED_SWAMP_BLACKBERRY_BUSHES = registerKey("swamp_blackberry_bushes");
+	public static final ResourceKey<PlacedFeature> PLACED_MALOBERRY_BUSHES = registerKey("maloberry_bushes");
 	public static final ResourceKey<PlacedFeature> PLACED_TROLL_ROOTS = registerKey("troll_roots");
 	public static final ResourceKey<PlacedFeature> PLACED_VANILLA_ROOTS = registerKey("vanilla_roots");
 	public static final ResourceKey<PlacedFeature> PLACED_WEBS = registerKey("webs");
@@ -177,6 +184,13 @@ public class TFPlacedFeatures {
 		context.register(PLACED_STONE_CIRCLE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.STONE_CIRCLE), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 105).build()));
 		context.register(PLACED_THORNS, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.THORNS), ImmutableList.<PlacementModifier>builder().add(ChunkBlanketingModifier.addThorns(HolderSet.direct(biomes.getOrThrow(TFBiomes.THORNLANDS)))).build()));
 		context.register(PLACED_TORCH_BERRIES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.TORCH_BERRIES), ImmutableList.<PlacementModifier>builder().add(PlacementUtils.HEIGHTMAP_WORLD_SURFACE, HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.absolute(60)), CountPlacement.of(8), InSquarePlacement.spread(), AvoidLandmarkModifier.checkUnderground(), BiomeFilter.biome()).build()));
+		context.register(PLACED_RASPBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.RASPBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 50, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
+		context.register(PLACED_SWAMP_RASPBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.RASPBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 200, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
+		context.register(PLACED_BLUEBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.BLUEBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 50, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
+		context.register(PLACED_SNOWY_BLUEBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.BLUEBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 100, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
+		context.register(PLACED_BLACKBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.BLACKBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 200, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
+		context.register(PLACED_SWAMP_BLACKBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.BLACKBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 25, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
+		context.register(PLACED_MALOBERRY_BUSHES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.MALOBERRY_BUSHES), tfFeatureCheckArea(AvoidLandmarkModifier.checkSurface(), 25, PlacementUtils.HEIGHTMAP_TOP_SOLID).build()));
 		context.register(PLACED_TROLL_ROOTS, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.TROLL_ROOTS), ImmutableList.<PlacementModifier>builder().add(PlacementUtils.HEIGHTMAP_WORLD_SURFACE, HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.absolute(60)), CountPlacement.of(8), BiomeFilter.biome()).build()));
 		context.register(PLACED_VANILLA_ROOTS, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.VANILLA_ROOTS), tfFeatureCheckArea(AvoidLandmarkModifier.checkUnderground(), 1, CountPlacement.of(16), HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.absolute(0)), PlacementUtils.filteredByBlockSurvival(TFBlocks.TORCHBERRY_PLANT.get())).build()));
 		context.register(PLACED_WEBS, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.WEBS), ImmutableList.<PlacementModifier>builder().add(PlacementUtils.HEIGHTMAP_WORLD_SURFACE, CountPlacement.of(60), InSquarePlacement.spread(), BiomeFilter.biome()).build()));

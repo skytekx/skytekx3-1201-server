@@ -117,7 +117,8 @@ public class MagicPainting extends HangingEntity {
             // A variant that is no longer registered (removed datapack, renamed id) falls back to the default instead of becoming an invisible 1x1 entity
             this.setVariant(MagicPaintingVariants.getVariant(this.level().registryAccess(), variant).isPresent() ? variant : MagicPaintingVariants.DEFAULT.location().toString());
         } else {
-            this.setVariant(EMPTY);
+            // No variant at all (e.g. /summon without NBT): like 4.8, use the default instead of an invisible 1x1 entity
+            this.setVariant(MagicPaintingVariants.DEFAULT);
         }
         this.direction = Direction.from2DDataValue(tag.getByte("facing"));
         super.readAdditionalSaveData(tag);

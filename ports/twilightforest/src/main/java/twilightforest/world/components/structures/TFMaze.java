@@ -322,9 +322,16 @@ public class TFMaze {
 	 * Puts a wall block in the structure, at the specified structure coordinates.
 	 */
 	private void putWallBlock(WorldGenLevel world, int x, int y, int z, TFStructureComponentOld component, BoundingBox sbb) {
-		if (wallBlocks != null) {
-			wallBlocks.next(world.getRandom(), x, y, z, true);
-			component.placeBlock(world, wallBlocks.getNext(), x, y, z, sbb);
+		StructurePiece.BlockSelector selector = wallBlocks;
+		if (selector != null) {
+			// The selector is shared by every postProcess thread of the structure and keeps the
+			// picked state in a mutable field, so select-and-read must happen atomically.
+			BlockState state;
+			synchronized (selector) {
+				selector.next(world.getRandom(), x, y, z, true);
+				state = selector.getNext();
+			}
+			component.placeBlock(world, state, x, y, z, sbb);
 		} else {
 			component.placeBlock(world, wallBlockState, x, y, z, sbb);
 		}

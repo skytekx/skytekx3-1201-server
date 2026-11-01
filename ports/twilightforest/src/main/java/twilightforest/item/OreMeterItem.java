@@ -48,7 +48,7 @@ public class OreMeterItem extends Item {
 	public static final int MAX_CHUNK_SEARCH_RANGE = 2;
 	public static final int LOAD_TIME = 50;
 
-	/** The scan in progress ({@link OreScannerComponent}). Server only: {@link #getShareTag} keeps it off the network. */
+	/** The scan in progress ({@link OreScannerComponent}). Server only: {@link #getShareTag} deliberately keeps it off the network. */
 	public static final String SCANNER_TAG = "ore_scanner";
 	/** Ticks the scan in progress has run, present only while scanning. */
 	public static final String LOADING_TAG = "ore_loading";
@@ -94,7 +94,7 @@ public class OreMeterItem extends Item {
 		}
 
 		// Scanning completed, save results to item
-		tag.put(DATA_TAG, OreScannerData.create(scan.getResults(getFilter(stack)), scan.centerChunkPos(), scan.getVolume(level), scan.getRange()).save());
+		tag.put(DATA_TAG, OreScannerData.create(scan.getResults(getFilter(stack)), scan.centerChunkPos(), scan.getScannedBlocks(), scan.getRange()).save());
 
 		tag.remove(LOADING_TAG);
 		tag.remove(SCANNER_TAG);
@@ -178,8 +178,13 @@ public class OreMeterItem extends Item {
 	}
 
 	/**
-	 * The scan in progress is only needed on the server, and it changes every tick while the meter is loading,
-	 * so it is not sent to clients (4.8 does not network-sync the ore_scanner component either).
+	 * The scan in progress is only needed on the server, and its block counts (about a hundred entries) change every tick
+	 * while the meter is loading, so it is deliberately not sent to clients to save bandwidth. This is not 4.8 parity:
+	 * 4.8's ore_scanner component has no stream codec of its own, so 1.21 syncs it with one derived from its codec.
+	 * <p>
+	 * Known trade-off: opening the creative inventory sends the client's copy of the stack back to the server, which
+	 * has no ore_scanner, so a scan in progress is dropped there and the meter returns to idle without results
+	 * ({@link #inventoryTick} clears the loading state). 4.8 keeps the scan in that case. Survival play is not affected.
 	 */
 	@Nullable
 	@Override

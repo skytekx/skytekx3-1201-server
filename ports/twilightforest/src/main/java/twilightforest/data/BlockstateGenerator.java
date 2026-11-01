@@ -699,11 +699,11 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		simpleBlock(TFBlocks.SMOKER.get(), this.makeTintedBlockColumnUniqueBottom(TFBlocks.SMOKER.getId().getPath())
 				.texture("side", prefix("block/firejet_side"))
 				.texture("top", prefix("block/firejet_top"))
-				.texture("bottom", new ResourceLocation("block/grass_block_top")));
+				.texture("bottom", new ResourceLocation("block/black_concrete_powder")));
 		simpleBlock(TFBlocks.FIRE_JET.get(), this.makeTintedBlockColumnUniqueBottom(TFBlocks.FIRE_JET.getId().getPath())
 				.texture("side", prefix("block/firejet_side"))
 				.texture("top", prefix("block/firejet_top"))
-				.texture("bottom", new ResourceLocation("block/grass_block_top")));
+				.texture("bottom", new ResourceLocation("block/black_concrete_powder")));
 
 		ModelFile smokerOff = this.make3LayerCubeIdenticalSides1Bottom(TFBlocks.ENCASED_SMOKER.getId().getPath(), 0, 10, 15, 10, 10)
 				.texture("top", prefix("block/towerdev_ghasttraplid_off"))
@@ -830,7 +830,7 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		magicLogCore(TFBlocks.MINING_LOG_CORE.get());
 
 		logWoodSapling(TFBlocks.SORTING_LOG.get(), TFBlocks.STRIPPED_SORTING_LOG.get(), TFBlocks.SORTING_WOOD.get(), TFBlocks.STRIPPED_SORTING_WOOD.get(), TFBlocks.SORTING_SAPLING.get());
-		plankBlocks("sort", TFBlocks.SORTING_PLANKS.get(), TFBlocks.SORTING_SLAB.get(), TFBlocks.SORTING_STAIRS.get(), TFBlocks.SORTING_BUTTON.get(), TFBlocks.SORTING_FENCE.get(), TFBlocks.SORTING_GATE.get(), TFBlocks.SORTING_PLATE.get(), TFBlocks.SORTING_DOOR.get(), TFBlocks.SORTING_TRAPDOOR.get(), true, TFBlocks.SORTING_BANISTER.get());
+		plankBlocks("sort", TFBlocks.SORTING_PLANKS.get(), TFBlocks.SORTING_SLAB.get(), TFBlocks.SORTING_STAIRS.get(), TFBlocks.SORTING_BUTTON.get(), TFBlocks.SORTING_FENCE.get(), TFBlocks.SORTING_GATE.get(), TFBlocks.SORTING_PLATE.get(), TFBlocks.SORTING_DOOR.get(), TFBlocks.SORTING_TRAPDOOR.get(), true, true, TFBlocks.SORTING_BANISTER.get());
 		singleBlockBoilerPlate(TFBlocks.SORTING_LEAVES.get(), "block/leaves", m -> m.texture("all", "block/sorting_leaves"));
 		magicLogCore(TFBlocks.SORTING_LOG_CORE.get());
 

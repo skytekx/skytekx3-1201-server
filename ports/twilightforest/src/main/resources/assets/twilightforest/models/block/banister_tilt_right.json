@@ -1,7 +1,5 @@
 {
-  "": "You won't be seeing this ingame until Mojang fixes their AO problem, plus some other issues associated with shading",
-  "This bug has existed for 6 freaking years": "https://bugs.mojang.com/browse/MC-84633",
-  "parent": "twilightforest:util/block_no_ao",
+  "parent": "block/block",
   "textures": { "particle": "#texture" },
   "ambientocclusion": false,
   "elements": [{
@@ -12,7 +10,6 @@
       "axis": "z",
       "angle": -45
     },
-    "shade": false,
     "faces": {
       "up":    { "texture": "#texture", "uv": [ 5, 0, 16, 4 ] },
       "down":  { "texture": "#texture", "uv": [ 5, 0, 16, 4 ] },
@@ -27,7 +24,6 @@
       "axis": "z",
       "angle": -45
     },
-    "shade": false,
     "faces": {
       "down":  { "texture": "#texture", "uv": [ 0, 12, 11, 16 ] },
       "up":    { "texture": "#texture", "uv": [ 0, 12, 11, 16 ] },
@@ -42,7 +38,6 @@
       "axis": "z",
       "angle": -45
     },
-    "shade": false,
     "faces": {
       "down":  { "texture": "#texture", "uv": [ 4.14794699982, 0, 16, 4 ] },
       "up":    { "texture": "#texture", "uv": [ 4.14794699982, 0, 16, 4 ] },
@@ -58,7 +53,6 @@
       "axis": "z",
       "angle": -45
     },
-    "shade": false,
     "faces": {
       "down":  { "texture": "#texture", "uv": [ 0, 12, 11.8520530002, 16 ] },
       "up":    { "texture": "#texture", "uv": [ 0, 12, 11.8520530002, 16 ] },
@@ -69,21 +63,19 @@
   }, {
     "from": [ 15.1715728753, -4, 12.03 ],
     "to":   [ 16           ,  0, 15.97 ],
-    "shade": false,
     "faces": {
       "down" : { "texture": "#texture"                                                             },
-      "north": { "texture": "#texture", "uv": [ 16, 12, 15.1715728753  , 16 ], "cullface": "north" },
-      "south": { "texture": "#texture", "uv": [  0, 12,  0.828427124746, 16 ]                      },
+      "north": { "texture": "#texture", "uv": [ 16, 12, 15.1715728753  , 16 ]                      },
+      "south": { "texture": "#texture", "uv": [  0, 12,  0.828427124746, 16 ], "cullface": "south" },
       "east" : { "texture": "#texture",                                        "cullface": "east"  }
     }
   }, {
     "from": [ 0             , 12, 12.03 ],
     "to":   [ 0.828427124746, 16, 15.97 ],
-    "shade": false,
     "faces": {
       "up":    { "texture": "#texture", "cullface": "up"    },
-      "north": { "texture": "#texture", "cullface": "north" },
-      "south": { "texture": "#texture"                      },
+      "north": { "texture": "#texture"                      },
+      "south": { "texture": "#texture", "cullface": "south" },
       "west":  { "texture": "#texture", "cullface": "west"  }
     }
   }, {
@@ -91,20 +83,20 @@
     "to":   [ 5.5, 9, 16 ],
     "faces": {
       "down" : { "texture": "#texture"                                       , "cullface": "down"  },
-      "north": { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 1, 7 ], "cullface": "north" },
-      "south": { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 1, 7 ]                      },
-      "west" : { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 1, 7 ]                      },
-      "east" : { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 1, 7 ]                      }
+      "north": { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 9, 7 ]                      },
+      "south": { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 9, 7 ], "cullface": "south" },
+      "west" : { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 9, 7 ]                      },
+      "east" : { "texture": "#texture", "rotation": 270, "uv": [ 0, 4, 9, 7 ]                      }
     }
   }, {
     "from": [ 10.5, 0, 13 ],
     "to":   [ 13.5, 1, 16 ],
     "faces": {
       "down":  { "texture": "#texture"                                        , "cullface": "down"  },
-      "north": { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 9, 11 ], "cullface": "north" },
-      "south": { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 9, 11 ]                      },
-      "west":  { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 9, 11 ]                      },
-      "east":  { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 9, 11 ]                      }
+      "north": { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 1, 11 ]                      },
+      "south": { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 1, 11 ], "cullface": "south" },
+      "west":  { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 1, 11 ]                      },
+      "east":  { "texture": "#texture", "rotation": 270, "uv": [ 0, 8, 1, 11 ]                      }
     }
   }]
 }

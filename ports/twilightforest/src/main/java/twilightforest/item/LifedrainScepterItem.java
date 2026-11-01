@@ -24,6 +24,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.init.TFDamageTypes;
@@ -147,7 +148,8 @@ public class LifedrainScepterItem extends Item {
 				if (target.hurt(TFDamageTypes.getEntityDamageSource(level, TFDamageTypes.LIFEDRAIN, living), 1)) {
 					// make it explode
 					if (!level.isClientSide()) {
-						if (target.getHealth() <= 1) {
+						// bosses die normally so their death sequence and loot still happen (#2122)
+						if (target.getHealth() <= 1 && !target.getType().is(Tags.EntityTypes.BOSSES)) {
 							if (!target.getType().is(EntityTagGenerator.LIFEDRAIN_DROPS_NO_FLESH)) {
 								target.spawnAtLocation(new ItemStack(Items.ROTTEN_FLESH, level.getRandom().nextInt(3)));
 								animateTargetShatter((ServerLevel) level, target);

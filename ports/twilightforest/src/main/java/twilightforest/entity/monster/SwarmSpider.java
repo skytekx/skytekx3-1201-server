@@ -29,16 +29,8 @@ import twilightforest.util.LegacyLandmarkPlacements;
 
 public class SwarmSpider extends Spider {
 
-	protected boolean shouldSpawn = false;
-
 	public SwarmSpider(EntityType<? extends SwarmSpider> type, Level world) {
-		this(type, world, true);
-	}
-
-	public SwarmSpider(EntityType<? extends SwarmSpider> type, Level world, boolean spawnMore) {
 		super(type, world);
-
-		this.setSpawnMore(spawnMore);
 		this.xpReward = 2;
 	}
 
@@ -101,41 +93,12 @@ public class SwarmSpider extends Spider {
 	}
 
 	@Override
-	public void tick() {
-		if (!this.level().isClientSide() && shouldSpawnMore()) {
-			int more = 1 + this.getRandom().nextInt(2);
-			for (int i = 0; i < more; i++) {
-				// try twice to spawn
-				if (!spawnAnother()) {
-					spawnAnother();
-				}
-			}
-			setSpawnMore(false);
-		}
-
-		super.tick();
-	}
-
-	@Override
 	public boolean doHurtTarget(Entity entity) {
 		return this.getRandom().nextInt(4) == 0 && super.doHurtTarget(entity);
 	}
 
-	protected boolean spawnAnother() {
-		SwarmSpider another = new SwarmSpider(TFEntities.SWARM_SPIDER.get(), this.level(), false);
-
-		double sx = this.getX() + (this.getRandom().nextBoolean() ? 0.9D : -0.9D);
-		double sy = this.getY();
-		double sz = this.getZ() + (this.getRandom().nextBoolean() ? 0.9D : -0.9D);
-		another.moveTo(sx, sy, sz, this.getRandom().nextFloat() * 360.0F, 0.0F);
-		if (!another.checkSpawnRules(this.level(), MobSpawnType.MOB_SUMMONED)) {
-			another.discard();
-			return false;
-		}
-		this.level().addFreshEntity(another);
-		another.spawnAnim();
-
-		return true;
+	public EntityType<? extends SwarmSpider> getReinforcementType() {
+		return TFEntities.SWARM_SPIDER.get();
 	}
 
 	public static boolean getCanSpawnHere(EntityType<? extends SwarmSpider> entity, ServerLevelAccessor accessor, MobSpawnType reason, BlockPos pos, RandomSource random) {
@@ -147,26 +110,6 @@ public class SwarmSpider extends Spider {
 		int chunkZ = Mth.floor(pos.getZ()) >> 4;
 		// We're allowed to spawn in bright light only in hedge mazes.
 		return LegacyLandmarkPlacements.getNearestLandmark(chunkX, chunkZ, accessor.getLevel()) == TFLandmark.HEDGE_MAZE || Monster.isDarkEnoughToSpawn(accessor, pos, random);
-	}
-
-	public boolean shouldSpawnMore() {
-		return shouldSpawn;
-	}
-
-	public void setSpawnMore(boolean flag) {
-		this.shouldSpawn = flag;
-	}
-
-	@Override
-	public void addAdditionalSaveData(CompoundTag compound) {
-		super.addAdditionalSaveData(compound);
-		compound.putBoolean("SpawnMore", this.shouldSpawnMore());
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
-		this.setSpawnMore(compound.getBoolean("SpawnMore"));
 	}
 
 	@Override
@@ -183,20 +126,22 @@ public class SwarmSpider extends Spider {
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData livingData, @Nullable CompoundTag dataTag) {
 		livingData = super.finalizeSpawn(accessor, difficulty, reason, livingData, dataTag);
-
-		if (this.getFirstPassenger() != null || accessor.getRandom().nextInt(20) <= difficulty.getDifficulty().getId()) {
-			SkeletonDruid druid = TFEntities.SKELETON_DRUID.get().create(this.level());
-			druid.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-			druid.setBaby(true);
-			ForgeEventFactory.onFinalizeSpawn(druid, accessor, difficulty, MobSpawnType.JOCKEY, null, null);
-
-			if (this.hasPassenger(e -> true)) {
-				this.ejectPassengers();
-			}
-
-			druid.startRiding(this);
-		}
-
+		this.summonJockey(accessor, difficulty);
 		return livingData;
+	}
+
+	public void summonJockey(ServerLevelAccessor accessor, DifficultyInstance difficulty) {
+		// Replaces the vanilla spider's rare skeleton rider, otherwise a 1 in 200 chance for a druid jockey
+		if (this.getFirstPassenger() != null || accessor.getRandom().nextInt(200) == 0) {
+			SkeletonDruid druid = TFEntities.SKELETON_DRUID.get().create(this.level());
+			if (druid != null) {
+				druid.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+				druid.setBaby(true);
+				ForgeEventFactory.onFinalizeSpawn(druid, accessor, difficulty, MobSpawnType.JOCKEY, null, null);
+
+				if (this.hasPassenger(e -> true)) this.ejectPassengers();
+				druid.startRiding(this);
+			}
+		}
 	}
 }

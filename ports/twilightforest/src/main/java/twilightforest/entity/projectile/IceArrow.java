@@ -5,6 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +21,10 @@ public class IceArrow extends TFArrow {
 
 	public IceArrow(Level world, Entity shooter) {
 		super(TFEntities.ICE_ARROW.get(), world, shooter);
+	}
+
+	public IceArrow(AbstractArrow parentArrow) {
+		super(TFEntities.ICE_ARROW.get(), parentArrow);
 	}
 
 	@Override

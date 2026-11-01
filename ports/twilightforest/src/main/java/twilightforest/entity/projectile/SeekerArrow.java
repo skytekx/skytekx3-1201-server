@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -31,6 +32,11 @@ public class SeekerArrow extends TFArrow {
 
 	public SeekerArrow(Level world, Entity shooter) {
 		super(TFEntities.SEEKER_ARROW.get(), world, shooter);
+		this.setBaseDamage(1.0D);
+	}
+
+	public SeekerArrow(AbstractArrow parentArrow) {
+		super(TFEntities.SEEKER_ARROW.get(), parentArrow);
 		this.setBaseDamage(1.0D);
 	}
 

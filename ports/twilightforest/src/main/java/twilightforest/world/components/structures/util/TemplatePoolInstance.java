@@ -27,9 +27,7 @@ import twilightforest.util.jigsaw.JigsawPlaceContext;
 import java.util.*;
 import java.util.function.Function;
 
-// TF 4.8 also carries Optional<Holder<TemplateMarkerHandlerList>> markerHandlers (JSON "marker_handlers") between ignoreWorldWaterlog and
-// randomizedProcessors. It arrives with the template marker handler registries; until then the key is ignored when parsing
-public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProcessorList>> processors, StructureTemplatePool.Projection projection, TerrainAdjustment terrainAdjustment, Optional<HeightAdjustment> beardifierGroundDelta, boolean ignoreWorldWaterlog, Optional<ChooseRandomProcessors> randomizedProcessors, Map<String, String> poolAliases) implements WeightedEntry {
+public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProcessorList>> processors, StructureTemplatePool.Projection projection, TerrainAdjustment terrainAdjustment, Optional<HeightAdjustment> beardifierGroundDelta, boolean ignoreWorldWaterlog, Optional<Holder<TemplateMarkerHandlerList>> markerHandlers, Optional<ChooseRandomProcessors> randomizedProcessors, Map<String, String> poolAliases) implements WeightedEntry {
 	private static final Codec<TemplatePoolInstance> CODEC_DIRECT = withAlternative(RecordCodecBuilder.create(instance -> instance.group(
 		Weight.CODEC.fieldOf("weight").forGetter(TemplatePoolInstance::weight),
 		StructureProcessorType.LIST_CODEC.optionalFieldOf("processors").forGetter(TemplatePoolInstance::processors),
@@ -37,6 +35,7 @@ public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProce
 		TerrainAdjustment.CODEC.optionalFieldOf("terrain_adaptation", TerrainAdjustment.NONE).forGetter(TemplatePoolInstance::terrainAdjustment),
 		HeightAdjustment.CODEC.optionalFieldOf("height_adjustment").forGetter(TemplatePoolInstance::beardifierGroundDelta),
 		Codec.BOOL.optionalFieldOf("ignore_world_waterlog", false).forGetter(TemplatePoolInstance::ignoreWorldWaterlog),
+		TemplateMarkerHandlerList.HOLDER_CODEC.optionalFieldOf("marker_handlers").forGetter(TemplatePoolInstance::markerHandlers),
 		ChooseRandomProcessors.CODEC.optionalFieldOf("randomized_processors").forGetter(TemplatePoolInstance::randomizedProcessors),
 		Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("pool_aliases", Map.of()).forGetter(TemplatePoolInstance::poolAliases)
 	).apply(instance, TemplatePoolInstance::new)), Codec.INT, TemplatePoolInstance::defaultsWithWeight);
@@ -51,6 +50,7 @@ public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProce
 			TerrainAdjustment.NONE,
 			Optional.empty(),
 			false,
+			Optional.empty(),
 			Optional.empty(),
 			Map.of()
 		);

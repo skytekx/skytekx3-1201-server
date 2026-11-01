@@ -10,6 +10,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.Weight;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -20,8 +21,10 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.init.custom.TemplateMarkerHandlers;
 import twilightforest.world.components.structures.util.StructureTemplateDefinition;
 import twilightforest.world.components.structures.util.StructureTemplateDefinitions;
+import twilightforest.world.components.structures.util.TemplateMarkerHandlerList;
 import twilightforest.world.components.structures.util.TemplatePoolInstance;
 
 import java.util.HashMap;
@@ -109,8 +112,7 @@ public abstract class StructureTemplateDefinitionProvider implements DataProvide
 		poolWeightsForTemplate.put(poolId, poolData);
 	}
 
-	// TF 4.8 also takes a @Nullable Holder<TemplateMarkerHandlerList> markerHandlers here and in weightedRigidTemplate()
-	protected TemplatePoolInstance weightedPathTemplate(int weight, @Nullable Map<String, String> poolAliases) {
+	protected TemplatePoolInstance weightedPathTemplate(int weight, @Nullable Holder<TemplateMarkerHandlerList> markerHandlers, @Nullable Map<String, String> poolAliases) {
 		// TODO register and reference instead
 		Holder<StructureProcessorList> projectionProcessorHolder = Holder.direct(new StructureProcessorList(List.of(new GravityProcessor(Heightmap.Types.WORLD_SURFACE_WG, -2))));
 		return new TemplatePoolInstance(
@@ -120,12 +122,13 @@ public abstract class StructureTemplateDefinitionProvider implements DataProvide
 			TerrainAdjustment.NONE,
 			Optional.of(new TemplatePoolInstance.HeightAdjustment(Heightmap.Types.WORLD_SURFACE_WG, 2, Optional.of(0))),
 			false,
+			Optional.ofNullable(markerHandlers),
 			Optional.empty(),
 			poolAliases == null ? Map.of() : poolAliases
 		);
 	}
 
-	protected TemplatePoolInstance weightedRigidTemplate(int weight, int beardifierGroundDelta, @Nullable Integer groundJunctionDiffLimit, @Nullable TemplatePoolInstance.ChooseRandomProcessors randomizedProcessors, @Nullable Map<String, String> poolAliases) {
+	protected TemplatePoolInstance weightedRigidTemplate(int weight, int beardifierGroundDelta, @Nullable Integer groundJunctionDiffLimit, @Nullable Holder<TemplateMarkerHandlerList> markerHandlers, @Nullable TemplatePoolInstance.ChooseRandomProcessors randomizedProcessors, @Nullable Map<String, String> poolAliases) {
 		return new TemplatePoolInstance(
 			Weight.of(weight),
 			Optional.empty(),
@@ -133,9 +136,15 @@ public abstract class StructureTemplateDefinitionProvider implements DataProvide
 			TerrainAdjustment.BEARD_BOX,
 			Optional.of(new TemplatePoolInstance.HeightAdjustment(Heightmap.Types.WORLD_SURFACE_WG, beardifierGroundDelta, Optional.ofNullable(groundJunctionDiffLimit))),
 			true,
+			Optional.ofNullable(markerHandlers),
 			Optional.ofNullable(randomizedProcessors),
 			poolAliases == null ? Map.of() : poolAliases
 		);
+	}
+
+	// A reference to a marker handler list of the datapack registry, so the definition names it instead of inlining it
+	protected Holder.Reference<TemplateMarkerHandlerList> getMarkers(HolderLookup.Provider provider, ResourceKey<TemplateMarkerHandlerList> key) {
+		return Holder.Reference.createStandAlone(provider.lookupOrThrow(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY), key);
 	}
 
 	@Override

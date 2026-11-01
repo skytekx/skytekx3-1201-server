@@ -60,6 +60,7 @@ import twilightforest.world.components.biomesources.LandmarkBiomeSource;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
 import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
 import twilightforest.world.components.structures.util.StructureTemplateDefinitions;
+import twilightforest.world.components.structures.util.TemplateMarkerHandlerList;
 
 import java.util.Locale;
 
@@ -139,6 +140,7 @@ public class TwilightForestMod {
 		Enforcement.ENFORCEMENTS.register(modbus);
 		Restrictions.RESTRICTIONS.register(modbus);
 		MagicPaintingVariants.MAGIC_PAINTINGS.register(modbus);
+		TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_TYPES.register(modbus);
 
 		modbus.addListener(this::sendIMCs);
 		modbus.addListener(this::init);
@@ -163,6 +165,9 @@ public class TwilightForestMod {
 		event.dataPackRegistry(BiomeLayerStack.BIOME_STACK_KEY, BiomeLayerStack.DISPATCH_CODEC);
 		event.dataPackRegistry(Restrictions.RESTRICTION_KEY, Restriction.CODEC, Restriction.CODEC);
 		event.dataPackRegistry(MagicPaintingVariants.REGISTRY_KEY, MagicPaintingVariant.CODEC, MagicPaintingVariant.CODEC);
+		// Server-side only: worldgen reads them, clients never do
+		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_KEY, TemplateMarkerHandlers.DISPATCH_CODEC);
+		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlerList.CODEC);
 	}
 
 	public void registerExtraStuff(RegisterEvent evt) {

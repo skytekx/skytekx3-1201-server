@@ -1,11 +1,15 @@
 package twilightforest.util;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.tags.PaintingVariantTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -204,6 +208,69 @@ public class EntityUtil {
 		if (checkValidPaintingPosition(world, painting))
 			world.addFreshEntity(painting);
 	}
+
+	// TF 4.8 variant that takes a variant holder and reports whether the painting was hung
+	public static boolean tryHangPainting(WorldGenLevel world, BlockPos pos, Direction direction, @Nullable Holder<PaintingVariant> chosenPainting) {
+		if (chosenPainting == null) return false;
+
+		Painting painting = createEntityIgnoreException(EntityType.PAINTING, world);
+
+		if (painting == null) return false;
+
+		painting.setPos(pos.getX(), pos.getY(), pos.getZ());
+		try {
+			handle_HangingEntity_setDirection.invoke(painting, direction);
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
+
+			return false;
+		}
+		painting.setVariant(chosenPainting);
+
+		if (checkValidPaintingPosition(world, painting)) {
+			world.addFreshEntity(painting);
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * TF 4.8's LichBossRoom.placePainting(): tries the paintings of the tag that fit in width x height blocks, in random order and with a
+	 * bias towards the larger ones, until one hangs or limitTries more attempts have failed. Width and height are in blocks; 1.20.1's
+	 * PaintingVariant measures in pixels, 16 per block.
+	 */
+	public static boolean placePainting(BlockPos pos, RandomSource random, int limitTries, TagKey<PaintingVariant> paintings, WorldGenLevel genLevel, int width, int height, Direction dir) {
+		int maxArea = width * height;
+
+		// 1.20.1's Util.shuffle() only takes an ObjectArrayList; same algorithm as 1.21's List overload
+		ObjectArrayList<Holder<PaintingVariant>> paintingsOfSizeOrSmaller = new ObjectArrayList<>(getPaintingsOfSizeOrSmaller(genLevel, paintings, width, height));
+		Util.shuffle(paintingsOfSizeOrSmaller, random);
+		for (Holder<PaintingVariant> paintingHolder : paintingsOfSizeOrSmaller) {
+			PaintingVariant painting = paintingHolder.value();
+			int area = (painting.getWidth() / 16) * (painting.getHeight() / 16);
+			if (random.nextInt(maxArea) <= area) {
+				if (tryHangPainting(genLevel, pos, dir, paintingHolder) || limitTries-- <= 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// Paintings of the tag no larger than width x height blocks
+	public static List<Holder<PaintingVariant>> getPaintingsOfSizeOrSmaller(WorldGenLevel level, TagKey<PaintingVariant> paintings, int width, int height) {
+		List<Holder<PaintingVariant>> valid = new ArrayList<>();
+
+		for (Holder<PaintingVariant> art : level.registryAccess().registryOrThrow(Registries.PAINTING_VARIANT).getTagOrEmpty(paintings)) {
+			if (art.value().getWidth() <= width * 16 && art.value().getHeight() <= height * 16) {
+				valid.add(art);
+			}
+		}
+
+		return valid;
+	}
+
 	@Nullable
 	public static ResourceKey<PaintingVariant> getPaintingOfSize(RandomSource rand, int minSize) {
 		return getPaintingOfSize(rand, minSize, minSize, false);

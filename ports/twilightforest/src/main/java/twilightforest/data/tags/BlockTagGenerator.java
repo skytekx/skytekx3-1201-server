@@ -106,6 +106,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> MINEABLE_WITH_BLOCK_AND_CHAIN = BlockTags.create(TwilightForestMod.prefix("mineable_with_block_and_chain"));
 	public static final TagKey<Block> BLOCK_AND_CHAIN_NEVER_BREAKS = BlockTags.create(TwilightForestMod.prefix("block_and_chain_never_breaks"));
 
+	public static final TagKey<Block> SMALL_LAKES_DONT_REPLACE = BlockTags.create(TwilightForestMod.prefix("small_lakes_dont_replace"));
+
 	public BlockTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
 		super(output, future, helper);
 	}
@@ -905,6 +907,9 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(BlockTags.SWORD_EFFICIENT)
 				.add(TFBlocks.HUGE_LILY_PAD.get());
+
+		tag(SMALL_LAKES_DONT_REPLACE).addTags(BlockTags.FEATURES_CANNOT_REPLACE, BlockTags.LOGS, BlockTags.LEAVES)
+				.add(TFBlocks.ROOT_BLOCK.get(), TFBlocks.LIVEROOT_BLOCK.get(), Blocks.MUSHROOM_STEM);
 	}
 
 	private static Block[] getAllMinecraftOrTwilightBlocks(Predicate<Block> predicate) {

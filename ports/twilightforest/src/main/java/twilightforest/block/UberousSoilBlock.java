@@ -103,8 +103,6 @@ public class UberousSoilBlock extends Block implements BonemealableBlock {
 			if (level instanceof ServerLevel serverLevel) {
 				this.applyBonemealNextTick(serverLevel, fromPos);
 			}
-
-			level.levelEvent(LevelEvent.PARTICLES_PLANT_GROWTH, fromPos, 0);
 		} else if (fromPos.getY() + 1 == pos.getY()) {
 			// Hanging plants (cave vines, weeping vines, ...) below the soil get the same 15 bonemeals (#2121)
 			BlockState below = level.getBlockState(fromPos);
@@ -117,8 +115,6 @@ public class UberousSoilBlock extends Block implements BonemealableBlock {
 
 				level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, fromPos, 15); // Bonemeal particles
 			}
-
-			level.levelEvent(LevelEvent.PARTICLES_PLANT_GROWTH, fromPos, 0);
 		}
 	}
 

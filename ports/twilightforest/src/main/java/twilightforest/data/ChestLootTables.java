@@ -66,6 +66,7 @@ public class ChestLootTables implements LootTableSubProvider {
 								.setRolls(ConstantValue.exactly(2))
 								//uncommon loot
 								.add(LootItem.lootTableItem(Items.BREAD).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 8))))
+								.add(LootItem.lootTableItem(TFItems.SHIKA_SENBEI.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))))
 								.add(LootItem.lootTableItem(Items.COOKED_BEEF).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 6))))
 								.add(LootItem.lootTableItem(Items.COOKED_PORKCHOP).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 8))))
 								.add(LootItem.lootTableItem(Items.BAKED_POTATO).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 8))))

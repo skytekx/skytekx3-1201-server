@@ -45,7 +45,9 @@ import twilightforest.util.LegacyLandmarkPlacements;
 import twilightforest.util.Vec2i;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
 import twilightforest.world.components.chunkgenerators.warp.*;
+import twilightforest.world.components.structures.HedgeMazeComponent;
 import twilightforest.world.components.structures.TFStructureComponent;
+import twilightforest.world.components.structures.courtyard.CourtyardMain;
 import twilightforest.world.components.structures.placements.BiomeForcedLandmarkPlacement;
 import twilightforest.world.components.structures.start.TFStructureStart;
 import twilightforest.world.components.structures.type.HedgeMazeStructure;
@@ -474,7 +476,8 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	 * First air level of the ground levelled for a Hedge Maze, Naga Courtyard or Quest Grove centred at (centerX, centerZ).
 	 * Since TF 4.8 the Hedge Maze and the Naga Courtyard follow the terrain, so their structure decides the height. It is the same
 	 * deterministic sample of the generator's base height their findGenerationPoint places them at, which keeps the levelled ground
-	 * and the structure in step even though they are computed at different chunk statuses.
+	 * and the structure in step even though they are computed at different chunk statuses. When the landmark's start already exists,
+	 * its first piece decides instead, so starts saved before the update keep their TF 4.3 arena height.
 	 */
 	private int getArenaGroundLevel(WorldGenRegion primer, RandomState random, TFLandmark landmark, int centerX, int centerZ) {
 		if (landmark != TFLandmark.HEDGE_MAZE && landmark != TFLandmark.NAGA_COURTYARD)
@@ -486,13 +489,31 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 			return cached;
 
 		Structure structure = primer.registryAccess().registryOrThrow(Registries.STRUCTURE).get(landmark == TFLandmark.HEDGE_MAZE ? TFStructures.HEDGE_MAZE : TFStructures.NAGA_COURTYARD);
-		int groundLevel;
-		if (structure instanceof HedgeMazeStructure hedgeMaze) {
-			groundLevel = hedgeMaze.getArenaGroundLevel(this, primer, random, centerX, centerZ);
-		} else if (structure instanceof NagaCourtyardStructure courtyard) {
-			groundLevel = courtyard.getArenaGroundLevel(this, primer, random, centerX, centerZ);
-		} else {
-			groundLevel = this.getSeaLevel() + 5; // Structure missing or replaced by a datapack
+		int groundLevel = Integer.MIN_VALUE;
+
+		// A start that already exists decides the height, so the arena always matches the saved pieces. This keeps landmarks whose start
+		// was saved by TF 4.3 (at its fixed sea level based height) consistent with arena chunks generated after the update.
+		// SURFACE has a range of 8 chunks, so the centre chunk (at most 3 chunks away) is in the region and past STRUCTURE_STARTS.
+		ChunkAccess centerChunkAccess = structure == null ? null : primer.getChunk(SectionPos.blockToSectionCoord(centerX), SectionPos.blockToSectionCoord(centerZ), ChunkStatus.STRUCTURE_STARTS, false);
+		StructureStart start = centerChunkAccess == null ? null : centerChunkAccess.getStartForStructure(structure);
+		if (start != null && start.isValid()) {
+			StructurePiece firstPiece = start.getPieces().get(0);
+			if (firstPiece instanceof HedgeMazeComponent) {
+				groundLevel = firstPiece.getBoundingBox().minY(); // The maze box starts at its floor (y - 3), the arena's first air level
+			} else if (firstPiece instanceof CourtyardMain) {
+				groundLevel = firstPiece.getBoundingBox().minY() + 1; // The courtyard box starts at y - 1, the arena's first air level is y
+			}
+		}
+
+		if (groundLevel == Integer.MIN_VALUE) {
+			// No start (for example the landmark's biome check failed): sample the same height findGenerationPoint would use
+			if (structure instanceof HedgeMazeStructure hedgeMaze) {
+				groundLevel = hedgeMaze.getArenaGroundLevel(this, primer, random, centerX, centerZ);
+			} else if (structure instanceof NagaCourtyardStructure courtyard) {
+				groundLevel = courtyard.getArenaGroundLevel(this, primer, random, centerX, centerZ);
+			} else {
+				groundLevel = this.getSeaLevel() + 5; // Structure missing or replaced by a datapack
+			}
 		}
 
 		this.arenaGroundLevels.put(centerChunk, groundLevel);

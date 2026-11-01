@@ -198,6 +198,21 @@
      "magic-map-improvements (B07, makes ProgressionStructure extend ConquerableStructure): keep ProgressionWrappedStructure.generate() as an override and do not make ConquerableStructure.generate final. 4.3's ConquerableStructure.generate keeps the LegacyLandmarkPlacements.chunkHasLandmarkCenter gate, which would silently reject random_spread-placed wrappers in the TF dimension. The wrapper's explicit `implements CustomStructureData` then becomes redundant and may be dropped.",
      "wrapper JSON blocks (hint_creature.hint_item, decoration_clearance, avoid_additional_structures) decode with 1.20.1's lenient optionalFieldOf: a 4.8-format hint_item (lowercase count or components) or any other parse error inside an optional block silently reads as absent instead of failing the datapack like 4.8 (DFU 8 strict optionals). Write hint_item in the 1.20.1 ItemStack format (id/Count/tag)."
     ]
+   },
+   {
+    "bundle": "structure-processors-48+structure-terrain-sampling",
+    "ids": [
+     "structure-processors-48",
+     "structure-terrain-sampling"
+    ],
+    "deferred": [
+     "lich-tower-revamp: SpawnerProcessor entity_width_max is decoded and stored but cannot rescale mobs on 1.20.1 (no generic.scale attribute before 1.20.5), so 4.8 LichTowerUtil's room spawners (SpawnerProcessor.compile(2, 0.8f, ...)) would place wide mobs unshrunk in small rooms. Pick room-spawner mobs narrower than 0.8 blocks, or filter the spawn list by EntityType width in LichTowerUtil.",
+     "sinister-spawner: SpawnerProcessor only matches minecraft:spawner; add the twilightforest:sinister_spawner match (4.8 384be486c) together with that block (TODO in SpawnerProcessor).",
+     "magic-map-improvements (owns QuestGroveStructure): the Quest Grove part of 4.8 257a1d1ff (move the grove from sea level + 5 to y + 2 with the default clamped adjustForTerrain) is not ported; 4.3's fixed sea level + 5 is kept and ChunkGeneratorTwilight's arena leveller still uses sea level + 5 for the grove. If it is ported, the leveller's Quest Grove branch in ChunkGeneratorTwilight.getArenaGroundLevel must derive its height from the grove's existing start (first piece bounding box), the same way the Hedge Maze and Naga Courtyard branches do, so groves saved by 4.3 keep their arena height.",
+     "lich-tower-revamp, fallen-trunk-structure, camp-structure: 4.8 also places these with WorldUtil.adjustForTerrain (the gridLength sampler); use the overloads already in twilightforest.util.WorldUtil.",
+     "naga-courtyard-terraces: the inverted-pyramid terrain clearing above the Hedge Maze and Naga Courtyard is not part of structure-terrain-sampling.",
+     "custom-density-terraforming: ChunkGeneratorTwilight.deformTerrainForFeature now takes a RandomState and getArenaGroundLevel/arenaGroundLevels were added next to doFill; expect a textual merge there."
+    ]
    }
   ]
  }

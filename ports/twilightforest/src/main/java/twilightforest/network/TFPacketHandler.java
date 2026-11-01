@@ -20,7 +20,8 @@ public class TFPacketHandler {
 	// .4: UpdateDeathTimePacket syncs a dying boss's deathTime to players that start tracking it (4.8 5b63f08d4).
 	// .5: AddTFBossBarPacket and UpdateTFBossBarStylePacket carry the RGB boss bars (4.8 15ab0d12a).
 	// .6: StructureProtectionPacket carries a list of per-piece boxes with a protected flag instead of one start box (4.8 262daec10, 48ba590a9).
-	private static final String PROTOCOL_VERSION = "2-skytekx.6";
+	// .7: SyncQuestsPacket (data pack driven Questing Ram quest, 4.8 02875d8a3) is registered before SyncUncraftingTableConfigPacket.
+	private static final String PROTOCOL_VERSION = "2-skytekx.7";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -42,6 +43,7 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, SpawnFallenLeafFromPacket.class, SpawnFallenLeafFromPacket::encode, SpawnFallenLeafFromPacket::new, SpawnFallenLeafFromPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, StructureProtectionClearPacket.class, StructureProtectionClearPacket::encode, StructureProtectionClearPacket::new, StructureProtectionClearPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, StructureProtectionPacket.class, StructureProtectionPacket::encode, StructureProtectionPacket::new, StructureProtectionPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, SyncQuestsPacket.class, SyncQuestsPacket::encode, SyncQuestsPacket::new, SyncQuestsPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, SyncUncraftingTableConfigPacket.class, SyncUncraftingTableConfigPacket::encode, SyncUncraftingTableConfigPacket::new, SyncUncraftingTableConfigPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, ThrowPlayerPacket.class, ThrowPlayerPacket::encode, ThrowPlayerPacket::new, ThrowPlayerPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, UncraftingGuiPacket.class, UncraftingGuiPacket::encode, UncraftingGuiPacket::new, UncraftingGuiPacket.Handler::onMessage);

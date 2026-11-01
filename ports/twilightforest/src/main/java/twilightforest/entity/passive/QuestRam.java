@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,29 +21,29 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.advancements.TFAdvancements;
 import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.ai.goal.QuestRamEatWoolGoal;
+import twilightforest.entity.passive.quest.ram.QuestingRamCurrentContext;
 import twilightforest.init.TFSounds;
-import twilightforest.loot.TFLootTables;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class QuestRam extends Animal implements EnforcedHomePoint {
 
@@ -64,13 +63,30 @@ public class QuestRam extends Animal implements EnforcedHomePoint {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.38F));
 		this.goalSelector.addGoal(2, new QuestRamEatWoolGoal(this));
-		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0F, Ingredient.of(ItemTags.WOOL), false));
+		// 1.20.1's TemptGoal only takes an Ingredient, so wrap the quest check (4.8 passes this::isItemTempting)
+		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0F, new Ingredient(Stream.empty()) {
+			@Override
+			public boolean test(@Nullable ItemStack stack) {
+				return stack != null && QuestRam.this.isItemTempting(stack);
+			}
+		}, false));
 		this.addRestrictionGoals(this, this.goalSelector);
 		this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0F));
 		this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 	}
 
-
+	/**
+	 * Is this one of the quest items (data pack driven, wool by default) for a colour the ram still needs?
+	 */
+	public boolean isItemTempting(ItemStack stack) {
+		for (var questEntry : QuestingRamCurrentContext.getContext(this.level()).questItems().entrySet()) {
+			if (questEntry.getValue().test(stack)) {
+				DyeColor color = questEntry.getKey();
+				return color != null && !this.isColorPresent(color);
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean isFood(ItemStack stack) {
@@ -120,7 +136,7 @@ public class QuestRam extends Animal implements EnforcedHomePoint {
 	private void rewardQuest() {
 		// todo flesh the context out more
 		LootParams ctx = new LootParams.Builder((ServerLevel) this.level()).withParameter(LootContextParams.THIS_ENTITY, this).create(LootContextParamSets.PIGLIN_BARTER);
-		ObjectArrayList<ItemStack> rewards = this.level().getServer().getLootData().getLootTable(TFLootTables.QUESTING_RAM_REWARDS).getRandomItems(ctx);
+		ObjectArrayList<ItemStack> rewards = this.level().getServer().getLootData().getLootTable(QuestingRamCurrentContext.getServerContext().lootTable()).getRandomItems(ctx);
 		rewards.forEach(stack -> this.spawnAtLocation(stack, 1.0F));
 
 		for (ServerPlayer player : this.level().getEntitiesOfClass(ServerPlayer.class, getBoundingBox().inflate(16.0D, 16.0D, 16.0D))) {
@@ -132,7 +148,8 @@ public class QuestRam extends Animal implements EnforcedHomePoint {
 	public InteractionResult interactAt(Player player, Vec3 vec, InteractionHand hand) {
 		ItemStack currentItem = player.getItemInHand(hand);
 
-		if (this.tryAccept(currentItem)) {
+		// 4.8 07865933b: only the server accepts quest items, the client just forwards the interaction
+		if (!this.level().isClientSide() && this.tryAccept(currentItem)) {
 			if (!player.getAbilities().instabuild) {
 				currentItem.shrink(1);
 			}
@@ -143,30 +160,25 @@ public class QuestRam extends Animal implements EnforcedHomePoint {
 		}
 	}
 
-	public boolean tryAccept(ItemStack stack) {
-		if (stack.is(ItemTags.WOOL)) {
-			DyeColor color = this.guessColor(stack);
-			if (color != null && !this.isColorPresent(color)) {
-				this.setColorPresent(color);
-				this.animateAddColor(color, 50);
-				this.playAmbientSound();
-				return true;
-			}
-		}
-		return false;
+	@Override
+	public AABB getBoundingBoxForCulling() {
+		// the model is far longer than the hitbox
+		return super.getBoundingBoxForCulling().inflate(3.0D);
 	}
 
-	@Nullable
-	public DyeColor guessColor(ItemStack stack) {
-		if (stack.is(ItemTags.WOOL) && stack.getItem() instanceof BlockItem blockItem) {
-			MapColor color = blockItem.getBlock().defaultMapColor();
-			for (DyeColor dye : DyeColor.values()) {
-				if (color == dye.getMapColor()) {
-					return dye;
+	public boolean tryAccept(ItemStack stack) {
+		for (var questEntry : QuestingRamCurrentContext.getContext(this.level()).questItems().entrySet()) {
+			if (questEntry.getValue().test(stack)) {
+				DyeColor color = questEntry.getKey();
+				if (color != null && !this.isColorPresent(color)) {
+					this.setColorPresent(color);
+					this.animateAddColor(color, 50);
+					this.playAmbientSound();
+					return true;
 				}
 			}
 		}
-		return null;
+		return false;
 	}
 
 	@Override

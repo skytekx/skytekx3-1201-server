@@ -8,9 +8,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import twilightforest.TwilightForestMod;
+import twilightforest.entity.passive.quest.ram.QuestingRamContext;
+import twilightforest.entity.passive.quest.ram.QuestingRamCurrentContext;
 import twilightforest.util.ColorUtil;
 
 import java.util.Map;
@@ -35,27 +36,28 @@ public class QuestRamWoolElement implements IElement {
 
     @Override
     public void render(GuiGraphics graphics, int x, int y) {
+        // 4.8 b06ef824a: scale through the GUI pose stack instead of permanently shifting the model view stack
         PoseStack stack = graphics.pose();
         stack.pushPose();
         RenderSystem.enableDepthTest();
-        PoseStack modelStack = RenderSystem.getModelViewStack();
-        modelStack.translate(3, 10, 0);
-        modelStack.scale(0.6f, 0.6f, 0.6f);
+        stack.translate(3.0F, 10, 0);
+        stack.scale(0.6f, 0.6f, 0.6f);
 
-        RenderSystem.applyModelViewMatrix();
+        // show what the (data pack driven) quest still asks for
+        QuestingRamContext quest = QuestingRamCurrentContext.getClientContext();
         int getRenderedWools = 0;
-        int colum = 0;
+        int column = 0;
         int row = 0;
         for (Map.Entry<DyeColor, Block> entry : ColorUtil.WOOL_TO_DYE_IN_RAM_ORDER.entrySet()) {
-            if (!isColorPresent(entry.getKey())) {
+            if (!this.isColorPresent(entry.getKey())) {
                 if (getRenderedWools % 8 == 0) {
                     row++;
-                    colum = 0;
+                    column = 0;
                 } else {
-                    colum++;
+                    column++;
                 }
 
-                graphics.renderItem(new ItemStack(entry.getValue()), x + (colum * 15), y + (row * 15));
+                graphics.renderItem(quest.getDisplayStack(entry.getKey(), entry.getValue()), x + (column * 16), y + (row * 18));
 
                 getRenderedWools++;
             }
@@ -74,7 +76,7 @@ public class QuestRamWoolElement implements IElement {
         int getRenderedWools = 0;
         int row = 0;
         for (Map.Entry<DyeColor, Block> entry : ColorUtil.WOOL_TO_DYE_IN_RAM_ORDER.entrySet()) {
-            if (!isColorPresent(entry.getKey())) {
+            if (!this.isColorPresent(entry.getKey())) {
                 if (getRenderedWools % 8 == 0) {
                     row++;
                 }
@@ -83,7 +85,7 @@ public class QuestRamWoolElement implements IElement {
             }
         }
 
-        return row * 10;
+        return row * 11;
     }
 
     @Override

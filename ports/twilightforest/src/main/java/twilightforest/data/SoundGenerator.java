@@ -309,7 +309,7 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.PICKED_TORCHBERRIES, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES);
 		this.generateExistingSoundWithSubtitle(TFSounds.PORTAL_WHOOSH, SoundEvents.PORTAL_AMBIENT);
 		this.generateExistingSoundWithSubtitle(TFSounds.REACTOR_AMBIENT, SoundEvents.PORTAL_AMBIENT);
-		this.generateExistingSoundWithSubtitle(TFSounds.REAPPEAR_BLOCK, SoundEvents.ITEM_PICKUP);
+		this.generateExistingSoundWithSubtitle(TFSounds.REAPPEAR_BLOCK, SoundEvents.DISPENSER_DISPENSE);
 		this.generateExistingSoundWithSubtitle(TFSounds.REAPPEAR_POOF, SoundEvents.ITEM_PICKUP);
 		this.generateNewSoundWithSubtitle(TFSounds.SLIDER, "random/creakgo2", 1);
 		this.generateExistingSoundWithSubtitle(TFSounds.SMOKER_START, SoundEvents.COMPARATOR_CLICK);

@@ -198,7 +198,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.CANDELABRA, "Candelabra");
 		this.addBlock(TFBlocks.WROUGHT_IRON_FENCE, "Wrought Iron Fence");
 		this.addBlock(TFBlocks.CORONATION_CARPET, "Coronation Carpet");
-		this.add("block.twilightforest.wrought_iron_fence.cap", "Right-click with an Iron Ingot or Nugget to add a finial");
+		this.add("block.twilightforest.wrought_iron_fence.cap", "Shift + right-click the same block to place finial");
 
 		this.addBlock(TFBlocks.KEEPSAKE_CASKET, "Keepsake Casket");
 		this.add("block.twilightforest.casket.broken", "Your Keepsake Casket was too damaged to hold any more items. All items that would be stored in your casket were dropped on the ground.");
@@ -491,6 +491,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.TWILIGHT_SCEPTER, "Scepter of Twilight");
 		this.addItem(TFItems.ZOMBIE_SCEPTER, "Zombie Scepter");
 		this.add("item.twilightforest.scepter.desc", "%s charges left");
+		this.addItem(TFItems.WROUGHT_IRON_BAR, "Wrought Iron Bar");
 		this.addItem(TFItems.BRITTLE_FLASK, "Brittle Potion Flask");
 		this.addItem(TFItems.GREATER_FLASK, "Greater Potion Flask");
 		this.add("item.twilightforest.flask.empty", "Empty");

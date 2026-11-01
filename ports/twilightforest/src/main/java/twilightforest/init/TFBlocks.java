@@ -23,6 +23,7 @@ import twilightforest.enums.BossVariant;
 import twilightforest.enums.FireJetVariant;
 import twilightforest.enums.TowerDeviceVariant;
 import twilightforest.item.FurnaceFuelItem;
+import twilightforest.item.WroughtIronFenceItem;
 import twilightforest.util.TFWoodTypes;
 import twilightforest.world.components.feature.trees.growers.*;
 
@@ -102,7 +103,7 @@ public class TFBlocks {
 	public static final RegistryObject<AbstractSkullCandleBlock> PLAYER_WALL_SKULL_CANDLE = BLOCKS.register("player_wall_skull_candle", () -> new WallSkullCandleBlock(SkullBlock.Types.PLAYER, BlockBehaviour.Properties.copy(Blocks.PLAYER_WALL_HEAD)));
 	public static final RegistryObject<AbstractSkullCandleBlock> PIGLIN_SKULL_CANDLE = BLOCKS.register("piglin_skull_candle", () -> new SkullCandleBlock(SkullBlock.Types.PIGLIN, BlockBehaviour.Properties.copy(Blocks.PIGLIN_HEAD)));
 	public static final RegistryObject<AbstractSkullCandleBlock> PIGLIN_WALL_SKULL_CANDLE = BLOCKS.register("piglin_wall_skull_candle", () -> new WallSkullCandleBlock(SkullBlock.Types.PIGLIN, BlockBehaviour.Properties.copy(Blocks.PIGLIN_WALL_HEAD)));
-	public static final RegistryObject<WroughtIronFenceBlock> WROUGHT_IRON_FENCE = register("wrought_iron_fence", () -> new WroughtIronFenceBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
+	public static final RegistryObject<WroughtIronFenceBlock> WROUGHT_IRON_FENCE = registerWroughtFence("wrought_iron_fence", () -> new WroughtIronFenceBlock(BlockBehaviour.Properties.of().strength(8.0F, 20.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
 	public static final RegistryObject<CarpetBlock> CORONATION_CARPET = register("coronation_carpet", () -> new WoolCarpetBlock(DyeColor.RED, BlockBehaviour.Properties.copy(Blocks.RED_CARPET).isValidSpawn((state, getter, pos, type) -> true)));
 
 	//labyrinth
@@ -619,6 +620,12 @@ public class TFBlocks {
 	public static <T extends Block> RegistryObject<T> registerDoubleBlockItem(String name, Supplier<Block> block) {
 		RegistryObject<? extends Block> ret = BLOCKS.register(name, block);
 		TFItems.ITEMS.register(name, () -> new DoubleHighBlockItem(ret.get(), new Item.Properties()));
+		return (RegistryObject<T>) ret;
+	}
+
+	public static <T extends Block> RegistryObject<T> registerWroughtFence(String name, Supplier<Block> block) {
+		RegistryObject<? extends Block> ret = BLOCKS.register(name, block);
+		TFItems.ITEMS.register(name, () -> new WroughtIronFenceItem(ret.get(), new Item.Properties()));
 		return (RegistryObject<T>) ret;
 	}
 

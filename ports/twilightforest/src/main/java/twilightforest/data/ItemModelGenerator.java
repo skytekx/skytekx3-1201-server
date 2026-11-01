@@ -456,6 +456,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 		hollowLog(TFItems.HOLLOW_SORTING_LOG);
 
 		singleTex(TFItems.NAGA_SCALE);
+		singleTex(TFItems.WROUGHT_IRON_BAR);
 		singleTex(TFItems.NAGA_CHESTPLATE);
 		singleTex(TFItems.NAGA_LEGGINGS);
 		singleTexTool(TFItems.TWILIGHT_SCEPTER);

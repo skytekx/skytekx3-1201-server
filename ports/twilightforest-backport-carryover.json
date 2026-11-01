@@ -1,0 +1,187 @@
+{
+ "_about": "Items deferred while porting earlier waves. Later porters: grep this file for your feature id (and related class names) and pick up what was handed to you.",
+ "waves": {
+  "1-2": [
+   {
+    "bundle": "worldgen-crash-fixes+worldgen-perf-fixes",
+    "ids": [
+     "worldgen-crash-fixes",
+     "worldgen-perf-fixes"
+    ],
+    "deferred": [
+     "worldgen-crash-fixes item 7 (PinchBeetle crash, upstream 4db9ecb2e): not applicable to 4.3. It fixes a recursion that the 1.20.5 port introduced (66c9a40f1); 4.3's getDimensions override is correct.",
+     "worldgen-perf-fixes, a2b9fa06b full reorganisation: moving every option into twilightforest.config.{TFConfig,TFCommonConfig,TFClientConfig,ConfigSetup} and baking all options (uncrafting, portal and client UI flags) is not ported. It is a 48-file refactor that overlaps config-option-additions (which renames and adds portal/core options) and would need SyncUncraftingTableConfigPacket rewiring. Forge 47's ConfigValue.get() already caches, so only the hot paths were baked, under 4.8's flat field names."
+    ]
+   },
+   {
+    "bundle": "worldgen-thread-safety",
+    "ids": [
+     "worldgen-thread-safety"
+    ],
+    "deferred": [
+     "daa18f41a (TFMaze.resetCells via Arrays.fill + per-retry rcoords reset in HedgeMazeComponent): not applicable here, it patches the #2035 hedge-maze retry loop (542b39b36) that 4.3 lacks; apply it together with structure-bugfixes-misc",
+     "Final Castle mural eager generation in the piece constructor via WorldUtil.getOverworldSeed(): needs remove-seed-coremod; implemented as lazy one-time generation on the first postProcess plus serialization instead",
+     "TFMaze.wallBlocks (MazestoneProcessor BlockSelector) still holds a shared mutable 'next' field across Labyrinth postProcess threads. Upstream 4.8 leaves it too; the race only affects which mazestone variant is placed and cannot crash"
+    ]
+   },
+   {
+    "bundle": "charm-system-rework",
+    "ids": [
+     "charm-system-rework"
+    ],
+    "deferred": [
+     "Skull Chest fallback for a fully damaged casket (4.8 3a80ee2f4/40677a5ec/1066cc426) and 4.8's ResolvableProfile/SkullChestBlockEntity casket owner: belongs to the keepsake-casket-skull-chest feature, as the spec says. 4.3's break-and-drop behaviour is kept until then.",
+     "Config translation lang keys (config.twilightforest.totem_charm_animation): 4.3 has no config.* translations at all, so none were added and no datagen was touched."
+    ]
+   },
+   {
+    "bundle": "boss-bugfixes+flask-tracking-per-player",
+    "ids": [
+     "boss-bugfixes",
+     "flask-tracking-per-player"
+    ],
+    "deferred": [
+     "boss-bugfixes: the d638f1787 NeoForge singleplayer in-memory packet path is not needed. Forge 47 SimpleChannel always encodes and decodes, so 4.3's FriendlyByteBuf path covers singleplayer.",
+     "boss-bugfixes: 5c8751651 (Naga crash in defineSynchedData) is a 1.20.5+ SynchedEntityData.Builder issue that does not affect 1.20.1, so it is skipped.",
+     "boss-bugfixes: 7fb35728d's `!getItemStacks().isEmpty()` guard is left out because a fixed-size NonNullList is never empty, so the check does nothing. 4.8 also skips marking the structure conquered when doMobLoot is off; only the loot gating is ported, so progression is unaffected.",
+     "flask-tracking-per-player: the 3-dose / 6-second rebalance, the FAILED_CHALLENGE damage type and overrideStackedOnOther (c3768657c, 08fe2f635, a8704024c) are left to the potion-flask-rework feature, which depends on this one."
+    ]
+   },
+   {
+    "bundle": "client-render-fixes",
+    "ids": [
+     "client-render-fixes"
+    ],
+    "deferred": []
+   },
+   {
+    "bundle": "tf-teleporter-safety",
+    "ids": [
+     "tf-teleporter-safety"
+    ],
+    "deferred": [
+     "TeleporterCache SavedData (twilightforest_teleporter_cache): left out on purpose. The spec marks it optional and says to keep 4.3's link cache, which already persists through the teleporter_cache capability.",
+     "DiagonalSpiralIteratorTests / XZQuadrantIteratorTests JUnit tests: 4.3 has no src/test source set. I checked the iterator separately with a simulation: it covers each square box exactly once."
+    ]
+   },
+   {
+    "bundle": "structure-bugfixes-misc",
+    "ids": [
+     "structure-bugfixes-misc"
+    ],
+    "deferred": [
+     "Hydra Lair floor (26c244635): the replaceBlocksDome radii and heights are tuned to 4.8's density-function lair (eaedcd678). 4.3 still builds the lair with ChunkGeneratorTwilight.raiseHills, where the domes would bury grass blocks under a stone floor. It belongs with landmark-density-terrain.",
+     "Yeti Cave drain and lattice height (13712dc34, 37f62ed62): this patches drainWater, speleothemConfig.latticeIterator and the YetiCaveStructure density terraformer. None of these exist in 4.3, which still uses deformTerrainForYetiLair. It belongs with landmark-density-terrain and speleothem-config-datadriven.",
+     "Quest Grove dropper/ram (dd7256de6): not applicable. This was a 4.8-only regression caused by its VANILLACOPY postProcess override; 4.3 already places both.",
+     "TFMaze #2335 null-state defaults (829b19ed1 + 6fe87ebf6): left out on purpose because worldgen-crash-fixes commit c7b45c8 already ports them with identical code.",
+     "Druid hut template NBT changes in 33541897c: these only rename LootTable ids from chests/* to 4.8's root ids (see the critic note on loot-table-fixes). 4.3 places basement chests from data markers and keeps chests/*."
+    ]
+   },
+   {
+    "bundle": "knight-stronghold-fixes+tree-feature-bugfixes",
+    "ids": [
+     "knight-stronghold-fixes",
+     "tree-feature-bugfixes"
+    ],
+    "deferred": [
+     "knight-stronghold-fixes: removing the ProgressionEvents knight-stronghold block-break workaround is deferred to progression-protection-overhaul (wave 5, e9116aa11), per critic ordering note; it is only changed to SEALEVEL - 2 here.",
+     "knight-stronghold-fixes: 64b89ff38 / 32a6db24c / e7ab1ae68 (per-piece PieceBeardifierModifier / access chamber BEARD_BOX) not applicable - 4.3 has no per-piece beardifier; belongs with custom-density-terraforming.",
+     "knight-stronghold-fixes: foundry deepslate-variant removal (262a938ab) is outside the spec and not ported.",
+     "tree-feature-bugfixes: 4.8's two-block-thick hollow/time tree roots (pen-2 RootPlacer in makeRoot) and the hollow-giant structure rewrite are content changes outside the spec; makeRoot stays 1-thick (penetrability 1).",
+     "tree-feature-bugfixes: deec8995b (canopy mushroom concurrency / WeightedListFeature) not ported; only the 46a06ef13 block-replacement fix was in scope.",
+     "Both: not boot-tested and no in-world worldgen check; needs a dedicated-server boot plus fresh-chunk inspection of a Knight Stronghold, canopy/mangrove roots, time/mining trees and large winter trees."
+    ]
+   },
+   {
+    "bundle": "block-spike-fixes+entity-gameplay-bugfixes",
+    "ids": [
+     "block-spike-fixes",
+     "entity-gameplay-bugfixes"
+    ],
+    "deferred": [
+     "block-spike-fixes: the Yeti Cave stalagmite elevation fix (cfadbd358) is not applicable yet. It fixes floor stalagmites that only the 4.8 speleothem-config Yeti Cave places; the 4.3 YetiCaveComponent places hanging spikes only. Revisit with speleothem-config-datadriven.",
+     "block-spike-fixes: the HollowHillStructure mound offset (+8 to +10) in 38e3b8504 belongs to the 4.8 density-function hollow hill, which 4.3 does not have (chunkgen overhaul is excluded).",
+     "block-spike-fixes: 4.3's StalactiteReloadListener still ignores the per-stalactite 'weight' when choosing a stalactite. 4.8 fixed this with StructureSpeleothemConfig weighted lists, which belongs to speleothem-config-datadriven.",
+     "entity-gameplay-bugfixes: the LichMinion Hard-only buff gate from 29a82d83b is not ported. 4.8 HEAD reverted it in the lich rework (Speed III, no gate), so it belongs to lich-boss-rework.",
+     "entity-gameplay-bugfixes: the LichBomb flame particle direction change in 65e29df27 is a client visual, left to client-visual-fixes.",
+     "entity-gameplay-bugfixes: the moonworm queen crash fix 4fa55a769 (stop setting WATERLOGGED) is not applicable. The 4.3 CritterBlock still has the WATERLOGGED property, so setting it from the fluid state is correct here."
+    ]
+   },
+   {
+    "bundle": "item-block-bugfixes+small-block-property-fixes",
+    "ids": [
+     "item-block-bugfixes",
+     "small-block-property-fixes"
+    ],
+    "deferred": [
+     "item-block-bugfixes: the optional 4.8 change that makes carminite_block no longer slime-like (instabreak, SLIME_BLOCK sound) was skipped on purpose; the spec calls it opinionated and optional.",
+     "item-block-bugfixes: 04d3d4a15 (#2073, ore magnet switched from forge: to c: tag namespace) does not apply to 1.20.1, so 4.3 keeps the forge: tags. The TagsUpdatedEvent cache refactor (60f02cca1/9cbd772c7) also stays out; it belongs to tree-core-particles."
+    ]
+   },
+   {
+    "bundle": "client-visual-fixes+asset-model-texture-fixes+biome-visuals",
+    "ids": [
+     "client-visual-fixes",
+     "asset-model-texture-fixes",
+     "biome-visuals-and-dimension-type"
+    ],
+    "deferred": [
+     "client-visual-fixes: Block and Chain link spacing (39388596c) needs the Chain part entity removal (232977188). Leave it to block-and-chain-fixes.",
+     "client-visual-fixes: fire jet and smoker textures are in the asset-model-texture-fixes commit, not this one.",
+     "asset-model-texture-fixes: upstream's rename of all generated door models and the render_type additions on other doors and trapdoors in 34d409b2d were left out. They only rename model files and would churn generated assets; only the sorting door used the corrected models upstream.",
+     "all three: the datagen .cache hash files under src/generated/resources/.cache were not updated. They do not affect the jar; the next runData regenerates them."
+    ]
+   },
+   {
+    "bundle": "loot+advancement+compat-tags+data-tweaks",
+    "ids": [
+     "loot-table-fixes",
+     "advancement-fixes",
+     "compat-tags",
+     "hollow-hill-stalactite-rebalance",
+     "spawn-cost-tuning",
+     "surface-rule-fixes"
+    ],
+    "deferred": [
+     "advancement-fixes: arborist update (#1951, b78462d5e + later): it only adds criteria for blocks 4.3 lacks (8 TF trapped chests -> tf-wood-trapped-chests; drying racks; chiseled canopy bookshelf). Those features should extend DENDROLOGIST_BLOCKS in TFAdvancementGenerator and arborist.json.",
+     "compat-tags: the 8 TF trapped chests in create:chest_mounted_storage; they wait for tf-wood-trapped-chests (a TODO is left in ModdedBlockTagGenerator).",
+     "loot-table-fixes: removing music_disc_superstitious from tree_cache (4a1f0a597) belongs with fallen-trunk-structure, because 4.8 moved the disc into fallen_trunk_loot. hill_1 ore_meter and hill_2 pocket_watch entries belong to ore-meter and pocket-watch.",
+     "surface-rule-fixes: the non-surface parts of 17885617b (Highlands birch trees, dark mushglooms, Bighorn getWalkTargetValue) are outside this feature's spec and were not ported."
+    ]
+   },
+   {
+    "bundle": "config+tf-tp+seed-coremod+crumble+tag-hooks",
+    "ids": [
+     "config-option-additions",
+     "tf-tp-command",
+     "remove-seed-coremod",
+     "crumble-horn-recipe-additions",
+     "tag-driven-hooks"
+    ],
+    "deferred": [
+     "config-option-additions: prettifyOreMeterGui is only read by the 4.8 Ore Meter HUD (OverlayHandler), so it belongs to the ore-meter feature.",
+     "tag-driven-hooks: block tag twilightforest:ore_meter_targetable is only read by the 4.8 Ore Meter's right-click filter (and needs ROOT_ORES and the sand/gravel tags translated), so it belongs to the ore-meter feature.",
+     "tag-driven-hooks: sinister_spawner in minecraft:features_cannot_replace (from ee15cfe92). The block does not exist in 4.3, so it belongs to the sinister-spawner feature.",
+     "tag-driven-hooks: coronation_carpet in minecraft:wool_carpets (also in ee15cfe92). The block does not exist in 4.3, so it belongs to whichever feature adds the coronation carpet.",
+     "crumble-horn-recipe-additions: the #2237 entries for chiseled copper, copper bulb, grate, door and trapdoor are dropped because those blocks were added after 1.20.1. This is a permanent drop, not a deferral."
+    ]
+   },
+   {
+    "bundle": "misc-data+curios+translation-refresh",
+    "ids": [
+     "misc-data-tweaks",
+     "curios-compat-fixes",
+     "translation-refresh"
+    ],
+    "deferred": [
+     "misc-data-tweaks #2077 (liveroot/root ores as ore meter targets, 9f300693b): 4.3 has no twilightforest:ore_meter_targetable tag (its NYI ore meter already counts roots and liveroot), so the ore-meter port should add #forge:ores_in_ground/root to that tag when it creates it",
+     "misc-data-tweaks #2159 (fallen leaves compostable): already in 4.3 (ComposterBlock.add(0.1F, FALLEN_LEAVES) in TwilightForestMod), no change needed",
+     "misc-data-tweaks: 4.8's switch of the TF chest recipe ingredient from the wooden-chest tag to minecraft:chest (part of 13f789b57) is deliberately not ported. 4.3 keeps forge:chests/wooden so other mods' wooden chests still work, and 4.3 has no trapped TF chests",
+     "curios-compat-fixes #1949 classloading (a312e2f9f) and the Charm of Keeping curio keep-condition: 4.3 is not affected (no Curios types in CharmEvents method signatures), and charm-system-rework (a5841f7) already moves the lookup into CuriosCompat.findAndConsumeCurio and switches keepCurios to CONSUMED_CHARM_TAG. Not duplicated here, to avoid conflicts",
+     "curios-compat-fixes: 4.8's generic CuriosCompat.isCurioEquipped/isCurioEquippedAndVisible(Predicate) refactor is not ported; it is API-only and would conflict with charm-system-rework's edits at the end of CuriosCompat",
+     "translation-refresh: translations for keys that later backported features add are not merged yet. Re-run ports/twilightforest/tools/merge_upstream_lang.py <upstream clone> after those features add their en_us keys"
+    ]
+   }
+  ]
+ }
+}

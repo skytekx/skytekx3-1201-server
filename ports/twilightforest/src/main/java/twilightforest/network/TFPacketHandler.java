@@ -1,16 +1,21 @@
 package twilightforest.network;
 
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import twilightforest.TwilightForestMod;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class TFPacketHandler {
 	// Bump this number every time theres a breaking change, to ensure people dont mess things up when joining on the wrong version
-	private static final String PROTOCOL_VERSION = "2";
+	// SkyTekx backport: the "-skytekx.N" suffix keeps stock TF 4.3 clients (protocol "2") out at the handshake instead of letting
+	// them fail to decode the changed packets later. Bump N (2-skytekx.2, ...) whenever a backported packet changes its wire format.
+	// .1: UpdateTFMultipartPacket is keyed by part entity id and always carries the part's synched data.
+	private static final String PROTOCOL_VERSION = "2-skytekx.1";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -27,7 +32,7 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, MagicMapPacket.class, MagicMapPacket::encode, MagicMapPacket::new, MagicMapPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, MazeMapPacket.class, MazeMapPacket::encode, MazeMapPacket::new, MazeMapPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, MissingAdvancementToastPacket.class, MissingAdvancementToastPacket::encode, MissingAdvancementToastPacket::new, MissingAdvancementToastPacket.Handler::onMessage);
-		CHANNEL.registerMessage(id++, ParticlePacket.class, ParticlePacket::encode, ParticlePacket::new, ParticlePacket.Handler::onMessage);
+		CHANNEL.registerMessage(id++, ParticlePacket.class, ParticlePacket::encode, ParticlePacket::new, ParticlePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, SpawnFallenLeafFromPacket.class, SpawnFallenLeafFromPacket::encode, SpawnFallenLeafFromPacket::new, SpawnFallenLeafFromPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, StructureProtectionClearPacket.class, StructureProtectionClearPacket::encode, StructureProtectionClearPacket::new, StructureProtectionClearPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, StructureProtectionPacket.class, StructureProtectionPacket::encode, StructureProtectionPacket::new, StructureProtectionPacket.Handler::onMessage);
@@ -37,7 +42,7 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, UpdateFeatherFanFallPacket.class, UpdateFeatherFanFallPacket::encode, UpdateFeatherFanFallPacket::new, UpdateFeatherFanFallPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, UpdateGamerulePacket.class, UpdateGamerulePacket::encode, UpdateGamerulePacket::new, UpdateGamerulePacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, UpdateShieldPacket.class, UpdateShieldPacket::encode, UpdateShieldPacket::new, UpdateShieldPacket.Handler::onMessage);
-		CHANNEL.registerMessage(id++, UpdateTFMultipartPacket.class, UpdateTFMultipartPacket::encode, UpdateTFMultipartPacket::new, UpdateTFMultipartPacket.Handler::onMessage);
+		CHANNEL.registerMessage(id++, UpdateTFMultipartPacket.class, UpdateTFMultipartPacket::encode, UpdateTFMultipartPacket::new, UpdateTFMultipartPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, UpdateThrownPacket.class, UpdateThrownPacket::encode, UpdateThrownPacket::new, UpdateThrownPacket.Handler::onMessage);
 	}
 }

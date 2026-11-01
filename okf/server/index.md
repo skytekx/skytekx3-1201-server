@@ -39,7 +39,7 @@ The host setup from scratch (packages, user, mcrcon, clone) is in the README sec
 | Server jar | The symlink `arclight.jar`, which points at the hardened `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar` |
 | Java | Java 17 only. Every boot that reached `Done` ran Temurin 17.0.19 on the build machine or 17.0.21 on the Mac mini |
 | Heap | An 11G heap in `ServerLinux.sh` and the systemd unit. The Mac mini launcher `ServerMac.sh` sets 9G, since macOS needs about 3 GB of the 16 GB |
-| Mods | 235 jars in `mods/`, which git does not hold, since Falling Meteors came in and Get It Together Drops left on 2026-11-01 at 06:10. Copy the folder as it is |
+| Mods | 234 jars in `mods/`, which git does not hold, since the Backpack port replaced Sophisticated Backpacks and Sophisticated Core on 2026-11-01 at 08:09. Copy the folder as it is |
 | Plugins | EssentialsX 2.22.0 and nothing else |
 | Players | Up to 39 (`max-players=39`), online mode on, whitelist off. The owner kept the whitelist off for the public address on 2026-10-31 at 21:48 |
 | Ports | Game on 25565/tcp, Simple Voice Chat on 24454/udp, RCON on 65535/tcp, which must never be exposed |

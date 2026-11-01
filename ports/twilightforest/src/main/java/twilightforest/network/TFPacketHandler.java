@@ -41,7 +41,7 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, SpawnCharmPacket.class, SpawnCharmPacket::encode, SpawnCharmPacket::new, SpawnCharmPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, SpawnFallenLeafFromPacket.class, SpawnFallenLeafFromPacket::encode, SpawnFallenLeafFromPacket::new, SpawnFallenLeafFromPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, StructureProtectionClearPacket.class, StructureProtectionClearPacket::encode, StructureProtectionClearPacket::new, StructureProtectionClearPacket.Handler::onMessage);
-		CHANNEL.registerMessage(id++, StructureProtectionPacket.class, StructureProtectionPacket::encode, StructureProtectionPacket::new, StructureProtectionPacket.Handler::onMessage);
+		CHANNEL.registerMessage(id++, StructureProtectionPacket.class, StructureProtectionPacket::encode, StructureProtectionPacket::new, StructureProtectionPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, SyncUncraftingTableConfigPacket.class, SyncUncraftingTableConfigPacket::encode, SyncUncraftingTableConfigPacket::new, SyncUncraftingTableConfigPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, ThrowPlayerPacket.class, ThrowPlayerPacket::encode, ThrowPlayerPacket::new, ThrowPlayerPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, UncraftingGuiPacket.class, UncraftingGuiPacket::encode, UncraftingGuiPacket::new, UncraftingGuiPacket.Handler::onMessage);

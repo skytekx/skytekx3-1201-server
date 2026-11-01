@@ -214,7 +214,7 @@ public class BlockstateGenerator extends BlockModelBuilders {
 				.texture("particle", blockTexture(Blocks.OBSIDIAN))
 				.texture("all", blockTexture(Blocks.OBSIDIAN))
 				.customLoader(GiantBlockBuilder::begin).parentBlock(Blocks.OBSIDIAN).end());
-		simpleBlock(TFBlocks.UBEROUS_SOIL.get(), models().withExistingParent(TFBlocks.UBEROUS_SOIL.getId().getPath(), "block/template_farmland").renderType(TRANSLUCENT)
+		simpleBlock(TFBlocks.UBEROUS_SOIL.get(), models().withExistingParent(TFBlocks.UBEROUS_SOIL.getId().getPath(), "block/template_farmland")
 				.texture("top", blockTexture(TFBlocks.UBEROUS_SOIL.get()))
 				.texture("dirt", blockTexture(TFBlocks.UBEROUS_SOIL.get())));
 		axisBlock(TFBlocks.HUGE_STALK.get(), prefix("block/huge_stalk"), prefix("block/huge_stalk_top"));

@@ -351,7 +351,7 @@ public class TFClientEvents {
 	@SubscribeEvent
 	public static void unrenderHeadWithTrophies(RenderLivingEvent.Pre<?, ?> event) {
 		ItemStack stack = event.getEntity().getItemBySlot(EquipmentSlot.HEAD);
-		boolean visible = !(stack.getItem() instanceof TrophyItem) && !(stack.getItem() instanceof SkullCandleItem) && !areCuriosEquipped(event.getEntity());
+		boolean visible = !(stack.getItem() instanceof TrophyItem) && !areCuriosEquipped(event.getEntity());
 		boolean isPlayer = event.getEntity() instanceof Player;
 		// Renderer models are shared by every entity of a type, so the head has to be made visible again as well, or one trophy wearer leaves all of them headless (#2147).
 		// PlayerRenderer resets part visibility itself before this event, so keep whatever it (or mods like Better Combat, which hide the head in first person) decided (#2267).
@@ -365,7 +365,7 @@ public class TFClientEvents {
 
 	private static boolean areCuriosEquipped(LivingEntity entity) {
 		if (ModList.get().isLoaded("curios")) {
-			return CuriosCompat.isTrophyCurioEquipped(entity) || CuriosCompat.isSkullCurioEquipped(entity);
+			return CuriosCompat.isTrophyCurioEquipped(entity);
 		}
 		return false;
 	}

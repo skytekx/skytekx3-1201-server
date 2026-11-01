@@ -446,6 +446,21 @@ logs stay on the Mac and are not in the repo.
 - At 06:23 the build machine's `mods/` got the same swap, because `macos/sync-to-mac.sh` mirrors that
   folder with `--delete` and would otherwise have brought the old jars back. Its 235 jars match the Mac
   mini's by SHA-256. The two old jars sit in `~/skytekx3-backups/jars-orig/` on the build machine.
+- At 03:54 the owner asked for the simple backpack mod of SkyTekx2 instead of Sophisticated Backpacks.
+  No build or remake for 1.20.1 exists, so Eydamos Backpack 2.0.1 (Minecraft 1.7.10, LGPL-2.1) was
+  ported to Forge 1.20.1 in the local repo `skytekx-backpack`, with 20 GameTests and one review. On the
+  test server with the owner's client the normal, big, workbench and ender backpacks opened, items
+  stayed in a backpack after reopening it, the held backpack stayed locked in its slot, and the
+  workbench backpack crafted four planks from a log in its storage. At 08:08:58 a backup ran
+  (`world-2026-11-01-0808.tgz`, 708 MB). The server stopped at 08:09 with nobody online. Sophisticated
+  Backpacks 3.26.19.2239 and Sophisticated Core 1.5.21.2444 moved to `~/skytekx3-backups/jars-orig/`
+  together with a copy of `world/data/sophisticatedbackpacks.dat`, and `backpack-1.20.1-2.0.1.1.jar`
+  came in (234 jars). That file held four backpacks, all worn by mobs, with jukebox upgrades and music
+  discs, and no player had stored anything. The server was up at 08:09:40 at 20 TPS with the known
+  boot errors and the expected unidentified mappings of the two removed mods. A player's first join
+  logs the Sophisticated recipes it drops from the recipe book. The owner's client `SkyTekx3-test`
+  and the second MacBook got the same swap, and the build machine's `mods/` matches the Mac mini by
+  SHA-256. See [Mod set](modpack/mod-set.md#backpack).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -59,6 +59,7 @@ import twilightforest.client.model.block.forcefield.ForceFieldModelLoader;
 import twilightforest.client.model.block.giantblock.GiantBlockModelLoader;
 import twilightforest.client.model.block.leaves.BakedLeavesModel;
 import twilightforest.client.model.block.patch.PatchModelLoader;
+import twilightforest.client.model.item.TrollsteinnModel;
 import twilightforest.client.renderer.TFSkyRenderer;
 import twilightforest.client.renderer.TFWeatherRenderer;
 import twilightforest.client.renderer.entity.MagicPaintingRenderer;
@@ -102,6 +103,13 @@ public class TFClientEvents {
 					.filter(entry -> entry.getKey().getNamespace().equals(TwilightForestMod.ID) && entry.getKey().getPath().contains("leaves") && !entry.getKey().getPath().contains("dark")).toList();
 
 			models.forEach(entry -> event.getModels().put(entry.getKey(), new BakedLeavesModel(entry.getValue())));
+
+			// the Trollsteinn item shows its lit texture while in light
+			ModelResourceLocation trollsteinn = new ModelResourceLocation(TwilightForestMod.prefix("trollsteinn"), "inventory");
+			BakedModel trollsteinnModel = event.getModels().get(trollsteinn);
+			if (trollsteinnModel != null) {
+				event.getModels().put(trollsteinn, new TrollsteinnModel(trollsteinnModel));
+			}
 		}
 
 		@SubscribeEvent
@@ -110,6 +118,7 @@ public class TFClientEvents {
 			event.register(new ModelResourceLocation(TwilightForestMod.prefix("trophy"), "inventory"));
 			event.register(new ModelResourceLocation(TwilightForestMod.prefix("trophy_minor"), "inventory"));
 			event.register(new ModelResourceLocation(TwilightForestMod.prefix("trophy_quest"), "inventory"));
+			event.register(TrollsteinnModel.LIT_TROLLSTEINN);
 
 			event.register(TwilightForestMod.prefix("block/casket_obsidian"));
 			event.register(TwilightForestMod.prefix("block/casket_stone"));

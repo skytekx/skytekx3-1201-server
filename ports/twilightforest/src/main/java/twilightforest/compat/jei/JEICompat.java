@@ -13,6 +13,9 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.UncraftingScreen;
@@ -39,6 +42,12 @@ public class JEICompat implements IModPlugin {
 
 	public static final IIngredientType<EntityType> ENTITY_TYPE = () -> EntityType.class;
 	public static final IIngredientType<FakeItemEntity> FAKE_ITEM_ENTITY = () -> FakeItemEntity.class;
+
+	static {
+		// JEI only builds this plugin on the client. Drop the cached display entities whenever a screen closes,
+		// otherwise they keep the level they were created in alive after a dimension change or disconnect (#2488)
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ScreenEvent.Closing.class, event -> EntityRenderer.clearEntityCache());
+	}
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {

@@ -32,6 +32,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.client.model.TFModelLayers;
 import twilightforest.client.model.entity.*;
 import twilightforest.client.model.entity.newmodels.*;
+import twilightforest.client.renderer.armor.TFArmorRenderer;
 import twilightforest.client.renderer.entity.*;
 import twilightforest.client.renderer.entity.newmodels.*;
 import twilightforest.entity.TFPart;
@@ -113,6 +114,7 @@ public class TFClientSetup {
 		event.registerReloadListener(JappaPackReloadListener.INSTANCE);
 		MagicPaintingTextureManager.instance = new MagicPaintingTextureManager(Minecraft.getInstance().getTextureManager());
 		event.registerReloadListener(MagicPaintingTextureManager.instance);
+		event.registerReloadListener(new TFArmorRenderer.ResourceReloadListener());
 	}
 
 	@SubscribeEvent

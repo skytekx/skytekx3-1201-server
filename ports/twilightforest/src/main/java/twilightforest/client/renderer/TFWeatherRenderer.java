@@ -304,7 +304,6 @@ public class TFWeatherRenderer {
 							double zRange = (double) ((float) dz + 0.5F) - camera.z();
 							float distanceToPlayer = Mth.sqrt((float) (xRange * xRange + zRange * zRange)) / (float) range;
 							float alpha = ((1.0F - distanceToPlayer * distanceToPlayer) * 0.3F + 0.5F);
-							int worldBrightness = LevelRenderer.getLightColor(level, pos);
 							int fullbright = 15 << 20 | 15 << 4;
 
 							switch (currentType) {
@@ -340,6 +339,9 @@ public class TFWeatherRenderer {
 									float countFactor = ((float) (ticks + dx * dx * 3121 + dx * 45238971 + dz * dz * 418711 + dz * 13761 & 31) + partialTicks) / 32.0F * (3.0F + random.nextFloat());
 									float uFactor = random.nextFloat();
 									float vFactor = random.nextFloat();
+									// Sample the light where vanilla samples its rain light (above the surface, at least at camera height)
+									// instead of at the y0 biome lookup position, which is usually inside the terrain and reads as 0.
+									int worldBrightness = LevelRenderer.getLightColor(level, pos.set(dx, Math.max(py, level.getHeight(Heightmap.Types.MOTION_BLOCKING, dx, dz)), dz));
 									renderEffect(bufferBuilder, rainX, rainZ, minY, maxY, camera, dx, dz, countFactor, uFactor, vFactor, new float[]{1.0F, 1.0F, 1.0F, alpha}, worldBrightness);
 								}
 							}
@@ -492,8 +494,9 @@ public class TFWeatherRenderer {
 	}
 
 	private static void renderEffect(BufferBuilder bufferBuilder, double rainX, double rainZ, int minY, int maxY, Vec3 camera, int dx, int dz, float countFactor, float uFactor, float vFactor, float[] color, int light) {
-		int blockLight = light >> 16 & 65535;
-		int skyLight = light & 65535;
+		// Packed light is (sky << 16 | block); uv2(u, v) takes (block, sky) like vanilla's uv2(int)
+		int blockLight = light & 65535;
+		int skyLight = light >> 16 & 65535;
 		bufferBuilder
 			.vertex(dx - camera.x() - rainX + 0.5D, minY - camera.y(), dz - camera.z() - rainZ + 0.5D)
 			.uv(0.0F + uFactor, minY * 0.25F + countFactor + vFactor)

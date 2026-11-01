@@ -214,6 +214,18 @@
      "custom-density-terraforming: ChunkGeneratorTwilight.deformTerrainForFeature now takes a RandomState and getArenaGroundLevel/arenaGroundLevels were added next to doFill; expect a textual merge there."
     ]
    }
+  ],
+  "4": [
+   {
+    "bundle": "rising-zombie-overhaul+block-and-chain-fixes",
+    "ids": [
+     "rising-zombie-overhaul",
+     "block-and-chain-fixes"
+    ],
+    "deferred": [
+     "block-and-chain-fixes: b5953b081 block and chain model/texture rework (block_and_chain.png, SpikeBlockModel/ChainModel UVs 32x16, BlockChainGoblinModel, isAlive gate in BlockChainGoblinRenderer) not ported by block-and-chain-fixes. It is in neither the inventory nor the carryover list, and asset-model-texture-fixes and client-visual-fixes already shipped, so it needs a later client-visual follow-up. Until then the thrown block uses 4.3's blockgoblin.png and UVs, and the classic goblin renderer still draws chain links while the goblin is dying. Cosmetic only."
+    ]
+   }
   ]
  }
 }

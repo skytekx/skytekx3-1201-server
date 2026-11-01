@@ -364,6 +364,7 @@ public class ChestLootTables implements LootTableSubProvider {
 								.add(LootItem.lootTableItem(Items.EMERALD).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 6))).setWeight(25))
 								.add(LootItem.lootTableItem(TFItems.PEACOCK_FEATHER_FAN.get()).setWeight(25))
 								.add(LootItem.lootTableItem(TFItems.CHARM_OF_LIFE_1.get()).setWeight(25))
+								.add(LootItem.lootTableItem(TFItems.POCKET_WATCH.get()).setWeight(25))
 								.add(LootItem.lootTableItem(TFItems.MUSIC_DISC_WAYFARER.get()).setWeight(25))));
 
 		register.accept(TFLootTables.LARGE_HOLLOW_HILL.lootTable,

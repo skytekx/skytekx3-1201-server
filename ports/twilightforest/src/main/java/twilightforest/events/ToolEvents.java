@@ -4,6 +4,7 @@ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -18,8 +19,10 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import twilightforest.TwilightForestMod;
@@ -133,6 +136,14 @@ public class ToolEvents {
 			if (stack.isDamageableItem() && !(stack.getItem() instanceof MazebreakerPickItem)) {
 				stack.hurtAndBreak(16, event.getPlayer(), (user) -> user.broadcastBreakEvent(InteractionHand.MAIN_HAND));
 			}
+		}
+	}
+
+	// Holding the Rabbit's Pocket Watch makes the holder immune to Mining Fatigue (#2097)
+	@SubscribeEvent
+	public static void preventFatigueWithPocketWatch(MobEffectEvent.Applicable event) {
+		if (event.getResult() != Event.Result.DENY && event.getEffectInstance().getEffect() == MobEffects.DIG_SLOWDOWN && event.getEntity().isHolding(TFItems.POCKET_WATCH.get())) {
+			event.setResult(Event.Result.DENY);
 		}
 	}
 

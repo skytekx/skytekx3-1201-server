@@ -244,6 +244,12 @@ Cosmetic replacement of 4.3's working block deformers. Do it only if the Beardif
 |---|---|---|---|---|
 | `landmark-density-terrain` — Density-shaped terrain for Hollow Hills, Hydra Lair, Yeti Cave and Labyrinth (optional) | worldgen | hard | 20 | changes landmark terrain in new chunks; a TF dimension reset is recommended for  |
 
+## Local divergences from upstream (keep on re-sync)
+
+Deliberate behaviour that differs from TF 4.8. An upstream re-sync must not silently drop or re-add these.
+
+- `client-render-fixes` / `PatchModel.getQuads`: returns `List.of()` for every non-null side and the quads only for the null (unculled) side. 4.3 and 4.8 return the full list for all 7 sides. No patch quad has a cull face, so vanilla and Embeddium draw the null list anyway, and the per-side copies only made every moss/clover patch be baked and drawn 7 times. A mod that samples one face (e.g. Xaero's map colours via `getQuads(state, UP, rand)`) now gets an empty list and falls back to the null list or `getParticleIcon()`, which returns the same sprite. For strict 4.8 parity, delete the `if (side != null) return List.of();` guard.
+
 ## Critic corrections (applied during porting)
 
 - `twilight-jigsaw-framework`: Lower the effort by about 2h. The LiquidSettings.IGNORE_WATERLOGGING blocker does not need a waterlog-stripping processor. In 1.20.1 StructurePlaceSettings still has the boolean keepLiquids, with setKeepLiquids(boolean) and shouldKeepLiquids() (verified in the 1.20.1 client_mappings.txt), and 1.21's LiquidSettings enum replaced exactly that boolean. setLiquidSettings(IGNORE_WATERLOGGING) therefore becomes setKeepLiquids(false). The selection_priority and placement_priority blockers stay: 1.20.1 JigsawBlockEntity and SinglePoolElement have neither (verified), so read the raw jigsaw NBT from StructureBlockInfo.nbt.

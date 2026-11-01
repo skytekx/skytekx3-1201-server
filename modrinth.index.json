@@ -177,7 +177,7 @@
         "sha512": "fcd7da643e84d7779e32af6916c6f8e808559d4724d565cc6d23fc96527f3bf50ea0b686eca1916c5dfeac146d836cf593a85374b6f04b60215f748aa00e3824"
       },
       "env": {
-        "client": "optional",
+        "client": "required",
         "server": "required"
       },
       "downloads": [
@@ -237,8 +237,8 @@
         "sha512": "3176f928fb6c60d27f5edb610ca4ab0236175404eebf32797a1ec6cdd794bb294a260231579578536d03571377e43c6181adc75d8dd2c0733f17fce4f7e636b9"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/EsAfCjCV/versions/XdXDExVF/appleskin-forge-mc1.20.1-2.5.1.jar"
@@ -402,8 +402,8 @@
         "sha512": "bdabc656c7f60d6476a7d8c3d1f7a3d174854c9c4a466a9ff9b220737b717bc8069229471f7cf7eac574ba15e1263b76da8fef2ed1a5273d53e1c9cbf041ad9b"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/MBAkmtvl/versions/dDN38ae7/balm-forge-1.20.1-7.3.44.jar"
@@ -627,8 +627,8 @@
         "sha512": "39a9ae53a625a87a5630065a206ccd91e2efbc263f85ed86aea020c0e9d034901751a35ffad5abafb76d3f0f6bfc3a2add9345b167f4274b35655c2d31ea11ed"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/g646EoqQ/versions/dp0wT78Q/cakechomps-forge-6.2.0%2B1.20.1.jar"
@@ -747,8 +747,8 @@
         "sha512": "13ef9d5bfea1895118eec45aa3071e2d79408241f29990624f67e157d4c525391753b0a1539ff3359dad79a6e5ab5e0b84fffbe528bdefcaaefd579ec794d9c9"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/fALzjamp/versions/4FTDk9wv/Chunky-1.3.146.jar"
@@ -777,8 +777,8 @@
         "sha512": "137c4af99c53d77317cbfb1cc8c49fc2761708b49d1992f51fd846960df41dde3a83519c987e081508d4ed90c603566f3d5a6cb620ad9d85b8f4de59aa9115ef"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/9s6osm5g/versions/t8TXrZvZ/cloth-config-11.1.136-forge.jar"
@@ -792,8 +792,8 @@
         "sha512": "ffd8ff2438e9f9d260d3926ccdd0cccc4772c6f99f29715690aed4f6e97a76035f3aeaa78168e2a458bc4cccf521e97ebdb6e0b61c819facb04af9ebb3638383"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/Wnxd13zP/versions/nAHGB5ls/Clumps-forge-1.20.1-12.0.0.4.jar"
@@ -807,8 +807,8 @@
         "sha512": "ad518e3f169cbab5ba1aa421a12b8eed51ffffac7371722f20c6e5d8a042e5f16a466524f8cebef889ce84bf479d0a71e28e23d1a1d1a41d95dcefde18813782"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/2gq0ALnz/versions/5zfJEMhM/CodeChickenLib-1.20.1-4.4.0.528-universal.jar"
@@ -837,8 +837,8 @@
         "sha512": "28345a26c883fe4079582c5af4069dd4082294dd3cd1f32c65ace8687d6bf3e147803eb7b3cc1ba07014ef4811dbb45c9e29b34310e61ade883c1eeaa67558ff"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/e0M1UDsY/versions/N66pAiDK/collective-1.20.1-8.72.jar"
@@ -942,7 +942,7 @@
         "sha512": "5b51f5d31437d9bfbf221b67459abd87260d284874e1e23b7ed1d522b23a48059a3b1d2c1c541428da35dc6be15561b4f3c7f36aac6df3a0e8db6a278f6b0316"
       },
       "env": {
-        "client": "optional",
+        "client": "required",
         "server": "required"
       },
       "downloads": [
@@ -973,7 +973,7 @@
       },
       "env": {
         "client": "required",
-        "server": "optional"
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/OsZiaDHq/versions/ChKayKur/CreativeCore_FORGE_v2.12.40_mc1.20.1.jar"
@@ -1213,7 +1213,7 @@
       },
       "env": {
         "client": "required",
-        "server": "optional"
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/fRiHVvU7/versions/Axuu9I9R/emi-1.1.24%2B1.20.1%2Bforge.jar"
@@ -1228,7 +1228,7 @@
       },
       "env": {
         "client": "required",
-        "server": "optional"
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/UVtY3ZAC/versions/OPgBRfTQ/EnchantmentDescriptions-Forge-1.20.1-17.1.21.jar"
@@ -1317,7 +1317,7 @@
         "sha512": "487cd36886cb791a3f252c90818d5c1cedeec5080a7f874b0bfafff328c8fcc9b2acee03fe40f8397355e8a2a092d2f34cb40671c786c0d9d035728c971d4e9c"
       },
       "env": {
-        "client": "optional",
+        "client": "required",
         "server": "required"
       },
       "downloads": [
@@ -1392,8 +1392,8 @@
         "sha512": "a1960a7c03dc32d4ccaccaf28afdd9b078758bbd62d15a91d4039a83fa9397a098e89b69591f6bd5190254d9ee97e502504154b9aec764adb8c65f000b75ba2c"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/uXXizFIs/versions/DG5Fn9Sz/ferritecore-6.0.1-forge.jar"
@@ -1468,7 +1468,7 @@
       },
       "env": {
         "client": "required",
-        "server": "optional"
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/8BmcQJ2H/versions/aC5KMoNg/geckolib-forge-1.20.1-4.8.4.jar"
@@ -1617,8 +1617,8 @@
         "sha512": "72025c4ad6d26522bafe3d5d6ac9d4702c006a868312cb34df8a7a2398a4618205839607b129c167fd176e58cb7655f08e3afbf1993925c80d4fcc559c45a037"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/nvQzSEkH/versions/xJQHCmWJ/Jade-1.20.1-Forge-11.13.3.jar"
@@ -1632,8 +1632,8 @@
         "sha512": "4c7561a2f5ecbcd693f5e378139da3f458fd049011fad4be913206d42c707c0f54b14737cad900c9107ac6cb7b4eed5a9fb3de43c163419ba5bbb9939257b185"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/u6dRKJwZ/versions/AsHUo8tY/jei-1.20.1-forge-15.74.0.233.jar"
@@ -1692,7 +1692,7 @@
         "sha512": "2af8701bfc62b1ca1dc35b7cf6f586d890f0b3a4bb24aae0e0384315dd7a7b849889b82995c71185866fb61f2c6c0e64685f77a4670dd83d50742c8f9873e939"
       },
       "env": {
-        "client": "optional",
+        "client": "required",
         "server": "required"
       },
       "downloads": [
@@ -1722,8 +1722,8 @@
         "sha512": "767f40030ed4b370a3838fa65ae1b79974f31979342fff7cc834a0d5f39eb28612642519352ff2a1dd5226ce1f745f8b3156ee3625ffde01219137d064c1ee40"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/ordsPcFz/versions/Zsh14XeQ/kotlinforforge-4.12.0-all.jar"
@@ -1752,8 +1752,8 @@
         "sha512": "71ef9e5eb5f3bead86b635b42ad305d075c6487e631217b281d938193dcdc5fe0ff6bae8c86dd4e069726223a66e8690c0610f736c5a62910f60fd80edd575c1"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/umyGl7zF/versions/hVR2xUSr/kubejs-forge-2001.6.5-build.26.jar"
@@ -2007,8 +2007,8 @@
         "sha512": "23579203f4b2073331db60048f4e1cee33baf203e689b3cf2c231f274c81e7b9d0e1a6a0b5cd346f3cfeafc7715d84982f0335078c79ff097826177bc9e0f06b"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/nmDcB62a/versions/OM5gX4LT/modernfix-forge-5.27.91%2Bmc1.20.1.jar"
@@ -2172,8 +2172,8 @@
         "sha512": "1b345f816b3648b0b1f65fa3c520a571f88de8a7e87dfeed4b99033f8e8ddd595cca9ab9fad5d70c0ca7ee2d5e8ac17a32d54ff7fd07e199dd95a185aadf1da1"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/l1rj36Ob/versions/94eVgkTa/NostalgicTweaks-mc1.20.1-Forge-2.0.0-beta.922.jar"
@@ -2202,8 +2202,8 @@
         "sha512": "916501acefab2a33f7b5438375dec0c3d523975d82c807c98496227c107c1efd57c95d9e1501d657513324a9ad617eb8ef7e963921263389af896da55dc707a9"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/c7m1mi73/versions/9F4NGhGR/packetfixer-3.3.2-1.18-1.20.4-merged.jar"
@@ -2247,8 +2247,8 @@
         "sha512": "c23990465e26336f476c3b05a897bcf0c8660ae7338756b325f6bf81d0dee34b609474c62293f394acac818637ab03f92c776d104c8b8e86f3786395f5c4d623"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/tCkE8p2N/versions/6SkuAGoz/Placebo-1.20.1-8.6.3.jar"
@@ -2292,8 +2292,8 @@
         "sha512": "1ffce7fff08e63002effa2b8fe4aa63e1efe2717ed062644693c084194610cd24e3001e2b81824c218380c5bd5c7bd78de99882bac35c325879c1fa1f09c5c00"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/6lvkzFFj/versions/boXcy1fH/polylib-forge-2000.0.3-build.143.jar"
@@ -2457,8 +2457,8 @@
         "sha512": "4eb6a635f3eff3baa158539bd55344421cf69b15e28f7da8bf55f370a11c071f3525063a6f81b67fbfca550ad8aaab7e6208df87f65ca6ed2851edd46f032b58"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/sk9knFPE/versions/uNALdylI/rhino-forge-2001.2.3-build.10.jar"
@@ -2472,8 +2472,8 @@
         "sha512": "8b4b9a69e7b55df8148e83a6d17ef381b9c412d8730d0068974bd48bbdae1a1a43837a5307471bc5dd2b41d3aa821d73c8683a3f480a9d987b2cf0969aa178cc"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/2eT495vq/versions/Yx85DYaG/saturn-mc1.20.1-0.1.3.jar"
@@ -2526,36 +2526,6 @@
       "fileSize": 620680
     },
     {
-      "path": "mods/sophisticatedbackpacks-1.20.1-3.26.19.2239.jar",
-      "hashes": {
-        "sha1": "cc7168866b086ccdec5fe77ad7a9a0a6d02b798e",
-        "sha512": "8b0358c07960353c697b0fbcf3f59958e63826bb980d621dcaaf92c889d339e4fab24f1b9890209a086290d60bf21d460a4194254dc13f64d50b21cfe4a7aec4"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/TyCTlI4b/versions/VjliRs3R/sophisticatedbackpacks-1.20.1-3.26.19.2239.jar"
-      ],
-      "fileSize": 1232150
-    },
-    {
-      "path": "mods/sophisticatedcore-1.20.1-1.5.21.2444.jar",
-      "hashes": {
-        "sha1": "2e47f1994010e035ac86eec943a8ffaeb673f43d",
-        "sha512": "97ce5dc704e3d67907e11ae8f8e93b86b036945038a92d2b2be610e2b869e4dd69be2f8499be4f7582b0694162dea8a194291ab1f3cead21439ff3e2ae403cf0"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/nmoqTijg/versions/K4JBJmEV/sophisticatedcore-1.20.1-1.5.21.2444.jar"
-      ],
-      "fileSize": 1772747
-    },
-    {
       "path": "mods/soulshards-1.20-1.3.6.jar",
       "hashes": {
         "sha1": "0dee96c4ab5dd7f607eb6fa075ec8575ceb18ba5",
@@ -2577,8 +2547,8 @@
         "sha512": "15c6a3753dcba380624643a1e19c856240e8f6bed280f908e1be12c6154a86284ac86405c806273842975e0b7270af93ea9b1db5cf575a3853e54e1088cf7343"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/l6YH9Als/versions/4FXHDE9F/spark-1.10.53-forge.jar"
@@ -2622,7 +2592,7 @@
         "sha512": "7817bf715b83f461c1ec45a4e58d12e3523f0bd3713b82c1f5d113994b388784efd51d8cb701fd9981425e15576d486b552a17577456c4c93f59ddcde4cace06"
       },
       "env": {
-        "client": "optional",
+        "client": "required",
         "server": "required"
       },
       "downloads": [
@@ -2637,8 +2607,8 @@
         "sha512": "cc89c6b2dd0db709586028c7732a57a3e6184f19cc2b98b25964c720c3ab434031e62de23e0dab022575d637b5e4a34b5813164d32ec356d56588da400e7d026"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/iRfIGC1s/versions/cNa0vkNj/starlight-1.1.2%2Bforge.1cda73c.jar"
@@ -2712,8 +2682,8 @@
         "sha512": "476595aacc7c66a0cf7bcd56143975122ea54ae4c5b61a232d3b0b9b1e3c013575efcc05de31a5d2c4e129542bfd8ae255a25d1486a4e08961cc4a303940fd19"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/LN9BxssP/versions/ZKor79dR/supermartijn642configlib-1.1.8-forge-mc1.20.jar"
@@ -2967,8 +2937,8 @@
         "sha512": "00eb9518b29138d7207396cab32a4089d58766ff1e32623b1f38f2da9e4e4bdee8fbe7c3a2b16947d1fa37e7d937be9431b5cf9f2f2d3b2bb7250caea834af95"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/9eGKb6K1/versions/IZvGk7Np/voicechat-forge-1.20.1-2.6.27.jar"
@@ -3028,7 +2998,7 @@
       },
       "env": {
         "client": "required",
-        "server": "optional"
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/1bokaNcj/versions/dB6E0CY9/xaerominimap-forge-1.20.1-26.6.0.jar"
@@ -3043,7 +3013,7 @@
       },
       "env": {
         "client": "required",
-        "server": "optional"
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/NcUtCpym/versions/KtEupJvB/xaeroworldmap-forge-1.20.1-1.47.0.jar"
@@ -3207,8 +3177,8 @@
         "sha512": "7136f756983da5a067f94e4879a7b2a7cbfa66049561a213963280a5957a119372f8f614908a6a67aaff0966f5668bb31c2727479c71dc3ee67884912d19b1fc"
       },
       "env": {
-        "client": "optional",
-        "server": "optional"
+        "client": "required",
+        "server": "required"
       },
       "downloads": [
         "https://cdn.modrinth.com/data/7tEfOcA7/versions/toOvLp8Y/mezz_config-1.20.1-forge-0.6.10.jar"
@@ -3229,6 +3199,51 @@
         "https://cdn.modrinth.com/data/uRHq6kbO/versions/6sx0Vsi0/modflared-1.2.0%2Brelease.61.jar"
       ],
       "fileSize": 70066
+    },
+    {
+      "path": "mods/ba_bt-1.20.1-3.0.0-beta3.2.1.jar",
+      "hashes": {
+        "sha1": "fd9fc82fbdca5364992ec1b6518e3eb8d5bdc8ab",
+        "sha512": "e2596ed73e59c13b73ec8fc4959124ce298a43506b754ae774cd41dcc3cfd8e82882347c2cc0a75ea9315401b56cd727b30afaa3877a707907a97ba06fb54153"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://github.com/skytekx/battletowers/releases/download/v3.0.0-beta3.2.1/ba_bt-1.20.1-3.0.0-beta3.2.1.jar"
+      ],
+      "fileSize": 54453322
+    },
+    {
+      "path": "mods/meteors-2.5-forge.jar",
+      "hashes": {
+        "sha1": "a9d3117be3bc39120ee93b08352a9e1c8f54efd1",
+        "sha512": "f45f169ae73980595576d16b259a0df4f554d3b2602ef39265360923fe6d0dcbf535f3cf507483fc9255ab734e9207cd6e20330d35c8727e18fd6683304379a7"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://github.com/skytekx/falling-meteors-reimagined/releases/download/v2.5/meteors-2.5-forge.jar"
+      ],
+      "fileSize": 1173120
+    },
+    {
+      "path": "mods/elementary-staffs-1.20.1-2.0.0.1.jar",
+      "hashes": {
+        "sha1": "03f77f0d4eda14388dfb7b39526d9c395e1371f0",
+        "sha512": "36bac01e40d6b46937f5b0969d7e3a6e2cd5b28b1b25be2c9e2c38a4caed7e89431b45b128533145793b84b2b394b793214ba7c0796d0f5f27af2b57d3d5131e"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://github.com/skytekx/elementary-staffs/releases/download/v2.0.0.1/elementary-staffs-1.20.1-2.0.0.1.jar"
+      ],
+      "fileSize": 338686
     }
   ],
   "dependencies": {

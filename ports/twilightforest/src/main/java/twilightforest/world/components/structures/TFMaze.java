@@ -15,6 +15,9 @@ import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFConfiguredFeatures;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 /**
  * This is a maze of cells and walls.
  * <p>
@@ -96,7 +99,7 @@ public class TFMaze {
 	/**
 	 * Gets the value from a cell in the maze
 	 */
-	private int getCell(int x, int z) {
+	public int getCell(int x, int z) {
 		return getRaw(x * 2 + 1, z * 2 + 1);
 	}
 
@@ -156,6 +159,22 @@ public class TFMaze {
 	 */
 	public boolean isWall(int sx, int sz, int dx, int dz) {
 		return getWall(sx, sz, dx, dz) == 0;
+	}
+
+	/**
+	 * @return true once every cell has been visited (carved) by the maze generator
+	 */
+	public boolean allCellsNonZero() {
+		return IntStream.range(0, width)
+			.allMatch(x -> IntStream.range(0, depth)
+				.allMatch(z -> getCell(x, z) != 0));
+	}
+
+	/**
+	 * Clears all cells and walls so the maze can be generated again
+	 */
+	public void resetCells() {
+		Arrays.fill(storage, 0);
 	}
 
 	/**

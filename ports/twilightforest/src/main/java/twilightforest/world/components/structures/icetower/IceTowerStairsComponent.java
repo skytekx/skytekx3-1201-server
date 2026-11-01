@@ -18,13 +18,16 @@ import twilightforest.world.components.structures.lichtower.TowerWingComponent;
 
 
 public class IceTowerStairsComponent extends TowerWingComponent {
+	protected static final int stairsLength = 5;
 
 	public IceTowerStairsComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		super(TFStructurePieceTypes.TFITSt.get(), nbt);
 	}
 
 	public IceTowerStairsComponent(int index, int x, int y, int z, int size, int height, Direction direction) {
-		super(TFStructurePieceTypes.TFITSt.get(), index, x, y, z, size, height, direction);
+		// The stairs run downwards from the door sill, so the box has to as well. It used to start at the sill and
+		// reach up by the entrance tower's height, which left the lower steps outside the box (#2503).
+		super(TFStructurePieceTypes.TFITSt.get(), index, x, y + 1 - stairsLength, z, size, stairsLength, direction);
 	}
 
 	@Override
@@ -36,25 +39,29 @@ public class IceTowerStairsComponent extends TowerWingComponent {
 
 	@Override
 	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
+		// Pieces saved before the box fix keep their old box (origin at the door sill, height = the entrance tower's
+		// height) and must keep drawing relative to it, or half-generated Aurora Palaces would get a shifted stairway.
+		int top = this.height == stairsLength ? stairsLength : 1;
+
 		for (int x = 1; x < this.size; x++) {
 
-			this.placeStairs(world, sbb, x, 1 - x, 5);
+			this.placeStairs(world, sbb, x, top - x, stairsLength);
 
 			for (int z = 0; z <= x; z++) {
 
 				if (z > 0 && z <= this.size / 2) {
-					this.placeStairs(world, sbb, x, 1 - x, 5 - z);
-					this.placeStairs(world, sbb, x, 1 - x, 5 + z);
+					this.placeStairs(world, sbb, x, top - x, stairsLength - z);
+					this.placeStairs(world, sbb, x, top - x, stairsLength + z);
 				}
 
 				if (x <= this.size / 2) {
-					this.placeStairs(world, sbb, z, 1 - x, 5 - x);
-					this.placeStairs(world, sbb, z, 1 - x, 5 + x);
+					this.placeStairs(world, sbb, z, top - x, stairsLength - x);
+					this.placeStairs(world, sbb, z, top - x, stairsLength + x);
 				}
 			}
 		}
 
-		this.placeBlock(world, deco.blockState, 0, 0, 5, sbb);
+		this.placeBlock(world, deco.blockState, 0, top - 1, stairsLength, sbb);
 	}
 
 	private void placeStairs(WorldGenLevel world, BoundingBox sbb, int x, int y, int z) {

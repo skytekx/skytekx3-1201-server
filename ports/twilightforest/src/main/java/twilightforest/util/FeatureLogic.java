@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import twilightforest.block.GiantBlock;
 import twilightforest.data.tags.BlockTagGenerator;
+import twilightforest.init.TFBlocks;
 
 import java.util.function.Predicate;
 
@@ -93,6 +94,7 @@ public final class FeatureLogic {
     }
 
     public static boolean isBlockNotOk(BlockState state) {
-        return state.liquid() || state.is(Blocks.BEDROCK) || state.getBlock() instanceof GiantBlock || state.is(BlockTagGenerator.CLOUDS);
+        // hardened dark leaves form the Dark Forest canopy roof; nothing should generate on top of it
+        return state.liquid() || state.is(Blocks.BEDROCK) || state.getBlock() instanceof GiantBlock || state.is(BlockTagGenerator.CLOUDS) || state.is(TFBlocks.HARDENED_DARK_LEAVES.get());
     }
 }

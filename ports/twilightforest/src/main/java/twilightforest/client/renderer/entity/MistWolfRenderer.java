@@ -23,9 +23,10 @@ public class MistWolfRenderer extends MobRenderer<HostileWolf, HostileWolfModel<
 		super(manager, new HostileWolfModel<>(manager.bakeLayer(TFModelLayers.HOSTILE_WOLF)) {
 			@Override
 			public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int light, int overlay, float r, float g, float b, float a) {
-				float brightness = parent.level().getMaxLocalRawBrightness(parent.blockPosition());
+				// raw light is 0-15, so normalise it; otherwise the wolf is opaque at any light level above 0 (TF 4.8 #2497, #2499)
+				float brightness = parent.level().getMaxLocalRawBrightness(parent.blockPosition()) / 15.0F;
 				float misty = Math.min(1F, brightness * 3F + 0.25F);
-				float smoky = brightness * 2F + 0.6F;
+				float smoky = Math.min(1F, brightness * 2F + 0.3F);
 				super.renderToBuffer(poseStack, buffer, light, overlay, misty, misty, misty, smoky);
 			}
 		}, 0.5F);

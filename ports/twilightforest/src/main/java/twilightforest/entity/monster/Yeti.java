@@ -42,7 +42,7 @@ import java.util.Optional;
 public class Yeti extends Monster implements IHostileMount {
 
 	private static final EntityDataAccessor<Boolean> ANGER_FLAG = SynchedEntityData.defineId(Yeti.class, EntityDataSerializers.BOOLEAN);
-	private static final AttributeModifier ANGRY_MODIFIER = new AttributeModifier("Angry follow range boost", 24, AttributeModifier.Operation.ADDITION);
+	private static final AttributeModifier ANGRY_MODIFIER = new AttributeModifier("Angry follow range boost", 8, AttributeModifier.Operation.ADDITION);
 
 	public Yeti(EntityType<? extends Yeti> type, Level world) {
 		super(type, world);
@@ -89,13 +89,7 @@ public class Yeti extends Monster implements IHostileMount {
 
 	@Override
 	public void aiStep() {
-
 		super.aiStep();
-
-		// if we no longer have a target, lets calm down
-		if (this.getTarget() == null && this.isAngry()) {
-			this.setAngry(false);
-		}
 
 		// look at things in our jaws
 		if (!this.getPassengers().isEmpty()) {

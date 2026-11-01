@@ -32,7 +32,7 @@ Waves 1-6 add only new registry ids, new NBT keys or new optional SavedData, and
 - Registry remap policy: extend 4.3's TFRemapper (MissingMappingsEvent) for block and item renames. For registries without MissingMappings (structure piece types, processors), keep old ids registered as aliases to the new deserializer: TFNCTr, TFNCDu and TFNCSt map to CourtyardTerrace, and 4.3's stubs TFLTC2ST and TFLTSTRm become no-op pieces. Never port 4.8's removal of death_tome_spawner and empty_canopy_bookshelf.
 - Coremod strategy: keep 4.3's JS coremods (META-INF/asm), extend conquered.js for StructureStart.loadStaticStart (knight_y), and add armor.js for Emperor's Cloth. Add a Mixin config to the fork only for the Traveller's hooks: water walk, unrestrained, FOV, food exhaustion, slime block, MouseHandler#turnPlayer, PhantomSpawner and snowy grass.
 - Verification harness: a fixed-seed TF biome and landmark dump compared before and after worldgen changes, plus structure-debug-commands, run against a copy of the server seed before each release. Boot rule from AGENTS.md: reach Done with 0 FATAL, crash or watchdog entries.
-- Pack-side glue in this repo: rebuild local-mods/twilightforest-1.20.1-4.3-universal.jar from the fork. Add twilightforest:copper_nugget and jerky to config/almostunified and KubeJS tags, and ship compat tags through kubejs/server_scripts/tag_fixes.js.
+- Pack-side glue in this repo: rebuild the local-mods/ TF jar from the fork (it is now named twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar). AlmostUnified is already prepared: `twilightforest` is last in modPriorities, so once TF datagen tags twilightforest:copper_nugget as forge:nuggets/copper it unifies to immersiveengineering:nugget_copper. The jerky need no unification entry. Ship any remaining compat tags through kubejs/server_scripts/tag_fixes.js.
 
 ## Wave 1: Crash, concurrency and multiplayer-correctness fixes (no new ids, no reset)
 
@@ -218,7 +218,7 @@ The headline 4.8 content, scheduled once all infrastructure (wave 3) and decor b
 
 ## Wave 9: Construct update: drying racks, foods, camps, recipe-viewer polish
 
-Drying racks and tanned leather are prerequisites for Traveller's Gear, and camps need the jigsaw markers and berry bushes from earlier waves. The EMI and Jade/TOP work comes last so every category exists. Add copper_nugget and jerky tags to AlmostUnified and KubeJS here.
+Drying racks and tanned leather are prerequisites for Traveller's Gear, and camps need the jigsaw markers and berry bushes from earlier waves. The EMI and Jade/TOP work comes last so every category exists. The AlmostUnified side is done (twilightforest is ranked last). Give copper_nugget the forge:nuggets/copper tag in TF datagen and the jerky forge:foods/jerky; neither needs a KubeJS tag.
 
 | Feature | Kind | Portability | h | Savegame |
 |---|---|---|---|---|
@@ -284,7 +284,7 @@ Deliberate behaviour that differs from TF 4.8. An upstream re-sync must not sile
 
 - ordering: candelabra-overhaul (wave 6) references TFItems.EXANIMATE_ESSENCE and #twilightforest:scepters, which arrive in wave 8 (ominous-fire-exanimate-essence, scepter-rework). Move the exanimate_essence item and the scepters tag into wave 6, or move the candelabra to wave 8.
 - ordering: custom-density-terraforming (wave 3) switches on 4.3's existing terrain_adaptation values (bury and beard_thin) for every landmark in new chunks the moment it lands. That contradicts the 'waves 1-6: no worldgen change' statement in savegame_summary. Gate the bridge to CustomDensitySource-only until wave 7 (or 11), or plan the first TF dimension reset right after wave 3.
-- ordering: AlmostUnified and KubeJS unification of twilightforest:copper_nugget is scheduled in wave 9, but copper_nugget appears in wave 7 (oreberries). Add it to config/almostunified unify.json and modPriorities in wave 7, or Create and TF nuggets coexist for two releases.
+- ordering: AlmostUnified and KubeJS unification of twilightforest:copper_nugget is scheduled in wave 9, but copper_nugget appears in wave 7 (oreberries). Add it to config/almostunified unify.json and modPriorities in wave 7, or Create and TF nuggets coexist for two releases. Done ahead of wave 7: copper is already a unified material and twilightforest sits last in modPriorities, so the TF nugget unifies to Immersive Engineering's as soon as it carries forge:nuggets/copper.
 - ordering: knight-stronghold-fixes (wave 2) and progression-protection-overhaul (wave 5) both touch the 4.3 ProgressionEvents knight-stronghold hack ('pos.getY() >= sea level - 2 → unprotected'). 4.8 removed that hack only when per-piece protection landed (e9116aa11), so keep it in wave 2 and remove it in wave 5. Otherwise the stronghold surface becomes protected or unprotected inconsistently between releases.
 - ordering: weather-renderer-rewrite (wave 5) is ported from HEAD, where TFWeatherRenderer.renderLockedStructure consumes the per-piece boxes of StructureProtectionPacket v2. Add depends_on progression-protection-overhaul and keep that order inside wave 5.
 - ordering: lich-fight-fixes (wave 4) contains #2384 (c576062db), which calls FortificationShieldAttachment.addShieldBreakParticles and the new shield_break particle from fortification-shield-rework (wave 5). Move fortification-shield-rework into wave 4 or defer that line.
@@ -323,6 +323,102 @@ Deliberate behaviour that differs from TF 4.8. An upstream re-sync must not sile
 - `four-leaf-clover`: From misc-simple-items: a placeholder item with no recipe, loot or use in 4.8. moss_soup moved to dried-foods-and-tanning.
 
 ## Twilight Forest addons
+
+### In the pack (2026-11-01)
+
+The version blocker below (note 1) is fixed. `ports/twilightforest/gradle.properties` sets
+`mod_version=4.3.2508-skytekx.1`, so the fork jar is `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`
+and Forge sees `4.3.2508-skytekx.1`. Maven orders the unknown qualifier after `4.3.2508` and before
+`4.3.2509`, which satisfies every `[4.3.x,)` range and still fails the 1.21.1-only `[4.8,)` ranges. Bump the
+trailing number for each fork release that goes into `local-mods/`.
+
+Each addon below is the newest 1.20.1 Forge build. Env is client / server as written to
+`modrinth.index.json`.
+
+| Addon | Version | Source | Env | License | Why |
+|---|---|---|---|---|---|
+| Twilight's Flavors & Delight | 2.2.8 | Modrinth index | required / required | LGPL-2.1 | Farmer's Delight crossover: TF knives, Maze Stove, Fiery Pot, ~67 foods. |
+| Spartan Weaponry: Twilight Forest | 1.20.1-3.1.1 | Modrinth index | required / required | MIT | Ironwood, steeleaf, knightmetal and fiery tiers for the pack's Spartan Weaponry. |
+| Spartan Weaponry Addon Toolkit (library) | 1.20.1-1.6.1 | Modrinth index | required / required | MIT | Required by Spartan TF (`[1.4.1,1.20.1-2.0.0)`). |
+| Twilight Forest - Dungeons & Villages | 1.2.3 | Modrinth index | required / required | ARR, Modrinth-hosted | Villages, hedge dungeons and trading inside the TF dimension. |
+| Twilight Forest: The Lost Blocks | 1.20.1-1.5.0 | Modrinth index | required / required | MIT | Builder blocks: towerwood and thorn sets, stairs, slabs and walls for TF stone. |
+| Farmer's Cutting: Twilight Forest | 1.20.1-1.0 | Modrinth index | optional / required | MIT | 50 cutting-board recipes for TF woods. Data only. |
+| Apothic Category Compat | 2.1.0 | Modrinth index | unsupported / required | MIT | Apotheosis loot categories for TF scepters and other modded weapons, pack-wide. Server side only. |
+| Twilight Treehouses | 1.0.2.1 | Modrinth index | optional / required | ARR, Modrinth-hosted | Four jigsaw treehouse dungeons in TF forest biomes. Worldgen data only. |
+| Twilight Aether | 1.20.1-1.0.0 | Modrinth index | required / required | MIT | Aether accessory gloves and cape in TF materials. |
+| Twilight Construct | 1.0.7 | `local-mods/` (CurseForge file 6462175) | both | LGPL-2.1 | Eight TF materials for Tinkers' Construct. |
+| Twilight Tweaks | 1.2 (1.20.x) | `local-mods/` (CurseForge file 4702979) | both | LGPL-2.1 | Final-boss spawner hook and re-fightable bosses (Time Powder on spawner remnants). |
+| The King of Twilight | 1.0.1 | `local-mods/` (CurseForge file 8029727) | both | MIT | The Twilight Lord final boss, spawned through Twilight Tweaks. |
+
+Distribution rules: a Modrinth-hosted addon goes into the index, even when it is All Rights Reserved,
+because the file comes from the Modrinth CDN. A CurseForge-only addon is bundled in `local-mods/` only
+with a license that allows redistribution. Each bundled jar must be byte-identical to its CurseForge
+file and needs an attribution file in
+[`modrinth-permissions/`](../../modrinth-permissions/README.md). All three bundled addons were checked
+against the CurseForge `licenseType`, the source repository LICENSE and the jar's mods.toml.
+
+Pack-side glue for these addons:
+- `config/twilighttweaks-common.toml` makes the final-boss spawner run
+  `summon twilightforestfinalboss:twilight_lord`. Its keys end in a space
+  (`"The command that the spawner should run: "`); without it, Forge resets the value.
+- `kubejs/server_scripts/tag_fixes.js` strips TF&D's 15 Neapolitan-only foods from
+  `farmersdelight:sweets`, `farmersdelight:snacks` and `diet:sugars`. Neapolitan is not in the pack,
+  and the unregistered ids otherwise drop those tags whole.
+- `tools/patch_mods.py` writes `minVersion` into `mixins.tf_dnv.json`.
+- The `skytekx3_fixes` datapack ports Twilight Tweaks' six uncrafting recipes to the 4.3 `input` format.
+  Bell, anvils and knightmetal ingot are converted; tipped arrow and written book are disabled because
+  TF ships its own.
+- AlmostUnified lists `twilightforest` last in `modPriorities`. See [AlmostUnified](almostunified.md).
+
+Compatibility checks against the fork (2026-11-01 build): every `twilightforest/*` class, field and
+method that the 12 jars link exists. Every mixin target and injection point resolves, including the TF
+targets of The Lost Blocks and the three Twilight Tweaks coremods. A full-pack dedicated-server boot on
+a fresh world (plain Forge 1.20.1-47.4.18) reached `Done` with 0 FATAL, crash or watchdog lines and no
+ERROR from an addon or from TF. The tracked Arclight jar could not be used for this test: its own
+`MinecraftServerMixin` failed in the test sandbox even with an empty `mods/`.
+
+Re-check these when the matching 4.8 code is backported, because the addons hook them directly:
+- The Lost Blocks mixins: `HedgeBlock#attack` (anchor `INVOKE Level#scheduleTick`),
+  `HedgeBlock#playerDestroy` (anchor `INVOKE Block#playerDestroy`), `ThornsBlock#<init>`,
+  `#createBlockStateDefinition` and `#doThornBurst`, and `FinalCastleBossGazeboComponent#postProcess`
+  (HEAD).
+- Twilight Tweaks coremods: `BossSpawnerBlockEntity.tick` (hook after the first `PUTFIELD`, which must
+  stay `spawnedBoss = true`), `FinalBossSpawnerBlockEntity.spawnMyBoss` (before the first `ICONST_0`),
+  and `FinalCastleBossGazeboComponent.postProcess` (before the first `GETSTATIC`). The 4.8 boss rework
+  touches the first two.
+- Symbols the added jars link that 4.8 removed or renamed (the freeze-list in note 2):
+  `util.TwilightItemTier`, `enums.TwilightArmorMaterial`, `init.TFDimensionSettings`,
+  `world.registration.TFGenerationSettings`, `block.TFLogBlock`, `item.recipe.TransformPowderRecipe`
+  and `TFItems.CICADA`, `FIREFLY` and `MOONWORM`. Also keep `block.SpecialMagicLogBlock` and the
+  `ItemTagGenerator` and `EntityTagGenerator` tag constants, which Twilight Tweaks, Twilight Construct and
+  Spartan TF use.
+- Content the addons expect from newer upstream TF: Treehouses place `twilightforest:rope` and
+  `twilightforest:mason_jar` (air until `rope` and `jar-revamp-mason-jar` land). Dungeons & Villages
+  rolls `twilightforest:chests/casket_loot` (missing, so that one pool is empty) and carries `twilightforest:jar`
+  block-entity data.
+
+### Pending permission
+
+- **Twilight Spellbooks** 1.2.0 (Mangelox; CurseForge 1585352) is All Rights Reserved and CurseForge only.
+  CurseForge's `allowModDistribution: true` only lets third-party launchers download it through the
+  CurseForge API. It does not allow bundling it in a Modrinth `.mrpack`. The jar's `twilightforest
+  [4.3.2508,)` requirement is now met, and its other dependencies match the pack. Once Mangelox gives
+  written permission, add the jar to `local-mods/` with a `modrinth-permissions/` file (Special
+  permission, plus the permission as proof).
+
+### Planned backports (1.21.1-only addons)
+
+These exist only for 1.21.1 NeoForge. They are ported as separate work once the 4.8 code they depend
+on is in the fork (details in the table below):
+- **Create: Shimmer**: the only maintained Create x TF bridge. It needs Create: Dragons Plus for 1.20.1,
+  a rework of the 1.21 recipe API, and the author's OK for its All Rights Reserved assets.
+- **Alternative Twilight (Remastered)**: after the 4.8 boss rework is backported. It replaces the
+  1.20.1 Alternative Twilight, which conflicts with that rework.
+- **Spiced Twilight**: after the 4.8 entity and Naga changes.
+- **Twilight Mobs Loots** and **Twilight Crossbow**: optional small ports. They need data components
+  and the 1.21 crossbow code rewritten for 1.20.1.
+
+### Research (2026-11-01)
 
 | Addon | Action | Fits pack | Versions |
 |---|---|---|---|

@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological history of major SkyTekx 3 milestones.
 tags: [log, history]
-timestamp: 2026-06-29
+timestamp: 2026-11-01
 ---
 
 # Change log
@@ -120,3 +120,15 @@ worldgen mod shrank to skytekx-compat 2.0.0 (Birds Nests mixin only) and Skyland
 datapack travel functions (predicates + platform retry loop), identical on every platform. Skylands
 dimension wiped (backup ~/skylands-prewipe-2026-07-12.tgz), regenerated, chunky pregen r1000. Fixed
 along the way: the always missing village_snowy has_structure tag.
+
+## 2026-11-01 — Twilight Forest addons
+The TF fork now reports `4.3.2508-skytekx.1`, which clears the Forge version check that blocked
+build-qualified addon ranges. Twelve TF addon jars joined the pack. Nine come from the Modrinth index:
+Twilight's Flavors & Delight, Spartan Weaponry: TF plus its toolkit, Dungeons & Villages, The Lost
+Blocks, Farmer's Cutting: TF, Apothic Category Compat, Twilight Treehouses and Twilight Aether. Three
+are bundled in `local-mods/` from CurseForge with LGPL or MIT licenses and attribution files: Twilight
+Construct, Twilight Tweaks and The King of Twilight. Twilight Tweaks now spawns the Twilight Lord on the
+Final Castle. Twilight Spellbooks waits for the author's permission. A full-pack boot on a fresh world
+reached `Done` with no FATAL and no addon ERROR. Three addon boot errors were fixed: TF&D's
+Neapolitan-only tag entries (KubeJS), the D&V mixin minVersion (patch_mods) and the Tweaks uncrafting
+format (fixes datapack). Details: [TF backport](modpack/twilightforest-backport.md#twilight-forest-addons).

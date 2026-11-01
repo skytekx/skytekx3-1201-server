@@ -15,7 +15,9 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFEntities;
@@ -65,6 +67,13 @@ public class Bighorn extends Sheep {
 		return random.nextBoolean()
 				? DyeColor.BROWN
 				: DyeColor.byId(random.nextInt(16));
+	}
+
+	// The Highlands are mostly podzol and coarse dirt; let Bighorns graze there like vanilla animals do on grass
+	@Override
+	public float getWalkTargetValue(BlockPos pos, LevelReader reader) {
+		BlockState state = reader.getBlockState(pos.below());
+		return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.PODZOL) ? 10.0F : reader.getPathfindingCostFromLightLevels(pos);
 	}
 
 	@Nullable

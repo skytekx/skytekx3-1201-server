@@ -3,14 +3,14 @@ package twilightforest.entity.projectile;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import twilightforest.entity.boss.Lich;
@@ -89,18 +89,24 @@ public class LichBomb extends TFThrowable implements ItemSupplier {
 	}
 
 	@Override
-	protected void onHitBlock(BlockHitResult result) {
-		super.onHitBlock(result);
+	protected void onHit(HitResult result) {
+		super.onHit(result);
 		this.explode();
 	}
 
+	/**
+	 * Bombs fly through every Lich, other Lich projectiles and wand bolts instead of colliding with them (4.8 2a37097ce,
+	 * 1e04187ab).
+	 */
 	@Override
-	protected void onHitEntity(EntityHitResult result) {
-		super.onHitEntity(result);
-		if (result.getEntity() instanceof LichBolt || result.getEntity() instanceof LichBomb || result.getEntity() instanceof Lich) {
-			return;
-		}
-		this.explode();
+	protected boolean canHitEntity(Entity target) {
+		return super.canHitEntity(target) && !(target instanceof LichBomb) && !(target instanceof Lich) && !(target instanceof LichBolt) && !(target instanceof TwilightWandBolt);
+	}
+
+	// Explosions, such as another bomb going off, do not push or chain-detonate bombs (4.8 48d6e5b09)
+	@Override
+	public boolean ignoreExplosion() {
+		return true;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -95,12 +96,20 @@ public class LichBolt extends TFThrowable {
 		this.discard();
 	}
 
+	/**
+	 * Lich bolts fly through shadow clones, other Lich projectiles and wand bolts, and only hit a Lich once a player has
+	 * reflected them, so a Lich no longer hits itself or its clones (4.8 9bc309831, 2a37097ce, 1e04187ab).
+	 */
+	@Override
+	protected boolean canHitEntity(Entity target) {
+		if (!super.canHitEntity(target)) return false;
+		if (target instanceof Lich lich && (lich.isShadowClone() || !(this.getOwner() instanceof Player))) return false;
+		return !(target instanceof LichBomb) && !(target instanceof LichBolt) && !(target instanceof TwilightWandBolt);
+	}
+
 	@Override
 	protected void onHitEntity(EntityHitResult result) {
 		Entity hit = result.getEntity();
-		if (hit instanceof LichBolt || hit instanceof LichBomb || (hit instanceof Lich lich && lich.isShadowClone())) {
-			return;
-		}
 
 		if (!this.level().isClientSide()) {
 			if (hit instanceof LivingEntity) {
@@ -109,5 +118,11 @@ public class LichBolt extends TFThrowable {
 			this.level().broadcastEntityEvent(this, (byte) 3);
 			this.discard();
 		}
+	}
+
+	// Explosions, such as the Lich's own bombs, do not push or detonate bolts (4.8 48d6e5b09)
+	@Override
+	public boolean ignoreExplosion() {
+		return true;
 	}
 }

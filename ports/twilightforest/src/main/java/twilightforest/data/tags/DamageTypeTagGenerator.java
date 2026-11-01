@@ -33,6 +33,7 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
 		this.tag(DamageTypeTags.NO_ANGER).add(TFDamageTypes.SLAM);
 		this.tag(DamageTypeTags.BYPASSES_INVULNERABILITY).add(TFDamageTypes.EXPIRED);
 		this.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(TFDamageTypes.FALLING_ICE);
+		this.tag(DamageTypeTags.IS_EXPLOSION).add(TFDamageTypes.LICH_BOMB);
 		this.tag(DamageTypeTags.WITCH_RESISTANT_TO).add(TFDamageTypes.LICH_BOMB, TFDamageTypes.LICH_BOLT, TFDamageTypes.LEAF_BRAIN, TFDamageTypes.LOST_WORDS, TFDamageTypes.SCHOOLED, TFDamageTypes.ACID_RAIN);
 		this.tag(BREAKS_LICH_SHIELDS).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC, DamageTypes.SONIC_BOOM, TFDamageTypes.LICH_BOLT, TFDamageTypes.TWILIGHT_SCEPTER);
 	}

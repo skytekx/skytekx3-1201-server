@@ -1,7 +1,6 @@
 package twilightforest.item;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.TierSortingRegistry;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.entity.ChainBlock;
 import twilightforest.init.TFEnchantments;
@@ -60,7 +60,7 @@ public class ChainBlockItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		if (getThrownUuid(stack) != null)
+		if (getThrownUuid(stack) != null || !level.getWorldBorder().isWithinBounds(player.blockPosition()))
 			return new InteractionResultHolder<>(InteractionResult.PASS, stack);
 
 		player.playSound(TFSounds.BLOCK_AND_CHAIN_FIRED.get(), 0.5F, 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F));
@@ -121,11 +121,10 @@ public class ChainBlockItem extends Item {
 	@Override
 	public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
 		//dont try to check harvest level if we arent thrown
-		if (stack.getTag() == null || !stack.getTag().contains(THROWN_UUID_KEY)) return false;
+		if (stack.getTag() == null || !stack.getTag().contains(THROWN_UUID_KEY) || !state.is(BlockTagGenerator.MINEABLE_WITH_BLOCK_AND_CHAIN)) return false;
 		if (EnchantmentHelper.getTagEnchantmentLevel(TFEnchantments.DESTRUCTION.get(), stack) > 0) {
-			if (state.is(BlockTags.MINEABLE_WITH_PICKAXE) || state.is(BlockTags.MINEABLE_WITH_HOE)
-					|| state.is(BlockTags.MINEABLE_WITH_SHOVEL) || state.is(BlockTags.MINEABLE_WITH_AXE))
-				return TierSortingRegistry.isCorrectTierForDrops(this.getHarvestLevel(stack), state);
+			// 1.20.5+ uses Tier.createToolProperties(tag).isCorrectForDrops; Forge 47 resolves the tier ladder here
+			return TierSortingRegistry.isCorrectTierForDrops(this.getHarvestLevel(stack), state);
 		}
 		return false;
 	}

@@ -13,6 +13,7 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
@@ -28,7 +29,9 @@ import twilightforest.TwilightForestMod;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.util.jigsaw.JigsawPlaceContext;
 import twilightforest.util.jigsaw.JigsawRecord;
+import twilightforest.world.components.structures.markerhandler.TemplateMarkerHandler;
 import twilightforest.world.components.structures.util.StructureTemplateDefinitions;
+import twilightforest.world.components.structures.util.TemplateMarkerHandlerList;
 import twilightforest.world.components.structures.util.TemplatePoolInstance;
 
 import java.util.*;
@@ -51,12 +54,14 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 	private static final String NBT_GROUND_OFFSET = "ground_offset";
 	private static final String NBT_IGNORE_WATERLOG = "ignore_waterlog";
 	private static final String NBT_RANDOMIZED_PROCESSORS = "randomized_processors";
+	private static final String NBT_MARKER_HANDLERS = "marker_handlers";
 
 	private final JigsawRecord sourceJigsaw;
 	private final List<JigsawRecord> spareJigsaws;
 	private final TerrainAdjustment terrainAdjustment;
 	private final Optional<Holder<StructureProcessorList>> processors;
 	private final StructureTemplatePool.Projection projection;
+	private final Optional<Holder<TemplateMarkerHandlerList>> markerHandlers;
 	private final int beardifierGroundDelta;
 	private final StructureProcessorList serializedProcessors;
 	private final Map<String, String> poolAliases;
@@ -86,6 +91,7 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 		DynamicOps<Tag> dynamicOps = RegistryOps.create(NbtOps.INSTANCE, ctx.registryAccess());
 		this.processors = compoundTag.contains(NBT_TEMPLATE_PROCESSORS) ? StructureProcessorType.LIST_CODEC.parse(dynamicOps, compoundTag.get(NBT_TEMPLATE_PROCESSORS)).resultOrPartial(message -> LOGGER.error("Error deserializing " + NBT_TEMPLATE_PROCESSORS + ": {}", message)) : Optional.empty();
 		this.projection = compoundTag.contains(NBT_PLACE_PROJECTION) ? StructureTemplatePool.Projection.valueOf(compoundTag.getString(NBT_PLACE_PROJECTION)) : StructureTemplatePool.Projection.RIGID;
+		this.markerHandlers = compoundTag.contains(NBT_MARKER_HANDLERS) ? TemplateMarkerHandlerList.HOLDER_CODEC.parse(dynamicOps, compoundTag.get(NBT_MARKER_HANDLERS)).resultOrPartial(message -> LOGGER.error("Error deserializing " + NBT_MARKER_HANDLERS + ": {}", message)) : Optional.empty();
 
 		this.beardifierGroundDelta = compoundTag.getInt(NBT_GROUND_OFFSET);
 
@@ -108,6 +114,7 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 		this.terrainAdjustment = TerrainAdjustment.NONE;
 		this.processors = Optional.empty();
 		this.projection = StructureTemplatePool.Projection.RIGID;
+		this.markerHandlers = Optional.empty();
 		this.beardifierGroundDelta = 0;
 		this.serializedProcessors = new StructureProcessorList(List.of());
 		this.poolAliases = Map.of();
@@ -122,6 +129,7 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 		this.terrainAdjustment = templatePoolInstance.terrainAdjustment();
 		this.processors = templatePoolInstance.processors();
 		this.projection = templatePoolInstance.projection();
+		this.markerHandlers = templatePoolInstance.markerHandlers();
 		this.beardifierGroundDelta = templatePoolInstance.beardifierGroundDelta().map(TemplatePoolInstance.HeightAdjustment::beardifierGroundDelta).orElse(0);
 		if (templatePoolInstance.ignoreWorldWaterlog()) this.placeSettings.setKeepLiquids(false);
 		this.processors.ifPresent(p -> p.value().list().forEach(this.placeSettings::addProcessor));
@@ -173,6 +181,14 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 			Optional<Tag> processorsList = StructureProcessorType.LIST_CODEC.encodeStart(registryOps, this.processors.get()).resultOrPartial(LOGGER::error);
 			if (processorsList.isPresent()) {
 				structureTag.put(NBT_TEMPLATE_PROCESSORS, processorsList.get());
+			}
+		}
+
+		if (this.markerHandlers.isPresent()) {
+			// A list from the datapack registry is saved as its id, an inline list in full
+			Optional<Tag> markerHandlersList = TemplateMarkerHandlerList.HOLDER_CODEC.encodeStart(registryOps, this.markerHandlers.get()).resultOrPartial(LOGGER::error);
+			if (markerHandlersList.isPresent()) {
+				structureTag.put(NBT_MARKER_HANDLERS, markerHandlersList.get());
 			}
 		}
 
@@ -235,6 +251,22 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 	// Data markers of jigsaw pieces arrive through the extended handleDataMarker(), as in TF 4.8 where this signature is final and empty
 	@Override
 	protected final void handleDataMarker(String label, BlockPos pos, ServerLevelAccessor level, RandomSource random, BoundingBox chunkBounds) {
+	}
+
+	// Runs the template pool entry's marker handlers in order, until one of them handles the marker
+	@Override
+	protected void handleDataMarker(String label, BlockPos pos, WorldGenLevel level, RandomSource random, BoundingBox chunkBounds, ChunkGenerator chunkGen, Rotation rotation) {
+		super.handleDataMarker(label, pos, level, random, chunkBounds, chunkGen, rotation);
+
+		if (this.markerHandlers.isEmpty()) {
+			return;
+		}
+
+		for (TemplateMarkerHandler handler : this.markerHandlers.get().value().markerHandlers()) {
+			if (handler.handleDataMarker(label, pos, level, random, chunkBounds, chunkGen, rotation)) {
+				break;
+			}
+		}
 	}
 
 	public JigsawRecord getSourceJigsaw() {

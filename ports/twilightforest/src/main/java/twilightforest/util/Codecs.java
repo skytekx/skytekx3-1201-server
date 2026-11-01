@@ -3,6 +3,8 @@ package twilightforest.util;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.floats.Float2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.floats.Float2ObjectSortedMap;
@@ -23,6 +25,7 @@ public final class Codecs {
     public static final Codec<BlockPos> STRING_POS = Codec.STRING.comapFlatMap(Codecs::parseString2BlockPos, Vec3i::toShortString);
     public static final Codec<Direction> ONLY_HORIZONTAL = Direction.CODEC.comapFlatMap(direction -> direction.getAxis() != Direction.Axis.Y ? DataResult.success(direction) : DataResult.error(() -> "Horizontal direction only!", direction), Function.identity());
     public static final Codec<Float> FLOAT_STRING = Codec.STRING.comapFlatMap(Codecs::parseString2Float, f -> Float.toString(f));
+    public static final Codec<Character> CHARACTER_CODEC = new CharacterCodec();
 
     public static final Codec<Climate.ParameterList<Holder<Biome>>> CLIMATE_SYSTEM = ExtraCodecs.nonEmptyList(RecordCodecBuilder.<Pair<Climate.ParameterPoint, Holder<Biome>>>create((instance) -> instance.group(Climate.ParameterPoint.CODEC.fieldOf("parameters").forGetter(Pair::getFirst), Biome.CODEC.fieldOf("biome").forGetter(Pair::getSecond)).apply(instance, Pair::of)).listOf()).xmap(Climate.ParameterList::new, Climate.ParameterList::values);
 
@@ -50,6 +53,19 @@ public final class Codecs {
 
     public static <E> DataResult<Pair<E, E>> arrayToPair(List<E> list) {
         return Util.fixedSize(list, 2).map(l -> Pair.of(l.get(0), l.get(1)));
+    }
+
+    // A single character, written as a one-character string. Reading takes the first character of the string and rejects an empty one
+    private static class CharacterCodec implements PrimitiveCodec<Character> {
+        @Override
+        public <T> DataResult<Character> read(DynamicOps<T> ops, T input) {
+            return ops.getStringValue(input).flatMap(s -> s.isEmpty() ? DataResult.error(() -> "Expected character value, received empty string.") : DataResult.success(s.charAt(0)));
+        }
+
+        @Override
+        public <T> T write(DynamicOps<T> ops, Character value) {
+            return ops.createString(value.toString());
+        }
     }
 
     private Codecs() {}

@@ -14,9 +14,14 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 import twilightforest.TFConfig;
 import twilightforest.init.TFBiomes;
+import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
+import twilightforest.network.ParticlePacket;
+import twilightforest.network.TFPacketHandler;
 import twilightforest.util.WorldUtil;
 
 import java.util.List;
@@ -68,6 +73,16 @@ public class TransLogCoreBlock extends SpecialMagicLogBlock {
 			if (level instanceof ServerLevel server) {
 				if (!chunkAt.isUnsaved()) chunkAt.setUnsaved(true);
 				server.getChunkSource().chunkMap.resendBiomesForChunks(List.of(chunkAt));
+
+				// Nine motes are drawn in from a ring around the transformed spot
+				Vec3 xyz = Vec3.atCenterOf(dPos);
+				ParticlePacket particlePacket = new ParticlePacket();
+				for (int j = 0; j < 9; j++) {
+					float angle = rand.nextFloat() * 360.0F;
+					Vec3 offset = new Vec3(Math.cos(angle), 0.0D, Math.sin(angle)).scale(2.0D);
+					particlePacket.queueParticle(TFParticleType.TRANSFORMATION_PARTICLE.get(), false, xyz.add(offset), Vec3.ZERO.subtract(offset));
+				}
+				TFPacketHandler.CHANNEL.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(xyz.x(), xyz.y(), xyz.z(), 64.0D, server.dimension())), particlePacket);
 			}
 			break;
 		}

@@ -18,7 +18,8 @@ public class MossPatchBlock extends PatchBlock {
 
 	@Override
 	public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
-		return reader.getBlockState(pos.below()).isFaceSturdy(reader, pos, Direction.UP);
+		BlockPos below = pos.below();
+		return reader.getBlockState(below).isFaceSturdy(reader, below, Direction.UP);
 	}
 
 	@Override

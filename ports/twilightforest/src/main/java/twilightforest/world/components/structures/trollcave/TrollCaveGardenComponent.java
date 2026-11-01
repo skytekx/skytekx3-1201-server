@@ -2,8 +2,8 @@ package twilightforest.world.components.structures.trollcave;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
@@ -48,12 +48,13 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 
 	@Override
 	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
-		Predicate<Biome> highlands = biome -> biome == world.registryAccess().registryOrThrow(Registries.BIOME).get(TFBiomes.HIGHLANDS);
-		// The structure pivot (blockPos) sits at the troll cave's minY (about y -20), which falls into the
-		// twilightforest:underground layer of the Highlands TerrainColumn, so sampling there never matches
-		// HIGHLANDS. Sample at sea level (0, quart 0) instead, like 4.3's getBiome(x, 0, z) did. Upstream 4.8
-		// (ecf49ebef) accepts HIGHLANDS_UNDERGROUND instead, but 4.3's underground biome is shared by every
-		// forest column, so accepting it here would stop rejecting gardens outside the Highlands.
+		Registry<Biome> biomeRegistry = world.registryAccess().registryOrThrow(Registries.BIOME);
+		Predicate<Biome> highlands = biome -> biome == biomeRegistry.get(TFBiomes.HIGHLANDS) || biome == biomeRegistry.get(TFBiomes.HIGHLANDS_UNDERGROUND);
+		// The structure pivot (blockPos) sits at the troll cave's minY (about y -20), in the underground layer of the
+		// Highlands TerrainColumn. Upstream 4.8 (ecf49ebef) samples there and accepts HIGHLANDS_UNDERGROUND as well,
+		// which the predicate mirrors. Sampling stays at sea level (0, quart 0), like 4.3's getBiome(x, 0, z), where the
+		// Highlands column is HIGHLANDS whatever its underground layer is (a data pack may still map the old shared
+		// twilightforest:underground layer there, which must keep rejecting gardens outside the Highlands).
 		if (this.isBoundingBoxOutsideBiomes(world, highlands, blockPos.atY(generator.getSeaLevel()))) {
 			return;
 		}
@@ -89,14 +90,14 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 		for (int i = 0; i < 8; i++) {
 			BlockPos.MutableBlockPos dest = getCoordsInCave(decoRNG);
 			setBlockStateRotated(world, Blocks.MYCELIUM.defaultBlockState(), dest.getX(), dest.setY(0).getY(), dest.getZ(), this.rotation, sbb);
-			generate(world, generator, TFConfiguredFeatures.BIG_MUSHGLOOM, decoRNG, dest.getX(), dest.setY(1).getY(), dest.getZ(), sbb);
+			generate(world, generator, TFConfiguredFeatures.TROLL_BIG_MUSHGLOOMS, decoRNG, dest.getX(), dest.setY(1).getY(), dest.getZ(), sbb);
 		}
 
 		// mushrooms!
 		for (int i = 0; i < 16; i++) {
 			BlockPos.MutableBlockPos dest = getCoordsInCave(decoRNG);
 			setBlockStateRotated(world, Blocks.MYCELIUM.defaultBlockState(), dest.getX(), dest.setY(0).getY(), dest.getZ(), this.rotation, sbb);
-			generate(world, generator, rand.nextBoolean() ? TreeFeatures.HUGE_BROWN_MUSHROOM : TreeFeatures.HUGE_RED_MUSHROOM, decoRNG, dest.getX(), dest.setY(1).getY(), dest.getZ(), sbb);
+			generate(world, generator, rand.nextBoolean() ? TFConfiguredFeatures.TROLL_HUGE_BROWN_MUSHROOMS : TFConfiguredFeatures.TROLL_HUGE_RED_MUSHROOMS, decoRNG, dest.getX(), dest.setY(1).getY(), dest.getZ(), sbb);
 		}
 
 		// stone stalactites!

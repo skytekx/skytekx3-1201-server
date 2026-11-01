@@ -240,6 +240,14 @@ public abstract class BiomeHelper {
 		return biome;
 	}
 
+	public static BiomeGenerationSettings.Builder highlandsUndergroundGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
+
+		addHighlandCaves(biome);
+
+		return biome;
+	}
+
 	public static BiomeGenerationSettings.Builder streamsAndLakes(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter, boolean isLake) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
@@ -454,6 +462,7 @@ public abstract class BiomeHelper {
 	public static void addHighlandCaves(BiomeGenerationSettings.Builder biome) {
 		biome.addCarver(GenerationStep.Carving.AIR, TFCaveCarvers.HIGHLANDCAVES_CONFIGURED);
 		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_TROLL_ROOTS);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_TROLL_MUSHGLOOMS);
 		addLegacyOres(biome);
 	}
 

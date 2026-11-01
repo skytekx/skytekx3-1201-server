@@ -68,6 +68,15 @@ public class LegacyLandmarkPlacements {
         return chunkX == nearestCenter.getX() >> 4 && chunkZ == nearestCenter.getZ() >> 4;
     }
 
+    public static int manhattanDistanceFromLandmarkCenter(int chunkX, int chunkZ) {
+        BlockPos nearestCenter = getNearestCenterXZ(chunkX, chunkZ);
+
+        int deltaChunkX = Math.abs(chunkX - (nearestCenter.getX() >> 4));
+        int deltaChunkZ = Math.abs(chunkZ - (nearestCenter.getZ() >> 4));
+
+        return deltaChunkX + deltaChunkZ;
+    }
+
     // TODO For use with Hollow Hills
     public static float distanceFromCenter(BlockPos posXZ, boolean euclidean) {
         BlockPos nearestCenter = getNearestCenterXZ(posXZ.getX() >> 4, posXZ.getZ() >> 4);

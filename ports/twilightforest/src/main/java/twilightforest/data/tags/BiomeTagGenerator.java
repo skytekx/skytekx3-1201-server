@@ -52,7 +52,7 @@ public class BiomeTagGenerator extends BiomeTagsProvider {
 				TFBiomes.SWAMP, TFBiomes.FIRE_SWAMP,
 				TFBiomes.DARK_FOREST, TFBiomes.DARK_FOREST_CENTER,
 				TFBiomes.SNOWY_FOREST, TFBiomes.GLACIER,
-				TFBiomes.HIGHLANDS, TFBiomes.THORNLANDS, TFBiomes.FINAL_PLATEAU
+				TFBiomes.HIGHLANDS, TFBiomes.HIGHLANDS_UNDERGROUND, TFBiomes.THORNLANDS, TFBiomes.FINAL_PLATEAU
 		);
 
 		tag(VALID_QUEST_GROVE_BIOMES).add(TFBiomes.ENCHANTED_FOREST);

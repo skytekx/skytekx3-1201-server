@@ -27,7 +27,7 @@ Status: **PORT** = translate as-is · **REAUTHOR** = intent kept, items changed 
 | Railcraft electric locomotive recipe | REAUTHOR | Railcraft→**Railcraft Reborn** (new ids); re-add corrected recipe |
 | Rotten flesh → leather (furnace) | PORT | `event.smelting('minecraft:leather','minecraft:rotten_flesh')` |
 | Bookshelf accepts any plank | PORT | use `#minecraft:planks` tag |
-| `backpack:bound_leather` recipe | DROP/REAUTHOR | Eydamos Backpacks gone → Sophisticated/Corail; drop unless re-added |
+| `backpack:bound_leather` recipe | BACK | Since 2026-11-01 the Backpack port of Eydamos Backpack 2.0.1 brings bound and tanned leather with their original recipes, so KubeJS needs no recipe for them |
 | Tinkers toolkit (`tinkersaddons`) alts | DROP | Tinkers' Addons not on 1.20.1; TiC3 has built-in modifiers |
 | Skyroot bucket milk oredict removal | REAUTHOR | Aether 1.20.1 bucket id differs; remove from `#forge:buckets/milk` if it conflicts |
 | Fresh water (HarvestCraft) | REAUTHOR | HarvestCraft→**HarvestCraft 2** id `harvestcraft:freshwater` |

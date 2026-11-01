@@ -2,6 +2,7 @@ package twilightforest.events;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -45,6 +46,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
+import twilightforest.advancements.DrinkFromFlaskTrigger;
 import twilightforest.block.*;
 import twilightforest.block.entity.KeepsakeCasketBlockEntity;
 import twilightforest.block.entity.SkullCandleBlockEntity;
@@ -55,6 +57,7 @@ import twilightforest.init.TFItems;
 import twilightforest.init.TFMobEffects;
 import twilightforest.init.TFStats;
 import twilightforest.item.FieryArmorItem;
+import twilightforest.item.PotionFlaskTracking;
 import twilightforest.item.YetiArmorItem;
 
 import java.util.Optional;
@@ -69,6 +72,16 @@ public class EntityEvents {
 	public static void alertPlayerCastleIsWIP(AdvancementEvent.AdvancementEarnEvent event) {
 		if (event.getAdvancement().getId().equals(TwilightForestMod.prefix("progression_end"))) {
 			event.getEntity().sendSystemMessage(Component.translatable("gui.twilightforest.progression_end.message", Component.translatable("gui.twilightforest.progression_end.discord").withStyle(style -> style.withColor(ChatFormatting.BLUE).applyFormat(ChatFormatting.UNDERLINE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.experiment115.com/")))));
+		}
+	}
+
+	@SubscribeEvent
+	public static void resetFlaskLogic(AdvancementEvent.AdvancementEarnEvent event) {
+		for (Criterion criterion : event.getAdvancement().getCriteria().values()) {
+			if (criterion.getTrigger() instanceof DrinkFromFlaskTrigger.Instance) {
+				PotionFlaskTracking.resetDoses(event.getEntity());
+				break;
+			}
 		}
 	}
 

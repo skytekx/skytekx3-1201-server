@@ -19,17 +19,11 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.advancements.TFAdvancements;
 import twilightforest.init.TFSounds;
 
 import java.util.List;
 
 public class BrittleFlaskItem extends Item {
-
-	private static Potion lastUsedPotion;
-	private static int timesUsed;
-	private static boolean advancementWindow;
-	public static int seconds;
 
 	public BrittleFlaskItem(Properties properties) {
 		super(properties);
@@ -117,13 +111,17 @@ public class BrittleFlaskItem extends Item {
 		if (tag != null) {
 			if (entity instanceof Player player) {
 				if (!level.isClientSide()) {
-					if (!player.isCreative()) addTowardsAdvancement(Potion.byName(tag.getString("Potion")), player);
 					for (MobEffectInstance mobeffectinstance : PotionUtils.getMobEffects(stack)) {
 						if (mobeffectinstance.getEffect().isInstantenous()) {
 							mobeffectinstance.getEffect().applyInstantenousEffect(player, player, player, mobeffectinstance.getAmplifier(), 1.0D);
 						} else {
 							player.addEffect(new MobEffectInstance(mobeffectinstance));
 						}
+					}
+					//track after the effects are applied, so a dose that kills the player does not count towards the challenge
+					Potion potion = PotionUtils.getPotion(stack);
+					if (!player.isCreative() && !player.isSpectator() && potion != Potions.EMPTY && player instanceof ServerPlayer serverPlayer) {
+						PotionFlaskTracking.trackDrink(serverPlayer, potion);
 					}
 				}
 				player.awardStat(Stats.ITEM_USED.get(this));
@@ -148,35 +146,6 @@ public class BrittleFlaskItem extends Item {
 			}
 		}
 		return super.finishUsingItem(stack, level, entity);
-	}
-
-	private void addTowardsAdvancement(Potion potionDrank, Player drinker) {
-		if (lastUsedPotion == null) {
-			lastUsedPotion = Potions.EMPTY;
-		}
-
-		if (!lastUsedPotion.equals(potionDrank)) {
-			timesUsed = 1;
-			lastUsedPotion = potionDrank;
-			advancementWindow = true;
-		} else {
-			timesUsed++;
-		}
-
-		if (drinker instanceof ServerPlayer player && drinker.isAlive() && advancementWindow) {
-			TFAdvancements.DRINK_FROM_FLASK.trigger(player, timesUsed, lastUsedPotion);
-		}
-	}
-
-	public static void ticker() {
-		if (advancementWindow) seconds++;
-
-		if (seconds == 8) {
-			advancementWindow = false;
-			timesUsed = 0;
-			lastUsedPotion = null;
-			seconds = 0;
-		}
 	}
 
 	public boolean canBreak() {

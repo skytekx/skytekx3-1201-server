@@ -687,7 +687,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.TIME_TRAPPED_CHEST.get(),
 				TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(),
 				TFBlocks.MINING_TRAPPED_CHEST.get(),
-				TFBlocks.SORTING_TRAPPED_CHEST.get()
+				TFBlocks.SORTING_TRAPPED_CHEST.get(),
+				TFBlocks.HUGE_LILY_PAD.get()
 		).addTags(BANISTERS, HOLLOW_LOGS, TOWERWOOD);
 
 		tag(BlockTags.MINEABLE_WITH_HOE).add(
@@ -879,6 +880,12 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		tag(BLOCK_AND_CHAIN_NEVER_BREAKS).addTags(MAZESTONE, CASTLE_BLOCKS, DEADROCK, BlockTags.WITHER_IMMUNE)
 				.add(TFBlocks.TIME_LOG_CORE.get(), TFBlocks.TRANSFORMATION_LOG_CORE.get(), TFBlocks.MINING_LOG_CORE.get(), TFBlocks.SORTING_LOG_CORE.get())
 				.add(TFBlocks.GIANT_OBSIDIAN.get());
+
+		tag(BlockTags.INSIDE_STEP_SOUND_BLOCKS)
+				.add(TFBlocks.HUGE_LILY_PAD.get());
+
+		tag(BlockTags.SWORD_EFFICIENT)
+				.add(TFBlocks.HUGE_LILY_PAD.get());
 	}
 
 	private static Block[] getAllMinecraftOrTwilightBlocks(Predicate<Block> predicate) {

@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -179,7 +180,59 @@ public abstract class AbstractSkullCandleBlock extends BaseEntityBlock implement
 
 			}
 		}
-		return this.lightCandles(state, level, pos, player, hand, result);
+		InteractionResult lightResult = this.lightCandles(state, level, pos, player, hand, result);
+		if (lightResult != InteractionResult.PASS) return lightResult;
+
+		// sneak-use with empty hands takes one candle back off the skull; the last one turns it back into the plain skull (#2119)
+		if (hand == InteractionHand.MAIN_HAND && player.getItemInHand(hand).isEmpty() && player.isSecondaryUseActive()
+				&& level.getBlockEntity(pos) instanceof SkullCandleBlockEntity sc && sc.getCandleAmount() > 0) {
+			boolean wall = state.getBlock() instanceof WallSkullCandleBlock;
+			int newCandleAmount = sc.getCandleAmount() - 1;
+			Block plainSkull = this.getNoCandleSkull(wall);
+			if (newCandleAmount <= 0 && plainSkull == null) return InteractionResult.PASS;
+
+			if (!level.isClientSide()) {
+				ItemStack candle = new ItemStack(candleColorToCandle(CandleColors.colorFromInt(sc.getCandleColor())));
+				if (newCandleAmount > 0) {
+					sc.setCandleAmount(newCandleAmount);
+				} else {
+					GameProfile profile = sc.getOwnerProfile();
+					BlockState newState;
+					if (wall) {
+						newState = plainSkull.defaultBlockState().setValue(WallSkullBlock.FACING, state.getValue(WallSkullCandleBlock.FACING));
+					} else {
+						newState = plainSkull.defaultBlockState().setValue(SkullBlock.ROTATION, state.getValue(SkullCandleBlock.ROTATION));
+					}
+					level.setBlockAndUpdate(pos, newState);
+					if (profile != null && level.getBlockEntity(pos) instanceof SkullBlockEntity skull) skull.setOwner(profile);
+				}
+				level.playSound(null, pos, SoundEvents.CANDLE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+				level.getLightEngine().checkBlock(pos);
+				if (player.getAbilities().instabuild) {
+					if (!player.getInventory().contains(candle)) {
+						player.getInventory().add(candle);
+					}
+				} else if (!player.getInventory().add(candle)) {
+					player.drop(candle, false);
+				}
+			}
+			return InteractionResult.sidedSuccess(level.isClientSide());
+		}
+		return InteractionResult.PASS;
+	}
+
+	@Nullable
+	private Block getNoCandleSkull(boolean wall) {
+		if (!(this.getType() instanceof SkullBlock.Types type)) return null;
+		return switch (type) {
+			case SKELETON -> wall ? Blocks.SKELETON_WALL_SKULL : Blocks.SKELETON_SKULL;
+			case WITHER_SKELETON -> wall ? Blocks.WITHER_SKELETON_WALL_SKULL : Blocks.WITHER_SKELETON_SKULL;
+			case PLAYER -> wall ? Blocks.PLAYER_WALL_HEAD : Blocks.PLAYER_HEAD;
+			case ZOMBIE -> wall ? Blocks.ZOMBIE_WALL_HEAD : Blocks.ZOMBIE_HEAD;
+			case CREEPER -> wall ? Blocks.CREEPER_WALL_HEAD : Blocks.CREEPER_HEAD;
+			case PIGLIN -> wall ? Blocks.PIGLIN_WALL_HEAD : Blocks.PIGLIN_HEAD;
+			default -> null;
+		};
 	}
 
 	@Override

@@ -26,7 +26,6 @@ import twilightforest.compat.curios.renderer.CurioHeadRenderer;
 import twilightforest.events.CharmEvents;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
-import twilightforest.item.SkullCandleItem;
 import twilightforest.item.TrophyItem;
 import twilightforest.network.CreateMovingCicadaSoundPacket;
 import twilightforest.network.TFPacketHandler;
@@ -123,11 +122,6 @@ public class CuriosCompat {
 
 	public static boolean isTrophyCurioEquipped(LivingEntity entity) {
 		Optional<SlotResult> slot = CuriosApi.getCuriosHelper().findFirstCurio(entity, stack -> stack.getItem() instanceof TrophyItem);
-		return slot.isPresent() && slot.get().slotContext() != null && slot.get().slotContext().visible();
-	}
-
-	public static boolean isSkullCurioEquipped(LivingEntity entity) {
-		Optional<SlotResult> slot = CuriosApi.getCuriosHelper().findFirstCurio(entity, stack -> stack.getItem() instanceof SkullCandleItem);
 		return slot.isPresent() && slot.get().slotContext() != null && slot.get().slotContext().visible();
 	}
 

@@ -96,6 +96,12 @@ Built once and reused by the Lich Tower, Camp, Fallen Trunk, Hollow Trees, Court
 | `avoid-landmark-modifier-v2` — no_structure placement modifier v2 (piece-accurate clearance) | worldgen | medium | 8 | none (decoration in new chunks) |
 | `landmark-wrapped-structure-types` — 'progression' and 'landmark' wrapper structure types | worldgen | easy | 4 | new ids only |
 
+Wrapper notes for pack datapacks (4.3-specific):
+
+- On 4.3, `twilightforest:progression` only locks a structure when its structure set uses `twilightforest:forced_landmark` for an existing TFLandmark (replacing that landmark's set) and the structure is in the `#twilightforest:landmark` structure tag. 4.3 has no datapack-usable `landmark_grid` placement, and the progression checks look the start up at the landmark grid centre.
+- The nested blocks (`hint_creature`, `decoration_clearance`, and `avoid_additional_structures` on `twilightforest:avoid_landmark_grid`) decode with 1.20.1's lenient `optionalFieldOf`. A parse error inside one silently reads as absent instead of failing the datapack. Write `hint_item` in the 1.20.1 ItemStack format (`id`/`Count`/`tag`), not 4.8's `count`/`components`.
+- The 4.8 codec reshape is not ported. TF's own landmark and progression structures keep 4.3's flat fields, so 4.8 `worldgen/structure/*.json` files must be flattened by hand (see the wave 3 entry in `ports/twilightforest-backport-carryover.json`).
+
 ## Wave 4: Boss and mob upgrades (high value on a multiplayer server)
 
 multiplayer-boss-scaling is event and tag based, so it has no BaseTFBoss dependency (checked), and it gives the best value per hour for a group server. BaseTFBoss and boss bars precede the Knight Phantom, Hydra and Lich work. The mob items are small and add only sound and loot ids.

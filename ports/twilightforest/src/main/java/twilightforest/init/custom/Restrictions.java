@@ -51,9 +51,9 @@ public class Restrictions {
         context.register(DARK_FOREST_CENTER, new Restriction(TFStructures.DARK_TOWER, Enforcement.DARKNESS.getKey(), 0.0F, asStack(TFBlocks.KNIGHT_PHANTOM_TROPHY), List.of(TwilightForestMod.prefix("progress_knights"))));
         context.register(FINAL_PLATEAU, new Restriction(TFStructures.FINAL_CASTLE, Enforcement.ACID_RAIN.getKey(), 1.5F, asStack(TFItems.LAMP_OF_CINDERS), List.of(TwilightForestMod.prefix("progress_troll"))));
         context.register(FIRE_SWAMP, new Restriction(TFStructures.HYDRA_LAIR, Enforcement.FIRE.getKey(), 8.0F, asStack(TFItems.MEEF_STROGANOFF), List.of(TwilightForestMod.prefix("progress_labyrinth"))));
-        context.register(GLACIER, new Restriction(TFStructures.AURORA_PALACE, Enforcement.FROST.getKey(), 3.0F, asStack(TFItems.ALPHA_YETI_FUR), List.of(TwilightForestMod.prefix("progress_yeti"))));
+        context.register(GLACIER, new Restriction(TFStructures.AURORA_PALACE, Enforcement.FROST.getKey(), 1.0F, asStack(TFItems.ALPHA_YETI_FUR), List.of(TwilightForestMod.prefix("progress_yeti"))));
         context.register(HIGHLANDS, new Restriction(TFStructures.TROLL_CAVE, Enforcement.ACID_RAIN.getKey(), 0.5F, asStack(TFBlocks.UBEROUS_SOIL), List.of(TwilightForestMod.prefix("progress_merge"))));
-        context.register(SNOWY_FOREST, new Restriction(TFStructures.YETI_CAVE, Enforcement.FROST.getKey(), 2.0F, asStack(TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE), List.of(TwilightForestMod.prefix("progress_lich"))));
+        context.register(SNOWY_FOREST, new Restriction(TFStructures.YETI_CAVE, Enforcement.FROST.getKey(), 0.0F, asStack(TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE), List.of(TwilightForestMod.prefix("progress_lich"))));
         context.register(SWAMP, new Restriction(TFStructures.LABYRINTH, Enforcement.HUNGER.getKey(), 1.0F, asStack(TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE), List.of(TwilightForestMod.prefix("progress_lich"))));
         context.register(THORNLANDS, new Restriction(TFStructures.FINAL_CASTLE, Enforcement.ACID_RAIN.getKey(), 1.0F, asStack(TFItems.LAMP_OF_CINDERS), List.of(TwilightForestMod.prefix("progress_troll"))));
     }

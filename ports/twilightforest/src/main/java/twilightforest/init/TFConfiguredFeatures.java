@@ -143,6 +143,7 @@ public final class TFConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_TREE = registerKey("tree/canopy_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FIREFLY_CANOPY_TREE = registerKey("tree/firefly_canopy_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> DEAD_CANOPY_TREE = registerKey("tree/dead_canopy_tree");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> MEGA_CANOPY_TREE = registerKey("tree/mega_canopy_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> MANGROVE_TREE = registerKey("tree/mangrove_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> DARKWOOD_TREE = registerKey("tree/darkwood_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HOMEGROWN_DARKWOOD_TREE = registerKey("tree/homegrown_darkwood_tree");
@@ -151,6 +152,9 @@ public final class TFConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TRANSFORMATION_TREE = registerKey("tree/transformation_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> MINING_TREE = registerKey("tree/mining_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SORTING_TREE = registerKey("tree/sorting_tree");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> FOREST_MEGA_OAK_TREE = registerKey("tree/forest_mega_oak_tree");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SAVANNAH_MEGA_OAK_TREE = registerKey("tree/savannah_mega_oak_tree");
+	// Pre-4.8 ids of the two Mega Oak trees, no longer used by TF; kept so datapacks referencing them still load
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FOREST_CANOPY_OAK_TREE = registerKey("tree/forest_canopy_oak_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SAVANNAH_CANOPY_OAK_TREE = registerKey("tree/savannah_canopy_oak_tree");
 	// Superseded by the twilightforest:hollow_tree structure, which the Robust Twilight Oak Sapling grows now. Kept registered for tree/hollow_oak and datapacks that reference 4.3's id
@@ -319,6 +323,7 @@ public final class TFConfiguredFeatures {
 		context.register(CANOPY_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.CANOPY_TREE));
 		context.register(FIREFLY_CANOPY_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.CANOPY_TREE_FIREFLY));
 		context.register(DEAD_CANOPY_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.CANOPY_TREE_DEAD));
+		context.register(MEGA_CANOPY_TREE, new ConfiguredFeature<>(TFFeatures.MEGA_CANOPY.get(), TreeConfigurations.MEGA_CANOPY));
 		context.register(MANGROVE_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.MANGROVE_TREE));
 		context.register(DARKWOOD_TREE, new ConfiguredFeature<>(TFFeatures.DARK_CANOPY_TREE.get(), TreeConfigurations.DARKWOOD_TREE));
 		context.register(HOMEGROWN_DARKWOOD_TREE, new ConfiguredFeature<>(TFFeatures.DARK_CANOPY_TREE.get(), TreeConfigurations.HOMEGROWN_DARKWOOD_TREE));
@@ -327,8 +332,10 @@ public final class TFConfiguredFeatures {
 		context.register(TRANSFORMATION_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.TRANSFORM_TREE));
 		context.register(MINING_TREE, new ConfiguredFeature<>(TFFeatures.MINERS_TREE.get(), TreeConfigurations.MINING_TREE));
 		context.register(SORTING_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.SORT_TREE));
-		context.register(FOREST_CANOPY_OAK_TREE, new ConfiguredFeature<>(TFFeatures.CANOPY_OAK.get(), TreeConfigurations.FOREST_CANOPY_OAK));
-		context.register(SAVANNAH_CANOPY_OAK_TREE, new ConfiguredFeature<>(TFFeatures.CANOPY_OAK.get(), TreeConfigurations.SAVANNAH_CANOPY_OAK));
+		context.register(FOREST_MEGA_OAK_TREE, new ConfiguredFeature<>(TFFeatures.MEGA_OAK.get(), TreeConfigurations.FOREST_MEGA_OAK));
+		context.register(SAVANNAH_MEGA_OAK_TREE, new ConfiguredFeature<>(TFFeatures.MEGA_OAK.get(), TreeConfigurations.SAVANNAH_MEGA_OAK));
+		context.register(FOREST_CANOPY_OAK_TREE, new ConfiguredFeature<>(TFFeatures.CANOPY_OAK.get(), TreeConfigurations.FOREST_MEGA_OAK));
+		context.register(SAVANNAH_CANOPY_OAK_TREE, new ConfiguredFeature<>(TFFeatures.CANOPY_OAK.get(), TreeConfigurations.SAVANNAH_MEGA_OAK));
 		context.register(HOLLOW_TREE, new ConfiguredFeature<>(TFFeatures.HOLLOW_TREE.get(), TreeConfigurations.HOLLOW_TREE));
 		context.register(RAINBOW_OAK_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.RAINBOAK_TREE));
 		context.register(LARGE_RAINBOW_OAK_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.LARGE_RAINBOAK_TREE));

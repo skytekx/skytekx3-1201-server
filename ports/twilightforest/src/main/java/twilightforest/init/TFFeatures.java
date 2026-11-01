@@ -25,7 +25,10 @@ public class TFFeatures {
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> CANOPY_RED_SMOOTH_MUSHROOM = FEATURES.register("canopy_red_smooth_mushroom", () -> new RedCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC, RedCanopyMushroomFeature.SMOOTH_CAP));
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> CANOPY_RED_SPHEROID_MUSHROOM = FEATURES.register("canopy_red_spheroid_mushroom", () -> new RedCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC, RedCanopyMushroomFeature.SPHEROID_CAP));
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> CANOPY_RED_FLAT_MUSHROOM = FEATURES.register("canopy_red_flat_mushroom", () -> new RedCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC, RedCanopyMushroomFeature.FLAT_CAP));
-	public static final RegistryObject<Feature<TFTreeFeatureConfig>> CANOPY_OAK = FEATURES.register("canopy_oak", () -> new OakCanopyTreeFeature(TFTreeFeatureConfig.codecTFTreeConfig));
+	public static final RegistryObject<Feature<TFTreeFeatureConfig>> MEGA_OAK = FEATURES.register("mega_oak", () -> new MegaOakTreeFeature(TFTreeFeatureConfig.codecTFTreeConfig));
+	public static final RegistryObject<Feature<TFTreeFeatureConfig>> MEGA_CANOPY = FEATURES.register("mega_canopy", () -> new MegaCanopyTreeFeature(TFTreeFeatureConfig.codecTFTreeConfig));
+	// Pre-4.8 id of the Mega Oak; only the legacy tree/*_canopy_oak_tree entries use it now, kept registered so datapacks referencing the id still load
+	public static final RegistryObject<Feature<TFTreeFeatureConfig>> CANOPY_OAK = FEATURES.register("canopy_oak", () -> new MegaOakTreeFeature(TFTreeFeatureConfig.codecTFTreeConfig));
 	public static final RegistryObject<Feature<NoneFeatureConfiguration>> CAVE_STALACTITE = FEATURES.register("block_spike", () -> new BlockSpikeFeature(NoneFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<TreeConfiguration>> DARK_CANOPY_TREE = FEATURES.register("dark_canopy_tree", () -> new DarkCanopyTreeFeature(TreeConfiguration.CODEC));
 	public static final RegistryObject<Feature<SwizzleConfig>> DRUID_HUT = FEATURES.register("druid_hut", () -> new DruidHutFeature(SwizzleConfig.CODEC));

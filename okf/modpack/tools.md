@@ -3,7 +3,7 @@ type: Reference
 title: Tools
 description: The scripts in tools/ in the order they are used, from datapack sync and mod updates through jar patches and the mrpack build to the Modrinth upload and RCON, with what each one really does and where it runs.
 tags: [modpack, tools, build, modrinth]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Tools
@@ -183,17 +183,19 @@ tools/structure_pieces.py world/dimensions/skytekx3/skylands/region skytekx3:sky
 The three scripts read region files with their own NBT reader and change nothing. Since 4ec39e3 the
 reader works like the one of Minecraft 1.20.1: it also reads chunks kept in `c.X.Z.mcc` files, and
 each script ends with a list of every chunk or region file it could not read and why (torn by a write,
-cut off, missing `.mcc`, unknown compression). Run them after a
-pregen, against a stopped server or right after `save-all flush`. They need numpy. The Mac mini has it in
-a venv, `python3 -m venv ~/.venvs/skyscan` with `pip install numpy` (numpy 2.0.2 on the system Python
-3.9).
+cut off, missing `.mcc`, unknown compression). Run them after a pregen, against a stopped server or
+right after `save-all flush`. They need numpy. The Mac mini has it in a venv,
+`python3 -m venv ~/.venvs/skyscan` with `pip install numpy` (numpy 2.0.2 on the system Python 3.9).
+Its copies of the three scripts are the ones of 4ec39e3 since 2026-11-01 01:10. Before that it ran
+older copies.
 
 - The scan [void_scan.py](../../tools/void_scan.py) lists every structure start with its lowest piece
   and its biome, every non-air block below the island band (Y 24 by default, `--band-min`) and every
   non-air block in `sky_void` columns. It reads starts from every chunk, also from the chunks at the
   edge of the generated area that are not full yet, and takes the biome at the center of the first
   piece, which often lies in the next chunk. A start whose chunk holds no biome yet counts as
-  `start_biome_unknown`. Island rims are `sky_void` by design, so terrain there is expected.
+  `start_biome_unknown`. Floaters and a few thin island edges lie in `sky_void` columns, so blocks
+  there are expected.
 - The scan [void_float.py](../../tools/void_float.py) flood fills from each block below the band. A
   group that reaches Y 40 (`--attach-y`) hangs from an island, for example an island bottom or a geode.
   A group that never reaches it floats in the void and is a leak. Since 6c2ff7d fills that meet are

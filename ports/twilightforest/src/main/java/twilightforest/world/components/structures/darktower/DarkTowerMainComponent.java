@@ -1,5 +1,6 @@
 package twilightforest.world.components.structures.darktower;
 
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -1001,7 +1002,7 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 		// wart container
 		makePillarFrame(world, sbb, netherDeco, rotation, 12, y, 9, 4, 4, 7, true);
 		this.fillBlocksRotated(world, sbb, 13, y + 1, 10, 14, y + 1, 14, Blocks.SOUL_SAND.defaultBlockState(), rotation);
-		this.fillBlocksRotated(world, sbb, 13, y + 2, 10, 14, y + 2, 14, Blocks.NETHER_WART.defaultBlockState(), rotation);
+		this.fillBlocksRotated(world, sbb, 13, y + 2, 10, 14, y + 2, 14, this.getNetherPlant(world, y), rotation);
 		this.fillBlocksRotated(world, sbb, 13, y + 4, 10, 14, y + 4, 14, Blocks.SOUL_SAND.defaultBlockState(), rotation);
 
 		// blaze container
@@ -1436,5 +1437,23 @@ public class DarkTowerMainComponent extends DarkTowerWingComponent {
 				}
 			}
 		}
+	}
+
+	/**
+	 * TF 4.8 fills the wart container with nether wart or one of the four Dark Tower berry bushes. 4.8 rolls the plant on
+	 * decoRNG; this port uses its own RNG seeded per tower floor, so the shared decoration sequence of every later floor
+	 * stays exactly as in 4.3. In a tower that was only partly generated before the update, the wart container is
+	 * the only thing that can come out differently in the remaining chunks.
+	 */
+	private BlockState getNetherPlant(WorldGenLevel world, int y) {
+		RandomSource plantRNG = RandomSource.create(world.getSeed() + this.boundingBox.minX() * 341873128712L + y * 132897987541L ^ this.boundingBox.minZ());
+		List<BlockState> blocks = List.of(
+			Blocks.NETHER_WART.defaultBlockState(),
+			TFBlocks.BLIGHTBERRY_BUSH.get().defaultBlockState(),
+			TFBlocks.DUSKBERRY_BUSH.get().defaultBlockState(),
+			TFBlocks.SKYBERRY_BUSH.get().defaultBlockState(),
+			TFBlocks.STINGBERRY_BUSH.get().defaultBlockState()
+		);
+		return Util.getRandom(blocks, plantRNG);
 	}
 }

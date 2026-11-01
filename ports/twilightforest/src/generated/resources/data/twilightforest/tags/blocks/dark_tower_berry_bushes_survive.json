@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#forge:netherrack",
+    "#forge:ores_in_ground/netherrack",
+    "minecraft:blackstone",
+    "minecraft:soul_sand",
+    "minecraft:soul_soil"
+  ]
+}

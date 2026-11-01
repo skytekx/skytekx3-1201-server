@@ -66,6 +66,10 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> ICE_BOMB_REPLACEABLES = BlockTags.create(TwilightForestMod.prefix("ice_bomb_replaceables"));
 	public static final TagKey<Block> MAZEBREAKER_ACCELERATED = BlockTags.create(TwilightForestMod.prefix("mazebreaker_accelerated_mining"));
 	public static final TagKey<Block> PLANTS_HANG_ON = BlockTags.create(TwilightForestMod.prefix("plants_hang_on"));
+	public static final TagKey<Block> TF_BERRY_BUSHES_SURVIVE = BlockTags.create(TwilightForestMod.prefix("tf_berry_bushes_survive"));
+	public static final TagKey<Block> TF_BERRY_BUSHES_REPLACE = BlockTags.create(TwilightForestMod.prefix("tf_berry_bushes_replace"));
+	public static final TagKey<Block> DARK_TOWER_BERRY_BUSHES_SURVIVE = BlockTags.create(TwilightForestMod.prefix("dark_tower_berry_bushes_survive"));
+	public static final TagKey<Block> DARK_TOWER_BERRY_BUSHES_DIE = BlockTags.create(TwilightForestMod.prefix("dark_tower_berry_bushes_die"));
 
 	public static final TagKey<Block> COMMON_PROTECTIONS = BlockTags.create(TwilightForestMod.prefix("common_protections"));
 	public static final TagKey<Block> ANNIHILATION_INCLUSIONS = BlockTags.create(TwilightForestMod.prefix("annihilation_inclusions"));
@@ -351,7 +355,11 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.FALLEN_LEAVES.get(),
 				TFBlocks.TORCHBERRY_PLANT.get(),
 				TFBlocks.ROOT_STRAND.get(),
-				TFBlocks.ROOT_BLOCK.get());
+				TFBlocks.ROOT_BLOCK.get(),
+				TFBlocks.RASPBERRY_BUSH.get(),
+				TFBlocks.BLUEBERRY_BUSH.get(),
+				TFBlocks.BLACKBERRY_BUSH.get(),
+				TFBlocks.MALOBERRY_BUSH.get());
 
 		tag(BlockTags.CLIMBABLE).add(TFBlocks.IRON_LADDER.get(), TFBlocks.ROPE.get(), TFBlocks.ROOT_STRAND.get()).addTag(HOLLOW_LOGS_CLIMBABLE);
 
@@ -639,6 +647,25 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		tag(DRUID_PROJECTILE_REPLACEABLE).addTags(BlockTags.LEAVES, BlockTags.LOGS, BlockTags.PLANKS, BlockTags.OVERWORLD_CARVER_REPLACEABLES, BlockTags.NETHER_CARVER_REPLACEABLES, BlockTags.REPLACEABLE_BY_TREES, BlockTags.LUSH_GROUND_REPLACEABLE, BlockTags.SCULK_REPLACEABLE, Tags.Blocks.ORES);
 
 		tag(BlockTags.OVERWORLD_CARVER_REPLACEABLES).add(TFBlocks.TROLLSTEINN.get());
+
+		tag(TF_BERRY_BUSHES_REPLACE)
+				.addTags(BlockTags.REPLACEABLE)
+				.addTags(BlockTags.FLOWERS)
+				.add(TFBlocks.MAYAPPLE.get());
+
+		tag(TF_BERRY_BUSHES_SURVIVE)
+				.addTags(BlockTags.DIRT)
+				.add(Blocks.SNOW_BLOCK);
+
+		tag(DARK_TOWER_BERRY_BUSHES_SURVIVE)
+				.addTag(Tags.Blocks.NETHERRACK)
+				.addTag(Tags.Blocks.ORES_IN_GROUND_NETHERRACK)
+				.add(Blocks.BLACKSTONE)
+				.add(Blocks.SOUL_SAND)
+				.add(Blocks.SOUL_SOIL);
+
+		tag(DARK_TOWER_BERRY_BUSHES_DIE)
+				.addTags(BlockTags.NYLIUM);
 
 		tag(TIME_CORE_EXCLUDED).add(Blocks.NETHER_PORTAL);
 

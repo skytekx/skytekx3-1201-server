@@ -48,6 +48,7 @@ import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 import twilightforest.block.CloudBlock;
+import twilightforest.block.SnowLoggable;
 import twilightforest.block.WroughtIronFenceBlock;
 import twilightforest.client.TFClientSetup;
 import twilightforest.events.ToolEvents;
@@ -326,5 +327,16 @@ public class ASMHooks {
 	public static boolean lead(boolean o, LeashFenceKnotEntity entity) {
 		BlockState fenceState = entity.level().getBlockState(entity.getPos());
 		return o || (fenceState.is(TFBlocks.WROUGHT_IRON_FENCE.get()) && fenceState.getValue(WroughtIronFenceBlock.POST) != WroughtIronFenceBlock.PostState.NONE);
+	}
+
+	/**
+	 * Injection Point:<br>
+	 * net.minecraft.world.level.block.SnowyDirtBlock#isSnowySetting(BlockState) (private)<br>
+	 * [BEFORE IRETURN]
+	 * <p>
+	 * Grass and podzol below a {@link SnowLoggable} block that holds snow layers keep their snowy look.
+	 */
+	public static boolean snowySetting(boolean o, BlockState state) {
+		return o || (state.getBlock() instanceof SnowLoggable && state.getValue(SnowLoggable.SNOW_LAYERS) > 0);
 	}
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.minecraftforge.client.model.generators.loaders.CompositeModelBuilder;
@@ -32,7 +33,9 @@ import twilightforest.enums.*;
 import twilightforest.init.TFBlocks;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 import static twilightforest.TwilightForestMod.prefix;
 
@@ -40,6 +43,9 @@ import static twilightforest.TwilightForestMod.prefix;
 //make better helper methods and move them to BlockModelBuilders
 //finish datagenning blocks that arent done yet
 public class BlockstateGenerator extends BlockModelBuilders {
+	@Nullable
+	private ModelFile[][] abstractBushStates;
+
 	public BlockstateGenerator(PackOutput output, ExistingFileHelper exFileHelper) {
 		super(output, exFileHelper);
 	}
@@ -342,6 +348,15 @@ public class BlockstateGenerator extends BlockModelBuilders {
 					.texture("1", item.getNamespace() + ":block/" + item.getPath() + "_top")
 					.texture("2", item.getNamespace() + ":block/" + item.getPath());
 		}
+
+		registerBush(TFBlocks.RASPBERRY_BUSH.get());
+		registerBush(TFBlocks.BLUEBERRY_BUSH.get());
+		registerBush(TFBlocks.BLACKBERRY_BUSH.get());
+		registerBush(TFBlocks.MALOBERRY_BUSH.get());
+		registerBush(TFBlocks.BLIGHTBERRY_BUSH.get());
+		registerBush(TFBlocks.DUSKBERRY_BUSH.get());
+		registerBush(TFBlocks.SKYBERRY_BUSH.get());
+		registerBush(TFBlocks.STINGBERRY_BUSH.get());
 
 		registerPlantBlocks();
 		simpleBlock(TFBlocks.ROOT_BLOCK.get());
@@ -886,6 +901,139 @@ public class BlockstateGenerator extends BlockModelBuilders {
 				.with(FireJetBlock.STATE, FireJetVariant.POPPING).setModels(new ConfiguredModel(encasedJetOn));
 		getVariantBuilder(TFBlocks.ENCASED_FIRE_JET.get()).partialState()
 				.with(FireJetBlock.STATE, FireJetVariant.FLAME).setModels(new ConfiguredModel(encasedJetOn));
+	}
+
+	private void registerBush(Block block) {
+		registerBush(block, 0, 0);
+	}
+
+	private void registerBush(Block block, int blockLight, int skyLight) {
+		String blockName = name(block);
+		ModelFile[][] bushModels;
+		ResourceLocation baseTexture = prefix("block/" + blockName);
+		ResourceLocation ripeTexture = prefix("block/" + blockName + "_ripe");
+		if (blockLight == 0 && skyLight == 0)
+			bushModels = createBushStatesWithoutEmissivity(blockName, baseTexture, ripeTexture);
+		else
+			bushModels = createBushStates(blockName, blockLight, skyLight, baseTexture, ripeTexture);
+
+		getVariantBuilder(block).forAllStates(state -> {
+			int age = state.getValue(BlockStateProperties.AGE_3);
+			int snowLayers = state.getValue(SnowLoggable.SNOW_LAYERS);
+			return new ConfiguredModel[]{
+				new ConfiguredModel(bushModels[age][snowLayers], 0, 0, false)
+			};
+		});
+	}
+
+	private ModelFile[][] createBushStatesWithoutEmissivity(String blockName, ResourceLocation baseTexture, ResourceLocation ripeTexture) {
+		ModelFile[][] bushModels = new ModelFile[TFBushBlock.MAX_AGE + 1][SnowLoggable.MAX_SNOW_LAYERS + 1];
+		for (int age = 0; age <= TFBushBlock.MAX_AGE; age++) {
+			ResourceLocation texture = age == 3 ? ripeTexture : baseTexture;
+			for (int snowLayers = SnowLoggable.MIN_SNOW_LAYERS; snowLayers <= SnowLoggable.MAX_SNOW_LAYERS; snowLayers++) {
+				bushModels[age][snowLayers] = models()
+					.getBuilder("block/" + blockName + getBushSuffix(age, snowLayers))
+					.parent(getAbstractBushesStates()[age][snowLayers])
+					.texture("all", texture);
+			}
+		}
+		return bushModels;
+	}
+
+	private ModelFile[][] createBushStates(String blockName, int blockLight, int skyLight, ResourceLocation baseTexture, ResourceLocation ripeTexture) {
+		ModelFile[][] bushModels = new ModelFile[TFBushBlock.MAX_AGE + 1][SnowLoggable.MAX_SNOW_LAYERS + 1];
+
+		for (int age = 0; age <= TFBushBlock.MAX_AGE; age++) {
+			ResourceLocation texture = age == 3 ? ripeTexture : baseTexture;
+			for (int snowLayers = SnowLoggable.MIN_SNOW_LAYERS; snowLayers <= SnowLoggable.MAX_SNOW_LAYERS; snowLayers++) {
+				bushModels[age][snowLayers] = createBushModel(blockName, age, snowLayers, texture, blockLight, skyLight);
+			}
+		}
+		return bushModels;
+	}
+
+	private ModelFile createBushModel(String bushName, int age, int snowLayers, ResourceLocation texturePath, int blockLight, int skyLight) {
+		String modelName = bushName + getBushSuffix(age, snowLayers);
+		float snowHeight = 16F / SnowLoggable.MAX_SNOW_LAYERS * snowLayers;
+
+		BlockModelBuilder builder = models().cubeAll(modelName, texturePath);
+		addBushElements(builder, age, snowHeight, blockLight, skyLight);
+
+		if (snowLayers > 0) {
+			builder.texture("snow", new ResourceLocation("block/snow"));
+			addSnowElements(builder, age, snowHeight);
+		}
+
+		return builder.renderType(CUTOUT);
+	}
+
+	private void addBushElements(BlockModelBuilder b, int age, float snowHeight, int blockLight, int skyLight) {
+		switch (age) {
+			case 0 -> addShrunkBox(b, 4, 0, 4, 12, 8, 12, snowHeight, blockLight, skyLight, (direction, faceBuilder) -> faceBuilder.texture("#all"));
+			case 1 -> addShrunkBox(b, 2, 0, 2, 14, 12, 14, snowHeight, blockLight, skyLight, (direction, faceBuilder) -> faceBuilder.texture("#all"));
+			case 2, 3 -> addShrunkBox(b, 0, 0, 0, 16, 16, 16, snowHeight, blockLight, skyLight, (direction, faceBuilder) -> faceBuilder.cullface(direction).texture("#all"));
+			default -> throw new IllegalArgumentException("Age out of range: " + age);
+		}
+	}
+
+	private void addSnowElements(BlockModelBuilder b, int age, float snowHeight) {
+		switch (age) {
+			case 0 -> addSnowCap(b, 4, 8, 4, 12, 10, 12);
+			case 1 -> addSnowCap(b, 2, 12, 2, 14, 14, 14);
+			default -> {
+			}
+		}
+		addSnowCover(b, snowHeight);
+	}
+
+	private void addShrunkBox(BlockModelBuilder b,
+							  float x1, float y1, float z1,
+							  float x2, float y2, float z2,
+							  float snowHeight, int blockLight, int skyLight,
+							  BiConsumer<Direction, ModelBuilder<BlockModelBuilder>.ElementBuilder.FaceBuilder> faces) {
+		if (snowHeight > y2 - SnowLoggable.SNOW_Z_FIGHTING)
+			return;
+		b.element()
+			.from(x1, Math.max(y1, snowHeight + SnowLoggable.SNOW_Z_FIGHTING), z1)
+			.to(x2, y2, z2)
+			.allFaces(faces)
+			.emissivity(blockLight, skyLight)
+			.end();
+	}
+
+	private void addSnowCap(BlockModelBuilder b, float x1, float y1, float z1, float x2, float y2, float z2) {
+		b.element()
+			.from(x1, y1, z1)
+			.to(x2, y2, z2)
+			.allFaces((d, f) -> f.texture("#snow"))
+			.end();
+	}
+
+	private void addSnowCover(BlockModelBuilder b, float snowHeight) {
+		b.element()
+			.from(0, 0, 0)
+			.to(16, snowHeight, 16)
+			.allFaces((d, f) -> f.texture("#snow"))
+			.end();
+	}
+
+	// The shared parents of every bush model: one per age and snow layer count, textured by the child models.
+	private ModelFile[][] getAbstractBushesStates() {
+		if (this.abstractBushStates == null) {
+			ResourceLocation defaultAbstractBushTexture = new ResourceLocation("block/bedrock");
+			this.abstractBushStates = createBushStates("abstract_bush", 0, 0, defaultAbstractBushTexture, defaultAbstractBushTexture);
+		}
+		return this.abstractBushStates;
+	}
+
+	private static String getBushSuffix(int age, int snowLayer) {
+		return switch (age) {
+			case 0 -> "_small_" + snowLayer;
+			case 1 -> "_" + snowLayer;
+			case 2 -> "_large_" + snowLayer;
+			case 3 -> "_grown_" + snowLayer;
+			default -> throw new IllegalArgumentException("Age out of range: " + age);
+		};
 	}
 
 	private void registerPlantBlocks() {

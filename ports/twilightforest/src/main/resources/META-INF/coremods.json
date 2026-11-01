@@ -10,5 +10,6 @@
   "shroom": "META-INF/asm/shroom.js",
   "cloud": "META-INF/asm/cloud.js",
   "lead": "META-INF/asm/lead.js",
-  "armor": "META-INF/asm/armor.js"
+  "armor": "META-INF/asm/armor.js",
+  "snow": "META-INF/asm/snow.js"
 }

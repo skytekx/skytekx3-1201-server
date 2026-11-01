@@ -22,6 +22,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -48,6 +49,7 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -64,6 +66,7 @@ import twilightforest.capabilities.CapabilityList;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.enchantment.ChillAuraEnchantment;
 import twilightforest.entity.projectile.ITFProjectile;
+import twilightforest.entity.projectile.LichBomb;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFMobEffects;
@@ -393,6 +396,17 @@ public class EntityEvents {
 		LivingEntity living = event.getEntity();
 		if (!living.level().isClientSide()) {
 			living.getCapability(CapabilityList.MULTIPLAYER_FIGHT).ifPresent(data -> data.grantGroupAdvancement(living));
+		}
+	}
+
+	/**
+	 * Lich bombs neither destroy dropped items (such as the loot of a player who died in the fight) nor set off other
+	 * bombs (4.8 b4428ffda).
+	 */
+	@SubscribeEvent
+	public static void lichBombsDontBlowUpItems(ExplosionEvent.Detonate event) {
+		if (event.getExplosion().getDirectSourceEntity() instanceof LichBomb) {
+			event.getAffectedEntities().removeIf(entity -> entity instanceof ItemEntity || entity instanceof LichBomb);
 		}
 	}
 }

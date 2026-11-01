@@ -4,6 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -47,6 +50,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.block.LightableBlock;
+import twilightforest.capabilities.shield.ShieldCapabilityHandler;
 import twilightforest.data.tags.DamageTypeTagGenerator;
 import twilightforest.entity.ai.goal.*;
 import twilightforest.entity.monster.LichMinion;
@@ -56,8 +60,10 @@ import twilightforest.network.TFPacketHandler;
 import twilightforest.util.EntityUtil;
 import twilightforest.util.WorldUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Lich extends BaseTFBoss {
 	public static final int DEATH_ANIMATION_DURATION = 175; //How many ticks until the body disappears
@@ -75,9 +81,21 @@ public class Lich extends BaseTFBoss {
 	public static final int MAX_ACTIVE_MINIONS = 3;
 	public static final int INITIAL_MINIONS_TO_SUMMON = 9;
 	public static final int MAX_HEALTH = 100;
+	/**
+	 * How far (in blocks) the Lich may stray from its spawner before it teleports back. Sized for the 4.3 tower's boss
+	 * room, as upstream did before the tower rework (77ac28cb2).
+	 */
+	public static final int HOME_ROOM_RADIUS = 8;
 
+	/**
+	 * The master of a shadow clone. Saved as "MasterLich" so the link survives a reload (4.8 00b68267f).
+	 */
 	@Nullable
-	private Lich masterLich;
+	private UUID masterUUID;
+	/**
+	 * The shadow clones this Lich summoned, saved as "SummonedClones".
+	 */
+	private final List<UUID> summonedClones = new ArrayList<>();
 	private int attackCooldown;
 	private int popCooldown;
 	private int heldScepterTime;
@@ -88,7 +106,6 @@ public class Lich extends BaseTFBoss {
 		super(type, world);
 
 		this.setShadowClone(false);
-		this.masterLich = null;
 		this.xpReward = 217;
 	}
 
@@ -96,7 +113,7 @@ public class Lich extends BaseTFBoss {
 		this(TFEntities.LICH.get(), level);
 
 		this.setShadowClone(true);
-		this.masterLich = otherLich;
+		this.setMasterUUID(otherLich.getUUID());
 	}
 
 	public static AttributeSupplier.Builder registerAttributes() {
@@ -139,7 +156,7 @@ public class Lich extends BaseTFBoss {
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this) {
 			@Override
 			public boolean canUse() {
-				if (this.mob instanceof Lich main && this.mob.getLastHurtByMob() instanceof Lich lich && lich.masterLich == main.masterLich) {
+				if (this.mob instanceof Lich main && this.mob.getLastHurtByMob() instanceof Lich lich && lich.getMaster() == main.getMaster()) {
 					return false;
 				}
 				return super.canUse();
@@ -152,6 +169,16 @@ public class Lich extends BaseTFBoss {
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 		compound.putBoolean("ShadowClone", this.isShadowClone());
+		if (this.getMasterUUID() != null) {
+			compound.putUUID("MasterLich", this.getMasterUUID());
+		}
+		ListTag clonesTag = new ListTag();
+		for (UUID uuid : this.summonedClones) {
+			clonesTag.add(NbtUtils.createUUID(uuid));
+		}
+		if (!clonesTag.isEmpty()) {
+			compound.put("SummonedClones", clonesTag);
+		}
 		compound.putInt("ShieldStrength", this.getShieldStrength());
 		compound.putInt("MinionsToSummon", this.getMinionsToSummon());
 	}
@@ -160,6 +187,15 @@ public class Lich extends BaseTFBoss {
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		this.setShadowClone(compound.getBoolean("ShadowClone"));
+		// A clone saved before this key existed has no master yet and adopts the nearest Lich in LichShadowsGoal, as before.
+		if (compound.hasUUID("MasterLich")) {
+			this.setMasterUUID(compound.getUUID("MasterLich"));
+		}
+		if (compound.contains("SummonedClones", Tag.TAG_LIST)) {
+			this.summonedClones.clear();
+			ListTag cloneList = compound.getList("SummonedClones", Tag.TAG_INT_ARRAY);
+			cloneList.forEach(tag -> this.summonedClones.add(NbtUtils.loadUUID(tag)));
+		}
 		this.setShieldStrength(compound.getInt("ShieldStrength"));
 		this.setMinionsToSummon(compound.getInt("MinionsToSummon"));
 	}
@@ -211,9 +247,23 @@ public class Lich extends BaseTFBoss {
 					this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D);
 	}
 
+	/**
+	 * Whether a position is outside the Lich's room: too far from its spawner, below the floor while it has no target,
+	 * or down the stairs during the melee phase.
+	 */
+	public boolean isOutsideHomeRange(Vec3 pos) {
+		if (this.getRestrictionPoint() == null) return false;
+		BlockPos point = this.getRestrictionPoint().pos();
+		if (this.getTarget() == null && pos.y() < point.getY() - 2) return true;
+		return point.distToCenterSqr(pos) > (HOME_ROOM_RADIUS * HOME_ROOM_RADIUS) || (this.getPhase() == 3 && pos.y() < point.getY() - 3);
+	}
+
 	@Override
 	protected void customServerAiStep() {
 		super.customServerAiStep();
+
+		// Teleport home if we get too far away from it
+		if (this.isOutsideHomeRange(this.position())) this.teleportHome();
 
 		if (this.getAttackCooldown() > 0 && this.spawnTime <= 0) {
 			this.attackCooldown--;
@@ -264,6 +314,8 @@ public class Lich extends BaseTFBoss {
 				// reduce shield for magic damage greater than 1 heart
 				if (this.getShieldStrength() > 0) {
 					this.setShieldStrength(this.getShieldStrength() - 1);
+					// Only the server may send the particle packet; the client also runs hurt() for player attacks (#2384).
+					if (!this.level().isClientSide()) ShieldCapabilityHandler.addShieldBreakParticles(src, this);
 					this.playSound(TFSounds.SHIELD_BREAK.get(), 1.0F, this.getVoicePitch() * 2.0F);
 					this.gameEvent(GameEvent.ENTITY_DAMAGE);
 				}
@@ -294,6 +346,25 @@ public class Lich extends BaseTFBoss {
 		super.die(cause);
 		if (!this.level().isClientSide() && !this.isShadowClone()) {
 			this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+			// A Lich killed through its shield (e.g. by /kill) drops the shield instead of keeping it through the death animation (#1998)
+			if (this.getShieldStrength() > 0) {
+				this.setShieldStrength(0);
+				this.playSound(TFSounds.SHIELD_BREAK.get(), 1.2F, this.getVoicePitch() * 2.0F);
+			}
+		}
+	}
+
+	/**
+	 * A destroyed shadow clone drops out of its master's clone list (4.8 00b68267f). BaseTFBoss deposits the boss chest.
+	 */
+	@Override
+	protected void postRemoval(ServerLevel serverLevel, RemovalReason reason) {
+		super.postRemoval(serverLevel, reason);
+		if (reason.shouldDestroy() && this.isShadowClone()) {
+			Lich master = this.getMaster();
+			if (master != null) {
+				master.summonedClones.remove(this.getUUID());
+			}
 		}
 	}
 
@@ -319,25 +390,55 @@ public class Lich extends BaseTFBoss {
 		this.level().addFreshEntity(projectile);
 	}
 
+	public void addClone(UUID uuid) {
+		this.summonedClones.add(uuid);
+	}
+
+	public List<UUID> getClones() {
+		return this.summonedClones;
+	}
+
+	@Nullable
+	public UUID getMasterUUID() {
+		return this.masterUUID;
+	}
+
+	/**
+	 * The loaded master of this shadow clone, or null if there is none (or on the client).
+	 */
+	@Nullable
+	public Lich getMaster() {
+		if (this.level() instanceof ServerLevel server && this.getMasterUUID() != null) {
+			Entity entity = server.getEntity(this.getMasterUUID());
+			if (entity instanceof Lich lich) {
+				return lich;
+			}
+		}
+		return null;
+	}
+
+	public void setMasterUUID(@Nullable UUID lich) {
+		this.masterUUID = lich;
+	}
+
 	public boolean wantsNewClone(Lich clone) {
 		return clone.isShadowClone() && this.countMyClones() < Lich.MAX_SHADOW_CLONES;
 	}
 
 	public int countMyClones() {
-		// check if there are enough clones.  we check a 32x16x32 area
+		// check if there are enough clones
 		int count = 0;
 
-		for (Lich nearbyLich : this.getNearbyLiches()) {
-			if (nearbyLich.isShadowClone() && nearbyLich.getMasterLich() == this) {
-				count++;
+		if (this.level() instanceof ServerLevel server) {
+			for (UUID uuid : this.summonedClones) {
+				Entity clone = server.getEntity(uuid);
+				if (clone instanceof Lich lich && lich.getMaster() == this) {
+					count++;
+				}
 			}
 		}
 
 		return count;
-	}
-
-	public List<? extends Lich> getNearbyLiches() {
-		return this.level().getEntitiesOfClass(getClass(), new AABB(this.getX(), this.getY(), this.getZ(), this.getX() + 1, this.getY() + 1, this.getZ() + 1).inflate(32.0D, 16.0D, 32.0D));
 	}
 
 	public boolean wantsNewMinion() {
@@ -355,21 +456,35 @@ public class Lich extends BaseTFBoss {
 	//              TELEPORTATION              //
 	//-----------------------------------------//
 
-	public void teleportToSightOfEntity(@Nullable Entity entity) {
-		Vec3 dest = this.findVecInLOSOf(entity);
-		double srcX = getX();
-		double srcY = getY();
-		double srcZ = getZ();
+	/**
+	 * Teleports the Lich back to its spawner, putting a block under it first if the floor is gone, so it cannot keep
+	 * teleporting into the air.
+	 */
+	public void teleportHome() {
+		if (this.getRestrictionPoint() != null) {
+			BlockPos pos = this.getRestrictionPoint().pos();
+			if (this.level().getBlockState(pos.below(2)).isAir()) this.level().setBlockAndUpdate(pos.below(2), TFBlocks.BOLD_STONE_PILLAR.get().defaultBlockState()); // Ensure there's something to stand on, so we don't teleport infinitely
+			if (this.level().getBlockState(pos.below()).isAir()) pos = pos.below();
+			this.teleportToNoChecks(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
+		}
+	}
 
-		if (dest != null && entity != null) {
+	/**
+	 * Teleports to a spot that can see the entity and returns whether it found one. findVecInLOSOf already checks the
+	 * line of sight from there, so the Lich no longer teleports straight back to where it was whenever its stale
+	 * sensing cache said it could not see the entity (491731ff4, as simplified in bf5b1c104).
+	 */
+	public boolean teleportToSightOfEntity(@Nullable Entity entity) {
+		if (entity == null) return false;
+		Vec3 dest = this.findVecInLOSOf(entity);
+
+		if (dest != null) {
 			this.teleportToNoChecks(dest.x(), dest.y(), dest.z());
 			this.getLookControl().setLookAt(entity, 100.0F, 100.0F);
 			this.yBodyRot = this.getYRot();
-
-			if (!this.getSensing().hasLineOfSight(entity)) {
-				this.teleportToNoChecks(srcX, srcY, srcZ);
-			}
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -394,7 +509,8 @@ public class Lich extends BaseTFBoss {
 			boolean canSeeTargetAtDest = this.hasLineOfSight(targetEntity); // Don't use senses cache because we're in a temporary position
 			this.teleportTo(origX, origY, origZ);
 
-			if (destClear && canSeeTargetAtDest) {
+			// Skip spots outside the room, the Lich would only teleport straight back home from there
+			if (destClear && canSeeTargetAtDest && !this.isOutsideHomeRange(new Vec3(tx, ty, tz))) {
 				return new Vec3(tx, ty, tz);
 			}
 		}
@@ -465,7 +581,8 @@ public class Lich extends BaseTFBoss {
 
 	private void extinguishNearbyCandles() {
 		for (BlockPos pos : WorldUtil.getAllAround(this.blockPosition(), 10)) {
-			if (this.level().getBlockState(pos).getBlock() instanceof AbstractCandleBlock && this.level().getBlockState(pos).getValue(BlockStateProperties.LIT)) {
+			// Other mods' candle blocks may lack the LIT property (4.8 #2563 guards the same loop against foreign candles)
+			if (this.level().getBlockState(pos).getBlock() instanceof AbstractCandleBlock && this.level().getBlockState(pos).getOptionalValue(BlockStateProperties.LIT).orElse(false)) {
 				this.level().setBlockAndUpdate(pos, this.level().getBlockState(pos).setValue(BlockStateProperties.LIT, false));
 				this.level().playSound(null, pos, SoundEvents.CANDLE_EXTINGUISH, SoundSource.BLOCKS, 2.0F, 1.0F);
 			} else if (this.level().getBlockState(pos).getBlock() instanceof LightableBlock && this.level().getBlockState(pos).getValue(LightableBlock.LIGHTING) == LightableBlock.Lighting.NORMAL) {
@@ -498,15 +615,6 @@ public class Lich extends BaseTFBoss {
 		} else {
 			return 3;
 		}
-	}
-
-	@Nullable
-	public Lich getMasterLich() {
-		return this.masterLich;
-	}
-
-	public void setMaster(Lich lich) {
-		this.masterLich = lich;
 	}
 
 	public int getAttackCooldown() {
@@ -577,9 +685,10 @@ public class Lich extends BaseTFBoss {
 	//                OVERRIDES                //
 	//-----------------------------------------//
 
+	@Nullable
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return TFSounds.LICH_AMBIENT.get();
+		return this.isShadowClone() ? null : TFSounds.LICH_AMBIENT.get();
 	}
 
 	@Override
@@ -589,7 +698,7 @@ public class Lich extends BaseTFBoss {
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return this.deathTime > 1 ? TFSounds.LICH_DEATH.get() : TFSounds.LICH_HURT.get();
+		return this.deathTime > 1 || this.isShadowClone() ? TFSounds.LICH_DEATH.get() : TFSounds.LICH_HURT.get();
 	}
 
 	@Override
@@ -671,7 +780,8 @@ public class Lich extends BaseTFBoss {
 
 	@Override
 	public boolean isDeathAnimationFinished() {
-		return this.deathTime >= DEATH_ANIMATION_DURATION;
+		// Shadow clones just poof like any mob after 20 ticks instead of playing the boss death animation
+		return this.deathTime >= (this.isShadowClone() ? 20 : DEATH_ANIMATION_DURATION);
 	}
 
 	@Override

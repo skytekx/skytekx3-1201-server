@@ -51,6 +51,7 @@ import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.block.LightableBlock;
 import twilightforest.capabilities.shield.ShieldCapabilityHandler;
+import twilightforest.client.particle.data.ColorParticleData;
 import twilightforest.data.tags.DamageTypeTagGenerator;
 import twilightforest.entity.ai.goal.*;
 import twilightforest.entity.monster.LichMinion;
@@ -236,7 +237,7 @@ public class Lich extends BaseTFBoss {
 				blu = 0.00F * sparkle;
 			}
 
-			this.level().addParticle(ParticleTypes.ENTITY_EFFECT, dx + (this.getRandom().nextGaussian() * 0.025), dy + (this.getRandom().nextGaussian() * 0.025), dz + (this.getRandom().nextGaussian() * 0.025), red, grn, blu);
+			this.level().addParticle(ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), red, grn, blu), dx + (this.getRandom().nextGaussian() * 0.025), dy + (this.getRandom().nextGaussian() * 0.025), dz + (this.getRandom().nextGaussian() * 0.025), 0.0F, 0.0F, 0.0F);
 		}
 
 		if (this.getPhase() == 3)
@@ -571,7 +572,7 @@ public class Lich extends BaseTFBoss {
 						double tx = source.x() + (target.x() - source.x()) * trailFactor + this.getRandom().nextGaussian() * 0.005D;
 						double ty = source.y() + 0.2D + (target.y() - source.y()) * trailFactor + this.getRandom().nextGaussian() * 0.005D;
 						double tz = source.z() + (target.z() - source.z()) * trailFactor + this.getRandom().nextGaussian() * 0.005D;
-						packet.queueParticle(ParticleTypes.ENTITY_EFFECT, false, tx, ty, tz, red, green, blue);
+						packet.queueParticle(ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), red, green, blue), false, tx, ty, tz, 0.0D, 0.0D, 0.0D);
 					}
 
 					TFPacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverplayer), packet);

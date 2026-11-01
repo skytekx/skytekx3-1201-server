@@ -154,6 +154,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> LICH_POP_MOB = createEvent("entity.twilightforest.lich.pop_mob");
 	public static final RegistryObject<SoundEvent> LICH_SHOOT = createEvent("entity.twilightforest.lich.shoot");
 	public static final RegistryObject<SoundEvent> LICH_TELEPORT = createEvent("entity.twilightforest.lich.teleport");
+	public static final RegistryObject<SoundEvent> LIFE_SCEPTER_DRAIN = createEvent("item.twilightforest.life_scepter.drain");
 	public static final RegistryObject<SoundEvent> LOCKED_VANISHING_BLOCK = createEvent("block.twilightforest.vanish.locked");
 	public static final RegistryObject<SoundEvent> LOYAL_ZOMBIE_AMBIENT = createEvent("entity.twilightforest.loyal_zombie.ambient");
 	public static final RegistryObject<SoundEvent> LOYAL_ZOMBIE_DEATH = createEvent("entity.twilightforest.loyal_zombie.death");
@@ -274,6 +275,8 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> TROLL_GRABS_ROCK = createEvent("entity.twilightforest.troll.grab_rock");
 	public static final RegistryObject<SoundEvent> TROLL_HURT = createEvent("entity.twilightforest.troll.hurt");
 	public static final RegistryObject<SoundEvent> TROLL_THROWS_ROCK = createEvent("entity.twilightforest.troll.throw_rock");
+	public static final RegistryObject<SoundEvent> TWILIGHT_SCEPTER_HIT = createEvent("item.twilightforest.twilight_scepter.pearl_hit");
+	public static final RegistryObject<SoundEvent> TWILIGHT_SCEPTER_USE = createEvent("item.twilightforest.twilight_scepter.use");
 	public static final RegistryObject<SoundEvent> UNCRAFTING_TABLE_ACTIVATE = createEvent("block.twilightforest.uncrafting_table.activate");
 	public static final RegistryObject<SoundEvent> UNLOCK_VANISHING_BLOCK = createEvent("block.twilightforest.vanish.unlock");
 	public static final RegistryObject<SoundEvent> UR_GHAST_AMBIENT = createEvent("entity.twilightforest.ur_ghast.ambient");
@@ -298,6 +301,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> YETI_GROWL = createEvent("entity.twilightforest.yeti.growl");
 	public static final RegistryObject<SoundEvent> YETI_HURT = createEvent("entity.twilightforest.yeti.hurt");
 	public static final RegistryObject<SoundEvent> YETI_THROW = createEvent("entity.twilightforest.yeti.throw");
+	public static final RegistryObject<SoundEvent> ZOMBIE_SCEPTER_USE = createEvent("item.twilightforest.zombie_scepter.use");
 
 	//Parrot sounds
 	public static final RegistryObject<SoundEvent> ALPHA_YETI_PARROT = createEvent("entity.twilightforest.parrot.imitate.alpha_yeti");

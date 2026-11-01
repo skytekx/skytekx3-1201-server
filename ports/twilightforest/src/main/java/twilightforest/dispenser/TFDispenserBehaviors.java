@@ -81,7 +81,7 @@ public class TFDispenserBehaviors {
 
 			@Override
 			protected SoundEvent getFiredSound() {
-				return TFSounds.SCEPTER_PEARL.get();
+				return TFSounds.TWILIGHT_SCEPTER_USE.get();
 			}
 
 			@Override

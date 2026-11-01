@@ -97,6 +97,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addEnchantment("chill_aura", "Chill Aura", "Adds a chance for the attacker to gain the frosted effect after hitting the wearer.");
 		this.addEnchantment("fire_react", "Fire React", "Adds a chance for the attacker to be set on fire after hitting the wearer.");
 		this.addEnchantment("destruction", "Destruction", "Allows the Block and Chain to break blocks with a higher mining tier.");
+		this.addEnchantment("renewal", "Renewal", "Automatically recharges scepters when they run out if the holder has the recharge items in their inventory.");
 
 		this.addAdvancement("root", "Twilight Forest", "Enter the mysterious, magical woodlands: the Twilight Forest");
 		this.addAdvancement("kill_cicada", "Shut", "Kill a Cicada");
@@ -1077,6 +1078,10 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.POWDER_USE, "Mob Transforms");
 		this.addSubtitle(TFSounds.SCEPTER_DRAIN, "Life Scepter drains");
 		this.addSubtitle(TFSounds.SCEPTER_PEARL, "Twilight Scepter throws pearl");
+		this.addSubtitle(TFSounds.LIFE_SCEPTER_DRAIN, "Life Scepter drains");
+		this.addSubtitle(TFSounds.TWILIGHT_SCEPTER_HIT, "Twilight Pearl hits mob");
+		this.addSubtitle(TFSounds.TWILIGHT_SCEPTER_USE, "Twilight Scepter throws pearl");
+		this.addSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "Loyal Zombie summoned");
 		this.addSubtitle(TFSounds.WOOD_SHIELD_SHATTERS, "Wooden Shield shatters");
 
 		this.addDeathMessage("ghastTear", "%1$s was scalded by fiery tears");

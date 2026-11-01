@@ -2,8 +2,10 @@ package twilightforest.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +16,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.capabilities.CapabilityList;
+import twilightforest.enchantment.RechargeScepterEffect;
+import twilightforest.enchantment.RenewalEnchantment;
+import twilightforest.util.TFItemStackUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,7 +42,7 @@ public class FortificationWandItem extends Item {
 			player.getCapability(CapabilityList.SHIELDS).ifPresent(cap -> {
 				cap.replenishShields();
 				if (!player.getAbilities().instabuild) {
-					stack.hurt(1, level.getRandom(), null);
+					TFItemStackUtils.hurtButDontBreak(stack, 1, (ServerLevel) level, player);
 				}
 			});
 		}
@@ -49,13 +54,19 @@ public class FortificationWandItem extends Item {
 	}
 
 	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		RechargeScepterEffect.inventoryTick(stack, level, entity, isSelected);
+	}
+
+	@Override
 	public boolean isEnchantable(ItemStack stack) {
 		return false;
 	}
 
+	// only Renewal can be put on a scepter, with an enchanted book in an anvil
 	@Override
 	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-		return false;
+		return RenewalEnchantment.isRenewalBook(book);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Open items
@@ -54,6 +54,9 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Owner decisions
 
+- Packs 3.0.6 and 3.0.7 still hold Placeable Items, which the server dropped on 2026-11-01 (787cb1f).
+  A client with the mod is refused at login, so every player disables it by hand until a pack 3.0.8
+  without it goes up. See [Mod set](modpack/mod-set.md#history).
 - AsgardShieldReloaded 0.2 crashed the server twice when a creeper exploded next to a player
   (2026-06-27 20:43 and 21:16). Remove it, patch it or accept the risk. See
   [Combat](content/combat.md#known-crash-asgard-shield-reloaded).

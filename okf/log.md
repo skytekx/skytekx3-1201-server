@@ -404,6 +404,11 @@ logs stay on the Mac and are not in the repo.
   `~/skytekx3-backups/skylands-gate-1.1-2026-11-01-0058.tgz`) and pregenerated to radius 2000 from
   00:59 to 01:06. The scans of 01:11 found 426 structure starts, 93 of them floaters, and no block
   below Y 13. See [Skylands worldgen](content/skylands-worldgen.md#deploy-of-2026-11-01).
+- Around 01:25 the owner reported that torches sometimes landed as a "Placed Block" of Placeable
+  Items, shown as the missing texture, and at 01:34 ruled to take the mod out. The server stopped at
+  01:38:36 after a warning in chat and was up at 01:39:29 without it, with the 3 accepted boot errors
+  and three about the mod's entries that the world still mapped. The owner's client runs with the jar
+  disabled since 01:42. See [Mod set](modpack/mod-set.md#history).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -3,7 +3,7 @@ type: Runtime
 title: Arclight runtime
 description: The hardened Arclight 1.20.1 jar built from patches/, the arclight.jar symlink, the Java 17 rule, how mods and plugins load and why the server must stop over RCON.
 tags: [server, arclight, java, forge, bukkit]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Arclight runtime
@@ -109,7 +109,8 @@ Forge loads jars from `mods/` only. The folder `local-mods/` is the tracked stor
 on Modrinth or were built here. It is not a mods folder. Its 35 jars reach the server because copies
 sit in `mods/`, and the debug log lists mod candidates under `mods/` only.
 
-Git ignores `mods/`. On the build machine it holds 236 jars since the mod update of 2026-10-31:
+Git ignores `mods/`. On the build machine it held 236 jars after the mod update of 2026-10-31 and holds
+235 since Placeable Items left on 2026-11-01:
 
 - The server side of `modrinth.index.json`.
 - Copies of the `local-mods/` jars.

@@ -308,6 +308,9 @@ chunks) in 3 minutes 31 seconds at a median of 83.2 chunks per second. The densi
 purpose on 2026-06-30 (commit 801edb4) so that structures act as stepping stones between islands. The
 profiles are in [performance](../server/performance.md).
 
+On the Mac mini the June terrain generated at 135 to 171 chunks per second on 2026-10-31 from 23:02.
+With the void floor of skytekx-compat 2.1.0 the pregen of 2026-11-01 ran at a median of 145.5 (radius
+2000, 63,001 chunks in 7 minutes 13 seconds), so the mixins cost no time that shows in these rates.
 
 The log of the last boot on the build machine shows 33 runtime warnings "Empty or non-existent pool:
 dungeons_arise:mechanical_nest/mechanical_nest_decoration" (logs/2026-07-12-1.log.gz). They come from
@@ -438,6 +441,42 @@ Mechanical Nest. Below Y 24 its float scan found 18 bodies that hang from island
 amethyst geodes) and 5 specks of one or two blocks (clay, bone block, tin ore), but no part of a
 structure.
 
+### Deploy of 2026-11-01
+
+The server on the Mac mini stopped at 00:58:03 after a warning in chat. The Skylands of the Halloween
+world were packed into `~/skytekx3-backups/skylands-gate-1.1-2026-11-01-0058.tgz` (352,266,314 bytes,
+403 region files) and wiped. No player had spent more than about 5 minutes in any of their chunks
+(`InhabitedTime`). skytekx-compat 2.1.0 of db56da3 replaced 2.0.0, which went to
+`~/skytekx3-backups/jars-orig/`, the gate of 0.8 (33a52d5) was synced, and EssentialsXSpawn came in,
+see [plugins](../modpack/plugins.md#spawn). The server was up at 00:58:59 with the 3 accepted boot
+errors and logged "SkyTekx compat: birdsnests loot-table guard and Skylands void floor active".
+
+Chunky then generated the Skylands around the spawn (308, 392) to radius 2000, 63,001 chunks in 7
+minutes 13 seconds up to 01:06:21. Its rate lines show a median of 145.5 chunks per second and at most
+200.1. A watch script read the heap during the run and would have paused Chunky if the old generation
+had stayed above 7.5 GB. It stayed at about 3.4 to 3.7 GB. Two players joined at 01:00 while it ran.
+The log holds 45 errors "No key selector" of `SculkSensorBlockEntity` from the pregen. The pregen of
+23:02 without the mod logged 102 of them, so the mod does not cause them.
+
+The region scans of [Tools](../modpack/tools.md#region-scans) read all 63,001 full chunks at 01:11 and
+found this.
+
+- 426 structure starts of 67 kinds, 69 of them in chunks at the edge that are not full yet. None has a
+  piece below Y 13. Only floaters start in `sky_void` (16 starts). The merchant camps reach down to
+  Y 29, and the one meteorite lies at Y 71.
+- 93 floaters of 23 kinds, among them 11 Keep Kayra and 8 Mechanical Nests. Per 16,129 chunks that
+  makes about 23.8 floaters, 2.8 Keep Kayra and 2.0 Mechanical Nests, close to test 4 (25 floaters)
+  and to the world of 23:13 (2.5 and 2.3).
+- No natural block below Y 13. 42.62% of the columns have terrain and an island biome, 42.66% an island
+  biome without terrain, 14.43% `sky_void` without terrain and 0.29% `sky_void` with terrain.
+- 10,446 blocks below Y 24. They form 69 bodies that hang from an island and 12 that float free. The
+  free ones are 5 small islands of stone, dirt and grass between Y 21 and 39 (744 to 16,429 blocks),
+  which the terrain noise places low, and 7 specks of one or two blocks (smooth basalt, clay, bone
+  block, tin ore).
+
+The Skylands beyond radius 2000 generate when players get there. A pregen to radius 3000 can follow
+when nobody is online.
+
 ## Open rulings
 
 These owner rulings are tracked in [open items](../open-items.md). Only the first one has been
@@ -492,6 +531,9 @@ implemented, on 2026-10-31.
   Halloween pumpkin patches arrived (5ec6b72), see [changes of 2026-10-31](#changes-of-2026-10-31).
 - 2026-10-31, 23:01: the June terrain came back (9a4dc12, cb91870, 9af7fae), and the Skylands of the
   Halloween world were wiped and generated again, see [changes of 2026-10-31](#changes-of-2026-10-31).
+- 2026-11-01, 00:58: the void floor of skytekx-compat 2.1.0 and the gate of 0.8 went live, and the
+  Skylands were wiped and generated again to radius 2000, see
+  [deploy of 2026-11-01](#deploy-of-2026-11-01).
 
 Related: [Skylands travel](aether-fall.md), [world reset](../server/world-reset.md),
 [performance](../server/performance.md), [mod set](../modpack/mod-set.md), [decisions](../decisions.md).

@@ -61,6 +61,12 @@ evidence and the page with the details. The rulings behind the first section are
   without it cannot join, so every player adds the jar by hand, as with BattleTowers. Its `mods.toml`
   declares LGPL 2.1 or later and its CurseForge project All Rights Reserved, so whether a pack 3.0.8
   bundles it is the owner's choice. See [Mod set](modpack/mod-set.md#jars-outside-the-index).
+- The Backpack port runs on the server since 2026-11-01 08:09 and is in no pack. A client without it
+  cannot join, so until a pack 3.0.8 brings it every player adds `backpack-1.20.1-2.0.1.1.jar` by hand
+  and removes Sophisticated Backpacks and Sophisticated Core. That pack has to bundle the jar through
+  `local-mods/` together with `backpack-1.20.1-2.0.1.1-sources.zip`, since the LGPL asks for the
+  source to come with the jar, and drop the two Sophisticated entries from the index. See
+  [Mod set](modpack/mod-set.md#backpack).
 - The ruling of 2026-11-01 05:52 keeps meteors off the sky islands, but the mod's Alien Creepers spawn
   through `data/meteors/forge/biome_modifier/add_alien_creeper_spawns.json` in every biome of
   `#minecraft:is_overworld`, and that tag holds the 14 island biomes of the Skylands. Keep them there,

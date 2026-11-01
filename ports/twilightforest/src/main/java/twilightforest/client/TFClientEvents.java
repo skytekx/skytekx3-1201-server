@@ -401,18 +401,17 @@ public class TFClientEvents {
 			event.setCanceled(true);
 			if (!state.isAir() && player.level().getWorldBorder().isWithinBounds(pos)) {
 				BlockPos offsetPos = new BlockPos(pos.getX() & ~0b11, pos.getY() & ~0b11, pos.getZ() & ~0b11);
-				renderGiantHitOutline(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.lines()), event.getCamera().getPosition(), offsetPos);
+				renderGiantHitOutline(event.getPoseStack(), event.getMultiBufferSource().getBuffer(RenderType.lines()), Vec3.atLowerCornerOf(offsetPos).subtract(event.getCamera().getPosition()));
 			}
 		}
 	}
 
 	private static final VoxelShape GIANT_BLOCK = Shapes.box(0.0D, 0.0D, 0.0D, 4.0D, 4.0D, 4.0D);
 
-	private static void renderGiantHitOutline(PoseStack poseStack, VertexConsumer consumer, Vec3 cam, BlockPos pos) {
+	// xyz is the giant block's corner relative to the camera, computed in double precision:
+	// casting the absolute coordinates to float first made the outline jitter far from the origin
+	private static void renderGiantHitOutline(PoseStack poseStack, VertexConsumer consumer, Vec3 xyz) {
 		PoseStack.Pose last = poseStack.last();
-		float posX = pos.getX() - (float)cam.x();
-		float posY = pos.getY() - (float)cam.y();
-		float posZ = pos.getZ() - (float)cam.z();
 		GIANT_BLOCK.forAllEdges((x, y, z, x1, y1, z1) -> {
 			float xSize = (float)(x1 - x);
 			float ySize = (float)(y1 - y);
@@ -421,8 +420,8 @@ public class TFClientEvents {
 			xSize /= sqrt;
 			ySize /= sqrt;
 			zSize /= sqrt;
-			consumer.vertex(last.pose(), (float)(x + posX), (float)(y + posY), (float)(z + posZ)).color(0.0F, 0.0F, 0.0F, 0.45F).normal(last.normal(), xSize, ySize, zSize).endVertex();
-			consumer.vertex(last.pose(), (float)(x1 + posX), (float)(y1 + posY), (float)(z1 + posZ)).color(0.0F, 0.0F, 0.0F, 0.45F).normal(last.normal(), xSize, ySize, zSize).endVertex();
+			consumer.vertex(last.pose(), (float)(x + xyz.x()), (float)(y + xyz.y()), (float)(z + xyz.z())).color(0.0F, 0.0F, 0.0F, 0.45F).normal(last.normal(), xSize, ySize, zSize).endVertex();
+			consumer.vertex(last.pose(), (float)(x1 + xyz.x()), (float)(y1 + xyz.y()), (float)(z1 + xyz.z())).color(0.0F, 0.0F, 0.0F, 0.45F).normal(last.normal(), xSize, ySize, zSize).endVertex();
 		});
 	}
 }

@@ -33,7 +33,7 @@ public class FireflyModel extends Model {
 		partdefinition.addOrReplaceChild("legs",
 				CubeListBuilder.create()
 						.texOffs(0, 21)
-						.addBox(-4.0F, 7.9F, -5.0F, 8.0F, 1.0F, 10.0F),
+						.addBox(-4.0F, 7.9F, -5.0F, 8.0F, 0.0F, 10.0F),
 				PartPose.ZERO);
 		partdefinition.addOrReplaceChild("fat_body",
 				CubeListBuilder.create()

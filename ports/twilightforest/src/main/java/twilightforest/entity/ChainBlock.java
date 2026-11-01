@@ -6,6 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -43,7 +44,7 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 
 	private static final EntityDataAccessor<Boolean> HAND = SynchedEntityData.defineId(ChainBlock.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> IS_FOIL = SynchedEntityData.defineId(ChainBlock.class, EntityDataSerializers.BOOLEAN);
-	private boolean isReturning = false;
+	private static final EntityDataAccessor<Boolean> IS_RETURNING = SynchedEntityData.defineId(ChainBlock.class, EntityDataSerializers.BOOLEAN);
 	private boolean canSmashBlocks;
 	private boolean hitEntity = false;
 	private ItemStack stack;
@@ -72,7 +73,6 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 
 	public ChainBlock(EntityType<? extends ChainBlock> type, Level world, LivingEntity thrower, InteractionHand hand, ItemStack stack) {
 		super(type, thrower, world);
-		this.isReturning = false;
 		this.canSmashBlocks = EnchantmentHelper.getTagEnchantmentLevel(TFEnchantments.DESTRUCTION.get(), stack) > 0 && !thrower.hasEffect(MobEffects.DIG_SLOWDOWN);
 		this.stack = stack;
 		this.setHand(hand);
@@ -86,6 +86,17 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 		this.getEntityData().set(IS_FOIL, stack.hasFoil());
 	}
 
+	@Override
+	public AABB getBoundingBoxForCulling() {
+		// Keep rendering the block and its chain while the thrower is on screen, even if the block itself is not
+		if (this.getOwner() != null) {
+			AABB dis = super.getBoundingBoxForCulling();
+			AABB owner = this.getOwner().getBoundingBoxForCulling();
+			return dis.minmax(owner);
+		}
+		return super.getBoundingBoxForCulling();
+	}
+
 	private void setHand(InteractionHand hand) {
 		this.getEntityData().set(HAND, hand == InteractionHand.MAIN_HAND);
 	}
@@ -96,6 +107,14 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 
 	public boolean isFoil() {
 		return this.getEntityData().get(IS_FOIL);
+	}
+
+	public void setIsReturning(boolean returning) {
+		this.getEntityData().set(IS_RETURNING, returning);
+	}
+
+	public boolean isReturning() {
+		return this.getEntityData().get(IS_RETURNING);
 	}
 
 	@Override
@@ -111,6 +130,18 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 		this.velX = this.getDeltaMovement().x();
 		this.velY = this.getDeltaMovement().y();
 		this.velZ = this.getDeltaMovement().z();
+	}
+
+	@Override
+	protected void updateRotation() {
+		Vec3 vec3 = this.getDeltaMovement();
+		if (this.isReturning() && this.getOwner() instanceof LivingEntity living) {
+			// Use this vec3 when returning. It's supposed to be pulled, so turning to face you doesn't make sense
+			vec3 = vec3.normalize().scale(-1.0D).lerp(this.getEyePosition().subtract(living.getEyePosition()).normalize(), 0.5);
+		}
+		double d0 = vec3.horizontalDistance();
+		this.setXRot(lerpRotation(this.xRotO, (float) (Mth.atan2(vec3.y, d0) * 180.0F / (float) Math.PI)));
+		this.setYRot(lerpRotation(this.yRotO, (float) (Mth.atan2(vec3.x, vec3.z) * 180.0F / (float) Math.PI)));
 	}
 
 	@Override
@@ -141,7 +172,7 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 					this.playSound(TFSounds.BLOCK_AND_CHAIN_HIT.get(), 1.0f, this.random.nextFloat());
 					// age when we hit a monster so that we go back to the player faster
 					this.hitEntity = true;
-					this.isReturning = true;
+					this.setIsReturning(true);
 					this.tickCount += 60;
 					if (this.getOwner() instanceof LivingEntity living) {
 						this.stack.hurtAndBreak(1, living, user -> user.broadcastBreakEvent(this.getHand()));
@@ -156,12 +187,12 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 		super.onHitBlock(result);
 		if (!this.level().isClientSide() && !this.level().isEmptyBlock(result.getBlockPos())) {
 			if (!this.stack.isCorrectToolForDrops(this.level().getBlockState(result.getBlockPos()))) {
-				if (!this.isReturning && !this.hitEntity) {
+				if (!this.isReturning() && !this.hitEntity) {
 					this.playSound(TFSounds.BLOCK_AND_CHAIN_COLLIDE.get(), 0.125f, this.random.nextFloat());
 					this.gameEvent(GameEvent.HIT_GROUND);
 				}
 
-				this.isReturning = true;
+				this.setIsReturning(true);
 
 				// riccochet
 				double bounce = 0.6;
@@ -215,7 +246,7 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 
 		// if we have smashed enough, add to ticks so that we go back faster
 		if (this.blocksSmashed > MAX_SMASH) {
-			this.isReturning = true;
+			this.setIsReturning(true);
 			if (this.tickCount < 60) {
 				this.tickCount += 60;
 			}
@@ -282,11 +313,11 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 			} else {
 				double distToPlayer = this.distanceTo(this.getOwner());
 				// return if far enough away
-				if (!this.isReturning && distToPlayer > MAX_CHAIN) {
-					this.isReturning = true;
+				if (!this.isReturning() && distToPlayer > MAX_CHAIN) {
+					this.setIsReturning(true);
 				}
 
-				if (this.isReturning) {
+				if (this.isReturning()) {
 					// despawn if close enough
 					if (distToPlayer < 2F) {
 						if (this.getOwner() instanceof LivingEntity living && this.blocksSmashed > 0) {
@@ -315,6 +346,7 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 	protected void defineSynchedData() {
 		this.getEntityData().define(HAND, true);
 		this.getEntityData().define(IS_FOIL, false);
+		this.getEntityData().define(IS_RETURNING, false);
 	}
 
 	@Override
@@ -332,12 +364,14 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 		if (pCompound.contains("BlockAndChainStack", 10)) {
 			this.stack = ItemStack.of(pCompound.getCompound("BlockAndChainStack"));
 		}
+		this.setIsReturning(pCompound.getBoolean("IsReturning"));
 	}
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag pCompound) {
 		super.addAdditionalSaveData(pCompound);
 		pCompound.put("BlockAndChainStack", this.stack.save(new CompoundTag()));
+		pCompound.putBoolean("IsReturning", this.isReturning());
 	}
 
 	@Override

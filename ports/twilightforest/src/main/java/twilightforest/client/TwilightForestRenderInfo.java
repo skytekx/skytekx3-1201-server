@@ -64,7 +64,7 @@ public class TwilightForestRenderInfo extends DimensionSpecialEffects {
 
     @Override
     public boolean renderSnowAndRain(ClientLevel level, int ticks, float partialTick, LightTexture lightTexture, double camX, double camY, double camZ) {
-        return TFWeatherRenderer.renderSnowAndRain(level, ticks, partialTick, lightTexture, camX, camY, camZ);
+        return TFWeatherRenderer.renderSnowAndRain(level, ticks, partialTick, lightTexture, new Vec3(camX, camY, camZ));
     }
 
     @Override

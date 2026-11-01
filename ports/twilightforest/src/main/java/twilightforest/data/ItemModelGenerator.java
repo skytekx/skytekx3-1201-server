@@ -232,6 +232,9 @@ public class ItemModelGenerator extends ItemModelProvider {
 		toBlock(TFBlocks.TWISTED_STONE.get());
 		toBlockModel(TFBlocks.TWISTED_STONE_PILLAR.get(), prefix("block/pillar/pillar_inventory"));
 		toBlock(TFBlocks.BOLD_STONE_PILLAR.get());
+		toBlockModel(TFBlocks.TERRORCOTTA_ARCS.get(), prefix("block/terrorcotta_arcs"));
+		toBlockModel(TFBlocks.TERRORCOTTA_LINES.get(), prefix("block/terrorcotta_lines_0"));
+		toBlockModel(TFBlocks.TERRORCOTTA_CURVES.get(), prefix("block/terrorcotta_curves_90"));
 		toBlockModel(TFBlocks.DEATH_TOME_SPAWNER.get(), prefix("block/death_tome_spawner_10"));
 		toBlock(TFBlocks.EMPTY_CANOPY_BOOKSHELF.get());
 		toBlock(TFBlocks.CANOPY_BOOKSHELF.get());

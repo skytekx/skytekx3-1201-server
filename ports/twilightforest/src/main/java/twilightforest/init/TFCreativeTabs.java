@@ -307,6 +307,9 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.BOLD_STONE_PILLAR.get());
 				output.accept(TFBlocks.TWISTED_STONE.get());
 				output.accept(TFBlocks.TWISTED_STONE_PILLAR.get());
+				output.accept(TFBlocks.TERRORCOTTA_LINES.get());
+				output.accept(TFBlocks.TERRORCOTTA_CURVES.get());
+				output.accept(TFBlocks.TERRORCOTTA_ARCS.get());
 				output.accept(TFBlocks.CANDELABRA.get());
 				output.accept(TFBlocks.WROUGHT_IRON_FENCE.get());
 				output.accept(TFBlocks.CORONATION_CARPET.get());

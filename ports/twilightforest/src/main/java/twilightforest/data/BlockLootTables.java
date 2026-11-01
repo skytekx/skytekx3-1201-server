@@ -216,6 +216,9 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.CANDELABRA.get());
 		dropSelf(TFBlocks.WROUGHT_IRON_FENCE.get());
 		dropSelf(TFBlocks.CORONATION_CARPET.get());
+		dropSelf(TFBlocks.TERRORCOTTA_ARCS.get());
+		dropSelf(TFBlocks.TERRORCOTTA_CURVES.get());
+		dropSelf(TFBlocks.TERRORCOTTA_LINES.get());
 		dropPottedContents(TFBlocks.POTTED_TWILIGHT_OAK_SAPLING.get());
 		dropPottedContents(TFBlocks.POTTED_CANOPY_SAPLING.get());
 		dropPottedContents(TFBlocks.POTTED_MANGROVE_SAPLING.get());

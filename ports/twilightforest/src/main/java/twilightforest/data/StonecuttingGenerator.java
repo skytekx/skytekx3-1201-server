@@ -143,6 +143,15 @@ public class StonecuttingGenerator {
 		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.TWISTED_STONE_PILLAR.get()));
 		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.SPIRAL_BRICKS.get()));
 		consumer.accept(stonecutting(TFBlocks.TWISTED_STONE.get(), TFBlocks.TWISTED_STONE_PILLAR.get()));
+		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.TERRORCOTTA_ARCS.get()));
+		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.TERRORCOTTA_CURVES.get()));
+		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.TERRORCOTTA_LINES.get()));
+		consumer.accept(stonecutting(TFBlocks.TERRORCOTTA_ARCS.get(), TFBlocks.TERRORCOTTA_CURVES.get()));
+		consumer.accept(stonecutting(TFBlocks.TERRORCOTTA_ARCS.get(), TFBlocks.TERRORCOTTA_LINES.get()));
+		consumer.accept(stonecutting(TFBlocks.TERRORCOTTA_CURVES.get(), TFBlocks.TERRORCOTTA_ARCS.get()));
+		consumer.accept(stonecutting(TFBlocks.TERRORCOTTA_CURVES.get(), TFBlocks.TERRORCOTTA_LINES.get()));
+		consumer.accept(stonecutting(TFBlocks.TERRORCOTTA_LINES.get(), TFBlocks.TERRORCOTTA_ARCS.get()));
+		consumer.accept(stonecutting(TFBlocks.TERRORCOTTA_LINES.get(), TFBlocks.TERRORCOTTA_CURVES.get()));
 
 		consumer.accept(stonecutting(TFBlocks.UNDERBRICK.get(), TFBlocks.UNDERBRICK_FLOOR.get()));
 	}

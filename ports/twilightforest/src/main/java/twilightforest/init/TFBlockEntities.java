@@ -24,6 +24,8 @@ public class TFBlockEntities {
 			BlockEntityType.Builder.of(CinderFurnaceBlockEntity::new, TFBlocks.CINDER_FURNACE.get()).build(null));
 	public static final RegistryObject<BlockEntityType<CarminiteReactorBlockEntity>> CARMINITE_REACTOR = BLOCK_ENTITIES.register("carminite_reactor", () ->
 			BlockEntityType.Builder.of(CarminiteReactorBlockEntity::new, TFBlocks.CARMINITE_REACTOR.get()).build(null));
+	public static final RegistryObject<BlockEntityType<ReactorDebrisBlockEntity>> REACTOR_DEBRIS = BLOCK_ENTITIES.register("reactor_debris", () ->
+			BlockEntityType.Builder.of(ReactorDebrisBlockEntity::new, TFBlocks.REACTOR_DEBRIS.get()).build(null));
 	public static final RegistryObject<BlockEntityType<FireJetBlockEntity>> FLAME_JET = BLOCK_ENTITIES.register("flame_jet", () ->
 			BlockEntityType.Builder.of(FireJetBlockEntity::new, TFBlocks.FIRE_JET.get(), TFBlocks.ENCASED_FIRE_JET.get()).build(null));
 	public static final RegistryObject<BlockEntityType<GhastTrapBlockEntity>> GHAST_TRAP = BLOCK_ENTITIES.register("ghast_trap", () ->
@@ -132,6 +134,7 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(TF_TRAPPED_CHEST.get(), TwilightChestRenderer::new);
 		BlockEntityRenderers.register(KEEPSAKE_CASKET.get(), CasketTileEntityRenderer::new);
 		BlockEntityRenderers.register(SKULL_CANDLE.get(), SkullCandleTileEntityRenderer::new);
+		BlockEntityRenderers.register(REACTOR_DEBRIS.get(), ReactorDebrisRenderer::new);
 		BlockEntityRenderers.register(RED_THREAD.get(), RedThreadRenderer::new);
 	}
 }

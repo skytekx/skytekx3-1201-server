@@ -73,15 +73,16 @@ public class CrumbleHornItem extends Item {
 	}
 
 	private void doCrumble(Level world, LivingEntity living, ItemStack stack) {
+		final double centerDistance = 3.0D;
+		final int radius = 2;
 
-		final double range = 3.0D;
-		final double radius = 2.0D;
+		// Snap the centre to a block first: the old fractional box was truncated towards zero by getAllInBB,
+		// which shifted the crumbled area by a block on negative coordinates.
+		Vec3 eyePosition = living.getEyePosition();
+		Vec3 lookVec = living.getLookAngle().scale(centerDistance);
+		BlockPos center = BlockPos.containing(eyePosition.add(lookVec));
 
-		Vec3 srcVec = new Vec3(living.getX(), living.getY() + living.getEyeHeight(), living.getZ());
-		Vec3 lookVec = living.getLookAngle().scale(range);
-		Vec3 destVec = srcVec.add(lookVec);
-
-		AABB crumbleBox = new AABB(destVec.x() - radius, destVec.y() - radius, destVec.z() - radius, destVec.x() + radius, destVec.y() + radius, destVec.z() + radius);
+		AABB crumbleBox = new AABB(center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius));
 
 		this.crumbleBlocksInAABB(world, living, crumbleBox, stack);
 	}

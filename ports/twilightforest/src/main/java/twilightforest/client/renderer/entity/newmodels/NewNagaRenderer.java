@@ -1,5 +1,6 @@
 package twilightforest.client.renderer.entity.newmodels;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -17,6 +18,13 @@ public class NewNagaRenderer<M extends NewNagaModel<Naga>> extends MobRenderer<N
 
 	public NewNagaRenderer(EntityRendererProvider.Context manager, M modelbase, float shadowSize) {
 		super(manager, modelbase, shadowSize);
+	}
+
+	@Override
+	protected void scale(Naga entity, PoseStack stack, float partialTicks) {
+		super.scale(entity, stack, partialTicks);
+		// TF 4.8 (#2352): the Jappa head sits raised while active and drops down onto the ground while dazed
+		stack.translate(0.0F, entity.isDazed() ? 0.0F : -0.75F, 0.0F);
 	}
 
 	@Override

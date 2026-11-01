@@ -43,9 +43,12 @@ public class BlockChainGoblinRenderer<T extends BlockChainGoblin, M extends Bloc
 
 		stack.pushPose();
 
-		double blockInX = (goblin.block.getX() - goblin.getX());
-		double blockInY = (goblin.block.getY() - goblin.getY());
-		double blockInZ = (goblin.block.getZ() - goblin.getZ());
+		// interpolate both positions, otherwise the block jitters against the (interpolated) goblin
+		Vec3 goblinPosition = goblin.getPosition(partialTicks);
+		Vec3 blockPosition = goblin.block.getPosition(partialTicks);
+		double blockInX = (blockPosition.x() - goblinPosition.x());
+		double blockInY = (blockPosition.y() - goblinPosition.y());
+		double blockInZ = (blockPosition.z() - goblinPosition.z());
 
 		VertexConsumer ivertexbuilder = buffer.getBuffer(this.model.renderType(textureLoc));
 		stack.translate(blockInX, blockInY, blockInZ);

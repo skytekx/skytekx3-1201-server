@@ -55,7 +55,7 @@ Bugfixes and JSON-level changes against code that 4.3 shares unchanged. Several 
 | Feature | Kind | Portability | h | Savegame |
 |---|---|---|---|---|
 | `tf-teleporter-safety` — Twilight portal teleporter safety and correctness | bugfix | medium | 12 | none (optional new SavedData twilightforest_teleporter_cache) |
-| `structure-bugfixes-misc` — Landmark structure and feature-template bugfixes | bugfix | easy | 10 | none (new chunks only) |
+| `structure-bugfixes-misc` — Landmark structure and feature-template bugfixes | bugfix | easy | 10 | none (new chunks only; a Hedge Maze or Labyrinth that straddles already-generated chunks can show a seam at the old/new chunk border) |
 | `knight-stronghold-fixes` — Knight Stronghold fixes (persisted start Y #2138, entrances, ruins, bounding boxes) | bugfix | easy | 5 | none (adds optional knight_y to start NBT) |
 | `tree-feature-bugfixes` — Tree and root generation fixes | bugfix | easy | 5 | none (new trees only) |
 | `block-spike-fixes` — Stalactite and stalagmite (BlockSpikeFeature) fixes | bugfix | easy | 3 | none |

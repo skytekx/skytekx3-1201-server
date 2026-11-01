@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
@@ -30,7 +29,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.DataPackRegistryEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
@@ -46,7 +44,6 @@ import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.compat.top.TopCompat;
 import twilightforest.item.recipe.UncraftingTableCondition;
 import twilightforest.loot.modifiers.GiantToolGroupingModifier;
-import twilightforest.network.UpdateGamerulePacket;
 import twilightforest.util.MagicPaintingVariant;
 import twilightforest.util.Restriction;
 import twilightforest.data.custom.stalactites.entry.Stalactite;
@@ -75,8 +72,6 @@ public class TwilightForestMod {
 	private static final String ENVIRO_DIR = "textures/environment/";
 	// odd one out, as armor textures are a stringy mess at present
 	public static final String ARMOR_DIR = ID + ":textures/armor/";
-
-	public static final GameRules.Key<GameRules.BooleanValue> ENFORCED_PROGRESSION_RULE = GameRules.register("tfEnforcedProgression", GameRules.Category.UPDATES, GameRules.BooleanValue.create(true, (server, enforced) -> TFPacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new UpdateGamerulePacket(enforced.get())))); //Putting it in UPDATES since other world stuff is here
 
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
@@ -147,6 +142,7 @@ public class TwilightForestMod {
 
 		modbus.addListener(this::sendIMCs);
 		modbus.addListener(this::init);
+		modbus.addListener(TFGameRules::register);
 		modbus.addListener(this::registerExtraStuff);
 		modbus.addListener(this::setRegistriesForDatapack);
 		modbus.addListener(CapabilityList::registerCapabilities);

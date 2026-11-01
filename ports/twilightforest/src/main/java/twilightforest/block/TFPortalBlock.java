@@ -42,9 +42,11 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.mutable.MutableInt;
 import twilightforest.TFConfig;
+import twilightforest.capabilities.CapabilityList;
 import twilightforest.client.MissingAdvancementToast;
 import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFGameRules;
 import twilightforest.init.TFSounds;
 import twilightforest.network.MissingAdvancementToastPacket;
 import twilightforest.network.TFPacketHandler;
@@ -235,8 +237,37 @@ public class TFPortalBlock extends HalfTransparentBlock implements LiquidBlockCo
 				}
 			}
 
-			attemptSendEntity(entity, false, true);
+			// [1.21 Entity#canUsePortal(false)]
+			if (!entity.isPassenger() && entity.isAlive()) {
+				if (entity instanceof Player player) {
+					// [4.8] players have to stand in the portal for a while first (see TFPortalCapability), so being knocked back
+					// into the portal right after arriving no longer sends them straight back
+					player.getCapability(CapabilityList.TF_PORTAL).ifPresent(cap -> {
+						if (!level.isClientSide()) cap.setAsInsidePortal(player);
+						cap.setInPortal(true);
+					});
+				} else if (!level.isClientSide()) {
+					// [1.21 PortalProcessor] other entities have no warm-up (getPortalTransitionTime is 0), but they get the
+					// vanilla portal cooldown, which the entity keeps through the transfer. Standing in a portal renews it, so an
+					// entity that arrives in the return portal is not sent straight back.
+					boolean onCooldown = entity.isOnPortalCooldown();
+					entity.setPortalCooldown();
+					if (!onCooldown) attemptSendEntity(entity, false, true);
+				}
+			}
 		}
+	}
+
+	/**
+	 * [4.8 TFPortalBlock#getPortalTransitionTime] How many ticks an entity has to stand in the portal before it is sent
+	 * through: the playersTfPortalCreativeDelay or playersTfPortalDefaultDelay game rule for players, 0 for anything else.
+	 */
+	public static int getPortalTransitionTime(ServerLevel level, Entity entity) {
+		if (!(entity instanceof Player player))
+			return 0;
+		return player.getAbilities().invulnerable
+				? level.getGameRules().getInt(TFGameRules.RULE_PLAYERS_TF_PORTAL_CREATIVE_DELAY.get())
+				: level.getGameRules().getInt(TFGameRules.RULE_PLAYERS_TF_PORTAL_DEFAULT_DELAY.get());
 	}
 
 	public static boolean isPlayerNotifiedOfRequirement(ServerPlayer player) {

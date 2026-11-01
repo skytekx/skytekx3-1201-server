@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -39,6 +40,18 @@ public class CapabilityEvents {
 		event.getEntity().getCapability(CapabilityList.SHIELDS).ifPresent(IShieldCapability::update);
 		event.getEntity().getCapability(CapabilityList.FEATHER_FAN_FALLING).ifPresent(FeatherFanFallCapability::update);
 		event.getEntity().getCapability(CapabilityList.YETI_THROWN).ifPresent(YetiThrowCapability::update);
+	}
+
+	// [4.8 CapabilityEvents.updatePlayerCaps] the Twilight portal warm-up; the client side is ticked in PortalOverlay
+	@SubscribeEvent
+	public static void tickTwilightPortal(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END && event.player.level() instanceof ServerLevel level) {
+			Player player = event.player;
+			player.getCapability(CapabilityList.TF_PORTAL).ifPresent(cap -> {
+				cap.tick(player);
+				cap.processPortalTeleportation(level, player);
+			});
+		}
 	}
 
 	@SubscribeEvent

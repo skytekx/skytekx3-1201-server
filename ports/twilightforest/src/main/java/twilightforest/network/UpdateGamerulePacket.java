@@ -3,7 +3,7 @@ package twilightforest.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
-import twilightforest.TwilightForestMod;
+import twilightforest.init.TFGameRules;
 
 import java.util.function.Supplier;
 
@@ -27,7 +27,7 @@ public class UpdateGamerulePacket {
 		public static boolean onMessage(UpdateGamerulePacket packet, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
 				if (Minecraft.getInstance().level != null)
-					Minecraft.getInstance().level.getGameRules().getRule(TwilightForestMod.ENFORCED_PROGRESSION_RULE).set(packet.enforced, null);
+					Minecraft.getInstance().level.getGameRules().getRule(TFGameRules.ENFORCED_PROGRESSION_RULE.get()).set(packet.enforced, null);
 			});
 
 			ctx.get().setPacketHandled(true);

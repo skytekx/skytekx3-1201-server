@@ -3,46 +3,44 @@ package twilightforest.compat.jei;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.registration.*;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.UncraftingScreen;
+import twilightforest.compat.RecipeViewerConstants;
 import twilightforest.compat.jei.categories.CrumbleHornCategory;
 import twilightforest.compat.jei.categories.JEIUncraftingCategory;
 import twilightforest.compat.jei.categories.TransformationPowderCategory;
+import twilightforest.compat.jei.extension.MoonwormQueenExtension;
 import twilightforest.compat.jei.renderers.*;
-import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFMenuTypes;
 import twilightforest.init.TFRecipes;
 import twilightforest.inventory.UncraftingMenu;
+import twilightforest.item.recipe.MoonwormQueenRepairRecipe;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @JeiPlugin
-@SuppressWarnings({"unused", "rawtypes"})
+@SuppressWarnings("unused")
 public class JEICompat implements IModPlugin {
 
-	public static final IIngredientType<EntityType> ENTITY_TYPE = () -> EntityType.class;
+	public static final IIngredientType<FakeEntityType> ENTITY_TYPE = () -> FakeEntityType.class;
 	public static final IIngredientType<FakeItemEntity> FAKE_ITEM_ENTITY = () -> FakeItemEntity.class;
 
 	static {
@@ -85,24 +83,17 @@ public class JEICompat implements IModPlugin {
 	}
 
 	@Override
+	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+		// the repair recipe is special, so JEI only lists it in the crafting category once something can draw it.
+		// A data pack that removes the recipe also removes the display (#2320)
+		registration.getCraftingCategory().addCategoryExtension(MoonwormQueenRepairRecipe.class, recipe -> new MoonwormQueenExtension());
+	}
+
+	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		RecipeManager manager = Objects.requireNonNull(Minecraft.getInstance().level).getRecipeManager();
 		if (!TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableEntireTable.get()) {
-			if (!TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableUncraftingOnly.get()) { //we only do this if uncrafting is not disabled
-				List<CraftingRecipe> recipes = manager.getAllRecipesFor(RecipeType.CRAFTING);
-				recipes = recipes.stream().filter(recipe ->
-								!recipe.getResultItem(Minecraft.getInstance().level.registryAccess()).isEmpty() && //get rid of empty items
-										!recipe.getResultItem(Minecraft.getInstance().level.registryAccess()).is(ItemTagGenerator.BANNED_UNCRAFTABLES) && //Prevents things that are tagged as banned from showing up
-										TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.reverseRecipeBlacklist.get() == TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableUncraftingRecipes.get().contains(recipe.getId().toString()) && //remove disabled recipes
-										TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.flipUncraftingModIdList.get() == TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.blacklistedUncraftingModIds.get().contains(recipe.getId().getNamespace())) //remove blacklisted mod ids
-						.collect(Collectors.toList());
-				recipes.removeIf(recipe -> (recipe instanceof ShapelessRecipe && !TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.allowShapelessUncrafting.get()));
-				recipes.addAll(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE.get()));
-				registration.addRecipes(JEIUncraftingCategory.UNCRAFTING, recipes);
-			} else {
-				List<CraftingRecipe> recipes = new ArrayList<>(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE.get()));
-				registration.addRecipes(JEIUncraftingCategory.UNCRAFTING, recipes);
-			}
+			registration.addRecipes(JEIUncraftingCategory.UNCRAFTING, RecipeViewerConstants.getAllUncraftingRecipes(manager));
 		}
 		registration.addRecipes(TransformationPowderCategory.TRANSFORMATION, manager.getAllRecipesFor(TFRecipes.TRANSFORM_POWDER_RECIPE.get()));
 		registration.addRecipes(CrumbleHornCategory.CRUMBLE_HORN, manager.getAllRecipesFor(TFRecipes.CRUMBLE_RECIPE.get()));
@@ -121,5 +112,11 @@ public class JEICompat implements IModPlugin {
 				return List.of(new Rect2i(screen.getGuiLeft() - 182, screen.getGuiTop(), 182, screen.getYSize()));
 			}
 		});
+	}
+
+	@Override
+	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+		// the painting variants differ only by NBT, which JEI does not tell apart, so it would list one arbitrary variant (4.8 3ae3c3575)
+		jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, List.of(new ItemStack(TFItems.MAGIC_PAINTING.get())));
 	}
 }

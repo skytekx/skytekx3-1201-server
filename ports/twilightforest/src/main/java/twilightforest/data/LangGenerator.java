@@ -1163,6 +1163,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addScreenMessage("crumble_horn_jei", "Crumble Horn");
 		this.addScreenMessage("transformation_jei", "Transformation Powder");
 		this.addScreenMessage("uncrafting_jei", "Uncrafting");
+		this.add("item.twilightforest.moonworm_queen.jei_info_message", "Torchberries restore 64 durability each");
 
 		this.addTrim("carminite", "Carminite");
 		this.addTrim("fiery", "Fiery");

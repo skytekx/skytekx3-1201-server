@@ -20,12 +20,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import twilightforest.TwilightForestMod;
+import twilightforest.compat.jei.FakeEntityType;
 
 import java.util.*;
 
-@SuppressWarnings({"rawtypes", "deprecation"})
+@SuppressWarnings("deprecation")
 //yoinked from TCon, entity melting rendering looks so good and I couldnt be bothered to write my own system
-public class EntityRenderer implements IIngredientRenderer<EntityType> {
+public class EntityRenderer implements IIngredientRenderer<FakeEntityType> {
 
 	private static final Set<EntityType<?>> IGNORED_ENTITIES = new HashSet<>();
 	// Shared between all renderers and dropped whenever a screen closes (see JEICompat), so the cached entities
@@ -52,8 +53,9 @@ public class EntityRenderer implements IIngredientRenderer<EntityType> {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics, @Nullable EntityType type) {
-		if (type != null) {
+	public void render(GuiGraphics graphics, @Nullable FakeEntityType fakeType) {
+		if (fakeType != null) {
+			EntityType<?> type = fakeType.type();
 			Level level = Minecraft.getInstance().level;
 			if (level != null && !IGNORED_ENTITIES.contains(type)) {
 				Entity entity;
@@ -97,11 +99,11 @@ public class EntityRenderer implements IIngredientRenderer<EntityType> {
 	}
 
 	@Override
-	public List<Component> getTooltip(EntityType type, TooltipFlag flag) {
+	public List<Component> getTooltip(FakeEntityType type, TooltipFlag flag) {
 		List<Component> tooltip = new ArrayList<>();
-		tooltip.add(type.getDescription());
+		tooltip.add(type.type().getDescription());
 		if (flag.isAdvanced()) {
-			tooltip.add(Component.literal(Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(type)).toString()).withStyle(ChatFormatting.DARK_GRAY));
+			tooltip.add(Component.literal(Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(type.type())).toString()).withStyle(ChatFormatting.DARK_GRAY));
 		}
 		return tooltip;
 	}

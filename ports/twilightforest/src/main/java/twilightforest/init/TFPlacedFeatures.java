@@ -94,6 +94,7 @@ public class TFPlacedFeatures {
 	public static final ResourceKey<PlacedFeature> PLACED_SAVANNAH_CANOPY_OAK_TREE = registerKey("tree/savannah_canopy_oak_tree");
 	public static final ResourceKey<PlacedFeature> PLACED_SWAMPY_OAK_TREE = registerKey("tree/swampy_oak_tree");
 	public static final ResourceKey<PlacedFeature> PLACED_DARKWOOD_TREE = registerKey("tree/darkwood_tree");
+	// Giant Hollow Oaks generate as the twilightforest:hollow_tree structure now and no TF biome places this any more. Kept registered so datapacks that still reference 4.3's id keep loading
 	public static final ResourceKey<PlacedFeature> PLACED_HOLLOW_OAK_TREE = registerKey("tree/hollow_oak");
 
 	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_TREES = registerKey("tree/selector/canopy_trees");

@@ -1,13 +1,20 @@
 package twilightforest.init;
 
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import twilightforest.TwilightForestMod;
+import twilightforest.world.components.structures.placements.AvoidLandmarkGridPlacement;
 import twilightforest.world.components.structures.placements.BiomeForcedLandmarkPlacement;
+
+import java.util.List;
+import java.util.Optional;
 
 public class TFStructureSets {
 
@@ -28,6 +35,8 @@ public class TFStructureSets {
 	public static final ResourceKey<StructureSet> TROLL_CAVE = registerKey("troll_cave");
 	public static final ResourceKey<StructureSet> FINAL_CASTLE = registerKey("final_castle");
 
+	public static final ResourceKey<StructureSet> HOLLOW_TREE = registerKey("hollow_tree");
+
 
 	private static ResourceKey<StructureSet> registerKey(String name) {
 		return ResourceKey.create(Registries.STRUCTURE_SET, TwilightForestMod.prefix(name));
@@ -35,6 +44,13 @@ public class TFStructureSets {
 
 	public static void bootstrap(BootstapContext<StructureSet> context) {
 		HolderGetter<Structure> structures = context.lookup(Registries.STRUCTURE);
+
+		List<StructureSet.StructureSelectionEntry> hollowTrees = List.of(
+			new StructureSet.StructureSelectionEntry(structures.getOrThrow(TFStructures.HOLLOW_TREE), 1),
+			new StructureSet.StructureSelectionEntry(structures.getOrThrow(TFStructures.SWAMP_HOLLOW_TREE), 1)
+		);
+		context.register(HOLLOW_TREE, new StructureSet(hollowTrees, new AvoidLandmarkGridPlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 0.5F, 34481210, Optional.empty(), 7, 5, RandomSpreadType.TRIANGULAR, Optional.empty())));
+
 		context.register(HEDGE_MAZE, new StructureSet(structures.getOrThrow(TFStructures.HEDGE_MAZE), new BiomeForcedLandmarkPlacement(TFLandmark.HEDGE_MAZE, 256)));
 		context.register(QUEST_GROVE, new StructureSet(structures.getOrThrow(TFStructures.QUEST_GROVE), new BiomeForcedLandmarkPlacement(TFLandmark.QUEST_GROVE, 256)));
 		context.register(MUSHROOM_TOWER, new StructureSet(structures.getOrThrow(TFStructures.MUSHROOM_TOWER), new BiomeForcedLandmarkPlacement(TFLandmark.MUSHROOM_TOWER, 256)));

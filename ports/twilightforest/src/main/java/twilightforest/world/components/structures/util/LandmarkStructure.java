@@ -41,7 +41,7 @@ public abstract class LandmarkStructure extends Structure implements DecorationC
     }
 
     @Override
-    protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+    public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         ChunkPos chunkPos = context.chunkPos();
 
         boolean dontCenter = this.dontCenter();

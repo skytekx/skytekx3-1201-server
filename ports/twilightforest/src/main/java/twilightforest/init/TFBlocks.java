@@ -105,6 +105,9 @@ public class TFBlocks {
 	public static final RegistryObject<AbstractSkullCandleBlock> PIGLIN_WALL_SKULL_CANDLE = BLOCKS.register("piglin_wall_skull_candle", () -> new WallSkullCandleBlock(SkullBlock.Types.PIGLIN, BlockBehaviour.Properties.copy(Blocks.PIGLIN_WALL_HEAD)));
 	public static final RegistryObject<WroughtIronFenceBlock> WROUGHT_IRON_FENCE = registerWroughtFence("wrought_iron_fence", () -> new WroughtIronFenceBlock(BlockBehaviour.Properties.of().strength(8.0F, 20.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
 	public static final RegistryObject<CarpetBlock> CORONATION_CARPET = register("coronation_carpet", () -> new WoolCarpetBlock(DyeColor.RED, BlockBehaviour.Properties.copy(Blocks.RED_CARPET).isValidSpawn((state, getter, pos, type) -> true)));
+	public static final RegistryObject<RotatedPillarBlock> TERRORCOTTA_ARCS = register("terrorcotta_arcs", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+	public static final RegistryObject<GlazedTerracottaBlock> TERRORCOTTA_CURVES = register("terrorcotta_curves", () -> new GlazedTerracottaBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+	public static final RegistryObject<BinaryRotatedBlock> TERRORCOTTA_LINES = register("terrorcotta_lines", () -> new BinaryRotatedBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
 	//labyrinth
 	public static final RegistryObject<Block> MAZESTONE = register("mazestone", () -> new Block(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.STONE).requiresCorrectToolForDrops().sound(SoundType.STONE).strength(100.0F, 5.0F)));

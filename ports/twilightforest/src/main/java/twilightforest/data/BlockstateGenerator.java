@@ -3,6 +3,7 @@ package twilightforest.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
@@ -445,6 +446,8 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		casketStuff();
 		stonePillar();
 		candelabra();
+
+		this.terrorcotta();
 	}
 
 	private void registerCoronationCarpet() {
@@ -929,6 +932,25 @@ public class BlockstateGenerator extends BlockModelBuilders {
 				.modelFile(models().withExistingParent(name(b) + "_z", prefix("block/util/cube_column_rotationally_correct_z"))
 						.texture("side", side).texture("end", end))
 				.rotationX(90)
+				.buildLast();
+		getVariantBuilder(b)
+				.partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y).setModels(yModel)
+				.partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.X).setModels(xModel)
+				.partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Z).setModels(zModel);
+	}
+
+	private void rotationallySpecialColumn(Block b) {
+		ResourceLocation sideA = prefix("block/" + name(b) + "_side_a");
+		ResourceLocation sideB = prefix("block/" + name(b) + "_side_b");
+		ResourceLocation end = prefix("block/" + name(b) + "_end");
+		ConfiguredModel yModel = new ConfiguredModel(models().cubeColumn(name(b), sideA, end));
+		ConfiguredModel xModel = ConfiguredModel.builder()
+				.modelFile(models().withExistingParent(name(b) + "_x", prefix("block/util/cube_column_rotationally_special_x"))
+						.texture("side_a", sideA).texture("side_b", sideB).texture("end", end))
+				.buildLast();
+		ConfiguredModel zModel = ConfiguredModel.builder()
+				.modelFile(models().withExistingParent(name(b) + "_z", prefix("block/util/cube_column_rotationally_special_z"))
+						.texture("side_a", sideA).texture("side_b", sideB).texture("end", end))
 				.buildLast();
 		getVariantBuilder(b)
 				.partialState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y).setModels(yModel)
@@ -1474,5 +1496,78 @@ public class BlockstateGenerator extends BlockModelBuilders {
 	@Override
 	public String getName() {
 		return "TwilightForest blockstates and block models";
+	}
+
+	private void terrorcotta() {
+		this.rotationallySpecialColumn(TFBlocks.TERRORCOTTA_ARCS.get());
+		this.getVariantBuilder(TFBlocks.TERRORCOTTA_CURVES.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(this.makeTerrorcottaCurvesModel("terrorcotta_curves", state.getValue(GlazedTerracottaBlock.FACING).get2DDataValue())).build());
+		this.getVariantBuilder(TFBlocks.TERRORCOTTA_LINES.get()).forAllStates(state -> ConfiguredModel.builder().modelFile(this.makeTerrorcottaLinesModel("terrorcotta_lines", state.getValue(BinaryRotatedBlock.ROTATED))).build());
+	}
+
+	private BlockModelBuilder makeTerrorcottaCurvesModel(String type, int rotation) {
+		return this.models().withExistingParent(type + "_" + (rotation * 90), new ResourceLocation("block/cube"))
+				.texture("particle", prefix("block/" + type + "_a"))
+				.texture("up", prefix("block/" + type + curvesSuffixForFacing(rotation, Direction.UP)))
+				.texture("down", prefix("block/" + type + curvesSuffixForFacing(rotation, Direction.DOWN)))
+				.texture("south", prefix("block/" + type + curvesSuffixForFacing(rotation, Direction.SOUTH)))
+				.texture("west", prefix("block/" + type + curvesSuffixForFacing(rotation, Direction.WEST)))
+				.texture("north", prefix("block/" + type + curvesSuffixForFacing(rotation, Direction.NORTH)))
+				.texture("east", prefix("block/" + type + curvesSuffixForFacing(rotation, Direction.EAST)));
+	}
+
+	private static String curvesSuffixForFacing(int blockRotation, Direction blockFace) {
+		int rotationForFace = switch (blockFace) {
+			case UP -> 2 - blockRotation;
+			case DOWN -> 3 + blockRotation;
+			case SOUTH -> switch (blockRotation) {
+				case 3 -> 0;
+				case 2 -> 3;
+				case 1 -> 1;
+				default -> 2;
+			};
+			case WEST -> switch (blockRotation) {
+				case 3 -> 1;
+				case 2 -> 3;
+				case 1 -> 0;
+				default -> 2;
+			};
+			case NORTH -> switch (blockRotation) {
+				case 3 -> 3;
+				case 2 -> 0;
+				case 1 -> 2;
+				default -> 1;
+			};
+			case EAST -> switch (blockRotation) {
+				case 3 -> 2;
+				case 2 -> 0;
+				case 1 -> 3;
+				default -> 1;
+			};
+		};
+
+		return switch (Math.floorMod(rotationForFace, 4)) {
+			case 3 -> "_d";
+			case 2 -> "_c";
+			case 1 -> "_b";
+			default -> "_a";
+		};
+	}
+
+	private BlockModelBuilder makeTerrorcottaLinesModel(String type, boolean rotated) {
+		return this.models().withExistingParent(type + "_" + (rotated ? 90 : 0), new ResourceLocation("block/cube"))
+				.texture("particle", prefix("block/" + type + "_a"))
+				.texture("up", prefix("block/" + type + linesSuffixForFacing(rotated, Direction.UP)))
+				.texture("down", prefix("block/" + type + linesSuffixForFacing(rotated, Direction.DOWN)))
+				.texture("south", prefix("block/" + type + linesSuffixForFacing(rotated, Direction.SOUTH)))
+				.texture("west", prefix("block/" + type + linesSuffixForFacing(rotated, Direction.WEST)))
+				.texture("north", prefix("block/" + type + linesSuffixForFacing(rotated, Direction.NORTH)))
+				.texture("east", prefix("block/" + type + linesSuffixForFacing(rotated, Direction.EAST)));
+	}
+
+	private static String linesSuffixForFacing(boolean blockRotation, Direction blockFace) {
+		Vec3i normal = blockFace.getNormal();
+		int axisDirection = normal.getX() + normal.getY() + normal.getZ();
+		// Biblically accurate XOR
+		return axisDirection > 0 == ((blockFace.getAxis() == Direction.Axis.Z) != blockRotation) ? "_a" : "_b";
 	}
 }

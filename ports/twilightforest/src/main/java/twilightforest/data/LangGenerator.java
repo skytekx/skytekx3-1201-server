@@ -199,6 +199,9 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.WROUGHT_IRON_FENCE, "Wrought Iron Fence");
 		this.addBlock(TFBlocks.CORONATION_CARPET, "Coronation Carpet");
 		this.add("block.twilightforest.wrought_iron_fence.cap", "Shift + right-click the same block to place finial");
+		this.addBlock(TFBlocks.TERRORCOTTA_ARCS, "Terrorcotta Arcs");
+		this.addBlock(TFBlocks.TERRORCOTTA_CURVES, "Terrorcotta Curves");
+		this.addBlock(TFBlocks.TERRORCOTTA_LINES, "Terrorcotta Lines");
 
 		this.addBlock(TFBlocks.KEEPSAKE_CASKET, "Keepsake Casket");
 		this.add("block.twilightforest.casket.broken", "Your Keepsake Casket was too damaged to hold any more items. All items that would be stored in your casket were dropped on the ground.");

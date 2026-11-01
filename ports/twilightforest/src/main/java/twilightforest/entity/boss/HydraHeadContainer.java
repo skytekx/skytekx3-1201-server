@@ -976,4 +976,11 @@ public class HydraHeadContainer {
 		this.respawnCounter = count;
 	}
 
+	/**
+	 * Ticks until this dead head respawns, or -1 when no respawn is pending
+	 */
+	public int getRespawnCounter() {
+		return this.respawnCounter;
+	}
+
 }

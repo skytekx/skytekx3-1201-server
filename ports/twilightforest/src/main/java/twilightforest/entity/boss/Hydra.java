@@ -264,6 +264,12 @@ public class Hydra extends BaseTFBoss {
 			}
 		}
 		compound.putByte("HeadMask", headData);
+		// not in 4.8: pending respawns, so a head that was dead at save time comes back on schedule instead of early or never
+		int[] respawnCounters = new int[this.numHeads];
+		for (int i = 0; i < this.numHeads; i++) {
+			respawnCounters[i] = this.hc[i].getRespawnCounter();
+		}
+		compound.putIntArray("HeadRespawnCounters", respawnCounters);
 		ListTag headNames = new ListTag();
 		for (int i = 0; i < this.numHeads; i++) {
 			headNames.add(StringTag.valueOf(this.getHeadNameFor(i)));
@@ -275,7 +281,7 @@ public class Hydra extends BaseTFBoss {
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		if (compound.contains("HeadMask", Tag.TAG_BYTE)) {
-			this.activateHeadsOnLoad(compound.getByte("HeadMask"));
+			this.activateHeadsOnLoad(compound.getByte("HeadMask"), compound.getIntArray("HeadRespawnCounters"));
 		} else {
 			// saved by 4.3: we only know how many heads were alive, so pick the extra ones at random like 4.3 did
 			this.activateNumberOfHeads(compound.getByte("NumHeads"));
@@ -295,12 +301,20 @@ public class Hydra extends BaseTFBoss {
 	/**
 	 * Activates heads based on a byte saved to nbt.
 	 * This allows all the same heads to activate on world reload as heads are randomly chosen when one is killed
+	 * <p>
+	 * Unlike 4.8 this also switches heads off: the three starting heads are alive after construction, so a starting head that was dead
+	 * at save time would otherwise come back on load. Dead heads get their saved respawn timer back (absent in saves from before it was
+	 * added, which leaves them waiting to be picked like any other dead head).
 	 */
-	private void activateHeadsOnLoad(byte heads) {
+	private void activateHeadsOnLoad(byte heads, int[] respawnCounters) {
 		for (int i = 0; i < this.numHeads; i++) {
-			if ((heads & 1 << i) != 0) {
-				this.hc[i].setNextState(HydraHeadContainer.State.IDLE);
+			boolean alive = (heads & 1 << i) != 0;
+			if (alive != this.hc[i].isActive()) {
+				this.hc[i].setNextState(alive ? HydraHeadContainer.State.IDLE : HydraHeadContainer.State.DEAD);
 				this.hc[i].endCurrentAction();
+			}
+			if (!alive && i < respawnCounters.length) {
+				this.hc[i].setRespawnCounter(respawnCounters[i]);
 			}
 		}
 	}

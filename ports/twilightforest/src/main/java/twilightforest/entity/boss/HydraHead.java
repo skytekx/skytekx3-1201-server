@@ -59,11 +59,13 @@ public class HydraHead extends HydraPart {
 		this.getEntityData().set(DATA_STATE, (byte) state.ordinal());
 	}
 
-	// a Name Tag only works on LivingEntities, so heads take the name themselves
+	// a Name Tag only works on LivingEntities, so heads take the name themselves.
+	// Not on a dying head: its parts stay pickable for a while after the name was cleared, and the name would carry over to whichever
+	// head respawns in that slot. DATA_STATE is synced, so both sides agree.
 	@Override
 	public InteractionResult interact(Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (stack.is(Items.NAME_TAG) && stack.hasCustomHoverName()) {
+		if (stack.is(Items.NAME_TAG) && stack.hasCustomHoverName() && this.getState() != HydraHeadContainer.State.DYING && this.getState() != HydraHeadContainer.State.DEAD) {
 			if (!this.level().isClientSide() && this.isAlive()) {
 				this.setCustomName(stack.getHoverName());
 

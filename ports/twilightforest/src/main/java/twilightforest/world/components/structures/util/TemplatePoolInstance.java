@@ -6,9 +6,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntComparators;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
@@ -24,6 +21,7 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import twilightforest.util.WorldUtil;
 import twilightforest.util.jigsaw.JigsawPlaceContext;
 
 import java.util.*;
@@ -125,7 +123,7 @@ public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProce
 
 		private int clampYLevelBox(Structure.GenerationContext generationContext, JigsawPlaceContext placeContext, BoundingBox box) {
 			if (this.groundJunctionDiffLimit.isEmpty()) {
-				return this.beardifierGroundDelta + sampleTerrainHeight(generationContext, box.minX(), box.minZ(), box.maxX(), box.maxZ(), 2, this.heightType);
+				return this.beardifierGroundDelta + WorldUtil.adjustForTerrain(generationContext, box.minX(), box.minZ(), box.maxX(), box.maxZ(), 2, this.heightType);
 			}
 
 			int templateY = placeContext.templatePos().getY();
@@ -134,7 +132,7 @@ public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProce
 				return templateY;
 			}
 
-			int yTerrain = sampleTerrainHeight(generationContext, box.minX(), box.minZ(), box.maxX(), box.maxZ(), 2, this.heightType);
+			int yTerrain = WorldUtil.adjustForTerrain(generationContext, box.minX(), box.minZ(), box.maxX(), box.maxZ(), 2, this.heightType);
 			return Mth.clamp(this.beardifierGroundDelta + yTerrain, templateY - variantLimit, templateY + variantLimit);
 		}
 
@@ -151,39 +149,6 @@ public record TemplatePoolInstance(Weight weight, Optional<Holder<StructureProce
 
 			int yTerrain = generationContext.chunkGenerator().getFirstOccupiedHeight(pos.getX(), pos.getZ(), this.heightType, generationContext.heightAccessor(), generationContext.randomState());
 			return Mth.clamp(this.beardifierGroundDelta + yTerrain, templateY - variantLimit, templateY + variantLimit);
-		}
-
-		// Same sampling as TF 4.8's WorldUtil.adjustForTerrain(GenerationContext, int, int, int, int, int, Heightmap.Types): a gridLength x gridLength grid
-		// of first-occupied heights across the footprint, sorted from highest to lowest and averaged with rising weights (1, 2, 3...)
-		private static int sampleTerrainHeight(Structure.GenerationContext context, int xMin, int zMin, int xMax, int zMax, int gridLength, Heightmap.Types type) {
-			int subDivisions = gridLength - 1;
-			IntList heights = new IntArrayList(gridLength * gridLength);
-
-			for (int zStep = 0; zStep <= subDivisions; zStep++) {
-				int zPos = lerpDiscrete((float) zStep / subDivisions, zMin, zMax);
-				for (int xStep = 0; xStep <= subDivisions; xStep++) {
-					int xPos = lerpDiscrete((float) xStep / subDivisions, xMin, xMax);
-
-					heights.add(context.chunkGenerator().getFirstOccupiedHeight(xPos, zPos, type, context.heightAccessor(), context.randomState()));
-				}
-			}
-
-			heights.sort(IntComparators.OPPOSITE_COMPARATOR); // sort from highest to lowest
-
-			double weightedSum = 0;
-			double totalWeight = 0;
-			for (int i = 0; i < heights.size(); i++) {
-				double weight = i + 1;
-				weightedSum += weight * heights.getInt(i);
-				totalWeight += weight;
-			}
-			return (int) Math.round(weightedSum / totalWeight);
-		}
-
-		// Mth.lerpDiscrete() of MC 1.20.5+
-		private static int lerpDiscrete(float delta, int start, int end) {
-			int range = end - start;
-			return start + Mth.floor(delta * (float) (range - 1)) + (delta > 0.0F ? 1 : 0);
 		}
 	}
 

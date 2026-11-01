@@ -367,6 +367,18 @@
      "Dropped, no feature: the 4.8 loading-screen tips for these items (lang keys twilightforest.tips.pocket_watch / twilightforest.tips.mystic_crown and assets/twilightforest/tips/*.json). Upstream they belong to the Tips mod compat (318a2b8c2 'add tips compat'), which is in no inventory feature, and 4.3 has no tips system. The 'left to the tips feature' notes in 03f9ec0 (pocket-watch) and f13a784 (mystic-crown) point to no feature id; re-add the tips only if a Tips compat feature is planned."
     ],
     "source": "integrator review notes, waves 5-6"
+   },
+   {
+    "bundle": "connected-texture-loader+coronation-carpet+miniature-structures",
+    "ids": [
+     "connected-texture-loader",
+     "coronation-carpet",
+     "miniature-structures"
+    ],
+    "deferred": [
+     "sinister-spawner: 4.8 also makes the Coronation Carpet a Sinister Spawner spawn surface. In SinisterSpawnerLogic's lazy spot scan (4.8 HEAD line ~234), accept blockBelow.is(TFBlocks.CORONATION_CARPET.get()) as well as blockBelow.isSolid() when recording a spawn position (added as ROYAL_RAGS in 914508f5d, renamed in 2ad874b3e). coronation-carpet (7ad9824) only registers the block and its isValidSpawn override, because SinisterSpawnerLogic does not exist in 4.3 yet."
+    ],
+    "source": "integrator review notes, waves 5-6"
    }
   ]
  }

@@ -226,10 +226,9 @@ public class CarminiteReactorBlockEntity extends BlockEntity {
 	private void createFakeBlock(BlockPos pos, BlockState state) {
 		BlockState stateThere = this.getLevel().getBlockState(pos);
 
-		// don't destroy unbreakable stuff
-		if (stateThere.getBlock() != Blocks.AIR &&
-				!(stateThere.is(BlockTagGenerator.CARMINITE_REACTOR_IMMUNE) ||
-						(stateThere.getDestroySpeed(this.getLevel(), pos) == -1))) {
+		// don't destroy unbreakable stuff; empty spots get a fake block too (67bbcd9fb)
+		if (!(stateThere.is(BlockTagGenerator.CARMINITE_REACTOR_IMMUNE) ||
+				(stateThere.getDestroySpeed(this.getLevel(), pos) == -1))) {
 			this.getLevel().setBlock(pos, state, 2);
 		}
 	}

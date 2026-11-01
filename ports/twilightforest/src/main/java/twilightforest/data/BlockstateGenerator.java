@@ -57,6 +57,7 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		builtinEntity(TFBlocks.FIREFLY.get(), "block/blank");
 		builtinEntity(TFBlocks.MOONWORM.get(), "block/blank");
 		builtinEntity(TFBlocks.CICADA.get(), "block/blank");
+		builtinEntity(TFBlocks.REACTOR_DEBRIS.get(), "block/blank");
 
 		builtinEntity(TFBlocks.RED_THREAD.get(), "block/blank");
 
@@ -1159,7 +1160,6 @@ public class BlockstateGenerator extends BlockModelBuilders {
 				.with(CarminiteReactorBlock.ACTIVE, false).setModels(new ConfiguredModel(reactor));
 		getVariantBuilder(TFBlocks.CARMINITE_REACTOR.get()).partialState()
 				.with(CarminiteReactorBlock.ACTIVE, true).setModels(new ConfiguredModel(reactorActive));
-		simpleBlock(TFBlocks.REACTOR_DEBRIS.get(), models().cubeAll(TFBlocks.REACTOR_DEBRIS.getId().getPath(), new ResourceLocation("block/destroy_stage_9")).renderType(CUTOUT));
 	}
 
 	private ModelFile pedestalModel(String name, String north, String south, String west, String east, boolean active) {

@@ -54,6 +54,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.block.GiantBlock;
 import twilightforest.block.MiniatureStructureBlock;
 import twilightforest.block.entity.GrowingBeanstalkBlockEntity;
+import twilightforest.client.model.block.ReactorDebrisModel;
 import twilightforest.client.model.block.carpet.RoyalRagsModelLoader;
 import twilightforest.client.model.block.connected.ConnectedTextureModelLoader;
 import twilightforest.client.model.block.forcefield.ForceFieldModelLoader;
@@ -111,6 +112,12 @@ public class TFClientEvents {
 			BakedModel trollsteinnModel = event.getModels().get(trollsteinn);
 			if (trollsteinnModel != null) {
 				event.getModels().put(trollsteinn, new TrollsteinnModel(trollsteinnModel));
+			}
+
+			// reactor debris has no rendered block model; the wrapper only picks its break particle texture
+			BakedModel defaultReactorDebrisModel = event.getModels().get(ModelResourceLocation.vanilla("netherrack", ""));
+			if (defaultReactorDebrisModel != null) {
+				event.getModels().put(new ModelResourceLocation(TwilightForestMod.prefix("reactor_debris"), ""), new ReactorDebrisModel(defaultReactorDebrisModel));
 			}
 		}
 

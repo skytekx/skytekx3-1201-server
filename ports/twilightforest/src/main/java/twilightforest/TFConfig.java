@@ -8,6 +8,7 @@ import com.mojang.authlib.minecraft.client.ObjectMapper;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilEnvironment;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -94,8 +95,18 @@ public class TFConfig {
 					define("allowPortalsInOtherDimensions", false);
 			adminOnlyPortals = builder.
 					translation(config + "admin_portals").
-					comment("Allow portals only for admins (Operators). This severely reduces the range in which the mod usually scans for valid portal conditions, and it scans near ops only.").
+					comment("""
+							Legacy option, prefer `portalCreationPermission`.
+							Allow portals only for admins (Operators). This severely reduces the range in which the mod usually scans for valid portal conditions, and it scans near ops only.
+							If true, this requires at least permission level 1 on top of `portalCreationPermission`.""").
 					define("adminOnlyPortals", false);
+			portalCreationPermission = builder.
+					translation(config + "portal_permission").
+					comment("""
+							Allows people with the specified permission or higher to create portals. This is based off of Vanilla's permission system.
+							You can read about them here: https://minecraft.wiki/w/Permission_level
+							At level 3 (admins) or higher the mod only scans for valid portal conditions in a small range around permitted players.""").
+					defineInRange("portalCreationPermission", Commands.LEVEL_ALL, Commands.LEVEL_ALL, Commands.LEVEL_OWNERS);
 			disablePortalCreation = builder.
 					translation(config + "portals").
 					comment("Disable Twilight Forest portal creation entirely. Provided for server operators looking to restrict action to the dimension.").
@@ -207,6 +218,14 @@ public class TFConfig {
 								If true, the uncrafting table will also be allowed to uncraft shapeless recipes.
 								The table was originally intended to only take shaped recipes, but this option remains for people who wish to keep the functionality.""").
 						define("enableShapelessCrafting", false);
+				UNCRAFTING_STUFFS.disableIngredientSwitching = builder.
+						worldRestart().
+						translation(config + "ingredient_switching").
+						comment("""
+								If true, the uncrafting table will no longer allow you to switch between ingredients if a recipe uses a tag for crafting.
+								This will remove the functionality for ALL RECIPES!
+								If you want to prevent certain ingredients from showing up in the first place, use the "twilightforest:banned_uncrafting_ingredients" tag.""").
+						define("disableIngredientSwitching", false);
 				UNCRAFTING_STUFFS.disableUncraftingOnly = builder.
 						worldRestart().
 						translation(config + "disable_uncrafting").
@@ -240,8 +259,10 @@ public class TFConfig {
 				MAGIC_TREES.timeRange = builder.
 						worldRestart().
 						translation(config + "time_range").
-						comment("Defines the radius at which the Timewood Core works. Can be a number anywhere between 1 and 128.")
-						.defineInRange("timeCoreRange", 16, 1, 128);
+						comment("""
+								Defines the radius at which the Timewood Core works. Can be a number anywhere between 1 and 128.
+								Set to 0 to prevent the Timewood Core from functioning.""")
+						.defineInRange("timeCoreRange", 16, 0, 128);
 
 				MAGIC_TREES.disableTransformation = builder.
 						worldRestart().
@@ -252,8 +273,10 @@ public class TFConfig {
 				MAGIC_TREES.transformationRange = builder.
 						worldRestart().
 						translation(config + "transformation_range").
-						comment("Defines the radius at which the Transformation Core works. Can be a number anywhere between 1 and 128.")
-						.defineInRange("transformationCoreRange", 16, 1, 128);
+						comment("""
+								Defines the radius at which the Transformation Core works. Can be a number anywhere between 1 and 128.
+								Set to 0 to prevent the Transformation Core from functioning.""")
+						.defineInRange("transformationCoreRange", 16, 0, 128);
 
 				MAGIC_TREES.disableMining = builder.
 						worldRestart().
@@ -264,8 +287,10 @@ public class TFConfig {
 				MAGIC_TREES.miningRange = builder.
 						worldRestart().
 						translation(config + "mining_range").
-						comment("Defines the radius at which the Minewood Core works. Can be a number anywhere between 1 and 128.")
-						.defineInRange("miningCoreRange", 16, 1, 128);
+						comment("""
+								Defines the radius at which the Minewood Core works. Can be a number anywhere between 1 and 128.
+								Set to 0 to prevent the Minewood Core from functioning.""")
+						.defineInRange("miningCoreRange", 16, 0, 128);
 
 				MAGIC_TREES.disableSorting = builder.
 						worldRestart().
@@ -276,8 +301,10 @@ public class TFConfig {
 				MAGIC_TREES.sortingRange = builder.
 						worldRestart().
 						translation(config + "sorting_range").
-						comment("Defines the radius at which the Sortingwood Core works. Can be a number anywhere between 1 and 128.")
-						.defineInRange("sortingCoreRange", 16, 1, 128);
+						comment("""
+								Defines the radius at which the Sortingwood Core works. Can be a number anywhere between 1 and 128.
+								Set to 0 to prevent the Sortingwood Core from functioning.""")
+						.defineInRange("sortingCoreRange", 16, 0, 128);
 			}
 			builder.pop();
 
@@ -309,6 +336,7 @@ public class TFConfig {
 		public final ForgeConfigSpec.ConfigValue<String> originDimension;
 		public final ForgeConfigSpec.BooleanValue allowPortalsInOtherDimensions;
 		public final ForgeConfigSpec.BooleanValue adminOnlyPortals;
+		public final ForgeConfigSpec.IntValue portalCreationPermission;
 		public final ForgeConfigSpec.BooleanValue disablePortalCreation;
 		public final ForgeConfigSpec.BooleanValue checkPortalDestination;
 		public final ForgeConfigSpec.BooleanValue portalLightning;
@@ -340,6 +368,7 @@ public class TFConfig {
 			public ForgeConfigSpec.DoubleValue uncraftingXpCostMultiplier;
 			public ForgeConfigSpec.DoubleValue repairingXpCostMultiplier;
 			public ForgeConfigSpec.BooleanValue allowShapelessUncrafting;
+			public ForgeConfigSpec.BooleanValue disableIngredientSwitching;
 			public ForgeConfigSpec.BooleanValue disableUncraftingOnly;
 			public ForgeConfigSpec.BooleanValue disableEntireTable;
 			public ForgeConfigSpec.ConfigValue<List<? extends String>> disableUncraftingRecipes;
@@ -372,7 +401,7 @@ public class TFConfig {
 					define("silentCicadasOnHead", false);
 			firstPersonEffects = builder.
 					translation(config + "first_person_effects").
-					comment("Controls whether various effects from the mod are rendered while in first-person view. Turn this off if you find them distracting.").
+					comment("Controls whether various effects from the mod are rendered while in first-person view, including the screen shaking while a Magic Beanstalk is growing. Turn this off if you find them distracting.").
 					define("firstPersonEffects", true);
 			rotateTrophyHeadsGui = builder.
 					translation(config + "animate_trophyitem").
@@ -427,6 +456,14 @@ public class TFConfig {
 	}
 
 	private static final String config = "config." + TwilightForestMod.ID;
+
+	/**
+	 * A magic tree core works unless it is disabled through its boolean option or its range is set to 0.
+	 * Takes the baked values (e.g. {@link #disableTimeCore}, {@link #timeCoreRange}) so the core tick stays off ForgeConfigSpec.
+	 */
+	public static boolean isMagicTreeCoreEnabled(boolean disabled, int range) {
+		return !disabled && range > 0;
+	}
 
 	public static int getClientCloudBlockPrecipitationDistance() {
 		return clientCloudBlockPrecipitationDistance == -1 ? commonCloudBlockPrecipitationDistance : clientCloudBlockPrecipitationDistance;
@@ -505,6 +542,7 @@ public class TFConfig {
 							COMMON_CONFIG.UNCRAFTING_STUFFS.uncraftingXpCostMultiplier.get(),
 							COMMON_CONFIG.UNCRAFTING_STUFFS.repairingXpCostMultiplier.get(),
 							COMMON_CONFIG.UNCRAFTING_STUFFS.allowShapelessUncrafting.get(),
+							COMMON_CONFIG.UNCRAFTING_STUFFS.disableIngredientSwitching.get(),
 							COMMON_CONFIG.UNCRAFTING_STUFFS.disableUncraftingOnly.get(),
 							COMMON_CONFIG.UNCRAFTING_STUFFS.disableEntireTable.get(),
 							COMMON_CONFIG.UNCRAFTING_STUFFS.disableUncraftingRecipes.get(),
@@ -539,6 +577,7 @@ public class TFConfig {
 						COMMON_CONFIG.UNCRAFTING_STUFFS.uncraftingXpCostMultiplier.get(),
 						COMMON_CONFIG.UNCRAFTING_STUFFS.repairingXpCostMultiplier.get(),
 						COMMON_CONFIG.UNCRAFTING_STUFFS.allowShapelessUncrafting.get(),
+						COMMON_CONFIG.UNCRAFTING_STUFFS.disableIngredientSwitching.get(),
 						COMMON_CONFIG.UNCRAFTING_STUFFS.disableUncraftingOnly.get(),
 						COMMON_CONFIG.UNCRAFTING_STUFFS.disableEntireTable.get(),
 						COMMON_CONFIG.UNCRAFTING_STUFFS.disableUncraftingRecipes.get(),

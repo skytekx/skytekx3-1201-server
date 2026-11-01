@@ -22,7 +22,7 @@ public class TimeLogCoreBlock extends SpecialMagicLogBlock {
 
 	@Override
 	public boolean doesCoreFunction() {
-		return !TFConfig.disableTimeCore;
+		return TFConfig.isMagicTreeCoreEnabled(TFConfig.disableTimeCore, TFConfig.timeCoreRange);
 	}
 
 	/**

@@ -43,16 +43,18 @@ public class UncraftingScreen extends AbstractContainerScreen<UncraftingMenu> {
 
 		//this.buttonList.add(new ModeButton(uiLeft + 7, guiTop + 57));
 
-		this.addRenderableWidget(new CycleButtonMini(this.leftPos + 27, this.topPos + 56, true, button -> {
-			TFPacketHandler.CHANNEL.sendToServer(new UncraftingGuiPacket(2));
-			this.menu.ingredientsInCycle++;
-			this.menu.slotsChanged(this.menu.tinkerInput);
-		}));
-		this.addRenderableWidget(new CycleButtonMini(this.leftPos + 27, this.topPos + 63, false, button -> {
-			TFPacketHandler.CHANNEL.sendToServer(new UncraftingGuiPacket(3));
-			this.menu.ingredientsInCycle--;
-			this.menu.slotsChanged(this.menu.tinkerInput);
-		}));
+		if (!TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableIngredientSwitching.get()) {
+			this.addRenderableWidget(new CycleButtonMini(this.leftPos + 27, this.topPos + 56, true, button -> {
+				TFPacketHandler.CHANNEL.sendToServer(new UncraftingGuiPacket(2));
+				this.menu.ingredientsInCycle++;
+				this.menu.slotsChanged(this.menu.tinkerInput);
+			}));
+			this.addRenderableWidget(new CycleButtonMini(this.leftPos + 27, this.topPos + 63, false, button -> {
+				TFPacketHandler.CHANNEL.sendToServer(new UncraftingGuiPacket(3));
+				this.menu.ingredientsInCycle--;
+				this.menu.slotsChanged(this.menu.tinkerInput);
+			}));
+		}
 
 		//this.buttonList.add(new RefreshButton(uiLeft + 26, guiTop + 57));
 
@@ -73,7 +75,7 @@ public class UncraftingScreen extends AbstractContainerScreen<UncraftingMenu> {
 		boolean scrolled = super.mouseScrolled(x, y, direction);
 
 		//ingredient buttons
-		if (x > this.leftPos + 27 && x < this.leftPos + 33 && y > this.topPos + 56 && y < this.topPos + 69) {
+		if (!TFConfig.COMMON_CONFIG.UNCRAFTING_STUFFS.disableIngredientSwitching.get() && x > this.leftPos + 27 && x < this.leftPos + 33 && y > this.topPos + 56 && y < this.topPos + 69) {
 			if (direction > 0) {
 				TFPacketHandler.CHANNEL.sendToServer(new UncraftingGuiPacket(2));
 				this.menu.ingredientsInCycle++;

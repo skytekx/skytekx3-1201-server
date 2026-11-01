@@ -29,7 +29,7 @@ public class TransLogCoreBlock extends SpecialMagicLogBlock {
 
 	@Override
 	public boolean doesCoreFunction() {
-		return !TFConfig.disableTransformationCore;
+		return TFConfig.isMagicTreeCoreEnabled(TFConfig.disableTransformationCore, TFConfig.transformationCoreRange);
 	}
 
 	/**

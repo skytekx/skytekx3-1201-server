@@ -2,6 +2,7 @@ package twilightforest;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -49,15 +50,13 @@ public class TFTickHandler {
 
 		// check for portal creation, at least if it's not disabled
 		if (!TFConfig.COMMON_CONFIG.disablePortalCreation.get() && event.phase == TickEvent.Phase.END && player.tickCount % (TFConfig.COMMON_CONFIG.checkPortalDestination.get() ? 100 : 20) == 0) {
-			// skip non admin players when the option is on
-			if (TFConfig.COMMON_CONFIG.adminOnlyPortals.get()) {
-				if (world.getServer().getProfilePermissions(player.getGameProfile()) != 0) {
-					// reduce range to 4.0 when the option is on
-					checkForPortalCreation(player, world, 4.0F);
-				}
-			} else {
-				// normal check, no special options
-				checkForPortalCreation(player, world, 32.0F);
+			// skip players below the required permission level
+			int requiredPermission = TFConfig.COMMON_CONFIG.portalCreationPermission.get();
+			boolean legacyAdminOnly = TFConfig.COMMON_CONFIG.adminOnlyPortals.get();
+			if (legacyAdminOnly) requiredPermission = Math.max(requiredPermission, Commands.LEVEL_MODERATORS);
+			if (world.getServer().getProfilePermissions(player.getGameProfile()) >= requiredPermission) {
+				// reduce range to 4.0 if config is set to admins/owners only
+				checkForPortalCreation(player, world, legacyAdminOnly || requiredPermission >= Commands.LEVEL_ADMINS ? 4.0F : 32.0F);
 			}
 		}
 

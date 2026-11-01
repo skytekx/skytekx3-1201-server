@@ -17,7 +17,7 @@ public class MineLogCoreBlock extends SpecialMagicLogBlock {
 
 	@Override
 	public boolean doesCoreFunction() {
-		return !TFConfig.disableMiningCore;
+		return TFConfig.isMagicTreeCoreEnabled(TFConfig.disableMiningCore, TFConfig.miningCoreRange);
 	}
 
 	/**

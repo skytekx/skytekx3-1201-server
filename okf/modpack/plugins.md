@@ -1,9 +1,9 @@
 ---
 type: Reference
 title: Plugins
-description: The Bukkit plugin layer that Arclight actually runs, which is EssentialsX 2.22.0 and, on the Mac mini since 2026-10-31, LuckPerms 5.5.71, their untracked files, the permissions, and the metrics and update checks they bring.
+description: The Bukkit plugin layer that Arclight actually runs, which is EssentialsX 2.22.0 with its spawn module and, on the Mac mini since 2026-10-31, LuckPerms 5.5.71, their untracked files, the permissions, /spawn, and the metrics and update checks they bring.
 tags: [modpack, server, plugins, essentialsx, arclight]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Plugins
@@ -16,6 +16,7 @@ also runs LuckPerms since 2026-10-31 22:34, see [permissions](#permissions).
 | Plugin | Version | State |
 |---|---|---|
 | EssentialsX | 2.22.0 | Installed, loaded at every boot since 2026-06-28 |
+| EssentialsXSpawn | 2.22.0 | For `/spawn` and `/setspawn`, on the build machine since 2026-10-31 and on the Mac mini since 2026-11-01 00:58, see [spawn](#spawn) |
 | LuckPerms | 5.5.71 (Bukkit) | On the Mac mini only, since 2026-10-31 22:34. Not in the checkout |
 | Multiverse | None | Not installed. The Skylands is a datapack dimension, see [Skylands worldgen](../content/skylands-worldgen.md) |
 | WorldEdit | None | Not installed |
@@ -32,6 +33,7 @@ sleep. The first boot that loaded it was on 2026-06-28 at 17:59:28 (`logs/2026-0
 | Path | In git | Content |
 |---|---|---|
 | Jar `plugins/EssentialsX-2.22.0.jar` | No | The plugin |
+| Jar `plugins/EssentialsXSpawn-2.22.0.jar` | No | The spawn module, since 2026-10-31 on the build machine |
 | Folder `plugins/Essentials/` | No | Default `config.yml` from 2026-06-28, `kits.yml` with the sample kits (tools, dtools, notch), the sample `motd.txt`, `items.json`, `worth.yml`, `tpr.yml`, one player file in `userdata/`, `usermap.bin` and `uuids.bin` |
 | File `plugins/bStats/config.yml` | No | Metrics switch, `enabled: true` |
 | File `plugins/PluginMetrics/config.yml` | Yes | The old MCStats metrics switch, `opt-out: false`, from 2026-06-27 |
@@ -64,13 +66,36 @@ is in, holds 38 nodes of EssentialsX, each with the prefix `essentials.`: `tpa`,
 `back.ondeath`, `spawn`, `warp`, `warp.list`, `msg`, `mail`, `mail.send`, `ignore`, `me`, `afk`, `list`,
 `seen`, `realname`, `motd`, `rules`, `help`, `helpop`, `ping`, `getpos`, `compass`, `depth`, `suicide`,
 `balance`, `balancetop`, `pay`, `worth` and `signs.use.*`. The admin commands stay with operators.
-`essentials.spawn` has no effect, because the EssentialsSpawn module that brings `/spawn` is not
-installed. Change the set over RCON with `lp group default permission set <node>` or `unset <node>`,
-or with `/lp editor` in game as an operator.
+`essentials.spawn` works since the spawn module came on 2026-11-01, see [spawn](#spawn). Change the
+set over RCON with `lp group default permission set <node>` or `unset <node>`, or with `/lp editor` in
+game as an operator.
 
 Breaking blocks and hitting players have nothing to do with these permissions. When both failed on
 2026-10-31, the causes were the spawn protection and a bug in Asgard Shield Reloaded, see the
 [change log](../log.md#2026-10-31-the-mac-mini-and-the-halloween-world).
+
+## Spawn
+
+On 2026-10-31 at 23:10 the owner asked why there is no `/spawn`. EssentialsX has the node
+`essentials.spawn`, but the command lives in the separate module EssentialsXSpawn. Version 2.22.0, the
+same release as EssentialsX, came from the GitHub release `EssentialsX/Essentials` 2.22.0
+(`EssentialsXSpawn-2.22.0.jar`, 18,661 bytes, SHA-256 `dd5377c4c921b9b6...`, checked against the
+digest of the release asset). The jar of EssentialsX in `plugins/` matches the digest of the same
+release.
+
+The module also takes over two events by default. On death it sends every player to the spawn point and
+ignores beds and respawn anchors, and on the first join it gives the sample kit `tools` and announces the
+new player. Both listeners are off in `plugins/Essentials/config.yml` (`respawn-listener-priority: none`
+and `spawn-join-listener-priority: none`), so respawns and joins stay vanilla and the module only adds
+the two commands.
+
+Until an operator stands somewhere and runs `/setspawn`, `/spawn` leads to the world spawn of the
+Overworld (308 64 392). `/setspawn` needs `essentials.setspawn`, which only operators have.
+
+The Mac mini got the module with the restart of 2026-11-01 00:58 (see
+[Skylands worldgen](../content/skylands-worldgen.md#deploy-of-2026-11-01)). Its boot logged "Enabling
+EssentialsSpawn v2.22.0", and at 01:20 `bukkit:help spawn` over RCON showed the command with the alias
+`espawn`. Nobody had used it yet.
 
 ## Metrics and update checks
 

@@ -5,11 +5,11 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across all 35 bundled mods. **Verify the blockers yourself before trusting them.**
+Researched automatically across all 37 bundled mods. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **29** mods are fine to bundle (open license or author allows modpacks).
+- **31** mods are fine to bundle (open license or author allows modpacks).
 - **0** need a quick manual check (CurseForge modpack flag unconfirmed).
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
@@ -75,6 +75,8 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `Tumbleweed-forge-1.20.1-0.5.5.jar` | Tumbleweed | LGPL-3.0-only | Licensed | yes | yes |
 | `twilight_construct-1.0.7.jar` | Twilight Construct | LGPL-2.1 | Licensed | yes | - |
 | `twilightforest-1.20.1-4.3-universal.jar` | The Twilight Forest | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures) | Special permission | yes | - |
+| `twilightforestfinalboss-1.0.1-forge-1.20.1.jar` | The King of Twilight | MIT | Licensed | yes | - |
+| `twilighttweaks-1.20.x-1.2.jar` | Twilight Tweaks | LGPL-2.1 | Licensed | yes | - |
 
 ## How to fill the form
 

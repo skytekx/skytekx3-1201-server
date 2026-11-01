@@ -524,10 +524,12 @@ found this.
 The Skylands beyond radius 2000 generate when players get there. A pregen to radius 3000 can follow
 when nobody is online.
 
-At 02:51 the server restarted after a warning in chat and runs skytekx-compat 2.1.2 since 02:52:03,
+At 02:51 the server restarted after a warning in chat and ran skytekx-compat 2.1.2 from 02:52:03,
 see [SkyTekx Compat](compat-mod.md#history). The Skylands were not generated again. Version 2.1.2 only
 changes chunks that generate later, and the scan of 01:11 had found no block below Y 13 in the
-pregenerated radius.
+pregenerated radius. Since 06:11 the server runs 2.1.3, whose worldgen code is that of 2.1.2. It only
+adds the mixins for Infernal Mobs and for Falling Meteors, whose meteors fall in the overworld and
+never in the Skylands.
 
 ## Open rulings
 

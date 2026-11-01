@@ -55,6 +55,7 @@ public class TFFeatures {
 	public static final RegistryObject<Feature<RootConfig>> WOOD_ROOTS = FEATURES.register("wood_roots", () -> new WoodRootFeature(RootConfig.CODEC));
 	public static final RegistryObject<Feature<NoneFeatureConfiguration>> SNOW_UNDER_TREES = FEATURES.register("snow_under_trees", () -> new SnowUnderTreeFeature(NoneFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<TreeConfiguration>> SNOW_TREE = FEATURES.register("anywhere_tree", () -> new SnowTreeFeature(TreeConfiguration.CODEC));
+	public static final RegistryObject<Feature<NoneFeatureConfiguration>> ENCHANTED_FOREST_VINES = FEATURES.register("enchanted_forest_vines", () -> new EnchantedForestVinesFeature(NoneFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<RandomPatchConfiguration>> DARK_FOREST_PLACER = FEATURES.register("dark_forest_placer", () -> new DarkForestFeature(RandomPatchConfiguration.CODEC));
 	public static final RegistryObject<Feature<WeightedListFeatureConfig>> WEIGHTED_LIST_SELECTOR = FEATURES.register("weighted_list", () -> new WeightedListFeature(WeightedListFeatureConfig.CODEC));
 }

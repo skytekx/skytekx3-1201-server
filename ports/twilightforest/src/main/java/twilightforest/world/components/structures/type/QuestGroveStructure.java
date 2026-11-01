@@ -39,7 +39,7 @@ public class QuestGroveStructure extends ConquerableStructure {
 
     public static QuestGroveStructure buildStructureConfig(BootstapContext<Structure> context) {
         return new QuestGroveStructure(
-                new DecorationConfig(1, false, true, true),
+                new DecorationConfig(2, false, true, true), // 4.8 (#2275): keep the denser Enchanted Forest growth and lakes further from the grove
                 new StructureSettings(
                         context.lookup(Registries.BIOME).getOrThrow(BiomeTagGenerator.VALID_QUEST_GROVE_BIOMES),
                         Arrays.stream(MobCategory.values()).collect(Collectors.toMap(category -> category, category -> new StructureSpawnOverride(StructureSpawnOverride.BoundingBoxType.STRUCTURE, WeightedRandomList.create()))), // Landmarks have Controlled Mob spawning

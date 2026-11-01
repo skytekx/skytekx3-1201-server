@@ -171,9 +171,9 @@ public class UrGhast extends BaseTFBoss {
 		boolean attackSuccessful;
 
 		if ("fireball".equals(source.getMsgId()) && source.getEntity() instanceof Player) {
-			// a fireball reflected by a player: take it as plain thrown damage, since we ignore fire damage.
-			// (as a Ghast subclass this used to trip the vanilla reflected-fireball check and deal 1000 damage)
-			attackSuccessful = super.hurt(this.damageSources().thrown(source.getEntity(), source.getDirectEntity()), damage);
+			// a fireball reflected by a player: take it as thrown damage, since we are immune to fire damage.
+			// The player stays the causing entity so they get hurt_boss and kill credit.
+			attackSuccessful = super.hurt(this.damageSources().thrown(source.getDirectEntity(), source.getEntity()), damage);
 		} else {
 			attackSuccessful = super.hurt(source, damage);
 		}

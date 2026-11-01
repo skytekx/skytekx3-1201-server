@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -61,6 +62,7 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 	private final NonNullList<ItemStack> dyingInventory = NonNullList.withSize(IBossLootBuffer.CONTAINER_SIZE, ItemStack.EMPTY);
 	// Players credited with the hurt_boss trigger when this boss dies. Like the per-boss lists 4.3 kept, it is not saved.
 	private final List<ServerPlayer> hurtBy = new ArrayList<>();
+	private boolean lootAlreadyPlaced; // 4.3 boss saved mid-death: its chest was already placed and filled in die()
 
 	protected BaseTFBoss(EntityType<? extends Monster> type, Level level) {
 		super(type, level);
@@ -125,6 +127,10 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
+		// ContainerHelper.saveAllItems always writes "Items" (even when empty), so only a dying boss saved by 4.3's Hydra, Alpha Yeti,
+		// Snow Queen, Minoshroom or Plateau boss lacks it. Those placed and filled their chest in die(); depositing the empty buffer
+		// into that chest on removal would wipe the loot the player has not collected yet.
+		this.lootAlreadyPlaced = this.isDeadOrDying() && !compound.contains("Items", Tag.TAG_LIST);
 		this.readDeathItemsSaveData(compound);
 		this.loadHomePointFromNbt(compound);
 	}
@@ -179,7 +185,7 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 
 	// drop loot into a chest after removal, separate method, so it can be overridden
 	protected void postRemoval(ServerLevel serverLevel, RemovalReason reason) {
-		if (reason.equals(RemovalReason.KILLED) && this.shouldSpawnLoot()) {
+		if (reason.equals(RemovalReason.KILLED) && this.shouldSpawnLoot() && !this.lootAlreadyPlaced) {
 			BlockState chest = this.getDeathContainer(this.getRandom()).defaultBlockState();
 			if (chest.hasProperty(ChestBlock.FACING)) {
 				chest = chest.setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(this.level().getRandom()));

@@ -181,7 +181,7 @@ public class BrittleFlaskItem extends Item {
 	//copied from Item.getBarWidth, but reversed the "durability" check so it increments up, not down
 	@Override
 	public int getBarWidth(ItemStack stack) {
-		return Math.round(13.0F - Math.abs(PotionFlaskContents.dosesOf(stack) - DOSES) * 13.0F / DOSES);
+		return Math.round(13.0F - Math.abs(Math.min(PotionFlaskContents.dosesOf(stack), DOSES) - DOSES) * 13.0F / DOSES);
 	}
 
 	/**

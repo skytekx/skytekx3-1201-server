@@ -100,7 +100,7 @@ symlink on that jar. A stock Arclight release brings back the crash at shutdown 
 
 ### Provide the mods
 
-Git does not hold `mods/`. Copy the folder from a running install as it is. It holds 234 jars, among
+Git does not hold `mods/`. Copy the folder from a running install as it is. It holds 235 jars, among
 them jars patched in place, BrassAmber BattleTowers, Falling Meteors Reimagined and the Backpack port,
 which exist nowhere else in the repo, see
 [Mod set](okf/modpack/mod-set.md#jars-outside-the-index).

@@ -3,7 +3,7 @@ type: Reference
 title: Client
 description: The owner's Prism Launcher instance for SkyTekx 3 on Asahi Linux, with Java 17, the 16K page allocator flag, the mods only clients have, the custom main menu, the client crash history and how a player joins from outside the LAN.
 tags: [modpack, client, prism, asahi]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Client
@@ -151,6 +151,10 @@ neither Modflared nor Rosetta.
 The first launch there failed to join with "Invalid session", because the instance ran with an
 offline account. After a sign-in with a Microsoft account it was relaunched at about 22:33. A join at
 22:34:44 was refused because the server was restarting at that moment.
+
+On 2026-11-01 at about 01:50 the owner asked to delete Placeable Items there as well, after the server
+had dropped it (see [mod set](mod-set.md#history)). The jar was the same file as on the server, and no
+game was running, so the instance now holds 240 jars and loads without the mod at its next start.
 
 ## Other settings
 

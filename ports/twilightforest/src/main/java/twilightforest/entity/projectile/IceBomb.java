@@ -50,7 +50,9 @@ public class IceBomb extends TFThrowable {
 
 	@Override
 	protected void onHitEntity(EntityHitResult result) {
-		if (result.getEntity() instanceof LivingEntity entity) this.inflictDamage(entity, 2);
+		// Unlike 4.8, only the server applies the direct hit: ThrowableProjectile#onHit also runs on the client,
+		// where doChillAuraEffect would leave a local "ghost" Frosted effect on the victim that the client never expires.
+		if (!this.level().isClientSide() && result.getEntity() instanceof LivingEntity entity) this.inflictDamage(entity, 2);
 	}
 
 	private void doTerrainEffects(int range) {

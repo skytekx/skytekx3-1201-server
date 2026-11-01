@@ -57,7 +57,9 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> GENERATED_PORTAL_DECO = BlockTags.create(TwilightForestMod.prefix("portal/generated_decoration"));
 
 	public static final TagKey<Block> DARK_TOWER_ALLOWED_POTS = BlockTags.create(TwilightForestMod.prefix("dark_tower_allowed_pots"));
+	// Kept for datapacks referencing it; the Trophy Pedestal reads TROPHY_PEDESTAL_ACTIVATION_BLOCKS since 4.8.
 	public static final TagKey<Block> TROPHIES = BlockTags.create(TwilightForestMod.prefix("trophies"));
+	public static final TagKey<Block> TROPHY_PEDESTAL_ACTIVATION_BLOCKS = BlockTags.create(TwilightForestMod.prefix("trophy_pedestal_activation_blocks"));
 	public static final TagKey<Block> FIRE_JET_FUEL = BlockTags.create(TwilightForestMod.prefix("fire_jet_fuel"));
 	public static final TagKey<Block> ICE_BOMB_REPLACEABLES = BlockTags.create(TwilightForestMod.prefix("ice_bomb_replaceables"));
 	public static final TagKey<Block> MAZEBREAKER_ACCELERATED = BlockTags.create(TwilightForestMod.prefix("mazebreaker_accelerated_mining"));
@@ -454,6 +456,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(BlockTags.FROG_PREFER_JUMP_TO).add(TFBlocks.HUGE_LILY_PAD.get());
 
+		tag(Tags.Blocks.BOOKSHELVES).add(TFBlocks.CANOPY_BOOKSHELF.get());
+
 		tag(TROPHIES)
 				.add(TFBlocks.NAGA_TROPHY.get(), TFBlocks.NAGA_WALL_TROPHY.get())
 				.add(TFBlocks.LICH_TROPHY.get(), TFBlocks.LICH_WALL_TROPHY.get())
@@ -464,6 +468,12 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				.add(TFBlocks.ALPHA_YETI_TROPHY.get(), TFBlocks.ALPHA_YETI_WALL_TROPHY.get())
 				.add(TFBlocks.SNOW_QUEEN_TROPHY.get(), TFBlocks.SNOW_QUEEN_WALL_TROPHY.get())
 				.add(TFBlocks.QUEST_RAM_TROPHY.get(), TFBlocks.QUEST_RAM_WALL_TROPHY.get());
+
+		tag(TROPHY_PEDESTAL_ACTIVATION_BLOCKS).add(
+				TFBlocks.NAGA_TROPHY.get(), TFBlocks.LICH_TROPHY.get(),
+				TFBlocks.MINOSHROOM_TROPHY.get(), TFBlocks.HYDRA_TROPHY.get(),
+				TFBlocks.KNIGHT_PHANTOM_TROPHY.get(), TFBlocks.UR_GHAST_TROPHY.get(),
+				TFBlocks.ALPHA_YETI_TROPHY.get(), TFBlocks.SNOW_QUEEN_TROPHY.get());
 
 		tag(FIRE_JET_FUEL).add(Blocks.LAVA);
 

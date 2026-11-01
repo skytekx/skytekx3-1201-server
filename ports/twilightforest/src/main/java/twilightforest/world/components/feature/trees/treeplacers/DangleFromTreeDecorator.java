@@ -76,7 +76,8 @@ public class DangleFromTreeDecorator extends TreeDecorator {
 					clearedOfPossibleLeaves = true;
 
 				if (clearedOfPossibleLeaves && !isAir) {
-					cordLength = ropeUnrolling;
+					// stop above the obstacle: counting it made the baggage target a non-air block and never get placed
+					cordLength = ropeUnrolling - 1;
 
 					break;
 				}

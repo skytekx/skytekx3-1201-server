@@ -7,9 +7,28 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+
 // TODO Split into FeatureLogic and FeaturePlacers
 @Deprecated
 public final class FeatureUtil {
+
+	/**
+	 * Tests the given position and the {@code depth} blocks directly below it.
+	 */
+	public static boolean anyBelowMatch(BlockPos exposedPos, int depth, Predicate<BlockPos> predicate) {
+		return isAnyMatchInArea(exposedPos.below(depth), 1, depth + 1, 1, predicate);
+	}
+
+	public static boolean isAnyMatchInArea(BlockPos pos, int xWidth, int height, int zWidth, Predicate<BlockPos> predicate) {
+		return IntStream.range(0, xWidth)
+				.mapToObj(cx -> IntStream.range(0, height)
+						.mapToObj(cy -> IntStream.range(0, zWidth)
+								.mapToObj(cz -> pos.offset(cx, cy, cz))))
+				.flatMap(stream -> stream.flatMap(s -> s))
+				.anyMatch(predicate);
+	}
 
 	public static boolean isAreaSuitable(WorldGenLevel world, BlockPos pos, int width, int height, int depth) {
 		return isAreaSuitable(world, pos, width, height, depth, false);

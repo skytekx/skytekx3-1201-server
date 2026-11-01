@@ -181,6 +181,14 @@ public class HollowTreeFeature extends TFTreeFeature<TFTreeFeatureConfig> {
 	}
 
 	/**
+	 * Whether the trunk base below ground level is placed regardless of what is there. Only safe for trees that
+	 * verify beforehand that nothing in {@link net.minecraft.tags.BlockTags#FEATURES_CANNOT_REPLACE} is in the way.
+	 */
+	protected boolean forceTrunkBase() {
+		return false;
+	}
+
+	/**
 	 * This function builds the hollow trunk of the tree
 	 */
 	protected void buildTrunk(LevelAccessor world, BiConsumer<BlockPos, BlockState> trunkPlacer, BiConsumer<BlockPos, BlockState> decoPlacer, RandomSource  random, BlockPos pos, int diameter, int height, TFTreeFeatureConfig config) {
@@ -198,7 +206,10 @@ public class HollowTreeFeature extends TFTreeFeature<TFTreeFeatureConfig> {
 					if (dist <= diameter) {
 						BlockPos dPos = pos.offset(dx, dy, dz);
 						if (FeatureUtil.hasAirAround(world, dPos)) {
-							if (dist > hollow) {
+							if (this.forceTrunkBase()) {
+								// The base must be able to replace the ground it is exposed in, not only air and plants
+								trunkPlacer.accept(dPos, (dist > hollow ? config.trunkProvider : config.branchProvider).getState(random, dPos));
+							} else if (dist > hollow) {
 								FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, random, dPos, config.trunkProvider);
 							} else {
 								FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, random, dPos, config.branchProvider);

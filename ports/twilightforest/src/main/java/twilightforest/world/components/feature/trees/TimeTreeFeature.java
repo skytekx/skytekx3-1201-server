@@ -3,11 +3,15 @@ package twilightforest.world.components.feature.trees;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import twilightforest.init.TFBlocks;
+import twilightforest.util.FeaturePlacers;
+import twilightforest.util.FeatureUtil;
 import twilightforest.world.components.feature.config.TFTreeFeatureConfig;
 
 import java.util.function.BiConsumer;
@@ -22,8 +26,12 @@ public class TimeTreeFeature extends HollowTreeFeature {
 		final int height = 8;
 		final int diameter = 1;
 
-		// do we have enough height?
-		if (world.isOutsideBuildHeight(pos.getY() + 1) || world.isOutsideBuildHeight(pos.getY() + height + diameter)) {
+		// do we have enough height? Do not grow through blocks that must not be replaced (e.g. a bedrock ceiling),
+		// nor build the trunk base into such blocks below
+		if (world.isOutsideBuildHeight(pos.getY() + 1)
+				|| world.isOutsideBuildHeight(pos.getY() + height + diameter)
+				|| FeatureUtil.isAnyMatchInArea(pos.subtract(new Vec3i(1, 4, 1)), 3, 4, 3, blockPos -> world.getBlockState(blockPos).is(BlockTags.FEATURES_CANNOT_REPLACE))
+				|| FeatureUtil.isAnyMatchInArea(pos.subtract(new Vec3i(1, 0, 1)), 3, 16, 3, blockPos -> !FeaturePlacers.validTreePos(world, blockPos))) {
 			return false;
 		}
 
@@ -48,9 +56,20 @@ public class TimeTreeFeature extends HollowTreeFeature {
 		// build the crown
 		buildTinyCrown(world, trunkPlacer, leavesPlacer, random, pos, diameter, height, config);
 
-		// add clock block
-		world.setBlock(pos.offset(-1, 2, 0), TFBlocks.TIME_LOG_CORE.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y), 3);
+		// add clock block, but only into the trunk or something replaceable
+		BlockPos corePos = pos.offset(-1, 2, 0);
+		BlockState stateAtCorePos = world.getBlockState(corePos);
+		if (stateAtCorePos.is(BlockTags.LOGS) || stateAtCorePos.canBeReplaced()) {
+			world.setBlock(corePos, TFBlocks.TIME_LOG_CORE.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y), 3);
+			world.scheduleTick(corePos, TFBlocks.TIME_LOG_CORE.get(), 20);
+		}
 
+		return true;
+	}
+
+	@Override
+	protected boolean forceTrunkBase() {
+		// safe: generate() refuses to grow if anything below the trunk is in FEATURES_CANNOT_REPLACE
 		return true;
 	}
 

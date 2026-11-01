@@ -1,6 +1,7 @@
 package twilightforest.world.components.feature.trees;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,9 +52,12 @@ public class MiningTreeFeature extends TFTreeFeature<TFTreeFeatureConfig> {
 		putBranchWithLeaves(world, trunkPlacer, leavesPlacer, random, pos.offset(0, 7, -4), false, config);
 		putBranchWithLeaves(world, trunkPlacer, leavesPlacer, random, pos.offset(0, 6, -5), false, config);
 
-		// place minewood core
-		world.setBlock(pos.above(), TFBlocks.MINING_LOG_CORE.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y), 3);
-		world.scheduleTick(pos.above(), TFBlocks.MINING_LOG_CORE.get(), 20);
+		// place minewood core, but only into the trunk or something replaceable
+		BlockState stateAtCorePos = world.getBlockState(pos.above());
+		if (stateAtCorePos.is(BlockTags.LOGS) || stateAtCorePos.canBeReplaced()) {
+			world.setBlock(pos.above(), TFBlocks.MINING_LOG_CORE.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y), 3);
+			world.scheduleTick(pos.above(), TFBlocks.MINING_LOG_CORE.get(), 20);
+		}
 
 		// root bulb
 		if (FeatureUtil.hasAirAround(world, pos.below())) {

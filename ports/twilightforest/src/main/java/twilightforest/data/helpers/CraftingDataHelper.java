@@ -18,10 +18,12 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.TFChestBlock;
+import twilightforest.block.TFTrappedChestBlock;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFBlocks;
 
@@ -335,16 +337,29 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.save(consumer, locWood(name + "_banister"));
 	}
 
-	protected final void chestBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends TFChestBlock> result, Supplier<? extends Block> material) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result.get(), 2)
+	protected final void chestBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends TFChestBlock> chest, Supplier<? extends TFTrappedChestBlock> trapped, Supplier<? extends Block> material) {
+		// The wooden chest tag also holds trapped chests (vanilla's and ours), which would make 8 planks around a trapped
+		// chest match both recipes below. Keep the tag so other mods' wooden chests still work, but leave the trapped
+		// ones to the trapped chest recipe (4.8 solved the same overlap with DifferenceIngredient for the belt, d4d90e268).
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, chest.get(), 2)
 				.pattern("###")
 				.pattern("#C#")
 				.pattern("###")
 				.define('#', material.get())
-				.define('C', Tags.Items.CHESTS_WOODEN)
+				.define('C', DifferenceIngredient.of(Ingredient.of(Tags.Items.CHESTS_WOODEN), Ingredient.of(Tags.Items.CHESTS_TRAPPED)))
 				.unlockedBy("has_item", has(material.get()))
 				.group("chest")
 				.save(consumer, locWood(name + "_chest"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, trapped.get(), 2)
+				.pattern("###")
+				.pattern("#C#")
+				.pattern("###")
+				.define('#', material.get())
+				.define('C', Tags.Items.CHESTS_TRAPPED)
+				.unlockedBy("has_item", has(material.get()))
+				.group("trapped_chest")
+				.save(consumer, locWood(name + "_trapped_chest"));
 	}
 
 	protected final void fieryConversion(Consumer<FinishedRecipe> consumer, Supplier<? extends Item> result, Item armor, int vials) {

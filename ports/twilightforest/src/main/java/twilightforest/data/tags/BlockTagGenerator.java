@@ -219,7 +219,12 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(Tags.Blocks.CHESTS_WOODEN)
 				.add(TFBlocks.TWILIGHT_OAK_CHEST.get(), TFBlocks.CANOPY_CHEST.get(), TFBlocks.MANGROVE_CHEST.get(), TFBlocks.DARK_CHEST.get())
-				.add(TFBlocks.TIME_CHEST.get(), TFBlocks.TRANSFORMATION_CHEST.get(), TFBlocks.MINING_CHEST.get(), TFBlocks.SORTING_CHEST.get());
+				.add(TFBlocks.TIME_CHEST.get(), TFBlocks.TRANSFORMATION_CHEST.get(), TFBlocks.MINING_CHEST.get(), TFBlocks.SORTING_CHEST.get())
+				.add(TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get(), TFBlocks.CANOPY_TRAPPED_CHEST.get(), TFBlocks.MANGROVE_TRAPPED_CHEST.get(), TFBlocks.DARK_TRAPPED_CHEST.get())
+				.add(TFBlocks.TIME_TRAPPED_CHEST.get(), TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(), TFBlocks.MINING_TRAPPED_CHEST.get(), TFBlocks.SORTING_TRAPPED_CHEST.get());
+		tag(Tags.Blocks.CHESTS_TRAPPED)
+				.add(TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get(), TFBlocks.CANOPY_TRAPPED_CHEST.get(), TFBlocks.MANGROVE_TRAPPED_CHEST.get(), TFBlocks.DARK_TRAPPED_CHEST.get())
+				.add(TFBlocks.TIME_TRAPPED_CHEST.get(), TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(), TFBlocks.MINING_TRAPPED_CHEST.get(), TFBlocks.SORTING_TRAPPED_CHEST.get());
 
 		tag(BlockTags.FLOWER_POTS)
 				.add(TFBlocks.POTTED_TWILIGHT_OAK_SAPLING.get(), TFBlocks.POTTED_CANOPY_SAPLING.get(), TFBlocks.POTTED_MANGROVE_SAPLING.get(), TFBlocks.POTTED_DARKWOOD_SAPLING.get(), TFBlocks.POTTED_RAINBOW_OAK_SAPLING.get())
@@ -672,7 +677,15 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.TIME_CHEST.get(),
 				TFBlocks.TRANSFORMATION_CHEST.get(),
 				TFBlocks.MINING_CHEST.get(),
-				TFBlocks.SORTING_CHEST.get()
+				TFBlocks.SORTING_CHEST.get(),
+				TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get(),
+				TFBlocks.CANOPY_TRAPPED_CHEST.get(),
+				TFBlocks.MANGROVE_TRAPPED_CHEST.get(),
+				TFBlocks.DARK_TRAPPED_CHEST.get(),
+				TFBlocks.TIME_TRAPPED_CHEST.get(),
+				TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(),
+				TFBlocks.MINING_TRAPPED_CHEST.get(),
+				TFBlocks.SORTING_TRAPPED_CHEST.get()
 		).addTags(BANISTERS, HOLLOW_LOGS, TOWERWOOD);
 
 		tag(BlockTags.MINEABLE_WITH_HOE).add(

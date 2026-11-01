@@ -7,7 +7,13 @@
       "item": "twilightforest:transformation_planks"
     },
     "C": {
-      "tag": "forge:chests/wooden"
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:chests/wooden"
+      },
+      "subtracted": {
+        "tag": "forge:chests/trapped"
+      }
     }
   },
   "pattern": [

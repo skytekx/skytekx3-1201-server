@@ -156,6 +156,15 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.MINING_CHEST.get());
 				output.accept(TFBlocks.SORTING_CHEST.get());
 				output.accept(TFBlocks.DARKWOOD_SAPLING.get());
+				output.accept(TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.CANOPY_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.MANGROVE_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.DARK_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.TIME_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.MINING_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.SORTING_TRAPPED_CHEST.get());
+				output.accept(TFBlocks.TIME_SAPLING.get());
 				output.accept(TFBlocks.TWILIGHT_OAK_WOOD.get());
 				output.accept(TFBlocks.CANOPY_WOOD.get());
 				output.accept(TFBlocks.MANGROVE_WOOD.get());
@@ -164,7 +173,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.TRANSFORMATION_WOOD.get());
 				output.accept(TFBlocks.MINING_WOOD.get());
 				output.accept(TFBlocks.SORTING_WOOD.get());
-				output.accept(TFBlocks.TIME_SAPLING.get());
+				output.accept(TFBlocks.TRANSFORMATION_SAPLING.get());
 				output.accept(TFBlocks.TWILIGHT_OAK_LOG.get());
 				output.accept(TFBlocks.CANOPY_LOG.get());
 				output.accept(TFBlocks.MANGROVE_LOG.get());
@@ -173,7 +182,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.TRANSFORMATION_LOG.get());
 				output.accept(TFBlocks.MINING_LOG.get());
 				output.accept(TFBlocks.SORTING_LOG.get());
-				output.accept(TFBlocks.TRANSFORMATION_SAPLING.get());
+				output.accept(TFBlocks.MINING_SAPLING.get());
 				output.accept(TFBlocks.STRIPPED_TWILIGHT_OAK_LOG.get());
 				output.accept(TFBlocks.STRIPPED_CANOPY_LOG.get());
 				output.accept(TFBlocks.STRIPPED_MANGROVE_LOG.get());
@@ -182,7 +191,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.STRIPPED_TRANSFORMATION_LOG.get());
 				output.accept(TFBlocks.STRIPPED_MINING_LOG.get());
 				output.accept(TFBlocks.STRIPPED_SORTING_LOG.get());
-				output.accept(TFBlocks.MINING_SAPLING.get());
+				output.accept(TFBlocks.SORTING_SAPLING.get());
 				output.accept(TFBlocks.STRIPPED_TWILIGHT_OAK_WOOD.get());
 				output.accept(TFBlocks.STRIPPED_CANOPY_WOOD.get());
 				output.accept(TFBlocks.STRIPPED_MANGROVE_WOOD.get());
@@ -191,7 +200,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.STRIPPED_TRANSFORMATION_WOOD.get());
 				output.accept(TFBlocks.STRIPPED_MINING_WOOD.get());
 				output.accept(TFBlocks.STRIPPED_SORTING_WOOD.get());
-				output.accept(TFBlocks.SORTING_SAPLING.get());
+				output.accept(TFBlocks.RAINBOW_OAK_SAPLING.get());
 				output.accept(TFBlocks.ROOT_BLOCK.get());
 				output.accept(TFBlocks.LIVEROOT_BLOCK.get());
 				output.accept(TFBlocks.MANGROVE_ROOT.get());
@@ -202,7 +211,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.TRANSFORMATION_LOG_CORE.get());
 				output.accept(TFBlocks.MINING_LOG_CORE.get());
 				output.accept(TFBlocks.SORTING_LOG_CORE.get());
-				output.accept(TFBlocks.RAINBOW_OAK_SAPLING.get());
+				output.accept(TFBlocks.HOLLOW_OAK_SAPLING.get());
 				output.accept(TFItems.HOLLOW_TWILIGHT_OAK_LOG.get());
 				output.accept(TFItems.HOLLOW_CANOPY_LOG.get());
 				output.accept(TFItems.HOLLOW_MANGROVE_LOG.get());
@@ -211,7 +220,6 @@ public class TFCreativeTabs {
 				output.accept(TFItems.HOLLOW_TRANSFORMATION_LOG.get());
 				output.accept(TFItems.HOLLOW_MINING_LOG.get());
 				output.accept(TFItems.HOLLOW_SORTING_LOG.get());
-				output.accept(TFBlocks.HOLLOW_OAK_SAPLING.get());
 				output.accept(TFBlocks.OAK_BANISTER.get());
 				output.accept(TFBlocks.SPRUCE_BANISTER.get());
 				output.accept(TFBlocks.BIRCH_BANISTER.get());

@@ -6,28 +6,37 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
-import twilightforest.block.entity.TwilightChestEntity;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-public class TwilightChestRenderer<T extends TwilightChestEntity> extends ChestRenderer<T> {
+public class TwilightChestRenderer<T extends ChestBlockEntity> extends ChestRenderer<T> {
     public static final Map<Block, EnumMap<ChestType, Material>> MATERIALS;
 
     static {
         ImmutableMap.Builder<Block, EnumMap<ChestType, Material>> builder = ImmutableMap.builder();
 
-        builder.put(TFBlocks.TWILIGHT_OAK_CHEST.get(), chestMaterial("twilight"));
-        builder.put(TFBlocks.CANOPY_CHEST.get(), chestMaterial("canopy"));
-        builder.put(TFBlocks.MANGROVE_CHEST.get(), chestMaterial("mangrove"));
-        builder.put(TFBlocks.DARK_CHEST.get(), chestMaterial("darkwood"));
-        builder.put(TFBlocks.TIME_CHEST.get(), chestMaterial("time"));
-        builder.put(TFBlocks.TRANSFORMATION_CHEST.get(), chestMaterial("trans"));
-        builder.put(TFBlocks.MINING_CHEST.get(), chestMaterial("mining"));
-        builder.put(TFBlocks.SORTING_CHEST.get(), chestMaterial("sort"));
+        builder.put(TFBlocks.TWILIGHT_OAK_CHEST.get(), chestMaterial("twilight", false));
+        builder.put(TFBlocks.CANOPY_CHEST.get(), chestMaterial("canopy", false));
+        builder.put(TFBlocks.MANGROVE_CHEST.get(), chestMaterial("mangrove", false));
+        builder.put(TFBlocks.DARK_CHEST.get(), chestMaterial("darkwood", false));
+        builder.put(TFBlocks.TIME_CHEST.get(), chestMaterial("time", false));
+        builder.put(TFBlocks.TRANSFORMATION_CHEST.get(), chestMaterial("trans", false));
+        builder.put(TFBlocks.MINING_CHEST.get(), chestMaterial("mining", false));
+        builder.put(TFBlocks.SORTING_CHEST.get(), chestMaterial("sort", false));
+
+        builder.put(TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get(), chestMaterial("twilight", true));
+        builder.put(TFBlocks.CANOPY_TRAPPED_CHEST.get(), chestMaterial("canopy", true));
+        builder.put(TFBlocks.MANGROVE_TRAPPED_CHEST.get(), chestMaterial("mangrove", true));
+        builder.put(TFBlocks.DARK_TRAPPED_CHEST.get(), chestMaterial("darkwood", true));
+        builder.put(TFBlocks.TIME_TRAPPED_CHEST.get(), chestMaterial("time", true));
+        builder.put(TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(), chestMaterial("trans", true));
+        builder.put(TFBlocks.MINING_TRAPPED_CHEST.get(), chestMaterial("mining", true));
+        builder.put(TFBlocks.SORTING_TRAPPED_CHEST.get(), chestMaterial("sort", true));
 
         MATERIALS = builder.build();
     }
@@ -47,12 +56,15 @@ public class TwilightChestRenderer<T extends TwilightChestEntity> extends ChestR
         return material != null ? material : super.getMaterial(blockEntity, chestType);
     }
 
-    private static EnumMap<ChestType, Material> chestMaterial(String type) {
+    // 4.3 keeps the chest textures under model/chest/<wood>/ (4.8 later moved them to entity/chest/); the trapped
+    // variants sit next to them with a "trapped_" prefix, which is where upstream had them before that move.
+    private static EnumMap<ChestType, Material> chestMaterial(String type, boolean trapped) {
         EnumMap<ChestType, Material> map = new EnumMap<>(ChestType.class);
+        String prefix = trapped ? "trapped_" : "";
 
-        map.put(ChestType.SINGLE, new Material(Sheets.CHEST_SHEET, TwilightForestMod.prefix("model/chest/" + type + "/" + type)));
-        map.put(ChestType.LEFT, new Material(Sheets.CHEST_SHEET, TwilightForestMod.prefix("model/chest/" + type + "/left")));
-        map.put(ChestType.RIGHT, new Material(Sheets.CHEST_SHEET, TwilightForestMod.prefix("model/chest/" + type + "/right")));
+        map.put(ChestType.SINGLE, new Material(Sheets.CHEST_SHEET, TwilightForestMod.prefix("model/chest/" + type + "/" + prefix + type)));
+        map.put(ChestType.LEFT, new Material(Sheets.CHEST_SHEET, TwilightForestMod.prefix("model/chest/" + type + "/" + prefix + "left")));
+        map.put(ChestType.RIGHT, new Material(Sheets.CHEST_SHEET, TwilightForestMod.prefix("model/chest/" + type + "/" + prefix + "right")));
 
         return map;
     }

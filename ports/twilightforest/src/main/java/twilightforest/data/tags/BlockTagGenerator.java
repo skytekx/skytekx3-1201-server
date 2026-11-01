@@ -462,6 +462,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(Tags.Blocks.BOOKSHELVES).add(TFBlocks.CANOPY_BOOKSHELF.get());
 
+		tag(BlockTags.WOOL_CARPETS).add(TFBlocks.CORONATION_CARPET.get());
+
 		tag(TROPHIES)
 				.add(TFBlocks.NAGA_TROPHY.get(), TFBlocks.NAGA_WALL_TROPHY.get())
 				.add(TFBlocks.LICH_TROPHY.get(), TFBlocks.LICH_WALL_TROPHY.get())

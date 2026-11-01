@@ -18,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.*;
+import twilightforest.client.model.block.carpet.RoyalRagsBuilder;
 import twilightforest.client.model.block.connected.ConnectedTextureBuilder;
 import twilightforest.client.model.block.forcefield.ForceFieldModel;
 import twilightforest.client.model.block.forcefield.ForceFieldModelBuilder;
@@ -374,6 +375,8 @@ public class BlockstateGenerator extends BlockModelBuilders {
 				.part().modelFile(models().getExistingFile(prefix("wrought_iron_fence_middle"))).rotationY(270).addModel().condition(WroughtIronFenceBlock.WEST_FENCE, WroughtIronFenceBlock.FenceSide.MIDDLE).end()
 				.part().modelFile(models().getExistingFile(prefix("wrought_iron_fence_bottom"))).rotationY(270).addModel().condition(WroughtIronFenceBlock.WEST_FENCE, WroughtIronFenceBlock.FenceSide.BOTTOM).end();
 
+		registerCoronationCarpet();
+
 		registerWoodBlocks();
 		registerNagastone();
 		registerForceFields();
@@ -440,6 +443,15 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		casketStuff();
 		stonePillar();
 		candelabra();
+	}
+
+	private void registerCoronationCarpet() {
+		ResourceLocation carpetTexture = TFBlocks.CORONATION_CARPET.getId().withPrefix("block/");
+		ResourceLocation carpetCTM = carpetTexture.withSuffix("_ctm");
+		simpleBlock(TFBlocks.CORONATION_CARPET.get(), this.models().carpet(TFBlocks.CORONATION_CARPET.getId().getPath(), carpetTexture)
+				.texture("wool_ctm", carpetCTM)
+				.customLoader(RoyalRagsBuilder::begin)
+				.end());
 	}
 
 	private void registerForceFields() {

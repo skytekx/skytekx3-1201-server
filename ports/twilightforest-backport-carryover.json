@@ -380,6 +380,188 @@
     ],
     "source": "integrator review notes, waves 5-6"
    }
+  ],
+  "5": [
+   {
+    "bundle": "fortification-shield-rework+lich-fight-fixes",
+    "ids": [
+     "fortification-shield-rework",
+     "lich-fight-fixes"
+    ],
+    "deferred": [
+     "fortification-shield-rework: temporary shields lasting 50% longer while the Mystic Crown is worn (883f963bb/3b278690e) -> mystic-crown. Hook: ShieldCapabilityHandler.update() should skip the timer decrement on every 3rd tick when the head slot holds the crown.",
+     "fortification-shield-rework: config.* translation keys for shield_indicator / shield_indicator_creative were not added, because 4.3 ships no config.* lang keys (same decision as the wave-2 charm-system-rework carryover).",
+     "fortification-shield-rework: 4.8's rename of the shield.add/shield.break sound event ids to fortification_shield.* was not ported. The old ids are kept for registry-id safety, and only the new block/expire events use 4.8 names.",
+     "fortification-shield-rework: b4f716995's removal of the invulnerable-player check in the shield hit handler was not ported on purpose. In 1.20.1 LivingAttackEvent fires before Player.hurt's invulnerability check, so dropping the check would let creative players lose shields, which 4.8 never does.",
+     "lich-fight-fixes: the rework-era teleport and clone logic (teleportToNewTarget multi-target retargeting, d3835bf37 teleportHome fallback in LichShadowsGoal, 6bcadba0a, teleport invisibility, minimum 5-block distance and below-target retries in findVecInLOSOf, clones inheriting the master's restriction point, the Lich home radius of 30) -> lich-boss-rework.",
+     "lich-fight-fixes: the literal OminousCandleBlock.CANDLE_MAP containsKey check from #2563 -> ominous-candles / lich-boss-rework, when CANDLE_MAP and turnNearbyCandles land. 4.3 only gets the equivalent LIT-property guard.",
+     "lich-fight-fixes: 7a178eb83's Lich shield break volume escalation and its 0.75F/1.75F block-sound tuning, and 00b68267f's teleport-sound and candle-range tweaks -> lich-boss-rework.",
+     "lich-fight-fixes: the LichBomb trail particle direction (65e29df27) is still not ported. It was handed to client-visual-fixes in wave 2, but the 4.3 code still has the old direction."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "potion-flask-rework",
+    "ids": [
+     "potion-flask-rework"
+    ],
+    "deferred": [
+     "lich-tower-revamp: 4.8's tower_potion loot table (guaranteed 3-5 brittle flasks plus a greater flask at weight 25) and the hut tables. 4.3's old Lich Tower has no potion room, so this port puts flasks into tower_library and tower_room instead, and lich-tower-revamp will replace those tables with the 4.8 ones. The 9278617c1 changes that are not about flasks (tower_foyer, tower_grave, the Lich's exanimate essence drop) also belong to lich-tower-revamp or a loot feature.",
+     "4.8's loading-screen tip 'potion_flask' (createTip) is not ported because 4.3 has no tips system; it belongs to whichever feature adds the tips system.",
+     "Other locales still contain the now-unused key item.twilightforest.flask.doses and lack the new flask.empty, flask.empty_description and death.attack.twilightforest.failedChallenge keys; this is left to tools/merge_upstream_lang.py."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "uncrafting-table-improvements",
+    "ids": [
+     "uncrafting-table-improvements"
+    ],
+    "deferred": [
+     "726b98bc3 (positioned recraft sub-grids): not applicable on 1.20.1. It fixes a 1.21-only regression from the trimmed CraftingInput, and 1.20.1 getRemainingItemsFor uses the full 3x3 container, so the indices in UncraftingResultSlot are already correct. Nothing left to do.",
+     "acf5b3c50 makes isIngredientProblematic, isDamageableComponent and countDamageableParts public for the #2059 XP-cost display. That part belongs to jei-plugin-upgrades and was left private here."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "questing-ram-datapack-quests+jei-plugin-upgrades",
+    "ids": [
+     "questing-ram-datapack-quests",
+     "jei-plugin-upgrades"
+    ],
+    "deferred": [
+     "questing-ram-datapack-quests: 4.8's entities/questing_ram_reward_blocks loot table is not applicable. It only exists because 1.20.5+ bundles take set_contents with nested loot tables, and a 1.20.1 bundle keeps its items in top-level NBT that set_contents cannot write. 4.3's set_nbt bundle already holds the same seven blocks, emerald block included.",
+     "questing-ram-datapack-quests: marking the Quest Grove conquered after the reward (52d0d5ef8, LandmarkUtil.markStructureConquered in QuestRam.rewardQuest) -> magic-map-improvements",
+     "jei-plugin-upgrades: the isEmiInstalled guard that turns off the JEI plugin when EMI is present -> emi-native-plugin. Until that lands, EMI sees TF only through this JEI plugin.",
+     "jei-plugin-upgrades: 4.8's JEI 19 layout APIs -> emi-native-plugin / wave-9 recipe-viewer polish. This covers setStandardSlotBackground, setOutputSlotBackground, getRecipeArrow, ITooltipBuilder tooltips, onDisplayedIngredientsUpdate for the Moonworm display, and ingredient codecs. JEI 15.20 has most of these, but the fork compiles against jei_version=15.2.0.25, so uncrafting and crumble horn keep their 4.3 background sheets.",
+     "jei-plugin-upgrades: moving the shared entity/item rendering into EntityRenderingUtil (used by 4.8's EMI and REI) -> emi-native-plugin",
+     "jei-plugin-upgrades: the drying, ominous fire, casket subtype/repair, scepter repair, no-template smithing and Traveller's categories/extensions each go with their own feature -> drying-rack, ominous-fire-exanimate-essence, keepsake-casket-skull-chest, scepter-rework, travellers-*"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "ore-meter",
+    "ids": [
+     "ore-meter"
+    ],
+    "deferred": [
+     "ore-meter: the spec's 'per-ore colours / ore_map_color data map' is misattributed. 4.8's Ore Meter HUD uses no colours; ore_map_color is only read by MazeMapItem (the Ore Map), so it belongs to the shared data-map listener and magic-map-improvements or an ore-map feature, not ore-meter.",
+     "ore-meter: 4.8's clear sound is block/crafter/craft, which does not exist before 1.20.3. random/click is used instead. This is a permanent substitution.",
+     "ore-meter: the en_us 'twilightforest.tips.ore_meter' string was not ported because 4.3 has no tips system. It goes to whichever feature adds the 4.8 tips.",
+     "ore-meter: the creative-tab move of the Ore Meter next to the Ore Magnet (d7f5ff19e, which also moves the pocket watch and moon dial) is not ported. It is cosmetic; it could go to pocket-watch or a tab-ordering feature.",
+     "ore-meter: the new en_us keys have no other locales yet. Re-run ports/twilightforest/tools/merge_upstream_lang.py (translation-refresh follow-up)."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "magic-painting-upgrades",
+    "ids": [
+     "magic-painting-upgrades"
+    ],
+    "deferred": [
+     "lich-tower-revamp: the gallery structure itself (LichTowerMagicGallery, the lich_tower/gallery/*.nbt templates and the painting data-marker handler from 3aabe77a2, e77e21e12, 661f4c3a8 and 5cbd33e97). MagicPainting now has a public setDirection and a setVariant(ResourceKey) overload, and MagicPaintingVariants exposes the new keys, ready for it.",
+     "jei-plugin-upgrades: hiding the blank magic painting in JEI (3ae3c3575). The B08 worktree already does this.",
+     "Non-English locales: the new magic_painting.* title and author keys need tools/merge_upstream_lang.py. Only en_us was written.",
+     "Verifier: refresh the datagen .cache manifests for the changed generated files."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "progression-protection-overhaul",
+    "ids": [
+     "progression-protection-overhaul"
+    ],
+    "deferred": [
+     "landmark-density-terrain: with per-piece protection the Yeti Cave (single piece, box sea level -2..15) no longer protects the lair roof built by deformTerrainForYetiLair (ceiling at sea level +16, stone to +24); 4.8 behaves the same. If wanted, add a roof-covering UtilityPiece or similar."
+    ],
+    "source": "integrator note, waves 5-6 orchestrator"
+   }
+  ],
+  "6": [
+   {
+    "bundle": "emperors-cloth",
+    "ids": [
+     "emperors-cloth"
+    ],
+    "deferred": [
+     "JEI display of twilightforest:no_template_smithing and the cloth crafting recipe -> jei-plugin-upgrades. JEI 15.2.0.25's SmithingRecipeCategory only accepts vanilla SmithingTransformRecipe and SmithingTrimRecipe, so these recipes are skipped silently. The 4.8 NoTemplateSmithingExtension needs the newer SmithingCategoryExtension API, which JEI 15.2 does not have; on 15.2 it needs a custom category.",
+     "EMI displays (EmiEmperorsClothRecipe, EmiNoSmithingTemplateRecipe) -> emi-native-plugin",
+     "REI display (REINoTemplateDisplay) -> no feature id; 4.3 has no REI plugin",
+     "Loading-screen tip twilightforest.tips.emperors_cloth -> no feature id; 4.3 has no tips system",
+     "Other-locale lang strings for item.twilightforest.emperors_cloth and its .desc -> merged later by tools/merge_upstream_lang.py (en_us is done)"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "wrought-iron-fence-finials+terrorcotta-blocks+maze-slime-block",
+    "ids": [
+     "wrought-iron-fence-finials",
+     "terrorcotta-blocks",
+     "maze-slime-block"
+    ],
+    "deferred": [
+     "candelabra-overhaul: the 4.8 candelabra recipe (3 bars on top, 1 under, gives 2) using forge:ingots/wrought_iron. The tag WROUGHT_IRON_INGOTS now exists in ItemTagGenerator.",
+     "canopy-window: canopy window and pane recipes from the same upstream commit 807bff120.",
+     "dried-foods-and-tanning: the drying recipe maze_slime_ball -> gelatinous_maze_slime_drop.",
+     "travellers-boots-modifiers: the Water Walk modifier recipe that uses maze_slime_ball.",
+     "lich-tower-revamp: placing terrorcotta, the finished fence and the yard fence (LichTowerWingRoom, LichPerimeterFence, LichYardLights).",
+     "Not ported, belongs to another feature: 4.8 loading-screen tip assets/twilightforest/tips/wrought_iron.json.",
+     "Not applicable on 1.20.1: 4.8 tag translations (translateTag for c:ingots/wrought_iron)."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "rope+uberous-soil-improvements+tree-core-particles",
+    "ids": [
+     "rope",
+     "uberous-soil-improvements",
+     "tree-core-particles"
+    ],
+    "deferred": [
+     "rope: Lich Tower use of rope (LichTowerWingRoom rope/chain dangling markers and templates) -> lich-tower-revamp",
+     "rope: 4.8 c:ropes block/item tags not added (NeoForge 1.21 convention tags, no Forge 47 Tags.Blocks/Items.ROPES equivalent) -> not applicable",
+     "tree-core-particles: SpecialMagicLogBlock bug from the 1be6248cb sweep is outside particle scope. When a core is disabled by config, use() calls state.setValue(ACTIVE,false) and discards the result, where 4.8 calls level.setBlockAndUpdate. -> small bugfix for any later block bugfix bundle"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "tf-wood-trapped-chests+reactor-debris-visual",
+    "ids": [
+     "tf-wood-trapped-chests",
+     "reactor-debris-visual"
+    ],
+    "deferred": [
+     "advancement-fixes arborist leftovers (not this bundle): the 8 *_DRYING_RACK entries belong to drying-rack; CHISELED_CANOPY_BOOKSHELF and dropping EMPTY_CANOPY_BOOKSHELF belong to the chiseled-bookshelf feature. The TODO in TFAdvancementGenerator now names only those.",
+     "Not ported, by design: 4.8's later move of TF chests and trapped chests to the vanilla CHEST/TRAPPED_CHEST block entity types (17602f730 plus BlockEntityTypeAddBlocksEvent). That is the feature tf-chest-vanilla-blockentity, which the plan already rules out.",
+     "translation-refresh: the 8 new en_us keys (block.twilightforest.<wood>_trapped_chest) need ports/twilightforest/tools/merge_upstream_lang.py re-run to pick up other locales."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "keepsake-casket-skull-chest",
+    "ids": [
+     "keepsake-casket-skull-chest"
+    ],
+    "deferred": [
+     "Lich Tower casket room and grave pieces that place caskets (2ea2df281 template_definition lich_tower/9x9/keepsake_casket, 40dca8060 grave.nbt, chests/casket_loot loot table): belong to lich-tower-revamp",
+     "Tip strings twilightforest.tips.casket_usage / casket_logging (assets/twilightforest/tips/*.json): belong to the loading-screen tips feature, not ported here",
+     "Config lang key config.twilightforest.casket_uuid_locking: 4.3 has no config.* translations (same decision as charm-system-rework)"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "block-qol-bundle+item-polish-bundle",
+    "ids": [
+     "block-qol-bundle",
+     "item-polish-bundle"
+    ],
+    "deferred": [
+     "scepter-rework: the 4.8 Lifedrain trail uses the twilightforest:magic_effect particle and plays the new life_scepter.drain sound every drain tick (2f016042f, 3a4cd0ba7, e2a32976e). This port keeps the coloured vanilla ENTITY_EFFECT particle for the trail and 4.3's SCEPTER_DRAIN sound on kill. When scepter-rework adds MAGIC_EFFECT and LIFE_SCEPTER_DRAIN, swap them in client/particle/LifedrainTrail.java and LifedrainScepterItem.onUseTick.",
+     "scepter-rework / mystic-crown: the 4.8 Lifedrain durability rule (Mystic Crown 5% skip, TFItemStackUtils.hurtButDontBreak) was not ported here.",
+     "skull-candle-blockstate-migration (excluded per plan): af0f724d1, which moves the candle count from the block entity into the blockstate. The #2119 candle removal reads the count from the block entity instead."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   }
   ]
  }
 }

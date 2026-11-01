@@ -2,6 +2,7 @@ package twilightforest.world.components.structures;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.QuartPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -518,20 +519,25 @@ public abstract class TFStructureComponentOld extends TFStructureComponent {
 		return 0;
 	}
 
-	protected boolean isBoundingBoxOutsideBiomes(WorldGenLevel world, Predicate<Biome> predicate) {
+	/**
+	 * Samples the biome source directly instead of going through {@link WorldGenLevel#getBiome}. The bounding box
+	 * (plus one block) reaches far outside the chunk being post-processed, and resolving biomes through the level's
+	 * chunk-backed BiomeManager from here could crash the server while the Final Castle / Troll Cave garden loaded.
+	 * Upstream 905123c0f, with the quart-coordinate correction from ecf49ebef.
+	 */
+	protected boolean isBoundingBoxOutsideBiomes(WorldGenLevel world, Predicate<Biome> predicate, BlockPos structurePos) {
+		// getUncachedNoiseBiome() requires quart pos instead of blockPos, unlike getBiome().
+		// Every block column of a quart cell yields the same biome, so step per quart cell instead of per block:
+		// identical result, 16x fewer (uncached) biome source lookups.
+		int minQuartX = QuartPos.fromBlock(this.boundingBox.minX() - 1);
+		int minQuartZ = QuartPos.fromBlock(this.boundingBox.minZ() - 1);
+		int maxQuartX = QuartPos.fromBlock(this.boundingBox.maxX() + 1);
+		int maxQuartZ = QuartPos.fromBlock(this.boundingBox.maxZ() + 1);
+		int quartY = QuartPos.fromBlock(structurePos.getY());
 
-		int minX = this.boundingBox.minX() - 1;
-		int minZ = this.boundingBox.minZ() - 1;
-		int maxX = this.boundingBox.maxX() + 1;
-		int maxZ = this.boundingBox.maxZ() + 1;
-
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-
-		for (int x = minX; x <= maxX; x++) {
-			for (int z = minZ; z <= maxZ; z++) {
-				if (!predicate.test(world.getBiome(pos.set(x, 0, z)).value())) {
-					return true;
-				}
+		for (int quartX = minQuartX; quartX <= maxQuartX; quartX++) {
+			for (int quartZ = minQuartZ; quartZ <= maxQuartZ; quartZ++) {
+				if (!predicate.test(world.getUncachedNoiseBiome(quartX, quartY, quartZ).value())) return true;
 			}
 		}
 

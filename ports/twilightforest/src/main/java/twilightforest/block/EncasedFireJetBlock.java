@@ -11,7 +11,9 @@ import twilightforest.enums.FireJetVariant;
 
 public class EncasedFireJetBlock extends FireJetBlock {
 
-	public static final EnumProperty<FireJetVariant> STATE = EnumProperty.create("state", FireJetVariant.class);
+	// Must be the same Property instance FireJetBlock registers in its state definition, otherwise
+	// state.getValue(STATE) throws on the first redstone update. (upstream 8a8497a64)
+	public static final EnumProperty<FireJetVariant> STATE = FireJetBlock.STATE;
 
 	public EncasedFireJetBlock(Properties properties) {
 		super(properties);

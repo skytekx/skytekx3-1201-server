@@ -32,6 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -309,13 +310,18 @@ public class ASMHooks {
 	 */
 	public static boolean cloud(boolean isRaining, Level level, BlockPos pos) {
 		if (!isRaining && TFConfig.COMMON_CONFIG.cloudBlockPrecipitationDistanceCommon.get() > 0) {
+			// Do NOT load new chunks when checking for rain. Mob spawning and lightning ask isRainingAt for
+			// positions in unloaded chunks, and a blocking chunk load from here can deadlock the server.
+			// Only ever look at the column's own (already loaded) chunk. (upstream 1.21.1 BlockHooks#isRainingAt)
+			if (!level.hasChunkAt(pos)) return false;
+			LevelChunk chunk = level.getChunkAt(pos);
 			for (int y = pos.getY(); y < pos.getY() + TFConfig.COMMON_CONFIG.cloudBlockPrecipitationDistanceCommon.get(); y++) {
 				BlockPos newPos = pos.atY(y);
-				BlockState state = level.getBlockState(newPos);
+				BlockState state = chunk.getBlockState(newPos);
 				if (state.getBlock() instanceof CloudBlock cloudBlock && cloudBlock.getCurrentPrecipitation(newPos, level, level.getRainLevel(1.0F)).getLeft() == Biome.Precipitation.RAIN) {
 					return true;
 				}
-				if (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(level.getBlockState(newPos))) {
+				if (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(chunk.getBlockState(newPos))) {
 					return false;
 				}
 			}

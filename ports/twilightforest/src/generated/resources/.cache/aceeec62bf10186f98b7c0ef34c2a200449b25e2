@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-01T18:07:34.3014922	Twilight Forest Block Tags
+// 1.20.1	2026-11-01T22:17:52.681296411	Twilight Forest Block Tags
 a10ef0864e630b44949959994b373ec7ee07dcb1 data/alexscaves/tags/blocks/ferromagnetic_blocks.json
 ddfcbead67bb9487c003af137a276963e5b20022 data/alexscaves/tags/blocks/gloomoth_light_sources.json
 c365018bd78f1335cd4508b5d74bc4500ae951bd data/alexscaves/tags/blocks/underzealot_light_sources.json
@@ -70,6 +70,7 @@ f3de4b0d6d2929c8fab124e75ff6269ca7642aa7 data/minecraft/tags/blocks/wooden_stair
 e61eeb87b9b5ecebdb3a29a8ba0b33a4881b48c7 data/twilightforest/tags/blocks/annihilation_inclusions.json
 894771e557845fa22ca82b71283c23be8ab1847a data/twilightforest/tags/blocks/antibuilder_ignores.json
 af8520c845f14fb320bcefd284018a5ad57a7528 data/twilightforest/tags/blocks/banisters.json
+6500e46db807b8cb8b3729393ae550ed1e46900a data/twilightforest/tags/blocks/block_and_chain_never_breaks.json
 84101198c6b6d645c6e155abb5349d33e7279300 data/twilightforest/tags/blocks/canopy_logs.json
 65138d47619b3b87ed5cdf3b4ec226e0bfebfb64 data/twilightforest/tags/blocks/carminite_reactor_immune.json
 66c63c2aea9e2f572dee901056877665b812ae56 data/twilightforest/tags/blocks/carminite_reactor_ores.json
@@ -92,6 +93,7 @@ c8fafdcc498cb38e705f74c899c6adee8c1c137e data/twilightforest/tags/blocks/ice_bom
 089e4347e6320066de4cd4d08b3e04a9442f4090 data/twilightforest/tags/blocks/mangrove_logs.json
 dd1f6af3c96cc308a52726613452fddc17b9833c data/twilightforest/tags/blocks/mazebreaker_accelerated_mining.json
 6983cf03e3e0ed197a353c175ee65000bac02492 data/twilightforest/tags/blocks/mazestone.json
+984a835f12c583514b244703d6bad1afa79b3402 data/twilightforest/tags/blocks/mineable_with_block_and_chain.json
 9a0837862b33f048722739e6314f5c471d56b2d6 data/twilightforest/tags/blocks/mining_logs.json
 2e3669ba44aac2e69249800a996f0e1b27c08e54 data/twilightforest/tags/blocks/mining_tree_excluded.json
 2e3669ba44aac2e69249800a996f0e1b27c08e54 data/twilightforest/tags/blocks/ore_magnet/ignored_ores.json

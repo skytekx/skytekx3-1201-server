@@ -42,6 +42,7 @@ import twilightforest.world.components.feature.TFSmallLakeFeature;
 import twilightforest.world.components.feature.config.BerryBushConfig;
 import twilightforest.world.components.feature.config.HollowLogConfig;
 import twilightforest.world.components.feature.config.RootConfig;
+import twilightforest.world.components.feature.config.RuinedFoundationConfig;
 import twilightforest.world.components.feature.config.SwizzleConfig;
 import twilightforest.world.components.feature.config.ThornsConfig;
 import twilightforest.world.components.feature.config.WeightedListFeatureConfig;
@@ -269,7 +270,7 @@ public final class TFConfiguredFeatures {
 		context.register(MAYAPPLE, new ConfiguredFeature<>(Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(BlockStateProvider.simple(TFBlocks.MAYAPPLE.get())))));
 		context.register(FIDDLEHEAD, new ConfiguredFeature<>(Feature.RANDOM_PATCH, FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(BlockStateProvider.simple(TFBlocks.FIDDLEHEAD.get())))));
 		context.register(FIRE_JET, new ConfiguredFeature<>(TFFeatures.FIRE_JET.get(), new BlockStateConfiguration(TFBlocks.FIRE_JET.get().defaultBlockState())));
-		context.register(FOUNDATION, new ConfiguredFeature<>(TFFeatures.FOUNDATION.get(), NoneFeatureConfiguration.NONE));
+		context.register(FOUNDATION, new ConfiguredFeature<>(TFFeatures.FOUNDATION.get(), RuinedFoundationConfig.withDefaultBlocks(false)));
 		context.register(GROVE_RUINS, new ConfiguredFeature<>(TFFeatures.GROVE_RUINS.get(), NoneFeatureConfiguration.NONE));
 		context.register(HOLLOW_LOG, new ConfiguredFeature<>(TFFeatures.FALLEN_HOLLOW_LOG.get(), NoneFeatureConfiguration.NONE));
 		context.register(HOLLOW_STUMP, new ConfiguredFeature<>(TFFeatures.HOLLOW_STUMP.get(), TreeConfigurations.HOLLOW_TREE));

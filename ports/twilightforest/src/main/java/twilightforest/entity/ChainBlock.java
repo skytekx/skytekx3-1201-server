@@ -269,7 +269,9 @@ public class ChainBlock extends ThrowableProjectile implements IEntityAdditional
 				&& (!restrictedPlaceMode || this.stack.hasAdventureModeBreakTagForBlock(level.registryAccess().registryOrThrow(Registries.BLOCK), new BlockInWorld(level, pos, false)))) {
 			BlockState cracked = state.setValue(BlockStateProperties.CRACKED, true);
 			level.setBlock(pos, cracked, Block.UPDATE_INVISIBLE);
-			Block.dropResources(cracked, level, pos, level.getBlockEntity(pos), this, this.stack);
+			// drop with a plain Block and Chain as the tool: it is in #breaks_decorated_pots and has no Silk Touch,
+			// so the 1.20.1 loot table always takes the sherds branch, like 4.8's cracked=true path
+			Block.dropResources(cracked, level, pos, level.getBlockEntity(pos), this, new ItemStack(TFItems.BLOCK_AND_CHAIN.get()));
 			level.destroyBlock(pos, false, this);
 			return true;
 		}

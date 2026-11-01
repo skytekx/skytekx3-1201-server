@@ -23,6 +23,7 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.custom.stalactites.entry.Stalactite;
+import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFConfiguredFeatures;
 import twilightforest.init.TFLandmark;
@@ -147,6 +148,10 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 					int ez = Math.min(z - minZ, maxZ - z);
 
 					double dist = Math.sqrt(ex * ey * ez);
+
+					// Overlapping cave pieces would otherwise hollow out the huge mushrooms another piece already grew
+					if (this.getBlock(world, x, y, z, boundingBox).is(BlockTagGenerator.CANNOT_TROLL_CAVE_HOLLOW))
+						continue;
 
 					if (dist > threshold) {
 						this.placeBlock(world, Blocks.AIR.defaultBlockState(), x, y, z, boundingBox);

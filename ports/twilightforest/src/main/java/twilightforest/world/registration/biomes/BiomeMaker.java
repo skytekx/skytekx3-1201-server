@@ -58,7 +58,7 @@ public final class BiomeMaker extends BiomeHelper {
 				biomeColumnWithUnderground(0.05F, 0.15F, biomeRegistry, TFBiomes.SNOWY_FOREST, undergroundBiome),
 				biomeColumnWithUnderground(0.025F, 0.05F, biomeRegistry, TFBiomes.GLACIER, undergroundBiome),
 
-				biomeColumnWithUnderground(3.0F, 0.25F, biomeRegistry, TFBiomes.HIGHLANDS, undergroundBiome),
+				biomeColumnWithUnderground(3.0F, 0.25F, biomeRegistry, TFBiomes.HIGHLANDS, biomeRegistry.getOrThrow(TFBiomes.HIGHLANDS_UNDERGROUND)),
 				biomeColumnToBedrock(7.0F, 0.1F, biomeRegistry, TFBiomes.THORNLANDS),
 				biomeColumnToBedrock(13.75F, 0.025F, biomeRegistry, TFBiomes.FINAL_PLATEAU)
 		);

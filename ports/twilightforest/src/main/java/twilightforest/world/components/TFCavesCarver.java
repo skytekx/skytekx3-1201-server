@@ -26,6 +26,7 @@ import net.minecraft.world.level.levelgen.synth.ImprovedNoise;
 import net.minecraft.world.level.material.Fluids;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.util.LegacyLandmarkPlacements;
 
 import java.util.function.Function;
 
@@ -49,15 +50,19 @@ public class TFCavesCarver extends WorldCarver<CaveCarverConfiguration> {
 
 	@Override
 	public boolean isStartChunk(CaveCarverConfiguration config, RandomSource rand) {
-		return rand.nextFloat() <= config.probability;
+		// Highland caves instead spawn when the troll caves structure is nearby, and with special location rules
+		return this.isHighlands || rand.nextFloat() <= config.probability;
 	}
 
 	@Override
 	public boolean carve(CarvingContext ctx, CaveCarverConfiguration config, ChunkAccess access, Function<BlockPos, Holder<Biome>> biomePos, RandomSource random, Aquifer aquifer, ChunkPos accessPos, CarvingMask mask) {
+		if (this.isHighlands && (Mth.clamp(LegacyLandmarkPlacements.manhattanDistanceFromLandmarkCenter(accessPos.x, accessPos.z), 0, 0b11) & 0b1) == 1)
+			return false; // If highlands, enforces a binary grid (diagonal range of 4 chunks) of possible placements around the structure center, with center being one of the zero tiles
+
 		int i = SectionPos.sectionToBlockCoord(this.getRange() * 2 - 1);
 
-		// Limited caves spawn for regular TF underground. Highland caves keep the old triple-nested roll for now
-		int caveCount = this.isHighlands ? random.nextInt(random.nextInt(random.nextInt(15) + 1) + 1) : random.nextInt(this.getCaveBound());
+		// If highlands, only roll chance to generate even 1 cave. Otherwise, limited caves spawn for regular TF underground
+		int caveCount = this.isHighlands ? random.nextInt(2) : random.nextInt(this.getCaveBound());
 
 		for (int caveIndex = 0; caveIndex < caveCount; ++caveIndex) {
 			double x = accessPos.getBlockX(random.nextInt(16));
@@ -68,7 +73,7 @@ public class TFCavesCarver extends WorldCarver<CaveCarverConfiguration> {
 			double floor = config.floorLevel.sample(random);
 			CarveSkipChecker checker = (context, dX, dY, dZ, yPos) -> shouldSkip(dX, dY, dZ, floor);
 			int tunnelCount = 1;
-			if (random.nextInt(4) == 0) {
+			if (this.isHighlands || random.nextInt(4) == 0) {
 				double horizToVertRatio = config.yScale.sample(random);
 				float radius = 1.0F + random.nextFloat() * 6.0F;
 				this.createRoom(ctx, config, access, biomePos, aquifer, x, y, z, radius, horizToVertRatio, mask, checker);
@@ -158,9 +163,11 @@ public class TFCavesCarver extends WorldCarver<CaveCarverConfiguration> {
 			BlockPos directionalRelative = pos.relative(facing);
 			if (!isInsideChunk(directionalRelative, chunkOrigin)) continue;
 
+			// FIXME Half-way configurable, would prefer to eliminate the isHighlands check entirely
+			//  The rand.nextInt rolls should have some way of being set into a custom config as well
+
 			if (this.isHighlands) {
-				// Highland caves keep lining 1 in 10 of their stone walls with the wall block (Trollsteinn) for now
-				if (rand.nextInt(10) == 0 && access.getBlockState(directionalRelative).is(BlockTags.BASE_STONE_OVERWORLD)) {
+				if (rand.nextInt(4) == 0 && this.canReplaceBlock(config, access.getBlockState(directionalRelative))) {
 					access.setBlockState(directionalRelative, this.wallBlocks.getState(rand, directionalRelative), false);
 				}
 			} else if (facing != Direction.DOWN && (facing == Direction.UP || access.getBlockState(directionalRelative.above()).isAir() || this.checkNoiseThreshold(directionalRelative, 0.25f, 0.5f))) { //here's the code for making dirt roofs. Enjoy :)

@@ -78,6 +78,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> CARMINITE_REACTOR_ORES = BlockTags.create(TwilightForestMod.prefix("carminite_reactor_ores"));
 	public static final TagKey<Block> STRUCTURE_BANNED_INTERACTIONS = BlockTags.create(TwilightForestMod.prefix("structure_banned_interactions"));
 	public static final TagKey<Block> PROGRESSION_ALLOW_BREAKING = BlockTags.create(TwilightForestMod.prefix("progression_allow_breaking"));
+	public static final TagKey<Block> CANNOT_TROLL_CAVE_HOLLOW = BlockTags.create(TwilightForestMod.prefix("cannot_troll_cave_hollow"));
 
 	public static final TagKey<Block> WORLDGEN_REPLACEABLES = BlockTags.create(TwilightForestMod.prefix("worldgen_replaceables"));
 	public static final TagKey<Block> ROOT_TRACE_SKIP = BlockTags.create(TwilightForestMod.prefix("tree_roots_skip"));
@@ -603,6 +604,11 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				.add(TFBlocks.SKULL_CHEST.get())
 				.add(TFBlocks.KEEPSAKE_CASKET.get())
 				.addOptional(new ResourceLocation("gravestone", "gravestone"));
+
+		tag(CANNOT_TROLL_CAVE_HOLLOW)
+				.add(Blocks.RED_MUSHROOM_BLOCK)
+				.add(Blocks.BROWN_MUSHROOM_BLOCK)
+				.add(TFBlocks.HUGE_MUSHGLOOM.get());
 
 		tag(ORE_MAGNET_SAFE_REPLACE_BLOCK).addTags(
 				BlockTags.DIRT,

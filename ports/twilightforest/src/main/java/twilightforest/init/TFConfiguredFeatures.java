@@ -94,6 +94,10 @@ public final class TFConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BLACKBERRY_BUSHES = registerKey("blackberry_bushes");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> MALOBERRY_BUSHES = registerKey("maloberry_bushes");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TROLL_ROOTS = registerKey("troll_roots");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TROLL_BIG_MUSHGLOOMS = registerKey("troll_big_mushglooms");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TROLL_HUGE_RED_MUSHROOMS = registerKey("troll_huge_red_mushrooms");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TROLL_HUGE_BROWN_MUSHROOMS = registerKey("troll_huge_brown_mushrooms");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TROLL_MUSHGLOOMS = registerKey("troll_mushglooms");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> VANILLA_ROOTS = registerKey("vanilla_roots");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> WEBS = registerKey("webs");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> WOOD_ROOTS_SPREAD = registerKey("ore/wood_roots_spread");
@@ -288,6 +292,10 @@ public final class TFConfiguredFeatures {
 		context.register(BLACKBERRY_BUSHES, new ConfiguredFeature<>(TFFeatures.BERRY_BUSH.get(), new BerryBushConfig(TFBlocks.BLACKBERRY_BUSH.get().defaultBlockState(), BlockTagGenerator.TF_BERRY_BUSHES_SURVIVE, true)));
 		context.register(MALOBERRY_BUSHES, new ConfiguredFeature<>(TFFeatures.BERRY_BUSH.get(), new BerryBushConfig(TFBlocks.MALOBERRY_BUSH.get().defaultBlockState(), BlockTagGenerator.TF_BERRY_BUSHES_SURVIVE, true)));
 		context.register(TROLL_ROOTS, new ConfiguredFeature<>(TFFeatures.TROLL_VINES.get(), new BlockStateConfiguration(TFBlocks.TROLLVIDR.get().defaultBlockState())));
+		context.register(TROLL_BIG_MUSHGLOOMS, new ConfiguredFeature<>(TFFeatures.TROLL_BIG_MUSHGLOOM.get(), new HugeMushroomFeatureConfiguration(BlockStateProvider.simple(TFBlocks.HUGE_MUSHGLOOM.get().defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.TRUE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), BlockStateProvider.simple(TFBlocks.HUGE_MUSHGLOOM_STEM.get().defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.FALSE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), 1)));
+		context.register(TROLL_HUGE_RED_MUSHROOMS, new ConfiguredFeature<>(TFFeatures.TROLL_HUGE_RED_MUSHROOM.get(), new HugeMushroomFeatureConfiguration(BlockStateProvider.simple(Blocks.RED_MUSHROOM_BLOCK.defaultBlockState().setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), BlockStateProvider.simple(Blocks.MUSHROOM_STEM.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.FALSE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), 2)));
+		context.register(TROLL_HUGE_BROWN_MUSHROOMS, new ConfiguredFeature<>(TFFeatures.TROLL_HUGE_BROWN_MUSHROOM.get(), new HugeMushroomFeatureConfiguration(BlockStateProvider.simple(Blocks.BROWN_MUSHROOM_BLOCK.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.TRUE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), BlockStateProvider.simple(Blocks.MUSHROOM_STEM.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.FALSE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), 3)));
+		context.register(TROLL_MUSHGLOOMS, new ConfiguredFeature<>(TFFeatures.UNDERGROUND_PLANTS_IN_STRUCTURE.get(), new BlockStateConfiguration(TFBlocks.MUSHGLOOM.get().defaultBlockState())));
 		context.register(VANILLA_ROOTS, new ConfiguredFeature<>(TFFeatures.UNDERGROUND_PLANTS.get(), new BlockStateConfiguration(Blocks.HANGING_ROOTS.defaultBlockState())));
 		context.register(WEBS, new ConfiguredFeature<>(TFFeatures.WEBS.get(), NoneFeatureConfiguration.NONE));
 		context.register(WOOD_ROOTS_SPREAD, new ConfiguredFeature<>(TFFeatures.WOOD_ROOTS.get(), new RootConfig(TreeDecorators.ROOT_BLEND_PROVIDER, BlockStateProvider.simple(TFBlocks.LIVEROOT_BLOCK.get()))));

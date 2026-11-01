@@ -16,6 +16,7 @@ import twilightforest.capabilities.fan.FeatherFanFallCapability;
 import twilightforest.capabilities.giant_pick.GiantPickMineCapability;
 import twilightforest.capabilities.giant_pick.GiantPickMineCapabilityHandler;
 import twilightforest.capabilities.multiplayer.MultiplayerInclusivityCapability;
+import twilightforest.capabilities.portal.TFPortalCapability;
 import twilightforest.capabilities.shield.IShieldCapability;
 import twilightforest.capabilities.shield.ShieldCapabilityHandler;
 import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapability;
@@ -34,6 +35,7 @@ public class CapabilityList {
 	public static final Capability<YetiThrowCapability> YETI_THROWN = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<GiantPickMineCapability> GIANT_PICK_MINE = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<MultiplayerInclusivityCapability> MULTIPLAYER_FIGHT = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final Capability<TFPortalCapability> TF_PORTAL = CapabilityManager.get(new CapabilityToken<>() {});
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.register(TeleporterCacheCapability.class);
@@ -42,6 +44,7 @@ public class CapabilityList {
 		event.register(YetiThrowCapability.class);
 		event.register(GiantPickMineCapability.class);
 		event.register(MultiplayerInclusivityCapability.class);
+		event.register(TFPortalCapability.class);
 	}
 
 	public static void attachLevelCapability(AttachCapabilitiesEvent<Level> e) {
@@ -118,6 +121,17 @@ public class CapabilityList {
 					@Override
 					public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 						return FEATHER_FAN_FALLING.orEmpty(cap, inst.cast());
+					}
+				});
+
+				// not serializable: the portal warm-up starts over after a relog, like 4.8's unsaved attachment
+				e.addCapability(TFPortalCapability.ID, new ICapabilityProvider() {
+
+					private final LazyOptional<TFPortalCapability> inst = LazyOptional.of(TFPortalCapability::new);
+
+					@Override
+					public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+						return TF_PORTAL.orEmpty(cap, inst.cast());
 					}
 				});
 			}

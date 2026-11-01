@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -95,6 +96,14 @@ public abstract class TFLangProvider extends LanguageProvider {
 	public void addMusicDisc(Supplier<Item> disc, String description) {
 		this.addItem(disc, "Music Disc");
 		this.add(disc.get().getDescriptionId() + ".desc", description);
+	}
+
+	public <T extends GameRules.Value<T>> void addGameRule(Supplier<GameRules.Key<T>> gameRule, String gameRuleName) {
+		this.add("gamerule." + gameRule.get().getId(), gameRuleName);
+	}
+
+	public <T extends GameRules.Value<T>> void addGameRuleDescription(Supplier<GameRules.Key<T>> gameRule, String gameRuleDescription) {
+		this.add("gamerule." + gameRule.get().getId() + ".description", gameRuleDescription);
 	}
 
 	public void addStructure(ResourceKey<Structure> biome, String name) {

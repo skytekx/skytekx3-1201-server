@@ -220,6 +220,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.MAZESTONE_BORDER, "Mazestone Border");
 		this.addBlock(TFBlocks.RED_THREAD, "Red Thread");
 		this.addBlock(TFBlocks.MINOTAUR_LABYRINTH_MINIATURE_STRUCTURE, "Miniature Minotaur Labyrinth");
+		this.addBlock(TFBlocks.MAZE_SLIME_BLOCK, "Maze Slime Block");
 
 		this.addBlock(TFBlocks.SMOKER, "Smoker");
 		this.addBlock(TFBlocks.FIRE_JET, "Fire Jet");
@@ -624,6 +625,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.COOKED_VENISON, "Venison Steak");
 		this.addItem(TFItems.MAZE_WAFER, "Maze Wafer");
 		this.addItem(TFItems.SHIKA_SENBEI, "Shika Senbei");
+		this.addItem(TFItems.MAZE_SLIME_BALL, "Maze Slimeball");
 		this.addItem(TFItems.RAW_MEEF, "Raw Meef");
 		this.addItem(TFItems.COOKED_MEEF, "Meef Steak");
 		this.addItem(TFItems.MEEF_STROGANOFF, "Meef Stroganoff");

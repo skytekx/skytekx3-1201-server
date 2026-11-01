@@ -78,6 +78,9 @@ public class LangGenerator extends TFLangProvider {
 		this.addCommand("structure.conquer.update", "Structure conquer flag was %s, changing to %s");
 		this.addCommand("structure.spawn_list", "Spawn list for this area is:");
 		this.addCommand("structure.spawn_info", "%s, Weight %s");
+		this.addCommand("display_pieces.missing_key", "missing key");
+		this.addCommand("generator_radius.center_chunk", "Structure start's center chunk");
+		this.addCommand("generator_radius.radius", "Radius from center chunk: %s");
 		this.addCommand("teleport.player_only", "Command must be run by a player.");
 		this.addCommand("teleport.dimension_missing", "The Twilight Forest dimension is unavailable.");
 		this.addCommand("teleport.success", "Teleported to The Twilight Forest at %s %s %s");

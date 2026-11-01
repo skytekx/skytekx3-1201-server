@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyC
 import net.minecraft.world.level.storage.loot.predicates.LootItemKilledByPlayerCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithLootingCondition;
+import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,6 +32,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFItems;
+import twilightforest.loot.LootingEnchantNumberProvider;
 import twilightforest.loot.MultiplayerBasedAdditionLootFunction;
 import twilightforest.loot.MultiplayerBasedNumberProvider;
 import twilightforest.loot.TFLootTables;
@@ -50,7 +52,6 @@ public class EntityLootTables extends EntityLootSubProvider {
 		add(TFEntities.ADHERENT.get(), emptyLootTable());
 		add(TFEntities.LICH_MINION.get(), emptyLootTable());
 		add(TFEntities.LOYAL_ZOMBIE.get(), emptyLootTable());
-		add(TFEntities.KNIGHT_PHANTOM.get(), emptyLootTable());
 		//haha no loot for you
 		add(TFEntities.PLATEAU_BOSS.get(), emptyLootTable());
 		add(TFEntities.HARBINGER_CUBE.get(), emptyLootTable());
@@ -507,6 +508,28 @@ public class EntityLootTables extends EntityLootSubProvider {
 								.name("hydra_trophy")
 								.setRolls(ConstantValue.exactly(1))
 								.add(LootItem.lootTableItem(TFBlocks.HYDRA_TROPHY.get().asItem()))));
+
+		// Every Knight Phantom rolls this table and hands the loot to a surviving knight; the last one adds knight_phantom_defeated and
+		// puts it all in one chest. Each roll succeeds 17% of the time, so six knights average the 4 weapons, 2 armor pieces and 1 rare
+		// armor piece the old stronghold_boss chest gave.
+		add(TFEntities.KNIGHT_PHANTOM.get(),
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								.name("knight_phantom_weapon")
+								.setRolls(new BinomialDistributionGenerator(LootingEnchantNumberProvider.applyLootingLevelTo(MultiplayerBasedNumberProvider.rollsForPlayers(ConstantValue.exactly(1.5F), ConstantValue.exactly(4.0F))), ConstantValue.exactly(0.17F)))
+								.add(LootItem.lootTableItem(TFItems.KNIGHTMETAL_SWORD.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(20))))
+								.add(LootItem.lootTableItem(TFItems.KNIGHTMETAL_PICKAXE.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(20))))
+								.add(LootItem.lootTableItem(TFItems.KNIGHTMETAL_AXE.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(20)))))
+						.withPool(LootPool.lootPool()
+								.name("knight_phantom_armor")
+								.setRolls(new BinomialDistributionGenerator(LootingEnchantNumberProvider.applyLootingLevelTo(MultiplayerBasedNumberProvider.rollsForPlayers(ConstantValue.exactly(1.0F), ConstantValue.exactly(2.0F))), ConstantValue.exactly(0.17F)))
+								.add(LootItem.lootTableItem(TFItems.PHANTOM_HELMET.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(20))))
+								.add(LootItem.lootTableItem(TFItems.PHANTOM_CHESTPLATE.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(20)))))
+						.withPool(LootPool.lootPool()
+								.name("knight_phantom_rare_armor")
+								.setRolls(new BinomialDistributionGenerator(LootingEnchantNumberProvider.applyLootingLevelTo(MultiplayerBasedNumberProvider.rollsForPlayers(ConstantValue.exactly(0.5F), ConstantValue.exactly(1.0F))), ConstantValue.exactly(0.17F)))
+								.add(LootItem.lootTableItem(TFItems.PHANTOM_HELMET.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(30))))
+								.add(LootItem.lootTableItem(TFItems.PHANTOM_CHESTPLATE.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(30))))));
 
 		add(TFEntities.UR_GHAST.get(),
 				LootTable.lootTable()

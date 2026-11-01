@@ -48,6 +48,8 @@ public class TFLootTables {
 	public static final TFLootTables TREE_CACHE = new TFLootTables("tree_cache");
 	public static final TFLootTables STRONGHOLD_CACHE = new TFLootTables("stronghold_cache");
 	public static final TFLootTables STRONGHOLD_ROOM = new TFLootTables("stronghold_room");
+	// No longer placed: Knight Phantoms drop their own entity loot (entities/knight_phantom and entities/knight_phantom_defeated) since 4.8.
+	// Kept so unopened stronghold boss chests in existing worlds, which reference this table, still fill.
 	public static final TFLootTables STRONGHOLD_BOSS = new TFLootTables("stronghold_boss");
 	public static final TFLootTables AURORA_CACHE = new TFLootTables("aurora_cache");
 	public static final TFLootTables AURORA_ROOM = new TFLootTables("aurora_room");
@@ -79,6 +81,7 @@ public class TFLootTables {
 	public static final ResourceLocation QUESTING_RAM_REWARDS = register("entities/questing_ram_rewards");
 	public static final ResourceLocation DEATH_TOME_HURT = register("entities/death_tome_hurt");
 	public static final ResourceLocation DEATH_TOME_BOOKS = register("entities/death_tome_books");
+	public static final ResourceLocation KNIGHT_PHANTOM_DEFEATED = register("entities/knight_phantom_defeated");
 
 	public static final ResourceLocation CICADA_SQUISH_DROPS = register("blocks/cicada_squish");
 	public static final ResourceLocation FIREFLY_SQUISH_DROPS = register("blocks/firefly_squish");

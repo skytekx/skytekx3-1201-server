@@ -4,6 +4,11 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import twilightforest.TwilightForestMod;
@@ -52,5 +57,30 @@ public class HydraHead extends HydraPart {
 
 	public void setState(HydraHeadContainer.State state) {
 		this.getEntityData().set(DATA_STATE, (byte) state.ordinal());
+	}
+
+	// a Name Tag only works on LivingEntities, so heads take the name themselves
+	@Override
+	public InteractionResult interact(Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		if (stack.is(Items.NAME_TAG) && stack.hasCustomHoverName()) {
+			if (!this.level().isClientSide() && this.isAlive()) {
+				this.setCustomName(stack.getHoverName());
+
+				//save name to main hydra
+				Hydra hydra = this.getParent();
+				if (hydra != null) {
+					for (int i = 0; i < hydra.numHeads; i++) {
+						if (hydra.hc[i].headEntity == this) {
+							hydra.setHeadNameFor(i, stack.getHoverName().getString());
+						}
+					}
+				}
+				stack.shrink(1);
+			}
+
+			return InteractionResult.sidedSuccess(this.level().isClientSide());
+		}
+		return super.interact(player, hand);
 	}
 }

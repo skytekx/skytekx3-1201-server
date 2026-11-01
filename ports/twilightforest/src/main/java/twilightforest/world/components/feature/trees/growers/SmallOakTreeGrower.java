@@ -18,6 +18,6 @@ public class SmallOakTreeGrower extends AbstractMegaTreeGrower {
 	@Nullable
 	@Override
 	protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredMegaFeature(RandomSource random) {
-		return random.nextInt(3) == 2 ? TFConfiguredFeatures.SAVANNAH_CANOPY_OAK_TREE : TFConfiguredFeatures.FOREST_CANOPY_OAK_TREE;
+		return random.nextInt(3) == 2 ? TFConfiguredFeatures.SAVANNAH_MEGA_OAK_TREE : TFConfiguredFeatures.FOREST_MEGA_OAK_TREE;
 	}
 }

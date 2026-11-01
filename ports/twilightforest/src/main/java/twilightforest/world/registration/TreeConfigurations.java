@@ -121,6 +121,17 @@ public class TreeConfigurations {
 			.ignoreVines()
 			.build();
 
+	public static final TFTreeFeatureConfig MEGA_CANOPY = new TFTreeFeatureConfig.Builder(
+			BlockStateProvider.simple(TFBlocks.CANOPY_LOG.get()),
+			BlockStateProvider.simple(TFBlocks.CANOPY_LEAVES.get()),
+			BlockStateProvider.simple(TFBlocks.CANOPY_WOOD.get()),
+			BlockStateProvider.simple(TFBlocks.ROOT_BLOCK.get())
+	)
+			.minHeight(30)
+			.chanceFirstFive(2)
+			.chanceSecondFive(3)
+			.build();
+
 	public static final TreeConfiguration MANGROVE_TREE = new TreeConfiguration.TreeConfigurationBuilder(
 			BlockStateProvider.simple(TFBlocks.MANGROVE_LOG.get()),
 			new TrunkRiser(4, new BranchingTrunkPlacer(7, 4, 0, 1, new BranchesConfig(0, 3, 6, 2, 0.3, 0.25), false)),
@@ -255,7 +266,7 @@ public class TreeConfigurations {
 	)
 			.build();
 
-	public static final TFTreeFeatureConfig FOREST_CANOPY_OAK = new TFTreeFeatureConfig.Builder(
+	public static final TFTreeFeatureConfig FOREST_MEGA_OAK = new TFTreeFeatureConfig.Builder(
 			BlockStateProvider.simple(TFBlocks.TWILIGHT_OAK_LOG.get()),
 			BlockStateProvider.simple(TFBlocks.TWILIGHT_OAK_LEAVES.get()),
 			BlockStateProvider.simple(TFBlocks.TWILIGHT_OAK_WOOD.get()),
@@ -264,7 +275,7 @@ public class TreeConfigurations {
 			.minHeight(24)
 			.build();
 
-	public static final TFTreeFeatureConfig SAVANNAH_CANOPY_OAK = new TFTreeFeatureConfig.Builder(
+	public static final TFTreeFeatureConfig SAVANNAH_MEGA_OAK = new TFTreeFeatureConfig.Builder(
 			BlockStateProvider.simple(TFBlocks.TWILIGHT_OAK_LOG.get()),
 			BlockStateProvider.simple(TFBlocks.TWILIGHT_OAK_LEAVES.get()),
 			BlockStateProvider.simple(TFBlocks.TWILIGHT_OAK_WOOD.get()),

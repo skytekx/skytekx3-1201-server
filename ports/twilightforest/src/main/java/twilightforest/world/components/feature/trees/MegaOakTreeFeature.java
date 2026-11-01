@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.FeatureLogic;
 import twilightforest.util.FeaturePlacers;
-import twilightforest.util.FeatureUtil;
 import twilightforest.world.components.feature.config.TFTreeFeatureConfig;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,9 +20,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 @ParametersAreNonnullByDefault
-public class OakCanopyTreeFeature extends CanopyTreeFeature {
+public class MegaOakTreeFeature extends CanopyTreeFeature {
 
-	public OakCanopyTreeFeature(Codec<TFTreeFeatureConfig> config) {
+	public MegaOakTreeFeature(Codec<TFTreeFeatureConfig> config) {
 		super(config);
 	}
 
@@ -73,32 +72,16 @@ public class OakCanopyTreeFeature extends CanopyTreeFeature {
 			makeLeafBlob(world, leavesPlacer, random, leafPos, config);
 		}
 
-		OakCanopyTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos, config);
-		OakCanopyTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos.east(), config);
-		OakCanopyTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos.south(), config);
-		OakCanopyTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos.east().south(), config);
+		MegaOakTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos, config);
+		MegaOakTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos.east(), config);
+		MegaOakTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos.south(), config);
+		MegaOakTreeFeature.makeRoots(world, trunkPlacer, decorationPlacer, random, pos.east().south(), config);
 
 		return true;
 	}
 
 	private void makeLeafBlob(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> leafPlacer, RandomSource rand, BlockPos leafPos, TFTreeFeatureConfig config) {
 		FeaturePlacers.placeSpheroid(world, leafPlacer, FeaturePlacers.VALID_TREE_POS, rand, leafPos, 2.5f, 2.5f, config.leavesProvider);
-	}
-
-	private static void makeRoots(LevelAccessor world, BiConsumer<BlockPos, BlockState> trunkPlacer, BiConsumer<BlockPos, BlockState> decoPlacer, RandomSource random, BlockPos pos, TFTreeFeatureConfig config) {
-		// root bulb
-		if (FeatureUtil.hasAirAround(world, pos.below())) {
-			FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, random, pos.below(), config.trunkProvider);
-		} else {
-			FeaturePlacers.placeIfValidRootPos(world, decoPlacer, random, pos.below(), config.rootsProvider);
-		}
-
-		// roots!
-		int numRoots = 1 + random.nextInt(2);
-		float offset = random.nextFloat();
-		for (int b = 0; b < numRoots; b++) {
-			FeaturePlacers.buildRoot(world, decoPlacer, random, pos, offset, b, config.rootsProvider);
-		}
 	}
 
 	private void buildTrunk(LevelAccessor world, List<BlockPos> leaves, BiConsumer<BlockPos, BlockState> trunkPlacer, RandomSource rand, BlockPos pos, int treeHeight, TFTreeFeatureConfig config) {
@@ -109,16 +92,19 @@ public class OakCanopyTreeFeature extends CanopyTreeFeature {
 			FeaturePlacers.placeIfValidTreePos(world, trunkPlacer, rand, pos.offset(1, dy, 1), config.trunkProvider);
 		}
 
-		if (rand.nextInt(3) == 0) {
-			Direction direction = Direction.getRandom(rand);
-			Direction.Axis axis = direction.getAxis();
-			if (axis != Direction.Axis.Y) {
-				BlockPos.MutableBlockPos bugPos = new BlockPos.MutableBlockPos();
-				bugPos.set(pos.offset(direction == Direction.EAST ? 1 : 0, rand.nextInt(treeHeight) / 2 + 10, direction == Direction.SOUTH ? 1 : 0));
-				bugPos.move(direction).move(axis == Direction.Axis.Z ? rand.nextInt(2) : 0, 0, axis == Direction.Axis.X ? rand.nextInt(2) : 0);
-				if (!world.getBlockState(bugPos).isSolidRender(world, bugPos)) {
-					BlockState bugState = TFBlocks.FIREFLY.get().defaultBlockState().setValue(DirectionalBlock.FACING, direction);
-					this.setBlock(world, bugPos, bugState);
+		// up to 7 fireflies spread over the whole trunk instead of a single one high up (#2067)
+		for (int i = 0; i < 7; i++) {
+			if (rand.nextInt(3) == 0) {
+				Direction direction = Direction.getRandom(rand);
+				Direction.Axis axis = direction.getAxis();
+				if (axis != Direction.Axis.Y) {
+					BlockPos.MutableBlockPos bugPos = new BlockPos.MutableBlockPos();
+					bugPos.set(pos.offset(direction == Direction.EAST ? 1 : 0, rand.nextInt(treeHeight), direction == Direction.SOUTH ? 1 : 0));
+					bugPos.move(direction).move(axis == Direction.Axis.Z ? rand.nextInt(2) : 0, 0, axis == Direction.Axis.X ? rand.nextInt(2) : 0);
+					if (!world.getBlockState(bugPos).isSolidRender(world, bugPos)) {
+						BlockState bugState = TFBlocks.FIREFLY.get().defaultBlockState().setValue(DirectionalBlock.FACING, direction);
+						this.setBlock(world, bugPos, bugState);
+					}
 				}
 			}
 		}

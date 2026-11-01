@@ -158,6 +158,14 @@ Hard rule: never add `sky_void` to `#minecraft:is_overworld`, `#forge:is_overwor
 `has_structure` tag. Tag chains would bring the y=0 bug back, for example through AE2 meteorites
 (memory `project_skytekx3_vanilla_skylands.md`).
 
+Five jigsaw placers of other mods never call the vanilla method that skytekx-compat redirects, so
+their children over a void column would still land at Y 0. These are `ModifiedJigsawPlacement` of
+When Dungeons Arise, `PieceLimitedJigsawManager` of Repurposed Structures, the placers of YUNG's API
+and Cataclysm, and `ExtendedJigsawPlacement` of Structure Gel. The biome tags leave only two of their
+structures able to start on an island: the lighthouse of When Dungeons Arise, whose pieces are all
+rigid, and the exempt Keep Kayra. Keep the island biomes out of these mods' structure tags, and run
+the void scan of [tools](../modpack/tools.md#region-scans) on a test world after any biome tag change.
+
 ## Structure sets
 
 Every set is `minecraft:random_spread` with linear spread. Spacing and separation are in chunks.

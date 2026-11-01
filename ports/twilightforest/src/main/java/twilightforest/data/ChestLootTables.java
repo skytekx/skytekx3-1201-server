@@ -535,6 +535,7 @@ public class ChestLootTables implements LootTableSubProvider {
 								.setRolls(ConstantValue.exactly(1))
 								//rare loot
 								.add(LootItem.lootTableItem(TFItems.MAZE_MAP_FOCUS.get()))
+								.add(LootItem.lootTableItem(TFItems.MAZE_MAP.get()))
 								.add(LootItem.lootTableItem(Items.TNT).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
 								.add(LootItem.lootTableItem(Items.BOOK).apply(new EnchantRandomlyFunction.Builder().withEnchantment(TFEnchantments.FIRE_REACT.get())))
 								.add(LootItem.lootTableItem(Items.POTION).apply(SetNbtFunction.setTag(Util.make(new CompoundTag(), (nbt) -> nbt.putString("Potion", "minecraft:strong_healing")))))));

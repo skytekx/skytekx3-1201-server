@@ -29,6 +29,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> SORTING_LOGS = create("sortwood_logs");
 
 	public static final TagKey<Item> TWILIGHT_LOGS = create("logs");
+	public static final TagKey<Item> STRIPPED_LOGS = makeForgeTag("stripped_logs");
+	public static final TagKey<Item> STRIPPED_WOOD = makeForgeTag("stripped_wood");
 
 	public static final TagKey<Item> PAPER = makeForgeTag("paper");
 
@@ -87,6 +89,10 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(ItemTags.LOGS_THAT_BURN)
 				.addTag(TWILIGHT_OAK_LOGS).addTag(CANOPY_LOGS).addTag(MANGROVE_LOGS)
 				.addTag(TIME_LOGS).addTag(TRANSFORMATION_LOGS).addTag(MINING_LOGS).addTag(SORTING_LOGS);
+
+		// Lets TF stripped logs/wood into Create's casing recipes and other forge:stripped_* consumers
+		this.copy(BlockTagGenerator.STRIPPED_LOGS, STRIPPED_LOGS);
+		this.copy(BlockTagGenerator.STRIPPED_WOOD, STRIPPED_WOOD);
 
 		this.copy(BlockTags.SAPLINGS, ItemTags.SAPLINGS);
 		this.copy(BlockTags.LEAVES, ItemTags.LEAVES);

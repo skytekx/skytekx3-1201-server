@@ -2402,6 +2402,31 @@
     ],
     "subtitle": "subtitles.twilightforest.item.moonworm.squish"
   },
+  "item.twilightforest.ore_meter.clear": {
+    "sounds": [
+      "random/click"
+    ],
+    "subtitle": "subtitles.twilightforest.item.ore_meter.clear"
+  },
+  "item.twilightforest.ore_meter.crackle": {
+    "sounds": [
+      "ambient/nether/basalt_deltas/click1",
+      "ambient/nether/basalt_deltas/click2",
+      "ambient/nether/basalt_deltas/click3",
+      "ambient/nether/basalt_deltas/click4",
+      "ambient/nether/basalt_deltas/click5"
+    ],
+    "subtitle": "subtitles.twilightforest.item.ore_meter.crackle"
+  },
+  "item.twilightforest.ore_meter.target_block": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.lodestone_compass.lock"
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.item.ore_meter.target_block"
+  },
   "item.twilightforest.scepter.drain": {
     "sounds": [
       {

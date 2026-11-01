@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,6 +44,7 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -66,7 +68,10 @@ import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.entity.boss.bar.ClientTFBossBar;
 import twilightforest.events.HostileMountEvents;
 import twilightforest.init.TFItems;
+import twilightforest.init.TFSounds;
 import twilightforest.item.*;
+import twilightforest.network.TFPacketHandler;
+import twilightforest.network.WipeOreMeterPacket;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import java.util.HashSet;
@@ -315,6 +320,20 @@ public class TFClientEvents {
 			event.getToolTip().add(WIP_TEXT_1);
 		} else {
 			event.getToolTip().add(NYI_TEXT);
+		}
+	}
+
+	/**
+	 * Left clicking air with an Ore Meter wipes its scan results and targeted block (4.8 EntityEvents#wipeOreMeterOnLeftClick).
+	 * The event only fires on the client, so the server is told through {@link WipeOreMeterPacket}.
+	 */
+	@SubscribeEvent
+	public static void wipeOreMeterOnLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+		ItemStack stack = event.getItemStack();
+		if (stack.is(TFItems.ORE_METER.get()) && OreMeterItem.hasScanDataOrFilter(stack)) {
+			TFPacketHandler.CHANNEL.sendToServer(new WipeOreMeterPacket(event.getHand()));
+			OreMeterItem.wipe(stack);
+			event.getLevel().playSound(event.getEntity(), event.getEntity().blockPosition(), TFSounds.ORE_METER_CLEAR.get(), SoundSource.PLAYERS, 1.25F, event.getLevel().getRandom().nextFloat() * 0.2F + 0.6F);
 		}
 	}
 

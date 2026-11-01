@@ -139,6 +139,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.MAZESTONE_BORDER.get());
 		dropSelf(TFBlocks.MAZE_SLIME_BLOCK.get());
 		add(TFBlocks.RED_THREAD.get(), redThread());
+		add(TFBlocks.ROPE.get(), rope());
 		dropWhenSilkTouch(TFBlocks.HEDGE.get());
 		add(TFBlocks.ROOT_BLOCK.get(), createSingleItemTableWithSilkTouch(TFBlocks.ROOT_BLOCK.get(), Items.STICK, UniformGenerator.between(3, 5)));
 		add(TFBlocks.LIVEROOT_BLOCK.get(), createSilkTouchDispatchTable(TFBlocks.LIVEROOT_BLOCK.get(), applyExplosionCondition(TFBlocks.LIVEROOT_BLOCK.get(), LootItem.lootTableItem(TFItems.LIVEROOT.get()).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)))));
@@ -592,6 +593,25 @@ public class BlockLootTables extends BlockLootSubProvider {
 										.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.RED_THREAD.get())
 												.setProperties(StatePropertiesPredicate.Builder.properties()
 														.hasProperty(PipeBlock.DOWN, true))))
+								.apply(SetItemCountFunction.setCount(ConstantValue.exactly(-1.0F), true)))));
+	}
+
+	protected LootTable.Builder rope() {
+		return LootTable.lootTable()
+				.withPool(LootPool.lootPool()
+						.add(this.applyExplosionDecay(TFBlocks.ROPE.get(), LootItem.lootTableItem(TFBlocks.ROPE.get())
+								.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
+										.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.ROPE.get())
+												.setProperties(StatePropertiesPredicate.Builder.properties()
+														.hasProperty(RopeBlock.X, true))))
+								.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
+										.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.ROPE.get())
+												.setProperties(StatePropertiesPredicate.Builder.properties()
+														.hasProperty(RopeBlock.Y, true))))
+								.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F), true)
+										.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(TFBlocks.ROPE.get())
+												.setProperties(StatePropertiesPredicate.Builder.properties()
+														.hasProperty(RopeBlock.Z, true))))
 								.apply(SetItemCountFunction.setCount(ConstantValue.exactly(-1.0F), true)))));
 	}
 

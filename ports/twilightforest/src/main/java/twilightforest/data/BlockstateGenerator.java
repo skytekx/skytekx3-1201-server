@@ -103,6 +103,16 @@ public class BlockstateGenerator extends BlockModelBuilders {
 					.condition(LadderBlock.FACING, d).condition(IronLadderBlock.RIGHT, true).end();
 		}
 
+		getMultipartBuilder(TFBlocks.ROPE.get())
+				.part().modelFile(models().getExistingFile(prefix("block/rope_y"))).addModel().condition(RopeBlock.Y, true).end()
+				.part().modelFile(models().getExistingFile(prefix("block/rope_x"))).addModel().condition(RopeBlock.X, true).end()
+				.part().modelFile(models().getExistingFile(prefix("block/rope_z"))).addModel().condition(RopeBlock.Z, true).end()
+				.part().modelFile(models().getExistingFile(prefix("block/rope_knot"))).addModel().useOr()
+				.nestedGroup().condition(RopeBlock.X, true).condition(RopeBlock.Y, true).end()
+				.nestedGroup().condition(RopeBlock.Y, true).condition(RopeBlock.Z, true).end()
+				.nestedGroup().condition(RopeBlock.Z, true).condition(RopeBlock.X, true).end()
+				.end();
+
 		simpleBlock(TFBlocks.CANOPY_WINDOW.get(), this.models().cubeAll(this.name(TFBlocks.CANOPY_WINDOW.get()), this.blockTexture(TFBlocks.CANOPY_WINDOW.get())).renderType(CUTOUT));
 		paneBlockWithRenderType(TFBlocks.CANOPY_WINDOW_PANE.get(), prefix("block/" + TFBlocks.CANOPY_WINDOW.getId().getPath()), prefix("block/" + TFBlocks.CANOPY_WINDOW.getId().getPath()), CUTOUT);
 

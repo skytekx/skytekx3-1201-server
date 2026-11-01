@@ -1209,7 +1209,7 @@
     "id": "progression-protection-overhaul",
     "title": "Progression lock overhaul (no block placing, per-piece protection)",
     "kind": "mechanic",
-    "description": "Merged from progression-protection-overhaul, progression-placement-lock and progression-protection-render-rewrite. Locked structures also block single and multi-block placement (#1203) and resync the inventory after a cancel. Protection is evaluated per StructurePiece (ProgressionPiece#isComponentProtected) instead of per start box. StructureProtectionPacket carries per-piece boxes inflated by 4, so the protection rain renders only over protected pieces, also with 0 particles or clouds off. portalCreationPermission replaces adminOnlyPortals.",
+    "description": "Merged from progression-protection-overhaul, progression-placement-lock and progression-protection-render-rewrite. Locked structures also block single and multi-block placement (#1203) and resync the inventory after a cancel. Protection is evaluated per StructurePiece (ProgressionPiece#isComponentProtected) instead of per start box. StructureProtectionPacket carries per-piece boxes inflated by 4, so the protection rain renders only over protected pieces, also with 0 particles or clouds off. portalCreationPermission replaces adminOnlyPortals. Already done elsewhere, skip here: portalCreationPermission (and the legacy adminOnlyPortals fallback) was ported in config-option-additions (commit 5d070d8); the permission check lives in 4.3's TFTickHandler portal scan, not in ProgressionEvents. Do not define the ForgeConfigSpec key again.",
     "paths_48": [
      "src/main/java/twilightforest/events/ProgressionEvents.java",
      "src/main/java/twilightforest/network/StructureProtectionPacket.java",
@@ -1466,7 +1466,7 @@
     "id": "uncrafting-table-improvements",
     "title": "Uncrafting Table recipe book, fixes and config",
     "kind": "qol",
-    "description": "Merged from uncrafting-table-improvements, uncrafting-table-gui-qol and uncrafting-recipe-book. Adds a vanilla recipe book with ghost placement (UncraftingRecipeBookComponent, UncraftingPlaceRecipe), button tooltips, and a disableIngredientSwitching config. Fixes: positioned re-craft sub-grids, enchantment merging without copying damage (#2079/#2080), non-enchantable results no longer getting enchants (22dc7f67f), #2009 and #2011.",
+    "description": "Merged from uncrafting-table-improvements, uncrafting-table-gui-qol and uncrafting-recipe-book. Adds a vanilla recipe book with ghost placement (UncraftingRecipeBookComponent, UncraftingPlaceRecipe), button tooltips, and a disableIngredientSwitching config. Fixes: positioned re-craft sub-grids, enchantment merging without copying damage (#2079/#2080), non-enchantable results no longer getting enchants (22dc7f67f), #2009 and #2011. Already done elsewhere, skip here: disableIngredientSwitching was ported in config-option-additions (commit 5d070d8), including the extra boolean in SyncUncraftingTableConfigPacket (after allowShapeless), the UncraftingGuiPacket server-side guard and the network protocol bump to \"2-skytekx.3\". Do not define the ForgeConfigSpec key or bump the protocol again for it.",
     "paths_48": [
      "src/main/java/twilightforest/inventory/UncraftingMenu.java",
      "src/main/java/twilightforest/client/UncraftingRecipeBookComponent.java",

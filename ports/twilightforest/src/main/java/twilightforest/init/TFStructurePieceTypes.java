@@ -9,6 +9,7 @@ import twilightforest.world.components.structures.*;
 import twilightforest.world.components.structures.courtyard.*;
 import twilightforest.world.components.structures.darktower.*;
 import twilightforest.world.components.structures.finalcastle.*;
+import twilightforest.world.components.structures.hollowtree.*;
 import twilightforest.world.components.structures.icetower.*;
 import twilightforest.world.components.structures.lichtower.*;
 import twilightforest.world.components.structures.lichtowerrevamp.*;
@@ -31,6 +32,14 @@ public class TFStructurePieceTypes {
     public static final RegistryObject<StructurePieceType> TFYeti = registerPieceType("TFYeti", YetiCaveComponent::new);
     public static final RegistryObject<StructurePieceType> TFUtilityPiece = registerPieceType("TFUtilityPiece", UtilityPiece::new);
     public static final RegistryObject<StructurePieceType> TFJigsawTemplate = registerPieceType("TFJigsawTemplate", TwilightJigsawPiece::defaultDeserialize);
+
+    // Giant Hollow Oak
+    public static final RegistryObject<StructurePieceType> TFHTLB = registerPieceType("TFHTLB", HollowTreeLargeBranch::new);
+    public static final RegistryObject<StructurePieceType> TFHTMB = registerPieceType("TFHTMB", HollowTreeMedBranch::new);
+    public static final RegistryObject<StructurePieceType> TFHTSB = registerPieceType("TFHTSB", HollowTreeSmallBranch::new);
+    public static final RegistryObject<StructurePieceType> TFHTTr = registerPieceType("TFHTTr", HollowTreeTrunk::new);
+    public static final RegistryObject<StructurePieceType> TFHTRo = registerPieceType("TFHTRo", HollowTreeRoot::new);
+    public static final RegistryObject<StructurePieceType> TFHTLD = registerPieceType("TFHTLD", HollowTreeLeafDungeon::new);
 
     // Mushroom Castle
     //public static final RegistryObject<StructurePieceType> TFMT = registerPieceType("TFMT", StructureStartMushroomTower::new);

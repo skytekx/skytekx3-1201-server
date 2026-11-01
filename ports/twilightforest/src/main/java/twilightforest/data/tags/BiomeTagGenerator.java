@@ -19,6 +19,7 @@ public class BiomeTagGenerator extends BiomeTagsProvider {
 
 	public static final TagKey<Biome> VALID_QUEST_GROVE_BIOMES = TagKey.create(Registries.BIOME, TwilightForestMod.prefix("valid_quest_grove_biomes"));
 
+	public static final TagKey<Biome> VALID_HOLLOW_TREE_BIOMES = TagKey.create(Registries.BIOME, TwilightForestMod.prefix("valid_hollow_tree_biomes"));
 	public static final TagKey<Biome> VALID_HEDGE_MAZE_BIOMES = TagKey.create(Registries.BIOME, TwilightForestMod.prefix("valid_hedge_maze_biomes"));
 	public static final TagKey<Biome> VALID_HOLLOW_HILL_BIOMES = TagKey.create(Registries.BIOME, TwilightForestMod.prefix("valid_hollow_hill_biomes"));
 	public static final TagKey<Biome> VALID_MUSHROOM_TOWER_BIOMES = TagKey.create(Registries.BIOME, TwilightForestMod.prefix("valid_mushroom_tower_biomes"));
@@ -57,6 +58,12 @@ public class BiomeTagGenerator extends BiomeTagsProvider {
 		tag(VALID_QUEST_GROVE_BIOMES).add(TFBiomes.ENCHANTED_FOREST);
 		tag(VALID_MUSHROOM_TOWER_BIOMES).add(TFBiomes.DENSE_MUSHROOM_FOREST);
 
+		tag(VALID_HOLLOW_TREE_BIOMES).add(
+				TFBiomes.DENSE_FOREST, TFBiomes.FIRE_SWAMP,
+				TFBiomes.DENSE_MUSHROOM_FOREST, TFBiomes.FIREFLY_FOREST,
+				TFBiomes.FOREST, TFBiomes.MUSHROOM_FOREST,
+				TFBiomes.OAK_SAVANNAH, TFBiomes.ENCHANTED_FOREST
+		);
 		tag(VALID_HEDGE_MAZE_BIOMES).add(
 				TFBiomes.CLEARING, TFBiomes.DENSE_FOREST,
 				TFBiomes.DENSE_MUSHROOM_FOREST, TFBiomes.FIREFLY_FOREST,

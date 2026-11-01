@@ -1,0 +1,167 @@
+package twilightforest.world.components.structures.util;
+
+import com.google.gson.JsonElement;
+import com.mojang.serialization.DynamicOps;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.util.random.Weight;
+import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedRandomList;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import org.jetbrains.annotations.Nullable;
+import twilightforest.util.jigsaw.JigsawPlaceContext;
+import twilightforest.world.components.structures.TwilightJigsawPiece;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Template pools read from {@code data/<namespace>/twilight/template_definition/**.json}. Each file is named after a structure template
+ * and lists the pools it joins, either with a bare weight or with a {@link TemplatePoolInstance} object. Datapacks can add templates to
+ * Twilight pools, or replace a Twilight file to change or remove an entry.
+ */
+public final class StructureTemplateDefinitions extends CodecResourceReloadListener<StructureTemplateDefinition> {
+	// Singleton, registered on the Forge bus by TwilightForestMod. Stands in for 4.8's Beanification @Component
+	public static final StructureTemplateDefinitions INSTANCE = new StructureTemplateDefinitions();
+
+	// Only touched by the reload thread while apply() runs
+	private final Map<ResourceLocation, Map<ResourceLocation, TemplatePoolInstance>> rawTemplatePools = new HashMap<>();
+	// Read by the worldgen threads; a /reload swaps in a whole new map instead of clearing this one while structures are being generated
+	private volatile Map<ResourceLocation, WeightedRandomList<TemplatePoolEntry>> templatePools = Map.of();
+
+	public static final String DIRECTORY = "twilight/template_definition";
+
+	@Nullable
+	private volatile RegistryAccess registryAccess;
+
+	private StructureTemplateDefinitions() {
+		super(DIRECTORY, StructureTemplateDefinition.CODEC);
+	}
+
+	@Override
+	protected void forLocation(ResourceManager manager, ResourceLocation templateName, StructureTemplateDefinition templateDefinition) {
+		for (Map.Entry<ResourceLocation, TemplatePoolInstance> poolToRegisterWeight : templateDefinition.poolWeights().entrySet()) {
+			ResourceLocation templatePoolId = poolToRegisterWeight.getKey();
+			TemplatePoolInstance templatePoolInstance = poolToRegisterWeight.getValue();
+
+			Map<ResourceLocation, TemplatePoolInstance> pool = this.rawTemplatePools.computeIfAbsent(templatePoolId, k -> new HashMap<>());
+
+			pool.put(templateName, templatePoolInstance);
+		}
+	}
+
+	@Override
+	protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager manager, ProfilerFiller profiler) {
+		this.rawTemplatePools.clear();
+
+		super.apply(map, manager, profiler);
+
+		Map<ResourceLocation, WeightedRandomList<TemplatePoolEntry>> templatePools = new HashMap<>();
+
+		for (Map.Entry<ResourceLocation, Map<ResourceLocation, TemplatePoolInstance>> rawTemplatePool : this.rawTemplatePools.entrySet()) {
+			ArrayList<TemplatePoolEntry> poolBuilder = new ArrayList<>();
+
+			// Ensures that the order of elements stays deterministic between sessions, as Sets are not implicitly ordered
+			List<Map.Entry<ResourceLocation, TemplatePoolInstance>> sortedTemplateWeights = rawTemplatePool.getValue().entrySet().stream().sorted(Map.Entry.comparingByKey()).toList();
+			for (Map.Entry<ResourceLocation, TemplatePoolInstance> templateIdWeight : sortedTemplateWeights) {
+				poolBuilder.add(new TemplatePoolEntry(templateIdWeight.getKey(), templateIdWeight.getValue()));
+			}
+
+			ResourceLocation templatePoolId = rawTemplatePool.getKey();
+			templatePools.put(templatePoolId, WeightedRandomList.create(poolBuilder));
+		}
+
+		this.templatePools = Collections.unmodifiableMap(templatePools);
+
+		this.rawTemplatePools.clear();
+	}
+
+	@Override
+	public void registerListener(AddReloadListenerEvent event) {
+		this.registryAccess = event.getRegistryAccess();
+
+		super.registerListener(event);
+	}
+
+	@Override
+	protected DynamicOps<JsonElement> initDynamicOps() {
+		RegistryAccess registryAccess = this.registryAccess;
+		// Registry ops resolve processor lists referenced by id; without them only inline lists parse
+		return registryAccess == null ? super.initDynamicOps() : RegistryOps.create(super.initDynamicOps(), registryAccess);
+	}
+
+	private Optional<TemplatePoolEntry> getRandomEntry(RandomSource random, ResourceLocation templatePoolId) {
+		WeightedRandomList<TemplatePoolEntry> templatePool = this.templatePools.get(templatePoolId);
+		return templatePool == null ? Optional.empty() : templatePool.getRandom(random);
+	}
+
+	@Nullable
+	public ResourceLocation getRandomTemplate(RandomSource random, ResourceLocation templatePoolId) {
+		return this.getRandomEntry(random, templatePoolId).map(TemplatePoolEntry::templateId).orElse(null);
+	}
+
+	// https://en.wikipedia.org/wiki/Reservoir_sampling
+	public Iterable<ResourceLocation> getShuffledSequence(RandomSource random, ResourceLocation templatePoolId) {
+		WeightedRandomList<TemplatePoolEntry> templatePool = this.templatePools.get(templatePoolId);
+
+		if (templatePool == null)
+			return Collections.emptyList();
+
+		Map<ResourceLocation, Double> reservoirSampled = new HashMap<>();
+		for (TemplatePoolEntry entry : templatePool.unwrap()) {
+			double rand = random.nextDouble();
+			reservoirSampled.put(entry.templateId(), -Math.log(rand) / entry.getWeight().asInt());
+		}
+
+		return reservoirSampled.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).collect(Collectors.toList());
+	}
+
+	// TODO initializeStubFromPool to return GenerationStub
+
+	@Deprecated
+	@Nullable
+	public TwilightJigsawPiece initializeTemplateFromPool(ResourceLocation templatePool, BlockPos parentJunctionPos, FrontAndTop parentOrientation, String selectName, RandomSource rand, int genDepth, StructureTemplateManager structureManager) {
+		Optional<TemplatePoolEntry> entryOptional = this.getRandomEntry(rand, templatePool);
+
+		if (entryOptional.isEmpty())
+			return null;
+
+		TemplatePoolEntry templateEntry = entryOptional.get();
+		JigsawPlaceContext placeContext = JigsawPlaceContext.pickPlaceableJunction(parentJunctionPos, BlockPos.ZERO, parentOrientation, structureManager, templateEntry.templateId, selectName, rand);
+
+		if (placeContext == null)
+			return null;
+
+		return TwilightJigsawPiece.defaultForTemplate(genDepth, structureManager, templateEntry.templateId, placeContext, templateEntry.instance, templateEntry.instance.chooseRandomProcessors(rand));
+	}
+
+	@Nullable
+	public TwilightJigsawPiece initializeTemplateFromPool(ResourceLocation templatePool, BlockPos parentJunctionPos, FrontAndTop parentOrientation, String selectName, Structure.GenerationContext generationContext, int genDepth, boolean parentProjectsTerrain) {
+		RandomSource random = generationContext.random();
+		Optional<TemplatePoolEntry> entryOptional = this.getRandomEntry(random, templatePool);
+		if (entryOptional.isEmpty())
+			return null;
+
+		TemplatePoolEntry templateEntry = entryOptional.get();
+		JigsawPlaceContext placeContext = JigsawPlaceContext.pickPlaceableJunction(parentJunctionPos, BlockPos.ZERO, parentOrientation, generationContext.structureTemplateManager(), templateEntry.templateId, selectName, random);
+
+		if (placeContext == null)
+			return null;
+		return TwilightJigsawPiece.defaultForTemplate(genDepth, generationContext.structureTemplateManager(), templateEntry.templateId, templateEntry.instance.adjustContextForTerrain(placeContext, generationContext, parentProjectsTerrain), templateEntry.instance, templateEntry.instance.chooseRandomProcessors(random));
+	}
+
+	private record TemplatePoolEntry(ResourceLocation templateId, TemplatePoolInstance instance) implements WeightedEntry {
+		@Override
+		public Weight getWeight() {
+			return this.instance.getWeight();
+		}
+	}
+}

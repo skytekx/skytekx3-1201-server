@@ -4,32 +4,34 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import twilightforest.TwilightForestMod;
 import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.entity.monster.Kobold;
-import twilightforest.init.TFLandmark;
 import twilightforest.network.AreaProtectionPacket;
 import twilightforest.network.EnforceProgressionStatusPacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.util.LandmarkUtil;
-import twilightforest.util.LegacyLandmarkPlacements;
 import twilightforest.util.WorldUtil;
 import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
+import twilightforest.world.components.structures.util.ProgressionPiece;
 import twilightforest.world.components.structures.util.ProgressionStructure;
 import twilightforest.world.registration.TFGenerationSettings;
 
@@ -55,7 +57,44 @@ public class ProgressionEvents {
 
 		if (isBlockProtectedFromBreaking(level, pos) && isAreaProtected(level, player, pos)) {
 			event.setCanceled(true);
+		}
+	}
 
+	/**
+	 * Check if the player is trying to place a block in a structure that's considered inaccessible for progression reasons.
+	 * Every right-click on a block inside a protected piece is refused, so nothing gets placed or used there.
+	 * The client has already predicted the placement, so resend the inventory to undo the item it thinks it used up.
+	 * Runs before {@link #onPlayerRightClick} (as in 4.8, where it is registered first), whose banned interactions it already covers,
+	 * so a click only sends one area protection packet.
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public static void preventLockedAreaBlockPlacing(PlayerInteractEvent.RightClickBlock event) {
+		if (!(event.getLevel() instanceof ServerLevel level)) return;
+
+		Player player = event.getEntity();
+		if (isAreaProtected(level, player, event.getPos())) {
+			event.setCanceled(true);
+			player.inventoryMenu.sendAllDataToRemote();
+		}
+	}
+
+	/**
+	 * Check if the player is trying to place a multi-block (beds, doors, ...) that intersects a structure that's considered inaccessible for progression reasons
+	 */
+	@SubscribeEvent
+	public static void preventLockedAreaMultiblocks(BlockEvent.EntityMultiPlaceEvent event) {
+		Entity entity = event.getEntity();
+
+		if (!(event.getLevel() instanceof ServerLevel level) || !(entity instanceof Player player)) return;
+
+		for (BlockSnapshot snapshot : event.getReplacedBlockSnapshots()) {
+			BlockPos pos = snapshot.getPos();
+
+			if (isBlockProtectedFromBreaking(level, pos) && isAreaProtected(level, player, pos)) {
+				event.setCanceled(true);
+				player.inventoryMenu.sendAllDataToRemote();
+				break;
+			}
 		}
 	}
 
@@ -98,16 +137,9 @@ public class ProgressionEvents {
 			Optional<StructureStart> struct = LandmarkUtil.locateNearestLandmarkStart(level, SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
 			if (struct.isPresent()) {
 				StructureStart structureStart = struct.get();
-				if (structureStart.getBoundingBox().isInside(pos) && structureStart.getStructure() instanceof ProgressionStructure structureHints) {
+				// only the pieces themselves are protected (not the whole start box), and only those that opt into protection
+				if (structureStart.getPieces().stream().anyMatch(structurePiece -> structurePiece.getBoundingBox().isInside(pos) && ProgressionPiece.isPieceProtected(structurePiece)) && structureStart.getStructure() instanceof ProgressionStructure structureHints) {
 					if (!structureHints.doesPlayerHaveRequiredAdvancements(player)/* && chunkGenerator.isBlockProtected(pos)*/) {
-						// what feature is nearby?  is it one the player has not unlocked?
-						TFLandmark nearbyFeature = LegacyLandmarkPlacements.pickLandmarkAtBlock(pos.getX(), pos.getZ(), (ServerLevel) level);
-
-						// TODO: This is terrible but *works* for now.. proper solution is to figure out why the stronghold bounding box is going so high
-						// SEALEVEL - 2: entrances (and their unprotected access chambers) can sit underground now
-						if (nearbyFeature == TFLandmark.KNIGHT_STRONGHOLD && pos.getY() >= TFGenerationSettings.SEALEVEL - 2)
-							return false;
-
 						// send protection packet
 						List<BoundingBox> boxes = new ArrayList<>();
 						structureStart.getPieces().forEach(piece -> {

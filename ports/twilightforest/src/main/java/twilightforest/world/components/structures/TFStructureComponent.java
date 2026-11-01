@@ -23,13 +23,14 @@ import net.minecraft.world.level.material.FluidState;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.ColorUtil;
+import twilightforest.world.components.structures.util.ProgressionPiece;
 
 import java.util.Set;
 
 @Deprecated
 // We keep rehashing Vanillacopies and they'll keep breaking between ports, we should be adding TwilightFeature to the
 //  StructurePiece classes we actually use. This class will take quite a while to dismantle
-public abstract class TFStructureComponent extends StructurePiece {
+public abstract class TFStructureComponent extends StructurePiece implements ProgressionPiece {
 
 	public TFStructureDecorator deco = null;
 	public int spawnListIndex = 0;
@@ -182,12 +183,5 @@ public abstract class TFStructureComponent extends StructurePiece {
 		tagCompound.putInt("si", this.spawnListIndex);
 		tagCompound.putString("deco", TFStructureDecorator.getDecoString(this.deco));
 		tagCompound.putInt("rot", this.rotation.ordinal());
-	}
-
-	/**
-	 * Does this component fall under block protection when progression is turned on, normally true
-	 */
-	public boolean isComponentProtected() {
-		return true;
 	}
 }

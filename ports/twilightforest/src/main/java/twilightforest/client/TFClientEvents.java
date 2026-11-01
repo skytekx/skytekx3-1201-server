@@ -38,7 +38,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.DimensionSpecialEffectsManager;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
@@ -63,7 +62,6 @@ import twilightforest.client.model.block.leaves.BakedLeavesModel;
 import twilightforest.client.model.block.patch.PatchModelLoader;
 import twilightforest.client.model.item.TrollsteinnModel;
 import twilightforest.client.renderer.TFSkyRenderer;
-import twilightforest.client.renderer.TFWeatherRenderer;
 import twilightforest.client.renderer.entity.MagicPaintingRenderer;
 import twilightforest.client.renderer.entity.ShieldLayer;
 import twilightforest.client.renderer.tooltip.PotionFlaskTooltipComponent;
@@ -141,8 +139,7 @@ public class TFClientEvents {
 
 		@SubscribeEvent
 		public static void registerDimEffects(RegisterDimensionSpecialEffectsEvent event) {
-			new TFSkyRenderer();
-			new TFWeatherRenderer();
+			TFSkyRenderer.createStars();
 			event.register(TwilightForestMod.prefix("renderer"), new TwilightForestRenderInfo(128.0F, false, DimensionSpecialEffects.SkyType.NONE, false, false));
 		}
 	}
@@ -282,13 +279,6 @@ public class TFClientEvents {
 			// Magic painting lightning layers fade out from the last tick a sky flash was active
 			if (mc.level != null && mc.level.getSkyFlashTime() > 0) {
 				MagicPaintingRenderer.lastLightning = mc.level.getGameTime();
-			}
-
-			DimensionSpecialEffects info = DimensionSpecialEffectsManager.getForType(TwilightForestMod.prefix("renderer"));
-
-			// add weather box if needed
-			if (mc.level != null && info instanceof TwilightForestRenderInfo) {
-				TFWeatherRenderer.tick();
 			}
 
 			if (TFConfig.CLIENT_CONFIG.firstPersonEffects.get() && mc.level != null && mc.player != null) {

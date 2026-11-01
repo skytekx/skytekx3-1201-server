@@ -373,19 +373,6 @@ public class EntityEvents {
 	}
 
 	@SubscribeEvent
-	public static void onLivingTickEvent(LivingEvent.LivingTickEvent event) {
-		LivingEntity living = event.getEntity();
-		if (living != null && canSpawnCloudParticles(living)) {
-			CloudBlock.addEntityMovementParticles(living.level(), living.getOnPos(), living, false);
-		}
-	}
-
-	public static boolean canSpawnCloudParticles(LivingEntity living) {
-		if (living.getDeltaMovement().x == 0.0D && living.getDeltaMovement().z == 0.0D && living.getRandom().nextInt(20) != 0) return false;
-		return living.tickCount % 2 == 0 && !living.isSpectator() && living.level().getBlockState(living.getOnPos()).getBlock() instanceof CloudBlock;
-	}
-
-	@SubscribeEvent
 	public static void onLivingJumpEvent(LivingEvent.LivingJumpEvent event) {
 		LivingEntity living = event.getEntity();
 		if (living != null && living.level().isClientSide() && !living.isSpectator() && living.level().getBlockState(living.getOnPos()).getBlock() instanceof CloudBlock) {

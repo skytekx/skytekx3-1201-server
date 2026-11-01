@@ -74,13 +74,14 @@ public class CloudEvents {
 
                     int renderDistance = Minecraft.useFancyGraphics() ? 10 : 5;
                     int precipitationDistance = TFConfig.getClientCloudBlockPrecipitationDistance();
+                    BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
                     for (int roofZ = floorZ - renderDistance; roofZ <= floorZ + renderDistance; ++roofZ) {
                         for (int roofX = floorX - renderDistance; roofX <= floorX + renderDistance; ++roofX) {
                             int lastBadYLevel = Integer.MIN_VALUE;
                             for (int roofY = floorY - renderDistance; roofY < floorY + precipitationDistance + renderDistance; roofY++) {
                                 boolean skipLoop = roofY == lastBadYLevel + 1; // Cloud can't rain if there is an invalid blockState right below it, so might as well skip the loop
-                                BlockPos pos = new BlockPos(roofX, roofY, roofZ);
+                                pos.set(roofX, roofY, roofZ);
                                 if (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(mc.level.getBlockState(pos)))
                                     lastBadYLevel = roofY; // Check if we skip next loop
                                 if (skipLoop) continue;
@@ -98,56 +99,59 @@ public class CloudEvents {
                                     }
                                     if (highestRainyBlock == roofY) continue;
 
-                                    RENDER_HELPER.add(new PrecipitationRenderHelper(pos, precipitationRainLevelPair.getLeft(), precipitationRainLevelPair.getRight(), highestRainyBlock));
+                                    RENDER_HELPER.add(new PrecipitationRenderHelper(pos.immutable(), precipitationRainLevelPair.getLeft(), precipitationRainLevelPair.getRight(), highestRainyBlock));
                                 }
                             }
                         }
                     }
                 }
 
-                RandomSource randomsource = RandomSource.create((long) mc.levelRenderer.getTicks() * 312987231L);
-                BlockPos particlePos = null;
-                int particleCount = 100 / (mc.options.particles().get() == ParticleStatus.DECREASED ? 2 : 1);
+                if (!RENDER_HELPER.isEmpty()) {
+                    RandomSource randomsource = RandomSource.create((long) mc.levelRenderer.getTicks() * 312987231L);
+                    BlockPos particlePos = null;
+                    int particleCount = 100 / (mc.options.particles().get() == ParticleStatus.DECREASED ? 2 : 1);
 
-                boolean yetToMakeASound = true;
-                BlockPos camPos = BlockPos.containing(vec3);
+                    boolean yetToMakeASound = true;
+                    BlockPos camPos = BlockPos.containing(vec3);
 
-                List<Vec2i> particleChecks = new ArrayList<>();
-                for (int i = 0; i < particleCount; ++i) {
-                    particleChecks.add(new Vec2i(randomsource.nextInt(21) - 10 + camPos.getX(), randomsource.nextInt(21) - 10 + camPos.getZ()));
-                }
+                    List<Vec2i> particleChecks = new ArrayList<>();
+                    for (int i = 0; i < particleCount; ++i) {
+                        particleChecks.add(new Vec2i(randomsource.nextInt(21) - 10 + camPos.getX(), randomsource.nextInt(21) - 10 + camPos.getZ()));
+                    }
 
-                for (PrecipitationRenderHelper helper : RENDER_HELPER) {
-                    if (helper.precipitation() == Biome.Precipitation.RAIN) {
-                        for (Vec2i vec2 : particleChecks) {
-                            if (vec2.x == helper.cloudPos().getX() && vec2.z == helper.cloudPos().getZ()) {
-                                BlockPos highestRainyPos = helper.cloudPos().atY(helper.rainOnY());
-                                if (!Heightmap.Types.MOTION_BLOCKING.isOpaque().test(mc.level.getBlockState(highestRainyPos.below()))) continue;
+                    for (PrecipitationRenderHelper helper : RENDER_HELPER) {
+                        if (helper.precipitation() == Biome.Precipitation.RAIN) {
+                            for (Vec2i vec2 : particleChecks) {
+                                if (vec2.x == helper.cloudPos().getX() && vec2.z == helper.cloudPos().getZ()) {
+                                    BlockPos highestRainyPos = helper.cloudPos().atY(helper.rainOnY());
+                                    if (!Heightmap.Types.MOTION_BLOCKING.isOpaque().test(mc.level.getBlockState(highestRainyPos.below())))
+                                        continue;
 
-                                if (yetToMakeASound && particlePos != null && randomsource.nextInt(3) < mc.levelRenderer.rainSoundTime++) {
-                                    mc.levelRenderer.rainSoundTime = 0;
-                                    if (particlePos.getY() > camPos.getY() + 1 && mc.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, camPos).getY() > Mth.floor((float) camPos.getY())) {
-                                        mc.level.playLocalSound(particlePos, SoundEvents.WEATHER_RAIN_ABOVE, SoundSource.WEATHER, 0.1F, 0.5F, false);
-                                    } else {
-                                        mc.level.playLocalSound(particlePos, SoundEvents.WEATHER_RAIN, SoundSource.WEATHER, 0.2F, 1.0F, false);
+                                    if (yetToMakeASound && particlePos != null && randomsource.nextInt(3) < mc.levelRenderer.rainSoundTime++) {
+                                        mc.levelRenderer.rainSoundTime = 0;
+                                        if (particlePos.getY() > camPos.getY() + 1 && mc.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, camPos).getY() > Mth.floor((float) camPos.getY())) {
+                                            mc.level.playLocalSound(particlePos, SoundEvents.WEATHER_RAIN_ABOVE, SoundSource.WEATHER, 0.1F, 0.5F, false);
+                                        } else {
+                                            mc.level.playLocalSound(particlePos, SoundEvents.WEATHER_RAIN, SoundSource.WEATHER, 0.2F, 1.0F, false);
+                                        }
+                                        yetToMakeASound = false;
                                     }
-                                    yetToMakeASound = false;
-                                }
 
-                                if (highestRainyPos.getY() > mc.level.getMinBuildHeight() && highestRainyPos.getY() <= camPos.getY() + 10 && highestRainyPos.getY() >= camPos.getY() - 10) {
-                                    particlePos = highestRainyPos.below();
-                                    if (mc.options.particles().get() == ParticleStatus.MINIMAL) break;
+                                    if (highestRainyPos.getY() > mc.level.getMinBuildHeight() && highestRainyPos.getY() <= camPos.getY() + 10 && highestRainyPos.getY() >= camPos.getY() - 10) {
+                                        particlePos = highestRainyPos.below();
+                                        if (mc.options.particles().get() == ParticleStatus.MINIMAL) break;
 
-                                    double particleX = randomsource.nextDouble();
-                                    double particleZ = randomsource.nextDouble();
-                                    BlockState blockstate = mc.level.getBlockState(particlePos);
-                                    FluidState fluidstate = mc.level.getFluidState(particlePos);
-                                    VoxelShape voxelshape = blockstate.getCollisionShape(mc.level, particlePos);
-                                    double voxelMax = voxelshape.max(Direction.Axis.Y, particleX, particleZ);
-                                    double fluidMax = fluidstate.getHeight(mc.level, particlePos);
-                                    double particleY = Math.max(voxelMax, fluidMax);
-                                    ParticleOptions particleoptions = !fluidstate.is(FluidTags.LAVA) && !blockstate.is(Blocks.MAGMA_BLOCK) && !CampfireBlock.isLitCampfire(blockstate) ? ParticleTypes.RAIN : ParticleTypes.SMOKE;
-                                    mc.level.addParticle(particleoptions, (double) particlePos.getX() + particleX, (double) particlePos.getY() + particleY, (double) particlePos.getZ() + particleZ, 0.0D, 0.0D, 0.0D);
+                                        double particleX = randomsource.nextDouble();
+                                        double particleZ = randomsource.nextDouble();
+                                        BlockState blockstate = mc.level.getBlockState(particlePos);
+                                        FluidState fluidstate = mc.level.getFluidState(particlePos);
+                                        VoxelShape voxelshape = blockstate.getCollisionShape(mc.level, particlePos);
+                                        double voxelMax = voxelshape.max(Direction.Axis.Y, particleX, particleZ);
+                                        double fluidMax = fluidstate.getHeight(mc.level, particlePos);
+                                        double particleY = Math.max(voxelMax, fluidMax);
+                                        ParticleOptions particleoptions = !fluidstate.is(FluidTags.LAVA) && !blockstate.is(Blocks.MAGMA_BLOCK) && !CampfireBlock.isLitCampfire(blockstate) ? ParticleTypes.RAIN : ParticleTypes.SMOKE;
+                                        mc.level.addParticle(particleoptions, (double) particlePos.getX() + particleX, (double) particlePos.getY() + particleY, (double) particlePos.getZ() + particleZ, 0.0D, 0.0D, 0.0D);
+                                    }
                                 }
                             }
                         }

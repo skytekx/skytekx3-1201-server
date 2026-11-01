@@ -22,11 +22,6 @@ public class TFSkyRenderer {
 
 	private static VertexBuffer starBuffer;
 
-	public TFSkyRenderer() {
-		this.createStars();
-	}
-
-
 	// [VanillaCopy] LevelRenderer.renderSky's overworld branch, without sun/moon/sunrise/sunset, using our own stars at full brightness, and lowering void horizon threshold height from getHorizonHeight (63) to 0
 	public static boolean renderSky(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog) {
 		LevelRenderer levelRenderer = Minecraft.getInstance().levelRenderer;
@@ -95,7 +90,7 @@ public class TFSkyRenderer {
 	}
 
 	// [VanillaCopy] LevelRenderer.createStars
-	private void createStars() {
+	public static void createStars() {
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
@@ -104,14 +99,14 @@ public class TFSkyRenderer {
 		}
 
 		starBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-		BufferBuilder.RenderedBuffer renderedBuffer = this.drawStars(bufferbuilder);
+		BufferBuilder.RenderedBuffer renderedBuffer = drawStars(bufferbuilder);
 		starBuffer.bind();
 		starBuffer.upload(renderedBuffer);
 		VertexBuffer.unbind();
 	}
 
 	// [VanillaCopy] of LevelRenderer.drawStars but with double the number of them
-	private BufferBuilder.RenderedBuffer drawStars(BufferBuilder bufferBuilder) {
+	private static BufferBuilder.RenderedBuffer drawStars(BufferBuilder bufferBuilder) {
 		RandomSource random = RandomSource.create(10842L);
 		bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 

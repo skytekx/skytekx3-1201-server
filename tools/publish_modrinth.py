@@ -15,7 +15,7 @@ if not PAT:
 GO = "--go" in sys.argv
 TEXTS = "--texts" in sys.argv
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.0.7"
+VERSION = "3.0.8"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
@@ -105,7 +105,7 @@ vdata = {
     "name": f"SkyTekx3 {VERSION}",
     "version_number": VERSION,
     "project_id": project_id,
-    "changelog": "Modflared comes with the pack and the server list holds hex.skytekx.com, so the SkyTekx server can be joined from the internet through a Cloudflare Tunnel. On its first start Modflared downloads cloudflared from GitHub. It runs on Windows, on Linux on x86 and on macOS, where Macs with Apple Silicon need Rosetta 2, but not on Linux on ARM. Voice chat does not go through the tunnel. Updating an instance from an older version replaces its server list.",
+    "changelog": "Every mod in the pack is required now. Version 3.0.7 marked 36 mods as optional, among them libraries like Cloth Config, JEI, Placebo and Balm, and an instance without them did not start. Sophisticated Backpacks and Sophisticated Core are gone, a port of the Backpack mod takes their place and its sources ship in the licenses folder. Falling Meteors Reimagined, Elementary Staffs and BattleTowers are new, downloaded from GitHub releases.",
     "dependencies": [],
     "game_versions": ["1.20.1"],
     "version_type": "beta",

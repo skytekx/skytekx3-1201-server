@@ -524,6 +524,11 @@ found this.
 The Skylands beyond radius 2000 generate when players get there. A pregen to radius 3000 can follow
 when nobody is online.
 
+At 02:51 the server restarted after a warning in chat and runs skytekx-compat 2.1.2 since 02:52:03,
+see [SkyTekx Compat](compat-mod.md#history). The Skylands were not generated again. Version 2.1.2 only
+changes chunks that generate later, and the scan of 01:11 had found no block below Y 13 in the
+pregenerated radius.
+
 ## Open rulings
 
 These owner rulings are tracked in [open items](../open-items.md). Only the first one has been
@@ -581,6 +586,8 @@ implemented, on 2026-10-31.
 - 2026-11-01, 00:58: the void floor of skytekx-compat 2.1.0 and the gate of 0.8 went live, and the
   Skylands were wiped and generated again to radius 2000, see
   [deploy of 2026-11-01](#deploy-of-2026-11-01).
+- 2026-11-01, 02:51: skytekx-compat 2.1.2 replaced 2.1.0 on the Mac mini. It also keeps swamp hut stilts
+  and the sky stone of meteorites out of the void.
 
 Related: [Skylands travel](aether-fall.md), [world reset](../server/world-reset.md),
 [performance](../server/performance.md), [mod set](../modpack/mod-set.md), [decisions](../decisions.md).

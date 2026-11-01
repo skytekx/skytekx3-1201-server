@@ -25,9 +25,9 @@ downward.
 | Build | Gradle 8.8, ForgeGradle 6.0, Parchment `2023.09.03-1.20.1`, MixinGradle 0.7, Mixin annotation processor 0.8.5, Java 17 (`~/jdk17/jdk-17.0.19+10`), Forge `1.20.1-47.4.6` |
 
 The jar in `local-mods/` is byte identical to `build/libs/skytekx-compat-2.1.2.jar` in the source repo,
-and the server's `mods/` on the build machine holds it too. The Mac mini runs 2.1.0 (12,330 bytes,
-SHA-256 `7eb835067e332cf1...`) since 2026-11-01 00:58, and 2.1.2 goes there with the next watched
-restart. Version 2.1.1 (12,818 bytes, SHA-256 `c1633905c56903ec...`) only ran on a test server. Packs 3.0.5 to 3.0.7 and the owner's Prism instance carry 2.0.0 (3,728 bytes, SHA-256
+and the server's `mods/` on the build machine holds it too. The Mac mini runs it since 2026-11-01
+02:51. From 00:58 it ran 2.1.0 (12,330 bytes, SHA-256 `7eb835067e332cf1...`), which now lies in
+`~/skytekx3-backups/jars-orig/` there. Version 2.1.1 (12,818 bytes, SHA-256 `c1633905c56903ec...`) only ran on a test server. Packs 3.0.5 to 3.0.7 and the owner's Prism instance carry 2.0.0 (3,728 bytes, SHA-256
 `16805d83d52c7c5f...`), which stays fine on the client, see [server list](#server-list). At boot
 2.1.0 and later log "SkyTekx compat: birdsnests loot-table guard and Skylands void floor active".
 2.0.0 logged "SkyTekx compat: birdsnests loot-table guard active" (`logs/2026-07-12-1.log.gz:235`).
@@ -184,6 +184,9 @@ Bird's Nests in `libs/` (compile only, for the mixin processor), which the repo 
   version. In test 6 a swamp hut over carved stilt columns dropped 44 oak logs below Y 13 with 2.1.1
   and none with 2.1.2, while stilts into shallow pits stayed the same. The server repo bundles 2.1.2
   since 593e227.
+- 2026-11-01 02:51: 2.1.2 went live on the Mac mini after a warning in chat, and 2.1.0 went to
+  `~/skytekx3-backups/jars-orig/` there. The server was up at 02:52:03 with the 3 accepted boot errors
+  and logged the void floor line.
 
 Related: [boot fixes](boot-fixes.md), [mod set](../modpack/mod-set.md),
 [Skylands worldgen](skylands-worldgen.md), [content](index.md).

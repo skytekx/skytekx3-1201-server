@@ -2,7 +2,6 @@ package twilightforest.entity.passive.quest.ram;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -48,8 +47,9 @@ public record QuestingRamContext(Map<DyeColor, Ingredient> questItems, ResourceL
 	private static final Codec<Ingredient> INGREDIENT_CODEC = ExtraCodecs.JSON.flatXmap(json -> {
 		try {
 			return DataResult.success(Ingredient.fromJson(json, false));
-		} catch (JsonParseException e) {
-			return DataResult.error(e::getMessage);
+		} catch (RuntimeException e) {
+			// not only JsonParseException: bad tag or type ids throw ResourceLocationException, and custom ingredient serializers can throw anything
+			return DataResult.error(() -> String.valueOf(e.getMessage()));
 		}
 	}, ingredient -> DataResult.success(ingredient.toJson()));
 

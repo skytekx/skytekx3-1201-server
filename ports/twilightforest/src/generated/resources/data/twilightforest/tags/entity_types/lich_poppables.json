@@ -1,4 +1,7 @@
 {
+  "remove": [
+    "#forge:bosses"
+  ],
   "values": [
     "#minecraft:skeletons",
     "minecraft:zombie",

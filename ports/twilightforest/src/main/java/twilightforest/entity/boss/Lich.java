@@ -473,7 +473,7 @@ public class Lich extends Monster implements EnforcedHomePoint, IBossLootBuffer 
 
 	@Override
 	public void remove(RemovalReason removalReason) {
-		if (removalReason.equals(RemovalReason.KILLED) && this.level() instanceof ServerLevel serverLevel) {
+		if (removalReason.equals(RemovalReason.KILLED) && !this.isShadowClone() && this.level() instanceof ServerLevel serverLevel) {
 			IBossLootBuffer.depositDropsIntoChest(this, this.random.nextBoolean() ? TFBlocks.TWILIGHT_OAK_CHEST.get().defaultBlockState() : TFBlocks.CANOPY_CHEST.get().defaultBlockState(), EntityUtil.bossChestLocation(this), serverLevel);
 		}
 		super.remove(removalReason);

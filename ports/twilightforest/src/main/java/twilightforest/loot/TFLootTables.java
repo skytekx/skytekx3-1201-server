@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
+import twilightforest.entity.boss.IBossLootBuffer;
 
 import java.util.Collections;
 import java.util.Set;
@@ -137,21 +139,25 @@ public class TFLootTables {
 
 	@Deprecated //move to using IBossLootBuffer.saveDropsIntoBoss instead
 	public static void entityDropsIntoContainer(LivingEntity entity, DamageSource source, BlockState blockContaining, BlockPos placement) {
-		if (entity.level() instanceof ServerLevel serverLevel && TFConfig.COMMON_CONFIG.bossDropChests.get()
-				&& serverLevel.setBlock(placement, blockContaining, DEFAULT_PLACE_FLAG)
-				&& serverLevel.getBlockEntity(placement) instanceof Container container) {
+		if (entity.level() instanceof ServerLevel serverLevel && TFConfig.COMMON_CONFIG.bossDropChests.get() && IBossLootBuffer.canDropLoot(serverLevel)) {
 			LootTable table = serverLevel.getServer().getLootData().getLootTable(entity.getLootTable());
 			LootParams params = createLootParams(entity, true, source).create(LootContextParamSets.ENTITY);
-			ObjectArrayList<ItemStack> stacks = table.getRandomItems(params);
-			table.fill(container, params, entity.getLootTableSeed());
-			//if our loot stack size is bigger than the chest, drop everything else outside of it. Dont want to lose any loot now do we?
-			if (stacks.size() > 27) {
-				for (ItemStack stack : stacks.subList(28, stacks.size())) {
-					ItemEntity item = new ItemEntity(serverLevel, placement.above().getX(), placement.above().getY(), placement.above().getZ(), stack);
-					item.setExtendedLifetime();
-					item.setNoPickUpDelay();
-					serverLevel.addFreshEntity(item);
+			BlockPos chestPos = IBossLootBuffer.placeLootChest(serverLevel, blockContaining, placement);
+			if (chestPos != null && serverLevel.getBlockEntity(chestPos) instanceof Container container) {
+				ObjectArrayList<ItemStack> stacks = table.getRandomItems(params);
+				table.fill(container, params, entity.getLootTableSeed());
+				//if our loot stack size is bigger than the chest, drop everything else outside of it. Dont want to lose any loot now do we?
+				if (stacks.size() > IBossLootBuffer.CONTAINER_SIZE) {
+					for (ItemStack stack : stacks.subList(IBossLootBuffer.CONTAINER_SIZE, stacks.size())) {
+						ItemEntity item = new ItemEntity(serverLevel, chestPos.above().getX(), chestPos.above().getY(), chestPos.above().getZ(), stack);
+						item.setExtendedLifetime();
+						item.setNoPickUpDelay();
+						serverLevel.addFreshEntity(item);
+					}
 				}
+			} else {
+				//no room for a chest anywhere above the placement, so pop the loot out instead of losing it
+				table.getRandomItems(params, entity.getLootTableSeed(), stack -> Block.popResource(serverLevel, placement, stack));
 			}
 		}
 	}

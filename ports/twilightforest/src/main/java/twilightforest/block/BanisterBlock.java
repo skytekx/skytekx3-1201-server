@@ -15,6 +15,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -119,10 +120,11 @@ public class BanisterBlock extends HorizontalDirectionalBlock implements SimpleW
 		tooltip.add(Component.translatable("block.twilightforest.banister.cycle").withStyle(ChatFormatting.GRAY));
 	}
 
+	// FENCE instead of BLOCKED: like a fence, mobs no longer treat the top of a banister as walkable
 	@Nullable
 	@Override
 	public BlockPathTypes getBlockPathType(BlockState state, BlockGetter getter, BlockPos pos, @Nullable Mob mob) {
-		return BlockPathTypes.BLOCKED;
+		return BlockPathTypes.FENCE;
 	}
 
 	@Override
@@ -141,15 +143,30 @@ public class BanisterBlock extends HorizontalDirectionalBlock implements SimpleW
 
 		if (held.canPerformAction(ToolActions.AXE_WAX_OFF)) {
 			BlockState newState = state.cycle(SHAPE);
+			BlockState belowState = level.getBlockState(pos.below());
 
-			// If we reach BanisterShape.TALL it means we went a full cycle, so we'll also cycle the extension
 			level.playSound(null, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
-			level.setBlock(pos, newState.getValue(SHAPE) == BanisterShape.TALL ? newState.cycle(EXTENDED) : newState, 3);
+			if (belowState.getBlock() instanceof BanisterBlock && belowState.getValue(SHAPE) != BanisterShape.SHORT) {
+				// If the state below is a non-short banister, we never use extended banisters
+				level.setBlock(pos, newState.setValue(EXTENDED, false), Block.UPDATE_ALL);
+			} else {
+				// If we reach BanisterShape.TALL it means we went a full cycle, so we'll also cycle the extension
+				level.setBlock(pos, newState.getValue(SHAPE) == BanisterShape.TALL ? newState.cycle(EXTENDED) : newState, Block.UPDATE_ALL);
+			}
 
 			return InteractionResult.SUCCESS;
 		}
 
 		return super.use(state, level, pos, player, hand, result);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState thisState, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos thisPos, BlockPos neighborPos) {
+		// If a non-short banister gets placed below this banister, while it is extended, un-extend
+		if (direction == Direction.DOWN && neighborState.getBlock() instanceof BanisterBlock && neighborState.getValue(SHAPE) != BanisterShape.SHORT && thisState.getValue(EXTENDED)) {
+			return thisState.setValue(EXTENDED, false);
+		}
+		return super.updateShape(thisState, direction, neighborState, level, thisPos, neighborPos);
 	}
 
 	@Override

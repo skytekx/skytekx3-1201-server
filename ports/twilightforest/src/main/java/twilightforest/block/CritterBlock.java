@@ -119,8 +119,13 @@ public abstract class CritterBlock extends BaseEntityBlock implements SimpleWate
 	@Deprecated
 	public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
 		Direction facing = state.getValue(DirectionalBlock.FACING);
+		return canSurvive(reader, pos, facing);
+	}
+
+	// Leaves have no sturdy face, but bugs can cling to them anyway
+	public static boolean canSurvive(LevelReader reader, BlockPos pos, Direction facing) {
 		BlockPos restingPos = pos.relative(facing.getOpposite());
-		return canSupportCenter(reader, restingPos, facing);
+		return canSupportCenter(reader, restingPos, facing) || reader.getBlockState(restingPos).getBlock() instanceof LeavesBlock;
 	}
 
 	@Override

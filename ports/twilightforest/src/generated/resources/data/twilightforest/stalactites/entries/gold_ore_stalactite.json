@@ -2,10 +2,6 @@
   "blocks": [
     {
       "block": "gold_ore",
-      "weight": 10
-    },
-    {
-      "block": "raw_gold_block",
       "weight": 1
     }
   ],

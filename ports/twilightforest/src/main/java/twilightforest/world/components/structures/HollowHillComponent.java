@@ -35,7 +35,10 @@ public class HollowHillComponent extends TFStructureComponentOld {
 	private static final float CHEST_SPAWN_CHANCE = 0.025f;
 	private static final float SPAWNER_SPAWN_CHANCE = 0.025f;
 	private static final float SPECIAL_SPAWN_CHANCE = CHEST_SPAWN_CHANCE + SPAWNER_SPAWN_CHANCE;
-	private static final float ORE_STALACTITE_CHANCE = 0.85f;
+	// Chance for a ceiling spike to be an ore stalactite instead of a plain stone one (was 0.85 before the 4.8 ore rebalance)
+	private static final float ORE_STALACTITE_CHANCE = 0.2f;
+	// Chance for a lattice point on the floor to grow a stalagmite at all (was always before 4.8)
+	private static final float STALAGMITE_CHANCE = 0.8f;
 
 	private final int hillSize;
 	final int radius;
@@ -128,7 +131,7 @@ public class HollowHillComponent extends TFStructureComponentOld {
 
 			world.setBlock(pos.below(), Blocks.COBBLESTONE.defaultBlockState(), 50);
 			world.setBlock(pos, Blocks.COBBLESTONE.defaultBlockState(), 50);
-		} else {
+		} else if (rand.nextFloat() < STALAGMITE_CHANCE) {
 			pos.setY(floorY);
 
 			int ceilingY = this.getCeilingY(distSq);

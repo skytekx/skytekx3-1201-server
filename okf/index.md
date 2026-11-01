@@ -39,7 +39,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | Game | Minecraft 1.20.1 with Forge 47.4.18 inside Arclight 1.20.1 1.0.6. The pack index asks clients for the same Forge build since a36207c |
 | Server jar | The symlink `arclight.jar` on the hardened `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, built from `patches/` |
 | Java | Java 17. The Mac mini runs Temurin 17.0.21, and every boot on the build machine that reached `Done` ran Temurin 17.0.19 |
-| Mods | 215 Modrinth entries in `modrinth.index.json`, the client only Modflared among them, and 35 bundled jars in `local-mods/`. The server's `mods/` holds 234 jars that git does not track |
+| Mods | 215 Modrinth entries in `modrinth.index.json`, the client only Modflared among them, and 35 bundled jars in `local-mods/`. The server's `mods/` holds 235 jars that git does not track |
 | Plugins | EssentialsX 2.22.0 and nothing else |
 | Recipe layers | AlmostUnified, Polymorph and KubeJS, the successors of UniDict, NoMoreRecipeConflict and CraftTweaker in SkyTekx 2 |
 | Own content | The Skylands dimension as a pure datapack, travel between it and the Overworld, the Nyx port, 1.7 style combat, the boot fixes and the small SkyTekx Compat mod |

@@ -231,7 +231,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 
 		tag(KOBOLD_PACIFICATION_BREADS).add(Items.BREAD);
 		tag(BOAR_TEMPT_ITEMS).addTag(Tags.Items.CROPS_CARROT).addTag(Tags.Items.CROPS_POTATO).addTag(Tags.Items.CROPS_BEETROOT);
-		tag(DEER_TEMPT_ITEMS).addTag(Tags.Items.CROPS_WHEAT).add(Items.APPLE);
+		tag(DEER_TEMPT_ITEMS).addTag(Tags.Items.CROPS_WHEAT).add(Items.APPLE).add(TFItems.SHIKA_SENBEI.get());
 		tag(DWARF_RABBIT_TEMPT_ITEMS).addTag(Tags.Items.CROPS_CARROT).add(Items.GOLDEN_CARROT).add(Items.DANDELION);
 		tag(PENGUIN_TEMPT_ITEMS).addTag(ItemTags.FISHES);
 		tag(RAVEN_TEMPT_ITEMS).addTag(Tags.Items.SEEDS);

@@ -431,6 +431,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.RAW_MEEF.get());
 				output.accept(TFItems.COOKED_MEEF.get());
 				output.accept(TFItems.MAZE_WAFER.get());
+				output.accept(TFItems.SHIKA_SENBEI.get());
 				output.accept(TFItems.MEEF_STROGANOFF.get());
 				output.accept(TFItems.HYDRA_CHOP.get());
 				output.accept(TFItems.EXPERIMENT_115.get());

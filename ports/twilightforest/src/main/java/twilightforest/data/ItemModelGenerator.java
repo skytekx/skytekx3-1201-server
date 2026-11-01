@@ -505,6 +505,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTex(TFItems.COOKED_MEEF);
 		singleTex(TFItems.MEEF_STROGANOFF);
 		singleTex(TFItems.MAZE_WAFER);
+		singleTex(TFItems.SHIKA_SENBEI);
 		singleTex(TFItems.MAGIC_MAP);
 		singleTex(TFItems.MAZE_MAP);
 		singleTex(TFItems.ORE_MAP);

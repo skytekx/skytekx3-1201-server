@@ -3,6 +3,8 @@ package twilightforest.entity.passive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFEntities;
+import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 
 public class Deer extends Animal {
@@ -46,6 +49,28 @@ public class Deer extends Animal {
 	@Override
 	public boolean isFood(ItemStack stack) {
 		return stack.is(ItemTagGenerator.DEER_TEMPT_ITEMS);
+	}
+
+	@Override
+	public InteractionResult mobInteract(Player player, InteractionHand hand) {
+		InteractionResult result = super.mobInteract(player, hand);
+		ItemStack stack = player.getItemInHand(hand);
+		if (result == InteractionResult.PASS && stack.is(TFItems.SHIKA_SENBEI.get()) && this.getHealth() < this.getMaxHealth()) {
+			this.usePlayerItem(player, hand, stack);
+			return InteractionResult.SUCCESS;
+		}
+
+		return result;
+	}
+
+	@Override
+	protected void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
+		if (stack.is(TFItems.SHIKA_SENBEI.get())) {
+			if (!this.level().isClientSide())
+				this.heal(4.0F);
+			this.level().playSound(null, this.getX(), this.getY(), this.getZ(), TFSounds.DEER_EAT.get(), this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+		}
+		super.usePlayerItem(player, hand, stack);
 	}
 
 	@Override

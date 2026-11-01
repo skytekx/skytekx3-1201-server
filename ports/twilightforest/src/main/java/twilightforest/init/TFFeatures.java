@@ -39,7 +39,7 @@ public class TFFeatures {
 	public static final RegistryObject<Feature<NoneFeatureConfiguration>> FALLEN_LEAVES = FEATURES.register("fallen_leaves", () -> new FallenLeavesFeature(NoneFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<HollowLogConfig>> FALLEN_SMALL_LOG = FEATURES.register("fallen_small_log", () -> new SmallFallenLogFeature(HollowLogConfig.CODEC));
 	public static final RegistryObject<Feature<BlockStateConfiguration>> FIRE_JET = FEATURES.register("fire_jet", () -> new FireJetFeature(BlockStateConfiguration.CODEC));
-	public static final RegistryObject<Feature<NoneFeatureConfiguration>> FOUNDATION = FEATURES.register("foundation", () -> new FoundationFeature(NoneFeatureConfiguration.CODEC));
+	public static final RegistryObject<Feature<RuinedFoundationConfig>> FOUNDATION = FEATURES.register("foundation", () -> new FoundationFeature(RuinedFoundationConfig.CODEC));
 	public static final RegistryObject<Feature<NoneFeatureConfiguration>> GRAVEYARD = FEATURES.register("graveyard", () -> new GraveyardFeature(NoneFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<NoneFeatureConfiguration>> GROVE_RUINS = FEATURES.register("grove_ruins", () -> new GroveRuinsFeature(NoneFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<TFTreeFeatureConfig>> HOLLOW_STUMP = FEATURES.register("hollow_stump", () -> new HollowStumpFeature(TFTreeFeatureConfig.codecTFTreeConfig));

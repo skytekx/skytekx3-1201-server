@@ -1,5 +1,7 @@
 package twilightforest.util;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -7,7 +9,10 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.block.GiantBlock;
 import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFBlocks;
@@ -20,8 +25,17 @@ import java.util.function.Predicate;
 public final class FeatureLogic {
     public static final Predicate<BlockState> IS_REPLACEABLE_AIR = state -> state.canBeReplaced() || state.isAir();
     public static final Predicate<BlockState> ROOT_SHOULD_SKIP = state -> state.is(BlockTagGenerator.ROOT_TRACE_SKIP);
+    // Kept for API compatibility; TF's own root tracing uses hasEmptyNeighborExceptBelow since 4.8 (bf74ddf65)
     public static boolean hasEmptyHorizontalNeighbor(LevelSimulatedReader worldReader, BlockPos pos) {
         return worldReader.isStateAtPosition(pos.north(), IS_REPLACEABLE_AIR)
+                || worldReader.isStateAtPosition(pos.south(), IS_REPLACEABLE_AIR)
+                || worldReader.isStateAtPosition(pos.west(), IS_REPLACEABLE_AIR)
+                || worldReader.isStateAtPosition(pos.east(), IS_REPLACEABLE_AIR);
+    }
+
+    public static boolean hasEmptyNeighborExceptBelow(LevelSimulatedReader worldReader, BlockPos pos) {
+        return worldReader.isStateAtPosition(pos.above(), IS_REPLACEABLE_AIR)
+                || worldReader.isStateAtPosition(pos.north(), IS_REPLACEABLE_AIR)
                 || worldReader.isStateAtPosition(pos.south(), IS_REPLACEABLE_AIR)
                 || worldReader.isStateAtPosition(pos.west(), IS_REPLACEABLE_AIR)
                 || worldReader.isStateAtPosition(pos.east(), IS_REPLACEABLE_AIR);
@@ -162,5 +176,43 @@ public final class FeatureLogic {
                     .setValue(HugeMushroomBlock.SOUTH, z == foliageRadius);
         }
         return blockState;
+    }
+
+    // North is treated for default rotation and null means you're not on the wall
+    @Nullable
+    public static Rotation wallVolumeRotation(RandomSource rand, int deltaX, int deltaZ, int xBound, int zBound) {
+        boolean westWall = deltaX == 0;
+        boolean northWall = deltaZ == 0;
+        boolean eastWall = deltaX == xBound;
+        boolean southWall = deltaZ == zBound;
+
+        if (westWall || northWall || eastWall || southWall)
+            return getRotation(rand, northWall, eastWall, southWall, westWall);
+
+        return null;
+    }
+
+    // North is treated for default rotation, plan your code accordingly
+    @NotNull
+    public static Rotation getRotation(RandomSource rand, boolean north, boolean east, boolean south, boolean west) {
+        // North -> NONE
+        // East -> CLOCKWISE_90
+        // South -> CLOCKWISE_180
+        // West -> COUNTERCLOCKWISE_90
+        // Combined adjacents will be settled by random
+
+        // 1.20.1's Util.shuffle only takes an ObjectArrayList (same Fisher-Yates shuffle as 4.8's List overload)
+        ObjectArrayList<Rotation> availableForRandom = new ObjectArrayList<>();
+
+        if (north) availableForRandom.add(Rotation.NONE);
+        if (east) availableForRandom.add(Rotation.CLOCKWISE_90);
+        if (south) availableForRandom.add(Rotation.CLOCKWISE_180);
+        if (west) availableForRandom.add(Rotation.COUNTERCLOCKWISE_90);
+
+        if (availableForRandom.isEmpty()) return Rotation.NONE;
+
+        Util.shuffle(availableForRandom, rand);
+
+        return Util.getRandom(availableForRandom, rand);
     }
 }

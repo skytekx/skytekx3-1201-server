@@ -359,8 +359,9 @@ public final class FeaturePlacers {
             if (worldReader.isStateAtPosition(exposedPos, FeatureLogic.ROOT_SHOULD_SKIP))
                 continue;
 
-            // Is the position considered underground?
-            if (!FeatureLogic.hasEmptyHorizontalNeighbor(worldReader, exposedPos)) {
+            // Is the position considered underground? Air above counts as exposed too (4.8 bf74ddf65), so a root
+            // tracing over flat ground keeps its exposed look instead of turning into dirt roots at the surface
+            if (!FeatureLogic.hasEmptyNeighborExceptBelow(worldReader, exposedPos)) {
                 // Retry placement at position as underground root. If successful, continue the tracing as regular root
                 if (FeaturePlacers.placeIfValidRootPos(worldReader, worldPlacer, random, exposedPos, dirtRoot))
                     traceRoot(worldReader, worldPlacer, random, dirtRoot, posTracer);

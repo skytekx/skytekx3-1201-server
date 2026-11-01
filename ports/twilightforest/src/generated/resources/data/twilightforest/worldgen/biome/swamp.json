@@ -31,7 +31,8 @@
     [],
     [
       "twilightforest:druid_hut",
-      "twilightforest:well_placer"
+      "twilightforest:well_placer",
+      "twilightforest:foundation"
     ],
     [],
     [
@@ -64,7 +65,6 @@
       "twilightforest:swamp_blackberry_bushes",
       "minecraft:patch_grass_taiga_2",
       "twilightforest:grove_ruins",
-      "twilightforest:foundation",
       "twilightforest:stone_circle",
       "twilightforest:outside_stalagmite",
       "twilightforest:monolith",

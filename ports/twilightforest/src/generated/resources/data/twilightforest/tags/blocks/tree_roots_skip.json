@@ -1,5 +1,6 @@
 {
   "values": [
+    "#minecraft:logs",
     "twilightforest:root",
     "twilightforest:liveroot_block",
     "twilightforest:mangrove_root",

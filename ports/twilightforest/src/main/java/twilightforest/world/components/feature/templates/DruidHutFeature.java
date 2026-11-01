@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.StructureMode;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -76,10 +77,14 @@ public class DruidHutFeature extends TemplateFeature<SwizzleConfig> {
 
          `lootET` will place a trapped chest facing the was-East.
          `lootNT` will place a trapped chest facing the was-North.
+
+         A trailing `J` fills the chest with junk (chests/hut_junk) instead of basement loot.
+
+         `barrel` will place a barrel of junk facing was-Up; `barrelD`/`barrelN`/`barrelE`/`barrelS`/`barrelW` pick the facing.
          */
         // removeBlock calls are required due to WorldGenRegion jank with cached TEs, this ensures the correct TE is used
         if ("spawner".equals(s)) {
-            if (world.removeBlock(blockPos, false) && world.setBlock(blockPos, Blocks.SPAWNER.defaultBlockState(), 16 | 2)) {
+            if (world.removeBlock(blockPos, false) && world.setBlock(blockPos, Blocks.SPAWNER.defaultBlockState(), Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS)) {
                 BlockEntity tile = world.getBlockEntity(blockPos);
 
                 if (tile instanceof SpawnerBlockEntity ms) {
@@ -93,7 +98,7 @@ public class DruidHutFeature extends TemplateFeature<SwizzleConfig> {
             chest = switch (s.substring(5, 6)) {
                 case "L" -> chest.setValue(ChestBlock.TYPE, mirror != Mirror.NONE ? ChestType.RIGHT : ChestType.LEFT);
                 case "R" -> chest.setValue(ChestBlock.TYPE, mirror != Mirror.NONE ? ChestType.LEFT : ChestType.RIGHT);
-                default -> chest.setValue(ChestBlock.TYPE, ChestType.SINGLE);
+                default -> chest.setValue(ChestBlock.TYPE, ChestType.SINGLE); // S
             };
 
             chest = switch (s.substring(4, 5)) {
@@ -103,7 +108,21 @@ public class DruidHutFeature extends TemplateFeature<SwizzleConfig> {
                 default -> chest.setValue(HorizontalDirectionalBlock.FACING, rotation.rotate(mirror.mirror(Direction.NORTH)));
             };
 
-            TFLootTables.BASEMENT.generateLootContainer(world, blockPos, chest, 16 | 2);
+            (s.endsWith("J") ? TFLootTables.HUT_JUNK : TFLootTables.BASEMENT).generateLootContainer(world, blockPos, chest, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+        } else if (s.startsWith("barrel")) {
+            world.removeBlock(blockPos, false);
+            BlockState barrel = Blocks.BARREL.defaultBlockState();
+
+            barrel = switch (s.length() > 6 ? s.substring(6, 7) : "U") {
+                case "D" -> barrel.setValue(BlockStateProperties.FACING, rotation.rotate(mirror.mirror(Direction.DOWN)));
+                case "W" -> barrel.setValue(BlockStateProperties.FACING, rotation.rotate(mirror.mirror(Direction.WEST)));
+                case "E" -> barrel.setValue(BlockStateProperties.FACING, rotation.rotate(mirror.mirror(Direction.EAST)));
+                case "N" -> barrel.setValue(BlockStateProperties.FACING, rotation.rotate(mirror.mirror(Direction.NORTH)));
+                case "S" -> barrel.setValue(BlockStateProperties.FACING, rotation.rotate(mirror.mirror(Direction.SOUTH)));
+                default -> barrel.setValue(BlockStateProperties.FACING, rotation.rotate(mirror.mirror(Direction.UP)));
+            };
+
+            TFLootTables.HUT_JUNK.generateLootContainer(world, blockPos, barrel, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
         } else if (s.startsWith("painting")) {
             world.removeBlock(blockPos, false);
 

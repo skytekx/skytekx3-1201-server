@@ -4,7 +4,9 @@ import net.minecraft.Util;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -42,6 +44,41 @@ public class ChestLootTables implements LootTableSubProvider {
 								.add(LootItem.lootTableItem(Items.SAND).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))))
 								.add(LootItem.lootTableItem(Items.FLOWER_POT))
 								.add(LootItem.lootTableItem(Items.BONE_MEAL))));
+
+		// 4.8 (c1563920a) later moved the effect stew into its own chests/suspicious_stew table and references it here;
+		// the inline entry below rolls exactly the same, so this table needs nothing from the Lich Tower loot.
+		register.accept(TFLootTables.HUT_JUNK.lootTable,
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(9))
+								// Nothing from USELESS_LOOT, too many "green/lively"-looking loot. Needs to be dead or close to actual junk
+								.add(LootItem.lootTableItem(Items.COBWEB).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))).setWeight(3))
+								.add(LootItem.lootTableItem(Items.BOWL).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))).setWeight(3))
+								.add(LootItem.lootTableItem(Items.GLASS_BOTTLE).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))).setWeight(3))
+								.add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.WATER)))
+								.add(LootItem.lootTableItem(Blocks.COARSE_DIRT).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 5))))
+								.add(LootItem.lootTableItem(Items.PAPER).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 9))))
+								.add(LootItem.lootTableItem(Items.SAND).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))).setWeight(3))
+								.add(LootItem.lootTableItem(Items.FLINT).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))).setWeight(3))
+								.add(LootItem.lootTableItem(Items.WHEAT_SEEDS).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 5))))
+								.add(LootItem.lootTableItem(Items.BONE_MEAL))
+								.add(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 8))).setWeight(3))
+						).withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1))
+								.add(LootItem.lootTableItem(Items.SUSPICIOUS_STEW).setWeight(8).apply(SetStewEffectFunction.stewEffect()
+										.withEffect(MobEffects.JUMP, UniformGenerator.between(7, 10))
+										.withEffect(MobEffects.WEAKNESS, UniformGenerator.between(6, 8))
+										.withEffect(MobEffects.BLINDNESS, UniformGenerator.between(5, 7))
+										.withEffect(MobEffects.POISON, UniformGenerator.between(10, 20))
+										.withEffect(MobEffects.SATURATION, UniformGenerator.between(7, 10))
+										.withEffect(MobEffects.WITHER, UniformGenerator.between(6, 10))
+								))
+								.add(LootItem.lootTableItem(Items.SUSPICIOUS_STEW).setWeight(2))
+								.add(LootItem.lootTableItem(Items.MUSHROOM_STEW).setWeight(4))
+								.add(LootItem.lootTableItem(Items.BELL))
+								.add(LootItem.lootTableItem(Items.IRON_NUGGET).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 5))))
+								.add(LootItem.lootTableItem(Items.GOLD_NUGGET).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+						));
 
 		register.accept(TFLootTables.BASEMENT.lootTable,
 				LootTable.lootTable()

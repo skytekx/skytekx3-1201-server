@@ -77,6 +77,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> DEER_AMBIENT = createEvent("entity.twilightforest.deer.ambient");
 	public static final RegistryObject<SoundEvent> DEER_DEATH = createEvent("entity.twilightforest.deer.death");
 	public static final RegistryObject<SoundEvent> DEER_HURT = createEvent("entity.twilightforest.deer.hurt");
+	public static final RegistryObject<SoundEvent> DEER_EAT = createEvent("entity.twilightforest.deer.eat");
 	public static final RegistryObject<SoundEvent> DOOR_ACTIVATED = createEvent("block.twilightforest.door.activate");
 	public static final RegistryObject<SoundEvent> DOOR_REAPPEAR = createEvent("block.twilightforest.door.reappear");
 	public static final RegistryObject<SoundEvent> DOOR_VANISH = createEvent("block.twilightforest.door.vanish");
@@ -84,6 +85,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> DWARF_RABBIT_DEATH = createEvent("entity.twilightforest.dwarf_rabbit.death");
 	public static final RegistryObject<SoundEvent> DWARF_RABBIT_HURT = createEvent("entity.twilightforest.dwarf_rabbit.hurt");
 	public static final RegistryObject<SoundEvent> FAN_WHOOSH = createEvent("item.twilightforest.fan.whoosh");
+	public static final RegistryObject<SoundEvent> FIRE_BEETLE_AMBIENT = createEvent("entity.twilightforest.fire_beetle.ambient");
 	public static final RegistryObject<SoundEvent> FIRE_BEETLE_DEATH = createEvent("entity.twilightforest.fire_beetle.death");
 	public static final RegistryObject<SoundEvent> FIRE_BEETLE_HURT = createEvent("entity.twilightforest.fire_beetle.hurt");
 	public static final RegistryObject<SoundEvent> FIRE_BEETLE_SHOOT = createEvent("entity.twilightforest.fire_beetle.shoot");
@@ -105,6 +107,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> HEDGE_SPIDER_DEATH = createEvent("entity.twilightforest.hedge_spider.death");
 	public static final RegistryObject<SoundEvent> HEDGE_SPIDER_HURT = createEvent("entity.twilightforest.hedge_spider.hurt");
 	public static final RegistryObject<SoundEvent> HEDGE_SPIDER_STEP = createEvent("entity.twilightforest.hedge_spider.step");
+	public static final RegistryObject<SoundEvent> HELMET_CRAB_AMBIENT = createEvent("entity.twilightforest.helmet_crab.ambient");
 	public static final RegistryObject<SoundEvent> HELMET_CRAB_DEATH = createEvent("entity.twilightforest.helmet_crab.death");
 	public static final RegistryObject<SoundEvent> HELMET_CRAB_HURT = createEvent("entity.twilightforest.helmet_crab.hurt");
 	public static final RegistryObject<SoundEvent> HELMET_CRAB_STEP = createEvent("entity.twilightforest.helmet_crab.step");
@@ -189,7 +192,12 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> NAGA_HURT = createEvent("entity.twilightforest.naga.hurt");
 	public static final RegistryObject<SoundEvent> NAGA_RATTLE = createEvent("entity.twilightforest.naga.rattle");
 	public static final RegistryObject<SoundEvent> PEDESTAL_ACTIVATE = createEvent("block.twilightforest.trophy_pedestal.activate");
+	public static final RegistryObject<SoundEvent> PENGUIN_AMBIENT = createEvent("entity.twilightforest.penguin.ambient");
+	public static final RegistryObject<SoundEvent> PENGUIN_DEATH = createEvent("entity.twilightforest.penguin.death");
+	public static final RegistryObject<SoundEvent> PENGUIN_HURT = createEvent("entity.twilightforest.penguin.hurt");
 	public static final RegistryObject<SoundEvent> PICKED_TORCHBERRIES = createEvent("block.twilightforest.torchberry.harvest");
+	public static final RegistryObject<SoundEvent> PINCH_BEETLE_AMBIENT = createEvent("entity.twilightforest.pinch_beetle.ambient");
+	public static final RegistryObject<SoundEvent> PINCH_BEETLE_ATTACK = createEvent("entity.twilightforest.pinch_beetle.attack");
 	public static final RegistryObject<SoundEvent> PINCH_BEETLE_DEATH = createEvent("entity.twilightforest.pinch_beetle.death");
 	public static final RegistryObject<SoundEvent> PINCH_BEETLE_HURT = createEvent("entity.twilightforest.pinch_beetle.hurt");
 	public static final RegistryObject<SoundEvent> PINCH_BEETLE_STEP = createEvent("entity.twilightforest.pinch_beetle.step");
@@ -218,6 +226,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_SHOOT = createEvent("entity.twilightforest.skeleton_druid.shoot");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_STEP = createEvent("entity.twilightforest.skeleton_druid.step");
 	public static final RegistryObject<SoundEvent> SLIDER = createEvent("block.twilightforest.slider.move");
+	public static final RegistryObject<SoundEvent> SLIME_BEETLE_AMBIENT = createEvent("entity.twilightforest.slime_beetle.ambient");
 	public static final RegistryObject<SoundEvent> SLIME_BEETLE_DEATH = createEvent("entity.twilightforest.slime_beetle.death");
 	public static final RegistryObject<SoundEvent> SLIME_BEETLE_HURT = createEvent("entity.twilightforest.slime_beetle.hurt");
 	public static final RegistryObject<SoundEvent> SLIME_BEETLE_SQUISH = createEvent("entity.twilightforest.slime_beetle.squish");
@@ -231,6 +240,9 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> SNOW_QUEEN_BREAK = createEvent("entity.twilightforest.snow_queen.break");
 	public static final RegistryObject<SoundEvent> SNOW_QUEEN_DEATH = createEvent("entity.twilightforest.snow_queen.death");
 	public static final RegistryObject<SoundEvent> SNOW_QUEEN_HURT = createEvent("entity.twilightforest.snow_queen.hurt");
+	public static final RegistryObject<SoundEvent> SQUIRREL_AMBIENT = createEvent("entity.twilightforest.squirrel.ambient");
+	public static final RegistryObject<SoundEvent> SQUIRREL_DEATH = createEvent("entity.twilightforest.squirrel.death");
+	public static final RegistryObject<SoundEvent> SQUIRREL_HURT = createEvent("entity.twilightforest.squirrel.hurt");
 	public static final RegistryObject<SoundEvent> SWARM_SPIDER_AMBIENT = createEvent("entity.twilightforest.swarm_spider.ambient");
 	public static final RegistryObject<SoundEvent> SWARM_SPIDER_DEATH = createEvent("entity.twilightforest.swarm_spider.death");
 	public static final RegistryObject<SoundEvent> SWARM_SPIDER_HURT = createEvent("entity.twilightforest.swarm_spider.hurt");
@@ -246,6 +258,10 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> TOWERWOOD_BORER_HURT = createEvent("entity.twilightforest.towerwood_borer.hurt");
 	public static final RegistryObject<SoundEvent> TOWERWOOD_BORER_STEP = createEvent("entity.twilightforest.towerwood_borer.step");
 	public static final RegistryObject<SoundEvent> TRANSFORMATION_CORE = createEvent("block.twilightforest.core.transformation");
+	public static final RegistryObject<SoundEvent> TROLL_AMBIENT = createEvent("entity.twilightforest.troll.ambient");
+	public static final RegistryObject<SoundEvent> TROLL_DEATH = createEvent("entity.twilightforest.troll.death");
+	public static final RegistryObject<SoundEvent> TROLL_GRABS_ROCK = createEvent("entity.twilightforest.troll.grab_rock");
+	public static final RegistryObject<SoundEvent> TROLL_HURT = createEvent("entity.twilightforest.troll.hurt");
 	public static final RegistryObject<SoundEvent> TROLL_THROWS_ROCK = createEvent("entity.twilightforest.troll.throw_rock");
 	public static final RegistryObject<SoundEvent> UNCRAFTING_TABLE_ACTIVATE = createEvent("block.twilightforest.uncrafting_table.activate");
 	public static final RegistryObject<SoundEvent> UNLOCK_VANISHING_BLOCK = createEvent("block.twilightforest.vanish.unlock");

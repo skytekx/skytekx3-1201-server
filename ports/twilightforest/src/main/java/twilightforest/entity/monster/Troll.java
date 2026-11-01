@@ -7,9 +7,11 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -108,6 +110,7 @@ public class Troll extends Monster implements RangedAttackMob {
 
 					if (this.rock != null) {
 						this.setHasRock(true);
+						this.playSound(TFSounds.TROLL_GRABS_ROCK.get());
 						ThrownBlock block = new ThrownBlock(level, this, this.rock);
 						block.startRiding(this);
 						level.addFreshEntity(block);
@@ -185,6 +188,22 @@ public class Troll extends Monster implements RangedAttackMob {
 		} else {
 			this.goalSelector.addGoal(4, this.aiAttackOnCollide);
 		}
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound() {
+		return TFSounds.TROLL_AMBIENT.get();
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource source) {
+		return TFSounds.TROLL_HURT.get();
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		return TFSounds.TROLL_DEATH.get();
 	}
 
 	@Override

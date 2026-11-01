@@ -30,8 +30,11 @@ public record PatchModel(ResourceLocation location, TextureAtlasSprite texture, 
 
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource random) {
+        // LOCAL DIVERGENCE from upstream (4.3 and 4.8 both return the full list for all 7 sides); keep it on upstream re-syncs.
         // None of these quads have a cull face, so they all belong to the unculled (null side) list.
         // Returning them for every side as well made renderers draw (and FaceBakery bake) each patch 7 times over.
+        // Mods that sample one face (e.g. map colours via getQuads(state, UP, rand)) now get an empty list and fall
+        // back to the null list or getParticleIcon(), which returns the same sprite.
         if (side != null)
             return List.of();
 

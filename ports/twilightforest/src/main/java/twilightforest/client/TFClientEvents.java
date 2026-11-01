@@ -60,6 +60,7 @@ import twilightforest.client.model.block.patch.PatchModelLoader;
 import twilightforest.client.renderer.TFSkyRenderer;
 import twilightforest.client.renderer.TFWeatherRenderer;
 import twilightforest.client.renderer.entity.ShieldLayer;
+import twilightforest.client.renderer.tooltip.PotionFlaskTooltipComponent;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.entity.boss.bar.ClientTFBossBar;
@@ -106,6 +107,11 @@ public class TFClientEvents {
 			event.register(TwilightForestMod.prefix("block/casket_obsidian"));
 			event.register(TwilightForestMod.prefix("block/casket_stone"));
 			event.register(TwilightForestMod.prefix("block/casket_basalt"));
+		}
+
+		@SubscribeEvent
+		public static void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+			event.register(BrittleFlaskItem.Tooltip.class, PotionFlaskTooltipComponent::new);
 		}
 
 		@SubscribeEvent

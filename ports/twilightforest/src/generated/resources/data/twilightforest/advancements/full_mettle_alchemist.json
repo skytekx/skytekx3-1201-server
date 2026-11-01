@@ -3,10 +3,10 @@
   "criteria": {
     "drink_4_harming": {
       "conditions": {
-        "doses": 4,
+        "doses": 3,
         "potion": "minecraft:strong_harming",
         "seconds": {
-          "max": 7
+          "max": 6
         }
       },
       "trigger": "twilightforest:drink_from_flask"
@@ -20,8 +20,8 @@
     "frame": "challenge",
     "hidden": true,
     "icon": {
-      "item": "twilightforest:greater_potion_flask",
-      "nbt": "{Potion:\"minecraft:strong_harming\",Uses:4}"
+      "item": "twilightforest:brittle_potion_flask",
+      "nbt": "{Potion:\"minecraft:strong_harming\",Uses:3}"
     },
     "show_toast": true,
     "title": {

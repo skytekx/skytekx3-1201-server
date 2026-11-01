@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.advancements.TFAdvancements;
 import twilightforest.init.TFSounds;
 
 import java.util.function.Consumer;
@@ -76,6 +77,8 @@ public class GlassSwordItem extends SwordItem {
 
 			if (player != null) {
 				CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger(player, stack, 0);
+				// hurt() returning true always shatters the sword, so this is the actual-breakage point (upstream a401b93ca)
+				TFAdvancements.BROKE_GLASS_SWORD.trigger(player);
 			}
 
 			return true;

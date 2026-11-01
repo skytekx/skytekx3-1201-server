@@ -8,7 +8,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -23,9 +22,8 @@ import twilightforest.TwilightForestMod;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.capabilities.shield.IShieldCapability;
 import twilightforest.entity.passive.QuestRam;
+import twilightforest.entity.passive.quest.ram.QuestingRamCurrentContext;
 import twilightforest.events.HostileMountEvents;
-
-import java.util.Objects;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TFOverlays {
@@ -82,17 +80,22 @@ public class TFOverlays {
 	public static void renderIndicator(Minecraft minecraft, GuiGraphics graphics, Gui gui, Player player, int screenWidth, int screenHeight) {
 		Options options = minecraft.options;
 		if (options.getCameraType().isFirstPerson()) {
-			if (minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || gui.canRenderCrosshairForSpectator(minecraft.hitResult)) {
-				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-				int j = ((screenHeight - 1) / 2) - 11;
-				int k = ((screenWidth - 1) / 2) - 3;
-				if (minecraft.crosshairPickEntity instanceof QuestRam ram) {
-					ItemStack stack = player.getInventory().getItem(player.getInventory().selected);
-					if (!stack.isEmpty() && stack.is(ItemTags.WOOL)) {
-						if (ram.guessColor(stack) != null && !ram.isColorPresent(Objects.requireNonNull(ram.guessColor(stack)))) {
-							graphics.blit(TF_ICONS_SHEET, k, j, 0, 0, 7, 7);
-						} else {
-							graphics.blit(TF_ICONS_SHEET, k, j, 7, 0, 7, 7);
+			if ((minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || gui.canRenderCrosshairForSpectator(minecraft.hitResult)) && minecraft.crosshairPickEntity instanceof QuestRam ram) {
+				ItemStack stack = player.getInventory().getItem(player.getInventory().selected);
+				if (!stack.isEmpty()) {
+					// the quest items come from the data pack quest the server synced (SyncQuestsPacket)
+					for (var questEntry : QuestingRamCurrentContext.getClientContext().questItems().entrySet()) {
+						if (questEntry.getValue().test(stack)) {
+							RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+							int j = ((screenHeight - 1) / 2) - 11;
+							int k = ((screenWidth - 1) / 2) - 3;
+							if (!ram.isColorPresent(questEntry.getKey())) {
+								graphics.blit(TF_ICONS_SHEET, k, j, 0, 0, 7, 7);
+							} else {
+								graphics.blit(TF_ICONS_SHEET, k, j, 7, 0, 7, 7);
+							}
+							RenderSystem.defaultBlendFunc();
+							break;
 						}
 					}
 				}

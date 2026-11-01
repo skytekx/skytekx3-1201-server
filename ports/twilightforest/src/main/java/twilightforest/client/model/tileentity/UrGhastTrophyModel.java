@@ -45,7 +45,8 @@ public class UrGhastTrophyModel extends GenericTrophyModel {
 	}
 
 	private static void makeTentacle(PartDefinition parent, String name, int iteration) {
-		var tentacleBase = parent.addOrReplaceChild(name + "_base", CubeListBuilder.create()
+		// pick UVs per tentacle like UrGhastModel does (ff7886b55), so the trophy's tentacles don't all look the same
+		var tentacleBase = parent.addOrReplaceChild(name + "_base", CubeListBuilder.create().texOffs(iteration % 3, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.333F, 5.333F, 3.333F),
 				switch (iteration) {
 					case 0 -> PartPose.offset(4.5F, 7, 4.5F);
@@ -64,12 +65,12 @@ public class UrGhastTrophyModel extends GenericTrophyModel {
 				});
 
 		var tentacleExtension = tentacleBase.addOrReplaceChild(name + "_extension", CubeListBuilder.create()
-						.texOffs(0, 3)
+						.texOffs(iteration % 4, 0)
 						.addBox(-1.5F, -1.35F, -1.5F, 3.333F, 6.66F, 3.333F),
 				PartPose.offset(0, 6.66F, 0));
 
 		tentacleExtension.addOrReplaceChild(name + "_tip", CubeListBuilder.create()
-						.texOffs(0, 9)
+						.texOffs(iteration % 4, 9)
 						.addBox(-1.5F, 1.3F, -1.5F, 3.333F, 4, 3.333F),
 				PartPose.offset(0, 4, 0));
 

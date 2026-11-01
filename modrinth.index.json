@@ -2256,21 +2256,6 @@
       "fileSize": 642732
     },
     {
-      "path": "mods/placeable_items-1.0.0-forge-1.20.1.jar",
-      "hashes": {
-        "sha1": "5345f955f13df1e8fdd0809a50dd7cfbd93dfdc3",
-        "sha512": "ec7f662f4a887cbcdf0d14f39544c8ffed20898161842b02088b894ddc4460e0c04fe11c6267b02ca1711950c930fca8a203c80d305deb1c04234f06c2c94f3b"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/O1p4axVt/versions/KFKxwmTe/placeable_items-1.0.0-forge-1.20.1.jar"
-      ],
-      "fileSize": 56360
-    },
-    {
       "path": "mods/Placebo-1.20.1-8.6.3.jar",
       "hashes": {
         "sha1": "e85f53de2e582a79ce25ff1df1e7b5b5fc08440f",

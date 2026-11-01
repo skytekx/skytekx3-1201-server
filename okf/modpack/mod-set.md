@@ -3,7 +3,7 @@ type: Reference
 title: Mod set
 description: What SkyTekx 3 is made of, how the Modrinth index, the bundled jars and the server's mods folder relate, which jars sit outside the pack, and how to change the set.
 tags: [modpack, mods, modrinth]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Mod set
@@ -213,7 +213,16 @@ b6a1e20 (Re:Avaritia out). Commit 4c5e331 only raised `versionId` to 3.0.5. The 
 an index that is byte identical to the one at commit 4c5e331. On 2026-10-31 the update above moved 55
 entries to newer builds and added mezz_config (0a20b8c), 217 entries in all. Commit d3391bf dropped
 the Nyx entry, whose jar is bundled anyway, which leaves 216. Commit 44358a8 added the client only
-Modflared for pack 3.0.7, 217 entries again.
+Modflared for pack 3.0.7, 217 entries again. Commit 516f90e dropped Placeable Items on 2026-11-01,
+which leaves 216.
+
+Placeable Items 1.0.0 turned a right click with any item without durability into a mob named "Placed
+Block" whenever vanilla did nothing with the click, for example on a block just past the reach of 4.5
+blocks, since the mod looks 5 blocks far. It stored only the item id, so a placed item came back
+without enchantments, name, potion type, gem data or shulker box contents, and some items rendered as
+the missing texture. The owner ruled at 01:34 to take it out. The mod's network channel accepts only
+version 1 on both sides, so a client that still has it is refused by a server without it. Players
+disable it in their instance until a pack without it is out.
 
 Related: [AlmostUnified](almostunified.md), [KubeJS](kubejs.md), [publish](publish.md),
 [tools](tools.md), [client](client.md), [Arclight](../server/arclight.md).

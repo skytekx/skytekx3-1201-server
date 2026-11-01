@@ -129,6 +129,7 @@ These rules apply to every later change.
 | 2026-06-29 12:10 | Sword swing like in 1.7 | Partial. The attack cooldown is gone on the server. The old swing animation depends on Nostalgic Tweaks, which each client may or may not have | [Combat](content/combat.md) |
 | 2026-06-30 04:15 | Resolve every error and warning at server boot | Partial. Boot ERRORs went from 152 to 3 accepted ones. WARNs were not cleared, with 303 to 331 per boot on the build machine and 344 to 387 on the Mac mini after the first boot of its new world | [Boot fixes](content/boot-fixes.md) |
 | 2026-10-31 23:10 | A `/spawn` command | Done with EssentialsXSpawn 2.22.0 on the Mac mini since 2026-11-01 00:58. Respawns and joins stay vanilla. `/spawn` leads to the world spawn until an operator runs `/setspawn` | [Plugins](modpack/plugins.md#spawn) |
+| 2026-11-01 01:34 | Placeable Items out, after torches landed as "Placed Block" mobs and placed items rendered as the missing texture | Done. The Mac mini runs without it since 01:39, and 516f90e drops it from the index. A client that still has it cannot join, so players disable it until a pack without it is out | [Mod set](modpack/mod-set.md#history) |
 
 ## Client and main menu
 

@@ -1,5 +1,7 @@
 package twilightforest.util;
 
+import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
+import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -17,10 +19,12 @@ import twilightforest.data.tags.StructureTagGenerator;
 import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.init.TFGameRules;
 import twilightforest.world.components.structures.start.TFStructureStart;
+import twilightforest.world.components.structures.util.CustomStructureData;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -41,15 +45,23 @@ public final class LandmarkUtil {
 
     public static Optional<StructureStart> locateNearestMatchingLandmark(LevelAccessor level, HolderSet<Structure> matching, int chunkX, int chunkZ) {
         Set<Structure> structures = matching.stream().map(Holder::get).collect(Collectors.toSet());
-        return locateNearestMatchingLandmark(level, structures::contains, chunkX, chunkZ);
+        return locateNearestMatchingLandmark(level, structures::contains, chunkX, chunkZ, true);
     }
 
     public static Optional<StructureStart> locateNearestMatchingLandmark(LevelAccessor level, Predicate<Structure> filter, int chunkX, int chunkZ) {
+        return locateNearestMatchingLandmark(level, filter, chunkX, chunkZ, true);
+    }
+
+    /**
+     * @param checkReady if true, only look at the landmark centre chunk when it is already loaded; if false, load it (up to
+     *                   {@link ChunkStatus#STRUCTURE_STARTS}) when needed
+     */
+    public static Optional<StructureStart> locateNearestMatchingLandmark(LevelAccessor level, Predicate<Structure> filter, int chunkX, int chunkZ, boolean checkReady) {
         BlockPos nearestFeature = LegacyLandmarkPlacements.getNearestCenterXZ(chunkX, chunkZ);
         int centerX = SectionPos.blockToSectionCoord(nearestFeature.getX());
         int centerZ =  SectionPos.blockToSectionCoord(nearestFeature.getZ());
 
-        if (!level.hasChunk(centerX, centerZ)) return Optional.empty();
+        if (checkReady && !level.hasChunk(centerX, centerZ)) return Optional.empty();
 
         ChunkAccess chunkAccess = level.getChunk(centerX, centerZ, ChunkStatus.STRUCTURE_STARTS);
 
@@ -59,6 +71,44 @@ public final class LandmarkUtil {
 
         return Optional.empty();
     }
+
+    /**
+     * Whether the landmark whose grid centre is nearest to the given block has been conquered. Used by the Magic Map for
+     * every landmark centre within its view radius, on every tick the map is held.
+     * <p>
+     * Upstream (4.8) loads the centre chunk up to STRUCTURE_STARTS on each of those calls. On a server that would reload
+     * chunks outside the view distance from disk every tick, so a centre chunk that is not loaded is only loaded the first
+     * time it is asked for; after that its last known state is reused until the chunk is loaded again or the start changes
+     * its conquered flag ({@link #forgetConquered}). Server thread only.
+     */
+    public static boolean isConquered(Level level, int blockX, int blockZ) {
+        BlockPos nearestFeature = LegacyLandmarkPlacements.getNearestCenterXZ(blockX >> 4, blockZ >> 4);
+        int centerX = SectionPos.blockToSectionCoord(nearestFeature.getX());
+        int centerZ = SectionPos.blockToSectionCoord(nearestFeature.getZ());
+        long centerKey = ChunkPos.asLong(centerX, centerZ);
+        Long2BooleanMap known = KNOWN_CONQUERED.computeIfAbsent(level, l -> new Long2BooleanOpenHashMap());
+
+        if (known.containsKey(centerKey) && !level.hasChunk(centerX, centerZ))
+            return known.get(centerKey);
+
+        Optional<StructureStart> start = locateNearestMatchingLandmark(level, s -> s instanceof CustomStructureData, blockX >> 4, blockZ >> 4, false);
+        boolean conquered = start.filter(structureStart -> structureStart instanceof TFStructureStart tfStructureStart && tfStructureStart.isConquered()).isPresent();
+        known.put(centerKey, conquered);
+        return conquered;
+    }
+
+    /**
+     * Drops the remembered {@link #isConquered} state of the landmark centre nearest to this start, so the next query reads
+     * the start again. Called whenever a {@link TFStructureStart} changes its conquered flag.
+     */
+    public static void forgetConquered(ChunkPos startChunk) {
+        BlockPos nearestFeature = LegacyLandmarkPlacements.getNearestCenterXZ(startChunk.x, startChunk.z);
+        long centerKey = ChunkPos.asLong(SectionPos.blockToSectionCoord(nearestFeature.getX()), SectionPos.blockToSectionCoord(nearestFeature.getZ()));
+        KNOWN_CONQUERED.values().forEach(known -> known.remove(centerKey));
+    }
+
+    // Per level (weakly held, so a stopped integrated server's levels are dropped), keyed by landmark centre chunk
+    private static final Map<Level, Long2BooleanMap> KNOWN_CONQUERED = new WeakHashMap<>();
 
     public static void markStructureConquered(Level level, EnforcedHomePoint mobHome, ResourceKey<Structure> structureKey, boolean conquered) {
         markStructureConquered(level, mobHome.getRestrictionPoint(), structureKey, conquered);

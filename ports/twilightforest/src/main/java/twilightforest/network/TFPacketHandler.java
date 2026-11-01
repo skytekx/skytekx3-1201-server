@@ -21,7 +21,8 @@ public class TFPacketHandler {
 	// .5: AddTFBossBarPacket and UpdateTFBossBarStylePacket carry the RGB boss bars (4.8 15ab0d12a).
 	// .6: StructureProtectionPacket carries a list of per-piece boxes with a protected flag instead of one start box (4.8 262daec10, 48ba590a9).
 	// .7: SyncQuestsPacket (data pack driven Questing Ram quest, 4.8 02875d8a3) is registered before SyncUncraftingTableConfigPacket.
-	private static final String PROTOCOL_VERSION = "2-skytekx.7";
+	// .8: MagicMapPacket feature ids carry a conquered flag in their top bit (4.8 e67ac0be2).
+	private static final String PROTOCOL_VERSION = "2-skytekx.8";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,

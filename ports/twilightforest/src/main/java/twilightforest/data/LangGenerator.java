@@ -486,6 +486,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.ORE_METER, "Ore Meter");
 		this.addItem(TFItems.FILLED_MAGIC_MAP, "Magic Map");
 		this.addItem(TFItems.FILLED_MAZE_MAP, "Maze Map");
+		this.add("item.twilightforest.maze_map.y_level", "Y level %s");
 		this.addItem(TFItems.FILLED_ORE_MAP, "Maze/Ore Map");
 		this.addItem(TFItems.MAGIC_MAP, "Blank Magic Map");
 		this.addItem(TFItems.MAZE_MAP, "Blank Maze Map");

@@ -4,15 +4,17 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,7 +25,11 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TFMazeMapData;
+import twilightforest.init.TFDataMaps;
 import twilightforest.init.TFItems;
+import twilightforest.util.datamaps.OreMapOreColor;
+
+import java.util.List;
 
 // [VanillaCopy] super everything, but with appropriate redirections to our own datastructures. finer details noted
 
@@ -126,9 +132,9 @@ public class MazeMapItem extends MapItem {
 									l3 = l3 * l3 * 31287121 + l3 * 11;
 
 									if ((l3 >> 20 & 1) == 0) {
-										multiset.add(Blocks.DIRT.defaultBlockState().getMapColor(level, BlockPos.ZERO), 10);
+										multiset.add(MapColor.DIRT, 10);
 									} else {
-										multiset.add(Blocks.STONE.defaultBlockState().getMapColor(level, BlockPos.ZERO), 100);
+										multiset.add(MapColor.STONE, 100);
 									}
 
 								} else {
@@ -158,25 +164,12 @@ public class MazeMapItem extends MapItem {
 										}
 									}
 
-									if (mapOres) {
-										// recolor ores
-										if (state.is(BlockTags.COAL_ORES)) {
-											multiset.add(MapColor.COLOR_BLACK, 1000);
-										} else if (state.is(BlockTags.GOLD_ORES)) {
-											multiset.add(MapColor.GOLD, 1000);
-										} else if (state.is(BlockTags.IRON_ORES)) {
-											multiset.add(MapColor.METAL, 1000);
-										} else if (state.is(BlockTags.LAPIS_ORES)) {
-											multiset.add(MapColor.LAPIS, 1000);
-										} else if (state.is(BlockTags.REDSTONE_ORES)) {
-											multiset.add(MapColor.COLOR_RED, 1000);
-										} else if (state.is(BlockTags.DIAMOND_ORES)) {
-											multiset.add(MapColor.DIAMOND, 1000);
-										} else if (state.is(BlockTags.EMERALD_ORES)) {
-											multiset.add(MapColor.EMERALD, 1000);
-										} else if (state.is(BlockTags.COPPER_ORES)) {
-											multiset.add(MapColor.COLOR_ORANGE, 1000);
-										} else if (state.getBlock() != Blocks.AIR && state.is(Tags.Blocks.ORES)) {
+									if (this.mapOres) {
+										// recolor ores (TF 4.8: colours come from the twilightforest:ore_map_color data map)
+										OreMapOreColor color = TFDataMaps.ORE_MAP_ORE_COLOR.get(state.getBlockHolder());
+										if (color != null) {
+											multiset.add(color.color(), 1000);
+										} else if (!state.isAir() && state.is(Tags.Blocks.ORES)) {
 											multiset.add(MapColor.COLOR_PINK, 1000);
 										}
 									}
@@ -238,7 +231,28 @@ public class MazeMapItem extends MapItem {
 	@Nullable
 	public Packet<?> getUpdatePacket(ItemStack stack, Level level, Player player) {
 		Integer id = getMapId(stack);
-		TFMazeMapData mapdata = getCustomMapData(stack, level);
+		TFMazeMapData mapdata = this.getCustomMapData(stack, level);
 		return id == null || mapdata == null ? null : mapdata.getUpdatePacket(id, player);
+	}
+
+	// TF 4.8 (#2174): also show the Y level the maze map was made at
+	@Override
+	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+		Integer id = getMapId(stack);
+		if (id != null) {
+			if (flag.isAdvanced()) {
+				TFMazeMapData data = level == null ? null : getData(stack, level);
+				if (data != null) {
+					tooltip.add(Component.translatable("item.twilightforest.maze_map.y_level", data.yCenter).withStyle(ChatFormatting.GRAY));
+					tooltip.add(Component.translatable("filled_map.id", id).withStyle(ChatFormatting.GRAY));
+					tooltip.add(Component.translatable("filled_map.scale", 1 << data.scale).withStyle(ChatFormatting.GRAY));
+					tooltip.add(Component.translatable("filled_map.level", data.scale, 4).withStyle(ChatFormatting.GRAY));
+				} else {
+					tooltip.add(Component.translatable("filled_map.unknown").withStyle(ChatFormatting.GRAY));
+				}
+			} else {
+				tooltip.add(Component.literal("#" + id).withStyle(ChatFormatting.GRAY));
+			}
+		}
 	}
 }

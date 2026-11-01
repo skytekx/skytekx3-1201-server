@@ -63,9 +63,11 @@ public class DataGenerators {
 		generator.addProvider(event.includeServer(), new BiomeTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new DamageTypeTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new StructureTagGenerator(output, lookupProvider, helper));
+		generator.addProvider(event.includeServer(), new CustomTagGenerator.DimensionTypeTagGenerator(output, lookupProvider, helper));
 
 		generator.addProvider(event.includeServer(), new CrumbleHornGenerator(output, helper));
 		generator.addProvider(event.includeServer(), new TransformationPowderGenerator(output, helper));
+		generator.addProvider(event.includeServer(), new DataMapGenerator(output));
 		generator.addProvider(event.includeServer(), new StalactiteGenerator(output));
 		generator.addProvider(event.includeServer(), new QuestGenerator(output));
 		generator.addProvider(true, new PackMetadataGenerator(output).add(PackMetadataSection.TYPE, new PackMetadataSection(

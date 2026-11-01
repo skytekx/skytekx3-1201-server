@@ -23,7 +23,7 @@ import twilightforest.init.TFEntities;
 import twilightforest.init.TFStructureTypes;
 import twilightforest.world.components.structures.start.TFStructureStart;
 import twilightforest.world.components.structures.stronghold.StrongholdEntranceComponent;
-import twilightforest.world.components.structures.util.ConquerableStructure;
+import twilightforest.world.components.structures.util.ControlledSpawningStructure;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import java.util.Arrays;
@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class KnightStrongholdStructure extends ConquerableStructure {
+public class KnightStrongholdStructure extends ControlledSpawningStructure {
     public static final Codec<KnightStrongholdStructure> CODEC = RecordCodecBuilder.create(instance ->
-            conquerStatusCodec(instance).apply(instance, KnightStrongholdStructure::new)
+            controlledSpawningCodec(instance).apply(instance, KnightStrongholdStructure::new)
     );
 
     public KnightStrongholdStructure(ControlledSpawningConfig controlledSpawningConfig, AdvancementLockConfig advancementLockConfig, HintConfig hintConfig, DecorationConfig decorationConfig, StructureSettings structureSettings) {

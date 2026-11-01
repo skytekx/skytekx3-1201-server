@@ -31,6 +31,7 @@ import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureCheckResult;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -1045,6 +1046,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		if (placementSetMap.isEmpty()) return nearest;
 
 		double distance = nearest == null ? Double.MAX_VALUE : nearest.getFirst().distSqr(pos);
+		StructureManager structureManager = level.structureManager();
 
 		for (BlockPos landmarkCenterPosition : LegacyLandmarkPlacements.landmarkCenterScanner(pos, Mth.ceil(Mth.sqrt(searchRadius)))) {
 			for (Map.Entry<BiomeForcedLandmarkPlacement, Set<Holder<Structure>>> landmarkPlacement : placementSetMap.entrySet()) {
@@ -1052,6 +1054,10 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 
 				for (Holder<Structure> targetStructure : targetStructures) {
 					if (landmarkPlacement.getValue().contains(targetStructure)) {
+						// TF 4.8 (b736cb16b): honour skipKnownStructures (e.g. explorer maps) by passing over landmarks already generated
+						if (skipKnownStructures && structureManager.checkStructurePresence(new ChunkPos(landmarkCenterPosition), targetStructure.value(), true) == StructureCheckResult.START_PRESENT)
+							break;
+
 						final double newDistance = landmarkCenterPosition.distToLowCornerSqr(pos.getX(), landmarkCenterPosition.getY(), pos.getZ());
 
 						if (newDistance < distance) {

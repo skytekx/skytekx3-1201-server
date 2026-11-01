@@ -54,7 +54,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.block.GiantBlock;
 import twilightforest.block.MiniatureStructureBlock;
 import twilightforest.block.entity.GrowingBeanstalkBlockEntity;
-import twilightforest.client.model.block.doors.CastleDoorModelLoader;
+import twilightforest.client.model.block.connected.ConnectedTextureModelLoader;
 import twilightforest.client.model.block.forcefield.ForceFieldModelLoader;
 import twilightforest.client.model.block.giantblock.GiantBlockModelLoader;
 import twilightforest.client.model.block.leaves.BakedLeavesModel;
@@ -92,7 +92,7 @@ public class TFClientEvents {
 			event.register("patch", PatchModelLoader.INSTANCE);
 			event.register("giant_block", GiantBlockModelLoader.INSTANCE);
 			event.register("force_field", ForceFieldModelLoader.INSTANCE);
-			event.register("castle_door", CastleDoorModelLoader.INSTANCE);
+			event.register("connected_texture_block", ConnectedTextureModelLoader.INSTANCE);
 		}
 
 		@SubscribeEvent

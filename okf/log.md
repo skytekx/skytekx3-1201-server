@@ -409,7 +409,7 @@ logs stay on the Mac and are not in the repo.
   01:38:36 after a warning in chat and was up at 01:39:29 without it, with the 3 accepted boot errors
   and three about the mod's entries that the world still mapped. The owner's client runs with the jar
   disabled since 01:42, and at the owner's request the jar was deleted on the second MacBook at
-  about 01:50. See [Mod set](modpack/mod-set.md#history).
+  01:45. See [Mod set](modpack/mod-set.md#history).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

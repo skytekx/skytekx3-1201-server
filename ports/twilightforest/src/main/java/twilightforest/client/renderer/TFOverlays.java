@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.passive.QuestRam;
+import twilightforest.events.HostileMountEvents;
 
 import java.util.Objects;
 
@@ -38,6 +39,14 @@ public class TFOverlays {
 				RenderSystem.enableBlend();
 				renderIndicator(minecraft, graphics, gui, player, screenWidth, screenHeight);
 				RenderSystem.disableBlend();
+			}
+		});
+		// Forge's food_level overlay hides the hunger bar while riding a living vehicle; a grabbed player still starves, so show it.
+		event.registerAbove(VanillaGuiOverlay.MOUNT_HEALTH.id(), "hostile_mount_hunger_bar", (gui, graphics, partialTick, screenWidth, screenHeight) -> {
+			LocalPlayer player = Minecraft.getInstance().player;
+			if (!gui.getMinecraft().options.hideGui && gui.shouldDrawSurvivalElements() && player != null && HostileMountEvents.isRidingUnfriendly(player)) {
+				gui.setupOverlayRenderState(true, false);
+				gui.renderFood(screenWidth, screenHeight, graphics);
 			}
 		});
 	}

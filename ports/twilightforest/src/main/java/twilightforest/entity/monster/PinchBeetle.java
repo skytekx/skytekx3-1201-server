@@ -2,6 +2,7 @@ package twilightforest.entity.monster;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -11,12 +12,17 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.entity.IHostileMount;
+import twilightforest.entity.TwilightBoat;
 import twilightforest.entity.ai.goal.ChargeAttackGoal;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFSounds;
@@ -71,23 +77,38 @@ public class PinchBeetle extends Monster implements IHostileMount {
 
 	@Override
 	public void aiStep() {
-
 		super.aiStep();
 		this.dimensions = this.getDimensions(this.getPose());
 
 		if (!this.getPassengers().isEmpty()) {
-			this.getLookControl().setLookAt(this.getPassengers().get(0), 100.0F, 100.0F);
+			Entity passenger = this.getPassengers().get(0);
+
+			// #2091: the victim can end up riding something else while still listed as our passenger; drop the stale entry
+			if (passenger.getVehicle() != this) {
+				this.removePassenger(passenger);
+				return;
+			}
+
+			this.getLookControl().setLookAt(passenger, 100.0F, 100.0F);
 			//always set our passenger as our target
-			if (this.getPassengers().get(0) instanceof LivingEntity entity) {
+			if (passenger instanceof LivingEntity entity) {
 				this.setTarget(entity);
 			}
 
 			//if our held player switches gamemodes let them go
-			if (this.getPassengers().get(0) instanceof Player player && player.getAbilities().invulnerable) {
+			if (passenger instanceof Player player && player.getAbilities().invulnerable) {
 				player.stopRiding();
 				this.setTarget(null);
 			}
 		}
+	}
+
+	@Override
+	public void die(DamageSource source) {
+		if (!this.getPassengers().isEmpty()) {
+			this.getPassengers().forEach(Entity::stopRiding);
+		}
+		super.die(source);
 	}
 
 	@Override
@@ -117,6 +138,27 @@ public class PinchBeetle extends Monster implements IHostileMount {
 			this.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), TFSounds.PINCH_BEETLE_ATTACK.get(), entity.getSoundSource(), 1.0F, (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.2F + 1.0F);
 		}
 		return clamped;
+	}
+
+	@Override
+	public boolean startRiding(Entity entity, boolean force) {
+		if (entity instanceof Boat boat) {
+			boat.kill();
+			if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+				Block planks = boat instanceof TwilightBoat twilightBoat ? twilightBoat.getTwilightBoatType().asPlank() : boat.getVariant().getPlanks();
+				for (int i = 0; i < 3; i++) {
+					this.spawnAtLocation(planks);
+				}
+
+				for (int j = 0; j < 2; j++) {
+					this.spawnAtLocation(Items.STICK);
+				}
+			}
+			this.playSound(SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);
+			return false;
+		}
+
+		return super.startRiding(entity, force);
 	}
 
 	@Override

@@ -24,7 +24,6 @@ import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFStructures;
 import twilightforest.init.custom.Enforcement;
-import twilightforest.item.BrittleFlaskItem;
 import twilightforest.network.MissingAdvancementToastPacket;
 import twilightforest.network.StructureProtectionClearPacket;
 import twilightforest.network.StructureProtectionPacket;
@@ -62,11 +61,6 @@ public class TFTickHandler {
 				// normal check, no special options
 				checkForPortalCreation(player, world, 32.0F);
 			}
-		}
-
-		//tick every second for the advancement trigger bit of the flask
-		if(event.phase == TickEvent.Phase.END && player.tickCount % 20 == 0) {
-			BrittleFlaskItem.ticker();
 		}
 
 		// check the player for being in a forbidden progression area, only every 20 ticks

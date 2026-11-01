@@ -222,6 +222,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 				TFBlocks.TWILIGHT_PORTAL_MINIATURE_STRUCTURE.get().asItem(),
 				TFBlocks.NAGA_COURTYARD_MINIATURE_STRUCTURE.get().asItem(),
 				TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE.get().asItem(),
+				TFBlocks.MINOTAUR_LABYRINTH_MINIATURE_STRUCTURE.get().asItem(),
+				TFBlocks.DARK_TOWER_MINIATURE_STRUCTURE.get().asItem(),
 				TFBlocks.AURORALIZED_GLASS.get().asItem(),
 				TFBlocks.SLIDER.get().asItem()
 		);

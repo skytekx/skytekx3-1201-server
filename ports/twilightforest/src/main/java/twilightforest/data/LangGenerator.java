@@ -216,6 +216,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.MAZESTONE_MOSAIC, "Mazestone Mosaic");
 		this.addBlock(TFBlocks.MAZESTONE_BORDER, "Mazestone Border");
 		this.addBlock(TFBlocks.RED_THREAD, "Red Thread");
+		this.addBlock(TFBlocks.MINOTAUR_LABYRINTH_MINIATURE_STRUCTURE, "Miniature Minotaur Labyrinth");
 
 		this.addBlock(TFBlocks.SMOKER, "Smoker");
 		this.addBlock(TFBlocks.FIRE_JET, "Fire Jet");
@@ -248,6 +249,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.FAKE_DIAMOND, "Diamond Block");
 		this.addBlock(TFBlocks.FAKE_GOLD, "Gold Block");
 		this.addBlock(TFBlocks.EXPERIMENT_115, "Experiment 115");
+		this.addBlock(TFBlocks.DARK_TOWER_MINIATURE_STRUCTURE, "Miniature Dark Tower");
 
 		this.addBlock(TFBlocks.AURORA_BLOCK, "Aurora Block");
 		this.addBlock(TFBlocks.AURORA_SLAB, "Aurora Slab");

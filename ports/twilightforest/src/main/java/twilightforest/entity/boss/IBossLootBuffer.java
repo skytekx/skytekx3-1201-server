@@ -15,7 +15,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -79,9 +78,10 @@ public interface IBossLootBuffer {
 					container.setItem(i, boss.getItem(i));
 				}
 			} else {
-				//No room for a chest anywhere above the drop spot: pop the loot out instead of losing it
+				//No room for a chest anywhere above the drop spot: drop the loot into the world instead of losing it
+				Vec3 dropPos = Vec3.atCenterOf(pos);
 				for (int i = 0; i < CONTAINER_SIZE; i++) {
-					Block.popResource(serverLevel, pos, boss.getItem(i));
+					dropLootItem(serverLevel, dropPos, boss.getItem(i));
 				}
 				chestPos = pos;
 			}
@@ -97,8 +97,22 @@ public interface IBossLootBuffer {
 	}
 
 	/**
-	 * Places {@code chest} at {@code pos}, or reuses one that is already there. If that spot holds an immovable block or another
-	 * block entity, each position above it is tried in turn, so the chest never wipes out a spawner, another chest or bedrock.
+	 * Drops boss loot as an item entity that does not despawn early and can be picked up immediately. Unlike
+	 * {@link net.minecraft.world.level.block.Block#popResource}, this ignores the doTileDrops gamerule: boss loot is mob loot, which
+	 * {@link #canDropLoot} already gates on doMobLoot. Empty stacks are skipped.
+	 */
+	static void dropLootItem(ServerLevel serverLevel, Vec3 pos, ItemStack stack) {
+		if (stack.isEmpty()) return;
+		ItemEntity item = new ItemEntity(serverLevel, pos.x(), pos.y(), pos.z(), stack);
+		item.setExtendedLifetime();
+		item.setNoPickUpDelay();
+		serverLevel.addFreshEntity(item);
+	}
+
+	/**
+	 * Places {@code chest} at {@code pos}, or reuses one that is already there. If that spot holds a block that pistons cannot push
+	 * or another block entity, each position above it is tried in turn, so the chest never wipes out a spawner or another chest.
+	 * Like upstream, unbreakable blocks such as bedrock still count as replaceable here: they keep {@link PushReaction#NORMAL}.
 	 *
 	 * @return the position of the placed chest, or null if there was no room for one up to the build limit
 	 */

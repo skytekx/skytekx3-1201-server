@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.boss.IBossLootBuffer;
@@ -156,8 +156,9 @@ public class TFLootTables {
 					}
 				}
 			} else {
-				//no room for a chest anywhere above the placement, so pop the loot out instead of losing it
-				table.getRandomItems(params, entity.getLootTableSeed(), stack -> Block.popResource(serverLevel, placement, stack));
+				//no room for a chest anywhere above the placement, so drop the loot into the world instead of losing it
+				Vec3 dropPos = Vec3.atCenterOf(placement);
+				table.getRandomItems(params, entity.getLootTableSeed(), stack -> IBossLootBuffer.dropLootItem(serverLevel, dropPos, stack));
 			}
 		}
 	}

@@ -45,6 +45,7 @@ public class TFParticleType {
 	public static final RegistryObject<SimpleParticleType> OMINOUS_FLAME = PARTICLE_TYPES.register("ominous_flame", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> SORTING_PARTICLE = PARTICLE_TYPES.register("sorting_particle", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> CLOUD_PUFF = PARTICLE_TYPES.register("cloud_puff", () -> new SimpleParticleType(false));
+	public static final RegistryObject<SimpleParticleType> SHIELD_BREAK = PARTICLE_TYPES.register("shield_break", () -> new SimpleParticleType(false));
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
@@ -68,5 +69,6 @@ public class TFParticleType {
 		event.registerSpriteSet(TFParticleType.OMINOUS_FLAME.get(), FlameParticle.SmallFlameProvider::new);
 		event.registerSpriteSet(TFParticleType.SORTING_PARTICLE.get(), SortingParticle.Factory::new);
 		event.registerSpriteSet(TFParticleType.CLOUD_PUFF.get(), CloudPuffParticle.Factory::new);
+		event.registerSpriteSet(TFParticleType.SHIELD_BREAK.get(), CustomTextureParticle.ShieldBreak::new);
 	}
 }

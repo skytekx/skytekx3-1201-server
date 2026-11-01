@@ -3,16 +3,12 @@ package twilightforest.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
@@ -24,7 +20,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -145,29 +140,13 @@ public class TFClientEvents {
 	}
 
 	/**
-	 * Render effects in first-person perspective and aurora
+	 * Render the aurora
 	 */
 	@SubscribeEvent
 	public static void renderWorldLast(RenderLevelStageEvent event) {
 		if (Minecraft.getInstance().level == null) return;
-		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) { // after particles says its best for special rendering effects, and thats what I consider this
-			if (!TFConfig.CLIENT_CONFIG.firstPersonEffects.get()) return;
 
-			Options settings = Minecraft.getInstance().options;
-			if (settings.getCameraType() != CameraType.FIRST_PERSON || settings.hideGui) return;
-
-			Entity entity = Minecraft.getInstance().getCameraEntity();
-			if (entity instanceof LivingEntity) {
-				EntityRenderer<? extends Entity> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
-				if (renderer instanceof LivingEntityRenderer<?, ?>) {
-					for (EffectRenders effect : EffectRenders.VALUES) {
-						if (effect.shouldRender((LivingEntity) entity, true)) {
-							effect.render((LivingEntity) entity, ((LivingEntityRenderer<?, ?>) renderer).getModel(), 0.0, 0.0, 0.0, event.getPartialTick(), true);
-						}
-					}
-				}
-			}
-		} else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_WEATHER && (aurora > 0 || lastAurora > 0) && TFShaders.AURORA != null) {
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_WEATHER && (aurora > 0 || lastAurora > 0) && TFShaders.AURORA != null) {
 			BufferBuilder buffer = Tesselator.getInstance().getBuilder();
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 

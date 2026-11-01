@@ -14,11 +14,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
+import twilightforest.capabilities.CapabilityList;
+import twilightforest.capabilities.shield.IShieldCapability;
 import twilightforest.entity.passive.QuestRam;
 import twilightforest.events.HostileMountEvents;
 
@@ -29,6 +32,7 @@ public class TFOverlays {
 	//for some reason we need a 256x256 texture to actually render anything so i'll just make this a generic icons sheet
 	//if we want to add any more overlay things in the future, we can simply add more icons!
 	private static final ResourceLocation TF_ICONS_SHEET = TwilightForestMod.prefix("textures/gui/tf_icons.png");
+	private static final ResourceLocation FORTIFICATION_SHIELD_TEXTURE = TwilightForestMod.prefix("textures/gui/fortification_shield.png");
 
 	@SubscribeEvent
 	public static void registerOverlays(RegisterGuiOverlaysEvent event) {
@@ -49,6 +53,30 @@ public class TFOverlays {
 				gui.renderFood(screenWidth, screenHeight, graphics);
 			}
 		});
+
+		event.registerAbove(VanillaGuiOverlay.ARMOR_LEVEL.id(), "fortification_shield_count", (gui, graphics, partialTick, screenWidth, screenHeight) -> {
+			Minecraft minecraft = Minecraft.getInstance();
+			LocalPlayer player = minecraft.player;
+			if (player != null && !minecraft.options.hideGui && minecraft.gameMode != null && (minecraft.gameMode.canHurtPlayer() || TFConfig.CLIENT_CONFIG.showFortificationShieldIndicatorInCreative.get()) && TFConfig.CLIENT_CONFIG.showFortificationShieldIndicator.get()) {
+				int shieldCount = player.getCapability(CapabilityList.SHIELDS).map(IShieldCapability::shieldsLeft).orElse(0);
+				if (shieldCount > 0) {
+					RenderSystem.enableBlend();
+					renderShieldCount(graphics, gui, screenWidth, screenHeight, shieldCount);
+					RenderSystem.disableBlend();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Draws one shield icon per active fortification shield (at most 10) in a row above the armor bar, like 4.8 does.
+	 * Forge 47 always reserves the armor row's height, even without armor, so the row needs no extra offset.
+	 */
+	public static void renderShieldCount(GuiGraphics graphics, ForgeGui gui, int screenWidth, int screenHeight, int shieldCount) {
+		for (int i = 0; i < Math.min(shieldCount, 10); i++) {
+			graphics.blit(FORTIFICATION_SHIELD_TEXTURE, screenWidth / 2 - 91 + (i * 8), screenHeight - gui.leftHeight, 0.0F, 0.0F, 9, 9, 9, 9);
+		}
+		gui.leftHeight += 10;
 	}
 
 	public static void renderIndicator(Minecraft minecraft, GuiGraphics graphics, Gui gui, Player player, int screenWidth, int screenHeight) {

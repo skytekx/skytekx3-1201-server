@@ -1287,6 +1287,8 @@
   "subtitles.twilightforest.entity.fire_beetle.death": "Fire Beetle dies",
   "subtitles.twilightforest.entity.fire_beetle.hurt": "Fire Beetle hurts",
   "subtitles.twilightforest.entity.fire_beetle.shoot": "Fire Beetle spews flames",
+  "subtitles.twilightforest.entity.fortification_shield.block": "Fortification Shield deflects",
+  "subtitles.twilightforest.entity.fortification_shield.expire": "Fortification Shield expires",
   "subtitles.twilightforest.entity.goblin_knight.ambient": "Goblin Knight chuckles",
   "subtitles.twilightforest.entity.goblin_knight.death": "Goblin Knight groans in agony",
   "subtitles.twilightforest.entity.goblin_knight.hurt": "Goblin Knight screeches in pain",

@@ -20,7 +20,17 @@ public interface IShieldCapability extends INBTSerializable<CompoundTag> {
 
 	int permanentShieldsLeft();
 
-	void breakShield();
+	/**
+	 * Breaks one shield, temporary ones first.
+	 *
+	 * @param expired true when a temporary shield ran out of time instead of absorbing a hit. Expired shields play the
+	 *                expire sound and do not count towards the shields broken statistic.
+	 */
+	void breakShield(boolean expired);
+
+	default void breakShield() {
+		this.breakShield(false);
+	}
 
 	void replenishShields();
 

@@ -22,6 +22,7 @@ import twilightforest.block.TFPortalBlock;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.capabilities.fan.FeatherFanFallCapability;
 import twilightforest.capabilities.shield.IShieldCapability;
+import twilightforest.capabilities.shield.ShieldCapabilityHandler;
 import twilightforest.capabilities.thrown.YetiThrowCapability;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.UpdateShieldPacket;
@@ -48,7 +49,12 @@ public class CapabilityEvents {
 		if (!living.level().isClientSide() && !event.getSource().is(DamageTypeTags.BYPASSES_ARMOR)) {
 			living.getCapability(CapabilityList.SHIELDS).ifPresent(cap -> {
 				if (cap.shieldsLeft() > 0) {
-					cap.breakShield();
+					// A shield absorbs every hit, but only one breaks per i-frame window, so a burst of hits costs one shield.
+					if (living.invulnerableTime <= 0) {
+						cap.breakShield(false);
+						ShieldCapabilityHandler.addShieldBreakParticles(event.getSource(), living);
+						living.invulnerableTime = living.invulnerableDuration;
+					}
 					event.setCanceled(true);
 				}
 			});

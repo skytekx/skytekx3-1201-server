@@ -30,6 +30,7 @@ import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.util.jigsaw.JigsawPlaceContext;
 import twilightforest.util.jigsaw.JigsawRecord;
 import twilightforest.world.components.structures.markerhandler.TemplateMarkerHandler;
+import twilightforest.world.components.structures.util.ProgressionPiece;
 import twilightforest.world.components.structures.util.StructureTemplateDefinitions;
 import twilightforest.world.components.structures.util.TemplateMarkerHandlerList;
 import twilightforest.world.components.structures.util.TemplatePoolInstance;
@@ -42,7 +43,7 @@ import java.util.function.Predicate;
  * {@link StructureTemplateDefinitions} (data/&lt;namespace&gt;/twilight/template_definition), its target names the jigsaw to connect in the
  * chosen template. Pieces that would collide with an existing piece are skipped.
  */
-public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implements PieceBeardifierModifier {
+public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implements ProgressionPiece, PieceBeardifierModifier {
 
 	private static final Logger LOGGER = LogManager.getLogger(TwilightForestMod.ID + "/TwilightJigsawPiece");
 

@@ -25,9 +25,10 @@ import java.util.Map;
  * An Ore Meter scan in progress. The scan walks the full height of a square of whole chunks around the player,
  * spread evenly over {@code scanDurationTicks} ticks, and counts every block it passes.
  * <p>
- * Backport of 4.8's OreScannerComponent (43024f484, 2b3737946, 1076dd0cc). 4.8 keeps it in a persistent but
- * not network-synced data component; here it lives in the stack NBT under {@code ore_scanner}, and
- * {@link twilightforest.item.OreMeterItem#getShareTag} keeps it off the network.
+ * Backport of 4.8's OreScannerComponent (43024f484, 2b3737946, 1076dd0cc). 4.8 keeps it in a persistent data component,
+ * which 1.21 also network-syncs (a component without its own stream codec is sent with one derived from its codec).
+ * Here it lives in the stack NBT under {@code ore_scanner}, and {@link twilightforest.item.OreMeterItem#getShareTag}
+ * deliberately keeps it off the network to save bandwidth; see there for the trade-off.
  */
 public class OreScannerComponent {
 	private final ResourceKey<Level> dimension;
@@ -39,6 +40,7 @@ public class OreScannerComponent {
 	private final Reference2IntOpenHashMap<Block> blockCounter;
 
 	private int ticksProgressed;
+	private int scannedBlocks;
 
 	public static OreScannerComponent scanFromCenter(ResourceKey<Level> dimension, BlockPos center, int range, int scanDurationTicks) {
 		int xChunkCenter = SectionPos.blockToSectionCoord(center.getX());
@@ -50,10 +52,10 @@ public class OreScannerComponent {
 		int originZ = SectionPos.sectionToBlockCoord(zChunkCenter - range);
 		int span = SectionPos.sectionToBlockCoord(range * 2 + 1);
 
-		return new OreScannerComponent(dimension, originX, originZ, span, span, range, scanDurationTicks, new Reference2IntOpenHashMap<>(), 0);
+		return new OreScannerComponent(dimension, originX, originZ, span, span, range, scanDurationTicks, new Reference2IntOpenHashMap<>(), 0, 0);
 	}
 
-	private OreScannerComponent(ResourceKey<Level> dimension, int originX, int originZ, int xSpan, int zSpan, int range, int scanDurationTicks, Reference2IntOpenHashMap<Block> blockCounter, int ticksProgressed) {
+	private OreScannerComponent(ResourceKey<Level> dimension, int originX, int originZ, int xSpan, int zSpan, int range, int scanDurationTicks, Reference2IntOpenHashMap<Block> blockCounter, int ticksProgressed, int scannedBlocks) {
 		this.dimension = dimension;
 		this.originX = originX;
 		this.originZ = originZ;
@@ -68,6 +70,7 @@ public class OreScannerComponent {
 		this.scanDurationTicks = scanDurationTicks;
 		this.blockCounter = blockCounter;
 		this.ticksProgressed = ticksProgressed;
+		this.scannedBlocks = scannedBlocks;
 	}
 
 	/**
@@ -97,6 +100,7 @@ public class OreScannerComponent {
 			}
 
 			this.blockCounter.addTo(chunk.getBlockState(pos.set(x, y, z)).getBlock(), 1);
+			this.scannedBlocks++;
 		}
 
 		this.ticksProgressed++;
@@ -124,6 +128,13 @@ public class OreScannerComponent {
 	public int getVolume(LevelHeightAccessor level) {
 		// 4.8 multiplies by getMaxBuildHeight() while starting at getMinBuildHeight(), which skips the top of worlds with a negative floor
 		return this.area * level.getHeight();
+	}
+
+	/**
+	 * @return how many blocks were actually read. Less than {@link #getVolume} when chunks were unloaded during the scan.
+	 */
+	public int getScannedBlocks() {
+		return this.scannedBlocks;
 	}
 
 	public int getTickProgress() {
@@ -162,6 +173,7 @@ public class OreScannerComponent {
 		tag.putInt("range", this.range);
 		tag.putInt("duration", this.scanDurationTicks);
 		tag.putInt("progression", this.ticksProgressed);
+		tag.putInt("scanned", this.scannedBlocks);
 
 		CompoundTag counts = new CompoundTag();
 		for (Reference2IntMap.Entry<Block> entry : this.blockCounter.reference2IntEntrySet()) {
@@ -194,6 +206,6 @@ public class OreScannerComponent {
 		}
 
 		return new OreScannerComponent(ResourceKey.create(Registries.DIMENSION, dimension), origin[0], origin[2], xSpan, zSpan,
-				tag.getInt("range"), duration, blockCounter, Math.max(tag.getInt("progression"), 0));
+				tag.getInt("range"), duration, blockCounter, Math.max(tag.getInt("progression"), 0), Math.max(tag.getInt("scanned"), 0));
 	}
 }

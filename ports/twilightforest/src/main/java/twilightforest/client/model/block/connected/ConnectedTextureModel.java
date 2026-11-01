@@ -1,4 +1,4 @@
-package twilightforest.client.model.block.doors;
+package twilightforest.client.model.block.connected;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -19,28 +20,37 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.init.TFBlocks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class CastleDoorModel implements IDynamicBakedModel {
+public class ConnectedTextureModel implements IDynamicBakedModel {
+
+	private final EnumSet<Direction> enabledFaces;
+	private final boolean renderOnDisabledFaces;
 	@Nullable
 	private final List<BakedQuad>[] baseQuads;
 	private final BakedQuad[][][] quads;
 	private final TextureAtlasSprite particle;
 	private final ItemOverrides overrides;
 	private final ItemTransforms transforms;
+	@Nullable
 	private final ChunkRenderTypeSet blockRenderTypes;
+	@Nullable
 	private final List<RenderType> itemRenderTypes;
+	@Nullable
 	private final List<RenderType> fabulousItemRenderTypes;
-	//if we ever expand this model to be more flexible, I think we'll need a list of blocks that can connect together defined in the json instead of hardcoding this (tags may be nice for this)
-	private final Block[] validConnectors = {TFBlocks.PINK_CASTLE_DOOR.get(), TFBlocks.YELLOW_CASTLE_DOOR.get(), TFBlocks.BLUE_CASTLE_DOOR.get(), TFBlocks.VIOLET_CASTLE_DOOR.get()};
-	private static final ModelProperty<CastleDoorData> DATA = new ModelProperty<>();
+	private final List<Block> validConnectors;
+	private final List<TagKey<Block>> validConnectorTags;
+	private static final ModelProperty<ConnectedTextureData> DATA = new ModelProperty<>();
 
-	public CastleDoorModel(@Nullable List<BakedQuad>[] baseQuads, BakedQuad[][][] quads, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms, RenderTypeGroup group) {
+	public ConnectedTextureModel(EnumSet<Direction> enabledFaces, boolean renderOnDisabledFaces, List<Block> connectableBlocks, List<TagKey<Block>> connectableTags, @Nullable List<BakedQuad>[] baseQuads, BakedQuad[][][] quads, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms, RenderTypeGroup group) {
+		this.enabledFaces = enabledFaces;
+		this.renderOnDisabledFaces = renderOnDisabledFaces;
+		this.validConnectors = connectableBlocks;
+		this.validConnectorTags = connectableTags;
 		this.baseQuads = baseQuads;
 		this.quads = quads;
 		this.particle = particle;
@@ -56,17 +66,19 @@ public class CastleDoorModel implements IDynamicBakedModel {
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource random, @NotNull ModelData extraData, @Nullable RenderType type) {
 		if (side != null) {
 			int faceIndex = side.get3DDataValue();
-			CastleDoorData data = extraData.get(DATA);
+			ConnectedTextureData data = extraData.get(DATA);
 			ArrayList<BakedQuad> quads = new ArrayList<>(4 + (this.baseQuads != null ? 4 : 0));
 			if (this.baseQuads != null) {
 				quads.addAll(this.baseQuads[faceIndex]);
 			}
 
-			for (int quad = 0; quad < 4; ++quad) {
-				//if our model data is null (I really hope it isn't) we can skip connected textures since we dont have the info we need
-				//i'd rather do this than crash the game or skip rendering the block entirely
-				ConnectionLogic connectionType = data != null ? data.logic[faceIndex][quad] : ConnectionLogic.NONE;
-				quads.add(this.quads[faceIndex][quad][connectionType.ordinal()]);
+			if (this.enabledFaces.contains(side) || this.renderOnDisabledFaces) {
+				for (int quad = 0; quad < 4; ++quad) {
+					//if our model data is null (I really hope it isn't) we can skip connected textures since we dont have the info we need
+					//i'd rather do this than crash the game or skip rendering the block entirely
+					ConnectionLogic connectionType = data != null && this.enabledFaces.contains(side) ? data.logic[faceIndex][quad] : ConnectionLogic.NONE;
+					quads.add(this.quads[faceIndex][quad][connectionType.ordinal()]);
+				}
 			}
 
 			return quads;
@@ -78,7 +90,7 @@ public class CastleDoorModel implements IDynamicBakedModel {
 	@NotNull
 	@Override
 	public ModelData getModelData(@NotNull BlockAndTintGetter getter, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData) {
-		CastleDoorData data = new CastleDoorData();
+		ConnectedTextureData data = new ConnectedTextureData();
 
 		for (Direction face : Direction.values()) {
 			Direction[] directions = ConnectionLogic.AXIS_PLANE_DIRECTIONS[face.getAxis().ordinal()];
@@ -103,14 +115,18 @@ public class CastleDoorModel implements IDynamicBakedModel {
 		return modelData.derive().with(DATA, data).build();
 	}
 
+	private boolean canConnectTo(BlockState neighborState) {
+		return this.validConnectors.contains(neighborState.getBlock()) || this.validConnectorTags.stream().anyMatch(neighborState::is);
+	}
+
 	private boolean shouldConnectSide(BlockAndTintGetter getter, BlockPos pos, Direction face, Direction side) {
 		BlockState neighborState = getter.getBlockState(pos.relative(side));
-		return Arrays.stream(this.validConnectors).anyMatch(neighborState::is) && Block.shouldRenderFace(neighborState, getter, pos, face, pos.relative(face));
+		return this.canConnectTo(neighborState) && Block.shouldRenderFace(neighborState, getter, pos, face, pos.relative(face));
 	}
 
 	private boolean isCornerBlockPresent(BlockAndTintGetter getter, BlockPos pos, Direction face, Direction side1, Direction side2) {
 		BlockState neighborState = getter.getBlockState(pos.relative(side1).relative(side2));
-		return Arrays.stream(this.validConnectors).anyMatch(neighborState::is) && Block.shouldRenderFace(neighborState, getter, pos, face, pos.relative(face));
+		return this.canConnectTo(neighborState) && Block.shouldRenderFace(neighborState, getter, pos, face, pos.relative(face));
 	}
 
 	@Override
@@ -172,9 +188,10 @@ public class CastleDoorModel implements IDynamicBakedModel {
 	}
 
 	//we need a class to make model data. Fine, here you go
-	private static final class CastleDoorData {
+	private static final class ConnectedTextureData {
 		private final ConnectionLogic[][] logic = new ConnectionLogic[6][4];
 
-		private CastleDoorData() {}
+		private ConnectedTextureData() {
+		}
 	}
 }

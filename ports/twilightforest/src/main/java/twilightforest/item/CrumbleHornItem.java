@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +40,7 @@ public class CrumbleHornItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		player.startUsingItem(hand);
 		player.playSound(TFSounds.QUEST_RAM_AMBIENT.get(), 1.0F, 0.8F);
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
+		return InteractionResultHolder.consume(player.getItemInHand(hand));
 	}
 
 	@Override
@@ -54,7 +53,7 @@ public class CrumbleHornItem extends Item {
 
 	@Override
 	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.BOW;
+		return UseAnim.TOOT_HORN;
 	}
 
 	@Override

@@ -83,6 +83,7 @@ public class TFLootTables {
 	public static final ResourceLocation DEATH_TOME_HURT = register("entities/death_tome_hurt");
 	public static final ResourceLocation DEATH_TOME_BOOKS = register("entities/death_tome_books");
 	public static final ResourceLocation KNIGHT_PHANTOM_DEFEATED = register("entities/knight_phantom_defeated");
+	public static final ResourceLocation LIFEDRAIN_SCEPTER_KILL_BONUS = register("items/lifedrain_scepter_kill_bonus");
 
 	public static final ResourceLocation CICADA_SQUISH_DROPS = register("blocks/cicada_squish");
 	public static final ResourceLocation FIREFLY_SQUISH_DROPS = register("blocks/firefly_squish");

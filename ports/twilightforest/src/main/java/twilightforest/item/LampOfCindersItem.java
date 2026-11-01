@@ -4,7 +4,6 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -97,12 +96,8 @@ public class LampOfCindersItem extends Item {
 	}
 
 	private void doBurnEffect(Level level, LivingEntity living) {
-		BlockPos pos = new BlockPos(
-				Mth.floor(living.xOld),
-				Mth.floor(living.yOld + living.getEyeHeight()),
-				Mth.floor(living.zOld)
-		);
-
+		// centre the blast two blocks in front of the user's eyes instead of on the user
+		BlockPos pos = BlockPos.containing(living.getEyePosition().add(living.getLookAngle().scale(2.0D)));
 		int range = 4;
 
 		if (!level.isClientSide()) {
@@ -130,7 +125,7 @@ public class LampOfCindersItem extends Item {
 			}
 
 			//burn mobs!
-			for (LivingEntity targets : level.getEntitiesOfClass(LivingEntity.class, new AABB(living.blockPosition()).inflate(4.0D))) {
+			for (LivingEntity targets : level.getEntitiesOfClass(LivingEntity.class, new AABB(pos.below(2)).inflate(4.0D))) {
 				if (!(targets instanceof Player)) {
 					targets.setSecondsOnFire(5);
 				}

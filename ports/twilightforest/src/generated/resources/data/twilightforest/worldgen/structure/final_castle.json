@@ -8,7 +8,7 @@
   "allow_biome_underground_decorations": true,
   "ambient_spawns": [],
   "biomes": "#twilightforest:valid_final_castle_biomes",
-  "chunk_clearance_radius": 4,
+  "chunk_clearance_radius": 4.0,
   "hint_item": {
     "Count": 1,
     "id": "minecraft:written_book",

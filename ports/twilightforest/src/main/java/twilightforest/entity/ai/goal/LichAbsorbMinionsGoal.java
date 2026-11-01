@@ -51,9 +51,10 @@ public class LichAbsorbMinionsGoal extends Goal {
 
 		if (!minions.isEmpty()) {
 			LichMinion minion = minions.get(0);
-			minion.discard();
 			//rain particles
 			LifedrainScepterItem.animateTargetShatter((ServerLevel) this.lich.level(), minion);
+			// discard only after the shatter: TRACKING_ENTITY sends nothing once the entity has left the ChunkMap
+			minion.discard();
 			// play death sound
 			SoundEvent deathSound = EntityUtil.getDeathSound(minion);
 			if (deathSound != null) {

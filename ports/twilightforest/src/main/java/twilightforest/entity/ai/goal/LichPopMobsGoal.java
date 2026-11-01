@@ -57,9 +57,10 @@ public class LichPopMobsGoal extends Goal {
 		if (this.lich.getScepterTimeLeft() > 0 || this.lich.level().isClientSide()) return;
 		for (Mob mob : this.lich.level().getEntitiesOfClass(Mob.class, this.lich.getBoundingBox().inflate(32.0D, 16.0D, 32.0D), e -> e.getType().is(EntityTagGenerator.LICH_POPPABLES) && e != this.lich)) {
 			if (this.lich.getSensing().hasLineOfSight(mob)) {
-				mob.discard();
 				//rain particles
 				LifedrainScepterItem.animateTargetShatter((ServerLevel) this.lich.level(), mob);
+				// discard only after the shatter: TRACKING_ENTITY sends nothing once the entity has left the ChunkMap
+				mob.discard();
 				// play death sound
 				SoundEvent deathSound = EntityUtil.getDeathSound(mob);
 				if (deathSound != null) {

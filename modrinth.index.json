@@ -216,6 +216,21 @@
       "fileSize": 2803994
     },
     {
+      "path": "mods/apothic_category_compat-2.1.0.jar",
+      "hashes": {
+        "sha1": "9b015ff2c1722a15ead2748723e36d9ef3c81a24",
+        "sha512": "8e9e43c8c0126aa2907c3436aab163a938b6787085e776855e6060a6bb0a7a78a17865bf910c50e7e08cb5489e5c5b2c8d205dd81521bc5a68b37fd00ff50a50"
+      },
+      "env": {
+        "client": "unsupported",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/Uonyc6M4/versions/35w4Gcta/apothic_category_compat-2.1.0.jar"
+      ],
+      "fileSize": 56883
+    },
+    {
       "path": "mods/ApothicAttributes-1.20.1-1.3.7.jar",
       "hashes": {
         "sha1": "1dc0744d17f0861fe6b067798d39abce9d8e0e86",

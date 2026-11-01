@@ -287,6 +287,8 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.TWILIGHT_PORTAL_MINIATURE_STRUCTURE.get());
 				output.accept(TFBlocks.NAGA_COURTYARD_MINIATURE_STRUCTURE.get());
 				output.accept(TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE.get());
+				output.accept(TFBlocks.MINOTAUR_LABYRINTH_MINIATURE_STRUCTURE.get());
+				output.accept(TFBlocks.DARK_TOWER_MINIATURE_STRUCTURE.get());
 				output.accept(TFBlocks.ETCHED_NAGASTONE.get());
 				output.accept(TFBlocks.CRACKED_ETCHED_NAGASTONE.get());
 				output.accept(TFBlocks.MOSSY_ETCHED_NAGASTONE.get());

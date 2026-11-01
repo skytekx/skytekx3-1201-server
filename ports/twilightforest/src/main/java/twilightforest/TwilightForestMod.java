@@ -113,6 +113,7 @@ public class TwilightForestMod {
 		TFEntities.ENTITIES.register(modbus);
 		BiomeLayerTypes.BIOME_LAYER_TYPES.register(modbus);
 		BiomeLayerStack.BIOME_LAYER_STACKS.register(modbus);
+		TFDataSerializers.DATA_SERIALIZERS.register(modbus);
 		TFFeatures.FEATURES.register(modbus);
 		TFFeatureModifiers.FOLIAGE_PLACERS.register(modbus);
 		TFLoot.FUNCTIONS.register(modbus);

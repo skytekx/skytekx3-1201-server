@@ -30,6 +30,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * This class holds the state data for a single hydra head
@@ -134,6 +135,7 @@ public class HydraHeadContainer {
 
 	private int damageTaken;
 	private int respawnCounter;
+	private int deathTime;
 
 	private final Hydra hydra;
 
@@ -324,6 +326,12 @@ public class HydraHeadContainer {
 		return new HydraNeck[]{this.necka, this.neckb, this.neckc, this.neckd, this.necke};
 	}
 
+	public void performOnAllNecks(Consumer<HydraNeck> consumer) {
+		for (HydraNeck neck : this.getNeckArray()) {
+			consumer.accept(neck);
+		}
+	}
+
 	/**
 	 * Called once per tick as part of the hydra entity update loop.
 	 */
@@ -331,32 +339,20 @@ public class HydraHeadContainer {
 
 		this.headEntity.tick();
 		// neck updates
-		this.necka.tick();
-		this.neckb.tick();
-		this.neckc.tick();
-		this.neckd.tick();
-		this.necke.tick();
+		this.performOnAllNecks(HydraPart::tick);
 
 		// adjust for difficulty
-		setDifficultyVariables();
+		this.setDifficultyVariables();
 
 		// only actually do these things on the server
 		if (!this.hydra.level().isClientSide()) {
 			// make sure this is set up
-			if (this.isActive() && this.headEntity.dimensions.width == 0) {
+			if (!this.isDead() && this.headEntity.dimensions.width == 0) {
 				this.headEntity.activate();
-				this.necka.activate();
-				this.neckb.activate();
-				this.neckc.activate();
-				this.neckd.activate();
-				this.necke.activate();
+				this.performOnAllNecks(HydraPart::activate);
 			} else if (!this.isActive() && this.headEntity.dimensions.width > 0) {
 				this.headEntity.deactivate();
-				this.necka.deactivate();
-				this.neckb.deactivate();
-				this.neckc.deactivate();
-				this.neckd.deactivate();
-				this.necke.deactivate();
+				this.performOnAllNecks(HydraPart::deactivate);
 			}
 			this.advanceRespawnCounter();
 			this.advanceHeadState();
@@ -365,10 +361,9 @@ public class HydraHeadContainer {
 			this.executeAttacks();
 			this.playSounds();
 		} else {
-			this.clientAnimateHeadDeath();
 			this.addMouthParticles();
 		}
-
+		this.animateHeadDeath();
 		this.setNeckPosition();
 	}
 
@@ -387,48 +382,35 @@ public class HydraHeadContainer {
 		}
 	}
 
-	private void clientAnimateHeadDeath() {
+	private void animateHeadDeath() {
 		// this will start the animation
+		// we need to use the head state as that one is actually synced to the client
 		if (this.headEntity.getState() == State.DYING) {
-			// several things, like head visibility animate off this
-			this.headEntity.deathTime++;
+			this.deathTime++;
 
-			// make explosion particles and stuff
-			if (this.headEntity.deathTime > 0) {
-				if (this.headEntity.deathTime < 20) {
-					this.doExplosionOn(this.headEntity, true);
-				} else if (this.headEntity.deathTime < 30) {
-					this.doExplosionOn(this.necka, false);
-				} else if (this.headEntity.deathTime < 40) {
-					this.doExplosionOn(this.neckb, false);
-				} else if (this.headEntity.deathTime < 50) {
-					this.doExplosionOn(this.neckc, false);
-				} else if (this.headEntity.deathTime < 60) {
-					this.doExplosionOn(this.neckd, false);
-				} else if (this.headEntity.deathTime < 70) {
-					this.doExplosionOn(this.necke, false);
-				}
+			// mark parts as dead so they explode and die off
+			if (this.deathTime == 1) {
+				this.headEntity.markedDead = true;
+				//clear name. The head died, so the name shouldn't persist
+				this.hydra.setHeadNameFor(this.headNum, "");
+				this.headEntity.setCustomName(null);
+			} else if (this.deathTime == 10) {
+				this.necka.markedDead = true;
+			} else if (this.deathTime == 20) {
+				this.neckb.markedDead = true;
+			} else if (this.deathTime == 30) {
+				this.neckc.markedDead = true;
+			} else if (this.deathTime == 40) {
+				this.neckd.markedDead = true;
+			} else if (this.deathTime == 50) {
+				this.necke.markedDead = true;
 			}
 
 			// turn necks red
-			this.necka.hurtTime = 20;
-			this.neckb.hurtTime = 20;
-			this.neckc.hurtTime = 20;
-			this.neckd.hurtTime = 20;
-			this.necke.hurtTime = 20;
-
+			this.headEntity.hurtTime = 20;
+			this.performOnAllNecks(neck -> neck.hurtTime = 20);
 		} else {
-			this.headEntity.deathTime = 0;
-			this.headEntity.health = this.headEntity.maxHealth;
-		}
-	}
-
-	private void doExplosionOn(HydraPart part, boolean large) {
-		for (int i = 0; i < 5; ++i) {
-			double vx = part.level().getRandom().nextGaussian() * 0.02D;
-			double vy = part.level().getRandom().nextGaussian() * 0.02D;
-			double vz = part.level().getRandom().nextGaussian() * 0.02D;
-			part.level().addParticle((part.level().getRandom().nextInt(5) == 0 || large ? ParticleTypes.EXPLOSION : ParticleTypes.POOF), part.getX() + part.level().getRandom().nextFloat() * 2.0F, part.getY() + part.level().getRandom().nextFloat() * 2.0F, part.getZ() + part.level().getRandom().nextFloat() * 2.0F, vx, vy, vz);
+			this.deathTime = 0;
 		}
 	}
 
@@ -510,7 +492,7 @@ public class HydraHeadContainer {
 			this.faceVec(this.targetX, this.targetY, this.targetZ, 5.0F, this.hydra.getMaxHeadXRot());
 
 		} else {
-			if (this.isActive()) {
+			if (!this.isDead()) {
 				if (this.targetEntity != null) {
 					// watch the target entity
 					this.faceEntity(this.targetEntity, 5.0F, this.hydra.getMaxHeadXRot());
@@ -653,7 +635,7 @@ public class HydraHeadContainer {
 		float xSwing = Mth.sin(this.hydra.tickCount / periodX) * 3.0F;
 		float ySwing = Mth.sin(this.hydra.tickCount / periodY) * 5.0F;
 
-		if (!this.isActive()) {
+		if (this.isDead()) {
 			xSwing = ySwing = 0;
 		}
 
@@ -943,25 +925,21 @@ public class HydraHeadContainer {
 		if (this.headEntity != null) {
 			this.headEntity.hurtTime = hurtTime;
 		}
-		this.necka.hurtTime = hurtTime;
-		this.neckb.hurtTime = hurtTime;
-		this.neckc.hurtTime = hurtTime;
-		this.neckd.hurtTime = hurtTime;
-		this.necke.hurtTime = hurtTime;
+		this.performOnAllNecks(neck -> neck.hurtTime = hurtTime);
 	}
 
 	/**
-	 * At certain times, some of the heads are "dead" and hidden
-	 */
-	public boolean shouldRenderHead() {
-		return this.headEntity.getState() != State.DEAD && this.headEntity.deathTime < 20;
-	}
-
-	/**
-	 * Is this head active, that is, not dying or dead?
+	 * Is this head active, that is, not dead? A dying head still counts as active while it plays its death animation.
 	 */
 	public boolean isActive() {
-		return this.currentState != State.DYING && this.currentState != State.DEAD;
+		return this.currentState != State.DEAD;
+	}
+
+	/**
+	 * Is this head dying or dead?
+	 */
+	public boolean isDead() {
+		return this.currentState == State.DYING || this.currentState == State.DEAD;
 	}
 
 	public boolean isIdle() {

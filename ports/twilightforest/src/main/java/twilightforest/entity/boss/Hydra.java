@@ -3,7 +3,13 @@ package twilightforest.entity.boss;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
@@ -29,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import twilightforest.entity.TFPart;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFDamageTypes;
+import twilightforest.init.TFDataSerializers;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStructures;
 import twilightforest.util.EntityUtil;
@@ -42,7 +49,7 @@ import java.util.List;
 public class Hydra extends BaseTFBoss {
 
 	private static final int TICKS_BEFORE_HEALING = 1000;
-	private static final int HEAD_RESPAWN_TICKS = 100;
+	private static final int HEAD_RESPAWN_TICKS = 140;
 	private static final int HEAD_MAX_DAMAGE = 120;
 	private static final float ARMOR_MULTIPLIER = 8.0F;
 	private static final int MAX_HEALTH = 360;
@@ -50,6 +57,8 @@ public class Hydra extends BaseTFBoss {
 
 	private static final int SECONDARY_FLAME_CHANCE = 10;
 	private static final int SECONDARY_MORTAR_CHANCE = 16;
+
+	private static final EntityDataAccessor<List<String>> HEAD_NAMES = SynchedEntityData.defineId(Hydra.class, TFDataSerializers.STRING_LIST_SERIALIZER);
 
 	private final HydraPart[] partArray;
 
@@ -83,6 +92,7 @@ public class Hydra extends BaseTFBoss {
 
 		for (int i = 0; i < this.numHeads; i++) {
 			this.hc[i] = new HydraHeadContainer(this, i, i < 3);
+			this.applyHeadName(i, this.getHeadNameFor(i));
 			parts.add(this.hc[i].headEntity);
 			Collections.addAll(parts, this.hc[i].getNeckArray());
 		}
@@ -92,6 +102,12 @@ public class Hydra extends BaseTFBoss {
 		this.noCulling = true;
 		this.xpReward = 511;
 
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.getEntityData().define(HEAD_NAMES, List.of("", "", "", "", "", "", ""));
 	}
 
 	public static AttributeSupplier.Builder registerAttributes() {
@@ -220,7 +236,7 @@ public class Hydra extends BaseTFBoss {
 			this.destroyBlocksInAABB(this.tail.getBoundingBox());
 
 			for (int i = 0; i < this.numHeads; i++) {
-				if (this.hc[i].headEntity != null && this.hc[i].isActive()) {
+				if (this.hc[i].headEntity != null && !this.hc[i].isDead()) {
 					this.destroyBlocksInAABB(this.hc[i].headEntity.getBoundingBox());
 				}
 			}
@@ -238,13 +254,69 @@ public class Hydra extends BaseTFBoss {
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
+		// 4.3 saves how many heads were alive; 4.8 reuses NumHeads for a bitmask of which heads are alive (989530790). NumHeads keeps
+		// the 4.3 count so the save stays readable both ways, and the bitmask goes into its own key.
 		compound.putByte("NumHeads", (byte) this.countActiveHeads());
+		byte headData = 0;
+		for (int i = 0; i < this.numHeads; i++) {
+			if (this.hc[i].isActive()) {
+				headData |= (byte) (1 << i);
+			}
+		}
+		compound.putByte("HeadMask", headData);
+		ListTag headNames = new ListTag();
+		for (int i = 0; i < this.numHeads; i++) {
+			headNames.add(StringTag.valueOf(this.getHeadNameFor(i)));
+		}
+		compound.put("HeadNames", headNames);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.activateNumberOfHeads(compound.getByte("NumHeads"));
+		if (compound.contains("HeadMask", Tag.TAG_BYTE)) {
+			this.activateHeadsOnLoad(compound.getByte("HeadMask"));
+		} else {
+			// saved by 4.3: we only know how many heads were alive, so pick the extra ones at random like 4.3 did
+			this.activateNumberOfHeads(compound.getByte("NumHeads"));
+		}
+		if (compound.contains("HeadNames", Tag.TAG_LIST)) {
+			List<String> names = new ArrayList<>(this.getEntityData().get(HEAD_NAMES));
+			ListTag list = compound.getList("HeadNames", Tag.TAG_STRING);
+			for (int i = 0; i < Math.min(list.size(), this.numHeads); i++) {
+				String name = list.getString(i);
+				names.set(i, name);
+				this.applyHeadName(i, name);
+			}
+			this.getEntityData().set(HEAD_NAMES, names);
+		}
+	}
+
+	/**
+	 * Activates heads based on a byte saved to nbt.
+	 * This allows all the same heads to activate on world reload as heads are randomly chosen when one is killed
+	 */
+	private void activateHeadsOnLoad(byte heads) {
+		for (int i = 0; i < this.numHeads; i++) {
+			if ((heads & 1 << i) != 0) {
+				this.hc[i].setNextState(HydraHeadContainer.State.IDLE);
+				this.hc[i].endCurrentAction();
+			}
+		}
+	}
+
+	@Override
+	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+		super.onSyncedDataUpdated(key);
+		// 4.8 only gets head names to clients through the heads' own data, which a player who starts tracking the Hydra later never
+		// receives. Apply the synced list on the client as well.
+		if (HEAD_NAMES.equals(key) && this.level().isClientSide()) {
+			for (int i = 0; i < this.numHeads; i++) {
+				if (this.hc[i] != null) {
+					this.applyHeadName(i, this.getHeadNameFor(i));
+				}
+			}
+		}
 	}
 
 	// TODO modernize this more (old AI copypasta still kind of here)
@@ -259,7 +331,7 @@ public class Hydra extends BaseTFBoss {
 
 		// kill heads that have taken too much damage
 		for (int i = 0; i < this.numHeads; i++) {
-			if (this.hc[i].isActive() && this.hc[i].getDamageTaken() > HEAD_MAX_DAMAGE) {
+			if (!this.hc[i].isDead() && this.hc[i].getDamageTaken() > HEAD_MAX_DAMAGE) {
 				this.hc[i].setNextState(HydraHeadContainer.State.DYING);
 				this.hc[i].endCurrentAction();
 
@@ -344,7 +416,7 @@ public class Hydra extends BaseTFBoss {
 	}
 
 	/**
-	 * Used when re-loading from save.  Assumes three heads are active and activates more if necessary.
+	 * Used when re-loading a 4.3 save, which only stored a head count. Assumes three heads are active and activates more if necessary.
 	 */
 	private void activateNumberOfHeads(int howMany) {
 		int moreHeads = howMany - this.countActiveHeads();
@@ -416,7 +488,7 @@ public class Hydra extends BaseTFBoss {
 		int count = 0;
 
 		for (int i = 0; i < this.numHeads; i++) {
-			if (this.hc[i].isActive()) {
+			if (!this.hc[i].isDead()) {
 				count++;
 			}
 		}
@@ -451,7 +523,7 @@ public class Hydra extends BaseTFBoss {
 			float distance = secondaryTarget.distanceTo(this);
 
 			for (int i = 1; i < this.numHeads; i++) {
-				if (this.hc[i].isActive() && this.hc[i].isIdle() && isTargetOnThisSide(i, secondaryTarget)) {
+				if (!this.hc[i].isDead() && this.hc[i].isIdle() && isTargetOnThisSide(i, secondaryTarget)) {
 					if (distance > 0 && distance < 20 && this.getRandom().nextInt(SECONDARY_FLAME_CHANCE) == 0) {
 						this.hc[i].setTargetEntity(secondaryTarget);
 						this.hc[i].isSecondaryAttacking = true;
@@ -579,7 +651,7 @@ public class Hydra extends BaseTFBoss {
 		for (int i = 0; i < this.numHeads; i++) {
 			if (this.hc[i].headEntity == part) {
 				headCon = this.hc[i];
-			} else if (part instanceof HydraNeck neck && this.hc[i].headEntity == neck.head && !this.hc[i].isActive())
+			} else if (part instanceof HydraNeck neck && this.hc[i].headEntity == neck.head && this.hc[i].isDead())
 				return false;
 		}
 
@@ -591,7 +663,7 @@ public class Hydra extends BaseTFBoss {
 		}
 
 		// ignore hits on dying heads, it's weird
-		if (headCon != null && !headCon.isActive()) {
+		if (headCon != null && headCon.isDead()) {
 			return false;
 		}
 
@@ -706,7 +778,7 @@ public class Hydra extends BaseTFBoss {
 		if (this.deathTime == 1) {
 			for (int i = 0; i < this.numHeads; i++) {
 				this.hc[i].setRespawnCounter(-1);
-				if (this.hc[i].isActive()) {
+				if (!this.hc[i].isDead()) {
 					this.hc[i].setNextState(HydraHeadContainer.State.IDLE);
 					this.hc[i].endCurrentAction();
 					this.hc[i].setHurtTime(200);
@@ -718,7 +790,7 @@ public class Hydra extends BaseTFBoss {
 		if (this.deathTime <= 140 && this.deathTime % 20 == 0) {
 			int headToDie = (this.deathTime / 20) - 1;
 
-			if (this.hc[headToDie].isActive()) {
+			if (!this.hc[headToDie].isDead()) {
 				this.hc[headToDie].setNextState(HydraHeadContainer.State.DYING);
 				this.hc[headToDie].endCurrentAction();
 			}
@@ -745,6 +817,22 @@ public class Hydra extends BaseTFBoss {
 					vx, vy, vz
 			);
 		}
+	}
+
+	public String getHeadNameFor(int index) {
+		return this.getEntityData().get(HEAD_NAMES).get(index);
+	}
+
+	public void setHeadNameFor(int index, String name) {
+		//we're working with an ImmutableList here so we need to copy and modify it
+		List<String> nameCopy = new ArrayList<>(this.getEntityData().get(HEAD_NAMES));
+		nameCopy.set(index, name);
+		this.getEntityData().set(HEAD_NAMES, nameCopy);
+	}
+
+	// 4.8 gives unnamed heads an empty literal name; leaving them unnamed keeps the part's default name (Hydra) for HUD mods
+	private void applyHeadName(int index, String name) {
+		this.hc[index].headEntity.setCustomName(name.isEmpty() ? null : Component.literal(name));
 	}
 
 	@Override

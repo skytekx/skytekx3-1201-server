@@ -1,5 +1,6 @@
 package twilightforest.entity.boss;
 
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,13 +18,13 @@ public abstract class HydraPart extends TFPart<Hydra> {
 
 	private static final EntityDataAccessor<Boolean> DATA_SIZEACTIVE = SynchedEntityData.defineId(HydraPart.class, EntityDataSerializers.BOOLEAN);
 
-	final float maxHealth = 1000F;
-	float health = this.maxHealth;
-
+	boolean markedDead;
 	private EntityDimensions cacheSize;
 
-	public HydraPart(Hydra hydra) {
-		super(hydra);
+	public HydraPart(Hydra parent, float width, float height) {
+		super(parent);
+		this.setSize(EntityDimensions.scalable(width, height));
+		this.refreshDimensions();
 	}
 
 	@Override
@@ -35,10 +36,16 @@ public abstract class HydraPart extends TFPart<Hydra> {
 	public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
 		super.onSyncedDataUpdated(accessor);
 		if (accessor == DATA_SIZEACTIVE) {
-			if (this.getEntityData().get(DATA_SIZEACTIVE))
+			// 4.8 calls setSize(getDimensions(STANDING)) here, which puts the full size back on a part that was just deactivated;
+			// re-applying the activation keeps a hidden part's hitbox at zero (as the #1935 fix intends)
+			if (this.isActive()) {
 				this.activate();
-			else
+				//reset death markers so things render again
+				this.markedDead = false;
+				this.deathTime = 0;
+			} else {
 				this.deactivate();
+			}
 		}
 	}
 
@@ -49,12 +56,6 @@ public abstract class HydraPart extends TFPart<Hydra> {
 		return this.level().clip(new ClipContext(vector3d, vector3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS;
 	}
 
-	public HydraPart(Hydra parent, float width, float height) {
-		this(parent);
-		this.setSize(EntityDimensions.scalable(width, height));
-		this.refreshDimensions();
-	}
-
 	@Override
 	protected void setSize(EntityDimensions size) {
 		super.setSize(size);
@@ -63,15 +64,30 @@ public abstract class HydraPart extends TFPart<Hydra> {
 
 	@Override
 	public void tick() {
-		clearFire();
+		this.clearFire();
 		super.tick();
 
 		if (this.hurtTime > 0)
 			this.hurtTime--;
 
-		if (this.health <= 0F)
+		if (this.markedDead)
 			this.deathTime++;
 
+		if (this.markedDead && this.isActive() && this.level().isClientSide()) {
+			float width = this.getBbWidth();
+			float height = this.getBbHeight();
+			for (int k = 0; k < 10; k++) {
+				this.level().addParticle(this.random.nextInt(5) == 0 ? ParticleTypes.EXPLOSION : ParticleTypes.POOF,
+						(this.getX() + this.random.nextFloat() * width),
+						this.getY() + this.random.nextFloat() * height,
+						(this.getZ() + this.random.nextFloat() * width),
+						this.random.nextGaussian() * 0.02D, this.random.nextGaussian() * 0.02D, this.random.nextGaussian() * 0.02D);
+			}
+		}
+
+		if (this.deathTime == 20) {
+			this.deactivate();
+		}
 	}
 
 	@Override
@@ -112,6 +128,10 @@ public abstract class HydraPart extends TFPart<Hydra> {
 	@Override
 	public boolean canChangeDimensions() {
 		return false;
+	}
+
+	public boolean isActive() {
+		return this.getEntityData().get(DATA_SIZEACTIVE);
 	}
 
 	public void activate() {

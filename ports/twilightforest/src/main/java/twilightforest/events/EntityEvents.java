@@ -6,6 +6,7 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,12 +18,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -41,7 +45,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -70,6 +76,8 @@ import twilightforest.enchantment.ChillAuraEnchantment;
 import twilightforest.entity.projectile.ITFProjectile;
 import twilightforest.entity.projectile.LichBomb;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFDamageTypes;
+import twilightforest.init.TFDataMaps;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFMobEffects;
 import twilightforest.init.TFDimensionSettings;
@@ -77,6 +85,9 @@ import twilightforest.init.TFStats;
 import twilightforest.item.FieryArmorItem;
 import twilightforest.item.PotionFlaskTracking;
 import twilightforest.item.YetiArmorItem;
+import twilightforest.util.EntityUtil;
+import twilightforest.util.OminousFireDamageSource;
+import twilightforest.util.datamaps.EntityTransformation;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +99,42 @@ public class EntityEvents {
 	private static final boolean SHIELD_PARRY_MOD_LOADED = ModList.get().isLoaded("parry");
 	// 4.8 names this modifier twilightforest:group_health_boost; 1.20.1 modifiers are keyed by UUID (nameUUIDFromBytes of that id)
 	private static final UUID GROUP_HEALTH_BOOST_UUID = UUID.fromString("14263e84-cfde-3f33-aeb8-990f4c6f4a62");
+
+	// things killed by ominous fire rise again: players as a zombie that remembers them, other mobs as set by the ominous_fire data map
+	@SubscribeEvent
+	public static void ominousFireConversion(LivingDeathEvent event) {
+		if (!event.isCanceled() && event.getSource().is(TFDamageTypes.OMINOUS_FIRE)) {
+			LivingEntity living = event.getEntity();
+
+			if (living instanceof ServerPlayer player) {
+				Zombie zombie = EntityType.ZOMBIE.create(player.level());
+				if (zombie != null) {
+					EntityUtil.setZombifiedPlayer(zombie, player.getGameProfile());
+					zombie.setCustomName(player.getName());
+					zombie.copyPosition(player);
+					zombie.setCanPickUpLoot(true);
+					zombie.setBaby(false);
+					ForgeEventFactory.onFinalizeSpawn(zombie, player.serverLevel(), player.level().getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.CONVERSION, null, null);
+					player.level().addFreshEntity(zombie);
+				}
+			} else if (living.level() instanceof ServerLevel) {
+				EntityTransformation transformation = TFDataMaps.OMINOUS_FIRE.get(living.getType().builtInRegistryHolder());
+				if (transformation != null) {
+					EntityUtil.convertEntity(living, transformation.result());
+				}
+			}
+		}
+	}
+
+	// the zombified remains of a player hit with a damage source that names that player in death messages
+	@SubscribeEvent
+	public static void zombifiedPlayerAttacks(LivingAttackEvent event) {
+		if (event.getSource().getEntity() instanceof Zombie zombie && !(event.getSource() instanceof OminousFireDamageSource) && EntityUtil.getZombifiedPlayer(zombie) != null) {
+			float amount = event.getAmount();
+			event.setCanceled(true);
+			event.getEntity().hurt(new OminousFireDamageSource(event.getSource()), amount);
+		}
+	}
 
 	@SubscribeEvent
 	public static void alertPlayerCastleIsWIP(AdvancementEvent.AdvancementEarnEvent event) {

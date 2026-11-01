@@ -43,6 +43,7 @@ public class TFItems {
 	public static final RegistryObject<Item> ZOMBIE_SCEPTER = ITEMS.register("zombie_scepter", () -> new ZombieWandItem(new Item.Properties().durability(9).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> FORTIFICATION_SCEPTER = ITEMS.register("fortification_scepter", () -> new FortificationWandItem(new Item.Properties().durability(9).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> WROUGHT_IRON_BAR = ITEMS.register("wrought_iron_bar", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> EXANIMATE_ESSENCE = ITEMS.register("exanimate_essence", () -> new ExanimateEssenceItem(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
 	//items.register("Wand of Pacification [NYI]", new Item().setIconIndex(6).setTranslationKey("wandPacification").setMaxStackSize(1));
 	public static final RegistryObject<Item> MAGIC_PAINTING = ITEMS.register("magic_painting", () -> new MagicPaintingItem(new Item.Properties()));
 	public static final RegistryObject<Item> ORE_METER = ITEMS.register("ore_meter", () -> new OreMeterItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));

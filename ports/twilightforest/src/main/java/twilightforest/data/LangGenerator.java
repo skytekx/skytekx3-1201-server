@@ -202,6 +202,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.TERRORCOTTA_ARCS, "Terrorcotta Arcs");
 		this.addBlock(TFBlocks.TERRORCOTTA_CURVES, "Terrorcotta Curves");
 		this.addBlock(TFBlocks.TERRORCOTTA_LINES, "Terrorcotta Lines");
+		this.addBlock(TFBlocks.OMINOUS_FIRE, "Ominous Fire");
 
 		this.addBlock(TFBlocks.SKULL_CHEST, "Skull Chest");
 		this.add("block.twilightforest.skull_chest.locked", "This Skull Chest can only be opened by %s!");
@@ -513,6 +514,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.ZOMBIE_SCEPTER, "Zombie Scepter");
 		this.add("item.twilightforest.scepter.desc", "%s charges left");
 		this.addItem(TFItems.WROUGHT_IRON_BAR, "Wrought Iron Bar");
+		this.addItem(TFItems.EXANIMATE_ESSENCE, "Exanimate Essence");
 		this.addItem(TFItems.BRITTLE_FLASK, "Brittle Potion Flask");
 		this.addItem(TFItems.GREATER_FLASK, "Greater Potion Flask");
 		this.add("item.twilightforest.flask.empty", "Empty");
@@ -1035,6 +1037,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.JET_POP, "Fire Jet pops");
 		this.addSubtitle(TFSounds.JET_START, "Fire Jet activates");
 		this.addSubtitle(TFSounds.LOCKED_VANISHING_BLOCK, "Towerwood door clicks");
+		this.addSubtitle(TFSounds.OMINOUS_FIRE, "Flame Whooshes Ominously");
 		this.addSubtitle(TFSounds.PEDESTAL_ACTIVATE, "Trophy Pedestal accepts trophy");
 		this.addSubtitle(TFSounds.PICKED_TORCHBERRIES, "Torchberries pop");
 		this.addSubtitle(TFSounds.PORTAL_WHOOSH, "Twilight Forest Portal beckons");
@@ -1110,6 +1113,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addDeathMessage("thrownBlock.player", "%1$s was squashed by a thrown block while escaping %2$s");
 		this.addDeathMessage("expired", "%1$s's life expired");
 		this.addDeathMessage("expired.player", "%1$s's life expired");
+		this.addDeathMessage("ominousFire.zombified_player", "%1$s was killed by the zombified remains of %2$s");
+		this.addDeathMessage("ominousFire.zombified_player.self", "%1$s was killed by the zombified remains of themselves");
 
 		this.addDeathMessage("axing", "%1$s was chopped up by %2$s");
 		this.addDeathMessage("axing.item", "%1$s was chopped up by %2$s using %3$s");
@@ -1142,6 +1147,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addDeathMessage("acid_rain", "%1$s went dancing in the acid rain");
 		this.addDeathMessage("failedChallenge", "%1$s failed to show their mettle and drank themselves to death");
 		this.addDeathMessage("failedChallenge.player", "%1$s failed to show their mettle and drank themselves to death while fighting %2$s");
+		this.addDeathMessage("ominous", "%1$s was subsumed by ominous fire");
 
 		this.addStat("blocks_crumbled", "Blocks Crumbled");
 		this.addStat("bugs_squished", "Bugs Squashed");

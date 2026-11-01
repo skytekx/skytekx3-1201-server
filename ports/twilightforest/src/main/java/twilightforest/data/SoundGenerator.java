@@ -327,6 +327,7 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.JET_POP, SoundEvents.LAVA_POP);
 		this.generateExistingSoundWithSubtitle(TFSounds.JET_START, SoundEvents.COMPARATOR_CLICK);
 		this.generateExistingSoundWithSubtitle(TFSounds.LOCKED_VANISHING_BLOCK, SoundEvents.COMPARATOR_CLICK);
+		this.generateNewSoundWithSubtitle(TFSounds.OMINOUS_FIRE, "random/candelabra/ominous", 1);
 		this.generateExistingSoundWithSubtitle(TFSounds.PEDESTAL_ACTIVATE, SoundEvents.ZOMBIE_INFECT);
 		this.generateExistingSoundWithSubtitle(TFSounds.PICKED_TORCHBERRIES, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES);
 		this.generateExistingSoundWithSubtitle(TFSounds.PORTAL_WHOOSH, SoundEvents.PORTAL_AMBIENT);

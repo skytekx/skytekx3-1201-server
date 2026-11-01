@@ -196,6 +196,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> ORE_METER_CLEAR = createEvent("item.twilightforest.ore_meter.clear");
 	public static final RegistryObject<SoundEvent> ORE_METER_CRACKLE = createEvent("item.twilightforest.ore_meter.crackle");
 	public static final RegistryObject<SoundEvent> ORE_METER_TARGET_BLOCK = createEvent("item.twilightforest.ore_meter.target_block");
+	public static final RegistryObject<SoundEvent> OMINOUS_FIRE = createEvent("block.twilightforest.ominous_fire.light");
 	public static final RegistryObject<SoundEvent> PEDESTAL_ACTIVATE = createEvent("block.twilightforest.trophy_pedestal.activate");
 	public static final RegistryObject<SoundEvent> PENGUIN_AMBIENT = createEvent("entity.twilightforest.penguin.ambient");
 	public static final RegistryObject<SoundEvent> PENGUIN_DEATH = createEvent("entity.twilightforest.penguin.death");

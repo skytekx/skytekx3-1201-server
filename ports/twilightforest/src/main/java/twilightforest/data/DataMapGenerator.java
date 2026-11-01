@@ -10,12 +10,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.MapColor;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBiomes;
 import twilightforest.init.TFDataMaps;
 import twilightforest.util.datamaps.DataMapType;
+import twilightforest.util.datamaps.EntityTransformation;
 import twilightforest.util.datamaps.MagicMapBiomeColor;
 import twilightforest.util.datamaps.OreMapOreColor;
 
@@ -69,6 +71,11 @@ public class DataMapGenerator implements DataProvider {
 		oreMap.add(BlockTags.DIAMOND_ORES, new OreMapOreColor(MapColor.DIAMOND));
 		oreMap.add(BlockTags.EMERALD_ORES, new OreMapOreColor(MapColor.EMERALD));
 		oreMap.add(BuiltInRegistries.BLOCK.getKey(Blocks.ANCIENT_DEBRIS), new OreMapOreColor(MapColor.TERRACOTTA_BROWN));
+
+		var ominousFire = this.builder(TFDataMaps.OMINOUS_FIRE);
+		ominousFire.add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.VILLAGER), new EntityTransformation(EntityType.ZOMBIE_VILLAGER));
+		ominousFire.add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PIGLIN), new EntityTransformation(EntityType.ZOMBIFIED_PIGLIN));
+		ominousFire.add(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.HORSE), new EntityTransformation(EntityType.ZOMBIE_HORSE));
 	}
 
 	@Override

@@ -223,6 +223,12 @@
     ],
     "subtitle": "subtitles.twilightforest.block.jet.start"
   },
+  "block.twilightforest.ominous_fire.light": {
+    "sounds": [
+      "twilightforest:random/candelabra/ominous"
+    ],
+    "subtitle": "subtitles.twilightforest.block.ominous_fire.light"
+  },
   "block.twilightforest.portal.whoosh": {
     "sounds": [
       {

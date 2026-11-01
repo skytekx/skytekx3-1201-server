@@ -224,6 +224,21 @@
             }
           ],
           "name": "twilightforest:brittle_potion_flask"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "twilightforest:exanimate_essence"
         }
       ],
       "rolls": 2.0

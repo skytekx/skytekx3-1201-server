@@ -1,13 +1,18 @@
 package twilightforest.util;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.PaintingVariantTags;
@@ -22,6 +27,7 @@ import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -41,7 +47,9 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.TwilightForestMod;
 import twilightforest.entity.EnforcedHomePoint;
+import twilightforest.init.TFSounds;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -49,6 +57,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.DoubleUnaryOperator;
 
 public class EntityUtil {
@@ -343,5 +352,94 @@ public class EntityUtil {
 		}
 
 		return list;
+	}
+
+	/**
+	 * Turns a living entity into another entity type, carrying over as much of its data as the new type can read.
+	 * [VanillaCopy]-ish port of TF 4.8's EntityUtil.convertEntity (used by ominous fire kills).
+	 *
+	 * @return true if the entity was converted
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean convertEntity(LivingEntity oldEntity, EntityType<?> newType) {
+		if (!(oldEntity.level() instanceof ServerLevel level)) return false;
+		Entity newEntity = newType.create(level);
+		if (newEntity == null) return false;
+		if (!(newEntity instanceof LivingEntity living) || ForgeEventFactory.canLivingConvert(oldEntity, (EntityType<? extends LivingEntity>) living.getType(), timer -> {})) {
+			List<Entity> passengerSave = oldEntity.getPassengers();
+			if (oldEntity instanceof Mob mob && newEntity instanceof Mob newMob) {
+				newEntity = mob.convertTo((EntityType<? extends Mob>) newMob.getType(), true);
+				if (newEntity == null) return false;
+			} else {
+				newEntity.copyPosition(oldEntity);
+
+				// 4.8 also moves the old mob's equipment over here, but that branch is unreachable: two mobs always take convertTo above
+				if (newEntity instanceof Mob mob) {
+					ForgeEventFactory.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(oldEntity.blockPosition()), MobSpawnType.CONVERSION, null, null);
+				}
+
+				level.addFreshEntity(newEntity);
+				oldEntity.discard();
+			}
+			try { // try copying what can be copied
+				UUID uuid = newEntity.getUUID();
+				newEntity.load(oldEntity.saveWithoutId(newEntity.saveWithoutId(new CompoundTag())));
+				newEntity.setUUID(uuid);
+				if (newEntity instanceof LivingEntity newLiving) {
+					newLiving.setHealth(newLiving.getMaxHealth());
+				}
+			} catch (Exception e) {
+				TwilightForestMod.LOGGER.warn("Couldn't transform entity NBT data", e);
+			}
+
+			if (oldEntity instanceof Saddleable saddleable && saddleable.isSaddled() && !(newEntity instanceof Saddleable)) {
+				newEntity.spawnAtLocation(Items.SADDLE);
+			}
+
+			if (newEntity instanceof Mob mob) {
+				mob.spawnAnim();
+				mob.spawnAnim();
+
+				for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+					ItemStack itemstack = mob.getItemBySlot(equipmentslot).copyAndClear();
+					mob.spawnAtLocation(itemstack);
+				}
+			}
+
+			if (!passengerSave.isEmpty()) {
+				for (Entity entity : passengerSave) {
+					entity.startRiding(newEntity, true);
+				}
+			}
+
+			if (newEntity instanceof LivingEntity newLiving) ForgeEventFactory.onLivingConvert(oldEntity, newLiving);
+			level.playSound(null, newEntity.blockPosition(), TFSounds.POWDER_USE.get(), newEntity.getSoundSource());
+			return true;
+		}
+		return false;
+	}
+
+	// 4.8 keeps this profile in the twilightforest:zombified_player data attachment; here it lives in the zombie's persistent data
+	private static final String ZOMBIFIED_PLAYER_TAG = "twilightforest:zombified_player";
+
+	/**
+	 * Marks a zombie as the risen remains of a player killed by ominous fire.
+	 */
+	public static void setZombifiedPlayer(Entity zombie, GameProfile profile) {
+		CompoundTag tag = new CompoundTag();
+		tag.put("id", NbtUtils.createUUID(profile.getId()));
+		tag.putString("name", profile.getName());
+		zombie.getPersistentData().put(ZOMBIFIED_PLAYER_TAG, tag);
+	}
+
+	/**
+	 * @return the profile (uuid and name) of the player whose remains this zombie is, or null if it is an ordinary zombie
+	 */
+	@Nullable
+	public static GameProfile getZombifiedPlayer(Entity zombie) {
+		if (!zombie.getPersistentData().contains(ZOMBIFIED_PLAYER_TAG, Tag.TAG_COMPOUND)) return null;
+		CompoundTag tag = zombie.getPersistentData().getCompound(ZOMBIFIED_PLAYER_TAG);
+		if (!tag.hasUUID("id")) return null;
+		return new GameProfile(tag.getUUID("id"), tag.getString("name"));
 	}
 }

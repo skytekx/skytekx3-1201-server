@@ -112,6 +112,9 @@ public class TFBlocks {
 	public static final RegistryObject<GlazedTerracottaBlock> TERRORCOTTA_CURVES = register("terrorcotta_curves", () -> new GlazedTerracottaBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final RegistryObject<BinaryRotatedBlock> TERRORCOTTA_LINES = register("terrorcotta_lines", () -> new BinaryRotatedBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
+	//ominous
+	public static final RegistryObject<OminousFireBlock> OMINOUS_FIRE = BLOCKS.register("ominous_fire", () -> new OminousFireBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).replaceable().noCollission().instabreak().lightLevel((state) -> 15).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY)));
+
 	//labyrinth
 	public static final RegistryObject<Block> MAZESTONE = register("mazestone", () -> new Block(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.STONE).requiresCorrectToolForDrops().sound(SoundType.STONE).strength(100.0F, 5.0F)));
 	public static final RegistryObject<Block> MAZESTONE_BRICK = register("mazestone_brick", () -> new Block(BlockBehaviour.Properties.copy(MAZESTONE.get())));

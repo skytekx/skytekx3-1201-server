@@ -851,6 +851,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(BlockTags.INVALID_SPAWN_INSIDE).add(TFBlocks.TWILIGHT_PORTAL.get());
 
+		tag(BlockTags.FIRE).add(TFBlocks.OMINOUS_FIRE.get());
+
 		tag(RELOCATION_NOT_SUPPORTED).add(TFBlocks.TWILIGHT_PORTAL.get(), TFBlocks.STRONGHOLD_SHIELD.get(),
 				TFBlocks.TIME_LOG_CORE.get(), TFBlocks.TRANSFORMATION_LOG_CORE.get(),
 				TFBlocks.MINING_LOG_CORE.get(), TFBlocks.SORTING_LOG_CORE.get(),

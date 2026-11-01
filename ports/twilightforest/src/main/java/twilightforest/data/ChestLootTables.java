@@ -489,7 +489,8 @@ public class ChestLootTables implements LootTableSubProvider {
 								.add(LootItem.lootTableItem(Items.POTION).apply(SetNbtFunction.setTag(Util.make(new CompoundTag(), (nbt) -> nbt.putString("Potion", "minecraft:healing")))))
 								.add(LootItem.lootTableItem(Items.POTION).apply(SetNbtFunction.setTag(Util.make(new CompoundTag(), (nbt) -> nbt.putString("Potion", "minecraft:fire_resistance")))))
 								.add(LootItem.lootTableItem(Items.POTION).apply(SetNbtFunction.setTag(Util.make(new CompoundTag(), (nbt) -> nbt.putString("Potion", "minecraft:harming")))))
-								.add(LootItem.lootTableItem(TFItems.BRITTLE_FLASK.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5)))))
+								.add(LootItem.lootTableItem(TFItems.BRITTLE_FLASK.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
+								.add(LootItem.lootTableItem(TFItems.EXANIMATE_ESSENCE.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3)))))
 						.withPool(LootPool.lootPool()
 								.setRolls(ConstantValue.exactly(1))
 								//rare loot

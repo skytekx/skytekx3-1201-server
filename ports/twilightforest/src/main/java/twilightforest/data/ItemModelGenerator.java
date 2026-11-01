@@ -497,6 +497,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTexTool(TFItems.LIFEDRAIN_SCEPTER);
 		singleTexTool(TFItems.ZOMBIE_SCEPTER);
 		singleTexTool(TFItems.FORTIFICATION_SCEPTER);
+		exanimateEssence(TFItems.EXANIMATE_ESSENCE);
 		singleTex(TFItems.MAGIC_PAINTING);
 		ModelFile oreMeterActive = generated("ore_meter_active", prefix("item/ore_meter_active"));
 		singleTex(TFItems.ORE_METER).override().predicate(prefix("active"), 1).model(oreMeterActive).end();
@@ -751,6 +752,14 @@ public class ItemModelGenerator extends ItemModelProvider {
 			builder = builder.texture("layer" + i, layers[i]);
 		}
 		builder = builder.customLoader(ItemLayerModelBuilder::begin).emissive(15, 15, 0).renderType("minecraft:translucent", 0).end();
+		return builder;
+	}
+
+	private ItemModelBuilder exanimateEssence(RegistryObject<Item> item) {
+		ItemModelBuilder builder = withExistingParent(item.getId().getPath(), "item/generated");
+		builder = builder.texture("layer0", prefix("item/exanimate_powder"));
+		builder = builder.texture("layer1", prefix("item/exanimate_flames"));
+		builder = builder.customLoader(ItemLayerModelBuilder::begin).emissive(15, 15, 1).end();
 		return builder;
 	}
 

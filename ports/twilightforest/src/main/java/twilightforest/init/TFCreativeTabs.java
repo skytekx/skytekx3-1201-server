@@ -491,6 +491,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.BRITTLE_FLASK.get());
 				output.accept(TFItems.GREATER_FLASK.get());
 				output.accept(TFItems.CROWN_SPLINTER.get());
+				output.accept(TFItems.EXANIMATE_ESSENCE.get());
 				output.accept(TFBlocks.RED_THREAD.get());
 				output.accept(TFItems.MAGIC_BEANS.get());
 				output.accept(TFItems.CUBE_TALISMAN.get());

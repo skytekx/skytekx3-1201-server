@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import twilightforest.block.entity.ReactorDebrisBlockEntity;
 
@@ -28,15 +29,17 @@ public class ReactorDebrisRenderer implements BlockEntityRenderer<ReactorDebrisB
 		X, Y, Z
 	}
 
-	private record QuadRenderInfo(VertexConsumer builder, Matrix4f matrix, int light, int overlay) {  // Reduce copy-paste, thanks to TFC for idea
+	private record QuadRenderInfo(VertexConsumer builder, Matrix4f matrix, Matrix3f normalMatrix, int light, int overlay) {  // Reduce copy-paste, thanks to TFC for idea
 		private void vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
-			// 1.20.1 vertex consumers need the elements in format order (NEW_ENTITY: position, colour, uv, overlay, light, normal)
+			// 1.20.1 vertex consumers need the elements in format order (NEW_ENTITY: position, colour, uv, overlay, light, normal).
+			// Unlike 1.21, 1.20.1 keeps the camera rotation in the PoseStack and sets the diffuse lights up in view space,
+			// so the normal has to go through the pose's normal matrix or the shading changes as the camera turns.
 			this.builder.vertex(this.matrix, x, y, z)
 				.color(1.0F, 1.0F, 1.0F, 1.0F)
 				.uv(u, v)
 				.overlayCoords(this.overlay)
 				.uv2(this.light)
-				.normal(nx, ny, nz)
+				.normal(this.normalMatrix, nx, ny, nz)
 				.endVertex();
 		}
 	}
@@ -48,7 +51,7 @@ public class ReactorDebrisRenderer implements BlockEntityRenderer<ReactorDebrisB
 		poseStack.pushPose();
 		VertexConsumer builder = buffer.getBuffer(RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS));
 		Matrix4f matrix = poseStack.last().pose();
-		QuadRenderInfo info = new QuadRenderInfo(builder, matrix, light, overlay);
+		QuadRenderInfo info = new QuadRenderInfo(builder, matrix, poseStack.last().normal(), light, overlay);
 
 		renderBlock(info, entity);
 		poseStack.popPose();

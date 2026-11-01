@@ -17,6 +17,7 @@ import twilightforest.TFConfig;
 import twilightforest.entity.CharmEffect;
 import twilightforest.init.TFEntities;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +38,10 @@ public record SpawnCharmPacket(ItemStack charm, ResourceKey<SoundEvent> event) {
 
 	public static class Handler {
 
+		//client-only effect entities take ids from here instead of the client's Entity counter, which can collide with ids of entities the server tracks.
+		//the server never hands out negative ids, so these never replace (and hide) a real entity
+		private static final AtomicInteger CLIENT_EFFECT_ID = new AtomicInteger(-1_000_000);
+
 		@SuppressWarnings("Convert2Lambda")
 		public static boolean onMessage(SpawnCharmPacket packet, Supplier<NetworkEvent.Context> ctx) {
 			//ensure this is only done on clients as this uses client only code
@@ -54,6 +59,7 @@ public record SpawnCharmPacket(ItemStack charm, ResourceKey<SoundEvent> event) {
 							Minecraft.getInstance().particleEngine.createTrackingEmitter(camera != null ? camera : player, new ItemParticleOption(ParticleTypes.ITEM, packet.charm()), 20);
 						} else {
 							CharmEffect effect = new CharmEffect(TFEntities.CHARM_EFFECT.get(), level, player, packet.charm());
+							effect.setId(CLIENT_EFFECT_ID.getAndDecrement());
 							effect.offset = (float) Math.PI;
 							level.putNonPlayerEntity(effect.getId(), effect);
 						}

@@ -185,7 +185,8 @@ public class CharmEvents {
 
 	/**
 	 * Tries to use the given charm of keeping on the inventory slots [fromSlot, toSlot) plus armor and offhand.
-	 * The charm is only consumed if any of the slots it would protect actually hold an item.
+	 * The charm is only consumed if the slots it would protect hold an item other than the charm itself
+	 * (and, below tier 3, other than the one keepsake casket that is left behind).
 	 *
 	 * @return true if the charm was found and consumed
 	 */
@@ -196,19 +197,39 @@ public class CharmEvents {
 		//merge armor and offhand into check slots since theyll always be kept by a charm
 		mergedCheck.addAll(player.getInventory().armor);
 		mergedCheck.addAll(player.getInventory().offhand);
+		//unless we keep everything, leave one keepsake casket behind so it can hold the items we didn't keep
+		boolean keepsEverything = charm == TFItems.CHARM_OF_KEEPING_3.get();
 		//first, check all affected slots to make sure they arent empty.
-		//filter out the charm so it doesnt count towards keeping items if its the only thing we are holding
-		if (mergedCheck.stream().filter(stack -> !stack.is(charm)).allMatch(ItemStack::isEmpty)) return false;
+		//filter out the charm so it doesnt count towards keeping items if its the only thing we are holding,
+		//and the single casket we leave behind, so a charm isnt spent on keeping nothing
+		if (!hasItemsToKeep(mergedCheck, charm, !keepsEverything)) return false;
 
 		//do we even have a charm? No? Then stop operation
 		if (!TFItemStackUtils.consumeInventoryItem(player, charm, getPlayerData(player), true) && !hasCharmCurio(charm, player, true)) return false;
 
-		//unless we keep everything, leave one keepsake casket behind so it can hold the items we didn't keep
-		boolean keptACasket = keepWholeListAndCheckCasket(keptInventory.items.subList(fromSlot, toSlot), inventorySlots, charm == TFItems.CHARM_OF_KEEPING_3.get());
+		boolean keptACasket = keepWholeListAndCheckCasket(keptInventory.items.subList(fromSlot, toSlot), inventorySlots, keepsEverything);
 		keptACasket = keepWholeListAndCheckCasket(keptInventory.armor, player.getInventory().armor, keptACasket);
 		keepWholeListAndCheckCasket(keptInventory.offhand, player.getInventory().offhand, keptACasket);
 
 		return true;
+	}
+
+	/**
+	 * Checks if a charm of keeping would actually keep anything from the given slots.
+	 * Mirrors {@link #keepWholeListAndCheckCasket}: the charm itself never counts, and if leaveCasket is set,
+	 * one item of the first keepsake casket found doesn't count either, since it stays behind.
+	 */
+	private static boolean hasItemsToKeep(List<ItemStack> slots, Item charm, boolean leaveCasket) {
+		boolean casketLeft = !leaveCasket;
+		for (ItemStack stack : slots) {
+			if (stack.isEmpty() || stack.is(charm)) continue;
+			if (!casketLeft && stack.is(TFBlocks.KEEPSAKE_CASKET.get().asItem())) {
+				casketLeft = true;
+				if (stack.getCount() == 1) continue;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private static void stockKeepsakeCasket(Player player) {

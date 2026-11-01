@@ -26,9 +26,9 @@ public class StructureProtectionClearPacket {
 			ctx.get().enqueueWork(() -> {
 				DimensionSpecialEffects info = DimensionSpecialEffectsManager.getForType(TwilightForestMod.prefix("renderer"));
 
-				// add weather box if needed
+				// clear the weather boxes if needed
 				if (info instanceof TwilightForestRenderInfo) {
-					TFWeatherRenderer.setProtectedBox(null);
+					TFWeatherRenderer.setProtectedBoxes(null);
 				}
 			});
 

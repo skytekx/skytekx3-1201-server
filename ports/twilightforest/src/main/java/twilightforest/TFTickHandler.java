@@ -1,5 +1,6 @@
 package twilightforest;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.commands.Commands;
@@ -32,6 +33,7 @@ import twilightforest.util.PlayerHelper;
 import twilightforest.util.WorldUtil;
 import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
 import twilightforest.world.components.structures.util.AdvancementLockedStructure;
+import twilightforest.world.components.structures.util.ProgressionPiece;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import java.util.List;
@@ -77,9 +79,9 @@ public class TFTickHandler {
 		}
 	}
 
-	private static void sendStructureProtectionPacket(Player player, BoundingBox sbb) {
+	private static void sendStructureProtectionPacket(Player player, List<Pair<BoundingBox, Boolean>> sbbData) {
 		if (player instanceof ServerPlayer) {
-			TFPacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new StructureProtectionPacket(sbb));
+			TFPacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new StructureProtectionPacket(sbbData));
 		}
 	}
 
@@ -98,7 +100,16 @@ public class TFTickHandler {
 		ChunkPos chunkPlayer = player.chunkPosition();
 		return LandmarkUtil.locateNearestLandmarkStart(world, chunkPlayer.x, chunkPlayer.z).map(structureStart -> {
 			if (structureStart.getStructure() instanceof AdvancementLockedStructure advancementLockedStructure && !advancementLockedStructure.doesPlayerHaveRequiredAdvancements(player)) {
-				sendStructureProtectionPacket(player, structureStart.getBoundingBox());
+				// per piece: protected pieces are inflated by 4 so the protection rain also shows around their walls,
+				// unprotected pieces are sent as-is so the client can cut them out of the rain
+				List<Pair<BoundingBox, Boolean>> boundingBoxesData = structureStart.getPieces().stream()
+						.map(piece -> {
+							boolean isProtected = ProgressionPiece.isPieceProtected(piece);
+							return Pair.of(isProtected ? piece.getBoundingBox().inflatedBy(4) : piece.getBoundingBox(), isProtected);
+						})
+						.toList();
+
+				sendStructureProtectionPacket(player, boundingBoxesData);
 				return true;
 			}
 

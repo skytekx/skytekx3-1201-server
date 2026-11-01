@@ -19,7 +19,8 @@ public class TFPacketHandler {
 	// .3: SyncUncraftingTableConfigPacket carries disableIngredientSwitching after allowShapeless (4.8 f5ef5a835).
 	// .4: UpdateDeathTimePacket syncs a dying boss's deathTime to players that start tracking it (4.8 5b63f08d4).
 	// .5: AddTFBossBarPacket and UpdateTFBossBarStylePacket carry the RGB boss bars (4.8 15ab0d12a).
-	private static final String PROTOCOL_VERSION = "2-skytekx.5";
+	// .6: StructureProtectionPacket carries a list of per-piece boxes with a protected flag instead of one start box (4.8 262daec10, 48ba590a9).
+	private static final String PROTOCOL_VERSION = "2-skytekx.6";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,

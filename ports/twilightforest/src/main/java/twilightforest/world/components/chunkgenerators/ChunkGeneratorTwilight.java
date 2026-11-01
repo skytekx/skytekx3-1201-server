@@ -1054,7 +1054,9 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 
 				for (Holder<Structure> targetStructure : targetStructures) {
 					if (landmarkPlacement.getValue().contains(targetStructure)) {
-						// TF 4.8 (b736cb16b): honour skipKnownStructures (e.g. explorer maps) by passing over landmarks already generated
+						// TF 4.8 (b736cb16b): skipKnownStructures check, copied as is. Note that with skipKnownStructures vanilla reports
+						// START_PRESENT only for a generated start nobody has referenced yet, so (as upstream) this passes over unexplored
+						// landmarks, not explored ones. Only exploration maps pass true; /locate and Eyes of Ender pass false.
 						if (skipKnownStructures && structureManager.checkStructurePresence(new ChunkPos(landmarkCenterPosition), targetStructure.value(), true) == StructureCheckResult.START_PRESENT)
 							break;
 

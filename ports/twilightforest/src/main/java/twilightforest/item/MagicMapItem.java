@@ -23,6 +23,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TFMagicMapData;
+import twilightforest.data.tags.CustomTagGenerator;
 import twilightforest.init.TFBiomes;
 import twilightforest.init.TFDataMaps;
 import twilightforest.init.TFItems;
@@ -97,8 +98,10 @@ public class MagicMapItem extends MapItem {
 
 	@Override
 	public void update(Level level, Entity viewer, MapItemSavedData data) {
-		// TF 4.8: where a magic map may be made is decided by the allows_magic_map_charting dimension type tag (EmptyMagicMapItem)
-		if (level.dimension() == data.dimension && viewer instanceof Player && level instanceof ServerLevel serverLevel) {
+		// TF 4.8: where a magic map may be made is decided by the allows_magic_map_charting dimension type tag (EmptyMagicMapItem).
+		// 4.8 charts in any dimension here; the tag gate also keeps a map that got its data elsewhere (e.g. a /give'n filled map
+		// without an id) from loading landmark-centre chunks of an untagged dimension (LandmarkUtil.isConquered) while it is held.
+		if (level.dimension() == data.dimension && viewer instanceof Player && level instanceof ServerLevel serverLevel && level.dimensionTypeRegistration().is(CustomTagGenerator.DimensionTypeTagGenerator.ALLOWS_MAGIC_MAP_CHARTING)) {
 			int biomesPerPixel = 4;
 			int blocksPerPixel = 16; // don't even bother with the scale, just hardcode it
 			int centerX = data.centerX;

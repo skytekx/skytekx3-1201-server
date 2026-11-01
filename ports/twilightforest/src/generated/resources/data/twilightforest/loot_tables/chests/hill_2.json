@@ -202,6 +202,11 @@
         },
         {
           "type": "minecraft:item",
+          "name": "twilightforest:pocket_watch",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
           "name": "twilightforest:music_disc_wayfarer",
           "weight": 25
         }

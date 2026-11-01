@@ -414,6 +414,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.ORE_MAP.get());
 				output.accept(TFItems.ORE_METER.get());
 				output.accept(TFItems.MOON_DIAL.get());
+				output.accept(TFItems.POCKET_WATCH.get());
 				output.accept(TFItems.LIVEROOT.get());
 				output.accept(TFItems.RAW_IRONWOOD.get());
 				output.accept(TFItems.IRONWOOD_INGOT.get());

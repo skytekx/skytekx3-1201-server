@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "twilightforest:fiery_vial"
+            "items": [
+              "twilightforest:giant_log"
+            ]
           }
         ]
       },
@@ -13,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "twilightforest:equipment/fiery_fiery_boots"
+        "recipe": "twilightforest:giant_log_to_oak_log"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "twilightforest:equipment/fiery_fiery_boots"
+      "twilightforest:giant_log_to_oak_log"
     ]
   },
   "sends_telemetry_event": false

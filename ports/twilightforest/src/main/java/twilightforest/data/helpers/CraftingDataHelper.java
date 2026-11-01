@@ -65,6 +65,17 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.save(consumer, locCastle(ForgeRegistries.BLOCKS.getKey(result.get()).getPath()));
 	}
 
+	protected final void woodenStairsBlock(Consumer<FinishedRecipe> consumer, ResourceLocation loc, Supplier<? extends Block> result, Supplier<? extends Block> criteria, ItemLike... ingredients) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result.get(), 8)
+				.pattern("#  ")
+				.pattern("## ")
+				.pattern("###")
+				.define('#', Ingredient.of(ingredients))
+				.unlockedBy("has_item", has(criteria.get()))
+				.group("wooden_stairs")
+				.save(consumer, loc);
+	}
+
 	protected final void stairsBlock(Consumer<FinishedRecipe> consumer, ResourceLocation loc, Supplier<? extends Block> result, Supplier<? extends Block> criteria, ItemLike... ingredients) {
 		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result.get(), 8)
 				.pattern("#  ")
@@ -177,6 +188,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, result.get())
 				.requires(material.get())
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_button")
 				.save(consumer, locWood(name + "_button"));
 	}
 
@@ -187,6 +199,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.pattern("##")
 				.define('#', material.get())
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_door")
 				.save(consumer, locWood(name + "_door"));
 	}
 
@@ -197,6 +210,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.define('#', material.get())
 				.define('S', Tags.Items.RODS_WOODEN)
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_fence")
 				.save(consumer, locWood(name + "_fence"));
 	}
 
@@ -207,6 +221,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.define('#', material.get())
 				.define('S', Tags.Items.RODS_WOODEN)
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_fence_gate")
 				.save(consumer, locWood(name + "_gate"));
 	}
 
@@ -214,6 +229,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, result.get(), 4)
 				.requires(material)
 				.unlockedBy("has_item", has(material))
+				.group("planks")
 				.save(consumer, locWood(name + "_planks"));
 	}
 
@@ -222,7 +238,17 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.pattern("##")
 				.define('#', material.get())
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_pressure_plate")
 				.save(consumer, locWood(name + "_plate"));
+	}
+
+	protected final void woodenSlabBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends Block> result, Supplier<? extends Block> material) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result.get(), 6)
+				.pattern("###")
+				.define('#', material.get())
+				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_slab")
+				.save(consumer, locWood(name + "_slab"));
 	}
 
 	protected final void slabBlock(Consumer<FinishedRecipe> consumer, String name, Supplier<? extends Block> result, Supplier<? extends Block> material) {
@@ -247,6 +273,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.pattern("###")
 				.define('#', material.get())
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_trapdoor")
 				.save(consumer, locWood(name + "_trapdoor"));
 	}
 	
@@ -256,6 +283,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.pattern("##")
 				.define('#', material.get())
 				.unlockedBy("has_item", has(material.get()))
+				.group("bark")
 				.save(consumer, locWood(name + "_wood"));
 	}
 
@@ -276,6 +304,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.define('#', material.get())
 				.define('-', Tags.Items.RODS_WOODEN)
 				.unlockedBy("has_item", has(material.get()))
+				.group("wooden_sign")
 				.save(consumer, locWood(name + "_sign"));
 	}
 
@@ -287,6 +316,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.define('#', material.get())
 				.define('|', Items.CHAIN)
 				.unlockedBy("has_item", has(material.get()))
+				.group("hanging_sign")
 				.save(consumer, locWood(name + "_hanging_sign"));
 	}
 
@@ -301,6 +331,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.define('-', material)
 				.define('|', Tags.Items.RODS_WOODEN)
 				.unlockedBy("has_item", has(material))
+				.group("wooden_banister")
 				.save(consumer, locWood(name + "_banister"));
 	}
 
@@ -312,6 +343,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.define('#', material.get())
 				.define('C', Tags.Items.CHESTS_WOODEN)
 				.unlockedBy("has_item", has(material.get()))
+				.group("chest")
 				.save(consumer, locWood(name + "_chest"));
 	}
 
@@ -320,7 +352,8 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 				.requires(armor)
 				.requires(Ingredient.of(ItemTagGenerator.FIERY_VIAL), vials)
 				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_VIAL))
-				.save(consumer, locEquip("fiery_" + ForgeRegistries.ITEMS.getKey(result.get()).getPath()));
+				.group(ForgeRegistries.ITEMS.getKey(result.get()).getPath())
+				.save(consumer, locEquip("fiery_" + ForgeRegistries.ITEMS.getKey(armor).getPath()));
 	}
 
 	protected final void buildBoats(Consumer<FinishedRecipe> consumer, Supplier<? extends Item> boat, Supplier<? extends Item> chestBoat, Supplier<? extends Block> planks) {

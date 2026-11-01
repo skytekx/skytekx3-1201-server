@@ -22,22 +22,52 @@ import static twilightforest.TwilightForestMod.prefix;
 public class StonecuttingGenerator {
 
 	protected static void buildRecipes(Consumer<FinishedRecipe> consumer) {
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.CASTLE_BRICK_STAIRS.get()));
 		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
-		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
-		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
-		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
-
 		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK.get()));
-		consumer.accept(stonecutting(TFBlocks.THICK_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.ENCASED_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.ENCASED_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.CASTLE_ROOF_TILE.get()));
+
+		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
+		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.CRACKED_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
+
+		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
+		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
+
+		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()));
+		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.MOSSY_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
+
+		consumer.accept(stonecutting(TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
 		consumer.accept(stonecutting(TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()));
-		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), TFBlocks.ENCASED_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.BOLD_CASTLE_BRICK_TILE.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.BOLD_CASTLE_BRICK_TILE.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
 
 		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), TFBlocks.ENCASED_CASTLE_BRICK_STAIRS.get()));
-		consumer.accept(stonecutting(TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
-		consumer.accept(stonecutting(TFBlocks.CASTLE_BRICK.get(), TFBlocks.CASTLE_BRICK_STAIRS.get()));
-		consumer.accept(stonecutting(TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK_STAIRS.get()));
-		consumer.accept(stonecutting(TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.CRACKED_CASTLE_BRICK_STAIRS.get()));
-		consumer.accept(stonecutting(TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.MOSSY_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), TFBlocks.ENCASED_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), TFBlocks.CASTLE_ROOF_TILE.get()));
+
+		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_TILE.get(), TFBlocks.ENCASED_CASTLE_BRICK_STAIRS.get()));
+		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_TILE.get(), TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.ENCASED_CASTLE_BRICK_TILE.get(), TFBlocks.CASTLE_ROOF_TILE.get()));
+
+		consumer.accept(stonecutting(TFBlocks.THICK_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get()));
+		consumer.accept(stonecutting(TFBlocks.THICK_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()));
+		consumer.accept(stonecutting(TFBlocks.THICK_CASTLE_BRICK.get(), TFBlocks.BOLD_CASTLE_BRICK_STAIRS.get()));
 
 		consumer.accept(stonecutting(TFBlocks.ETCHED_NAGASTONE.get(), TFBlocks.NAGASTONE_STAIRS_LEFT.get()));
 		consumer.accept(stonecutting(TFBlocks.ETCHED_NAGASTONE.get(), TFBlocks.NAGASTONE_STAIRS_RIGHT.get()));
@@ -55,7 +85,8 @@ public class StonecuttingGenerator {
 		
 		consumer.accept(stonecutting(TFBlocks.DARK_LOG.get(), TFBlocks.TOWERWOOD.get()));
 		consumer.accept(stonecutting(TFBlocks.DARK_WOOD.get(), TFBlocks.TOWERWOOD.get()));
-		consumer.accept(stonecutting(TFBlocks.TOWERWOOD.get(), TFBlocks.ENCASED_TOWERWOOD.get()));
+		consumer.accept(stonecutting(TFBlocks.DARK_LOG.get(), TFBlocks.ENCASED_TOWERWOOD.get()));
+		consumer.accept(stonecutting(TFBlocks.DARK_WOOD.get(), TFBlocks.ENCASED_TOWERWOOD.get()));
 		
 		consumer.accept(stonecutting(TFBlocks.MAZESTONE.get(), TFBlocks.MAZESTONE_BORDER.get()));
 		consumer.accept(stonecutting(TFBlocks.MAZESTONE.get(), TFBlocks.MAZESTONE_BRICK.get()));
@@ -109,6 +140,8 @@ public class StonecuttingGenerator {
 		consumer.accept(stonecutting(Blocks.CHERRY_LOG, TFItems.HOLLOW_CHERRY_LOG.get()));
 		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.TWISTED_STONE.get()));
 		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.BOLD_STONE_PILLAR.get()));
+		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.TWISTED_STONE_PILLAR.get()));
+		consumer.accept(stonecutting(Blocks.STONE, TFBlocks.SPIRAL_BRICKS.get()));
 		consumer.accept(stonecutting(TFBlocks.TWISTED_STONE.get(), TFBlocks.TWISTED_STONE_PILLAR.get()));
 
 		consumer.accept(stonecutting(TFBlocks.UNDERBRICK.get(), TFBlocks.UNDERBRICK_FLOOR.get()));

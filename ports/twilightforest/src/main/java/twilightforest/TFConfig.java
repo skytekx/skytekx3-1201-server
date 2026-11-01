@@ -181,7 +181,7 @@ public class TFConfig {
 								Example: "twilightforest:firefly_particle_spawner" will disable uncrafting the particle spawner into a firefly jar, firefly, and poppy.
 								If an item has multiple crafting recipes and you wish to disable them all, add the item to the "twilightforest:banned_uncraftables" item tag.
 								If you have a problematic ingredient, like infested towerwood for example, add the item to the "twilightforest:banned_uncrafting_ingredients" item tag.""").
-						defineList("disableUncraftingRecipes", List.of("twilightforest:giant_log_to_oak_planks"), s -> s instanceof String);
+						defineList("disableUncraftingRecipes", List.of("twilightforest:giant_log_to_oak_log"), s -> s instanceof String);
 				UNCRAFTING_STUFFS.reverseRecipeBlacklist = builder.
 						worldRestart().
 						translation(config + "uncrafting_recipes_flip").

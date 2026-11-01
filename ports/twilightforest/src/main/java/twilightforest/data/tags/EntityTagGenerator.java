@@ -59,7 +59,8 @@ public class EntityTagGenerator extends ModdedEntityTagGenerator {
 				TFEntities.THROWN_WEP.get(),
 				TFEntities.THROWN_ICE.get(),
 				TFEntities.FALLING_ICE.get(),
-				TFEntities.ICE_SNOWBALL.get()
+				TFEntities.ICE_SNOWBALL.get(),
+				TFEntities.CHAIN_BLOCK.get()
 		);
 
 		tag(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS).add(

@@ -343,6 +343,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(Tags.Items.TOOLS_SHIELDS).add(TFItems.KNIGHTMETAL_SHIELD.get());
 		tag(Tags.Items.TOOLS_BOWS).add(TFItems.TRIPLE_BOW.get(), TFItems.SEEKER_BOW.get(), TFItems.ICE_BOW.get(), TFItems.ENDER_BOW.get());
 
+		tag(ItemTags.BREAKS_DECORATED_POTS).add(TFItems.BLOCK_AND_CHAIN.get());
+
 		tag(ItemTags.CLUSTER_MAX_HARVESTABLES).add(
 				TFItems.IRONWOOD_PICKAXE.get(),
 				TFItems.STEELEAF_PICKAXE.get(),

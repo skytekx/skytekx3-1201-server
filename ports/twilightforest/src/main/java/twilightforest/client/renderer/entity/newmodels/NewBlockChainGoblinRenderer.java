@@ -63,9 +63,14 @@ public class NewBlockChainGoblinRenderer<T extends BlockChainGoblin, M extends N
 		stack.popPose();
 
 		if (goblin.isAlive()) {
-			BlockChainRenderer.renderChain(goblin, goblin.chain1, yaw, partialTicks, stack, buffer, light, chainModel);
-			BlockChainRenderer.renderChain(goblin, goblin.chain2, yaw, partialTicks, stack, buffer, light, chainModel);
-			BlockChainRenderer.renderChain(goblin, goblin.chain3, yaw, partialTicks, stack, buffer, light, chainModel);
+			stack.pushPose();
+			stack.translate(0.0D, goblin.getEyeHeight(), 0.0D);
+			Vec3 xyz = goblin.block.getEyePosition(partialTicks).subtract(goblin.getEyePosition(partialTicks)).multiply(1.0D, 0.5D, 1.0D);
+			BlockChainRenderer.renderChain(goblin.block, xyz.scale(0.00D), stack, buffer, light, this.chainModel);
+			BlockChainRenderer.renderChain(goblin.block, xyz.scale(0.25D), stack, buffer, light, this.chainModel);
+			BlockChainRenderer.renderChain(goblin.block, xyz.scale(0.50D), stack, buffer, light, this.chainModel);
+			BlockChainRenderer.renderChain(goblin.block, xyz.scale(0.75D), stack, buffer, light, this.chainModel);
+			stack.popPose();
 		}
 		//when you allowed debugBoundingBox, you can see Hitbox
 		if (this.entityRenderDispatcher.shouldRenderHitBoxes() && !goblin.block.isInvisible() && !Minecraft.getInstance().showOnlyReducedInfo()) {

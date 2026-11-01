@@ -157,7 +157,7 @@ public class TFConfig {
 					translation(config + "boss_drop_chests").
 					comment("""
 							If true, Twilight Forest's bosses will put their drops inside of a chest where they originally spawned instead of dropping the loot directly.
-							Note that the Knight Phantoms are not affected by this as their drops work differently.""").
+							The Knight Phantoms share one chest, filled by the last knight to fall; if false, each knight drops its own loot and the last one also drops the trophy.""").
 					define("boss_drop_chests", true);
 
 			cloudBlockPrecipitationDistanceCommon = builder.

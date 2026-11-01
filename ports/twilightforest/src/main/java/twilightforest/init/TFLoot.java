@@ -7,6 +7,7 @@ import net.minecraft.world.level.storage.loot.providers.number.LootNumberProvide
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
+import twilightforest.loot.LootingEnchantNumberProvider;
 import twilightforest.loot.MultiplayerBasedAdditionLootFunction;
 import twilightforest.loot.MultiplayerBasedNumberProvider;
 import twilightforest.loot.conditions.IsMinionCondition;
@@ -25,6 +26,7 @@ public class TFLoot {
 	public static final RegistryObject<LootItemFunctionType> MULTIPLAYER_MULTIPLIER = FUNCTIONS.register("multiplayer_addition", () -> new LootItemFunctionType(new MultiplayerBasedAdditionLootFunction.Serializer()));
 
 	public static final RegistryObject<LootNumberProviderType> MULTIPLAYER_ROLLS = NUMBERS.register("multiplayer_rolls", () -> new LootNumberProviderType(new MultiplayerBasedNumberProvider.Serializer()));
+	public static final RegistryObject<LootNumberProviderType> LOOTING_ROLLS = NUMBERS.register("looting_rolls", () -> new LootNumberProviderType(new LootingEnchantNumberProvider.Serializer()));
 
 	public static final RegistryObject<LootItemConditionType> IS_MINION = CONDITIONS.register("is_minion", () -> new LootItemConditionType(new IsMinionCondition.ConditionSerializer()));
 	public static final RegistryObject<LootItemConditionType> MOD_EXISTS = CONDITIONS.register("mod_exists", () -> new LootItemConditionType(new ModExistsCondition.ConditionSerializer()));

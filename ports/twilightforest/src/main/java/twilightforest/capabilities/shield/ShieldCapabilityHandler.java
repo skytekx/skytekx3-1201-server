@@ -6,11 +6,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
+import twilightforest.init.TFItems;
 import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStats;
@@ -41,10 +43,19 @@ public class ShieldCapabilityHandler implements IShieldCapability {
 		if (!this.host.level().isClientSide() && this.temporaryShieldsLeft() > 0 && !(this.host instanceof Player player && player.getAbilities().invulnerable)) {
 			if (this.timer <= 0) {
 				this.breakShield(true);
-			} else {
+			} else if (this.checkLichCrownBonus()) {
+				// Timer decay skipped after every 2 ticks so that shields last 50% longer with the Mystic Crown worn
 				this.timer--;
 			}
 		}
+	}
+
+	/**
+	 * 4.8 FortificationShieldAttachment.checkLichCrownBonus: false on every third tick while the Mystic Crown is worn,
+	 * so the temporary shield countdown skips that tick and temporary shields last 50% longer.
+	 */
+	private boolean checkLichCrownBonus() {
+		return !this.host.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || (this.host.tickCount % 3) != 0;
 	}
 
 	@Override

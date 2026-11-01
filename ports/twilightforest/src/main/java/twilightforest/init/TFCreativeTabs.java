@@ -449,6 +449,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.TRANSFORMATION_POWDER.get());
 				output.accept(TFItems.BRITTLE_FLASK.get());
 				output.accept(TFItems.GREATER_FLASK.get());
+				output.accept(TFItems.CROWN_SPLINTER.get());
 				output.accept(TFBlocks.RED_THREAD.get());
 				output.accept(TFItems.MAGIC_BEANS.get());
 				output.accept(TFItems.CUBE_TALISMAN.get());
@@ -551,6 +552,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.PHANTOM_CHESTPLATE.get());
 				generateGearWithEnchants(output, TFItems.NAGA_CHESTPLATE.get(), new EnchantmentInstance(Enchantments.FIRE_PROTECTION, 3));
 				generateGearWithEnchants(output, TFItems.NAGA_LEGGINGS.get(), new EnchantmentInstance(Enchantments.ALL_DAMAGE_PROTECTION, 3));
+				output.accept(TFItems.MYSTIC_CROWN.get());
 				output.accept(TFItems.TWILIGHT_SCEPTER.get());
 				output.accept(TFItems.LIFEDRAIN_SCEPTER.get());
 				output.accept(TFItems.ZOMBIE_SCEPTER.get());

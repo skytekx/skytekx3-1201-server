@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -28,6 +29,7 @@ import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.init.TFDamageTypes;
+import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.util.EntityUtil;
 
@@ -181,7 +183,8 @@ public class LifedrainScepterItem extends Item {
 							}
 						}
 
-						if (living instanceof Player player && !player.getAbilities().instabuild) {
+						// the Mystic Crown spares the charge 5% of the time
+						if (living instanceof Player player && !player.getAbilities().instabuild && (!player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || level.getRandom().nextFloat() > 0.05F)) {
 							stack.hurt(1, level.getRandom(), null);
 						}
 					}

@@ -9,6 +9,7 @@ import com.mojang.math.Axis;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.SkullModelBase;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -25,6 +26,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -52,6 +54,7 @@ import twilightforest.client.renderer.tileentity.TrophyTileEntityRenderer;
 import twilightforest.enums.BossVariant;
 import twilightforest.init.TFBlocks;
 import twilightforest.item.KnightmetalShieldItem;
+import twilightforest.item.MysticCrownItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +80,11 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 		makeInstance(map, TFBlocks.MINING_CHEST);
 		makeInstance(map, TFBlocks.SORTING_CHEST);
 	});
+	private static final ResourceLocation LICH_TEXTURE = TwilightForestMod.getModelTexture("twilightlich64.png");
+
 	private KnightmetalShieldModel shield = new KnightmetalShieldModel(Minecraft.getInstance().getEntityModels().bakeLayer(TFModelLayers.KNIGHTMETAL_SHIELD));
+	// The Mystic Crown is the Lich's own crown ("hat" layer of the Lich model)
+	private ModelPart crown = Minecraft.getInstance().getEntityModels().bakeLayer(TFModelLayers.LICH).getChild("hat");
 	private Map<BossVariant, GenericTrophyModel> trophies = TrophyTileEntityRenderer.createTrophyRenderers(Minecraft.getInstance().getEntityModels());
 	private Map<SkullBlock.Type, SkullModelBase> skulls = SkullBlockRenderer.createSkullRenderers(Minecraft.getInstance().getEntityModels());
 	// Dummy block entities used to look up the renderer for EntityBlock items (critters etc.), created once per block instead of every frame
@@ -91,6 +98,7 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 	@Override
 	public void onResourceManagerReload(ResourceManager manager) {
 		this.shield = new KnightmetalShieldModel(Minecraft.getInstance().getEntityModels().bakeLayer(TFModelLayers.KNIGHTMETAL_SHIELD));
+		this.crown = Minecraft.getInstance().getEntityModels().bakeLayer(TFModelLayers.LICH).getChild("hat");
 		this.trophies = TrophyTileEntityRenderer.createTrophyRenderers(Minecraft.getInstance().getEntityModels());
 		this.skulls = SkullBlockRenderer.createSkullRenderers(Minecraft.getInstance().getEntityModels());
 
@@ -185,6 +193,22 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 			Material material = new Material(Sheets.SHIELD_SHEET, new ResourceLocation(TwilightForestMod.ID, "model/knightmetal_shield"));
 			VertexConsumer vertexconsumer = material.sprite().wrap(ItemRenderer.getFoilBufferDirect(buffers, this.shield.renderType(material.atlasLocation()), true, stack.hasFoil()));
 			this.shield.renderToBuffer(ms, vertexconsumer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+			ms.popPose();
+		} else if (item instanceof MysticCrownItem) {
+			this.crown.xRot = 0.0F;
+			this.crown.yRot = 0.0F;
+			ms.pushPose();
+			ms.scale(1.0F, -1.0F, -1.0F);
+			if (camera == ItemDisplayContext.GUI) {
+				ms.translate(0.5F, -0.1F, 0.0F);
+				ms.last().normal().rotate(Mth.PI * 0.5F, 0.0F, 1.0F, 0.0F);
+				ms.mulPose(Axis.XP.rotationDegrees(30));
+				ms.mulPose(Axis.YP.rotationDegrees(45));
+			} else {
+				ms.translate(0.5F, 0.0F, -0.5F);
+				ms.scale(1.05F, 1.05F, 1.05F);
+			}
+			this.crown.render(ms, buffers.getBuffer(RenderType.entityCutoutNoCull(LICH_TEXTURE)), light, overlay);
 			ms.popPose();
 		}
 	}

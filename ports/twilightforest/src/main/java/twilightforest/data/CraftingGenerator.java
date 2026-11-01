@@ -235,6 +235,14 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.define('b', Ingredient.of(Items.POWDER_SNOW_BUCKET))
 				.unlockedBy("has_item", has(TFBlocks.FLUFFY_CLOUD.get()))
 				.save(consumer, TwilightForestMod.prefix("snowy_cloud"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.MYSTIC_CROWN.get(), 1)
+				.pattern("ttt")
+				.pattern("t t")
+				.pattern("ttt")
+				.define('t', Ingredient.of(TFItems.CROWN_SPLINTER.get()))
+				.unlockedBy("has_item", has(TFItems.CROWN_SPLINTER.get()))
+				.save(consumer);
 	}
 
 	private void darkTowerRecipes(Consumer<FinishedRecipe> consumer) {

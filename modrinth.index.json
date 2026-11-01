@@ -1326,6 +1326,21 @@
       "fileSize": 420181
     },
     {
+      "path": "mods/farmers-cutting-twilight-forest-1.20.1-1.0.jar",
+      "hashes": {
+        "sha1": "1d8e912d2e7cb6d91d97cccdd5e4f0d54140cd12",
+        "sha512": "fa227bce6d69e285d3991f1a4db0ae7398551690820e3b85fc302cdb78d6d29984dd7f43a6ebcfe3f1e2232a7fa1ffaec95775343c880251bd0b88035e17e956"
+      },
+      "env": {
+        "client": "optional",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/DiojkUaV/versions/BIxQGaf2/farmers-cutting-twilight-forest-1.20.1-1.0.jar"
+      ],
+      "fileSize": 37357
+    },
+    {
       "path": "mods/FarmersDelight-1.20.1-1.3.2.jar",
       "hashes": {
         "sha1": "397763ae36dc2e0f526e0338c875850437580157",

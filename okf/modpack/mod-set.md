@@ -18,8 +18,8 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since a36207c, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 217 since ca131c3, all from `cdn.modrinth.com`. The 217th is Modflared, a client only mod for the Cloudflare Tunnel. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 952,411,152 bytes since ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
+| Index entries | 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 952,346,929 bytes since 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
 | Bundled jars | 35 in `local-mods/` since 507a8f2, 33 before | Tracked in git |
 | Jars the server loads | 236 in `mods/` after the update, 235 before | Counted 2026-10-31 |
 
@@ -227,7 +227,8 @@ an index that is byte identical to the one at commit 940f07e. On 2026-10-31 the 
 entries to newer builds and added mezz_config (092140d), 217 entries in all. Commit 74faf22 dropped
 the Nyx entry, whose jar is bundled anyway, which leaves 216. Commit ca131c3 added the client only
 Modflared for pack 3.0.7, 217 entries again. Commit 787cb1f dropped Placeable Items on 2026-11-01,
-which leaves 216.
+which leaves 216, and 3afc3bf dropped Get It Together Drops on the owner's ruling of 05:52 that day,
+which leaves 215. Get It Together Drops ran only on the server, so clients lose nothing.
 
 Placeable Items 1.0.0 turned a right click with any item without durability into a mob named "Placed
 Block" whenever vanilla did nothing with the click, for example on a block just past the reach of 4.5

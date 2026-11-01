@@ -14,6 +14,7 @@ What ships in the pack and how its recipes are kept conflict-free.
 - **[AlmostUnified](almostunified.md)** — material unification (the modern UniDict).
 - **[KubeJS scripts](kubejs.md)** — recipe / tag / loot / gameplay tweaks (the modern CraftTweaker).
 - **[Publish](publish.md)** — build + upload the `.mrpack` to Modrinth.
+- **[Twilight Forest backport](twilightforest-backport.md)** — TF 4.8 content grafted onto 4.3 (`ports/twilightforest/`), waves + addons.
 
 ## Recipe-consistency engine
 The original 1.12.2 layered conflict-prevention ported 1:1 in concept:

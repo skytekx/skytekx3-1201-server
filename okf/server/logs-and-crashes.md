@@ -59,8 +59,10 @@ with the strings `/ERROR]`, `/WARN]` and `/FATAL]`.
   (`logs/latest.log:326`, 2026-07-13 07:13). B is its baseline and C the current value.
 - Arclight's async catcher (`async-catcher` in `arclight.conf`, `warn=true`) logs
   `Async chunk entity get` as WARN from the `Netty Epoll Server IO` thread while players are online.
-  There were 6,482 such lines in 6 runs, 858 in the run of 2026-07-12 18:11 alone. Some mod touches
-  chunk entities from the network thread. It never crashed the server, and the mod is not identified.
+  There were 6,482 such lines in 6 runs, 858 in the run of 2026-07-12 18:11 alone. On 2026-11-01 the
+  stack dumps in `debug.log` named Infernal Mobs' `MobModsPacket.handle` for all 6,130 lines since
+  03:02. Since skytekx-compat 2.1.3 (06:10) these queries run on the server thread, see
+  [SkyTekx Compat](../content/compat-mod.md#infernal-mobs-queries). It never crashed the server.
 
 How a run ended shows in its last lines.
 

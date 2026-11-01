@@ -141,11 +141,13 @@ tick. All three signal stops in the logs went wrong. The evidence is on
 ## Configuration files
 
 Arclight, Bukkit and Spigot read `arclight.conf`, `bukkit.yml`, `spigot.yml` and `commands.yml` from the
-repo root. All four were committed once in `5ae7f82` and never edited, so they are close to generated
-defaults.
+repo root. All four were committed once in `5ae7f82`, so they are close to generated defaults. Only
+`spigot.yml` changed since.
 
 - The file `arclight.conf` sets the async catcher to `defaultOperation=block` with `warn=true`, the
-  source of the `Async chunk entity get` warnings. It keeps the data fixer on
+  source of the `Async chunk entity get` warnings. With `dump=true` the stack of each one goes to
+  `debug.log`. Infernal Mobs caused all of them until skytekx-compat 2.1.3 moved its queries to the
+  server thread on 2026-11-01, see [SkyTekx Compat](../content/compat-mod.md#infernal-mobs-queries). It keeps the data fixer on
   (`disable-data-fixer=false`) and sets `goal-selector-update-interval=2` and
   `use-activation-and-tracking-range=true`.
 - The file `bukkit.yml` sets the spawn limits (monsters 70, animals 10, water animals 5, water ambient
@@ -153,7 +155,11 @@ defaults.
 - The file `spigot.yml` sets entity activation ranges of 32 for animals and monsters, 48 for raiders
   and 16 for the rest, a tracking range of 48 for players, animals and monsters, and 4 Netty threads.
   It also sets `restart-on-crash: true` with `restart-script: ./start.sh`, a script that does not
-  exist. Restarts come from the service manager instead.
+  exist. Restarts come from the service manager instead. Since 2026-11-01 06:10 it sets
+  `merge-radius.item` to 0.5 instead of 2.5 (a4bcaf7). Arclight inflates the merge box of a dropped
+  item by that radius in every direction, vanilla by 0.5 sideways only, and each merge hands the
+  longer pickup delay to the pile. Get It Together Drops had replaced this code with its own radius of
+  2 until it left the pack the same day.
 - The live `server.properties` is gitignored because it holds the RCON password, see
   [Secrets](secrets.md).
 

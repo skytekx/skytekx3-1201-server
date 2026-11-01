@@ -10,8 +10,10 @@ timestamp: 2026-11-01
 
 The owner plays SkyTekx 3 in a Prism Launcher instance on this MacBook (Asahi Linux, aarch64, 16K
 pages). On 2026-06-27 19:58 the owner asked for the client to be added to Prism so they could join the
-server (`~/.claude/history.jsonl`, session 5bd3e1de). Since 2026-10-31 a second instance holds a clean
-install of pack 3.0.6 for tests, see [test instance](#test-instance).
+server (`~/.claude/history.jsonl`, session 5bd3e1de). The table below describes that first instance,
+`SkyTekx3`, which Prism last launched on 2026-07-12. Since 2026-10-31 the owner plays in a second
+instance, `SkyTekx3-test`, which started as a clean install of pack 3.0.6, see
+[test instance](#test-instance).
 
 | Setting | Value | Evidence |
 |---|---|---|
@@ -130,6 +132,11 @@ out. The instance is not linked to the Modrinth project. The results are on
 
 The first launch stopped at Prism's Microsoft sign-in, which had expired (error AADSTS70000). The owner
 signed in again with a device code that evening.
+
+Since then this instance is the owner's game client. It has a 12 GB heap, and on 2026-11-01 it held
+240 jars. Falling Meteors Reimagined was added by hand at 05:54. It still carries skytekx-compat 2.0.0,
+which does not matter on a client, since the compat mod only changes server code. Prism last launched it
+on 2026-11-01 at 06:04, and its play time was 8.0 hours, against 39.1 hours in `SkyTekx3` up to July.
 
 ## Second Mac
 

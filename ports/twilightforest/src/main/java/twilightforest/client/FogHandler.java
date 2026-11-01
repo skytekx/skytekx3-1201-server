@@ -19,32 +19,7 @@ import javax.annotation.Nullable;
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class FogHandler {
 
-	private static final float[] spoopColors = new float[3];
-	private static float spoopColor = 0F;
-
-	@SubscribeEvent
-	public static void fogColors(ViewportEvent.ComputeFogColor event) {
-		boolean flag = isSpooky(Minecraft.getInstance().level, Minecraft.getInstance().player);
-		if (flag || spoopColor > 0F) {
-			final float[] realColors = {event.getRed(), event.getGreen(), event.getBlue()};
-			final float[] lerpColors = {130F / 255F, 115F / 255F, 145F / 255F};
-			for (int i = 0; i < 3; i++) {
-				final float real = realColors[i];
-				final float spoop = lerpColors[i];
-				final boolean inverse = real > spoop;
-				spoopColors[i] = real == spoop ? spoop : Mth.clampedLerp(inverse ? spoop : real, inverse ? real : spoop, spoopColor);
-			}
-			float shift = (float) (0.01F * event.getPartialTick());
-			if (flag)
-				spoopColor += shift;
-			else
-				spoopColor -= shift;
-			spoopColor = Mth.clamp(spoopColor, 0F, 1F);
-			event.setRed(spoopColors[0]);
-			event.setGreen(spoopColors[1]);
-			event.setBlue(spoopColors[2]);
-		}
-	}
+	// The Spooky Forest fog colour comes from the biome's fog_color (TF 4.8 #2212) instead of being lerped here
 
 	private static boolean SKY_CHUNK_LOADED = false;
 

@@ -49,6 +49,12 @@ public final class WorldUtil {
 		return null;
 	}
 
+	public static int getGeneratorSeaLevel(LevelAccessor level) {
+		return level.getChunkSource() instanceof ServerChunkCache chunkSource
+				? chunkSource.chunkMap.generator().getSeaLevel()
+				: TFGenerationSettings.SEALEVEL; // TFGenerationSettings.SEALEVEL Should only ever hit if this method is called on client
+	}
+
 	public static int getSeaLevel(ChunkGenerator generator) {
 		if (generator instanceof ChunkGeneratorTwilight) {
 			return generator.getSeaLevel();

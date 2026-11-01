@@ -837,24 +837,16 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	}
 
 	@Nullable
-	public static List<MobSpawnSettings.SpawnerData> gatherPotentialSpawns(@Nullable ChunkGeneratorTwilight key, StructureManager structureManager, MobCategory classification, BlockPos pos) {
-		Iterable<Structure> structures = structureManager.registryAccess().registryOrThrow(Registries.STRUCTURE);
-		if (key != null) {
-			List<Structure> l = ControlledSpawnsCache.CONTROLLED_SPAWNS.get(key);
-			if (l == null) {
-				List<Structure> list = new ArrayList<>();
-				for (Structure structure : structures)
-					if (structure instanceof ControlledSpawns)
-						list.add(structure);
-				ControlledSpawnsCache.CONTROLLED_SPAWNS.put(key, list);
-				structures = list;
-			} else
-				structures = l;
-		}
-		for (Structure structure : structures) {
-			if (structure instanceof ControlledSpawns landmark) {
-				StructureStart start = structureManager.getStructureAt(pos, structure);
-				if (!start.isValid())
+	public static List<MobSpawnSettings.SpawnerData> gatherPotentialSpawns(StructureManager structureManager, MobCategory classification, BlockPos pos) {
+		// Only look at the structure starts this chunk actually references, instead of probing every ControlledSpawns
+		// structure in the registry with getStructureAt() on each spawn attempt. This replaces the per-generator
+		// ControlledSpawnsCache list. (upstream 282edcaf6)
+		List<StructureStart> structureStarts = structureManager.startsForStructure(new ChunkPos(pos), s -> s instanceof ControlledSpawns);
+
+		for (StructureStart start : structureStarts) {
+			if (start.getStructure() instanceof ControlledSpawns landmark) {
+				// Keep 4.3's getStructureAt() semantics: the start's bounding box has to contain the position
+				if (!start.isValid() || !start.getBoundingBox().isInside(pos))
 					continue;
 
 				if (classification != MobCategory.MONSTER)
@@ -864,7 +856,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 					return null;
 
 				// FIXME Make interface for this method?
-				if (structure instanceof HollowHillStructure hollowHill && !hollowHill.canSpawnMob(pos, start.getBoundingBox()))
+				if (landmark instanceof HollowHillStructure hollowHill && !hollowHill.canSpawnMob(pos, start.getBoundingBox()))
 					return null;
 
 				final int index = getSpawnListIndexAt(start, pos);
@@ -878,7 +870,7 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 
 	@Override
 	public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory mobCategory, BlockPos pos) {
-		List<MobSpawnSettings.SpawnerData> potentialStructureSpawns = gatherPotentialSpawns(this, structureManager, mobCategory, pos);
+		List<MobSpawnSettings.SpawnerData> potentialStructureSpawns = gatherPotentialSpawns(structureManager, mobCategory, pos);
 		if (potentialStructureSpawns != null)
 			return WeightedRandomList.create(potentialStructureSpawns);
 

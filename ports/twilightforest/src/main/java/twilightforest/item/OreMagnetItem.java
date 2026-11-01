@@ -2,8 +2,10 @@ package twilightforest.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -22,13 +24,16 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.network.PacketDistributor;
 import twilightforest.TwilightForestMod;
 import twilightforest.data.tags.BlockTagGenerator;
+import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
+import twilightforest.network.ParticlePacket;
+import twilightforest.network.TFPacketHandler;
 import twilightforest.util.VoxelBresenhamIterator;
 
 import javax.annotation.Nonnull;
@@ -141,9 +146,6 @@ public class OreMagnetItem extends Item {
 	 *                         ({@link BlockTagGenerator#MINING_CORE_EXCLUDED}) instead of the ore magnet's.
 	 */
 	public static int doMagnet(Level level, BlockPos usePos, BlockPos destPos, boolean sourceIsMineCore) {
-		// FIXME Find a better place to invoke this!
-		initOre2BlockMap();
-
 		int blocksMoved = 0;
 
 		// find some ore?
@@ -184,6 +186,17 @@ public class OreMagnetItem extends Item {
 
 				if (isReplaceable(replaceState) || replaceState.canBeReplaced() || replaceState.isAir()) {
 					level.setBlock(coord, replacementBlock, 2);
+
+					if (sourceIsMineCore && level instanceof ServerLevel serverLevel) {
+						// The Miner's Tree leaves a trail of green motes where it drops each pulled ore block
+						Vec3 xyz = Vec3.atCenterOf(replacePos);
+						ParticlePacket particlePacket = new ParticlePacket();
+						for (int i = 0; i < 16; i++) {
+							Vec3 offset = new Vec3((level.random.nextDouble() - 0.5D) * 1.25D, (level.random.nextDouble() - 0.5D) * 1.25D, (level.random.nextDouble() - 0.5D) * 1.25D);
+							particlePacket.queueParticle(TFParticleType.LOG_CORE_PARTICLE.get(), false, xyz.add(offset), new Vec3(0.8, 0.9, 0.2));
+						}
+						TFPacketHandler.CHANNEL.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(xyz.x(), xyz.y(), xyz.z(), 64.0D, serverLevel.dimension())), particlePacket);
+					}
 
 					// set close to ore material
 					level.setBlock(replacePos, attactedOreBlock, 2);
@@ -242,39 +255,41 @@ public class OreMagnetItem extends Item {
 		return (core ? TREE_ORE_TO_BLOCK_REPLACEMENTS : MAGNET_ORE_TO_BLOCK_REPLACEMENTS).containsKey(ore);
 	}
 
-	// So it looks like we can't really access BlockTag contents until Datapack loading is complete (see `buildOreMagnetCache` method below)
-	// Instead let's opt for only clearing that particular cache on reload, and lazy-init the map when the magnet is used
-
 	// Switch over to ConcurrentHashMap if we run into any concurrency problems
-	private static boolean cacheNeedsBuild = true;
-	private static final HashMap<Block, Block> MAGNET_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
-	private static final HashMap<Block, Block> TREE_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+	public static final HashMap<Block, Block> MAGNET_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+	public static final HashMap<Block, Block> TREE_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
 
-	private static void initOre2BlockMap() {
-		if (!cacheNeedsBuild)
-			return;
+	/**
+	 * Rebuilds the ore to ground block maps once the server has bound the block tags, at startup and on every /reload.
+	 * Only the server ever magnets ores, so the client's own tag sync is skipped. In singleplayer it would otherwise
+	 * rebuild these shared maps on the client thread while the integrated server may be reading them.
+	 */
+	@SubscribeEvent
+	public static void refreshOreMagnetCache(TagsUpdatedEvent event) {
+		if (event.getUpdateCause() != TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) return;
 
-		TwilightForestMod.LOGGER.info("GENERATING ORE TO BLOCK MAPPING");
+		MAGNET_ORE_TO_BLOCK_REPLACEMENTS.clear();
+		TREE_ORE_TO_BLOCK_REPLACEMENTS.clear();
 
 		//collect all tags
-		for (TagKey<Block> tag : Objects.requireNonNull(ForgeRegistries.BLOCKS.tags()).getTagNames().filter(location -> location.location().getNamespace().equals("forge")).toList()) {
+		for (TagKey<Block> tag : BuiltInRegistries.BLOCK.getTagNames().filter(location -> location.location().getNamespace().equals("forge")).toList()) {
 			//check if the tag is a valid ore tag
 			if (tag.location().getPath().contains("ores_in_ground/")) {
 				//grab the part after the slash for use later
 				String oreground = tag.location().getPath().substring(15);
 				//check if a tag for ore grounds matches up with our ores in ground tag
-				if (Objects.requireNonNull(ForgeRegistries.BLOCKS.tags()).getTagNames().filter(location -> location.location().getNamespace().equals("forge")).anyMatch(blockTagKey -> blockTagKey.location().getPath().equals("ore_bearing_ground/" + oreground))) {
+				if (BuiltInRegistries.BLOCK.getTagNames().filter(location -> location.location().getNamespace().equals("forge")).anyMatch(blockTagKey -> blockTagKey.location().getPath().equals("ore_bearing_ground/" + oreground))) {
 					//add each ground type to each ore
-					Objects.requireNonNull(ForgeRegistries.BLOCKS.tags()).getTag(TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "ore_bearing_ground/" + oreground))).forEach(ground ->
-							Objects.requireNonNull(ForgeRegistries.BLOCKS.tags()).getTag(tag).forEach(ore -> {
+					BuiltInRegistries.BLOCK.getTag(TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "ore_bearing_ground/" + oreground))).ifPresent(grounds -> grounds.forEach(ground ->
+							BuiltInRegistries.BLOCK.getTag(tag).ifPresent(ores -> ores.forEach(ore -> {
 								//exclude ignored ores
-								if (!ore.defaultBlockState().is(BlockTagGenerator.ORE_MAGNET_IGNORE)) {
-									MAGNET_ORE_TO_BLOCK_REPLACEMENTS.put(ore, ground);
+								if (!ore.value().defaultBlockState().is(BlockTagGenerator.ORE_MAGNET_IGNORE)) {
+									MAGNET_ORE_TO_BLOCK_REPLACEMENTS.put(ore.value(), ground.value());
 								}
-								if (!ore.defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED)) {
-									TREE_ORE_TO_BLOCK_REPLACEMENTS.put(ore, ground);
+								if (!ore.value().defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED)) {
+									TREE_ORE_TO_BLOCK_REPLACEMENTS.put(ore.value(), ground.value());
 								}
-							}));
+							}))));
 				}
 			}
 		}
@@ -288,21 +303,5 @@ public class OreMagnetItem extends Item {
 		if (!Blocks.ANCIENT_DEBRIS.defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED) && !TREE_ORE_TO_BLOCK_REPLACEMENTS.containsKey(Blocks.ANCIENT_DEBRIS)) {
 			TREE_ORE_TO_BLOCK_REPLACEMENTS.put(Blocks.ANCIENT_DEBRIS, Blocks.NETHERRACK);
 		}
-
-		cacheNeedsBuild = false;
-	}
-
-	@SubscribeEvent
-	public static void buildOreMagnetCache(AddReloadListenerEvent event) {
-		event.addListener((stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor) -> {
-			if (!cacheNeedsBuild) {
-				MAGNET_ORE_TO_BLOCK_REPLACEMENTS.clear();
-				TREE_ORE_TO_BLOCK_REPLACEMENTS.clear();
-				cacheNeedsBuild = true;
-			}
-
-			return stage.wait(null).thenRun(() -> {
-			}); // Nothing to do here
-		});
 	}
 }

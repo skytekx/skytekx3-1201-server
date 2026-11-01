@@ -324,6 +324,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.KEEPSAKE_CASKET.get());
 				output.accept(TFBlocks.SMOKER.get());
 				output.accept(TFBlocks.FIRE_JET.get());
+				output.accept(TFBlocks.MAZE_SLIME_BLOCK.get());
 				output.accept(TFBlocks.MAZESTONE.get());
 				output.accept(TFBlocks.MAZESTONE_BRICK.get());
 				output.accept(TFBlocks.CRACKED_MAZESTONE.get());
@@ -427,6 +428,7 @@ public class TFCreativeTabs {
 				output.accept(TFItems.RAW_IRONWOOD.get());
 				output.accept(TFItems.IRONWOOD_INGOT.get());
 				output.accept(TFItems.STEELEAF_INGOT.get());
+				output.accept(TFItems.MAZE_SLIME_BALL.get());
 				output.accept(TFItems.NAGA_SCALE.get());
 				output.accept(TFItems.WROUGHT_IRON_BAR.get());
 				output.accept(TFItems.ARMOR_SHARD.get());

@@ -54,6 +54,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> STORAGE_BLOCKS_IRONWOOD = makeForgeTag("storage_blocks/ironwood");
 	public static final TagKey<Item> STORAGE_BLOCKS_KNIGHTMETAL = makeForgeTag("storage_blocks/knightmetal");
 	public static final TagKey<Item> STORAGE_BLOCKS_STEELEAF = makeForgeTag("storage_blocks/steeleaf");
+	public static final TagKey<Item> STORAGE_BLOCKS_SLIME = makeForgeTag("storage_blocks/slime");
 
 	public static final TagKey<Item> RAW_MATERIALS_IRONWOOD = makeForgeTag("raw_materials/ironwood");
 	public static final TagKey<Item> RAW_MATERIALS_KNIGHTMETAL = makeForgeTag("raw_materials/knightmetal");
@@ -158,6 +159,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 
 		tag(PAPER).add(Items.PAPER);
 		tag(Tags.Items.FEATHERS).add(Items.FEATHER).add(TFItems.RAVEN_FEATHER.get());
+		tag(Tags.Items.SLIMEBALLS).add(TFItems.MAZE_SLIME_BALL.get());
+		tag(STORAGE_BLOCKS_SLIME).add(TFBlocks.MAZE_SLIME_BLOCK.get().asItem());
 
 		tag(FIERY_VIAL).add(TFItems.FIERY_BLOOD.get(), TFItems.FIERY_TEARS.get());
 

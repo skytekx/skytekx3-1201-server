@@ -50,6 +50,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> STORAGE_BLOCKS_IRONWOOD = BlockTags.create(TwilightForestMod.prefix("storage_blocks/ironwood"));
 	public static final TagKey<Block> STORAGE_BLOCKS_KNIGHTMETAL = BlockTags.create(TwilightForestMod.prefix("storage_blocks/knightmetal"));
 	public static final TagKey<Block> STORAGE_BLOCKS_STEELEAF = BlockTags.create(TwilightForestMod.prefix("storage_blocks/steeleaf"));
+	public static final TagKey<Block> STORAGE_BLOCKS_SLIME = BlockTags.create(new ResourceLocation("forge", "storage_blocks/slime"));
 
 	public static final TagKey<Block> PORTAL_EDGE = BlockTags.create(TwilightForestMod.prefix("portal/edge"));
 	public static final TagKey<Block> PORTAL_POOL = BlockTags.create(TwilightForestMod.prefix("portal/fluid"));
@@ -388,6 +389,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 		tag(STORAGE_BLOCKS_IRONWOOD).add(TFBlocks.IRONWOOD_BLOCK.get());
 		tag(STORAGE_BLOCKS_KNIGHTMETAL).add(TFBlocks.KNIGHTMETAL_BLOCK.get());
 		tag(STORAGE_BLOCKS_STEELEAF).add(TFBlocks.STEELEAF_BLOCK.get());
+		tag(STORAGE_BLOCKS_SLIME).add(TFBlocks.MAZE_SLIME_BLOCK.get());
 
 		tag(BlockTags.BEACON_BASE_BLOCKS).addTags(
 				STORAGE_BLOCKS_ARCTIC_FUR,

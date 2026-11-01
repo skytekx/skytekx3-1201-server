@@ -266,6 +266,29 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.define('t', Ingredient.of(TFItems.CROWN_SPLINTER.get()))
 				.unlockedBy("has_item", has(TFItems.CROWN_SPLINTER.get()))
 				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.LEAD, 2)
+				.define('~', Items.STRING)
+				.define('O', TFItems.MAZE_SLIME_BALL.get())
+				.pattern("~~ ")
+				.pattern("~O ")
+				.pattern("  ~")
+				.unlockedBy("has_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer, TwilightForestMod.prefix("lead_maze_ver"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BREWING, Items.MAGMA_CREAM)
+				.requires(Items.BLAZE_POWDER)
+				.requires(TFItems.MAZE_SLIME_BALL.get())
+				.unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER))
+				.save(consumer, TwilightForestMod.prefix("magma_cream_maze_ver"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.STICKY_PISTON)
+				.define('P', Blocks.PISTON)
+				.define('S', TFItems.MAZE_SLIME_BALL.get())
+				.pattern("S")
+				.pattern("P")
+				.unlockedBy("has_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer, TwilightForestMod.prefix("sticky_piston_maze_ver"));
 	}
 
 	private void darkTowerRecipes(Consumer<FinishedRecipe> consumer) {
@@ -533,6 +556,19 @@ public class CraftingGenerator extends CraftingDataHelper {
 		compressedBlock(consumer, "ironwood_block", TFBlocks.IRONWOOD_BLOCK, ItemTagGenerator.IRONWOOD_INGOTS);
 		compressedBlock(consumer, "knightmetal_block", TFBlocks.KNIGHTMETAL_BLOCK, ItemTagGenerator.KNIGHTMETAL_INGOTS);
 		compressedBlock(consumer, "steeleaf_block", TFBlocks.STEELEAF_BLOCK, ItemTagGenerator.STEELEAF_INGOTS);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.MAZE_SLIME_BALL.get(), 9)
+				.requires(TFBlocks.MAZE_SLIME_BLOCK.get())
+				.unlockedBy("has_item", has(TFBlocks.MAZE_SLIME_BLOCK.get()))
+				.save(consumer, TwilightForestMod.prefix("compressed_blocks/reversed/maze_slime_block"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MAZE_SLIME_BLOCK.get())
+				.pattern("###")
+				.pattern("###")
+				.pattern("###")
+				.define('#', TFItems.MAZE_SLIME_BALL.get())
+				.unlockedBy("has_item", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer, TwilightForestMod.prefix("compressed_blocks/maze_slime"));
 	}
 
 	private void emptyMapRecipes(Consumer<FinishedRecipe> consumer) {

@@ -119,6 +119,7 @@ public class TFBlocks {
 	public static final RegistryObject<Block> MAZESTONE_MOSAIC = register("mazestone_mosaic", () -> new Block(BlockBehaviour.Properties.copy(MAZESTONE.get())));
 	public static final RegistryObject<Block> MAZESTONE_BORDER = register("mazestone_border", () -> new Block(BlockBehaviour.Properties.copy(MAZESTONE.get())));
 	public static final RegistryObject<Block> RED_THREAD = register("red_thread", () -> new RedThreadBlock(BlockBehaviour.Properties.of().instabreak().mapColor(MapColor.FIRE).noCollission().noOcclusion().noParticlesOnBreak().pushReaction(PushReaction.DESTROY)));
+	public static final RegistryObject<Block> MAZE_SLIME_BLOCK = register("maze_slime_block", () -> new MazeSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).mapColor(MapColor.STONE)));
 
 	//stronghold
 	public static final RegistryObject<Block> STRONGHOLD_SHIELD = register("stronghold_shield", () -> new StrongholdShieldBlock(BlockBehaviour.Properties.of().noLootTable().mapColor(MapColor.STONE).pushReaction(PushReaction.BLOCK).requiresCorrectToolForDrops().sound(SoundType.METAL).strength(-1.0F, 6000000.0F)));

@@ -2,6 +2,9 @@ package twilightforest.data;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.SlimePredicate;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -331,12 +334,18 @@ public class EntityLootTables extends EntityLootSubProvider {
 				LootTable.lootTable()
 						.withPool(LootPool.lootPool()
 								.setRolls(ConstantValue.exactly(1))
-								.add(LootItem.lootTableItem(Items.SLIME_BALL)
-										.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))
-										.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))))
+								.add(LootItem.lootTableItem(TFItems.MAZE_SLIME_BALL.get())
+										.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
+										.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+										.when(this.killedByFrog().invert()))
+								.add(LootItem.lootTableItem(TFItems.MAZE_SLIME_BALL.get())
+										.apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))
+										.when(this.killedByFrog()))
+								.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().subPredicate(SlimePredicate.sized(MinMaxBounds.Ints.exactly(1))))))
 						.withPool(LootPool.lootPool()
 								.setRolls(ConstantValue.exactly(1))
 								.add(LootItem.lootTableItem(TFItems.CHARM_OF_KEEPING_1.get()))
+								.when(LootItemKilledByPlayerCondition.killedByPlayer())
 								.when((LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.015F, 0.005F)))));
 
 		add(TFEntities.MINOTAUR.get(),

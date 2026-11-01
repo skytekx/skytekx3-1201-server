@@ -1,7 +1,7 @@
 ---
 type: Mod
 title: SkyTekx Compat
-description: The pack's own small Forge mod, skytekx-compat 2.1.2. It guards Bird's Nests against short loot table paths and, since 2026-10-31, keeps Skylands structures out of the void. It began as the skytekx-worldgen mod.
+description: The pack's own small Forge mod, skytekx-compat 2.1.3. It guards Bird's Nests against short loot table paths, keeps Skylands structures out of the void since 2026-10-31, and since 2026-11-01 answers Infernal Mobs queries on the server thread and keeps Falling Meteors in the overworld. It began as the skytekx-worldgen mod.
 tags: [content, mod, compat, mixin]
 timestamp: 2026-11-01
 ---
@@ -14,19 +14,21 @@ the Skylands structure placement and the Skylands travel handler. Since the vani
 2026-10-31 added three worldgen mixins that keep the structures of the Skylands off the void, see
 [Skylands void floor](#skylands-void-floor). Versions 2.1.1 and 2.1.2 of 2026-11-01 tightened the start
 check after two reviews, and 2.1.2 added a fourth worldgen mixin for the columns that pieces fill
-downward.
+downward. Version 2.1.3 of 2026-11-01 added two mixins for other mods, see
+[Infernal Mobs queries](#infernal-mobs-queries) and
+[Falling Meteors only in the overworld](#falling-meteors-only-in-the-overworld).
 
 | Property | Value |
 |---|---|
-| Jar | Bundled as [local-mods/skytekx-compat-2.1.2.jar](../../local-mods/skytekx-compat-2.1.2.jar), 14,260 bytes, SHA-256 `c424dda546c40151...` |
+| Jar | Bundled as [local-mods/skytekx-compat-2.1.3.jar](../../local-mods/skytekx-compat-2.1.3.jar), 17,325 bytes, SHA-256 `0059f9b31d295b86...` |
 | Mod id | Still `skytekx`, display name "SkyTekx Compat", MIT, author "SkyTekx" |
-| Needs | Forge 47 or later and Minecraft 1.20.1 up to 1.21. No declared dependency on Bird's Nests |
-| Source | Local git repo `~/git/skytekx-worldgen` (no remote), branch `master`, head 26a493d |
+| Needs | Forge 47 or later and Minecraft 1.20.1 up to 1.21. No declared dependency on Bird's Nests, Infernal Mobs or Falling Meteors |
+| Source | Local git repo `~/git/skytekx-worldgen` (no remote), branch `master`, head c6d170b |
 | Build | Gradle 8.8, ForgeGradle 6.0, Parchment `2023.09.03-1.20.1`, MixinGradle 0.7, Mixin annotation processor 0.8.5, Java 17 (`~/jdk17/jdk-17.0.19+10`), Forge `1.20.1-47.4.6` |
 
-The jar in `local-mods/` is byte identical to `build/libs/skytekx-compat-2.1.2.jar` in the source repo,
-and the server's `mods/` on the build machine holds it too. The Mac mini runs it since 2026-11-01
-02:51. From 00:58 it ran 2.1.0 (12,330 bytes, SHA-256 `7eb835067e332cf1...`), which now lies in
+The jar in `local-mods/` is byte identical to `build/libs/skytekx-compat-2.1.3.jar` in the source repo.
+The Mac mini runs it since 2026-11-01 06:10. From 02:51 it ran 2.1.2 (14,260 bytes, SHA-256
+`c424dda546c40151...`), from 00:58 2.1.0 (12,330 bytes, SHA-256 `7eb835067e332cf1...`). Both now lie in
 `~/skytekx3-backups/jars-orig/` there. Version 2.1.1 (12,818 bytes, SHA-256 `c1633905c56903ec...`) only ran on a test server. Packs 3.0.5 to 3.0.7 and the owner's Prism instance carry 2.0.0 (3,728 bytes, SHA-256
 `16805d83d52c7c5f...`), which stays fine on the client, see [server list](#server-list). At boot
 2.1.0 and later log "SkyTekx compat: birdsnests loot-table guard and Skylands void floor active".
@@ -103,27 +105,71 @@ Waystones mixes into `tryPlacingChildren` at `Registry.getHolder`, Structure Gel
 `StructurePiece.fillColumnDown` either. Blue Skies, Twilight Forest and DimDoors only call it from
 their own pieces in their own dimensions. The refmap of 2.1.2 adds `m_73528_`.
 
+## Infernal Mobs queries
+
+The client of Infernal Mobs 1.20.1.11 sends a `MobModsPacket` query for every mob that joins its world,
+to learn the mob's modifiers. The server half of `MobModsPacket.handle` ran straight on the Netty IO
+thread and called `Level.getEntity` there. Arclight's async catcher (`defaultOperation=block`, see
+[Arclight](../server/arclight.md#configuration-files)) turns such a call into a task for the server
+thread, parks the IO thread until the task ran and logs `Async chunk entity get`. From 03:02 to 04:40
+on 2026-11-01 the Mac mini logged 6,130 of these, all on one IO thread, in bursts of up to 42 within
+about 0.2 s, and every stack dump in `debug.log` passes through `MobModsPacket.handle`. While the
+thread waits, the connections on it read no packets.
+
+`InfernalMobsQueryOnServerThreadMixin` hooks the head of `handle`. For a query (`sentFromServer` 0)
+that arrives on the server outside the server thread, it schedules the original method with Forge's
+`enqueueWork`, marks the packet handled and cancels. On the server thread the original body runs
+unchanged and answers the client. Answers from the server and everything on the client keep the old
+path. The handler belongs to the instance that registered the packet, so the mixin reads the private
+`sentFromServer` of the decoded packet through a cast to the mixin class, which Mixin turns into a
+cast to `MobModsPacket`.
+
+On the test server at 06:05 the owner's client sent 61 queries. The `Server thread` handled all of
+them, the client received the modifiers of an infernal mob, and no `Async chunk entity get` came up.
+The stalls lasted at most about 0.2 s each, so they explain hiccups, but not on their own the reports
+of items that need several passes to pick up. The merge radius is the other suspect, see
+[Arclight](../server/arclight.md#configuration-files).
+
+## Falling Meteors only in the overworld
+
+Falling Meteors Reimagined 2.5 decides per level in the static
+`MeteorManager.isDimensionWhitelisted(ServerLevel)` whether its climate timer queues natural meteors
+and comets there and whether a thrown Meteor Summoner may call one. With the default
+`whitelistedDimensions = [0, 1, 7]` it accepts the overworld, the End and every dimension whose type
+is natural and has sky light, which includes the Skylands. The owner ruled on 2026-11-01 at 05:52
+that meteors fall only in the main dimension. `FallingMeteorsOverworldOnlyMixin` returns true for
+`minecraft:overworld` and false everywhere else. A summoner thrown elsewhere reports the wrong
+dimension and calls nothing. The op commands `/meteor`, `/comet` and `/kittyattack` do not ask the
+method and work everywhere. Alien Creepers still spawn through the mod's biome modifier in every
+biome of `#minecraft:is_overworld`, and that tag holds the 14 island biomes of the Skylands.
+
+On the test server at 06:02 a summoner projectile dropped onto a stone block called a falling meteor
+in the overworld and nothing in the Skylands, the Nether or the End. The End proves the mixin, since
+the default list allows it. A natural meteor from `/meteor` then crashed at X 97 Z 11 next to the
+owner's client and left 166 meteor and 8 rare meteor blocks, with no error in the log.
+
 ## Server list
 
 Forge compares the version of each mod in the server list ping. Packs 3.0.5 to 3.0.7 carry 2.0.0 with
 the default display test `MATCH_VERSION`, which marks a server as incompatible unless the server reports
 exactly "2.0.0" for the mod id `skytekx`. Versions 2.1.0 to 2.1.2 therefore report "2.0.0" in the
-ping and accept any server version on the client (`SkytekxWorldgen.SERVER_LIST_VERSION`). Every fix in
-the mod acts on the server, so a client never needs 2.1.0 or later.
+ping and accept any server version on the client (`SkytekxWorldgen.SERVER_LIST_VERSION`), and so does
+2.1.3. Every fix in the mod acts on the server, so a client never needs 2.1.0 or later.
 
 ## Rebuild
 
 ```sh
 cd ~/git/skytekx-worldgen
 JAVA_HOME=~/jdk17/jdk-17.0.19+10 ./gradlew build -Djava.net.preferIPv4Stack=true
-cp build/libs/skytekx-compat-2.1.2.jar ~/git/skytekx3-1201-server/local-mods/
+cp build/libs/skytekx-compat-2.1.3.jar ~/git/skytekx3-1201-server/local-mods/
 ```
 
-The Gradle cache lacks MixinGradle 0.7.38 and two of its dependencies, so `--offline` fails and the build
-needs the network.
+Up to 2.1.2 the Gradle cache lacked MixinGradle 0.7.38 and two of its dependencies, so `--offline`
+failed. The build of 2.1.3 on 2026-11-01 ran with `--offline`.
 
-Copy the new jar into the server's `mods/` as well and restart. The build needs Java 17 and a copy of
-Bird's Nests in `libs/` (compile only, for the mixin processor), which the repo tracks.
+Copy the new jar into the server's `mods/` as well and restart. The build needs Java 17 and copies of
+Bird's Nests, Infernal Mobs 1.20.1.11 and Falling Meteors 2.5 in `libs/` (compile only, for the mixin
+processor), which the repo tracks.
 
 ## Open points
 
@@ -135,7 +181,7 @@ Bird's Nests in `libs/` (compile only, for the mixin processor), which the repo 
 - The repo has no remote, so the only copy of the source is on this machine. The Mac mini only needs the
   jar.
 - The folder `modrinth-permissions/` still has `skytekx-worldgen-1.0.0.jar.md` next to
-  `skytekx-compat-2.1.2.jar.md` (see [publish](../modpack/publish.md)).
+  `skytekx-compat-2.1.3.jar.md` (see [publish](../modpack/publish.md)).
 - `/locate` and explorer maps use `Structure.findValidGenerationPoint`, not `generate`. Beyond the
   pregenerated radius they can point at a swamp hut or a meteorite that the start check then cancels.
 - The mod has no tests. The void floor was tested on throwaway copies of the server (tests 1 to 6),
@@ -145,8 +191,10 @@ Bird's Nests in `libs/` (compile only, for the mixin processor), which the repo 
   and neither needs the redirect, see
   [Skylands worldgen](skylands-worldgen.md#no-structures-over-the-void). Keep the island biomes out of
   their tags and run the void scan after any biome tag change.
-- Nobody tested a boot without Bird's Nests. The mixin config is required and Bird's Nests is no
-  declared dependency, so removing Bird's Nests should be tested before it is done.
+- A boot of 2.1.3 without Falling Meteors on the test server (2026-11-01 06:13) came up normally.
+  Mixin only logged `@Mixin target net.meteor.meteors.world.MeteorManager was not found` as a warning,
+  although the mixin config is required. A missing Bird's Nests or Infernal Mobs should behave the
+  same, but nobody tested those two.
 
 ## History
 
@@ -187,6 +235,13 @@ Bird's Nests in `libs/` (compile only, for the mixin processor), which the repo 
 - 2026-11-01 02:51: 2.1.2 went live on the Mac mini after a warning in chat, and 2.1.0 went to
   `~/skytekx3-backups/jars-orig/` there. The server was up at 02:52:03 with the 3 accepted boot errors
   and logged the void floor line.
+- 2026-11-01 05:45: version 2.1.3 began with commit 7d58122, which answers Infernal Mobs queries on
+  the server thread, and 23d4173 set the version. At 06:00 commit c6d170b added the Falling Meteors
+  mixin. The server repo bundles 2.1.3 since 429e220.
+- 2026-11-01 06:10: 2.1.3 went live on the Mac mini together with Falling Meteors Reimagined, without
+  Get It Together Drops and with the Spigot item merge radius at 0.5. Nobody was online, and 2.1.2
+  went to `~/skytekx3-backups/jars-orig/` there. The server was up at 06:11:04 with the 3 accepted boot
+  errors.
 
 Related: [boot fixes](boot-fixes.md), [mod set](../modpack/mod-set.md),
 [Skylands worldgen](skylands-worldgen.md), [content](index.md).

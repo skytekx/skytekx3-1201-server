@@ -415,6 +415,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.SLIDER.get());
 				output.accept(TFBlocks.UNCRAFTING_TABLE.get());
 				output.accept(TFBlocks.IRON_LADDER.get());
+				output.accept(TFBlocks.ROPE.get());
 			}).build());
 
 	public static final RegistryObject<CreativeModeTab> ITEMS = TABS.register("items", () -> CreativeModeTab.builder()

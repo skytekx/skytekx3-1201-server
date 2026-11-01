@@ -337,7 +337,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.ROOT_STRAND.get(),
 				TFBlocks.ROOT_BLOCK.get());
 
-		tag(BlockTags.CLIMBABLE).add(TFBlocks.IRON_LADDER.get(), TFBlocks.ROOT_STRAND.get()).addTag(HOLLOW_LOGS_CLIMBABLE);
+		tag(BlockTags.CLIMBABLE).add(TFBlocks.IRON_LADDER.get(), TFBlocks.ROPE.get(), TFBlocks.ROOT_STRAND.get()).addTag(HOLLOW_LOGS_CLIMBABLE);
 
 		tag(BlockTags.STANDING_SIGNS).add(
 				TFBlocks.TWILIGHT_OAK_SIGN.get(), TFBlocks.CANOPY_SIGN.get(),

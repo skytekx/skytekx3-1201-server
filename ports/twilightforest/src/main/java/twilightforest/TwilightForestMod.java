@@ -115,6 +115,7 @@ public class TwilightForestMod {
 		TFFeatures.FEATURES.register(modbus);
 		TFFeatureModifiers.FOLIAGE_PLACERS.register(modbus);
 		TFLoot.FUNCTIONS.register(modbus);
+		TFLoot.NUMBERS.register(modbus);
 		TFItems.ITEMS.register(modbus);
 		TFLootModifiers.LOOT_MODIFIERS.register(modbus);
 		TFMobEffects.MOB_EFFECTS.register(modbus);

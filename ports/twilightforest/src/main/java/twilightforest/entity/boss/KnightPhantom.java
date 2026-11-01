@@ -195,20 +195,16 @@ public class KnightPhantom extends BaseTFBoss {
 				}
 
 				//trigger criteria for killing every phantom in a group
+				// Everyone near the treasure shares the kill, which replaces the hurt_boss credit progress_knights no longer needs (4.8 #1987)
 				if (cause.getEntity() instanceof ServerPlayer player) {
 					TFAdvancements.KILL_ALL_PHANTOMS.trigger(player);
+					for (ServerPlayer otherPlayer : this.level().getEntitiesOfClass(ServerPlayer.class, new AABB(treasurePos).inflate(32.0D))) {
+						TFAdvancements.KILL_ALL_PHANTOMS.trigger(otherPlayer);
+					}
 				}
 
 				// mark the stronghold as defeated
 				LandmarkUtil.markStructureConquered(this.level(), this, TFStructures.KNIGHT_STRONGHOLD, true);
-
-				for (ServerPlayer player : this.getPlayersWhoHurtMe()) {
-					TFAdvancements.HURT_BOSS.trigger(player, this);
-				}
-
-				for (ServerPlayer player : this.level().getEntitiesOfClass(ServerPlayer.class, new AABB(treasurePos).inflate(64.0D))) {
-					TFAdvancements.HURT_BOSS.trigger(player, this);
-				}
 			}
 		}
 	}

@@ -11,11 +11,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -33,12 +39,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -50,6 +60,8 @@ import twilightforest.advancements.DrinkFromFlaskTrigger;
 import twilightforest.block.*;
 import twilightforest.block.entity.KeepsakeCasketBlockEntity;
 import twilightforest.block.entity.SkullCandleBlockEntity;
+import twilightforest.capabilities.CapabilityList;
+import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.enchantment.ChillAuraEnchantment;
 import twilightforest.entity.projectile.ITFProjectile;
 import twilightforest.init.TFBlocks;
@@ -60,6 +72,7 @@ import twilightforest.item.FieryArmorItem;
 import twilightforest.item.PotionFlaskTracking;
 import twilightforest.item.YetiArmorItem;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,6 +80,8 @@ import java.util.UUID;
 public class EntityEvents {
 
 	private static final boolean SHIELD_PARRY_MOD_LOADED = ModList.get().isLoaded("parry");
+	// 4.8 names this modifier twilightforest:group_health_boost; 1.20.1 modifiers are keyed by UUID (nameUUIDFromBytes of that id)
+	private static final UUID GROUP_HEALTH_BOOST_UUID = UUID.fromString("14263e84-cfde-3f33-aeb8-990f4c6f4a62");
 
 	@SubscribeEvent
 	public static void alertPlayerCastleIsWIP(AdvancementEvent.AdvancementEarnEvent event) {
@@ -331,6 +346,53 @@ public class EntityEvents {
 		LivingEntity living = event.getEntity();
 		if (living != null && living.level().isClientSide() && !living.isSpectator() && living.level().getBlockState(living.getOnPos()).getBlock() instanceof CloudBlock) {
 			for (int i = 0; i < 12; i++) CloudBlock.addEntityMovementParticles(living.level(), living.getOnPos(), living, true);
+		}
+	}
+
+	// Multiplayer-inclusive boss fights, backported from TF 4.8 (#1987, EntityEvents.adjustEntityHealthInMultiplayerFights)
+	@SubscribeEvent
+	public static void adjustEntityHealthInMultiplayerFights(MobSpawnEvent.FinalizeSpawn event) {
+		Mob mob = event.getEntity();
+		if (mob.getType().is(EntityTagGenerator.MULTIPLAYER_INCLUSIVE_ENTITIES)) {
+			if (TFConfig.multiplayerFightAdjuster.adjustsHealth()) {
+				List<ServerPlayer> nearbyPlayers = event.getLevel().getEntitiesOfClass(ServerPlayer.class, mob.getBoundingBox().inflate(32, 10, 32), player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.and(EntitySelector.ENTITY_STILL_ALIVE).test(player));
+				AttributeInstance maxHealth = mob.getAttribute(Attributes.MAX_HEALTH);
+				// a mob can be finalized twice (e.g. by another mod), and adding the same modifier twice throws
+				if (nearbyPlayers.size() > 1 && maxHealth != null && maxHealth.getModifier(GROUP_HEALTH_BOOST_UUID) == null) {
+					double bonus = getHealthBasedOnDifficulty(event.getDifficulty().getDifficulty()) * (nearbyPlayers.size() - 1);
+					maxHealth.addPermanentModifier(new AttributeModifier(GROUP_HEALTH_BOOST_UUID, TwilightForestMod.prefix("group_health_boost").toString(), bonus, AttributeModifier.Operation.ADDITION));
+					// 4.8 only raises the maximum, so most bosses would start the fight missing the bonus. Grant it as actual health too.
+					mob.setHealth(mob.getHealth() + (float) bonus);
+				}
+			}
+		}
+	}
+
+	private static double getHealthBasedOnDifficulty(Difficulty difficulty) {
+		return switch (difficulty) {
+			case EASY -> 20.0D;
+			case NORMAL -> 40.0D;
+			case HARD -> 60.0D;
+			default -> 0.0D;
+		};
+	}
+
+	// 4.8 listens to LivingDamageEvent.Post. On 1.20.1 LivingDamageEvent fires right before the health is lowered, so listen last and
+	// skip cancelled events: every player whose damage goes through is counted, including the one landing the killing blow.
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void addQualifiedGroupPlayerIfNeeded(LivingDamageEvent event) {
+		LivingEntity living = event.getEntity();
+		if (!living.level().isClientSide() && living.getType().is(EntityTagGenerator.MULTIPLAYER_INCLUSIVE_ENTITIES) && event.getSource().getEntity() != null) {
+			living.getCapability(CapabilityList.MULTIPLAYER_FIGHT).ifPresent(data -> data.maybeAddQualifiedPlayer(event.getSource().getEntity()));
+		}
+	}
+
+	// Every player that took part gets the hurt_boss trigger, which the boss progression advancements accept
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void grantGroupAdvancementIfNeeded(LivingDeathEvent event) {
+		LivingEntity living = event.getEntity();
+		if (!living.level().isClientSide()) {
+			living.getCapability(CapabilityList.MULTIPLAYER_FIGHT).ifPresent(data -> data.grantGroupAdvancement(living));
 		}
 	}
 }

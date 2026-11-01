@@ -68,6 +68,9 @@ public class TFConfig {
 	public static boolean disableSortingCore = false;
 	public static int sortingCoreRange = 16;
 
+	// -- Bosses --
+	public static MultiplayerFightAdjuster multiplayerFightAdjuster = MultiplayerFightAdjuster.NONE;
+
 	public static class Common {
 
 		public Common(ForgeConfigSpec.Builder builder) {
@@ -163,6 +166,17 @@ public class TFConfig {
 							Dictates how many blocks down from a cloud block should the game logic check for handling weather related code.
 							Lower if experiencing low tick rate. Set to 0 to turn all cloud precipitation logic off.""").
 					defineInRange("cloudBlockPrecipitationDistance", 32, 0, Integer.MAX_VALUE);
+
+			multiplayerFightAdjuster = builder.
+					worldRestart().
+					translation(config + "multiplayer_fight_adjuster").
+					comment("""
+							Determines how bosses should adjust to multiplayer fights. There are 4 possible values that can be put here:
+							NONE: doesnt do anything when multiple people participate in a bossfight. Bosses will act the same as they do in singleplayer or solo fights.
+							MORE_LOOT: adds additional drops to a boss' loot table based on how many players participated in the fight. These are fully controlled through the entity's loot table, using the `twilightforest:multiplayer_addition` loot function and the `twilightforest:multiplayer_rolls` number provider. Note that these will only do things to entities that are included in the `twilightforest:multiplayer_inclusive_entities` tag.
+							MORE_HEALTH: increases the health of each boss in that tag by 10 hearts on Easy, 20 on Normal and 30 on Hard for each additional player nearby when it spawns.
+							MORE_LOOT_AND_HEALTH: does both of the above functions for each boss.""").
+					defineEnum("multiplayerFightAdjuster", MultiplayerFightAdjuster.NONE);
 
 			builder.
 					comment("Settings for all things related to the uncrafting table.").
@@ -348,6 +362,7 @@ public class TFConfig {
 		public final ForgeConfigSpec.BooleanValue defaultItemEnchants;
 		public final ForgeConfigSpec.BooleanValue bossDropChests;
 		public final ForgeConfigSpec.IntValue cloudBlockPrecipitationDistanceCommon;
+		public final ForgeConfigSpec.EnumValue<MultiplayerFightAdjuster> multiplayerFightAdjuster;
 
 		public final MagicTrees MAGIC_TREES = new MagicTrees();
 
@@ -458,6 +473,32 @@ public class TFConfig {
 	private static final String config = "config." + TwilightForestMod.ID;
 
 	/**
+	 * How bosses in {@code #twilightforest:multiplayer_inclusive_entities} adapt to group fights (backported from TF 4.8, #1987).
+	 */
+	public enum MultiplayerFightAdjuster {
+		NONE(false, false),
+		MORE_LOOT(true, false),
+		MORE_HEALTH(false, true),
+		MORE_LOOT_AND_HEALTH(true, true);
+
+		private final boolean moreLoot;
+		private final boolean moreHealth;
+
+		MultiplayerFightAdjuster(boolean loot, boolean health) {
+			this.moreLoot = loot;
+			this.moreHealth = health;
+		}
+
+		public boolean adjustsLootRolls() {
+			return this.moreLoot;
+		}
+
+		public boolean adjustsHealth() {
+			return this.moreHealth;
+		}
+	}
+
+	/**
 	 * A magic tree core works unless it is disabled through its boolean option or its range is set to 0.
 	 * Takes the baked values (e.g. {@link #disableTimeCore}, {@link #timeCoreRange}) so the core tick stays off ForgeConfigSpec.
 	 */
@@ -481,6 +522,8 @@ public class TFConfig {
 		miningCoreRange = config.MAGIC_TREES.miningRange.get();
 		disableSortingCore = config.MAGIC_TREES.disableSorting.get();
 		sortingCoreRange = config.MAGIC_TREES.sortingRange.get();
+
+		multiplayerFightAdjuster = config.multiplayerFightAdjuster.get();
 	}
 
 	private static void rebakeClientOptions(Client config) {

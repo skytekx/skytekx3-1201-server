@@ -461,6 +461,16 @@ logs stay on the Mac and are not in the repo.
   logs the Sophisticated recipes it drops from the recipe book. The owner's client `SkyTekx3-test`
   and the second MacBook got the same swap, and the build machine's `mods/` matches the Mac mini by
   SHA-256. See [Mod set](modpack/mod-set.md#backpack).
+- In the evening the Mac mini moved to a new network and is now reached at 192.168.178.50. On the
+  owner's ask Elementary Staffs came back as our Forge 1.20.1 port of Kroko's MIT mod
+  (`elementary-staffs-1.20.1-2.0.0.1.jar`, public repo `skytekx/elementary-staffs`, 25 GameTests). After
+  a test with the owner's client on the test server and a chat warning, a backup ran at 19:56
+  (`world-2026-11-01-1956.tgz`, which pushed out the backup of 2026-10-31 19:34), and the server was up
+  with the jar at 19:57:09 (235 jars). Both MacBooks got the jar plus the client only shader loader
+  Oculus 1.8.0 with the shader MakeUp Ultra Fast 9.6. Complementary Reimagined failed on the laptop,
+  since Mesa on Apple silicon offers only 16 texture units per stage. BattleTowers and Falling Meteors
+  are now unchanged releases in the public repos `skytekx/battletowers` and
+  `skytekx/falling-meteors-reimagined`, for the next pack to download.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

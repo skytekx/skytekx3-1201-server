@@ -1,5 +1,6 @@
 package twilightforest;
 
+import com.google.common.collect.MapMaker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -10,11 +11,20 @@ import twilightforest.init.TFBiomes;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 public final class FoliageColorHandler {
 
-	private static final Map<Biome, Handler> HANDLES = new WeakHashMap<>();
+	// Concurrent + weak keys: the foliage colour resolver is called from chunk meshing worker threads (Embeddium/Sodium),
+	// which corrupted the plain WeakHashMap. Cleared when the client world changes (#2361), see TFClientEvents#clearFoliageColorCache.
+	private static final Map<Biome, Handler> HANDLES = new MapMaker().weakKeys().makeMap();
+
+	/**
+	 * Drops the cached biome handlers. They are looked up through the current client level's biome registry,
+	 * so a handler resolved while switching worlds (or with no level loaded) must not outlive that world.
+	 */
+	public static void clearCache() {
+		HANDLES.clear();
+	}
 
 	public static int get(int o, Biome biome, double x, double z) {
 		Handler handler = HANDLES.get(biome);

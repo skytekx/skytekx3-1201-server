@@ -14,8 +14,8 @@ import twilightforest.world.components.layer.vanillalegacy.Area;
 import twilightforest.world.components.layer.vanillalegacy.BiomeLayerFactory;
 import twilightforest.world.components.layer.vanillalegacy.BiomeLayerType;
 import twilightforest.world.components.layer.vanillalegacy.area.LazyArea;
-import twilightforest.world.components.layer.vanillalegacy.context.BigContext;
 import twilightforest.world.components.layer.vanillalegacy.context.LazyAreaContext;
+import twilightforest.world.components.layer.vanillalegacy.context.RandomContext;
 import twilightforest.world.components.layer.vanillalegacy.traits.AreaTransformer1;
 
 import java.util.List;
@@ -29,8 +29,6 @@ import java.util.function.LongFunction;
  * @author Ben
  */
 public record KeyBiomesLayer(List<ResourceKey<Biome>> keyBiomes) implements AreaTransformer1 {
-	private static final Random RANDOM = new Random();
-
 	@Override
 	public int getParentX(int x) {
 		return x | 3;
@@ -42,12 +40,13 @@ public record KeyBiomesLayer(List<ResourceKey<Biome>> keyBiomes) implements Area
 	}
 
 	@Override
-	public ResourceKey<Biome> applyPixel(BigContext<?> context, Area layer, int x, int z) {
-		RANDOM.setSeed(TFDimensionSettings.seed + (x & -4) * 25117L + (z & -4) * 151121L);
-		int ox = RANDOM.nextInt(2) + 1;
-		int oz = RANDOM.nextInt(2) + 1;
-		RANDOM.setSeed(TFDimensionSettings.seed + (x / 8) * 25117L + (z / 8) * 151121L);
-		int offset = RANDOM.nextInt(3);
+	public ResourceKey<Biome> applyPixel(RandomContext randomContext, Area layer, int x, int z) {
+		// Local Random: a shared static instance raced between worldgen threads. It is reseeded on every call, so the output is unchanged.
+		final Random rand = new Random(TFDimensionSettings.seed + (x & -4) * 25117L + (z & -4) * 151121L);
+		int ox = rand.nextInt(2) + 1;
+		int oz = rand.nextInt(2) + 1;
+		rand.setSeed(TFDimensionSettings.seed + (x / 8) * 25117L + (z / 8) * 151121L);
+		int offset = rand.nextInt(3);
 		if ((x & 3) == ox && (z & 3) == oz) {
 			// determine which of the 4
 			if ((x & 4) == 0) {

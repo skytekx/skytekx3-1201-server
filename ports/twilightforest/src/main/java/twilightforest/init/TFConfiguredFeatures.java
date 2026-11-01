@@ -1,6 +1,7 @@
 package twilightforest.init;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -10,6 +11,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Blocks;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.NoiseProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import twilightforest.TwilightForestMod;
@@ -38,6 +41,7 @@ import twilightforest.world.components.feature.config.HollowLogConfig;
 import twilightforest.world.components.feature.config.RootConfig;
 import twilightforest.world.components.feature.config.SwizzleConfig;
 import twilightforest.world.components.feature.config.ThornsConfig;
+import twilightforest.world.components.feature.config.WeightedListFeatureConfig;
 import twilightforest.world.registration.TreeConfigurations;
 import twilightforest.world.registration.TreeDecorators;
 
@@ -143,6 +147,10 @@ public final class TFConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_RAINBOW_OAK_TREE = registerKey("tree/large_rainbow_oak");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BROWN_CANOPY_MUSHROOM_TREE = registerKey("mushroom/brown_canopy_mushroom");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> RED_CANOPY_MUSHROOM_TREE = registerKey("mushroom/red_canopy_mushroom");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_RED_VANILLA_MUSHROOM = registerKey("mushroom/canopy_red_vanilla_mushroom");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_RED_SMOOTH_MUSHROOM = registerKey("mushroom/canopy_red_smooth_mushroom");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_RED_SPHEROID_MUSHROOM = registerKey("mushroom/canopy_red_spheroid_mushroom");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_RED_FLAT_MUSHROOM = registerKey("mushroom/canopy_red_flat_mushroom");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> MEGA_SPRUCE_TREE = registerKey("tree/mega_spruce_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_WINTER_TREE = registerKey("tree/large_winter_tree");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SNOWY_SPRUCE_TREE = registerKey("tree/snowy_spruce_tree");
@@ -305,7 +313,20 @@ public final class TFConfiguredFeatures {
 		context.register(RAINBOW_OAK_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.RAINBOAK_TREE));
 		context.register(LARGE_RAINBOW_OAK_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.LARGE_RAINBOAK_TREE));
 		context.register(BROWN_CANOPY_MUSHROOM_TREE, new ConfiguredFeature<>(TFFeatures.CANOPY_BROWN_MUSHROOM.get(), new HugeMushroomFeatureConfiguration(BlockStateProvider.simple(Blocks.BROWN_MUSHROOM_BLOCK.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.TRUE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), BlockStateProvider.simple(Blocks.MUSHROOM_STEM.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.FALSE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), 3)));
-		context.register(RED_CANOPY_MUSHROOM_TREE, new ConfiguredFeature<>(TFFeatures.CANOPY_RED_MUSHROOM.get(), new HugeMushroomFeatureConfiguration(BlockStateProvider.simple(Blocks.RED_MUSHROOM_BLOCK.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.TRUE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), BlockStateProvider.simple(Blocks.MUSHROOM_STEM.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.FALSE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), 3)));
+
+		HugeMushroomFeatureConfiguration redCanopyMushroom = new HugeMushroomFeatureConfiguration(BlockStateProvider.simple(Blocks.RED_MUSHROOM_BLOCK.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.TRUE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), BlockStateProvider.simple(Blocks.MUSHROOM_STEM.defaultBlockState().setValue(HugeMushroomBlock.UP, Boolean.FALSE).setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)), 3);
+		context.register(CANOPY_RED_VANILLA_MUSHROOM, new ConfiguredFeature<>(TFFeatures.CANOPY_RED_VANILLA_MUSHROOM.get(), redCanopyMushroom));
+		context.register(CANOPY_RED_SMOOTH_MUSHROOM, new ConfiguredFeature<>(TFFeatures.CANOPY_RED_SMOOTH_MUSHROOM.get(), redCanopyMushroom));
+		context.register(CANOPY_RED_SPHEROID_MUSHROOM, new ConfiguredFeature<>(TFFeatures.CANOPY_RED_SPHEROID_MUSHROOM.get(), redCanopyMushroom));
+		context.register(CANOPY_RED_FLAT_MUSHROOM, new ConfiguredFeature<>(TFFeatures.CANOPY_RED_FLAT_MUSHROOM.get(), redCanopyMushroom));
+
+		context.register(RED_CANOPY_MUSHROOM_TREE, new ConfiguredFeature<>(TFFeatures.WEIGHTED_LIST_SELECTOR.get(), new WeightedListFeatureConfig(SimpleWeightedRandomList.<Holder<PlacedFeature>>builder()
+				.add(PlacementUtils.inlinePlaced(features.getOrThrow(CANOPY_RED_VANILLA_MUSHROOM)), 33)
+				.add(PlacementUtils.inlinePlaced(features.getOrThrow(CANOPY_RED_SMOOTH_MUSHROOM)), 33)
+				.add(PlacementUtils.inlinePlaced(features.getOrThrow(CANOPY_RED_SPHEROID_MUSHROOM)), 33)
+				.add(PlacementUtils.inlinePlaced(features.getOrThrow(CANOPY_RED_FLAT_MUSHROOM)), 1)
+				.build())));
+
 		context.register(MEGA_SPRUCE_TREE, new ConfiguredFeature<>(Feature.TREE, TreeConfigurations.BIG_SPRUCE));
 		context.register(LARGE_WINTER_TREE, new ConfiguredFeature<>(TFFeatures.LARGE_WINTER_TREE.get(), TreeConfigurations.LARGE_WINTER));
 		context.register(SNOWY_SPRUCE_TREE, new ConfiguredFeature<>(TFFeatures.SNOW_TREE.get(), new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(Blocks.SPRUCE_LOG), new StraightTrunkPlacer(5, 2, 1), BlockStateProvider.simple(Blocks.SPRUCE_LEAVES), new SpruceFoliagePlacer(UniformInt.of(2, 3), UniformInt.of(0, 2), UniformInt.of(1, 2)), new TwoLayersFeatureSize(2, 0, 2)).ignoreVines().build()));

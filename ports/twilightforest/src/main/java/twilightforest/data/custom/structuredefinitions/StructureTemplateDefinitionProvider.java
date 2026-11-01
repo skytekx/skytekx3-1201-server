@@ -41,7 +41,9 @@ public abstract class StructureTemplateDefinitionProvider implements DataProvide
 	private final Map<ResourceLocation, Map<ResourceLocation, TemplatePoolInstance>> poolsForTemplateWeights = new HashMap<>();
 
 	private final PackOutput.PathProvider pathProvider;
-	private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+	// Protected as in 4.8's JsonCodecProvider: subclasses resolve getMarkers() through it. Pass RegistryDataGenerator's getRegistryProvider(), since the
+	// plain GatherDataEvent lookup lacks TF's datapack registries and lookupOrThrow(TEMPLATE_MARKER_HANDLER_LIST_KEY) would throw
+	protected final CompletableFuture<HolderLookup.Provider> lookupProvider;
 	protected final String modid;
 	private final String name;
 

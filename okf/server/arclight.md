@@ -110,13 +110,16 @@ on Modrinth or were built here. It is not a mods folder. Its 35 jars reach the s
 sit in `mods/`, and the debug log lists mod candidates under `mods/` only.
 
 Git ignores `mods/`. On the build machine it held 236 jars after the mod update of 2026-10-31 and holds
-235 since 2026-11-01. That day Placeable Items and Get It Together Drops left and Falling Meteors
-Reimagined came in. The folder matches the Mac mini's jar for jar:
+234 since 2026-11-01 08:09. That day Placeable Items, Get It Together Drops, Sophisticated Backpacks
+and Sophisticated Core left, and Falling Meteors Reimagined and the Backpack port came in. The folder
+matches the Mac mini's jar for jar:
 
-- The server side of `modrinth.index.json`.
+- The server side of `modrinth.index.json`, without Sophisticated Backpacks and Sophisticated Core,
+  whose entries stay in the index until the next pack.
 - Copies of the `local-mods/` jars.
-- Two jars that exist nowhere else in the repo, `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` (BrassAmber
-  BattleTowers) and since 2026-11-01 `meteors-2.5-forge.jar` (Falling Meteors Reimagined). Up to 2026-10-31 `alltheleaks-1.1.1+1.20.1-forge.jar` and
+- Three jars that exist nowhere else in the repo, `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` (BrassAmber
+  BattleTowers), since 2026-11-01 `meteors-2.5-forge.jar` (Falling Meteors Reimagined) and
+  `backpack-1.20.1-2.0.1.1.jar` (the Backpack port, built in the local repo `skytekx-backpack`). Up to 2026-10-31 `alltheleaks-1.1.1+1.20.1-forge.jar` and
   `cataclysm_spellbooks-1.2.9-1.20.1.jar` were in that position too. Since 782126f they are in
   `local-mods/`.
 

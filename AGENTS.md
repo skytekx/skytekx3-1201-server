@@ -27,8 +27,8 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   folder `plugins/` is not ignored, and it holds player data in `plugins/Essentials/userdata/`, so read
   `git status` before every commit. Real secrets live in the ansible vault.
 - Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, nine of them patched in
-  place, the bundled jars from `local-mods/` (one of them patched too) and BrassAmber BattleTowers,
-  which is in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change
+  place, the bundled jars from `local-mods/` (one of them patched too), BrassAmber BattleTowers and
+  Falling Meteors Reimagined, which are in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change
   into `mods/` by hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
   [Mod set](okf/modpack/mod-set.md).
 - Unify materials through `config/almostunified/` and tags, not by editing recipes mod by mod.

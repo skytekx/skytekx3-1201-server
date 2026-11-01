@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: Material/tag unification — the modern replacement for the 1.12.2 UniDict.
 tags: [modpack, recipes, unification]
-timestamp: 2026-06-29
+timestamp: 2026-11-01
 ---
 
 # AlmostUnified
@@ -18,8 +18,14 @@ item wins for each unified tag:
 
 ```
 ["minecraft","kubejs","crafttweaker","thermal","mekanism","immersiveengineering",
- "create","enderio","industrialforegoing","railcraft","tconstruct"]
+ "create","enderio","industrialforegoing","railcraft","tconstruct","twilightforest"]
 ```
+
+AlmostUnified 0.11 uses the first listed mod that has an item in the tag and never falls back to an
+unlisted mod. `twilightforest` is deliberately last: TF 4.8's `copper_nugget` (forge:nuggets/copper
+after the backport) unifies to `immersiveengineering:nugget_copper`, because Thermal and Mekanism have
+no copper nugget and Create and TConstruct come next. TF only wins a shared tag that no other listed
+mod fills.
 
 Unifies the `c:*_ores` / `_ingots` / `_nuggets` / `_dusts` / `_plates` / `_gears` / `_rods` /
 `_raw_materials` / `_storage_blocks` tag families.

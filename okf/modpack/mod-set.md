@@ -3,7 +3,7 @@ type: Reference
 title: Mod set
 description: How the mod list is composed — Modrinth index (source of truth) + local-mods overrides.
 tags: [modpack, mods, modrinth]
-timestamp: 2026-06-29
+timestamp: 2026-11-01
 ---
 
 # Mod set
@@ -15,10 +15,32 @@ and download URL. To add or remove a Modrinth mod, **edit the index**, not `mods
 
 ## Derived vs tracked
 - `mods/` — **derived**, gitignored. Rebuilt from the index by `tools/resolve_all.py` (needs the
-  Modrinth PAT, see [secrets](../server/secrets.md)).
+  Modrinth PAT, see [secrets](../server/secrets.md)). Caveat: `resolve_all.py` resolves its own
+  hard-coded `SLUGS` list and writes to the original build host's paths. It does not read
+  `modrinth.index.json`, so entries added only to the index (such as the TF addons) are not picked up.
+  To rebuild `mods/` exactly from the index, download every `files[].downloads[0]` whose `env.server`
+  is not `unsupported`, check `sha1`/`sha512`/`fileSize`, add `local-mods/*.jar`, then run
+  `tools/patch_mods.py`.
 - `client-only-mods/` — derived, gitignored (split out of `mods/` for the server).
 - `local-mods/` — **tracked**. Mods built from source / not on Modrinth (Twilight Forest,
   [Nyx](../content/nyx.md), …). These are part of the pack and ride into the `.mrpack` as overrides.
+
+## Bundling a non-Modrinth jar (redistribution)
+A jar in `local-mods/` is redistributed inside the `.mrpack`, so Modrinth review requires an
+attribution for each one. [`modrinth-permissions/`](../../modrinth-permissions/README.md) holds one
+`<jar>.md` per bundled jar (permission reason, link, license, explanation) and the overview table.
+- Only bundle a jar whose license allows redistribution (open license, or a stated modpack permission).
+  Check the CurseForge project license, the source repository LICENSE and the jar's mods.toml. MDK
+  leftovers such as `license="All rights reserved"` in an LGPL project are common. CurseForge's
+  `allowModDistribution` flag only covers its own launcher API.
+- Keep the jar byte-identical to the upstream file and record the file id and SHA-1 in its `.md`.
+- If a mod is on Modrinth, put it in the index instead (even when All Rights Reserved), because the
+  file then comes from the Modrinth CDN.
+- All Rights Reserved without written permission stays out (e.g. Twilight Spellbooks, see the
+  [TF backport](twilightforest-backport.md#pending-permission)).
+
+The TF addons Twilight Construct, Twilight Tweaks and The King of Twilight are bundled this way. The
+other TF addons are index entries; see the [TF backport](twilightforest-backport.md#in-the-pack-2026-11-01).
 
 ## ⚠️ Known gap
 A few non-Modrinth jars are referenced but not yet bundled in `local-mods/` nor given a manual index

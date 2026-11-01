@@ -161,7 +161,10 @@ public class EntityEvents {
 			BlockEntity te = event.getLevel().getBlockEntity(event.getPos());
 			if (te instanceof SkullChestBlockEntity casket) {
 				if (casket.owner != null && !casket.isEmpty()) {
-					if (!player.hasPermissions(3) || !casket.isOwner(player)) {
+					//skytekx: upstream cancels unless the breaker is an op AND the owner. Since caskets can now be
+					//fluid-logged and encased (obsidian/stone), a non-op owner could otherwise never reach their items.
+					//Let the owner or an operator break it, block everyone else.
+					if (!player.hasPermissions(3) && !casket.isOwner(player)) {
 						event.setCanceled(true);
 					}
 				}

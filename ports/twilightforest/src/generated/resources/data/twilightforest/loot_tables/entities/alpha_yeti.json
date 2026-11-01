@@ -19,11 +19,20 @@
                 "min": 0.0
               },
               "function": "minecraft:looting_enchant"
+            },
+            {
+              "extra_count_per_player": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "twilightforest:multiplayer_addition"
             }
           ],
           "name": "twilightforest:alpha_yeti_fur"
         }
       ],
+      "name": "alpha_yeti_fur",
       "rolls": 1.0
     },
     {
@@ -44,11 +53,20 @@
                 "min": 0.0
               },
               "function": "minecraft:looting_enchant"
+            },
+            {
+              "extra_count_per_player": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "twilightforest:multiplayer_addition"
             }
           ],
           "name": "twilightforest:ice_bomb"
         }
       ],
+      "name": "alpha_yeti_bombs",
       "rolls": 1.0
     },
     {
@@ -59,6 +77,7 @@
           "name": "twilightforest:alpha_yeti_trophy"
         }
       ],
+      "name": "alpha_yeti_trophy",
       "rolls": 1.0
     }
   ],

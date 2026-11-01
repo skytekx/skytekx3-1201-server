@@ -23,11 +23,20 @@
                 "min": 0.0
               },
               "function": "minecraft:looting_enchant"
+            },
+            {
+              "extra_count_per_player": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "twilightforest:multiplayer_addition"
             }
           ],
           "name": "twilightforest:naga_scale"
         }
       ],
+      "name": "naga_scales",
       "rolls": 1.0
     },
     {
@@ -38,6 +47,7 @@
           "name": "twilightforest:naga_trophy"
         }
       ],
+      "name": "naga_trophy",
       "rolls": 1.0
     }
   ],

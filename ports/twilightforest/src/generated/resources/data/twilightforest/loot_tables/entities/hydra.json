@@ -23,11 +23,20 @@
                 "min": 0.0
               },
               "function": "minecraft:looting_enchant"
+            },
+            {
+              "extra_count_per_player": {
+                "type": "minecraft:uniform",
+                "max": 10.0,
+                "min": 5.0
+              },
+              "function": "twilightforest:multiplayer_addition"
             }
           ],
           "name": "twilightforest:hydra_chop"
         }
       ],
+      "name": "hydra_chop",
       "rolls": 1.0
     },
     {
@@ -52,11 +61,20 @@
                 "min": 0.0
               },
               "function": "minecraft:looting_enchant"
+            },
+            {
+              "extra_count_per_player": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "twilightforest:multiplayer_addition"
             }
           ],
           "name": "twilightforest:fiery_blood"
         }
       ],
+      "name": "hydra_blood",
       "rolls": 1.0
     },
     {
@@ -67,6 +85,7 @@
           "name": "twilightforest:hydra_trophy"
         }
       ],
+      "name": "hydra_trophy",
       "rolls": 1.0
     }
   ],

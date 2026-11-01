@@ -21,7 +21,16 @@
           "name": "twilightforest:fortification_scepter"
         }
       ],
-      "rolls": 1.0
+      "name": "lich_scepters",
+      "rolls": {
+        "type": "twilightforest:multiplayer_rolls",
+        "default_rolls": 1.0,
+        "per_player_rolls": {
+          "type": "minecraft:uniform",
+          "max": 1.0,
+          "min": -2.0
+        }
+      }
     },
     {
       "bonus_rolls": 0.0,
@@ -102,10 +111,19 @@
           "name": "minecraft:golden_boots"
         }
       ],
+      "name": "lich_armor",
       "rolls": {
-        "type": "minecraft:uniform",
-        "max": 4.0,
-        "min": 2.0
+        "type": "twilightforest:multiplayer_rolls",
+        "default_rolls": {
+          "type": "minecraft:uniform",
+          "max": 4.0,
+          "min": 2.0
+        },
+        "per_player_rolls": {
+          "type": "minecraft:uniform",
+          "max": 1.0,
+          "min": 0.0
+        }
       }
     },
     {
@@ -130,11 +148,20 @@
                 "min": 0.0
               },
               "function": "minecraft:looting_enchant"
+            },
+            {
+              "extra_count_per_player": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "twilightforest:multiplayer_addition"
             }
           ],
           "name": "minecraft:ender_pearl"
         }
       ],
+      "name": "lich_pearls",
       "rolls": 1.0
     },
     {
@@ -164,6 +191,7 @@
           "name": "minecraft:bone"
         }
       ],
+      "name": "lich_bones",
       "rolls": 1.0
     },
     {
@@ -174,6 +202,7 @@
           "name": "twilightforest:lich_trophy"
         }
       ],
+      "name": "lich_trophy",
       "rolls": 1.0
     }
   ],

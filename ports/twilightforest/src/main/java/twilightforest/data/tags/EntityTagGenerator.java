@@ -24,6 +24,7 @@ public class EntityTagGenerator extends ModdedEntityTagGenerator {
 	public static final TagKey<EntityType<?>> RIDES_OBSTRUCT_SNATCHING = create(TwilightForestMod.prefix("rides_obstruct_snatching"));
 	public static final TagKey<EntityType<?>> DONT_KILL_BUGS = create(TwilightForestMod.prefix("dont_kill_bugs"));
 	public static final TagKey<EntityType<?>> SORTABLE_ENTITIES = create(TwilightForestMod.prefix("sortable_entities"));
+	public static final TagKey<EntityType<?>> MULTIPLAYER_INCLUSIVE_ENTITIES = create(TwilightForestMod.prefix("multiplayer_inclusive_entities"));
 
 	public EntityTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper helper) {
 		super(output, provider, helper);
@@ -150,6 +151,17 @@ public class EntityTagGenerator extends ModdedEntityTagGenerator {
 				EntityType.TRADER_LLAMA,
 				EntityType.DONKEY,
 				EntityType.MULE);
+
+		tag(MULTIPLAYER_INCLUSIVE_ENTITIES).add(
+				TFEntities.NAGA.get(),
+				TFEntities.LICH.get(),
+				TFEntities.MINOSHROOM.get(),
+				TFEntities.HYDRA.get(),
+				TFEntities.UR_GHAST.get(),
+				TFEntities.ALPHA_YETI.get(),
+				TFEntities.SNOW_QUEEN.get(),
+				TFEntities.PLATEAU_BOSS.get()
+		);
 
 		tag(Tags.EntityTypes.BOSSES).addTag(BOSSES);
 	}

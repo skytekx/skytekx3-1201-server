@@ -15,12 +15,14 @@ import twilightforest.capabilities.fan.FeatherFanCapabilityHandler;
 import twilightforest.capabilities.fan.FeatherFanFallCapability;
 import twilightforest.capabilities.giant_pick.GiantPickMineCapability;
 import twilightforest.capabilities.giant_pick.GiantPickMineCapabilityHandler;
+import twilightforest.capabilities.multiplayer.MultiplayerInclusivityCapability;
 import twilightforest.capabilities.shield.IShieldCapability;
 import twilightforest.capabilities.shield.ShieldCapabilityHandler;
 import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapability;
 import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapabilityHandler;
 import twilightforest.capabilities.thrown.YetiThrowCapability;
 import twilightforest.capabilities.thrown.YetiThrowCapabilityHandler;
+import twilightforest.data.tags.EntityTagGenerator;
 
 import javax.annotation.Nonnull;
 
@@ -31,6 +33,7 @@ public class CapabilityList {
 	public static final Capability<FeatherFanFallCapability> FEATHER_FAN_FALLING = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<YetiThrowCapability> YETI_THROWN = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<GiantPickMineCapability> GIANT_PICK_MINE = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final Capability<MultiplayerInclusivityCapability> MULTIPLAYER_FIGHT = CapabilityManager.get(new CapabilityToken<>() {});
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.register(TeleporterCacheCapability.class);
@@ -38,6 +41,7 @@ public class CapabilityList {
 		event.register(FeatherFanFallCapability.class);
 		event.register(YetiThrowCapability.class);
 		event.register(GiantPickMineCapability.class);
+		event.register(MultiplayerInclusivityCapability.class);
 	}
 
 	public static void attachLevelCapability(AttachCapabilitiesEvent<Level> e) {
@@ -161,6 +165,29 @@ public class CapabilityList {
 					return GIANT_PICK_MINE.orEmpty(cap, inst.cast());
 				}
 			});
+
+			// Only the entity types tagged when the entity is created get it, so a /reload that changes the tag only affects new entities
+			if (living.getType().is(EntityTagGenerator.MULTIPLAYER_INCLUSIVE_ENTITIES)) {
+				e.addCapability(MultiplayerInclusivityCapability.ID, new ICapabilitySerializable<CompoundTag>() {
+
+					private final LazyOptional<MultiplayerInclusivityCapability> inst = LazyOptional.of(MultiplayerInclusivityCapability::new);
+
+					@Override
+					public CompoundTag serializeNBT() {
+						return inst.orElseThrow(NullPointerException::new).serializeNBT();
+					}
+
+					@Override
+					public void deserializeNBT(CompoundTag nbt) {
+						inst.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
+					}
+
+					@Override
+					public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+						return MULTIPLAYER_FIGHT.orEmpty(cap, inst.cast());
+					}
+				});
+			}
 		}
 	}
 }

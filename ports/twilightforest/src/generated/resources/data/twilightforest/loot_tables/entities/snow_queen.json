@@ -13,7 +13,16 @@
           "name": "twilightforest:seeker_bow"
         }
       ],
-      "rolls": 1.0
+      "name": "snow_queen_bows",
+      "rolls": {
+        "type": "twilightforest:multiplayer_rolls",
+        "default_rolls": 1.0,
+        "per_player_rolls": {
+          "type": "minecraft:uniform",
+          "max": 1.0,
+          "min": -2.0
+        }
+      }
     },
     {
       "bonus_rolls": 0.0,
@@ -38,6 +47,7 @@
           "name": "minecraft:packed_ice"
         }
       ],
+      "name": "snow_queen_ice",
       "rolls": {
         "type": "minecraft:uniform",
         "max": 4.0,
@@ -59,6 +69,7 @@
           "name": "minecraft:snowball"
         }
       ],
+      "name": "snow_queen_snowballs",
       "rolls": {
         "type": "minecraft:uniform",
         "max": 5.0,
@@ -73,6 +84,7 @@
           "name": "twilightforest:snow_queen_trophy"
         }
       ],
+      "name": "snow_queen_trophy",
       "rolls": 1.0
     }
   ],

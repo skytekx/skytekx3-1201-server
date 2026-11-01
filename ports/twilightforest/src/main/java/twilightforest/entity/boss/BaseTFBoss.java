@@ -32,7 +32,6 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TFConfig;
-import twilightforest.advancements.TFAdvancements;
 import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.entity.boss.bar.ServerTFBossBar;
 import twilightforest.loot.TFLootTables;
@@ -41,8 +40,6 @@ import twilightforest.network.UpdateDeathTimePacket;
 import twilightforest.util.EntityUtil;
 import twilightforest.util.LandmarkUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -62,8 +59,6 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 
 	private final ServerTFBossBar bossEvent;
 	private final NonNullList<ItemStack> dyingInventory = NonNullList.withSize(IBossLootBuffer.CONTAINER_SIZE, ItemStack.EMPTY);
-	// Players credited with the hurt_boss trigger when this boss dies. Like the per-boss lists 4.3 kept, it is not saved.
-	private final List<ServerPlayer> hurtBy = new ArrayList<>();
 	private boolean lootAlreadyPlaced; // 4.3 boss saved mid-death: its chest was already placed and filled in die()
 
 	protected BaseTFBoss(EntityType<? extends Monster> type, Level level) {
@@ -149,34 +144,17 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
 	}
 
 	@Override
-	protected void actuallyHurt(DamageSource source, float amount) {
-		float healthBefore = this.getHealth();
-		super.actuallyHurt(source, amount);
-		// only credit damage that went through (not shield-blocked or cancelled). actuallyHurt runs before die(), so the player
-		// landing the killing blow is credited as well
-		if (this.getHealth() < healthBefore && source.getEntity() instanceof ServerPlayer player && !this.hurtBy.contains(player)) {
-			this.hurtBy.add(player);
-		}
-	}
-
-	protected List<ServerPlayer> getPlayersWhoHurtMe() {
-		return this.hurtBy;
-	}
-
-	@Override
 	public void die(DamageSource cause) {
 		super.die(cause);
 		if (this.shouldSpawnLoot() && this.level() instanceof ServerLevel server) this.postmortem(server, cause);
 	}
 
 	// mark the boss structure as conquered, separate method, so it can be overridden
+	// The hurt_boss trigger is granted to every participant by EntityEvents for bosses in #twilightforest:multiplayer_inclusive_entities
 	protected void postmortem(ServerLevel serverLevel, DamageSource cause) {
 		this.getBossBar().setProgress(0.0F);
 		IBossLootBuffer.saveDropsIntoBoss(this, TFLootTables.createLootParams(this, true, cause).create(LootContextParamSets.ENTITY), serverLevel);
 		LandmarkUtil.markStructureConquered(serverLevel, this, this.getHomeStructure(), true);
-		for (ServerPlayer player : this.getPlayersWhoHurtMe()) {
-			TFAdvancements.HURT_BOSS.trigger(player, this);
-		}
 	}
 
 	@Override

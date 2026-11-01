@@ -36,6 +36,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> SORTING_LOGS = BlockTags.create(TwilightForestMod.prefix("sortwood_logs"));
 
 	public static final TagKey<Block> TF_LOGS = BlockTags.create(TwilightForestMod.prefix("logs"));
+	public static final TagKey<Block> STRIPPED_LOGS = BlockTags.create(new ResourceLocation("forge", "stripped_logs"));
+	public static final TagKey<Block> STRIPPED_WOOD = BlockTags.create(new ResourceLocation("forge", "stripped_wood"));
 	public static final TagKey<Block> BANISTERS = BlockTags.create(TwilightForestMod.prefix("banisters"));
 	public static final TagKey<Block> HOLLOW_LOGS_HORIZONTAL = BlockTags.create(TwilightForestMod.prefix("hollow_logs_horizontal"));
 	public static final TagKey<Block> HOLLOW_LOGS_VERTICAL = BlockTags.create(TwilightForestMod.prefix("hollow_logs_vertical"));
@@ -128,6 +130,26 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(BlockTags.LOGS_THAT_BURN)
 				.addTags(TWILIGHT_OAK_LOGS, CANOPY_LOGS, MANGROVE_LOGS, TIME_LOGS, TRANSFORMATION_LOGS, MINING_LOGS, SORTING_LOGS);
+
+		tag(STRIPPED_LOGS).add(
+				TFBlocks.STRIPPED_TWILIGHT_OAK_LOG.get(),
+				TFBlocks.STRIPPED_CANOPY_LOG.get(),
+				TFBlocks.STRIPPED_MANGROVE_LOG.get(),
+				TFBlocks.STRIPPED_DARK_LOG.get(),
+				TFBlocks.STRIPPED_TIME_LOG.get(),
+				TFBlocks.STRIPPED_TRANSFORMATION_LOG.get(),
+				TFBlocks.STRIPPED_MINING_LOG.get(),
+				TFBlocks.STRIPPED_SORTING_LOG.get());
+
+		tag(STRIPPED_WOOD).add(
+				TFBlocks.STRIPPED_TWILIGHT_OAK_WOOD.get(),
+				TFBlocks.STRIPPED_CANOPY_WOOD.get(),
+				TFBlocks.STRIPPED_MANGROVE_WOOD.get(),
+				TFBlocks.STRIPPED_DARK_WOOD.get(),
+				TFBlocks.STRIPPED_TIME_WOOD.get(),
+				TFBlocks.STRIPPED_TRANSFORMATION_WOOD.get(),
+				TFBlocks.STRIPPED_MINING_WOOD.get(),
+				TFBlocks.STRIPPED_SORTING_WOOD.get());
 
 		tag(BlockTags.SAPLINGS)
 				.add(TFBlocks.TWILIGHT_OAK_SAPLING.get(), TFBlocks.CANOPY_SAPLING.get(), TFBlocks.MANGROVE_SAPLING.get(), TFBlocks.DARKWOOD_SAPLING.get())

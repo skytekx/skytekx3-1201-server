@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -47,7 +48,7 @@ public class ToolEvents {
 		if (arrow.getOwner() instanceof Player player
 				&& evt.getRayTraceResult() instanceof EntityHitResult result
 				&& result.getEntity() instanceof LivingEntity living
-				&& arrow.getOwner() != result.getEntity()) {
+				&& arrow.getOwner() != result.getEntity() && !result.getEntity().getType().is(Tags.EntityTypes.BOSSES)) {
 
 			if (arrow.getPersistentData().contains(EnderBowItem.KEY)) {
 				double sourceX = player.getX(), sourceY = player.getY(), sourceZ = player.getZ();
@@ -114,7 +115,7 @@ public class ToolEvents {
 	public static void onMinotaurAxeCharge(LivingHurtEvent event) {
 		LivingEntity target = event.getEntity();
 		Entity source = event.getSource().getDirectEntity();
-		if (!target.level().isClientSide() && source instanceof LivingEntity living && source.isSprinting() && (event.getSource().getMsgId().equals("player") || event.getSource().getMsgId().equals("mob"))) {
+		if (!target.level().isClientSide() && source instanceof LivingEntity living && living.isSprinting()) {
 			ItemStack weapon = living.getMainHandItem();
 			if (!weapon.isEmpty() && weapon.getItem() instanceof MinotaurAxeItem) {
 				event.setAmount(event.getAmount() + MINOTAUR_AXE_BONUS_DAMAGE);
@@ -128,7 +129,7 @@ public class ToolEvents {
 	@SubscribeEvent
 	public static void damageToolsExtra(BlockEvent.BreakEvent event) {
 		ItemStack stack = event.getPlayer().getMainHandItem();
-		if (event.getState().is(BlockTagGenerator.MAZESTONE) || event.getState().is(BlockTagGenerator.CASTLE_BLOCKS)) {
+		if (event.getState().is(BlockTagGenerator.MAZEBREAKER_ACCELERATED)) {
 			if (stack.isDamageableItem() && !(stack.getItem() instanceof MazebreakerPickItem)) {
 				stack.hurtAndBreak(16, event.getPlayer(), (user) -> user.broadcastBreakEvent(InteractionHand.MAIN_HAND));
 			}

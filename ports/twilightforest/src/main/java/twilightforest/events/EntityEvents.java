@@ -26,6 +26,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.LeadItem;
@@ -39,6 +40,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -70,6 +72,7 @@ import twilightforest.entity.projectile.LichBomb;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFMobEffects;
+import twilightforest.init.TFDimensionSettings;
 import twilightforest.init.TFStats;
 import twilightforest.item.FieryArmorItem;
 import twilightforest.item.PotionFlaskTracking;
@@ -329,6 +332,45 @@ public class EntityEvents {
 		}
 
 		return amount;
+	}
+
+	/**
+	 * Endermen do not pick up blocks in the Twilight Forest (4.8). The vanilla take-block goal is swapped for a wrapper
+	 * that refuses to start in the Twilight Forest dimension type, so endermen can still place a block they carry in.
+	 */
+	@SubscribeEvent
+	public static void stopEndermenFromGrabbingBlocksInTF(EntityJoinLevelEvent event) {
+		if (event.getEntity() instanceof EnderMan enderMan) {
+			enderMan.goalSelector.getAvailableGoals().stream()
+					.filter(g -> g.getGoal() instanceof EnderMan.EndermanTakeBlockGoal && !(g.getGoal() instanceof ExtendedEndermanTakeBlockGoal))
+					.findAny()
+					.ifPresent(g -> {
+						enderMan.goalSelector.removeGoal(g.getGoal());
+						enderMan.goalSelector.addGoal(g.getPriority(), new ExtendedEndermanTakeBlockGoal((EnderMan.EndermanTakeBlockGoal) g.getGoal(), enderMan));
+					});
+		}
+	}
+
+	static class ExtendedEndermanTakeBlockGoal extends EnderMan.EndermanTakeBlockGoal {
+
+		private final EnderMan.EndermanTakeBlockGoal delegate;
+		private final EnderMan enderman;
+
+		public ExtendedEndermanTakeBlockGoal(EnderMan.EndermanTakeBlockGoal delegate, EnderMan enderman) {
+			super(enderman);
+			this.delegate = delegate;
+			this.enderman = enderman;
+		}
+
+		@Override
+		public boolean canUse() {
+			return this.delegate.canUse() && !this.enderman.level().dimensionTypeRegistration().is(TFDimensionSettings.TWILIGHT_DIM_TYPE);
+		}
+
+		@Override
+		public void tick() {
+			this.delegate.tick();
+		}
 	}
 
 	@SubscribeEvent

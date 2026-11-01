@@ -150,6 +150,11 @@ public class YetiModel<T extends Yeti> extends HumanoidModel<T> {
 			this.leftArm.zRot -= Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
 			this.rightArm.xRot += Mth.sin(ageInTicks * 0.067F) * 0.05F;
 			this.leftArm.xRot -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
+			if (entity.isVehicle()) {
+				// arms up!
+				this.rightArm.xRot -= Mth.HALF_PI;
+				this.leftArm.xRot -= Mth.HALF_PI;
+			}
 		}
 	}
 

@@ -3,11 +3,14 @@ package twilightforest.util;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 import twilightforest.events.CharmEvents;
 import twilightforest.item.KeepsakeCasketItem;
@@ -171,5 +174,18 @@ public class TFItemStackUtils {
 		}
 
 		if(!blockedItems.isEmpty()) blockedItems.forEach(inventory::add);
+	}
+
+	/**
+	 * Damages a stack like {@link ItemStack#hurtAndBreak} does, but never breaks it: a scepter at 0 charges stays in the
+	 * inventory, empty, until it is recharged (4.8 965dc16e0, #2223). Creative players don't use up anything.
+	 */
+	public static void hurtButDontBreak(ItemStack stack, int amount, ServerLevel level, @Nullable LivingEntity entity) {
+		if (stack.isDamageableItem()) {
+			amount = stack.getItem().damageItem(stack, amount, entity, item -> {});
+			if (!(entity instanceof Player player && player.getAbilities().instabuild)) {
+				stack.hurt(amount, level.getRandom(), entity instanceof ServerPlayer serverPlayer ? serverPlayer : null);
+			}
+		}
 	}
 }

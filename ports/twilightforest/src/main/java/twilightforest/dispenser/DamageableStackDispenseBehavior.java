@@ -4,12 +4,14 @@ import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
+import twilightforest.util.TFItemStackUtils;
 
 //[VanillaCopy] of ProjectileDispenseBehavior, but it damages the stack instead of using it up every shot
 public abstract class DamageableStackDispenseBehavior extends DefaultDispenseItemBehavior {
@@ -21,14 +23,13 @@ public abstract class DamageableStackDispenseBehavior extends DefaultDispenseIte
 		Level level = source.getLevel();
 		Position pos = DispenserBlock.getDispensePosition(source);
 		Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-		if (!level.isClientSide()) {
-			if (!(stack.getMaxDamage() == stack.getDamageValue() + this.getDamageAmount())) {
+		if (level instanceof ServerLevel serverLevel) {
+			// fire while enough charges are left, and leave the empty item in the dispenser instead of breaking it (#2088)
+			if (stack.getMaxDamage() >= stack.getDamageValue() + this.getDamageAmount()) {
 				Projectile projectileentity = this.getProjectileEntity(level, pos, stack);
 				projectileentity.shoot(direction.getStepX(), (float) direction.getStepY() + 0.1F, direction.getStepZ(), this.getProjectileVelocity(), this.getProjectileInaccuracy());
 				level.addFreshEntity(projectileentity);
-				if (stack.hurt(this.getDamageAmount(), level.getRandom(), null)) {
-					stack.setCount(0);
-				}
+				TFItemStackUtils.hurtButDontBreak(stack, this.getDamageAmount(), serverLevel, null);
 				this.fired = true;
 			}
 		}

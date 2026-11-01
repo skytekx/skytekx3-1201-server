@@ -33,6 +33,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.tags.EntityTagGenerator;
+import twilightforest.enchantment.RechargeScepterEffect;
+import twilightforest.enchantment.RenewalEnchantment;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
@@ -41,6 +43,7 @@ import twilightforest.network.LifedrainParticlePacket;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.util.EntityUtil;
+import twilightforest.util.TFItemStackUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,13 +67,19 @@ public class LifedrainScepterItem extends Item {
 	}
 
 	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		RechargeScepterEffect.inventoryTick(stack, level, entity, isSelected);
+	}
+
+	@Override
 	public boolean isEnchantable(ItemStack stack) {
 		return false;
 	}
 
+	// only Renewal can be put on a scepter, with an enchanted book in an anvil
 	@Override
 	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-		return false;
+		return RenewalEnchantment.isRenewalBook(book);
 	}
 
 	@Override
@@ -162,6 +171,7 @@ public class LifedrainScepterItem extends Item {
 				// the server draws the trail for everyone watching, and only while the target can still be drained
 				if (!level.isClientSide() && !target.isDeadOrDying()) {
 					TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> living), new LifedrainParticlePacket(living.getId(), target.getEyePosition()));
+					level.playSound(null, living.blockPosition(), TFSounds.LIFE_SCEPTER_DRAIN.get(), SoundSource.PLAYERS);
 				}
 
 				DamageSource damageSource = TFDamageTypes.getEntityDamageSource(level, TFDamageTypes.LIFEDRAIN, living);
@@ -185,7 +195,6 @@ public class LifedrainScepterItem extends Item {
 							if (target instanceof Mob mob) {
 								mob.spawnAnim();
 							}
-							target.playSound(TFSounds.SCEPTER_DRAIN.get(), 1.0F, living.getVoicePitch());
 							SoundEvent deathSound = EntityUtil.getDeathSound(target);
 							if (deathSound != null) {
 								level.playSound(null, target.blockPosition(), deathSound, SoundSource.HOSTILE, 1.0F, target.getVoicePitch());
@@ -211,7 +220,7 @@ public class LifedrainScepterItem extends Item {
 
 						// the Mystic Crown spares the charge 5% of the time
 						if (living instanceof Player player && !player.getAbilities().instabuild && (!player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || level.getRandom().nextFloat() > 0.05F)) {
-							stack.hurt(1, level.getRandom(), null);
+							TFItemStackUtils.hurtButDontBreak(stack, 1, (ServerLevel) level, player);
 						}
 					}
 				}

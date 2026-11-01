@@ -2,6 +2,8 @@ package twilightforest.init;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.client.particle.FlameParticle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.particle.*;
+import twilightforest.client.particle.data.ColorParticleData;
 import twilightforest.client.particle.data.LeafParticleData;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -49,6 +52,13 @@ public class TFParticleType {
 	public static final RegistryObject<SimpleParticleType> CLOUD_PUFF = PARTICLE_TYPES.register("cloud_puff", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> SHIELD_BREAK = PARTICLE_TYPES.register("shield_break", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> DRYING_RACK = PARTICLE_TYPES.register("drying_rack", () -> new SimpleParticleType(false));
+	public static final RegistryObject<ParticleType<ColorParticleData>> MAGIC_EFFECT = PARTICLE_TYPES.register("magic_effect", () -> new ParticleType<>(false, ColorParticleData.DESERIALIZER) {
+		@Override
+		public Codec<ColorParticleData> codec() {
+			return ColorParticleData.codec(MAGIC_EFFECT.get());
+		}
+	});
+	public static final RegistryObject<SimpleParticleType> TWILIGHT_ORB = PARTICLE_TYPES.register("twilight_orb", () -> new SimpleParticleType(false));
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
@@ -76,5 +86,13 @@ public class TFParticleType {
 		event.registerSpriteSet(TFParticleType.CLOUD_PUFF.get(), CloudPuffParticle.Factory::new);
 		event.registerSpriteSet(TFParticleType.SHIELD_BREAK.get(), CustomTextureParticle.ShieldBreak::new);
 		event.registerSpriteSet(TFParticleType.DRYING_RACK.get(), DryingRackParticle.Provider::new);
+		event.registerSpriteSet(TFParticleType.MAGIC_EFFECT.get(), MagicEffectParticle.Factory::new);
+		event.registerSpriteSet(TFParticleType.TWILIGHT_ORB.get(), TFParticleType::twilightOrb);
+	}
+
+	// a method reference instead of a lambda: a lambda body would stay in this class on a dedicated server, which has no particle classes
+	@OnlyIn(Dist.CLIENT)
+	private static ParticleProvider<SimpleParticleType> twilightOrb(SpriteSet sprites) {
+		return new CustomTextureParticle.Factory(sprites, true);
 	}
 }

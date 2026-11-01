@@ -19,6 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.data.custom.DryingRecipeBuilder;
 import twilightforest.data.custom.NoSmithingTemplateRecipeBuilder;
+import twilightforest.data.custom.ScepterRecipeBuilder;
 import twilightforest.data.custom.UncraftingGenerator;
 import twilightforest.data.helpers.CraftingDataHelper;
 import twilightforest.data.tags.ItemTagGenerator;
@@ -511,6 +512,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 		SpecialRecipeBuilder.special(TFRecipes.MAGIC_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("magic_map_cloning_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.MAZE_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("maze_map_cloning_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.EMPERORS_CLOTH_RECIPE.get()).save(consumer, TwilightForestMod.prefix("emperors_cloth_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.ESSENCE_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("essence_repair_recipe").toString());
 
 		NoSmithingTemplateRecipeBuilder
 				.noTemplate(Ingredient.of(ItemTagGenerator.EMPERORS_CLOTH_APPLICABLE), Ingredient.of(TFItems.EMPERORS_CLOTH.get()), RecipeCategory.MISC)
@@ -566,29 +568,21 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_ring", has(TFItems.KNIGHTMETAL_RING.get()))
 				.save(consumer, locEquip(TFItems.KNIGHTMETAL_SHIELD.getId().getPath()));
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TFItems.LIFEDRAIN_SCEPTER.get())
-				.requires(scepter(TFItems.LIFEDRAIN_SCEPTER.get()))
-				.requires(Ingredient.of(Items.FERMENTED_SPIDER_EYE))
-				.unlockedBy("has_item", has(TFItems.LIFEDRAIN_SCEPTER.get()))
+		ScepterRecipeBuilder.repairFor(TFItems.LIFEDRAIN_SCEPTER.get(), 9)
+				.addRepairIngredient(Items.FERMENTED_SPIDER_EYE)
 				.save(consumer, locEquip(TFItems.LIFEDRAIN_SCEPTER.getId().getPath()));
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TFItems.FORTIFICATION_SCEPTER.get())
-				.requires(scepter(TFItems.FORTIFICATION_SCEPTER.get()))
-				.requires(Ingredient.of(Items.GOLDEN_APPLE))
-				.unlockedBy("has_item", has(TFItems.FORTIFICATION_SCEPTER.get()))
+		ScepterRecipeBuilder.repairFor(TFItems.FORTIFICATION_SCEPTER.get(), 9)
+				.addRepairIngredient(Ingredient.of(Items.GOLDEN_APPLE))
 				.save(consumer, locEquip(TFItems.FORTIFICATION_SCEPTER.getId().getPath()));
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TFItems.TWILIGHT_SCEPTER.get())
-				.requires(scepter(TFItems.TWILIGHT_SCEPTER.get()))
-				.requires(Tags.Items.ENDER_PEARLS)
-				.unlockedBy("has_item", has(TFItems.TWILIGHT_SCEPTER.get()))
+		ScepterRecipeBuilder.repairFor(TFItems.TWILIGHT_SCEPTER.get(), 9)
+				.addRepairIngredient(Tags.Items.ENDER_PEARLS)
 				.save(consumer, locEquip(TFItems.TWILIGHT_SCEPTER.getId().getPath()));
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TFItems.ZOMBIE_SCEPTER.get())
-				.requires(CompoundIngredient.of(potion(Potions.STRENGTH), potion(Potions.STRONG_STRENGTH), potion(Potions.LONG_STRENGTH)))
-				.requires(scepter(TFItems.ZOMBIE_SCEPTER.get()))
-				.requires(Ingredient.of(Items.ROTTEN_FLESH))
-				.unlockedBy("has_item", has(TFItems.ZOMBIE_SCEPTER.get()))
+		ScepterRecipeBuilder.repairFor(TFItems.ZOMBIE_SCEPTER.get(), 9)
+				.addRepairIngredient(CompoundIngredient.of(potion(Potions.STRENGTH), potion(Potions.LONG_STRENGTH), potion(Potions.STRONG_STRENGTH)))
+				.addRepairIngredient(Items.ROTTEN_FLESH)
 				.save(consumer, locEquip(TFItems.ZOMBIE_SCEPTER.getId().getPath()));
 	}
 

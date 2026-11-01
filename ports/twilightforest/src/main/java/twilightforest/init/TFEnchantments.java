@@ -6,6 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
+import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.enchantment.*;
 import twilightforest.item.ChainBlockItem;
 
@@ -16,6 +17,8 @@ public class TFEnchantments {
 	public static final RegistryObject<Enchantment> FIRE_REACT = ENCHANTMENTS.register("fire_react", () -> new FireReactEnchantment(Enchantment.Rarity.UNCOMMON));
 	public static final RegistryObject<Enchantment> CHILL_AURA = ENCHANTMENTS.register("chill_aura", () -> new ChillAuraEnchantment(Enchantment.Rarity.UNCOMMON));
 	public static final RegistryObject<Enchantment> DESTRUCTION = ENCHANTMENTS.register("destruction", () -> new DestructionEnchantment(Enchantment.Rarity.RARE));
+	public static final RegistryObject<Enchantment> RENEWAL = ENCHANTMENTS.register("renewal", () -> new RenewalEnchantment(Enchantment.Rarity.VERY_RARE));
 
 	public static final EnchantmentCategory BLOCK_AND_CHAIN = EnchantmentCategory.create("twilightforest_block_and_chain", item -> item instanceof ChainBlockItem);
+	public static final EnchantmentCategory SCEPTER = EnchantmentCategory.create("twilightforest_scepter", item -> item.builtInRegistryHolder().is(ItemTagGenerator.SCEPTERS));
 }

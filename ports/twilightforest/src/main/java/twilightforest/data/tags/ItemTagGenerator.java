@@ -86,6 +86,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> REPAIRS_FIERY_TOOLS = create("repairs_fiery_tools");
 	public static final TagKey<Item> REPAIRS_GIANT_TOOLS = create("repairs_giant_tools");
 	public static final TagKey<Item> REPAIRS_ICE_TOOLS = create("repairs_ice_tools");
+	public static final TagKey<Item> SCEPTERS = create("scepters");
 
 	public static final TagKey<Item> IMMUNE_TO_THORNS = create("immune_to_thorns");
 	public static final TagKey<Item> RENDER_LOWER_ON_DRYING_RACK = create("lower_on_drying_rack");
@@ -276,6 +277,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(UNCRAFTING_IGNORES_COST).addTag(Tags.Items.RODS_WOODEN);
 
 		tag(KEPT_ON_DEATH).add(TFItems.TOWER_KEY.get(), TFItems.PHANTOM_HELMET.get(), TFItems.PHANTOM_CHESTPLATE.get());
+
+		tag(SCEPTERS).add(TFItems.TWILIGHT_SCEPTER.get(), TFItems.LIFEDRAIN_SCEPTER.get(), TFItems.ZOMBIE_SCEPTER.get(), TFItems.FORTIFICATION_SCEPTER.get());
 
 		tag(REPAIRS_IRONWOOD_TOOLS).addTag(IRONWOOD_INGOTS);
 		tag(REPAIRS_STEELEAF_TOOLS).addTag(STEELEAF_INGOTS);

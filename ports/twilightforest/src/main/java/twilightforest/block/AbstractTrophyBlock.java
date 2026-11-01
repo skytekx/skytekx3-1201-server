@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import twilightforest.block.entity.TrophyBlockEntity;
+import twilightforest.client.particle.data.ColorParticleData;
 import twilightforest.enums.BossVariant;
 import twilightforest.init.TFBlockEntities;
 import twilightforest.init.TFItems;
@@ -225,11 +226,11 @@ public abstract class AbstractTrophyBlock extends BaseEntityBlock {
 						break;
 					case QUEST_RAM:
 						for (int p = 0; p < 10; p++) {
-							server.sendParticles(ParticleTypes.ENTITY_EFFECT,
+							server.sendParticles(ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), rand.nextFloat(), rand.nextFloat(), rand.nextFloat()),
 									(double) pos.getX() + 0.5 + (rand.nextDouble() - 0.5),
 									(double) pos.getY() + (rand.nextDouble() - 0.5),
 									(double) pos.getZ() + 0.5 + (rand.nextDouble() - 0.5), 1,
-									rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 1);
+									0.0D, 0.0D, 0.0D, 0.0D);
 						}
 						break;
 					default:

@@ -1,7 +1,6 @@
 package twilightforest.client.particle;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,6 +8,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import twilightforest.client.particle.data.ColorParticleData;
+import twilightforest.init.TFParticleType;
 import twilightforest.item.LifedrainScepterItem;
 
 /**
@@ -31,8 +32,7 @@ public final class LifedrainTrail {
 			float r = 1.0F;
 			float g = 0.5F;
 			float b = 0.5F;
-			// in 1.20.1 the entity effect particle takes its colour from the speed arguments
-			level.addParticle(ParticleTypes.ENTITY_EFFECT, particlePos.x(), particlePos.y(), particlePos.z(), r, g, b);
+			level.addParticle(ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), r, g, b), particlePos.x(), particlePos.y(), particlePos.z(), 0.0D, 0.0D, 0.0D);
 		}
 	}
 

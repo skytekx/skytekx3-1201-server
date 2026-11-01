@@ -369,7 +369,11 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.POWDER_USE, SoundEvents.ZOMBIE_VILLAGER_CURE);
 		this.generateExistingSoundWithSubtitle(TFSounds.SCEPTER_DRAIN, SoundEvents.GENERIC_BIG_FALL);
 		this.generateExistingSoundWithSubtitle(TFSounds.SCEPTER_PEARL, SoundEvents.FLINTANDSTEEL_USE);
+		this.generateNewSoundWithSubtitle(TFSounds.LIFE_SCEPTER_DRAIN, "random/scepter/drain", 3);
+		this.generateNewSoundWithSubtitle(TFSounds.TWILIGHT_SCEPTER_HIT, "random/scepter/twilight_hit", 3);
+		this.generateNewSoundWithSubtitle(TFSounds.TWILIGHT_SCEPTER_USE, "random/scepter/twilight_use", 3);
 		this.generateExistingSoundWithSubtitle(TFSounds.WOOD_SHIELD_SHATTERS, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);
+		this.generateNewSoundWithSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "random/scepter/zombie", 1);
 
 		this.makeMusicDisc(TFSounds.MUSIC_DISC_RADIANCE, "radiance");
 		this.makeMusicDisc(TFSounds.MUSIC_DISC_STEPS, "steps");

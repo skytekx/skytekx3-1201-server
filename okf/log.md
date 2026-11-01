@@ -3,12 +3,12 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # Change log
 
-Oldest first. Times are the build machine's local time, CEST up to 2026-07-13 and CET on 2026-10-31.
+Oldest first. Times are the build machine's local time, CEST up to 2026-07-13 and CET from 2026-10-31.
 The build sessions themselves were deleted, so this log rests on the owner's prompts in
 `~/.claude/history.jsonl` (session 5bd3e1de, and 3dcdf872 for the hosting question of 2026-06-26
 23:09), the git history, the server logs and crash reports, the `.mrpack` files and file times.
@@ -378,6 +378,32 @@ logs stay on the Mac and are not in the repo.
   [Boot fixes](content/boot-fixes.md#jar-patches)), `spawn-protection` went to 0 in the Mac's
   `server.properties`, and the server restarted at 22:49:28 after a warning in chat. It was up again at
   22:50:09 with the 3 accepted boot errors.
+- At 22:18 and 22:22 the owner reported that the islands no longer looked like in June and ruled that a
+  fix must not change their size, shape or spacing. Commits 9a4dc12, cb91870 and 9af7fae of 22:59
+  bring back the June terrain with a biome gate that follows it. On the Mac mini the Skylands were
+  wiped at 23:01 and pregenerated with Chunky. At 23:17:24, at 80.43% of radius 3000, the server ran
+  out of its 9 GB heap, and launchd restarted it at 23:17:31. See
+  [Skylands worldgen](content/skylands-worldgen.md#june-terrain-returns).
+- At 23:10 the owner reported things between the islands, especially flowers in the void, and asked
+  why there is no `/spawn`. A scan at 23:13 found 54,386 blocks below Y 13 from villages, merchant
+  camps and AE2 meteorites that start on an island and reach into the void. skytekx-compat 2.1.0
+  (source commits 9636058 to db56da3) keeps them out, and four test worlds on the build machine
+  ended with no block below Y 13. The biome gate went from 1.1 to 0.8 (33a52d5). See
+  [Skylands worldgen](content/skylands-worldgen.md#the-void-floor). For `/spawn`, EssentialsXSpawn
+  2.22.0 was prepared, see [Plugins](modpack/plugins.md#spawn).
+- At 23:51 the owner reported that the test client on the build machine showed an X as pointer and
+  could not pick up items in the inventory. Every click acted as a shift click, which moves a stack
+  between inventory and hotbar. The X server held no key down, so the client itself had missed the
+  release of Shift. A client restart at 00:24 cleared it. The X was the default root cursor of
+  XWayland, which the compositor never set. The client of that evening, with a 12 GB heap, held about
+  9 GB after a join, needed about 3 GB more while EMI reloaded its recipes, and kept about 250 MB more
+  after each of its 12 reconnects (counts of AllTheLeaks), so it came close to running out of memory
+  after three hours.
+- At 00:58 the server on the Mac mini restarted after a warning in chat, with skytekx-compat 2.1.0, the
+  gate of 0.8 and EssentialsXSpawn. Its Skylands were wiped again (backup
+  `~/skytekx3-backups/skylands-gate-1.1-2026-11-01-0058.tgz`) and pregenerated to radius 2000 from
+  00:59 to 01:06. The scans of 01:11 found 426 structure starts, 93 of them floaters, and no block
+  below Y 13. See [Skylands worldgen](content/skylands-worldgen.md#deploy-of-2026-11-01).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

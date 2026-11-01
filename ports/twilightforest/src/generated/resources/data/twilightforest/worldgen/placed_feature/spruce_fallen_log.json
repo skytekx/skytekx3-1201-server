@@ -19,6 +19,9 @@
       "occupies_underground": false,
       "occupies_vegetation": false,
       "structures_allowed": []
+    },
+    {
+      "type": "minecraft:biome"
     }
   ]
 }

@@ -23,6 +23,8 @@ public abstract class BiomeHelper {
 	public static BiomeGenerationSettings.Builder twilightForestGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_LARGE_FERN);
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
 
@@ -41,6 +43,10 @@ public abstract class BiomeHelper {
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_RASPBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLACKBERRY_BUSHES);
+
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_LARGE_FERN);
+
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
 
@@ -58,6 +64,8 @@ public abstract class BiomeHelper {
 	public static BiomeGenerationSettings.Builder fireflyForestGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLACKBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
+
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
 
@@ -69,7 +77,7 @@ public abstract class BiomeHelper {
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_MUSHGLOOM_CLUSTER);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_PUMPKIN);
-		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.FLOWER_FOREST_FLOWERS);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.FLOWER_FOREST_FLOWERS);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_DEFAULT_FALLEN_LOGS);
 		biome.addFeature(GenerationStep.Decoration.LAKES, TFPlacedFeatures.PLACED_LAKE_WATER);
 
@@ -80,10 +88,11 @@ public abstract class BiomeHelper {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_RASPBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_FOREST);
 		addForestVegetation(biome);
 		commonFeatures(biome);
 
-		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.FLOWER_FOREST_FLOWERS);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.FLOWER_FOREST_FLOWERS);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_DEFAULT_FALLEN_LOGS);
 		biome.addFeature(GenerationStep.Decoration.LAKES, TFPlacedFeatures.PLACED_LAKE_WATER);
 
@@ -92,6 +101,9 @@ public abstract class BiomeHelper {
 
 	public static BiomeGenerationSettings.Builder oakSavannaGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
+
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_TAIGA_2);
+
 		addForestVegetation(biome);
 		commonFeatures(biome);
 
@@ -135,6 +147,7 @@ public abstract class BiomeHelper {
 
 	public static BiomeGenerationSettings.Builder spookyForestGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_MAYAPPLE);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_TWILIGHT_OAK_TREE);
@@ -159,6 +172,8 @@ public abstract class BiomeHelper {
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_RASPBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLACKBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
+
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
 
@@ -178,6 +193,8 @@ public abstract class BiomeHelper {
 	public static BiomeGenerationSettings.Builder denseMushroomForestGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLACKBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_JUNGLE);
+
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
 
@@ -206,12 +223,16 @@ public abstract class BiomeHelper {
 	public static BiomeGenerationSettings.Builder highlandsGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_BLUEBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_GRASS_TAIGA);
+		// 4.8 adds VegetationPlacements.PATCH_LARGE_FERN here, which its minecraft:patch_large_fern override turns into this placement
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_LARGE_FERN);
 		commonFeatures(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_HIGHLANDS_TREES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, MiscOverworldPlacements.FOREST_ROCK);
-		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_GRASS_TAIGA);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SPARSE_MUSHGLOOMS);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SPRUCE_FALLEN_LOG);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_DARK_FERNS);
 
 		addHighlandCaves(biome);
 		addSmallStoneClusters(biome);
@@ -235,8 +256,11 @@ public abstract class BiomeHelper {
 
 	public static BiomeGenerationSettings.Builder swampGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
+
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SWAMP_RASPBERRY_BUSHES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SWAMP_BLACKBERRY_BUSHES);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_GRASS_TAIGA_2);
+
 		commonFeatures(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_MANGROVE_TREE);
@@ -254,6 +278,8 @@ public abstract class BiomeHelper {
 
 	public static BiomeGenerationSettings.Builder fireSwampGen(HolderGetter<PlacedFeature> featureGetter, HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
 		BiomeGenerationSettings.Builder biome = defaultGenSettingBuilder(featureGetter, carverGetter);
+
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_GRASS_TAIGA_2);
 
 		commonFeaturesWithoutBuildings(biome);
 		addSwampTrees(biome);
@@ -421,7 +447,7 @@ public abstract class BiomeHelper {
 		biome.addCarver(GenerationStep.Carving.AIR, TFCaveCarvers.TFCAVES_CONFIGURED);
 		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_PLANT_ROOTS);
 		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_TORCH_BERRIES);
-		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_VANILLA_ROOTS);
+		//biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_VANILLA_ROOTS);
 		addLegacyOres(biome);
 	}
 
@@ -522,10 +548,9 @@ public abstract class BiomeHelper {
 		BiomeGenerationSettings.Builder biome = new BiomeGenerationSettings.Builder(featureGetter, carverGetter);
 
 		BiomeDefaultFeatures.addDefaultSoftDisks(biome);
-		BiomeDefaultFeatures.addForestGrass(biome);
-		BiomeDefaultFeatures.addSavannaGrass(biome);
-		BiomeDefaultFeatures.addDefaultGrass(biome);
-		BiomeDefaultFeatures.addSavannaExtraGrass(biome);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_TALL_GRASS);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_BADLANDS);
+		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_SAVANNA);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_SUGAR_CANE);
 		BiomeDefaultFeatures.addSurfaceFreezing(biome);
 		withWoodRoots(biome);

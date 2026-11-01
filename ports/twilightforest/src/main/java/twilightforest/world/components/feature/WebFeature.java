@@ -26,8 +26,10 @@ public class WebFeature extends Feature<NoneFeatureConfiguration> {
 		BlockPos pos = config.origin().above(config.random().nextInt(world.getMaxBuildHeight() - config.origin().getY()));
 		while (pos.getY() > config.origin().getY()) {
 			pos = pos.below();
-			if (world.isEmptyBlock(pos.below()) && isValidMaterial(world.getBlockState(pos))) {
-				world.setBlock(pos.below(), Blocks.COBWEB.defaultBlockState(), 16 | 2);
+			BlockState state = world.getBlockState(pos);
+			if (world.isEmptyBlock(pos.below()) && isValidMaterial(state)) {
+				// Half of the webs under leaves replace the leaf block itself, so the web looks woven into the canopy
+				world.setBlock(state.is(BlockTags.LEAVES) && config.random().nextBoolean() ? pos : pos.below(), Blocks.COBWEB.defaultBlockState(), 16 | 2);
 				return true;
 			}
 		}

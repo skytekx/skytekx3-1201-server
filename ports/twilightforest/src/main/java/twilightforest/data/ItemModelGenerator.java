@@ -533,15 +533,14 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTex(TFItems.MAGIC_MAP);
 		singleTex(TFItems.MAZE_MAP);
 		singleTex(TFItems.ORE_MAP);
-		ModelFile magnetPull1 = generated("ore_magnet_pulling_1", prefix("item/ore_magnet_pulling_1"));
-		ModelFile magnetPull2 = generated("ore_magnet_pulling_2", prefix("item/ore_magnet_pulling_2"));
-		singleTex(TFItems.ORE_MAGNET)
+		ModelFile magnetPull1 = specialTool("ore_magnet_pulling_1", prefix("item/ore_magnet_pulling_1"));
+		ModelFile magnetPull2 = specialTool("ore_magnet_pulling_2", prefix("item/ore_magnet_pulling_2"));
+		specialTool(TFItems.ORE_MAGNET)
 				.override().predicate(new ResourceLocation("pulling"), 1).predicate(new ResourceLocation("pull"), (float) 0.5).model(magnetPull1).end()
 				.override().predicate(new ResourceLocation("pulling"), 1).predicate(new ResourceLocation("pull"), 1).model(magnetPull2).end();
-		singleTexTool(TFItems.CRUMBLE_HORN);
+		crumbleHorn(TFItems.CRUMBLE_HORN);
 		singleTexTool(TFItems.PEACOCK_FEATHER_FAN);
-		ModelFile queenAlt = fullbrightTool("moonworm_queen_alt", prefix("item/moonworm_queen_alt"));
-		singleTexFullbrightTool(TFItems.MOONWORM_QUEEN).override().predicate(prefix("alt"), 1).model(queenAlt).end();
+		moonwormQueen(TFItems.MOONWORM_QUEEN);
 		singleTex(TFItems.CHARM_OF_KEEPING_1);
 		singleTex(TFItems.CHARM_OF_KEEPING_2);
 		singleTex(TFItems.CHARM_OF_KEEPING_3);
@@ -563,7 +562,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTex(TFItems.KNIGHTMETAL_RING);
 		trimmedArmor(TFItems.PHANTOM_HELMET);
 		trimmedArmor(TFItems.PHANTOM_CHESTPLATE);
-		singleTex(TFItems.LAMP_OF_CINDERS);
+		lamp(TFItems.LAMP_OF_CINDERS);
 		singleTex(TFItems.EMPERORS_CLOTH);
 		singleTex(TFItems.POCKET_WATCH);
 		singleTex(TFItems.CROWN_SPLINTER);
@@ -750,6 +749,18 @@ public class ItemModelGenerator extends ItemModelProvider {
 		return generated(item.getId().getPath(), prefix("item/" + item.getId().getPath()));
 	}
 
+	private ItemModelBuilder specialTool(RegistryObject<? extends Item> item) {
+		return specialTool(item.getId().getPath(), prefix("item/" + item.getId().getPath()));
+	}
+
+	private ItemModelBuilder specialTool(String name, ResourceLocation... layers) {
+		ItemModelBuilder builder = withExistingParent(name, TwilightForestMod.prefix("item/special_handheld"));
+		for (int i = 0; i < layers.length; i++) {
+			builder = builder.texture("layer" + i, layers[i]);
+		}
+		return builder;
+	}
+
 	private ItemModelBuilder bowItem(String name, ResourceLocation... layers) {
 		ItemModelBuilder builder = withExistingParent(name, "item/bow");
 		for (int i = 0; i < layers.length; i++) {
@@ -874,6 +885,67 @@ public class ItemModelGenerator extends ItemModelProvider {
 					.texture("layer2", this.mcLoc("trims/items/" + armor.get().getType().getName() + "_trim_" + material));
 			base.override().predicate(new ResourceLocation("trim_type"), trim.itemModelIndex()).model(trimModel).end();
 		}
+	}
+
+	private void crumbleHorn(RegistryObject<Item> item) {
+		String name = item.getId().getPath();
+		ItemModelBuilder tooting = withExistingParent("tooting_" + name, this.mcLoc("item/tooting_goat_horn"))
+				.texture("layer0", prefix("item/" + name));
+
+		withExistingParent(name, this.mcLoc("item/goat_horn"))
+				.texture("layer0", prefix("item/" + name))
+				.override().predicate(TwilightForestMod.prefix("tooting"), 1).model(tooting);
+	}
+
+	private void lamp(RegistryObject<Item> item) {
+		String name = item.getId().getPath();
+		tool(name)
+				.texture("layer0", prefix("item/" + name))
+				.transforms()
+				.transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+				.rotation(0, -90, 0)
+				.translation(0, -0.5F, -3.0F)
+				.scale(0.65F)
+				.end()
+				.transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND)
+				.rotation(0, 90, 0)
+				.translation(0, -0.5F, -3.0F)
+				.scale(0.65F)
+				.end()
+				.end();
+	}
+
+	private void moonwormQueen(RegistryObject<Item> item) {
+		String name = item.getId().getPath();
+
+		ModelFile alt = fullbrightTool(name + "_alt", prefix("item/" + name + "_alt"))
+				.transforms()
+				.transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+				.rotation(0, -90, 55)
+				.translation(0, 2.0F, -1.0F)
+				.scale(0.85F)
+				.end()
+				.transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND)
+				.rotation(0, 90, -55)
+				.translation(0, 2.0F, -1.0F)
+				.scale(0.85F)
+				.end()
+				.end();
+
+		singleTexFullbrightTool(item)
+				.transforms()
+				.transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+				.rotation(0, -90, 55)
+				.translation(0, 2.0F, -1.0F)
+				.scale(0.85F)
+				.end()
+				.transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND)
+				.rotation(0, 90, -55)
+				.translation(0, 2.0F, -1.0F)
+				.scale(0.85F)
+				.end()
+				.end()
+				.override().predicate(prefix("alt"), 1).model(alt).end();
 	}
 
 	@Override

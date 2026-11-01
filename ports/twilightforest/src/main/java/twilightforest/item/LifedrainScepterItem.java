@@ -1,8 +1,8 @@
 package twilightforest.item;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -21,16 +22,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
+import twilightforest.loot.TFLootTables;
+import twilightforest.network.LifedrainParticlePacket;
+import twilightforest.network.ParticlePacket;
+import twilightforest.network.TFPacketHandler;
 import twilightforest.util.EntityUtil;
 
 import java.util.List;
@@ -73,21 +82,28 @@ public class LifedrainScepterItem extends Item {
 	 * Animates the target falling apart into a rain of shatter particles
 	 */
 	public static void animateTargetShatter(ServerLevel level, LivingEntity target) {
-		ItemStack itemId = Items.ROTTEN_FLESH.getDefaultInstance();
+		ParticleOptions options = new ItemParticleOption(ParticleTypes.ITEM, Items.ROTTEN_FLESH.getDefaultInstance());
 		// 1 in 100 chance of a big pop, you're welcome KD
-		double explosionPower = level.getRandom().nextInt(100) == 0 ? 0.5D : 0.15D;
+		boolean big = level.getRandom().nextInt(100) == 0;
+		double explosionPower = big ? 1.0D : 0.3D;
 
-		for (int i = 0; i < 50 + ((int) target.dimensions.width * 75); ++i) {
+		// sent as one packet so every gib can fly outwards on its own vector, which ServerLevel#sendParticles cannot do
+		ParticlePacket particlePacket = new ParticlePacket();
+		double gaussFactor = 5.0D;
+
+		for (int i = 0; i < 50 + ((int) target.dimensions.width * (big ? 75 : 25)); ++i) {
 			double gaussX = level.getRandom().nextGaussian() * 0.01D;
 			double gaussY = level.getRandom().nextGaussian() * 0.01D;
 			double gaussZ = level.getRandom().nextGaussian() * 0.01D;
-			double gaussFactor = 5.0D;
-			level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, itemId),
-					target.getX() + level.getRandom().nextFloat() * target.getBbWidth() * 1.5F - target.getBbWidth() - gaussX * gaussFactor,
-					target.getY() + level.getRandom().nextFloat() * target.getBbHeight() - gaussY * gaussFactor,
-					target.getZ() + level.getRandom().nextFloat() * target.getBbWidth() * 1.5F - target.getBbWidth() - gaussZ * gaussFactor,
-					1, gaussX, gaussY, gaussZ, level.getRandom().nextGaussian() * explosionPower);
+			double speed = level.getRandom().nextFloat() * explosionPower;
+			double x = level.getRandom().nextFloat() * target.getBbWidth() * 1.5F - target.getBbWidth() - gaussX * gaussFactor + (level.getRandom().nextGaussian() * gaussX);
+			double y = level.getRandom().nextFloat() * target.getBbHeight() - gaussY * gaussFactor + (level.getRandom().nextGaussian() * gaussY);
+			double z = level.getRandom().nextFloat() * target.getBbWidth() * 1.5F - target.getBbWidth() - gaussZ * gaussFactor + (level.getRandom().nextGaussian() * gaussZ);
+
+			particlePacket.queueParticle(options, false, target.getX() + x, target.getY() + y, target.getZ() + z, x * speed, y * speed, z * speed);
 		}
+
+		TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> target), particlePacket);
 	}
 
 	/**
@@ -143,18 +159,28 @@ public class LifedrainScepterItem extends Item {
 			Entity pointedEntity = getPlayerLookTarget(level, living);
 
 			if (pointedEntity instanceof LivingEntity target && !(target instanceof ArmorStand)) {
-				if (level.isClientSide()) {
-					this.makeRedMagicTrail(level, living, target.getEyePosition());
+				// the server draws the trail for everyone watching, and only while the target can still be drained
+				if (!level.isClientSide() && !target.isDeadOrDying()) {
+					TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> living), new LifedrainParticlePacket(living.getId(), target.getEyePosition()));
 				}
 
-				if (target.hurt(TFDamageTypes.getEntityDamageSource(level, TFDamageTypes.LIFEDRAIN, living), 1)) {
+				DamageSource damageSource = TFDamageTypes.getEntityDamageSource(level, TFDamageTypes.LIFEDRAIN, living);
+				if (target.hurt(damageSource, 1)) {
 					// make it explode
 					if (!level.isClientSide()) {
 						// bosses die normally so their death sequence and loot still happen (#2122)
 						if (target.getHealth() <= 1 && !target.getType().is(Tags.EntityTypes.BOSSES)) {
-							if (!target.getType().is(EntityTagGenerator.LIFEDRAIN_DROPS_NO_FLESH)) {
-								target.spawnAtLocation(new ItemStack(Items.ROTTEN_FLESH, level.getRandom().nextInt(3)));
-								animateTargetShatter((ServerLevel) level, target);
+							if (!target.getType().is(EntityTagGenerator.LIFEDRAIN_DROPS_NO_FLESH) && level instanceof ServerLevel serverLevel && living instanceof Player player) {
+								// the rotten flesh bonus comes from a loot table, so packs can change or remove it
+								LootParams ctx = new LootParams.Builder(serverLevel)
+										.withParameter(LootContextParams.THIS_ENTITY, target)
+										.withParameter(LootContextParams.ORIGIN, target.getEyePosition())
+										.withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
+										.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
+										.withParameter(LootContextParams.KILLER_ENTITY, player)
+										.withParameter(LootContextParams.DIRECT_KILLER_ENTITY, player).create(LootContextParamSets.ENTITY);
+								serverLevel.getServer().getLootData().getLootTable(TFLootTables.LIFEDRAIN_SCEPTER_KILL_BONUS).getRandomItems(ctx).forEach(target::spawnAtLocation);
+								animateTargetShatter(serverLevel, target);
 							}
 							if (target instanceof Mob mob) {
 								mob.spawnAnim();
@@ -195,22 +221,6 @@ public class LifedrainScepterItem extends Item {
 					target.setDeltaMovement(0, 0.15D, 0);
 				}
 			}
-		}
-	}
-
-	private void makeRedMagicTrail(Level level, LivingEntity source, Vec3 target) {
-		// make particle trail
-		int particles = 32;
-		for (int i = 0; i < particles; i++) {
-			double trailFactor = i / (particles - 1.0D);
-			float f = 1.0F;
-			float f1 = 0.5F;
-			float f2 = 0.5F;
-			double handOffset = source.getItemInHand(InteractionHand.OFF_HAND).is(this) ? -0.35D : 0.35D;
-			double tx = source.getX() + (target.x() - source.getX()) * trailFactor + level.getRandom().nextGaussian() * 0.005D + (handOffset * Direction.fromYRot(source.yBodyRot).get2DDataValue());
-			double ty = source.getEyeY() - 0.1D + (target.y() - source.getEyeY()) * trailFactor + level.getRandom().nextGaussian() * 0.005D - 0.1D;
-			double tz = source.getZ() + (target.z() - source.getZ()) * trailFactor + level.getRandom().nextGaussian() * 0.005D + (handOffset * Direction.fromYRot(source.yBodyRot).get2DDataValue());
-			level.addParticle(ParticleTypes.ENTITY_EFFECT, tx, ty, tz, f, f1, f2);
 		}
 	}
 

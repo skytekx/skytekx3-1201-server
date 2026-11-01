@@ -13,6 +13,7 @@ import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
+import twilightforest.data.custom.NoSmithingTemplateRecipeBuilder;
 import twilightforest.data.custom.UncraftingGenerator;
 import twilightforest.data.helpers.CraftingDataHelper;
 import twilightforest.data.tags.ItemTagGenerator;
@@ -20,6 +21,7 @@ import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFRecipes;
 import twilightforest.item.recipe.UncraftingTableCondition;
+import twilightforest.util.ArmorUtil;
 
 import java.util.function.Consumer;
 
@@ -399,6 +401,13 @@ public class CraftingGenerator extends CraftingDataHelper {
 		SpecialRecipeBuilder.special(TFRecipes.MOONWORM_QUEEN_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("moonworm_queen_repair_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.MAGIC_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("magic_map_cloning_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.MAZE_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("maze_map_cloning_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.EMPERORS_CLOTH_RECIPE.get()).save(consumer, TwilightForestMod.prefix("emperors_cloth_recipe").toString());
+
+		NoSmithingTemplateRecipeBuilder
+				.noTemplate(Ingredient.of(ItemTagGenerator.EMPERORS_CLOTH_APPLICABLE), Ingredient.of(TFItems.EMPERORS_CLOTH.get()), RecipeCategory.MISC)
+				.attachData(tag -> tag.putBoolean(ArmorUtil.EMPERORS_CLOTH_TAG, true))
+				.unlocks("has_cloth", has(TFItems.EMPERORS_CLOTH.get()))
+				.save(consumer, TwilightForestMod.prefix("emperors_cloth_smithing"));
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Blocks.COBBLESTONE, 64)
 				.requires(TFBlocks.GIANT_COBBLESTONE.get())

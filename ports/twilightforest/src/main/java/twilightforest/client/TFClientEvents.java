@@ -73,6 +73,7 @@ import twilightforest.init.TFSounds;
 import twilightforest.item.*;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.WipeOreMeterPacket;
+import twilightforest.util.ArmorUtil;
 import twilightforest.world.registration.TFGenerationSettings;
 
 import java.util.HashSet;
@@ -315,10 +316,15 @@ public class TFClientEvents {
 	private static final MutableComponent WIP_TEXT_0 = Component.translatable("misc.twilightforest.wip0").setStyle(Style.EMPTY.withColor(ChatFormatting.RED));
 	private static final MutableComponent WIP_TEXT_1 = Component.translatable("misc.twilightforest.wip1").setStyle(Style.EMPTY.withColor(ChatFormatting.RED));
 	private static final MutableComponent NYI_TEXT = Component.translatable("misc.twilightforest.nyi").setStyle(Style.EMPTY.withColor(ChatFormatting.RED));
+	private static final MutableComponent EMPERORS_CLOTH_TOOLTIP = Component.translatable("item.twilightforest.emperors_cloth.desc").withStyle(ChatFormatting.GRAY);
 
 	@SubscribeEvent
 	public static void tooltipEvent(ItemTooltipEvent event) {
 		ItemStack item = event.getItemStack();
+
+		if (ArmorUtil.hasEmperorsCloth(item)) {
+			event.getToolTip().add(Math.min(1, event.getToolTip().size()), EMPERORS_CLOTH_TOOLTIP);
+		}
 
 		if (!item.is(ItemTagGenerator.WIP) && !item.is(ItemTagGenerator.NYI)) return;
 

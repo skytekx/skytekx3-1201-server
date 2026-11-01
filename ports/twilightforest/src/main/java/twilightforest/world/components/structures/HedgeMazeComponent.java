@@ -172,9 +172,9 @@ public class HedgeMazeComponent extends TFStructureComponentOld {
 		roomSpawner(world, roomRNG, x, z, 8, sbb);
 
 		// and 1-2 chests
-		roomTreasure(world, roomRNG, x, z, 8, sbb);
+		roomTreasure(world, roomRNG, x, z, 8, sbb, TFLootTables.HEDGE_MAZE);
 		if (roomRNG.nextInt(4) == 0) {
-			roomTreasure(world, roomRNG, x, z, 8, sbb);
+			roomTreasure(world, roomRNG, x, z, 8, sbb, TFLootTables.HEDGE_CLOTH);
 		}
 	}
 
@@ -197,7 +197,7 @@ public class HedgeMazeComponent extends TFStructureComponentOld {
 	/**
 	 * Place a treasure chest within diameter / 2 squares of the specified x and z coordinates
 	 */
-	private void roomTreasure(WorldGenLevel world, RandomSource rand, int x, int z, int diameter, BoundingBox sbb) {
+	private void roomTreasure(WorldGenLevel world, RandomSource rand, int x, int z, int diameter, BoundingBox sbb, TFLootTables table) {
 		int rx = x + rand.nextInt(diameter) - (diameter / 2);
 		int rz = z + rand.nextInt(diameter) - (diameter / 2);
 
@@ -210,7 +210,7 @@ public class HedgeMazeComponent extends TFStructureComponentOld {
 			Direction facing;
 			if (Math.abs(xDiff) > Math.abs(zDiff)) facing = xDiff < 0 ? Direction.WEST : Direction.EAST;
 			else facing = zDiff < 0 ? Direction.NORTH : Direction.SOUTH;
-			TFLootTables.HEDGE_MAZE.generateChest(world, pos, facing, false);
+			table.generateChest(world, pos, facing, false);
 		}
 	}
 

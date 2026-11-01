@@ -32,6 +32,7 @@ public class TFLootTables {
 	public static final TFLootTables MEDIUM_HOLLOW_HILL = new TFLootTables("hill_2");
 	public static final TFLootTables LARGE_HOLLOW_HILL = new TFLootTables("hill_3");
 	public static final TFLootTables HEDGE_MAZE = new TFLootTables("hedge_maze");
+	public static final TFLootTables HEDGE_CLOTH = new TFLootTables("hedge_cloth");
 	public static final TFLootTables FANCY_WELL = new TFLootTables("fancy_well");
 	public static final TFLootTables WELL = new TFLootTables("well");
 	public static final TFLootTables LABYRINTH_ROOM = new TFLootTables("labyrinth_room");

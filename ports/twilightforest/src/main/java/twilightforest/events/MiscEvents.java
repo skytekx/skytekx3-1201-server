@@ -4,18 +4,23 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -32,6 +37,7 @@ import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
 import twilightforest.network.CreateMovingCicadaSoundPacket;
 import twilightforest.network.TFPacketHandler;
+import twilightforest.util.ArmorUtil;
 
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID)
 public class MiscEvents {
@@ -100,5 +106,35 @@ public class MiscEvents {
 
 			}
 		}
+	}
+
+	@SubscribeEvent
+	public static void washOffCloth(PlayerInteractEvent.RightClickBlock event) {
+		BlockState state = event.getLevel().getBlockState(event.getPos());
+		if (!state.is(Blocks.WATER_CAULDRON) || state.getValue(LayeredCauldronBlock.LEVEL) <= 0) return;
+		ItemStack stack = event.getItemStack();
+		if (ArmorUtil.hasEmperorsCloth(stack)) {
+			LayeredCauldronBlock.lowerFillLevel(state, event.getLevel(), event.getPos());
+			ArmorUtil.removeEmperorsCloth(stack);
+			event.getEntity().awardStat(Stats.CLEAN_ARMOR);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+			event.setCanceled(true);
+		}
+	}
+
+	/**
+	 * Shrouded armor does not count as armor cover while invisible, so it no longer gives the wearer away to mobs.
+	 * TF 4.8 patches LivingEntity#getVisibilityPercent to subtract the shrouded share from getArmorCoverPercentage();
+	 * Forge 47 fires this event at the end of that method, so the same factor is corrected here instead.
+	 */
+	@SubscribeEvent
+	public static void hideShroudedArmor(LivingEvent.LivingVisibilityEvent event) {
+		LivingEntity entity = event.getEntity();
+		if (!entity.isInvisible()) return;
+		float shrouded = ArmorUtil.getShroudedArmorPercentage(entity);
+		if (shrouded <= 0.0F) return;
+		// vanilla multiplied the visibility by 0.7 * max(cover, 0.1); swap that cover for (cover - shrouded)
+		float cover = entity.getArmorCoverPercentage();
+		event.modifyVisibility(Math.max(cover - shrouded, 0.1F) / Math.max(cover, 0.1F));
 	}
 }

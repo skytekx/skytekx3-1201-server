@@ -38,9 +38,11 @@ public class TFBlocks {
 
 	//misc.
 	public static final RegistryObject<Block> HEDGE = register("hedge", () -> new HedgeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).pushReaction(PushReaction.DESTROY).sound(SoundType.GRASS).strength(2.0F, 6.0F)));
-	public static final RegistryObject<Block> FIREFLY_JAR = register("firefly_jar", () -> new JarBlock(BlockBehaviour.Properties.of().lightLevel((state) -> 15).noOcclusion().noParticlesOnBreak().sound(SoundType.BONE_BLOCK).strength(0.3F, 3.0F)));
-	public static final RegistryObject<Block> FIREFLY_SPAWNER = register("firefly_particle_spawner", () -> new FireflySpawnerBlock(BlockBehaviour.Properties.of().lightLevel((state) -> 15).noOcclusion().noParticlesOnBreak().sound(SoundType.BONE_BLOCK).strength(0.3F, 3.0F)));
-	public static final RegistryObject<Block> CICADA_JAR = register("cicada_jar", () -> new JarBlock(BlockBehaviour.Properties.of().noOcclusion().noParticlesOnBreak().randomTicks().sound(SoundType.BONE_BLOCK).strength(0.3F, 3.0F)));
+	// The jars' items are registered in TFItems as JarItems
+	public static final RegistryObject<MasonJarBlock> MASON_JAR = BLOCKS.register("mason_jar", () -> new MasonJarBlock(BlockBehaviour.Properties.of().noOcclusion().noParticlesOnBreak().randomTicks().sound(TFSoundTypes.JAR).strength(0.3F, 3.0F)));
+	public static final RegistryObject<JarBlock> FIREFLY_JAR = BLOCKS.register("firefly_jar", () -> new FireflyJarBlock(BlockBehaviour.Properties.of().lightLevel((state) -> 15).noOcclusion().noParticlesOnBreak().sound(TFSoundTypes.JAR).strength(0.3F, 3.0F)));
+	public static final RegistryObject<Block> FIREFLY_SPAWNER = register("firefly_particle_spawner", () -> new FireflySpawnerBlock(BlockBehaviour.Properties.of().lightLevel((state) -> 15).noOcclusion().noParticlesOnBreak().sound(TFSoundTypes.JAR).strength(0.3F, 3.0F)));
+	public static final RegistryObject<JarBlock> CICADA_JAR = BLOCKS.register("cicada_jar", () -> new CicadaJarBlock(BlockBehaviour.Properties.of().noOcclusion().noParticlesOnBreak().randomTicks().sound(TFSoundTypes.JAR).strength(0.3F, 3.0F)));
 	public static final RegistryObject<Block> MOSS_PATCH = register("moss_patch", () -> new MossPatchBlock(BlockBehaviour.Properties.of().ignitedByLava().instabreak().mapColor(MapColor.PLANT).noCollission().noOcclusion().pushReaction(PushReaction.DESTROY).sound(SoundType.MOSS)));
 	public static final RegistryObject<Block> MAYAPPLE = register("mayapple", () -> new MayappleBlock(BlockBehaviour.Properties.of().ignitedByLava().instabreak().mapColor(MapColor.PLANT).noCollission().noOcclusion().pushReaction(PushReaction.DESTROY).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> CLOVER_PATCH = register("clover_patch", () -> new PatchBlock(BlockBehaviour.Properties.of().ignitedByLava().noCollission().noOcclusion().instabreak().mapColor(MapColor.PLANT).pushReaction(PushReaction.DESTROY).sound(SoundType.GRASS)));

@@ -36,6 +36,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import twilightforest.advancements.TFAdvancements;
+import twilightforest.block.entity.JarBlockEntity;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.client.ClientInitiator;
 import twilightforest.command.TFCommand;
@@ -114,6 +115,7 @@ public class TwilightForestMod {
 		TFLoot.FUNCTIONS.register(modbus);
 		TFLoot.NUMBERS.register(modbus);
 		TFItems.ITEMS.register(modbus);
+		TFItemDisplayContexts.DISPLAY_CONTEXTS.register(modbus);
 		TFLootModifiers.LOOT_MODIFIERS.register(modbus);
 		TFMobEffects.MOB_EFFECTS.register(modbus);
 		TFParticleType.PARTICLE_TYPES.register(modbus);
@@ -195,6 +197,7 @@ public class TwilightForestMod {
 			TFSounds.registerParrotSounds();
 			TFDispenserBehaviors.init();
 			TFStats.init();
+			JarBlockEntity.registerDefaultLids();
 
 			CauldronInteraction.WATER.put(TFItems.ARCTIC_HELMET.get(), CauldronInteraction.DYED_ITEM);
 			CauldronInteraction.WATER.put(TFItems.ARCTIC_CHESTPLATE.get(), CauldronInteraction.DYED_ITEM);

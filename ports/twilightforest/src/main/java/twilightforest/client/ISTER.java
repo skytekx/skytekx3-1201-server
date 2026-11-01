@@ -43,22 +43,28 @@ import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.AbstractSkullCandleBlock;
 import twilightforest.block.AbstractTrophyBlock;
+import twilightforest.block.JarBlock;
 import twilightforest.block.KeepsakeCasketBlock;
+import twilightforest.block.MasonJarBlock;
 import twilightforest.block.SkullChestBlock;
 import twilightforest.block.TFChestBlock;
 import twilightforest.block.TFTrappedChestBlock;
+import twilightforest.block.entity.JarBlockEntity;
 import twilightforest.block.entity.KeepsakeCasketBlockEntity;
+import twilightforest.block.entity.MasonJarBlockEntity;
 import twilightforest.block.entity.SkullChestBlockEntity;
 import twilightforest.block.entity.TFTrappedChestBlockEntity;
 import twilightforest.block.entity.TwilightChestEntity;
 import twilightforest.client.model.TFModelLayers;
 import twilightforest.client.model.entity.KnightmetalShieldModel;
 import twilightforest.client.model.tileentity.GenericTrophyModel;
+import twilightforest.client.renderer.tileentity.JarRenderer;
 import twilightforest.client.renderer.tileentity.SkullCandleTileEntityRenderer;
 import twilightforest.client.renderer.tileentity.SkullChestRenderer;
 import twilightforest.client.renderer.tileentity.TrophyTileEntityRenderer;
 import twilightforest.enums.BossVariant;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFItemDisplayContexts;
 import twilightforest.item.KeepsakeCasketItem;
 import twilightforest.item.KnightmetalShieldItem;
 import twilightforest.item.MysticCrownItem;
@@ -203,6 +209,26 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 					Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
 							AbstractSkullCandleBlock.candleColorToCandle(AbstractSkullCandleBlock.CandleColors.colorFromInt(tag.getInt("CandleColor")))
 									.defaultBlockState().setValue(CandleBlock.CANDLES, tag.getInt("CandleAmount")), ms, buffers, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());
+				}
+			} else if (block instanceof JarBlock jarBlock) {
+				Minecraft minecraft = Minecraft.getInstance();
+				JarRenderer.renderJarModel(block.defaultBlockState(), minecraft.getBlockRenderer(), ms, buffers, light, overlay);
+				Item jarLid = JarBlockEntity.getLid(stack);
+				Item lid = jarLid == null || !JarRenderer.LIDS.containsKey(jarLid) ? jarBlock.getDefaultLid() : jarLid;
+				BakedModel lidModel = JarRenderer.LIDS.get(lid);
+				if (lidModel != null) JarRenderer.renderModel(lidModel, block.defaultBlockState(), minecraft.getBlockRenderer(), ms, buffers, light, overlay);
+
+				if (jarBlock instanceof MasonJarBlock) {
+					ItemStack contents = MasonJarBlockEntity.getContents(stack);
+					if (!contents.isEmpty()) {
+						MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
+						ms.pushPose();
+						ms.translate(0.5D, 0.4375D, 0.5D);
+						ms.scale(0.5F, 0.5F, 0.5F);
+						minecraft.getItemRenderer().render(contents, TFItemDisplayContexts.JARRED, false, ms, bufferSource, light, OverlayTexture.NO_OVERLAY, minecraft.getItemRenderer().getModel(contents, null, null, 1));
+						ms.popPose();
+						bufferSource.endBatch();
+					}
 				}
 			} else {
 				if (block instanceof EntityBlock be) {

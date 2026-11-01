@@ -179,6 +179,9 @@ public class TFItems {
 		}
 	});
 
+	public static final RegistryObject<Item> MASON_JAR = ITEMS.register("mason_jar", () -> new JarItem.MasonJarItem(TFBlocks.MASON_JAR.get(), new Item.Properties()));
+	public static final RegistryObject<Item> FIREFLY_JAR = ITEMS.register("firefly_jar", () -> new JarItem(TFBlocks.FIREFLY_JAR.get(), new Item.Properties()));
+	public static final RegistryObject<Item> CICADA_JAR = ITEMS.register("cicada_jar", () -> new JarItem(TFBlocks.CICADA_JAR.get(), new Item.Properties()));
 	public static final RegistryObject<Item> FIREFLY = ITEMS.register("firefly", () -> new WearableItem(TFBlocks.FIREFLY.get(), new Item.Properties()));
 	public static final RegistryObject<Item> CICADA = ITEMS.register("cicada", () -> new WearableItem(TFBlocks.CICADA.get(), new Item.Properties()));
 	public static final RegistryObject<Item> MOONWORM = ITEMS.register("moonworm", () -> new WearableItem(TFBlocks.MOONWORM.get(), new Item.Properties()));

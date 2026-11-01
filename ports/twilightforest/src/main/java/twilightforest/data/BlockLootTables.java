@@ -26,6 +26,8 @@ import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.*;
+import twilightforest.block.entity.JarBlockEntity;
+import twilightforest.block.entity.MasonJarBlockEntity;
 import twilightforest.enums.HollowLogVariants;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
@@ -145,9 +147,14 @@ public class BlockLootTables extends BlockLootSubProvider {
 		add(TFBlocks.LIVEROOT_BLOCK.get(), createSilkTouchDispatchTable(TFBlocks.LIVEROOT_BLOCK.get(), applyExplosionCondition(TFBlocks.LIVEROOT_BLOCK.get(), LootItem.lootTableItem(TFItems.LIVEROOT.get()).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)))));
 		add(TFBlocks.MANGROVE_ROOT.get(), createSingleItemTableWithSilkTouch(TFBlocks.MANGROVE_ROOT.get(), Items.STICK, UniformGenerator.between(3, 5)));
 		dropSelf(TFBlocks.UNCRAFTING_TABLE.get());
-		dropSelf(TFBlocks.FIREFLY_JAR.get());
+		this.add(TFBlocks.MASON_JAR.get(), this.jar(TFBlocks.MASON_JAR.get(), CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+				.copy(JarBlockEntity.TAG_LID, "BlockEntityTag." + JarBlockEntity.TAG_LID)
+				.copy(MasonJarBlockEntity.TAG_ITEM, "BlockEntityTag." + MasonJarBlockEntity.TAG_ITEM)));
+		this.add(TFBlocks.FIREFLY_JAR.get(), this.jar(TFBlocks.FIREFLY_JAR.get(), CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+				.copy(JarBlockEntity.TAG_LID, "BlockEntityTag." + JarBlockEntity.TAG_LID)));
+		this.add(TFBlocks.CICADA_JAR.get(), this.jar(TFBlocks.CICADA_JAR.get(), CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+				.copy(JarBlockEntity.TAG_LID, "BlockEntityTag." + JarBlockEntity.TAG_LID)));
 		add(TFBlocks.FIREFLY_SPAWNER.get(), particleSpawner());
-		dropSelf(TFBlocks.CICADA_JAR.get());
 		add(TFBlocks.MOSS_PATCH.get(), createShearsOnlyDrop(TFBlocks.MOSS_PATCH.get()));
 		add(TFBlocks.MAYAPPLE.get(), createShearsOnlyDrop(TFBlocks.MAYAPPLE.get()));
 		add(TFBlocks.CLOVER_PATCH.get(), createShearsOnlyDrop(TFBlocks.CLOVER_PATCH.get()));
@@ -570,6 +577,15 @@ public class BlockLootTables extends BlockLootSubProvider {
 
 	private static LootTable.Builder casketInfo(Block block) {
 		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).apply(CopyBlockState.copyState(block).copy(KeepsakeCasketBlock.BREAKAGE)));
+	}
+
+	// 4.8 copies the jar_lid and container components; on 1.20.1 the lid and contents travel as BlockEntityTag
+	private LootTable.Builder jar(Block jar, CopyNbtFunction.Builder copyNbt) {
+		return LootTable.lootTable().withPool(
+				this.applyExplosionCondition(jar,
+						LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1.0F))
+								.add(LootItem.lootTableItem(jar).apply(copyNbt))));
 	}
 
 	private LootTable.Builder particleSpawner() {

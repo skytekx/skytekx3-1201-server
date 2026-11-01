@@ -323,6 +323,15 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateNewSoundWithSubtitle(TFSounds.GHAST_TRAP_ON, "mob/ur_ghast/trap_on", 5);
 		this.generateNewSoundWithSubtitle(TFSounds.GHAST_TRAP_SPINDOWN, "mob/ur_ghast/trap_spin_down", 1);
 		this.generateNewSoundWithSubtitle(TFSounds.GHAST_TRAP_WARMUP, "mob/ur_ghast/trap_warmup", 1);
+		this.makeNewGenericSound(TFSounds.JAR_BREAK, "random/jar/jar", 3, "break");
+		this.makeNewGenericSound(TFSounds.JAR_STEP, "random/jar/jar", 3, "footsteps");
+		this.makeNewGenericSound(TFSounds.JAR_PLACE, "random/jar/jar_place", 1, "place");
+		this.makeNewGenericSound(TFSounds.JAR_HIT, "random/jar/jar", 3, "hit");
+		this.makeNewGenericSound(TFSounds.JAR_FALL, "random/jar/jar", 3, null);
+		this.generateNewSoundWithSubtitle(TFSounds.JAR_INSERT, "random/jar/jar_in", 1);
+		this.generateNewSoundWithSubtitle(TFSounds.JAR_REMOVE, "random/jar/jar_out", 1);
+		this.generateNewSoundWithSubtitle(TFSounds.JAR_LID_SWAP, "random/jar/jar_swap", 1);
+		this.generateNewSoundWithSubtitle(TFSounds.JAR_WIGGLE, "random/jar/jar_wiggle", 3);
 		this.generateExistingSoundWithSubtitle(TFSounds.JET_ACTIVE, SoundEvents.GHAST_SHOOT);
 		this.generateExistingSoundWithSubtitle(TFSounds.JET_POP, SoundEvents.LAVA_POP);
 		this.generateExistingSoundWithSubtitle(TFSounds.JET_START, SoundEvents.COMPARATOR_CLICK);

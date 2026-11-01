@@ -140,9 +140,18 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_wrought_iron", has(ItemTagGenerator.WROUGHT_IRON_INGOTS))
 				.save(consumer);
 
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFItems.MASON_JAR.get(), 4)
+				.pattern("GLG")
+				.pattern("G G")
+				.pattern("GGG")
+				.define('G', Ingredient.of(Items.GLASS))
+				.define('L', Ingredient.of(TFBlocks.TWILIGHT_OAK_LOG.get()))
+				.unlockedBy("has_tf_oak", has(TFBlocks.TWILIGHT_OAK_LOG.get()))
+				.save(consumer);
+
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.FIREFLY_JAR.get())
 				.requires(Ingredient.of(TFBlocks.FIREFLY.get()))
-				.requires(Ingredient.of(Items.GLASS_BOTTLE))
+				.requires(Ingredient.of(TFItems.MASON_JAR.get()))
 				.unlockedBy("has_item", has(TFBlocks.FIREFLY.get()))
 				.save(consumer);
 
@@ -155,7 +164,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.CICADA_JAR.get())
 				.requires(Ingredient.of(TFBlocks.CICADA.get()))
-				.requires(Ingredient.of(Items.GLASS_BOTTLE))
+				.requires(Ingredient.of(TFItems.MASON_JAR.get()))
 				.unlockedBy("has_item", has(TFBlocks.CICADA.get()))
 				.save(consumer);
 

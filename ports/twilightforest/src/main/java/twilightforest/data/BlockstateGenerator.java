@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -24,6 +25,7 @@ import twilightforest.client.model.block.connected.ConnectedTextureBuilder;
 import twilightforest.client.model.block.forcefield.ForceFieldModel;
 import twilightforest.client.model.block.forcefield.ForceFieldModelBuilder;
 import twilightforest.client.model.block.giantblock.GiantBlockBuilder;
+import twilightforest.client.renderer.tileentity.JarRenderer;
 import twilightforest.data.helpers.BlockModelBuilders;
 import twilightforest.enums.*;
 import twilightforest.init.TFBlocks;
@@ -317,11 +319,29 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		simpleBlock(TFBlocks.MINOSHROOM_BOSS_SPAWNER.get(), bigSpawner);
 		simpleBlock(TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get(), bigSpawner);
 		simpleBlock(TFBlocks.FINAL_BOSS_BOSS_SPAWNER.get(), bigSpawner);
-		simpleBlock(TFBlocks.FIREFLY_JAR.get(), this.makeJar(TFBlocks.FIREFLY_JAR.getId().getPath())
-				.texture("cork", prefix("block/firefly_jar_cork")));
+
+		BlockModelBuilder masonJar = this.makeJar(TFBlocks.MASON_JAR.getId().getPath());
+		simpleBlock(TFBlocks.MASON_JAR.get(), masonJar);
+		simpleBlock(TFBlocks.CICADA_JAR.get(), masonJar);
+		simpleBlock(TFBlocks.FIREFLY_JAR.get(), masonJar);
 		simpleBlockExisting(TFBlocks.FIREFLY_SPAWNER.get());
-		simpleBlock(TFBlocks.CICADA_JAR.get(), this.makeJar(TFBlocks.CICADA_JAR.getId().getPath())
-				.texture("cork", prefix("block/cicada_jar_cork")));
+
+		ResourceLocation jarLid = TwilightForestMod.prefix("jar_lid");
+		for (JarRenderer.LidResource lid : JarRenderer.LID_LOCATION_LIST.get()) {
+			ResourceLocation item = lid.resourceLocation();
+			String name = item.getPath();
+			if (lid.lid() == Items.PUMPKIN) {
+				this.models().withExistingParent("block/lid/" + name, jarLid)
+						.texture("1", "minecraft:block/pumpkin_top")
+						.texture("2", "minecraft:block/pumpkin_side");
+				continue;
+			}
+			if (lid.customPath() != null) name = lid.customPath();
+			this.models().withExistingParent("block/lid/" + name, jarLid)
+					.texture("1", item.getNamespace() + ":block/" + item.getPath() + "_top")
+					.texture("2", item.getNamespace() + ":block/" + item.getPath());
+		}
+
 		registerPlantBlocks();
 		simpleBlock(TFBlocks.ROOT_BLOCK.get());
 		simpleBlock(TFBlocks.LIVEROOT_BLOCK.get());

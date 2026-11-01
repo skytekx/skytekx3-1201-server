@@ -129,6 +129,15 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> ICE_CORE_DEATH = createEvent("entity.twilightforest.ice.death");
 	public static final RegistryObject<SoundEvent> ICE_CORE_HURT = createEvent("entity.twilightforest.ice.hurt");
 	public static final RegistryObject<SoundEvent> ICE_CORE_SHOOT = createEvent("entity.twilightforest.ice.shoot");
+	public static final RegistryObject<SoundEvent> JAR_BREAK = createEvent("block.twilightforest.jar.break");
+	public static final RegistryObject<SoundEvent> JAR_STEP = createEvent("block.twilightforest.jar.step");
+	public static final RegistryObject<SoundEvent> JAR_PLACE = createEvent("block.twilightforest.jar.place");
+	public static final RegistryObject<SoundEvent> JAR_HIT = createEvent("block.twilightforest.jar.hit");
+	public static final RegistryObject<SoundEvent> JAR_FALL = createEvent("block.twilightforest.jar.fall");
+	public static final RegistryObject<SoundEvent> JAR_INSERT = createEvent("block.twilightforest.jar.insert");
+	public static final RegistryObject<SoundEvent> JAR_REMOVE = createEvent("block.twilightforest.jar.remove");
+	public static final RegistryObject<SoundEvent> JAR_LID_SWAP = createEvent("block.twilightforest.jar.lid_swap");
+	public static final RegistryObject<SoundEvent> JAR_WIGGLE = createEvent("block.twilightforest.jar.wiggle");
 	public static final RegistryObject<SoundEvent> JET_ACTIVE = createEvent("block.twilightforest.jet.active");
 	public static final RegistryObject<SoundEvent> JET_POP = createEvent("block.twilightforest.jet.pop");
 	public static final RegistryObject<SoundEvent> JET_START = createEvent("block.twilightforest.jet.start");

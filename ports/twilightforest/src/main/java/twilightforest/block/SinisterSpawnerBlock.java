@@ -131,25 +131,36 @@ public class SinisterSpawnerBlock extends BaseEntityBlock {
 					return InteractionResult.sidedSuccess(level.isClientSide());
 				}
 			}
-
-			// 4.8's block entity implements Spawner, so spawn eggs set its mob like a vanilla spawner's.
-			// 1.20.1's SpawnEggItem only knows minecraft:spawner, so the egg is handled here instead.
-			if (stack.getItem() instanceof SpawnEggItem egg && player.getAbilities().mayBuild) {
-				if (!level.isClientSide()) {
-					EntityType<?> type = egg.getType(stack.getTag());
-					entity.setEntityId(type, level.getRandom());
-					level.sendBlockUpdated(pos, state, state, 3);
-					level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-					if (!player.getAbilities().instabuild) {
-						stack.shrink(1);
-					}
-				}
-
-				return InteractionResult.sidedSuccess(level.isClientSide());
-			}
 		}
 
 		return super.use(state, level, pos, player, hand, hitResult);
+	}
+
+	/**
+	 * 4.8's block entity implements Spawner, so a spawn egg used on it sets its mob like a vanilla spawner's, whether
+	 * or not the player sneaks. 1.20.1's SpawnEggItem only knows minecraft:spawner, and Block#use is skipped for a
+	 * sneaking player holding an item, so {@link twilightforest.events.MiscEvents} calls this from
+	 * PlayerInteractEvent.RightClickBlock, before either of those runs.
+	 *
+	 * @return {@link InteractionResult#PASS} if the click is not a spawn egg on a sinister spawner the player may edit
+	 */
+	public static InteractionResult useSpawnEgg(Level level, BlockPos pos, Player player, ItemStack stack) {
+		if (stack.getItem() instanceof SpawnEggItem egg && player.getAbilities().mayBuild && level.getBlockEntity(pos) instanceof SinisterSpawnerBlockEntity entity) {
+			if (!level.isClientSide()) {
+				EntityType<?> type = egg.getType(stack.getTag());
+				entity.setEntityId(type, level.getRandom());
+				BlockState state = level.getBlockState(pos);
+				level.sendBlockUpdated(pos, state, state, 3);
+				level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+				if (!player.getAbilities().instabuild) {
+					stack.shrink(1);
+				}
+			}
+
+			return InteractionResult.sidedSuccess(level.isClientSide());
+		}
+
+		return InteractionResult.PASS;
 	}
 
 	private List<ParticleOptions> particlesFromItem(ItemStack stack) {

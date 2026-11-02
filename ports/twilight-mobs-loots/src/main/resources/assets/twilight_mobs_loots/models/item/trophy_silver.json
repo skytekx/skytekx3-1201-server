@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "twilight_mobs_loots:item/trophy_silver"
+    "layer0": "twilightforest:item/trophy_minor"
   }
 }

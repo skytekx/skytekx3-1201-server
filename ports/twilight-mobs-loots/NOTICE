@@ -21,3 +21,8 @@ Changes in this backport (SkyTekx, 2026):
   renderer: the 1.20.1 fork already does both.
 - Small fixes: removed UTF-8 byte order marks from 11 item model files, added the missing English
   name of the Curios "trophy" slot, the giant trophies fall back to the default player skin.
+- Assets: upstream ships textures/item/trophy_silver.png, an unmodified copy of Twilight Forest's
+  textures/item/trophy_minor.png (Twilight Forest assets are CC BY-NC-SA 4.0, not MIT). This build does
+  not ship that copy: the trophy_silver and template_trophy item models use
+  twilightforest:item/trophy_minor from the Twilight Forest jar, a required dependency. The unused
+  textures/block/trophy_base.png was removed too. The remaining assets come from upstream under MIT.

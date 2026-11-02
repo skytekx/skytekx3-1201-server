@@ -5,7 +5,7 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across all 37 bundled mods. **Verify the blockers yourself before trusting them.**
+Researched automatically across all 38 bundled mods. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 

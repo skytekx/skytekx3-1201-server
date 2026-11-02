@@ -362,8 +362,12 @@ Twilight Mobs Loots exists only for 1.21.1 NeoForge, so it is backported from so
 `41e447de`, 1.1.1, MIT) in [`ports/twilight-mobs-loots/`](../../ports/twilight-mobs-loots/README.md).
 Build `ports/twilightforest` first, then `./gradlew build` in the port; the jar is byte-reproducible.
 It requires `twilightforest` `[4.3.2508-skytekx.1,)`, so `local-mods/` must carry the fork jar, not the
-older `4.3` build. Not ported: the Twilight Moonshine Moon Rabbit compat (no 1.20.1 build), and
-re-registering TF's boss trophies as curios (the fork already does it).
+older `4.3` build: until that swap (the pack-side glue item above) lands, Forge refuses to load the
+addon and the full pack does not boot. Not ported: the Twilight Moonshine Moon Rabbit compat (no 1.20.1
+build), and re-registering TF's boss trophies as curios (the fork already does it). Upstream's
+`trophy_silver.png` is a copy of TF's CC BY-NC-SA `trophy_minor.png`; the backport does not ship it and
+uses `twilightforest:item/trophy_minor` instead, so the jar stays MIT only (SHA-1 `03478ccb`, 135505
+bytes, recorded in its `modrinth-permissions/` file).
 
 Pack-side glue for these addons:
 - `config/twilighttweaks-common.toml` makes the final-boss spawner run
@@ -445,7 +449,7 @@ on is in the fork (details in the table below):
 | [Alternative Twilight (1.20.1)](https://modrinth.com/mod/alternative_twilight) | skip | no | 1.20.1 Forge 1.20.1-1.1.0 (2025-06-06). The 1.21.1 line is a separate remake. Its TF range is the soft '4.3.2145', which accepts any version |
 | [Alternative Twilight (Remastered)](https://modrinth.com/mod/alternative-twilight-remastered) | needs_backport | yes | 1.21.1 NeoForge only, 0.0.2 (2026-05-15). 34 classes, 3 mixins. Source github.com/Lvedy114/alternative-twilight. |
 | [Create: Shimmer](https://www.curseforge.com/minecraft/mc-mods/create-shimmer) | needs_backport | yes | 1.21.1 NeoForge only (1.3.1, 2026-08-13). Needs create [6.0.7,), create_dragons_plus [1.8.0,), curios 9 and twilightforest [4.7.0,). |
-| [Twilight Mobs Loots](https://modrinth.com/mod/twilight-mobs-loots) | needs_backport | yes | 1.21.1 NeoForge 1.1.1 only. twilightforest [4.8,5.0). 24 classes, no mixins. |
+| [Twilight Mobs Loots](https://modrinth.com/mod/twilight-mobs-loots) | backported_bundled | yes | 1.21.1 NeoForge 1.1.1 only. twilightforest [4.8,5.0). 24 classes, no mixins. Done: ported in `ports/twilight-mobs-loots/` (22 classes, Twilight Moonshine compat dropped) and bundled as `local-mods/twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar`. |
 | [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | needs_backport | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. |
 | [Spiced Twilight (baguchi)](https://modrinth.com/mod/spiced-twilight) | needs_backport | yes | 1.21.1 NeoForge 1.21.1-2.0.0 only. twilightforest [4.8.3287,). 32 classes, 9 mixins into 4.8 entity code. |
 | [Mystic Crown Compat](https://modrinth.com/mod/mystic-crown-compat) | skip | no | 1.21.1 NeoForge 1.1.0 only. twilightforest [4.8,). 14 classes, 5 mixins. |

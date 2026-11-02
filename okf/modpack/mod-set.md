@@ -10,7 +10,7 @@ timestamp: 2026-11-02
 
 ## Source of truth
 [`modrinth.index.json`](../../modrinth.index.json) is the **manifest** — every Modrinth-resolvable mod
-(213 files at v3.0.4), each with its env (`client` / `server` `required|optional|unsupported`), hashes,
+(225 files at v3.1.0), each with its env (`client` / `server` `required|optional|unsupported`), hashes,
 and download URL. To add or remove a Modrinth mod, **edit the index**, not `mods/`.
 
 ## Derived vs tracked

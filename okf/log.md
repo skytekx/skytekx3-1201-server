@@ -533,6 +533,12 @@ logs stay on the Mac and are not in the repo.
   next morning once enough players in the Skylands sleep. At 14:03 sleeping still failed, because a
   second player was awake in the Skylands and `playersSleepingPercentage` stood at the default of 100.
   At 14:10 the rule went to 0, so one sleeping player is enough on the whole server.
+- At 14:54 the owner asked why a nether portal in the Skylands does not open with flint and steel. The
+  frame was complete, but vanilla and Arclight light portals only in the overworld and the nether, and a
+  portal in the nether always leads to the overworld. On the owner's ask of 14:59
+  `kubejs/server_scripts/skylands_portals.js` went live at 15:05 (11daa901). It opens frames in the
+  Skylands and sends a player who came from the Skylands back there from the nether. See
+  [Skylands worldgen](content/skylands-worldgen.md#nether-portals).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

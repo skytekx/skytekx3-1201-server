@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "chest",
+  "key": {
+    "#": {
+      "item": "twilightforest:mining_planks"
+    },
+    "C": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:chests/wooden"
+      },
+      "subtracted": {
+        "tag": "forge:chests/trapped"
+      }
+    }
+  },
+  "pattern": [
+    "###",
+    "#C#",
+    "###"
+  ],
+  "result": {
+    "count": 2,
+    "item": "twilightforest:mining_chest"
+  },
+  "show_notification": true
+}

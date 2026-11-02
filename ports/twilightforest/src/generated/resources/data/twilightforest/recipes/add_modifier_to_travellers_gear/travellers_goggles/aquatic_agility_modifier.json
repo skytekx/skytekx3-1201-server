@@ -1,0 +1,35 @@
+{
+  "type": "twilightforest:travellers_gear_modifier_shaped_recipe",
+  "is_rotated": false,
+  "modifier_key": "twilightforest:aquatic_agility",
+  "pattern": {
+    "key": {
+      "b": {
+        "item": "minecraft:bamboo"
+      },
+      "g": {
+        "item": "twilightforest:travellers_goggles"
+      },
+      "s": {
+        "tag": "forge:slimeballs"
+      },
+      "w": [
+        {
+          "type": "forge:partial_nbt",
+          "item": "minecraft:potion",
+          "nbt": "{Potion:\"minecraft:water_breathing\"}"
+        },
+        {
+          "type": "forge:partial_nbt",
+          "item": "minecraft:potion",
+          "nbt": "{Potion:\"minecraft:long_water_breathing\"}"
+        }
+      ]
+    },
+    "pattern": [
+      " b",
+      "gb",
+      "sw"
+    ]
+  }
+}

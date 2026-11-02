@@ -1,0 +1,10 @@
+{
+  "type": "spiced_twilight:add_table",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "twilightforest:entities/fire_beetle"
+    }
+  ],
+  "table": "spiced_twilight:inject/fire_beetle_powder"
+}

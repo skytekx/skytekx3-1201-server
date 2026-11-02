@@ -1,0 +1,36 @@
+package twilightforest.init;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+import twilightforest.TwilightForestMod;
+import twilightforest.loot.LootingEnchantNumberProvider;
+import twilightforest.loot.MultiplayerBasedAdditionLootFunction;
+import twilightforest.loot.MultiplayerBasedNumberProvider;
+import twilightforest.loot.conditions.IsMinionCondition;
+import twilightforest.loot.conditions.ModExistsCondition;
+import twilightforest.loot.conditions.UncraftingTableEnabledCondition;
+import twilightforest.loot.conditions.GiantPickUsedCondition;
+import twilightforest.loot.functions.ModItemSwap;
+
+public class TFLoot {
+
+	public static final DeferredRegister<LootItemConditionType> CONDITIONS = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, TwilightForestMod.ID);
+	public static final DeferredRegister<LootItemFunctionType> FUNCTIONS = DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, TwilightForestMod.ID);
+	public static final DeferredRegister<LootNumberProviderType> NUMBERS = DeferredRegister.create(Registries.LOOT_NUMBER_PROVIDER_TYPE, TwilightForestMod.ID);
+
+	public static final RegistryObject<LootItemFunctionType> ITEM_OR_DEFAULT = FUNCTIONS.register("item_or_default", () -> new LootItemFunctionType(new ModItemSwap.Serializer()));
+	public static final RegistryObject<LootItemFunctionType> MULTIPLAYER_MULTIPLIER = FUNCTIONS.register("multiplayer_addition", () -> new LootItemFunctionType(new MultiplayerBasedAdditionLootFunction.Serializer()));
+
+	public static final RegistryObject<LootNumberProviderType> MULTIPLAYER_ROLLS = NUMBERS.register("multiplayer_rolls", () -> new LootNumberProviderType(new MultiplayerBasedNumberProvider.Serializer()));
+	public static final RegistryObject<LootNumberProviderType> LOOTING_ROLLS = NUMBERS.register("looting_rolls", () -> new LootNumberProviderType(new LootingEnchantNumberProvider.Serializer()));
+
+	public static final RegistryObject<LootItemConditionType> IS_MINION = CONDITIONS.register("is_minion", () -> new LootItemConditionType(new IsMinionCondition.ConditionSerializer()));
+	public static final RegistryObject<LootItemConditionType> MOD_EXISTS = CONDITIONS.register("mod_exists", () -> new LootItemConditionType(new ModExistsCondition.ConditionSerializer()));
+	public static final RegistryObject<LootItemConditionType> UNCRAFTING_TABLE_ENABLED = CONDITIONS.register("uncrafting_table_enabled", () -> new LootItemConditionType(new UncraftingTableEnabledCondition.ConditionSerializer()));
+	public static final RegistryObject<LootItemConditionType> GIANT_PICK_USED_CONDITION = CONDITIONS.register("giant_pick_used", () -> new LootItemConditionType(new GiantPickUsedCondition.ConditionSerializer()));
+
+}

@@ -1,35 +1,63 @@
 #!/usr/bin/env python3
 """Assemble SkyTekx3-<version>.mrpack (client and server) from the committed tree.
-- writes modrinth.index.json from the committed index with this version, summary and Forge
+- refuses to build a public pack while a bundled jar in local-mods/ lacks distribution permission
+  (modrinth-permissions/<jar>.md with Status OK), see tools/mrpack_permissions.py
+- reads modrinth.index.json as committed (never rewrites it) and checks versionId/forge against
+  VERSION/FORGE below
 - moves client-only jars out of the server mods/ dir
 - zips the index and the overrides, all read from git HEAD, so edits that are not committed
   (configs rewritten by a server boot, for example) stay out of the pack
 - writes the server list of the clients as client-overrides/servers.dat
 """
-import io, json, os, shutil, struct, subprocess, tarfile, zipfile
+import io, json, os, shutil, struct, subprocess, sys, tarfile, zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.0.8"
+VERSION = "3.1.0"
 FORGE = "47.4.18"   # The Forge build that the server (inside Arclight) and the owner's client run
 
 def git(*args):
     return subprocess.run(["git", "-C", REPO, *args], check=True, capture_output=True).stdout
 
-# Mod file list from the committed index, deduped by path (last wins)
-files = list({f["path"]: f for f in json.loads(git("show", "HEAD:modrinth.index.json"))["files"]}.values())
+# --- permission guard: every bundled jar needs modrinth-permissions/<jar>.md with Status OK ---
+# Runs before anything is written or moved. --allow-unpermitted builds a private/draft pack under a
+# separate name (SkyTekx3-<ver>-UNPERMITTED.mrpack), which publish_modrinth.py never picks up; it also
+# re-checks the jars inside whatever .mrpack it uploads (tools/mrpack_permissions.py).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import mrpack_permissions
 
-index = {
-    "formatVersion": 1,
-    "game": "minecraft",
-    "versionId": VERSION,
-    "name": "SkyTekx3",
-    "summary": "Hexxit × Tekkit × SkyFactory, reborn on Minecraft 1.20.1.",   # The tagline of skytekx.com
-    "files": files,
-    "dependencies": {"minecraft": "1.20.1", "forge": FORGE},
-}
-index_json = json.dumps(index, indent=2) + "\n"   # trailing newline, as update_mods.py writes it
-with open(REPO+"/modrinth.index.json", "w") as fh:
-    fh.write(index_json)
+out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
+bad = mrpack_permissions.check(REPO, mrpack_permissions.local_mod_jars(REPO))
+if bad:
+    print("local-mods/ jars without distribution permission (modrinth-permissions/ Status is not OK):")
+    for fn, why in bad:
+        print("  %s -- %s" % (fn, why))
+    if "--allow-unpermitted" not in sys.argv:
+        if os.path.exists(out):
+            os.remove(out)  # leave nothing uploadable behind from an earlier build
+            print("removed the existing", out)
+        sys.exit("refusing to build a public .mrpack; resolve them first, or pass --allow-unpermitted "
+                 "for a private/draft build that must not be uploaded")
+    out = REPO+f"/SkyTekx3-{VERSION}-UNPERMITTED.mrpack"
+    print("--allow-unpermitted: building a private/draft pack as", out, "-- do NOT upload it")
+
+# --- mod file list: always the committed index ---
+# The index is the source of truth and is shipped as committed. (Until 3.1.0 a resolve_all.py scratch
+# list silently replaced it and was written back over the index, dropping every index-only entry.)
+# Read from git HEAD like the overrides, so an uncommitted edit cannot slip into the pack.
+index_json = git("show", "HEAD:modrinth.index.json").decode("utf-8")
+index = json.loads(index_json)
+files = index["files"]
+paths = [f["path"] for f in files]
+problems = []
+dups = sorted({p for p in paths if paths.count(p) > 1})
+if dups:
+    problems.append("duplicate paths: %s" % dups)
+if index.get("versionId") != VERSION:
+    problems.append("versionId %r != VERSION %r (bump them together)" % (index.get("versionId"), VERSION))
+if index.get("dependencies", {}).get("forge") != FORGE:
+    problems.append("dependencies.forge %r != FORGE %r" % (index.get("dependencies", {}).get("forge"), FORGE))
+if problems:
+    sys.exit("modrinth.index.json does not match this build: " + "; ".join(problems))
 
 # --- split client-only jars out of the server mods/ dir ---
 clientonly = REPO+"/client-only-mods"
@@ -84,8 +112,7 @@ def servers_dat(entries):
         out += b"\x08" + nbt_str("name") + nbt_str(name) + b"\x08" + nbt_str("ip") + nbt_str(ip) + b"\x00"
     return out + b"\x00"
 
-# --- assemble the .mrpack ---
-out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
+# --- assemble the .mrpack (out is set by the permission guard above) ---
 if os.path.exists(out): os.remove(out)
 counts = {}
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:

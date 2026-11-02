@@ -1,0 +1,27 @@
+{
+  "type": "twilightforest:scepter_repair",
+  "durability": 9,
+  "repair_ingredients": [
+    [
+      {
+        "type": "forge:partial_nbt",
+        "item": "minecraft:potion",
+        "nbt": "{Potion:\"minecraft:strength\"}"
+      },
+      {
+        "type": "forge:partial_nbt",
+        "item": "minecraft:potion",
+        "nbt": "{Potion:\"minecraft:long_strength\"}"
+      },
+      {
+        "type": "forge:partial_nbt",
+        "item": "minecraft:potion",
+        "nbt": "{Potion:\"minecraft:strong_strength\"}"
+      }
+    ],
+    {
+      "item": "minecraft:rotten_flesh"
+    }
+  ],
+  "scepter": "twilightforest:zombie_scepter"
+}

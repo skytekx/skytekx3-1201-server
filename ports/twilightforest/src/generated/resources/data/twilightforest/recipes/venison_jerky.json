@@ -1,0 +1,10 @@
+{
+  "type": "twilightforest:drying",
+  "filter_time": 6000,
+  "input": {
+    "item": "twilightforest:raw_venison"
+  },
+  "result": {
+    "item": "twilightforest:venison_jerky"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "twilightforest:uncrafting",
+  "cost": 7,
+  "input": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:chipped_anvil"
+    }
+  },
+  "key": {
+    "0": {
+      "item": "minecraft:iron_block"
+    },
+    "1": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "011",
+    " 1 ",
+    "111"
+  ]
+}

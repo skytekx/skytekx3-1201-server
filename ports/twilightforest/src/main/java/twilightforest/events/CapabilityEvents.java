@@ -1,0 +1,160 @@
+package twilightforest.events;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
+import twilightforest.TFConfig;
+import twilightforest.TwilightForestMod;
+import twilightforest.block.TFPortalBlock;
+import twilightforest.capabilities.CapabilityList;
+import twilightforest.capabilities.fan.FeatherFanFallCapability;
+import twilightforest.capabilities.shield.IShieldCapability;
+import twilightforest.capabilities.shield.ShieldCapabilityHandler;
+import twilightforest.capabilities.thrown.YetiThrowCapability;
+import twilightforest.network.TFPacketHandler;
+import twilightforest.network.UpdateShieldPacket;
+import twilightforest.world.TFTeleporter;
+import twilightforest.world.registration.TFGenerationSettings;
+
+@Mod.EventBusSubscriber(modid = TwilightForestMod.ID)
+public class CapabilityEvents {
+
+	private static final String NBT_TAG_TWILIGHT = "twilightforest_banished";
+
+	@SubscribeEvent
+	public static void updateCaps(LivingEvent.LivingTickEvent event) {
+		event.getEntity().getCapability(CapabilityList.SHIELDS).ifPresent(IShieldCapability::update);
+		event.getEntity().getCapability(CapabilityList.FEATHER_FAN_FALLING).ifPresent(FeatherFanFallCapability::update);
+		event.getEntity().getCapability(CapabilityList.YETI_THROWN).ifPresent(YetiThrowCapability::update);
+	}
+
+	// [4.8 CapabilityEvents.updatePlayerCaps] the Twilight portal warm-up; the client side is ticked in PortalOverlay
+	@SubscribeEvent
+	public static void tickTwilightPortal(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END && event.player.level() instanceof ServerLevel level) {
+			Player player = event.player;
+			player.getCapability(CapabilityList.TF_PORTAL).ifPresent(cap -> {
+				cap.tick(player);
+				cap.processPortalTeleportation(level, player);
+			});
+		}
+	}
+
+	@SubscribeEvent
+	public static void livingAttack(LivingAttackEvent event) {
+		LivingEntity living = event.getEntity();
+		// shields
+		if (event.getEntity() instanceof Player player && player.getAbilities().invulnerable) return;
+		if (!living.level().isClientSide() && !event.getSource().is(DamageTypeTags.BYPASSES_ARMOR)) {
+			living.getCapability(CapabilityList.SHIELDS).ifPresent(cap -> {
+				if (cap.shieldsLeft() > 0) {
+					// A shield absorbs every hit, but only one breaks per i-frame window, so a burst of hits costs one shield.
+					if (living.invulnerableTime <= 0) {
+						cap.breakShield(false);
+						ShieldCapabilityHandler.addShieldBreakParticles(event.getSource(), living);
+						living.invulnerableTime = living.invulnerableDuration;
+					}
+					event.setCanceled(true);
+				}
+			});
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+		if (event.isEndConquered()) {
+			updateCapabilities(serverPlayer, serverPlayer);
+		}
+
+		if (TFConfig.COMMON_CONFIG.DIMENSION.newPlayersSpawnInTF.get() && serverPlayer.getRespawnPosition() == null) {
+			CompoundTag tagCompound = serverPlayer.getPersistentData();
+			CompoundTag playerData = tagCompound.getCompound(Player.PERSISTED_NBT_TAG);
+			playerData.putBoolean(NBT_TAG_TWILIGHT, false); // set to false so that the method works
+			tagCompound.put(Player.PERSISTED_NBT_TAG, playerData); // commit
+			banishNewbieToTwilightZone(serverPlayer);
+		}
+	}
+
+	/**
+	 * When player logs in, report conflict status, set progression status
+	 */
+	@SubscribeEvent
+	public static void playerLogsIn(PlayerEvent.PlayerLoggedInEvent event) {
+		if (!event.getEntity().level().isClientSide() && event.getEntity() instanceof ServerPlayer) {
+			updateCapabilities((ServerPlayer) event.getEntity(), event.getEntity());
+			banishNewbieToTwilightZone(event.getEntity());
+		}
+	}
+
+	@SubscribeEvent
+	public static void playerPortals(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (!event.getEntity().level().isClientSide() && event.getEntity() instanceof ServerPlayer player) {
+			updateCapabilities(player, event.getEntity());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onStartTracking(PlayerEvent.StartTracking event) {
+		updateCapabilities((ServerPlayer) event.getEntity(), event.getTarget());
+	}
+
+	// send any capabilities that are needed client-side
+	private static void updateCapabilities(ServerPlayer clientTarget, Entity shielded) {
+		shielded.getCapability(CapabilityList.SHIELDS).ifPresent(cap -> {
+			if (cap.shieldsLeft() > 0) {
+				TFPacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> clientTarget), new UpdateShieldPacket(shielded, cap));
+			}
+		});
+	}
+
+	// Teleport first-time players to Twilight Forest
+	private static void banishNewbieToTwilightZone(Player player) {
+		CompoundTag tagCompound = player.getPersistentData();
+		CompoundTag playerData = tagCompound.getCompound(Player.PERSISTED_NBT_TAG);
+
+		// getBoolean returns false, if false or didn't exist
+		boolean shouldBanishPlayer = TFConfig.COMMON_CONFIG.DIMENSION.newPlayersSpawnInTF.get() && !playerData.getBoolean(NBT_TAG_TWILIGHT);
+
+		playerData.putBoolean(NBT_TAG_TWILIGHT, true); // set true once player has spawned either way
+		tagCompound.put(Player.PERSISTED_NBT_TAG, playerData); // commit
+
+		if (shouldBanishPlayer)
+			TFPortalBlock.attemptSendEntity(player, true, TFConfig.COMMON_CONFIG.DIMENSION.portalForNewPlayerSpawn.get(), getNewPlayerSpawn(player)); // See ya hate to be ya
+	}
+
+	/**
+	 * The surface spot in the Twilight Forest that a banished player is sent to and respawns at, so neither the arrival
+	 * nor the forced respawn point can be up in the air (no falling spawn-kills) or inside terrain.
+	 * <p>
+	 * Local deviation from 4.8 (6da868af5): the column is the player's position scaled into the Twilight Forest
+	 * (coordinate_scale 0.125, so x8 horizontally), as 4.3's banish through the portal teleporter always did. 4.8 uses
+	 * the raw overworld X/Z instead ({@code player.blockPosition()}, since bb51f4ee6). Keeping 4.3's scaling lands new
+	 * players in the same region as players banished before this backport.
+	 */
+	@Nullable
+	private static BlockPos getNewPlayerSpawn(Player player) {
+		if (player.getServer() == null || player.level().dimension().equals(TFGenerationSettings.DIMENSION_KEY))
+			return null;
+
+		ServerLevel twilight = player.getServer().getLevel(TFGenerationSettings.DIMENSION_KEY);
+		if (twilight == null)
+			return null;
+
+		return twilight.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, TFTeleporter.getScaledDestination(player, twilight));
+	}
+}

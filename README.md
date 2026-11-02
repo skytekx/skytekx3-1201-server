@@ -92,6 +92,8 @@ gcc mcrcon.c -o mcrcon && mv mcrcon /usr/local/bin/
 git clone https://github.com/skytekx/skytekx3-1201-server.git \
   /opt/minecraft-server/server/skytekx3-1201-server
 cd /opt/minecraft-server/server/skytekx3-1201-server
+
+readlink arclight.jar   # arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar
 ```
 
 The clone brings the hardened Arclight jar and the symlink `arclight.jar` that points at it. Keep the
@@ -100,20 +102,33 @@ symlink on that jar. A stock Arclight release brings back the crash at shutdown 
 
 ### Provide the mods
 
-Git does not hold `mods/`. Copy the folder from a running install as it is. It holds 235 jars, among
-them jars patched in place, BrassAmber BattleTowers, Falling Meteors Reimagined and the Backpack port,
-which exist nowhere else in the repo, see
-[Mod set](okf/modpack/mod-set.md#jars-outside-the-index).
+Git does not hold `mods/`. Forge loads only `mods/`, and nothing points it at `local-mods/`, so copy
+the bundled jars in, fetch every index file the server needs (`env.server` not `unsupported`) and apply
+the jar patches again.
 
-No script restores `mods/` from the pinned index yet. Do not use `tools/resolve_all.py` for it, because
-it ignores the index and installs whatever is newest, including Radium, which crashed Arclight on
-2026-06-27. A rebuild from the index takes four steps.
+```bash
+mkdir -p mods
+cp local-mods/*.jar mods/
+python3 - <<'EOF'   # fetch each server-side index file that mods/ lacks, sha1-checked
+import hashlib, json, os, urllib.request
+for f in json.load(open("modrinth.index.json"))["files"]:
+    dst = os.path.join("mods", os.path.basename(f["path"]))
+    if f["env"]["server"] == "unsupported" or os.path.exists(dst):
+        continue
+    req = urllib.request.Request(f["downloads"][0], headers={"User-Agent": "skytekx3-deploy"})
+    data = urllib.request.urlopen(req, timeout=120).read()
+    if hashlib.sha1(data).hexdigest() != f["hashes"]["sha1"]:
+        raise SystemExit("sha1 mismatch: " + dst)
+    open(dst, "wb").write(data)
+    print("fetched", dst)
+EOF
+python3 tools/patch_mods.py             # jar-level boot fixes; run it after every change to mods/
+```
 
-1. Download every index entry whose `env.server` is not `unsupported` and check its hash against the
-   index.
-2. Copy the jars from `local-mods/` into `mods/`.
-3. Run `python3 tools/patch_mods.py`.
-4. Add BrassAmber BattleTowers and Falling Meteors Reimagined, which are in no pack.
+Run the same steps again after a `git pull` that changes `local-mods/` or the index, and delete the
+old file from `mods/` when a jar gets a new version. Do not use `tools/resolve_all.py` for this,
+because it ignores the index and installs whatever is newest, including Radium, which crashed Arclight
+on 2026-06-27.
 
 The plugin jar `plugins/EssentialsX-2.22.0.jar` and its folder `plugins/Essentials/` are not in git
 either. Copy them along, or the server has no `/gm` and no other Essentials command.

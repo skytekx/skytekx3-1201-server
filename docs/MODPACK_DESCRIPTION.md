@@ -10,7 +10,7 @@ Magic comes from Botania, Ars Nouveau, Blood Magic, Ars Magica Legacy, Forbidden
 
 Adventure comes from Twilight Forest, the Aether with Deep Aether and Aether Redux, Blue Skies, Cataclysm, Apotheosis, L2 Hostility, Hexxit Gear, SlashBlade Resharped, Spartan Weaponry and Epic Knights.
 
-For daily life there are Farmer's Delight, Quark, Supplementaries, Waystones, Sophisticated Backpacks and Simple Voice Chat.
+For daily life there are Farmer's Delight, Quark, Supplementaries, Waystones, Backpacks and Simple Voice Chat.
 
 ## The Skylands
 
@@ -22,6 +22,7 @@ SkyTekx is a server first and a modpack second. The Skylands come as datapacks f
 
 ## What makes it SkyTekx
 
+- The Twilight Forest comes as SkyTekx's own 1.20.1 build with the content of Twilight Forest 4.8 backported, together with a set of Twilight Forest add-ons.
 - Tinkers' Construct stays, with Tinkers' Reforged and more add-ons. Keeping it is one reason this generation runs on 1.20.1.
 - Chocobos are back with ChocoCraft, a core mod of SkyTekx.
 - Nyx, the moon mod of SkyTekx 2, had no release for 1.20.1, so it was ported for this pack. It brings harvest moons, blood moons, star showers, falling meteors and meteor gear.
@@ -38,10 +39,6 @@ SkyTekx is a server first and a modpack second. The Skylands come as datapacks f
 ## Joining the server
 
 The server list of the pack holds hex.skytekx.com. The server sits behind a Cloudflare Tunnel, and Modflared, which comes with the pack, connects you through it. On its first start Modflared downloads cloudflared, the client of the tunnel. That works on Windows, on Linux on x86 and on macOS, where Macs with Apple Silicon need Rosetta 2, but not on Linux on ARM. Browsers, pings and server status sites cannot reach the address, so they show it as down even while the server runs. Voice chat does not go through the tunnel.
-
-The server also runs Brass-Amber BattleTowers, which is not on Modrinth, and the server turns away a client without it. Download version 3.0.0-beta3.2.1 for Forge 1.20.1 from CurseForge and put the jar into the mods folder of your instance.
-
-The same goes for Falling Meteors Reimagined, a 1.20.1 fork of the old Falling Meteors. Download `meteors-2.5-forge.jar` from its CurseForge page (falling-meteors) and put it into the mods folder as well. Meteors only fall in the overworld, never on the sky islands.
 
 ## Credits
 

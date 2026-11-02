@@ -1,0 +1,10 @@
+{
+  "type": "twilightforest:no_template_smithing",
+  "addition": {
+    "item": "twilightforest:emperors_cloth"
+  },
+  "additional_data": "{twilightforest_emperors_cloth_applied:1b}",
+  "base": {
+    "tag": "twilightforest:emperors_cloth_applicable"
+  }
+}

@@ -1,0 +1,1179 @@
+{
+ "_about": "Items deferred while porting earlier waves. Later porters: grep this file for your feature id (and related class names) and pick up what was handed to you.",
+ "waves": {
+  "1-2": [
+   {
+    "bundle": "worldgen-crash-fixes+worldgen-perf-fixes",
+    "ids": [
+     "worldgen-crash-fixes",
+     "worldgen-perf-fixes"
+    ],
+    "deferred": [
+     "worldgen-crash-fixes item 7 (PinchBeetle crash, upstream 4db9ecb2e): not applicable to 4.3. It fixes a recursion that the 1.20.5 port introduced (66c9a40f1); 4.3's getDimensions override is correct.",
+     "worldgen-perf-fixes, a2b9fa06b full reorganisation: moving every option into twilightforest.config.{TFConfig,TFCommonConfig,TFClientConfig,ConfigSetup} and baking all options (uncrafting, portal and client UI flags) is not ported. It is a 48-file refactor that overlaps config-option-additions (which renames and adds portal/core options) and would need SyncUncraftingTableConfigPacket rewiring. Forge 47's ConfigValue.get() already caches, so only the hot paths were baked, under 4.8's flat field names."
+    ]
+   },
+   {
+    "bundle": "worldgen-thread-safety",
+    "ids": [
+     "worldgen-thread-safety"
+    ],
+    "deferred": [
+     "daa18f41a (TFMaze.resetCells via Arrays.fill + per-retry rcoords reset in HedgeMazeComponent): not applicable here, it patches the #2035 hedge-maze retry loop (542b39b36) that 4.3 lacks; apply it together with structure-bugfixes-misc",
+     "Final Castle mural eager generation in the piece constructor via WorldUtil.getOverworldSeed(): needs remove-seed-coremod; implemented as lazy one-time generation on the first postProcess plus serialization instead",
+     "TFMaze.wallBlocks (MazestoneProcessor BlockSelector) still holds a shared mutable 'next' field across Labyrinth postProcess threads. Upstream 4.8 leaves it too; the race only affects which mazestone variant is placed and cannot crash"
+    ]
+   },
+   {
+    "bundle": "charm-system-rework",
+    "ids": [
+     "charm-system-rework"
+    ],
+    "deferred": [
+     "Skull Chest fallback for a fully damaged casket (4.8 3a80ee2f4/40677a5ec/1066cc426) and 4.8's ResolvableProfile/SkullChestBlockEntity casket owner: belongs to the keepsake-casket-skull-chest feature, as the spec says. 4.3's break-and-drop behaviour is kept until then.",
+     "Config translation lang keys (config.twilightforest.totem_charm_animation): 4.3 has no config.* translations at all, so none were added and no datagen was touched."
+    ]
+   },
+   {
+    "bundle": "boss-bugfixes+flask-tracking-per-player",
+    "ids": [
+     "boss-bugfixes",
+     "flask-tracking-per-player"
+    ],
+    "deferred": [
+     "boss-bugfixes: the d638f1787 NeoForge singleplayer in-memory packet path is not needed. Forge 47 SimpleChannel always encodes and decodes, so 4.3's FriendlyByteBuf path covers singleplayer.",
+     "boss-bugfixes: 5c8751651 (Naga crash in defineSynchedData) is a 1.20.5+ SynchedEntityData.Builder issue that does not affect 1.20.1, so it is skipped.",
+     "boss-bugfixes: 7fb35728d's `!getItemStacks().isEmpty()` guard is left out because a fixed-size NonNullList is never empty, so the check does nothing. 4.8 also skips marking the structure conquered when doMobLoot is off; only the loot gating is ported, so progression is unaffected.",
+     "flask-tracking-per-player: the 3-dose / 6-second rebalance, the FAILED_CHALLENGE damage type and overrideStackedOnOther (c3768657c, 08fe2f635, a8704024c) are left to the potion-flask-rework feature, which depends on this one."
+    ]
+   },
+   {
+    "bundle": "client-render-fixes",
+    "ids": [
+     "client-render-fixes"
+    ],
+    "deferred": []
+   },
+   {
+    "bundle": "tf-teleporter-safety",
+    "ids": [
+     "tf-teleporter-safety"
+    ],
+    "deferred": [
+     "TeleporterCache SavedData (twilightforest_teleporter_cache): left out on purpose. The spec marks it optional and says to keep 4.3's link cache, which already persists through the teleporter_cache capability.",
+     "DiagonalSpiralIteratorTests / XZQuadrantIteratorTests JUnit tests: 4.3 has no src/test source set. I checked the iterator separately with a simulation: it covers each square box exactly once."
+    ]
+   },
+   {
+    "bundle": "structure-bugfixes-misc",
+    "ids": [
+     "structure-bugfixes-misc"
+    ],
+    "deferred": [
+     "Hydra Lair floor (26c244635): the replaceBlocksDome radii and heights are tuned to 4.8's density-function lair (eaedcd678). 4.3 still builds the lair with ChunkGeneratorTwilight.raiseHills, where the domes would bury grass blocks under a stone floor. It belongs with landmark-density-terrain. DONE in landmark-density-terrain (3613731): HydraLairComponent lays the stone floor and the grass under the open part with replaceBlocksDome on the density-shaped lair; 4.3-saved lairs keep raiseHills and get no domes.",
+     "Yeti Cave drain and lattice height (13712dc34, 37f62ed62): this patches drainWater, speleothemConfig.latticeIterator and the YetiCaveStructure density terraformer. None of these exist in 4.3, which still uses deformTerrainForYetiLair. It belongs with landmark-density-terrain and speleothem-config-datadriven. DONE in landmark-density-terrain (3613731): the density-shaped Yeti Cave drains and ices its floor and starts its lattice at getWorldY(4); 4.3-saved caves keep deformTerrainForYetiLair and the old lattice height.",
+     "Quest Grove dropper/ram (dd7256de6): not applicable. This was a 4.8-only regression caused by its VANILLACOPY postProcess override; 4.3 already places both.",
+     "TFMaze #2335 null-state defaults (829b19ed1 + 6fe87ebf6): left out on purpose because worldgen-crash-fixes commit c7b45c8 already ports them with identical code.",
+     "Druid hut template NBT changes in 33541897c: these only rename LootTable ids from chests/* to 4.8's root ids (see the critic note on loot-table-fixes). 4.3 places basement chests from data markers and keeps chests/*."
+    ]
+   },
+   {
+    "bundle": "knight-stronghold-fixes+tree-feature-bugfixes",
+    "ids": [
+     "knight-stronghold-fixes",
+     "tree-feature-bugfixes"
+    ],
+    "deferred": [
+     "knight-stronghold-fixes: removing the ProgressionEvents knight-stronghold block-break workaround is deferred to progression-protection-overhaul (wave 5, e9116aa11), per critic ordering note; it is only changed to SEALEVEL - 2 here.",
+     "knight-stronghold-fixes: 64b89ff38 / 32a6db24c / e7ab1ae68 (per-piece PieceBeardifierModifier / access chamber BEARD_BOX) not applicable - 4.3 has no per-piece beardifier; belongs with custom-density-terraforming.",
+     "knight-stronghold-fixes: foundry deepslate-variant removal (262a938ab) is outside the spec and not ported.",
+     "tree-feature-bugfixes: 4.8's two-block-thick hollow/time tree roots (pen-2 RootPlacer in makeRoot) and the hollow-giant structure rewrite are content changes outside the spec; makeRoot stays 1-thick (penetrability 1).",
+     "tree-feature-bugfixes: deec8995b (canopy mushroom concurrency / WeightedListFeature) not ported; only the 46a06ef13 block-replacement fix was in scope.",
+     "Both: not boot-tested and no in-world worldgen check; needs a dedicated-server boot plus fresh-chunk inspection of a Knight Stronghold, canopy/mangrove roots, time/mining trees and large winter trees."
+    ]
+   },
+   {
+    "bundle": "block-spike-fixes+entity-gameplay-bugfixes",
+    "ids": [
+     "block-spike-fixes",
+     "entity-gameplay-bugfixes"
+    ],
+    "deferred": [
+     "block-spike-fixes: the Yeti Cave stalagmite elevation fix (cfadbd358) is not applicable yet. It fixes floor stalagmites that only the 4.8 speleothem-config Yeti Cave places; the 4.3 YetiCaveComponent places hanging spikes only. Revisit with speleothem-config-datadriven.",
+     "block-spike-fixes: the HollowHillStructure mound offset (+8 to +10) in 38e3b8504 belongs to the 4.8 density-function hollow hill, which 4.3 does not have (chunkgen overhaul is excluded). DONE in landmark-density-terrain (3613731): HollowHillStructure's terraformer centres the mound at yCeilingFocus + 10 (38e3b8504).",
+     "block-spike-fixes: 4.3's StalactiteReloadListener still ignores the per-stalactite 'weight' when choosing a stalactite. 4.8 fixed this with StructureSpeleothemConfig weighted lists, which belongs to speleothem-config-datadriven.",
+     "entity-gameplay-bugfixes: the LichMinion Hard-only buff gate from 29a82d83b is not ported. 4.8 HEAD reverted it in the lich rework (Speed III, no gate), so it belongs to lich-boss-rework. DONE in lich-boss-rework (6aa3cd67c): Speed III and Strength II on any difficulty, as 4.8 HEAD.",
+     "entity-gameplay-bugfixes: the LichBomb flame particle direction change in 65e29df27 is a client visual, left to client-visual-fixes. DONE in lich-boss-rework (6aa3cd67c): the trail is emitted behind the bomb (65e29df27).",
+     "entity-gameplay-bugfixes: the moonworm queen crash fix 4fa55a769 (stop setting WATERLOGGED) is not applicable. The 4.3 CritterBlock still has the WATERLOGGED property, so setting it from the fluid state is correct here."
+    ]
+   },
+   {
+    "bundle": "item-block-bugfixes+small-block-property-fixes",
+    "ids": [
+     "item-block-bugfixes",
+     "small-block-property-fixes"
+    ],
+    "deferred": [
+     "item-block-bugfixes: the optional 4.8 change that makes carminite_block no longer slime-like (instabreak, SLIME_BLOCK sound) was skipped on purpose; the spec calls it opinionated and optional.",
+     "item-block-bugfixes: 04d3d4a15 (#2073, ore magnet switched from forge: to c: tag namespace) does not apply to 1.20.1, so 4.3 keeps the forge: tags. The TagsUpdatedEvent cache refactor (60f02cca1/9cbd772c7) also stays out; it belongs to tree-core-particles."
+    ]
+   },
+   {
+    "bundle": "client-visual-fixes+asset-model-texture-fixes+biome-visuals",
+    "ids": [
+     "client-visual-fixes",
+     "asset-model-texture-fixes",
+     "biome-visuals-and-dimension-type"
+    ],
+    "deferred": [
+     "client-visual-fixes: Block and Chain link spacing (39388596c) needs the Chain part entity removal (232977188). Leave it to block-and-chain-fixes.",
+     "client-visual-fixes: fire jet and smoker textures are in the asset-model-texture-fixes commit, not this one.",
+     "asset-model-texture-fixes: upstream's rename of all generated door models and the render_type additions on other doors and trapdoors in 34d409b2d were left out. They only rename model files and would churn generated assets; only the sorting door used the corrected models upstream.",
+     "all three: the datagen .cache hash files under src/generated/resources/.cache were not updated. They do not affect the jar; the next runData regenerates them."
+    ]
+   },
+   {
+    "bundle": "loot+advancement+compat-tags+data-tweaks",
+    "ids": [
+     "loot-table-fixes",
+     "advancement-fixes",
+     "compat-tags",
+     "hollow-hill-stalactite-rebalance",
+     "spawn-cost-tuning",
+     "surface-rule-fixes"
+    ],
+    "deferred": [
+     "advancement-fixes: arborist update (#1951, b78462d5e + later): it only adds criteria for blocks 4.3 lacks (8 TF trapped chests -> tf-wood-trapped-chests; drying racks; chiseled canopy bookshelf). Those features should extend DENDROLOGIST_BLOCKS in TFAdvancementGenerator and arborist.json.",
+     "compat-tags: the 8 TF trapped chests in create:chest_mounted_storage; they wait for tf-wood-trapped-chests (a TODO is left in ModdedBlockTagGenerator).",
+     "loot-table-fixes: removing music_disc_superstitious from tree_cache (4a1f0a597) belongs with fallen-trunk-structure, because 4.8 moved the disc into fallen_trunk_loot. hill_1 ore_meter and hill_2 pocket_watch entries belong to ore-meter and pocket-watch.",
+     "surface-rule-fixes: the non-surface parts of 17885617b (Highlands birch trees, dark mushglooms, Bighorn getWalkTargetValue) are outside this feature's spec and were not ported."
+    ]
+   },
+   {
+    "bundle": "config+tf-tp+seed-coremod+crumble+tag-hooks",
+    "ids": [
+     "config-option-additions",
+     "tf-tp-command",
+     "remove-seed-coremod",
+     "crumble-horn-recipe-additions",
+     "tag-driven-hooks"
+    ],
+    "deferred": [
+     "config-option-additions: prettifyOreMeterGui is only read by the 4.8 Ore Meter HUD (OverlayHandler), so it belongs to the ore-meter feature.",
+     "tag-driven-hooks: block tag twilightforest:ore_meter_targetable is only read by the 4.8 Ore Meter's right-click filter (and needs ROOT_ORES and the sand/gravel tags translated), so it belongs to the ore-meter feature.",
+     "tag-driven-hooks: sinister_spawner in minecraft:features_cannot_replace (from ee15cfe92). The block does not exist in 4.3, so it belongs to the sinister-spawner feature.",
+     "tag-driven-hooks: coronation_carpet in minecraft:wool_carpets (also in ee15cfe92). The block does not exist in 4.3, so it belongs to whichever feature adds the coronation carpet.",
+     "crumble-horn-recipe-additions: the #2237 entries for chiseled copper, copper bulb, grate, door and trapdoor are dropped because those blocks were added after 1.20.1. This is a permanent drop, not a deferral."
+    ]
+   },
+   {
+    "bundle": "misc-data+curios+translation-refresh",
+    "ids": [
+     "misc-data-tweaks",
+     "curios-compat-fixes",
+     "translation-refresh"
+    ],
+    "deferred": [
+     "misc-data-tweaks #2077 (liveroot/root ores as ore meter targets, 9f300693b): 4.3 has no twilightforest:ore_meter_targetable tag (its NYI ore meter already counts roots and liveroot), so the ore-meter port should add #forge:ores_in_ground/root to that tag when it creates it",
+     "misc-data-tweaks #2159 (fallen leaves compostable): already in 4.3 (ComposterBlock.add(0.1F, FALLEN_LEAVES) in TwilightForestMod), no change needed",
+     "misc-data-tweaks: 4.8's switch of the TF chest recipe ingredient from the wooden-chest tag to minecraft:chest (part of 13f789b57) is deliberately not ported. 4.3 keeps forge:chests/wooden so other mods' wooden chests still work, and 4.3 has no trapped TF chests",
+     "curios-compat-fixes #1949 classloading (a312e2f9f) and the Charm of Keeping curio keep-condition: 4.3 is not affected (no Curios types in CharmEvents method signatures), and charm-system-rework (a5841f7) already moves the lookup into CuriosCompat.findAndConsumeCurio and switches keepCurios to CONSUMED_CHARM_TAG. Not duplicated here, to avoid conflicts",
+     "curios-compat-fixes: 4.8's generic CuriosCompat.isCurioEquipped/isCurioEquippedAndVisible(Predicate) refactor is not ported; it is API-only and would conflict with charm-system-rework's edits at the end of CuriosCompat",
+     "translation-refresh: translations for keys that later backported features add are not merged yet. Re-run ports/twilightforest/tools/merge_upstream_lang.py <upstream clone> after those features add their en_us keys"
+    ]
+   }
+  ],
+  "3": [
+   {
+    "bundle": "structure-debug-commands+landmark-wrapped-structure-types+avoid-landmark-grid-placement",
+    "ids": [
+     "structure-debug-commands",
+     "landmark-wrapped-structure-types",
+     "avoid-landmark-grid-placement"
+    ],
+    "deferred": [
+     "hollow-tree-structure, fallen-trunk-structure, camp-structure, giant-house-split: the 4.8 codec reshape was NOT ported. LandmarkStructure and ProgressionStructure keep 4.3's flat codecs, so hand-convert every 4.8 worldgen/structure/*.json: flatten decoration_clearance{} into top-level chunk_clearance_radius (float 0-8: keep 4.8's value exactly, e.g. 0.5 for hollow_tree/swamp_hollow_tree, 0 = per-piece clearance), allow_biome_surface_decorations, allow_biome_underground_decorations, allow_biome_vegetation (optional, default true; write it only when false, as datagen omits true) and adjust_structure_elevation (avoid-landmark-modifier-v2 made the flat codec accept these); flatten hint_creature{} into top-level hint_item (1.20.1 ItemStack with id/Count/tag) and hint_mob; flatten controlled_spawns{}; drop structure_icon. Only the new twilightforest:landmark and twilightforest:progression wrapper types take the nested 4.8 blocks. The 4.8 structure_set JSONs for camp, fallen_trunk and hollow_tree that use twilightforest:avoid_landmark_grid copy over unchanged.",
+     "progression-protection-overhaul / lich-tower-revamp (whichever adds ProgressionPiece): in twilightforest/command/DisplayPiecesCommand.java replace `piece instanceof TFStructureComponent shieldablePiece && shieldablePiece.isComponentProtected()` with `piece instanceof ProgressionPiece shieldablePiece && shieldablePiece.isComponentProtected()` (4.8 8eb565e12), so TwilightJigsawPiece pieces are coloured lime.",
+     "40a7f57e3 (LandmarkStructure.findValidGenerationPoint override using TFBiomeProvider.getMainBiome at the grid-tile centre) is not on 4.3; LandmarkWrappedStructure and ProgressionWrappedStructure inherit vanilla Structure.findValidGenerationPoint until it is ported.",
+     "magic-map-improvements (B07, makes ProgressionStructure extend ConquerableStructure): keep ProgressionWrappedStructure.generate() as an override and do not make ConquerableStructure.generate final. 4.3's ConquerableStructure.generate keeps the LegacyLandmarkPlacements.chunkHasLandmarkCenter gate, which would silently reject random_spread-placed wrappers in the TF dimension. The wrapper's explicit `implements CustomStructureData` then becomes redundant and may be dropped.",
+     "wrapper JSON blocks (hint_creature.hint_item, decoration_clearance, avoid_additional_structures) decode with 1.20.1's lenient optionalFieldOf: a 4.8-format hint_item (lowercase count or components) or any other parse error inside an optional block silently reads as absent instead of failing the datapack like 4.8 (DFU 8 strict optionals). Write hint_item in the 1.20.1 ItemStack format (id/Count/tag)."
+    ]
+   },
+   {
+    "bundle": "structure-processors-48+structure-terrain-sampling",
+    "ids": [
+     "structure-processors-48",
+     "structure-terrain-sampling"
+    ],
+    "deferred": [
+     "lich-tower-revamp: SpawnerProcessor entity_width_max is decoded and stored but cannot rescale mobs on 1.20.1 (no generic.scale attribute before 1.20.5), so 4.8 LichTowerUtil's room spawners (SpawnerProcessor.compile(2, 0.8f, ...)) would place wide mobs unshrunk in small rooms. Pick room-spawner mobs narrower than 0.8 blocks, or filter the spawn list by EntityType width in LichTowerUtil.",
+     "sinister-spawner: SpawnerProcessor only matches minecraft:spawner; add the twilightforest:sinister_spawner match (4.8 384be486c) together with that block (TODO in SpawnerProcessor).",
+     "magic-map-improvements (owns QuestGroveStructure): the Quest Grove part of 4.8 257a1d1ff (move the grove from sea level + 5 to y + 2 with the default clamped adjustForTerrain) is not ported; 4.3's fixed sea level + 5 is kept and ChunkGeneratorTwilight's arena leveller still uses sea level + 5 for the grove. If it is ported, the leveller's Quest Grove branch in ChunkGeneratorTwilight.getArenaGroundLevel must derive its height from the grove's existing start (first piece bounding box), the same way the Hedge Maze and Naga Courtyard branches do, so groves saved by 4.3 keep their arena height.",
+     "lich-tower-revamp, fallen-trunk-structure, camp-structure: 4.8 also places these with WorldUtil.adjustForTerrain (the gridLength sampler); use the overloads already in twilightforest.util.WorldUtil.",
+     "naga-courtyard-terraces: the inverted-pyramid terrain clearing above the Hedge Maze and Naga Courtyard is not part of structure-terrain-sampling.",
+     "custom-density-terraforming: ChunkGeneratorTwilight.deformTerrainForFeature now takes a RandomState and getArenaGroundLevel/arenaGroundLevels were added next to doFill; expect a textual merge there."
+    ]
+   },
+   {
+    "bundle": "avoid-landmark-modifier-v2",
+    "ids": [
+     "avoid-landmark-modifier-v2"
+    ],
+    "deferred": [
+     "custom-density-terraforming (adds UtilityPiece): in twilightforest/world/components/placements/AvoidLandmarkModifier.placementIsBlocked, replace the TODO with `if (piece instanceof UtilityPiece utilityPiece && utilityPiece.allowFeatures) continue;` before the greatestAxalDistance check (4.8 7dac0cd13, ea5db78ed)",
+     "lich-tower-revamp / vegetation-placement-misc: append AvoidLandmarkModifier.checkVegetation() to PLACED_MAYAPPLE, PLACED_MUSHGLOOM_CLUSTER, PLACED_FLOWER_PLACER and PLACED_FLOWER_PLACER_ALT, and to the new patch_grass_*, as 4.8 facc450f5 does. Regenerate their placed_feature JSONs. DONE for dense_ferns and dense_large_ferns: enchanted-forest-overhaul (b053426) already passes AvoidLandmarkModifier.checkVegetation() inline on PLACED_DENSE_FERNS and PLACED_DENSE_LARGE_FERNS, and their placed_feature JSONs already carry the no_structure entry with occupies_vegetation true; do not add it again. If you add 4.8's shared `AvoidLandmarkModifier avoidLichTower` local, keep exactly one declaration (both forms emit the same JSON).",
+     "lich-tower-revamp: add the tfTreeCheckArea overloads taking HolderSet<Structure> structuresAllowed and pass the Lich Tower holder to the tree placements (4.8 dc6ae022a). DONE in lich-tower-revamp part B (db41226): the dead canopy, twilight oak, large twilight oak, savannah oak, canopy, dense canopy, firefly forest and vanilla TF tree placements allow twilightforest:lich_tower, and their 8 generated placed_feature JSONs match 4.8."
+    ]
+   },
+   {
+    "bundle": "template-marker-handlers",
+    "ids": [
+     "template-marker-handlers"
+    ],
+    "deferred": [
+     "drying-rack: add twilightforest/world/components/structures/markerhandler/DryingRackMarkerHandler (4.8 a2287e9db/929400f60): record (BlockStateProvider provider, ResourceLocation lootTable), codec fields \"drying_rack_block\" (BlockStateProvider.CODEC) and \"loot_table\" (ResourceLocation.CODEC; 4.8's ResourceKey<LootTable> has the same JSON form). handleDataMarker: rotate the provider state, return false unless the block is a DryingRackBlock and setBlock succeeds and the block entity is a DryingRackBlockEntity, then return dryingRack.fillFromLootTable(lootTable, random.nextLong(), level.getLevel()). Register TemplateMarkerHandlers.DRYING_RACK = TEMPLATE_MARKER_HANDLER_TYPES.register(\"drying_rack\", () -> () -> DryingRackMarkerHandler.CODEC) between ROTATION and PAINTING (the TODO comment there marks the spot).",
+     "camp-structure: fill TemplateMarkerHandlers.bootstrap() with 4.8's twilightforest:camp_marker_handlers (add the ResourceKey CAMP_MARKER_HANDLERS in TEMPLATE_MARKER_HANDLER_LIST_KEY): one RotationMarkerHandler wrapping a SwitchMarkerHandler keyed twilight_oak_slab (BlockPlaceMarkerHandler, weighted twilight_oak_slab 1 / air 3), camp_armor_rack (DryingRackMarkerHandler canopy_drying_rack + CAMP_ARMOR_RACK), birch_drying_rack (DryingRackMarkerHandler birch_drying_rack + CAMP_DRYING_RACK), painting (PaintingMarkerHandler PaintingVariantTags.PLACEABLE) and tent_pot (LootMarkerHandler + CAMP_POT). On 1.20.1 tent_pot must place minecraft:barrel instead of minecraft:decorated_pot: 1.20.1 pots have no inventory, so LootMarkerHandler places an empty pot and reports the marker unhandled. Hand-write the matching generated src/generated/resources/data/twilightforest/twilight/template_marker_handler_list/camp_marker_handlers.json (DatapackBuiltinEntriesProvider output). The camp_tent, camp_drying_rack and camp_pot loot tables already exist (dried-foods-and-tanning, 159a916, upstream-port 585aa60): reuse TFLootTables.CAMP_TENT, CAMP_DRYING_RACK and CAMP_POT in the marker handlers and do NOT register them again (TFLootTables.register throws on a duplicate id during class init). camp-structure only adds TFLootTables.CAMP_ARMOR_RACK with its ChestLootTables entry and generated loot_tables/camp_armor_rack.json.",
+     "camp-structure: StructureTemplateDefinitionProvider.getMarkers(provider, key) needs a HolderLookup.Provider that contains TF's datapack registries. lookupProvider is now protected (as in 4.8's JsonCodecProvider), so CampStructureDefinitionGenerator can do 4.8's `this.lookupProvider.thenAccept(this::generatePoolsWithProvider)` inside generatePools() (the future is already complete there, so it runs synchronously). Register the generator in DataGenerators with the `lookupProvider` from datapackProvider.getRegistryProvider() (RegistryDataGenerator), never with event.getLookupProvider(), or lookupOrThrow(TEMPLATE_MARKER_HANDLER_LIST_KEY) throws. weightedRigidTemplate()/weightedPathTemplate() already take the marker list as 4.8 does.",
+     "camp-structure / any feature that encodes pool entries: TemplatePoolInstance.equals()/hashCode() ignore markerHandlers, randomizedProcessors and poolAliases (upstream latent bug, kept), so TemplatePoolInstanceCodec.encode() writes an entry whose only non-default field is marker_handlers as a bare int weight and drops the list. Current datagen callers are safe (weightedRigidTemplate uses BEARD_BOX, weightedPathTemplate sets processors). If a new caller builds such an entry, make the int shortcut in TemplatePoolInstanceCodec.encode() also require markerHandlers().isEmpty() (and randomizedProcessors()/poolAliases() empty).",
+     "lich-tower-revamp: 4.8's LichBossRoom.placePainting(BlockPos, RandomSource, int, TagKey<PaintingVariant>, WorldGenLevel, int, int, Direction) and its painting-size helpers are already ported as twilightforest.util.EntityUtil.placePainting(...), getPaintingsOfSizeOrSmaller(...) and the Holder-based tryHangPainting(...) (sizes in blocks; 1.20.1 PaintingVariant measures pixels, the helpers divide by 16). The Lich Tower boss room should call those; only LichBossRoom's label-parsing overload placePainting(String label, BlockPos, ServerLevelAccessor, RandomSource, BoundingBox, Rotation, int limitTries, int rarityFactor, TagKey) remains to port (it parses \"<facing>:<width>:<height>\" markers via DirectionUtil.fromStringOrElse, applies the chunk-bounds and rarity checks, rotates the facing, then calls EntityUtil.placePainting)."
+    ]
+   },
+   {
+    "bundle": "custom-density-terraforming",
+    "ids": [
+     "custom-density-terraforming"
+    ],
+    "deferred": [
+     "landmark-density-terrain: yeti_cave keeps terrain_adaptation bury, unlike 4.8's none (0ceb8258d). YetiCaveComponent returns NONE per piece through TFStructureComponentOld, so bury does not bury anything; it only makes Structure.adjustBoundingBox inflate the StructureStart box by 12 blocks. ProgressionEvents.isAreaProtected, gatherPotentialSpawns and the spawn_overrides still use that start box, and the piece box only spans sea level -2..15 while deformTerrainForYetiLair puts the lair ceiling at sea level + 16 and the stone top at sea level + 24. Switch yeti_cave to TerrainAdjustment.NONE (and drop the \"terrain_adaptation\" line from the generated worldgen/structure/yeti_cave.json) only together with the YetiCaveStructure CustomDensitySource terraformer that replaces deformTerrainForYetiLair, and only once the lair roof stays protected: either progression-protection-overhaul's piece-based isAreaProtected is in, or the Yeti Cave adds a piece (e.g. a UtilityPiece) that covers the roof and the margin around the hill. DONE in landmark-density-terrain (3613731, 0ed1b83): yeti_cave is none as in 4.8, a density-shaped cave adds a UtilityPiece over its whole hill (39 blocks around the centre, floor to one block over the roof), and YetiCaveStructure.adjustBoundingBox keeps the 12-block inflation for 4.3-saved starts (no UtilityPiece, 69 wide) so their spawn overrides and gatherPotentialSpawns keep the old box.",
+     "First boot test of the TF dimension (any later worldgen feature that boot-tests it, e.g. landmark-density-terrain or lich-tower-revamp): TFBeardifier.WARP_NOISE_TO_DENSITY = 1/78 is exact only for scale-0.05 biomes. The warp slope per block is 2/32 * 2.5 * 96 / (0.9*scale + 0.1) / 8, so after scaling it is about 0.23 per block in Dark Forest and Dark Forest Center (scale 0.005: Dark Tower, Knight Stronghold), about 0.20 on the Final Plateau (0.025) and about 0.074 in the Highlands (0.25: Troll Cave), against 4.8's uniform 1/6. The x4 of positive noise is applied before the noise is added in computeInitialDensity, but toBeardDensity divides the whole interpolated value, so the beard strength can be off by up to about 4x for one or two blocks near the surface. Generate fresh chunks and look at a Lich Tower and Dark Tower entrance (BEARD_BOX floor fill), a Hedge Maze edge and a Knight Stronghold entrance mound. If the Dark Forest or Highlands beards look off, derive the factor per column from the TerrainColumn scale instead of using a constant. PARTLY DONE in landmark-density-terrain (3613731): its terraformers are scaled by 8 or 16 or only add density, so they do not depend on the warp scale; the Dark Tower entrance and Knight Stronghold ruins of a fresh world sat on level ground. Not yet looked at: a Highlands Troll Cave, a Lich Tower and a Hedge Maze edge beard (lich-tower-revamp boot test).",
+     "Bridge entry points for later terraformers (landmark-density-terrain, lich-tower-revamp, fallen-trunk-structure, naga-courtyard-terraces): implement twilightforest.world.components.structures.CustomDensitySource on the Structure; TFBeardifier.forStructuresInChunk gathers it in ChunkGeneratorTwilight.doFill. Per-piece beards use Forge 47's net.minecraftforge.common.world.PieceBeardifierModifier (there is no TF IPieceBeardifierModifier, contrary to the okf plan). Terraformers only act in ChunkGeneratorTwilight's own fill; when the warper is absent (non-TF biome source) the wrapped vanilla generator applies only the vanilla Beardifier."
+    ]
+   },
+   {
+    "bundle": "twilight-jigsaw-framework",
+    "ids": [
+     "twilight-jigsaw-framework"
+    ],
+    "deferred": [
+     "template-marker-handlers: add Optional<Holder<TemplateMarkerHandlerList>> markerHandlers to TemplatePoolInstance between ignoreWorldWaterlog and randomizedProcessors, with JSON key marker_handlers. Until then the key is silently ignored when parsing. Also add the TwilightJigsawPiece field, its 'marker_handlers' NBT key and the handler loop in an override of handleDataMarker(String, BlockPos, WorldGenLevel, RandomSource, BoundingBox, ChunkGenerator, Rotation). In StructureTemplateDefinitionProvider, add the markerHandlers parameter to weightedPathTemplate/weightedRigidTemplate and add getMarkers().",
+     "progression-protection-overhaul (or lich-tower-revamp): TwilightJigsawPiece does not implement ProgressionPiece yet, because the interface does not exist in 4.3.",
+     "camp-structure / lich-tower-revamp / final-castle-template-hooks / naga-courtyard-terraces: the template_definition JSONs, their StructureDefinitionGenerator subclasses and DataGenerators registration. The _empty.json pool entry belongs to camp-structure.",
+     "lich-tower-revamp (or whichever feature needs it): the TwilightTemplateStructurePiece changes that 4.8 makes for every template piece were applied to jigsaw pieces only. These are setKnownShape(true) and placeFlag (8fe9054bf), postProcess overridden with the jigsaw-free placement (b6469cb16/dd7256de6), a final legacy handleDataMarker (f6f1ec19c), and getTemplateName() (31e253132). Existing 4.3 pieces keep vanilla behaviour.",
+     "structure-terrain-sampling: HeightAdjustment uses a private copy of 4.8's WorldUtil.adjustForTerrain(ctx, xMin, zMin, xMax, zMax, grid, heightmap) (TemplatePoolInstance.HeightAdjustment.sampleTerrainHeight). Once the WorldUtil overload lands, this can call it instead.",
+     "speleothem-config-datadriven: moving 4.3's StalactiteReloadListener onto CodecResourceReloadListener (upstream 0721aedeb) was not done.",
+     "camp-structure / lich-tower-revamp / final-castle-template-hooks / naga-courtyard-terraces: before copying 4.8 .nbt templates that contain minecraft:jigsaw blocks, check every nbt.final_state resolves on 1.20.1 + this fork; TwilightJigsawPiece's JigsawReplacementProcessor throws on an unresolvable final_state, so replace such states (review note on 3d152a9)."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   }
+  ],
+  "4": [
+   {
+    "bundle": "rising-zombie-overhaul+block-and-chain-fixes",
+    "ids": [
+     "rising-zombie-overhaul",
+     "block-and-chain-fixes"
+    ],
+    "deferred": [
+     "block-and-chain-fixes: b5953b081 block and chain model/texture rework (block_and_chain.png, SpikeBlockModel/ChainModel UVs 32x16, BlockChainGoblinModel, isAlive gate in BlockChainGoblinRenderer) not ported by block-and-chain-fixes. It is in neither the inventory nor the carryover list, and asset-model-texture-fixes and client-visual-fixes already shipped, so it needs a later client-visual follow-up. Until then the thrown block uses 4.3's blockgoblin.png and UVs, and the classic goblin renderer still draws chain links while the goblin is dying. Cosmetic only."
+    ]
+   },
+   {
+    "bundle": "multiplayer-boss-scaling",
+    "ids": [
+     "multiplayer-boss-scaling"
+    ],
+    "deferred": [
+     "multiplayer-boss-scaling: twilightforest:looting_rolls (loot number provider, LootingEnchantNumberProvider, upstream f67973125 'make Knight Phantoms use the entity loot system') is listed in this feature's new_registry_ids but was not ported. It is used only by the knight_phantom entity loot table, and LootingEnchantNumberProvider.java is in knight-phantom-rework's paths_48, so it goes to knight-phantom-rework. Port it there together with the knight_phantom entity table (pools knight_phantom_weapon, knight_phantom_armor, knight_phantom_rare_armor: BinomialDistributionGenerator over looting_rolls wrapping MultiplayerBasedNumberProvider.rollsForPlayers(...)). The multiplayer half already exists: reuse twilightforest:multiplayer_rolls (TFLoot.MULTIPLAYER_ROLLS, MultiplayerBasedNumberProvider.rollsForPlayers) instead of adding a second provider. Register looting_rolls on TFLoot.NUMBERS with a Gson Serializer, as multiplayer_rolls is.",
+     "knight-phantom-rework: the nearby-player KILL_ALL_PHANTOMS grant that the knight-phantom-rework spec lists ('KILL_ALL_PHANTOMS is granted to nearby players') is already integrated by multiplayer-boss-scaling (30882a1): KnightPhantom.die triggers it for the killer and for every ServerPlayer within 32 blocks of the treasure. When die() is rewritten from f67973125/HEAD, keep exactly one such loop; do not add it a second time. Also do not bring back the HURT_BOSS loops or BaseTFBoss.getPlayersWhoHurtMe(); multiplayer-boss-scaling removed them from KnightPhantom and BaseTFBoss.",
+     "knight-phantom-rework / progress_knights: unlike 4.8, the progress_knights advancement keeps its hurt_boss was_in_fight criterion (in the same OR group as all_knights and trophy, CountRequirementsStrategy(3, 1)). It is kept only for save compatibility: AdvancementProgress.update drops the saved progress of removed criteria on load, and in 4.3 most members of a group clear completed progress_knights only through was_in_fight. It is no longer granted, because Knight Phantoms are not in #twilightforest:multiplayer_inclusive_entities. Do not remove it when porting 4.8's advancement generator changes.",
+     "All later boss features (hydra-death-and-named-heads, lich-fight-fixes, ur-ghast-tweaks, knight-phantom-rework and any new boss): hurt_boss (the was_in_fight criteria) is now granted only through the #twilightforest:multiplayer_inclusive_entities tag and MultiplayerInclusivityCapability (EntityEvents.grantGroupAdvancementIfNeeded). A boss that should give hurt_boss credit must be in that tag; do not add per-boss TFAdvancements.HURT_BOSS triggers.",
+     "Pack config (outside ports/): multiplayerFightAdjuster defaults to NONE, as upstream. Nothing changes in play until the server sets multiplayerFightAdjuster = \"MORE_LOOT_AND_HEALTH\" (or MORE_LOOT / MORE_HEALTH) at the top level of config/twilightforest-common.toml; Forge adds the key with NONE on the first boot."
+    ]
+   },
+   {
+    "bundle": "boss-base-class-refactor",
+    "ids": [
+     "boss-base-class-refactor"
+    ],
+    "deferred": [
+     "custom-rgb-boss-bars: BaseTFBoss still uses the vanilla ServerBossEvent, and getBossBarColor() returns BossEvent.BossBarColor. Swap these for ServerTFBossBar/TFBossBarPacket and an int colour. The Lich's per-phase bar changes are in Lich.tickBossBar(); move them to updateStyle as 15ab0d12a does. DONE: custom-rgb-boss-bars (d2076aa) moved the Lich's per-phase bar to updateStyle.",
+     "multiplayer-boss-scaling: the hurt_boss credit currently lives in BaseTFBoss (actuallyHurt fills a list; postmortem, and KnightPhantom.die, trigger HURT_BOSS). Replace it with the MultiplayerInclusivityAttachment/EntityEvents version and delete the list.",
+     "knight-phantom-rework: only the last knight marks the stronghold conquered and makes the STRONGHOLD_BOSS chest (shouldSpawnLoot() is false). Still to port: the 4.8 postmortem/giveKnightLoot/IT_IS_OVER loot sharing, the dying ascent and untouchable size, KILL_ALL_PHANTOMS for nearby players, conquest on /kill, and returning false from hurt() for a shield block.",
+     "hydra-death-and-named-heads: MAX_HEADS, the HydraPart.markedDead death sequence, the HeadNames serializer and the NumHeads bitmask are not ported. Hydra.tickDeath already removes as KILLED at 200 and calls tickDeathAnimation() on the client.",
+     "ur-ghast-tweaks: done in this commit: the own attack/look goals, removing the ExplosionPower-era 1000-damage reflection (reflected fireballs now do normal damage through the old 'thrown' conversion in hurt()), and the 90-tick client death animation. Still to port: switching to 4.8's isReflectedFireball in isInvulnerableTo; inTrapCounter at 20 with trap damage not counting toward tantrum; EventHooks.finalizeMobSpawn for ghastlings; the fire/descending death rendering; and dropping the eye-height-2.6 and ambient-interval-160 overrides if 4.8's values are wanted.",
+     "lich-boss-rework: the Lich keeps 4.3's IS_CLONE/masterLich and has no teleport-home. Lich.placeSpawner and postRemoval are ready to override for candle relighting, as 4.8 does. DONE in lich-boss-rework (6aa3cd67c): teleport-home, candle relighting in placeSpawner and postRemoval, and IS_CLONE/masterLich kept for compatibility.",
+     "unassigned upstream tweak in 5db77f784: Snow Queen block breaking switched from ICE/PACKED_ICE to BlockTags.ICE. It is not in any feature and not ported."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   },
+   {
+    "bundle": "hydra-death-and-named-heads+ur-ghast-tweaks",
+    "ids": [
+     "hydra-death-and-named-heads",
+     "ur-ghast-tweaks"
+    ],
+    "deferred": [
+     "hydra-death-and-named-heads: 4.8 also changed the head and neck positions (Vec3 offsets, endY - 0.5, neck -1.8) in squashed commit 485d7e0a7. That belongs to the Hydra model rework, not this feature, so it is not ported. Two other 4.8 refactors of Hydra are also left out because they are outside this spec: moving heal and block destruction into customServerAiStep, and replacing numHeads with MAX_HEADS.",
+     "ur-ghast-tweaks: in 5db77f784, 4.8 removed the Carminite Ghastguard's trap target reset (CarminiteGhastguard.setInTrap and inTrapCounter). The fork keeps it because it is Ghastguard behaviour, not Ur-Ghast scope. 4.8's change to checkGhastsAtTraps (an AABB built from getCenter) is a 1.21 port artifact that shifts the box by 0.5 blocks, so the fork keeps the 4.3 AABB."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   },
+   {
+    "bundle": "new-mob-sounds+helmet-crab-rework+mob-balance-tweaks",
+    "ids": [
+     "new-mob-sounds",
+     "helmet-crab-rework",
+     "mob-balance-tweaks"
+    ],
+    "deferred": [
+     "hostile-wolf-variants (excluded): the WolfVariant half of upstream da8bf0b12, including HostileWolfRenderer and TransformPowderItem changes, needs the 1.20.5+ WolfVariant registry. Only the target-goal half is ported.",
+     "new-mob-sounds: 4.8 replaces a clamped player's hurt sound through a custom DamageEffects enum entry, which Forge 47 cannot add. The port plays the clamp next to the normal player hurt sound instead. A Mixin on Player.getHurtSound could match 4.8 exactly if that is ever wanted.",
+     "new-mob-sounds: 4.8 en_us subtitle rewording for mobs outside this feature is not ported. Examples: Tiny Bird chirps/sings/squeaks, Quest Ram -> Questing Ram, the knight_phantom axe/pickaxe label swap, hydra 'spews fire', lich_clone, minion, tear, block_and_chain, transformation_powder, kobold.munch. No feature id owns it; the closest is translation-refresh.",
+     "shika-senbei: TFSounds.DEER_EAT (entity.twilightforest.deer.eat, with subtitle) is registered and ready, but only shika-senbei's Deer.usePlayerItem will play it."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   },
+   {
+    "bundle": "passive-tempt-tags+shika-senbei+hostile-mount-fixes+ice-bomb-rework+death-tome-tweaks",
+    "ids": [
+     "passive-tempt-tags",
+     "shika-senbei",
+     "hostile-mount-fixes",
+     "ice-bomb-rework",
+     "death-tome-tweaks"
+    ],
+    "deferred": [
+     "shika-senbei: the fallen_trunk_loot entry (shika_senbei 2-6, weight 75, from bbd970a7d) belongs to fallen-trunk-structure, because that loot table does not exist in 4.3",
+     "death-tome-tweaks: the Peaceful gate (a841a573e, WorldUtil.getDifficulty plus LichTowerWingRoom trappable lectern and bookshelf rolls) belongs to the Lich Tower revamp / chiseled-canopy-bookshelf feature. 4.3 generates no lectern or bookshelf tome traps, and its TomeSpawnerBlock already skips Peaceful.",
+     "passive-tempt-tags: the 4.8 'tag.item.twilightforest.*_tempt_items' translations (LangGenerator.translateTag) depend on the recipe-viewer tag-translation support (4.8 REI/EMI compat), which 4.3 lacks. Not added.",
+     "hostile-mount-fixes: the 052f07619 grabbing hitbox (2.2x1.6) was tuned for the 1.20.3 passenger-attachment rework. 4.3's 2.25x1.25 is kept with getPassengersRidingOffset positioning, so no feature needs to pick this up."
+    ],
+    "source": "porter report, waves 3-4 orchestrator"
+   }
+  ],
+  "5-6": [
+   {
+    "bundle": "pocket-watch+mystic-crown+loyal-zombie-babies+canopy-window+trollsteinn-light-states",
+    "ids": [
+     "pocket-watch",
+     "mystic-crown",
+     "loyal-zombie-babies",
+     "canopy-window",
+     "trollsteinn-light-states"
+    ],
+    "deferred": [
+     "fortification-shield-rework / mystic-crown: the Mystic Crown temporary-shield bonus (\"temporary shields last 50% longer\", 4.8 FortificationShieldAttachment.tick/checkLichCrownBonus) is already in ShieldCapabilityHandler.update(): the temporary-shield timer is not decremented when the HEAD slot holds TFItems.MYSTIC_CROWN and host.tickCount % 3 == 0. mystic-crown was ported (2c9f1b7) as a tickTimer() hook against the old handler; fortification-shield-rework (5605dcd) had already reworked it, so the integrated commit (f13a784) puts the bonus in a checkLichCrownBonus() guard on the timer decrement instead, as in 4.8. Anyone touching the handler again must apply the bonus once, not twice (no second crown check, or the crown would skip 2 of every 3 ticks).",
+     "scepter-rework: TwilightWandItem and LifedrainScepterItem now carry the Mystic Crown's 5% charge-save condition (player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) and a random roll of at most 0.05 skips the durability cost, from 883f963bb). When scepter-rework replaces stack.hurt with its own hurtButDontBreak, keep that condition around the new call.",
+     "Dropped, no feature: the 4.8 loading-screen tips for these items (lang keys twilightforest.tips.pocket_watch / twilightforest.tips.mystic_crown and assets/twilightforest/tips/*.json). Upstream they belong to the Tips mod compat (318a2b8c2 'add tips compat'), which is in no inventory feature, and 4.3 has no tips system. The 'left to the tips feature' notes in 03f9ec0 (pocket-watch) and f13a784 (mystic-crown) point to no feature id; re-add the tips only if a Tips compat feature is planned."
+    ],
+    "source": "integrator review notes, waves 5-6"
+   },
+   {
+    "bundle": "connected-texture-loader+coronation-carpet+miniature-structures",
+    "ids": [
+     "connected-texture-loader",
+     "coronation-carpet",
+     "miniature-structures"
+    ],
+    "deferred": [
+     "sinister-spawner: 4.8 also makes the Coronation Carpet a Sinister Spawner spawn surface. In SinisterSpawnerLogic's lazy spot scan (4.8 HEAD line ~234), accept blockBelow.is(TFBlocks.CORONATION_CARPET.get()) as well as blockBelow.isSolid() when recording a spawn position (added as ROYAL_RAGS in 914508f5d, renamed in 2ad874b3e). coronation-carpet (7ad9824) only registers the block and its isValidSpawn override, because SinisterSpawnerLogic does not exist in 4.3 yet."
+    ],
+    "source": "integrator review notes, waves 5-6"
+   }
+  ],
+  "5": [
+   {
+    "bundle": "fortification-shield-rework+lich-fight-fixes",
+    "ids": [
+     "fortification-shield-rework",
+     "lich-fight-fixes"
+    ],
+    "deferred": [
+     "fortification-shield-rework: temporary shields lasting 50% longer while the Mystic Crown is worn (883f963bb/3b278690e) -> mystic-crown. Hook: ShieldCapabilityHandler.update() should skip the timer decrement on every 3rd tick when the head slot holds the crown.",
+     "fortification-shield-rework: config.* translation keys for shield_indicator / shield_indicator_creative were not added, because 4.3 ships no config.* lang keys (same decision as the wave-2 charm-system-rework carryover).",
+     "fortification-shield-rework: 4.8's rename of the shield.add/shield.break sound event ids to fortification_shield.* was not ported. The old ids are kept for registry-id safety, and only the new block/expire events use 4.8 names.",
+     "fortification-shield-rework: b4f716995's removal of the invulnerable-player check in the shield hit handler was not ported on purpose. In 1.20.1 LivingAttackEvent fires before Player.hurt's invulnerability check, so dropping the check would let creative players lose shields, which 4.8 never does.",
+     "lich-fight-fixes: the rework-era teleport and clone logic (teleportToNewTarget multi-target retargeting, d3835bf37 teleportHome fallback in LichShadowsGoal, 6bcadba0a, teleport invisibility, minimum 5-block distance and below-target retries in findVecInLOSOf, clones inheriting the master's restriction point, the Lich home radius of 30) -> lich-boss-rework. DONE in lich-boss-rework (6aa3cd67c).",
+     "lich-fight-fixes: the literal OminousCandleBlock.CANDLE_MAP containsKey check from #2563 -> ominous-candles / lich-boss-rework, when CANDLE_MAP and turnNearbyCandles land. 4.3 only gets the equivalent LIT-property guard. DONE in lich-boss-rework (6aa3cd67c).",
+     "lich-fight-fixes: 7a178eb83's Lich shield break volume escalation and its 0.75F/1.75F block-sound tuning, and 00b68267f's teleport-sound and candle-range tweaks -> lich-boss-rework. DONE in lich-boss-rework (6aa3cd67c).",
+     "lich-fight-fixes: the LichBomb trail particle direction (65e29df27) is still not ported. It was handed to client-visual-fixes in wave 2, but the 4.3 code still has the old direction. DONE in lich-boss-rework (6aa3cd67c)."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "potion-flask-rework",
+    "ids": [
+     "potion-flask-rework"
+    ],
+    "deferred": [
+     "lich-tower-revamp: 4.8's tower_potion loot table (guaranteed 3-5 brittle flasks plus a greater flask at weight 25) and the hut tables. 4.3's old Lich Tower has no potion room, so this port puts flasks into tower_library and tower_room instead, and lich-tower-revamp will replace those tables with the 4.8 ones. The 9278617c1 changes that are not about flasks (tower_foyer, tower_grave, the Lich's exanimate essence drop) also belong to lich-tower-revamp or a loot feature. DONE in lich-tower-revamp: tower_potion, tower_foyer and the tower_grave_upper/lower tables are 4.8's (65d7bdb), and tower_library and tower_room take 4.8's tables (db41226), so the interim flasks are gone from them and the greater flask only drops from tower_potion.",
+     "4.8's loading-screen tip 'potion_flask' (createTip) is not ported because 4.3 has no tips system; it belongs to whichever feature adds the tips system.",
+     "Other locales still contain the now-unused key item.twilightforest.flask.doses and lack the new flask.empty, flask.empty_description and death.attack.twilightforest.failedChallenge keys; this is left to tools/merge_upstream_lang.py."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "uncrafting-table-improvements",
+    "ids": [
+     "uncrafting-table-improvements"
+    ],
+    "deferred": [
+     "726b98bc3 (positioned recraft sub-grids): not applicable on 1.20.1. It fixes a 1.21-only regression from the trimmed CraftingInput, and 1.20.1 getRemainingItemsFor uses the full 3x3 container, so the indices in UncraftingResultSlot are already correct. Nothing left to do.",
+     "acf5b3c50 makes isIngredientProblematic, isDamageableComponent and countDamageableParts public for the #2059 XP-cost display. That part belongs to jei-plugin-upgrades and was left private here."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "questing-ram-datapack-quests+jei-plugin-upgrades",
+    "ids": [
+     "questing-ram-datapack-quests",
+     "jei-plugin-upgrades"
+    ],
+    "deferred": [
+     "questing-ram-datapack-quests: 4.8's entities/questing_ram_reward_blocks loot table is not applicable. It only exists because 1.20.5+ bundles take set_contents with nested loot tables, and a 1.20.1 bundle keeps its items in top-level NBT that set_contents cannot write. 4.3's set_nbt bundle already holds the same seven blocks, emerald block included.",
+     "questing-ram-datapack-quests: marking the Quest Grove conquered after the reward (52d0d5ef8, LandmarkUtil.markStructureConquered in QuestRam.rewardQuest) -> magic-map-improvements",
+     "jei-plugin-upgrades: the isEmiInstalled guard that turns off the JEI plugin when EMI is present -> emi-native-plugin. Until that lands, EMI sees TF only through this JEI plugin.",
+     "jei-plugin-upgrades: 4.8's JEI 19 layout APIs -> emi-native-plugin / wave-9 recipe-viewer polish. This covers setStandardSlotBackground, setOutputSlotBackground, getRecipeArrow, ITooltipBuilder tooltips, onDisplayedIngredientsUpdate for the Moonworm display, and ingredient codecs. JEI 15.20 has most of these, but the fork compiles against jei_version=15.2.0.25, so uncrafting and crumble horn keep their 4.3 background sheets.",
+     "jei-plugin-upgrades: moving the shared entity/item rendering into EntityRenderingUtil (used by 4.8's EMI and REI) -> emi-native-plugin",
+     "jei-plugin-upgrades: the drying, ominous fire, casket subtype/repair, scepter repair, no-template smithing and Traveller's categories/extensions each go with their own feature -> drying-rack, ominous-fire-exanimate-essence, keepsake-casket-skull-chest, scepter-rework, travellers-*"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "ore-meter",
+    "ids": [
+     "ore-meter"
+    ],
+    "deferred": [
+     "ore-meter: the spec's 'per-ore colours / ore_map_color data map' is misattributed. 4.8's Ore Meter HUD uses no colours; ore_map_color is only read by MazeMapItem (the Ore Map), so it belongs to the shared data-map listener and magic-map-improvements or an ore-map feature, not ore-meter.",
+     "ore-meter: 4.8's clear sound is block/crafter/craft, which does not exist before 1.20.3. random/click is used instead. This is a permanent substitution.",
+     "ore-meter: the en_us 'twilightforest.tips.ore_meter' string was not ported because 4.3 has no tips system. It goes to whichever feature adds the 4.8 tips.",
+     "ore-meter: the creative-tab move of the Ore Meter next to the Ore Magnet (d7f5ff19e, which also moves the pocket watch and moon dial) is not ported. It is cosmetic; it could go to pocket-watch or a tab-ordering feature.",
+     "ore-meter: the new en_us keys have no other locales yet. Re-run ports/twilightforest/tools/merge_upstream_lang.py (translation-refresh follow-up)."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "magic-painting-upgrades",
+    "ids": [
+     "magic-painting-upgrades"
+    ],
+    "deferred": [
+     "lich-tower-revamp: the gallery structure itself (LichTowerMagicGallery, the lich_tower/gallery/*.nbt templates and the painting data-marker handler from 3aabe77a2, e77e21e12, 661f4c3a8 and 5cbd33e97). MagicPainting now has a public setDirection and a setVariant(ResourceKey) overload, and MagicPaintingVariants exposes the new keys, ready for it.",
+     "jei-plugin-upgrades: hiding the blank magic painting in JEI (3ae3c3575). The B08 worktree already does this.",
+     "Non-English locales: the new magic_painting.* title and author keys need tools/merge_upstream_lang.py. Only en_us was written.",
+     "Verifier: refresh the datagen .cache manifests for the changed generated files."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "progression-protection-overhaul",
+    "ids": [
+     "progression-protection-overhaul"
+    ],
+    "deferred": [
+     "landmark-density-terrain: with per-piece protection the Yeti Cave (single piece, box sea level -2..15) no longer protects the lair roof built by deformTerrainForYetiLair (ceiling at sea level +16, stone to +24); 4.8 behaves the same. If wanted, add a roof-covering UtilityPiece or similar. DONE in landmark-density-terrain (3613731): a UtilityPiece covers the hill, its roof and the floor of every density-shaped Yeti Cave (not in 4.8)."
+    ],
+    "source": "integrator note, waves 5-6 orchestrator"
+   }
+  ],
+  "6": [
+   {
+    "bundle": "emperors-cloth",
+    "ids": [
+     "emperors-cloth"
+    ],
+    "deferred": [
+     "JEI display of twilightforest:no_template_smithing and the cloth crafting recipe -> jei-plugin-upgrades. JEI 15.2.0.25's SmithingRecipeCategory only accepts vanilla SmithingTransformRecipe and SmithingTrimRecipe, so these recipes are skipped silently. The 4.8 NoTemplateSmithingExtension needs the newer SmithingCategoryExtension API, which JEI 15.2 does not have; on 15.2 it needs a custom category.",
+     "EMI displays (EmiEmperorsClothRecipe, EmiNoSmithingTemplateRecipe) -> emi-native-plugin",
+     "REI display (REINoTemplateDisplay) -> no feature id; 4.3 has no REI plugin",
+     "Loading-screen tip twilightforest.tips.emperors_cloth -> no feature id; 4.3 has no tips system",
+     "Other-locale lang strings for item.twilightforest.emperors_cloth and its .desc -> merged later by tools/merge_upstream_lang.py (en_us is done)"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "wrought-iron-fence-finials+terrorcotta-blocks+maze-slime-block",
+    "ids": [
+     "wrought-iron-fence-finials",
+     "terrorcotta-blocks",
+     "maze-slime-block"
+    ],
+    "deferred": [
+     "candelabra-overhaul: the 4.8 candelabra recipe (3 bars on top, 1 under, gives 2) using forge:ingots/wrought_iron. The tag WROUGHT_IRON_INGOTS now exists in ItemTagGenerator.",
+     "canopy-window: canopy window and pane recipes from the same upstream commit 807bff120.",
+     "travellers-boots-modifiers: the Water Walk modifier recipe that uses maze_slime_ball. DONE in travellers-modifier-framework (9530cec): add_modifier_to_travellers_gear/travellers_boots/water_walk_modifier ships with the other 25 modifier recipes; do not add it again.",
+     "lich-tower-revamp: placing terrorcotta, the finished fence and the yard fence (LichTowerWingRoom, LichPerimeterFence, LichYardLights).",
+     "Not ported, belongs to another feature: 4.8 loading-screen tip assets/twilightforest/tips/wrought_iron.json.",
+     "Not applicable on 1.20.1: 4.8 tag translations (translateTag for c:ingots/wrought_iron)."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "rope+uberous-soil-improvements+tree-core-particles",
+    "ids": [
+     "rope",
+     "uberous-soil-improvements",
+     "tree-core-particles"
+    ],
+    "deferred": [
+     "rope: Lich Tower use of rope (LichTowerWingRoom rope/chain dangling markers and templates) -> lich-tower-revamp",
+     "rope: 4.8 c:ropes block/item tags not added (NeoForge 1.21 convention tags, no Forge 47 Tags.Blocks/Items.ROPES equivalent) -> not applicable",
+     "tree-core-particles: SpecialMagicLogBlock bug from the 1be6248cb sweep is outside particle scope. When a core is disabled by config, use() calls state.setValue(ACTIVE,false) and discards the result, where 4.8 calls level.setBlockAndUpdate. -> small bugfix for any later block bugfix bundle"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "tf-wood-trapped-chests+reactor-debris-visual",
+    "ids": [
+     "tf-wood-trapped-chests",
+     "reactor-debris-visual"
+    ],
+    "deferred": [
+     "advancement-fixes arborist leftovers (not this bundle): the 8 *_DRYING_RACK entries belong to drying-rack; CHISELED_CANOPY_BOOKSHELF and dropping EMPTY_CANOPY_BOOKSHELF belong to the chiseled-bookshelf feature. The TODO in TFAdvancementGenerator now names only those. UPDATE: chiseled-canopy-bookshelf registered the block but handed its Arborist entry on to lich-tower-revamp (see the wave 8 chiseled-canopy-bookshelf entry), and EMPTY_CANOPY_BOOKSHELF stays in the list.",
+     "Not ported, by design: 4.8's later move of TF chests and trapped chests to the vanilla CHEST/TRAPPED_CHEST block entity types (17602f730 plus BlockEntityTypeAddBlocksEvent). That is the feature tf-chest-vanilla-blockentity, which the plan already rules out.",
+     "translation-refresh: the 8 new en_us keys (block.twilightforest.<wood>_trapped_chest) need ports/twilightforest/tools/merge_upstream_lang.py re-run to pick up other locales."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "keepsake-casket-skull-chest",
+    "ids": [
+     "keepsake-casket-skull-chest"
+    ],
+    "deferred": [
+     "Lich Tower casket room and grave pieces that place caskets (2ea2df281 template_definition lich_tower/9x9/keepsake_casket, 40dca8060 grave.nbt, chests/casket_loot loot table): belong to lich-tower-revamp",
+     "Tip strings twilightforest.tips.casket_usage / casket_logging (assets/twilightforest/tips/*.json): belong to the loading-screen tips feature, not ported here",
+     "Config lang key config.twilightforest.casket_uuid_locking: 4.3 has no config.* translations (same decision as charm-system-rework)"
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   },
+   {
+    "bundle": "block-qol-bundle+item-polish-bundle",
+    "ids": [
+     "block-qol-bundle",
+     "item-polish-bundle"
+    ],
+    "deferred": [
+     "scepter-rework: the 4.8 Lifedrain trail uses the twilightforest:magic_effect particle and plays the new life_scepter.drain sound every drain tick (2f016042f, 3a4cd0ba7, e2a32976e). This port keeps the coloured vanilla ENTITY_EFFECT particle for the trail and 4.3's SCEPTER_DRAIN sound on kill. When scepter-rework adds MAGIC_EFFECT and LIFE_SCEPTER_DRAIN, swap them in client/particle/LifedrainTrail.java and LifedrainScepterItem.onUseTick.",
+     "scepter-rework / mystic-crown: the 4.8 Lifedrain durability rule (Mystic Crown 5% skip, TFItemStackUtils.hurtButDontBreak) was not ported here.",
+     "skull-candle-blockstate-migration (excluded per plan): af0f724d1, which moves the candle count from the block entity into the blockstate. The #2119 candle removal reads the count from the block entity instead."
+    ],
+    "source": "porter report, waves 5-6 orchestrator"
+   }
+  ],
+  "7": [
+   {
+    "bundle": "cave-carver-rework+highlands-underground-troll-caves",
+    "ids": [
+     "cave-carver-rework",
+     "highlands-underground-troll-caves"
+    ],
+    "deferred": [
+     "giant-house-split (troll-cloud CloudComponent) or any later feature that ports 4.8's Troll Cave structure placement: 4.8 raises Troll Caves by 11 blocks (TrollCaveStructure.getFirstPiece passes y + 11, 4a68b96e3). This port keeps 4.3's height and instead lowers the highland_caves tunnel band and the troll_mushglooms cap by TFCaveCarvers.TROLL_CAVE_HEIGHT_OFFSET = 11. Whoever ports the y + 11 change must set TROLL_CAVE_HEIGHT_OFFSET to 0 in the same commit and hand-regenerate src/generated/resources/data/twilightforest/worldgen/configured_carver/highland_caves.json (biased_to_bottom absolute 8..32, inner 16) and worldgen/placed_feature/troll_mushglooms.json (height_range max absolute 15) to match 4.8, or the tunnels and mushglooms are shifted twice.",
+     "oreberries: UndergroundPlantFeature now has (codec) and (codec, boolean spawnInStructure) constructors and a deferred isInsideLandmark lookup (a9683b9dd, #2532). When porting OREBERRY_BUSHES, merge 4.8's (codec, int maxCount) and (codec, int maxCount, boolean) constructors and the maxCount loop limit into this version, keep the spawnInStructure field and the deferred landmark lookup, and default maxCount to Integer.MAX_VALUE for the existing constructors."
+    ],
+    "source": "cave-carver-rework+highlands-underground-troll-caves review (wave 7 integrator)"
+   },
+   {
+    "bundle": "speleothem-config-datadriven+chunk-blanketing",
+    "ids": [
+     "speleothem-config-datadriven",
+     "chunk-blanketing"
+    ],
+    "deferred": [
+     "13712dc34/37f62ed62 (Yeti Cave drainWater + getWorldY(4) lattice height): N/A on 4.3 terrain, belongs to landmark-density-terrain. The speleothem port places the Yeti Cave and Hydra Lair lattices at the world heights 4.8 used while it still had 4.3's deformTerrainForYetiLair / raiseHills terrain; whoever ports the density-shaped landmark terrain must move these lattice heights to the 4.8 values in the same commit (Yeti Cave: drainWater and getWorldY(4), 13712dc34/37f62ed62). DONE in landmark-density-terrain (3613731).",
+     "chunk-blanketing: worlds created with 4.3 store dark_forest_canopy_height=19 in level.dat; the ChunkGeneratorTwilight codec keeps it as an optional ignored field, so new Dark Forest chunks use the 4.8 canopy (height 14, 1x thickness) and show a ~5-block step against explored chunks. Mitigation is a TF dimension reset or a server datapack overriding data/twilightforest/twilight/chunk_blanket_processors/dark_forest_canopy.json with \"height\": 19 (height only; the processor has no thickness field)."
+    ],
+    "source": "speleothem-config-datadriven+chunk-blanketing review (wave 7 integrator)"
+   },
+   {
+    "bundle": "berry-bushes",
+    "ids": [
+     "berry-bushes"
+    ],
+    "deferred": [
+     "4.8 ConditionalMippedModel wrapper for '_bush'/'_oreberry' models (ClientRegistrationEvents.modifyBakingResult): 4.3/fork has no ConditionalMippedModel or leaves-mipping system; no inventory feature owns it. Purely a client mipmapping visual, skipped.",
+     "4.8 'Tips' JSONs (assets/twilightforest/tips/berry_bushes.json, nether_bushes.json and their lang keys): 4.3 has no tips provider; no inventory feature owns it.",
+     "c:foods/berry and c:foods item tags (berries, torchberries, berry_medley): Forge 47 has no foods tag set and compat-tags did not port the c:foods family. Should go to whoever adds food tags (dried-foods-and-tanning, or a later compat-tags follow-up). The 1.20.1 mapping would be e.g. forge:berries.",
+     "oreberries (depends on berry-bushes): BlockstateGenerator.registerBush(block, blockLight, skyLight) exists, but Forge 47's ModelBuilder.toJson does not write element-level emissivity (only per-face forge_data), so the emissive essence_oreberry models need per-face emissivity. TFBushBlock's constructor takes a ResourceLocation loot table (not a ResourceKey).",
+     "dried-foods-and-tanning: twilight_dinner now has 4.3's criteria plus 'berry' and 'berry_medley' with CountRequirementsStrategy(2,2,1,1,1,1,1,1,1). 4.8's jerky/slime_drop/moss_soup criteria and its venison/meef regrouping are left to that feature."
+    ],
+    "source": "workflow wave-7 bundle C01-berry-bushes"
+   },
+   {
+    "bundle": "hollow-tree-structure",
+    "ids": [
+     "hollow-tree-structure"
+    ],
+    "deferred": [
+     "fallen-trunk-structure: its structure set needs the exclusion_zone on TFStructureSets.HOLLOW_TREE (radius 1, 4.8 TFStructureSets), and the tree_cache music_disc_superstitious removal (4a1f0a597) is already in the carryover for it.",
+     "camp-structure: its avoid_additional_structures map must reference TFStructureSets.HOLLOW_TREE (radius 1) and fallen_trunk (radius 2) as in 4.8.",
+     "4.8's refactor of HollowTreeFeature into an abstract base with a static makeHollowTree (used by TimeTreeFeature/HollowStumpFeature) is not ported. 4.3's concrete HollowTreeFeature stays because the kept tree/hollow_tree configured feature needs it; there is no player-facing change.",
+     "Spec mentions #2185: that fix is the mangrove root y_offset (1e1385fdd) and belongs to tree-feature-bugfixes, not this feature.",
+     "Not boot-tested and no in-world worldgen check: needs a dedicated-server boot, fresh TF chunks in forest/swamp biomes (/locate structure twilightforest:hollow_tree), a sapling growth test, and a reload of a world containing a generated tree to exercise piece NBT."
+    ],
+    "source": "workflow wave-7 bundle C02-hollow-tree-structure"
+   },
+   {
+    "bundle": "oreberries",
+    "ids": [
+     "oreberries"
+    ],
+    "deferred": [
+     "underground_plants_in_structure (from upstream a9683b9dd, used by troll_mushglooms) is not registered here. It belongs to highlands-underground-troll-caves, which can now just register it with new UndergroundPlantFeature(BlockStateConfiguration.CODEC, true).",
+     "tips/oreberries.json is not ported because 4.3/1.20.1 has no tips provider. This is a permanent drop, not a deferral to another feature.",
+     "4.8 also tags the oreberry damage type with minecraft:no_knockback, c:is_environment and c:is_physical. None of these tags exist on 1.20.1 / Forge 47, so they are dropped. 1.20.1 only knocks back when the damage has an attacker, so behaviour is unchanged.",
+     "AlmostUnified/KubeJS unification of twilightforest:copper_nugget is left to the orchestrator; nothing outside ports/twilightforest was touched."
+    ],
+    "source": "workflow wave-7 bundle C03-oreberries"
+   },
+   {
+    "bundle": "fallen-trunk-structure",
+    "ids": [
+     "fallen-trunk-structure"
+    ],
+    "deferred": [
+     "camp-structure: the camp structure_set's avoid_additional_structures should reference TFStructureSets.FALLEN_TRUNK (weight 2) and HOLLOW_TREE (weight 1), as 4.8 does. TFStructureSets.FALLEN_TRUNK now exists for that.",
+     "First boot test of the TF dimension (custom-density-terraforming follow-up): look at Fallen Trunk mounds and flattening in freshly generated chunks. TFBeardifier.WARP_NOISE_TO_DENSITY = 1/78 is exact only for scale-0.05 biomes. Fire Swamp and Oak Savannah are in #valid_hollow_tree_biomes and may beard slightly stronger or weaker."
+    ],
+    "source": "workflow wave-7 bundle C04-fallen-trunk-structure"
+   },
+   {
+    "bundle": "small-lakes-and-frozen-lakes+enchanted-forest-overhaul",
+    "ids": [
+     "small-lakes-and-frozen-lakes",
+     "enchanted-forest-overhaul"
+    ],
+    "deferred": [
+     "vegetation-placement-misc: the rest of upstream 33de427a3 (#2357) is not ported. It adds PlacementUtils.filteredByBlockSurvival(TFBlocks.MUSHGLOOM) to PLACED_MUSHGLOOM_CLUSTER and the 4.8 PLACED_SPARSE_MUSHGLOOMS, and regenerates mushgloom_cluster.json and sparse_mushglooms.json. It is not assigned to any feature in the inventory.",
+     "vegetation-placement-misc (carryover from avoid-landmark-modifier-v2): checkVegetation() is now on dense_ferns and dense_large_ferns. Appending it to PLACED_MAYAPPLE, PLACED_MUSHGLOOM_CLUSTER, PLACED_FLOWER_PLACER(_ALT) and the patch_grass_* placements is still open.",
+     "hollow-tree-structure: 4.8's enchantedForestGen no longer calls addHollowOakTrees. The call is kept in the fork's rewritten enchantedForestGen and should be removed when hollow oaks become structures.",
+     "magic-map-improvements (owns QuestGroveStructure): 4.8 b6a019720's LENGTH = 27 constant and 'centre the grove' offset are not ported. The offset (x - LENGTH/2 + 1) equals 4.3's x - 12, so it changes nothing."
+    ],
+    "source": "workflow wave-7 bundle C05-lakes+enchanted-forest"
+   },
+   {
+    "bundle": "dark-forest-ground-and-bushes+canopy-tree-shape-and-density+vegetation-placement-misc",
+    "ids": [
+     "dark-forest-ground-and-bushes",
+     "canopy-tree-shape-and-density",
+     "vegetation-placement-misc"
+    ],
+    "deferred": [
+     "rope: CANOPY_TREE_FIREFLY's DangleFromTreeDecorator should hang twilightforest:rope (weight 3) instead of canopy_fence, as in 4.8 08648b962 (TODO comment in TreeConfigurations). Update generated configured_feature/tree/firefly_canopy_tree.json to match: rope state axis x/y/z with y=true, waterlogged=false.",
+     "lich-tower-revamp: pass allowLichTower (HolderSet of TFStructures.LICH_TOWER) to the tree placements, including tree/selector/canopy_trees, dense_canopy_trees, firefly_forest_trees and dead_canopy_tree, through the tfTreeCheckArea overloads (4.8 dc6ae022a). This is already listed in the carryover. DONE in lich-tower-revamp part B (db41226).",
+     "enchanted-forest-overhaul: checkVegetation() on dense_ferns and dense_large_ferns (the rest of the carryover item). The C05 worktree already adds it, so nothing remains unless that change is lost. The enchanted forest's own builder also belongs there; until it lands, enchanted_forest inherits the new default grass builder."
+    ],
+    "source": "workflow wave-7 bundle C06-dark-forest+canopy+vegetation"
+   },
+   {
+    "bundle": "ruins-and-feature-templates",
+    "ids": [
+     "ruins-and-feature-templates"
+    ],
+    "deferred": [
+     "rope: the simple_well_top.nbt chain -> twilightforest:rope swap (4.8 788aa3ee9) is not in this commit because the rope block is not on this base; the rope bundle already has it (6f7b4c9 in the B15 worktree).",
+     "lich-tower-revamp: 4.8 c1563920a moves the effect suspicious stew into a separate chests/suspicious_stew loot table, which hut_junk references as a nested table. Here hut_junk has it inline, which rolls the same. If lich-tower-revamp adds TFLootTables.SUSPICIOUS_STEW, it can switch hut_junk to the nested reference. CLOSED, inlined by design: lich-tower-revamp inlines the stew the same way in tower_foyer (65d7bdb, weight 3) and tower_room (db41226, weight 75), with 4.8's effects and weights, so every drop chance matches 4.8; only 4.8's extra chests/suspicious_stew table id does not exist in the fork. If that id is ever wanted, a loot feature can add TFLootTables.SUSPICIOUS_STEW holding the stew entry and switch hut_junk (8 for the table plus 2 for a plain stew), tower_room (75) and tower_foyer (3) to LootTableReference.lootTableReference(...) with the same weights, hand-writing the generated JSONs."
+    ],
+    "source": "workflow wave-7 bundle C09-ruins-and-feature-templates"
+   },
+   {
+    "bundle": "aurora-palace-rework+giant-house-split",
+    "ids": [
+     "aurora-palace-rework",
+     "giant-house-split"
+    ],
+    "deferred": [
+     "giant-house-split: splitting the Giant House into its own structure is not ported (4.8 9081aba16 GiantHouseStructure, worldgen/structure + structure_set + structure_type giant_house, valid_giant_house_biomes tag, structure tags, map icon, its own ControlledSpawningConfig). It needs 4.8's landmark-grid placement from the excluded chunkgen-density-overhaul, so per the spec the house stays in the troll cave start.",
+     "giant-house-split: c346014ab ('partial troll caves finishing after a reload') does not apply. It fixes the speleothem config_id that 4.8 added to TrollCaveMainComponent, and 4.3 has no such config.",
+     "aurora-palace-rework: 4.8's IceTowerDecorator switch to IceTowerRandomBlockSelectorFactory is left out on purpose. It belongs to the excluded aurora-block-noise-model, and 4.3's IceTowerProcessor is kept, as the okf plan says."
+    ],
+    "source": "workflow wave-7 bundle C11-aurora-palace+giant-house"
+   },
+   {
+    "bundle": "naga-courtyard-terraces+final-castle-template-hooks",
+    "ids": [
+     "naga-courtyard-terraces",
+     "final-castle-template-hooks"
+    ],
+    "deferred": [
+     "Pack integration (no feature id; for whoever owns the SkyTekx pack glue): Twilight Tweaks replaces the gazebo's postProcess with its FINAL_BOSS_BOSS_SPAWNER placement. Newly generated castles now also get the 4.8 gazebo template piece (violet force-field cage, WIP Text Displays and the tagged Interaction) around that spawner. To keep today's cage-free TT gazebo, ship a datapack override of data/twilightforest/twilight/template_definition/final_castle/temp/gazebo.json containing {} (for example under kubejs/data or the world datapacks). This empties the pool, so no template piece is added. This file lives outside ports/twilightforest, so I did not add it.",
+     "First TF-dimension boot test (any later worldgen feature that boot-tests): generate a fresh Naga Courtyard and Hedge Maze. Check the dug-in BEARD_BOX terraces, the hedge terraces and the inverted-pyramid clearing next to 4.3's still-active arena leveller. Generate a fresh Final Castle and check that the three template pieces land at the right junctions and that punching the WIP text removes it.",
+     "gazebo.nbt keeps its 1.21-only entity keys (neoforge:attachments fortification_shields, teleport_duration). 1.20.1 ignores them; re-save the template in a 1.20.1 dev world if a clean file is wanted."
+    ],
+    "source": "workflow wave-7 bundle C12-courtyard-terraces+final-castle-hooks"
+   }
+  ],
+  "8": [
+   {
+    "bundle": "ominous-fire-exanimate-essence+scepter-rework",
+    "ids": [
+     "ominous-fire-exanimate-essence",
+     "scepter-rework"
+    ],
+    "deferred": [
+     "emi-native-plugin: the ominous fire recipe-viewer category (4.8 compat/jei/categories/OminousFireCategory + compat/jei/util/OminousFireRecipe, and EmiOminousFireRecipe for EMI) is not ported. It lists TFDataMaps.OMINOUS_FIRE (villager -> zombie_villager, piglin -> zombified_piglin, horse -> zombie_horse), but the 1.20.1 DataMapType stand-in (util/datamaps) is filled only on the server by DataMapLoader and is not synced, so on a dedicated server a client-side category would be empty. Add a data map sync packet first (on TFPacketHandler, sent on login and after reload, bump PROTOCOL_VERSION to the next 2-skytekx.N) or build the displays from a client-side copy of data/twilightforest/data_maps/entity_type/ominous_fire.json. The scepter-repair and essence-repair JEI crafting extensions are done (ScepterRepairExtension, ExanimateEssenceRepairExtension); the 'scepter repair' and 'ominous fire' parts of the jei-plugin-upgrades note in wave 5 are settled by this entry."
+    ],
+    "source": "ominous-fire-exanimate-essence+scepter-rework review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "chiseled-canopy-bookshelf",
+    "ids": [
+     "chiseled-canopy-bookshelf"
+    ],
+    "deferred": [
+     "lich-tower-revamp: add TFBlocks.CHISELED_CANOPY_BOOKSHELF.get() to DENDROLOGIST_BLOCKS in TFAdvancementGenerator (after EMPTY_CANOPY_BOOKSHELF in the canopy row) and hand-edit src/generated/resources/data/twilightforest/advancements/arborist.json with the matching criterion and requirement, as 4.8 does (#1951, b78462d5e). Keep EMPTY_CANOPY_BOOKSHELF: 4.8 deletes it, but this port keeps it registered and craftable. Do this only together with the wing rooms that place the shelf: like 4.8 since 0713f5291 the shelf has no recipe, so adding it earlier would make Arborist impossible to earn in survival. Then drop the TODO above DENDROLOGIST_BLOCKS.",
+     "lich-tower-revamp: the generated shelf contents in LichTowerWingRoom (random books, including the enchanted book roll from d99acebb5 via WorldUtil) and turning shelves into Death Tome spawners. Use ChiseledCanopyShelfBlock.SPAWNER and the block entity's spawner (twilightforest.block.entity.bookshelf).",
+     "jade-top-providers: the Jade/TOP spawn providers for the chiseled shelf and their config string."
+    ],
+    "source": "chiseled-canopy-bookshelf review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "candelabra-overhaul+ominous-candles",
+    "ids": [
+     "candelabra-overhaul",
+     "ominous-candles"
+    ],
+    "deferred": [
+     "ominous-candles: Lich.turnNearbyCandles (candles to ominous candles with the CANDLE_MAP.containsKey guard from #2563, plus the CANDELABRA_OMINOUS sound) -> lich-boss-rework. OminousCandleBlock.CANDLE_MAP is in place; the lich-fight-fixes entry in wave 5 about the literal containsKey check is settled once this lands. DONE in lich-boss-rework (6aa3cd67c).",
+     "candelabra-overhaul: 4.8 tip twilightforest.tips.candelabra (assets/twilightforest/tips/candelabra.json) -> no feature id; 4.3 has no tips system"
+    ],
+    "source": "candelabra-overhaul+ominous-candles review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "lich-boss-rework",
+    "ids": [
+     "lich-boss-rework"
+    ],
+    "deferred": [
+     "lich-tower-revamp: Lich.getRoomRadius() returns 30 unless the home point lies inside a 4.3 TowerMainComponent (decided once per home point via StructureManager.getStructureWithPieceAt), so Liches in new-tower boss rooms get 4.8's radius of 30 without changes.",
+     "lich-tower-revamp: LichSpawnerBlockEntity now drops the Lich to the floor and sets its home one block above the floor, as in 4.8. A spawner placed on the floor gives home = spawner + 1, so the loot chest lands where the spawner stood. In a 4.3 tower the home stays the spawner position.",
+     "lich-tower-revamp: the candle theatrics (turnNearbyCandles, relighting on death/discard/Peaceful) are centred on the Lich's home point; place the boss-room candles and candelabra within the growing radius around it.",
+     "translation-refresh: the attribute.name.lich.* keys have an en_us entry added here (4.8 has none); other locales have no translation."
+    ],
+    "source": "porter report + review, waves 8-10 integrator"
+   }
+  ],
+  "9": [
+   {
+    "bundle": "dried-foods-and-tanning",
+    "ids": [
+     "dried-foods-and-tanning"
+    ],
+    "deferred": [
+     "Loading-screen tip twilightforest.tips.jerky -> no feature id; 4.3 has no tips system",
+     "Other-locale lang strings for the jerkies, slime drops, moss soup, tannin, treated/tanned leather, stale bread, the stale_sandwich death message and the chicken_jerky advancement -> merged later by tools/merge_upstream_lang.py (en_us is done)",
+     "Pack changelog: players who already completed twilightforest:twilight_dinner see it reopen (now 14 criteria: berries, berry medley, jerky, slime drop, moss soup) and get its 75 XP and challenge announcement again on re-completion."
+    ],
+    "source": "dried-foods-and-tanning review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "jade-top-providers+emi-native-plugin",
+    "ids": [
+     "jade-top-providers",
+     "emi-native-plugin"
+    ],
+    "deferred": [
+     "travellers-gear: add TFItems.TRAVELLERS_GOGGLES/VEST/GLOVES/BELT/WINGS/BOOTS.get() to TFEmiCompat.CANT_USE_ENCHANTS, same order as 4.8 TFEmiCompat (goggles, vest, gloves, belt, wings, boots, after FORTIFICATION_SCEPTER), and remove the \"4.8 also lists the six Traveller's Gear pieces\" comment. Without it EMI shows made-up anvil enchant and grindstone disenchant recipes for the gear once it lands.",
+     "travellers-modifier-framework: port 4.8 compat/emi/recipes/EmiTravellersGearGrindstoneRecipe and EmiTravellersGearModifierRecipe. In TFEmiCompat.register call EmiTravellersGearGrindstoneRecipe.register(registry) right after the drying loop. In the crafting loop add `else if (crafting instanceof TravellersGearModifierRecipe recipe && TravellersModifiersManager.isModifierEnabled(Minecraft.getInstance().level.registryAccess(), recipe.getTravellersModifierKey())) emiRecipe = new EmiTravellersGearModifierRecipe(recipe);` (4.8 fbd63cc75: no display with an empty output for a deleted modifier). The JEI side of the Traveller's categories/extensions is already handed to travellers-* by the wave-5 jei-plugin-upgrades entry. DONE in travellers-modifier-framework (9530cec): both EMI recipes, EmiTravellersGearGrindstoneRecipe.register after the drying loop, and the crafting-loop branch guarded by isModifierEnabled.",
+     "jei-plugin-upgrades (wave-5 item '4.8's JEI 19 layout APIs -> emi-native-plugin / wave-9 recipe-viewer polish'): dropped, no feature id. setStandardSlotBackground, setOutputSlotBackground, getRecipeArrow, ITooltipBuilder and onDisplayedIngredientsUpdate need a jei_version above the fork's 15.2.0.25, and in this pack EMI is installed, so JEICompat.isEmiInstalled turns the TF JEI plugin off and none of it would be visible. The JEI ominous fire category uses the furnace arrow instead of getRecipeArrow. Revisit only if the pack drops EMI and the fork moves to JEI 15.20+.",
+     "Recipe-viewer tag names -> no feature id (follow-up for whoever polishes recipe viewers): 4.8's 52 LangGenerator.translateTag entries (TFLangProvider.translateTag writes tag.<registry>.<namespace>.<path with / as .>, e.g. tag.item.twilightforest.boar_tempt_items, plus FluidTagGenerator.FIRE_JET_FUEL) are still missing, so EMI shows raw tag ids for TF tag ingredients. passive-tempt-tags skipped them because 4.3 had no EMI plugin; that reason is gone now. Port the helper and only the entries whose tags exist in this fork, using the fork's tag ids (forge:ingots/..., forge:storage_blocks/... where 4.8 uses c:), and hand-write the sorted keys into the generated en_us.json."
+    ],
+    "source": "jade-top-providers+emi-native-plugin review (waves 8-10 integrator)"
+   }
+  ],
+  "10": [
+   {
+    "bundle": "travellers-gear",
+    "ids": [
+     "travellers-gear"
+    ],
+    "deferred": [
+     "travellers-modifier-framework: the /tf travellers_gear command, and firing TFAdvancements.ADD_MODIFIER (AddModifierTrigger, criterion twilightforest:add_modifier, already registered) from PlayerEvent.ItemCraftedEvent for every modifier the crafted Traveller's piece gained over the input copy (4.8 TravellersGearEvents#fireCraftingModifierTrigger). Until this lands twilightforest:modify_travellers_gear cannot be earned. Then switch its icon from plain travellers_boots to boots carrying the water_walk modifier, as 4.8's TFAdvancementGenerator does (TFAdvancementGenerator + the generated advancements/modify_travellers_gear.json). Put the modifier NBT in components/item/TravellersGearData under 4.8's component ids and fill TravellersArmorItem.getInsertedModifierIds, which the twilightforest:travellers_gear item model loader already reads for the overlay sprites. DONE in travellers-modifier-framework (9530cec): the command, the add_modifier criterion from ItemCraftedEvent, the Water Walk boots icon, the modifier NBT in TravellersGearData and getInsertedModifierIds, which now takes (RegistryAccess, ItemStack); its only caller, TravellersGearItemModel, was updated.",
+     "travellers-modifier-framework: the anvil block on combining two Traveller's pieces (4.8 TravellersGearEvents#cancelCombiningTravellersGear) is already ported by the travellers-gear review fix, together with clearing the stale result slot that Forge 47 leaves on cancel. Do not port it a second time.",
+     "travellers-vest-modifiers: the vest's built-in Swift Swim (4.8 chestProperties: SWIFT_SWIM component plus Attributes.WATER_MOVEMENT_EFFICIENCY +1 ADD_VALUE, modifier id twilightforest:travellers_gear.vest_fast_swimming). WATER_MOVEMENT_EFFICIENCY is 1.21-only; substitute ForgeMod.SWIM_SPEED or a Depth-Strider-like travel hook, applied from TravellersArmorItem#getAttributeModifiers or ItemAttributeModifierEvent (TravellersGearEvents#deactivateBrokenTravellersGear already clears everything while broken). Also copy sounds/random/travellers/perfect_dodge.ogg and register item.twilightforest.travellers_gear.perfect_dodge (TFSounds + SoundGenerator + generated sounds.json + subtitle). Since travellers-modifier-framework (9530cec): register the built-in ability with TravellersArmorItem#withDefaultComponent(TravellersGearData.SWIFT_SWIM, Unit.INSTANCE) in TFItems, so the piece shows its 'Ability:' tooltip line and counts as having the ability (the 1.20.1 stand-in for 4.8's default item components); add the built-in attributes in TravellersArmorItem#getAttributeModifiers.",
+     "travellers-boots-modifiers: the boots' built-in Step Up (4.8 bootsProperties: HIGH_STEP component plus Attributes.STEP_HEIGHT +0.5 ADD_VALUE, id twilightforest:travellers_gear.boots_high_step). On 1.20.1 use ForgeMod.STEP_HEIGHT_ADDITION +0.5 ADDITION on the FEET slot, skipped while broken. Since travellers-modifier-framework (9530cec): register the built-in ability with TravellersArmorItem#withDefaultComponent(TravellersGearData.HIGH_STEP, Unit.INSTANCE) in TFItems, so the piece shows its 'Ability:' tooltip line and counts as having the ability (the 1.20.1 stand-in for 4.8's default item components); add the built-in attributes in TravellersArmorItem#getAttributeModifiers. DONE in travellers-boots-modifiers (d09e865): TFItems gives the boots withDefaultComponent(TravellersGearData.HIGH_STEP, Unit.INSTANCE) plus the new TravellersArmorItem#withBuiltinAttribute(TravellersModifiersManager::travellersHighStep), which getAttributeModifiers adds next to the inserted modifiers and drops while broken; Step-Up stops while sneaking (disableHighStepWhileSneaking).",
+     "travellers-wings-mobility: the wings' built-in High Jump (4.8 wingsProperties: HIGH_JUMP_AMPLIFIER = 1). Copy sounds/random/travellers/double_jump.ogg, side_step.ogg and side_step_ready.ogg and register item.twilightforest.travellers_gear.double_jump / side_step / side_step_ready (TFSounds + SoundGenerator + generated sounds.json + subtitles). The sidestep, double-jump and cooldown fields already live in TravellersWingsAttachment (CapabilityList.TRAVELLERS_WINGS). Since travellers-modifier-framework (9530cec): register the built-in ability with TravellersArmorItem#withDefaultComponent(TravellersGearData.HIGH_JUMP_AMPLIFIER, 1) in TFItems, so the piece shows its 'Ability:' tooltip line and counts as having the ability (the 1.20.1 stand-in for 4.8's default item components); add the built-in attributes in TravellersArmorItem#getAttributeModifiers. DONE in travellers-wings-mobility (b9617cc): TFItems gives the wings withDefaultComponent(TravellersGearData.HIGH_JUMP_AMPLIFIER, 1) and TravellersGearLogic#travellersWingsHighJump applies it; the three .ogg files, TFSounds DOUBLE_JUMP / SIDE_STEP / SIDE_STEP_CHARGED, SoundGenerator, the generated sounds.json and the en_us subtitles are in.",
+     "travellers-goggles-modifiers: the goggles' built-in Zoom (4.8 gogglesProperties: ZOOM_ABILITY_MODIFIER 0.3F), the ZOOM_KEY (twilightforest zoom, default Z) and RED_THREAD_VISION_KEY (red_thread_vision, unbound) key mappings in client/TFKeyBinds below the KEY_MAPPINGS list, the item.twilightforest.travellers_goggles.zoom_in sound, and 4.8's TravellersArmorItem#getArmorTexture switch to textures/models/armor/travellers_layer_1_down.png (outer layer) while the wearer zooms (4.8 IS_USING_GOGGLES_ZOOM_MODIFIER attachment). The texture is already copied; the port's getArmorTexture does not switch yet. Since travellers-modifier-framework (9530cec): register the built-in ability with TravellersArmorItem#withDefaultComponent(TravellersGearData.ZOOM_ABILITY_MODIFIER, 0.3F) in TFItems, so the piece shows its 'Ability:' tooltip line and counts as having the ability (the 1.20.1 stand-in for 4.8's default item components); add the built-in attributes in TravellersArmorItem#getAttributeModifiers.",
+     "travellers-goggles-item-display: the ITEM_DISPLAY_MAP_CYCLE_KEY key mapping (item_display_map_cycle, default C) in client/TFKeyBinds and the item.twilightforest.travellers_gear.cycle_maps / cycle_maps_empty sounds.",
+     "travellers-belt-swap-hotbar: the belt's built-in Swap Hotbar and its 9-slot storage (4.8 TravellersArmorBeltItem#beltProperties: SWAP_HOTBAR_ABILITY plus a DataComponents.CONTAINER of 9 empty slots -> stack NBT in TravellersGearData), the SWAP_HOTBAR_KEY key mapping (swap_hotbar, default V) in client/TFKeyBinds, the item.twilightforest.travellers_gear.swap_hotbar sound, and drawing the belt on wings that carry Swap Hotbar (TravellersArmorRenderer#getHumanoidArmorModel LEGS branch, where a comment marks the spot). Since travellers-modifier-framework (9530cec): register the built-in ability with TravellersArmorItem#withDefaultComponent(TravellersGearData.SWAP_HOTBAR_ABILITY, Unit.INSTANCE) plus a second withDefaultComponent(TravellersGearData.CONTAINER, <9 empty slots>) in TFItems, so the piece shows its 'Ability:' tooltip line and counts as having the ability (the 1.20.1 stand-in for 4.8's default item components); add the built-in attributes in TravellersArmorItem#getAttributeModifiers."
+    ],
+    "source": "travellers-gear review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "travellers-modifier-framework",
+    "ids": [
+     "travellers-modifier-framework"
+    ],
+    "deferred": [
+     "travellers-belt-swap-hotbar: the grindstone must not delete stored contents. 4.8's TravellersGearEvents#extractItemsFromSwapHotbarModifier returns the belt hotbar items when Swap Hotbar is stripped, but Forge 47's GrindstoneEvent.OnTakeItem has no player. Either cancel GrindstoneEvent.OnPlaceItem in TravellersGearEvents#removeModifiersFromTravellersGear while TravellersGearData.CONTAINER holds a non-empty stack, or return the contents through a GrindstoneMenu result-slot mixin. Nothing can fill CONTAINER before this feature (9530cec), so nothing is lost yet.",
+     "travellers-goggles-item-display: the grindstone must not delete stored contents. Stripping Item Display at the grindstone would drop whatever TravellersGearData.ITEM_DISPLAY holds, and Forge 47's GrindstoneEvent.OnTakeItem has no player. Either cancel GrindstoneEvent.OnPlaceItem in TravellersGearEvents#removeModifiersFromTravellersGear while TravellersGearData.ITEM_DISPLAY holds a non-empty stack, or return the contents through a GrindstoneMenu result-slot mixin. Nothing can fill ITEM_DISPLAY before this feature (9530cec), so nothing is lost yet.",
+     "travellers-goggles-modifiers: emulate Aquatic Agility from its marker, e.g. TravellersModifiersManager.isModifierActive(entity, TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER) in an air-supply or break-speed event (4.8's oxygen bonus and submerged mining speed attributes do not exist in 1.20.1). Do not add attribute entries to twilight/travellers_modifiers/aquatic_agility.json: inserted attribute modifiers are copied into the stack's INSERTED_ATTRIBUTE_MODIFIERS when the modifier is added, so goggles modified before such a change would never get them."
+    ],
+    "source": "travellers-modifier-framework review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "travellers-wings+boots",
+    "ids": [
+     "travellers-wings-mobility",
+     "travellers-boots-modifiers"
+    ],
+    "deferred": [
+     "Runtime check (first boot of the fork jar on the dedicated Arclight server, plus a client join): META-INF/asm/travellers_boots.js was only verified offline (all 8 transformers apply to the SRG Forge 47.1.70 jar and pass BasicVerifier; Arclight 1.0.6-safeiter2's EntityMixin/LivingEntityMixin do not overwrite Entity#move, canStandOnFluid or getBlock*Factor). Look for no 'Twilight Forest travellers_boots.js' ERROR lines and no coremod transform failures in the log; still unproven: that the coremod transforms Forge's IForgeBlock#getFriction in production and the client-only LocalPlayer#aiStep hook. In game: Unrestrained boots on ice (no sliding) and in cobweb (no rubber-banding), Water Walk on still water, sprinting on water with Unrestrained + Water Walk, Double Jump, Sidestep and Gradual Glide on a server with a second player watching.",
+     "Arclight/Bukkit note (upstream behaviour, not changed): TravellersGearLogic#travellersWingsHighJump re-applies Jump Boost (duration 2) every server tick, as 4.8 does. Arclight overwrites LivingEntity#addEffect(MobEffectInstance, Entity), so each wearer fires a Bukkit EntityPotionEffectEvent and sends a ClientboundUpdateMobEffectPacket every tick, and a potion-control plugin can cancel High Jump. If profiling or a plugin conflict shows it, skip addEffect while the current Jump Boost already has that amplifier and more than one tick left (apply it with a longer duration, e.g. 3, so the skip can trigger)."
+    ],
+    "source": "travellers-wings-mobility+travellers-boots-modifiers review (waves 8-10 integrator)"
+   }
+  ],
+  "addons": [
+   {
+    "bundle": "twilight-mobs-loots",
+    "ids": [
+     "twilight-mobs-loots"
+    ],
+    "deferred": [
+     "Twilight Moonshine Moon Rabbit trophy compat (MoonRabbitCurioRenderer, MoonRabbitRendererBridge and the twilightmoonshine:moon_rabbit_trophy entries in curios:head and curios:trophy). Twilight Moonshine has no 1.20.1 build and is not in the pack, and its unresolved id would have dropped both curios tags.",
+     "Re-registering Twilight Forest's nine boss trophies as curios and giving them this mod's TrophyCurioRenderer. Nothing is lost: the fork already gives them a curio capability (TrophyItem/CurioItem) and an equivalent CurioHeadRenderer. They are still added to the curios:trophy tag so they fit the new slot.",
+     "Not runtime-tested: client rendering (block entity renderer, item renderer, Curios renderer, hiding the player's head). Only a dedicated server was booted. It compiles against the client classes, and the reflection names were checked.",
+     "Not runtime-tested: the actual trophy drop. The pool needs a player kill, and no player can join the headless server. The injected pool did run on the redcap and bighorn tables without error.",
+     "No 4.8-only mobs had to be skipped: all 48 MobHead entries exist in the fork."
+    ],
+    "source": "workflow tf-addon-backports bundle E01-twilight-mobs-loots"
+   },
+   {
+    "bundle": "twilight-crossbow",
+    "ids": [
+     "twilight-crossbow"
+    ],
+    "deferred": [
+     "Knight Crossbow (KnightCrossBowItem): upstream never registers it, so neither the item nor upstream's getChargeDuration CrossbowItemMixin is ported.",
+     "TwilightCrossBowClient: an empty config-screen entry point upstream (the mod has no configs). Dropped; client setup is merged into ClientRegistrar.",
+     "Client-only code compiled and its refmap entries were checked, but none of it ran (dedicated-server test only): the crossbow model predicates, the HumanoidModel and ItemInHandRenderer mixins, the IceFireworkEntityRenderer, and the JEI smithing extension.",
+     "A Snow Guardian actually shooting a player with RangedCrossbowAttackGoal was not tested (needs a player). The shooting code it uses was tested through pillagers.",
+     "Under Arclight, Bukkit's EntityShootBowEvent does not fire for these four crossbows, because they skip CrossbowItem#shootProjectile. No Arclight boot was run.",
+     "In 1.21 the charging sounds come from enchantment components; on 1.20.1 the crossbows use the vanilla charging sounds.",
+     "The addon's entry in ports/twilightforest-backport-inventory.json still says action needs_backport. Left alone to avoid merge conflicts with the other workflows."
+    ],
+    "source": "workflow tf-addon-backports bundle E02-twilight-crossbow"
+   },
+   {
+    "bundle": "spiced-twilight",
+    "ids": [
+     "spiced-twilight"
+    ],
+    "deferred": [
+     "Naga jump attack (upstream NagaMovementPatternMixin) is not ported on purpose: it conflicts with the Naga rework in Alternative Twilight Remastered, which is backported into the same pack. This is documented in NOTICE, the mods.toml description and okf.",
+     "Lich minion to Skeleton Druid conversion (LichAbsorbMinionsGoal mixin) applies cleanly but was not seen in-game. In the headless test the summoned Lich removed itself (it was not in its tower), so no low-health absorb phase happened. It needs a real fight to check.",
+     "The Lich#getTeleportInvisibility check is looked up by reflection and only takes effect once the fork's Lich rework (waves 8-10) adds that method. Until then the check always passes.",
+     "The kobold ironwood-helmet branch for twilightforest:highlands_underground matches nothing until the fork has that biome (wave 7 worldgen). It uses a plain ResourceKey, so it needs no code change when the biome lands.",
+     "Client-side parts were only compiled and checked with javap, not run in a client: the helmet crab hide model, the baby kobold head and armor layer on both the default and the Jappa kobold models, the Maze Slime Beetle renderer, the thrown maze slime ball renderer, and the Cinder Pouch bundle tooltip and use particles.",
+     "Natural Maze Slime Beetle spawning inside the Labyrinth (the LevelEvent.PotentialSpawns hook) was not observed: natural spawning needs a player online. Only the structure tag resolution was checked.",
+     "The datagen run was not executed. The recipe and advancement JSON in src/generated were hand-written in the 1.20.1 datagen format. The ported CraftingGenerator would produce the same files.",
+     "Not boot-tested on Arclight, only on plain Forge 47.4.18. The vanilla brewing-stand mixins are HEAD injects with no overwrites."
+    ],
+    "source": "workflow tf-addon-backports bundle E03-spiced-twilight"
+   },
+   {
+    "bundle": "alternative-twilight-remastered",
+    "ids": [
+     "alternative-twilight-remastered"
+    ],
+    "deferred": [
+     "Boss music audio: the 8 upstream .ogg tracks (naga, lich, hydra, ur_ghast, knight_phantom, snow_queen, minoshroom, alpha_yeti; about 33 MB) and their sounds.json are not shipped. Their metadata shows Bilibili video downloads of unknown authorship, which the GPL grant does not cover. The music system is ported and registers the at_mod:music.<boss> sound events; it plays only if a resource pack defines them in assets/at_mod/sounds.json and stays silent otherwise.",
+     "NeoForge in-game config screen (ConfigurationScreen): Forge 47 has no generic equivalent. Edit config/at_mod_config.toml instead.",
+     "MDK template leftovers: at_mod:example_block, its block item, its creative-tab entry, and the HELLO log listeners.",
+     "Client-side runtime check: the spear arm pose and models, the Knight Phantom aurora post shader and the boss music tracker compile but were not run in a game client (server-only test environment).",
+     "Upstream master rewrite (8f5c978, com.alternative_twilight package, 1.0.0): not ported, because it is unfinished TODO stubs with no boss logic.",
+     "1.20.5+ damage type tags minecraft:no_knockback and minecraft:bypasses_wolf_armor are dropped because they do not exist in 1.20.1. no_knockback is emulated for the venom with LivingKnockBackEvent; wolf armor does not exist in 1.20.1.",
+     "Full-pack Arclight boot: not done here. The jar needs the fork TF jar to replace the stock twilightforest-1.20.1-4.3-universal.jar in local-mods/ before the pack can load it."
+    ],
+    "source": "workflow tf-addon-backports bundle E04-alternative-twilight-remastered"
+   },
+   {
+    "bundle": "mystic-crown-curios",
+    "ids": [
+     "mystic-crown-curios"
+    ],
+    "deferred": [
+     "In-game checks that need a real logged-in player were not run on the headless server: putting the crown in a Curios head slot (GUI or right-click) and having it count there, the curio head rendering, Twilight Scepter Lich-bomb shots, double Lifedrain damage from scepter use, and the Zombie Scepter gear roll and Knockback II stick. The code paths are compiled and partly exercised: the crown check on non-Curios mobs, the Lich-bomb immunity, shield behaviour, CrownSummoned NBT and the 4-damage attack.",
+     "Addon config translations: the addon's lang file only had MDK template keys. The fork's existing config options have no lang entries, so the two new options don't either.",
+     "Datagen .cache was not updated for curios/tags/items/head.json. Like the other recent feature commits, I left it for the next 'chore(twilightforest): regenerate datagen output' run.",
+     "config/twilightforest-common.toml in the repo does not list the two new options (it also lacks other newer options). Forge fills in the defaults (true/true) on first boot."
+    ],
+    "source": "workflow tf-addon-backports bundle E05-mystic-crown-curios"
+   }
+  ],
+  "8-10": [
+   {
+    "bundle": "ominous-fire-exanimate-essence+scepter-rework (porter, D01)",
+    "ids": [
+     "ominous-fire-exanimate-essence",
+     "scepter-rework"
+    ],
+    "deferred": [
+     "ominous-candles: ExanimateEssenceItem's first branch (lit vanilla candle -> ominous candle via OminousCandleBlock.CANDLE_MAP, 4.8 a7a69c507/e81773961) is not ported; until then the essence just places ominous fire on the clicked face. A comment marks the spot.",
+     "candelabra-overhaul: essence/scepters turning a candelabra ominous. TFItems.EXANIMATE_ESSENCE and ItemTagGenerator.SCEPTERS (#twilightforest:scepters) now exist; sounds/random/candelabra/ominous.ogg (4.8 file, byte-identical) is already added for block.twilightforest.ominous_fire.light, so CANDELABRA_OMINOUS can reuse it.",
+     "jei-plugin-upgrades: JEI ominous fire category (OminousFireCategory, ominous_fire_jei textures, gui.twilightforest.ominous_fire_jei lang), ScepterRepairExtension and ExanimateEssenceRepairExtension. Until then JEI hides the scepter repairs, because special recipes are hidden by default.",
+     "mystic-crown: 4.8's 5% charge saving and baby zombie roll in the scepter items (B11 already has them; see notes for the merge).",
+     "item-polish-bundle (B18): its client LifedrainTrail should draw ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), 1F, 0.5F, 0.5F) instead of ENTITY_EFFECT, and the server-side LIFE_SCEPTER_DRAIN sound belongs next to its LifedrainParticlePacket send.",
+     "lich-tower-revamp: 4.8's tower_room/tower_library loot tables (essence and Renewal book entries were added to 4.3's pools only as a stopgap) and the twilight_orb projectile texture move (e65e3a651).",
+     "lich-boss-rework: the Lich's shoot/pop_mob sounds switching to the scepter recordings, and the Lich phase-2 wand bolt deflection.",
+     "lich-fight-fixes: TwilightWandBolt.canHitEntity excluding LichBolt/LichBomb (1e04187ab).",
+     "no owning feature: 4.8 moved Transformation Powder onto EntityUtil.convertEntity and a transformation data map (49c7489ee); 4.3 keeps its recipe-driven powder. Tag translation tag.item.twilightforest.scepters needs recipe-viewer tag translation support; 4.8 tips are excluded (tips-mod-compat)."
+    ],
+    "source": "workflow waves-8-10 bundle D01-ominous-fire+scepters"
+   },
+   {
+    "bundle": "drying-rack (porter, D02)",
+    "ids": [
+     "drying-rack"
+    ],
+    "deferred": [
+     "jade-top-providers: DryingRackProvider (Jade; show remaining time from `saveWithoutMetadata()` `dry_time`/`total_dry_time` while `isDrying()`), plus the lang keys `config.jade.plugin_twilightforest.drying_rack` and `jade.drying_rack.remaining`. Use `twilightforest.compat.DryingRecipeViewerHelper.getDryingTime` (4.8 uses RecipeViewerConstants).",
+     "emi-native-plugin: TFEmiCategories.DRYING and EmiDryingRecipe (workstations from `#twilightforest:drying_racks`), reusing `DryingRecipeViewerHelper`.",
+     "dried-foods-and-tanning: 1) the jerky, gelatinous drop, treated-to-tanned leather and stale bread drying recipes via DryingRecipeBuilder (it already lets stale_bread through without criteria); 2) add GELATINOUS_SLIME_DROP and GELATINOUS_MAZE_SLIME_DROP to ItemTagGenerator.RENDER_LOWER_ON_DRYING_RACK and to the generated tags/items/lower_on_drying_rack.json; 3) filter `!recipe.getResult().is(TFItems.STALE_BREAD)` on the drying recipes in JEICompat.registerRecipes; 4) the drying-related tips (jerky, travellers gear).",
+     "camp-structure: camp_marker_handlers wiring DryingRackMarkerHandler (canopy_drying_rack + CAMP_ARMOR_RACK, birch_drying_rack + CAMP_DRYING_RACK), the TFLootTables keys and loot tables camp_drying_rack and camp_armor_rack, and the camp/deco double_drying_rack and long_drying_rack NBTs."
+    ],
+    "source": "workflow waves-8-10 bundle D02-drying-rack"
+   },
+   {
+    "bundle": "jar-revamp-mason-jar (porter, D03)",
+    "ids": [
+     "jar-revamp-mason-jar"
+    ],
+    "deferred": [
+     "lich-tower-revamp: the chests/tower_jars loot table, the Lich Tower 'mason_jar' data-marker handler, and the calls to MasonJarBlockEntity.fillFromLootTable(ResourceLocation, long, ServerLevel) and setItemRotation. The jars in the 6 templates (5x5/potion, 7x7/desk, jar_study, shelved_jars, 9x9/cauldron_keep, tiered_spawner) are data markers ('mason_jar:jar:11', 'mason_jar:skeleton_skull:15'), not block entity NBT, so no 1.21 item-NBT conversion is needed.",
+     "Not ported because 4.3 does not have the feature: the 4.8 tip text 'twilightforest.tips.jars'.",
+     "Left out on purpose: 4.8's trophy item-model moves and the 'fixed' transform changes in c67b098e2 that are not jar-related. Only the twilightforest:jarred entries were added; the Ur-Ghast and Alpha Yeti models stay hand-written in main/resources."
+    ],
+    "source": "workflow waves-8-10 bundle D03-jar-revamp-mason-jar"
+   },
+   {
+    "bundle": "chiseled-canopy-bookshelf (porter, D04)",
+    "ids": [
+     "chiseled-canopy-bookshelf"
+    ],
+    "deferred": [
+     "jade-top-providers: the Jade and TOP ChiseledBookshelfSpawnProvider (37dba57df, plus the 07af38da2 null check on getNextSpawnData()) and the en_us key config.jade.plugin_twilightforest.chiseled_bookshelf_spawner = \"Chiseled Canopy Bookshelf Spawns\". BookshelfSpawner#getNextSpawnData() is already there for them.",
+     "lich-tower-revamp: LichTowerWingRoom#putTrappableBookshelf. In 4.8 HEAD a shelf is a spawner 1 in 12, each slot is filled 2 in 3, and a non-spawner shelf gets an enchanted book 1 in 16 instead of a plain one (d99acebb5). Per 4.8 final (8c535fc57) there is no Peaceful check on the roll; the runtime check is already in BookshelfSpawner. 4.8 writes ChiseledBookShelfBlockEntity.items directly through an access transformer entry (2e99c344b: public net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity items). On 1.20.1 setItem cannot be used in worldgen because it needs a non-null level. Spawner shelves get spawner.setEntityId(DEATH_TOME, null, random, pos).",
+     "lich-tower-revamp: the arborist advancement update (advancement-fixes carryover). Swap EMPTY_CANOPY_BOOKSHELF for CHISELED_CANOPY_BOOKSHELF in TFAdvancementGenerator.DENDROLOGIST_BLOCKS and arborist.json once the Lich Tower makes the shelf obtainable in survival. 4.8 has no recipe for it, so adding it now would make Arborist impossible to finish. The TODO in TFAdvancementGenerator now says this."
+    ],
+    "source": "workflow waves-8-10 bundle D04-chiseled-canopy-bookshelf"
+   },
+   {
+    "bundle": "candelabra-overhaul+ominous-candles (porter, D05)",
+    "ids": [
+     "candelabra-overhaul",
+     "ominous-candles"
+    ],
+    "deferred": [
+     "lich-boss-rework: Lich.turnNearbyCandles / lightNearbyCandles (4.8 Lich.java ~726-756) using OminousCandleBlock.CANDLE_MAP (this is the literal #2563 containsKey check from the lich-fight-fixes carryover), the NORMAL<->OMINOUS candelabra switch and TFSounds.CANDELABRA_OMINOUS; CANDLE_MAP, the ominous candle blocks and the sound now exist",
+     "lich-tower-revamp: LichTowerFoyerDecor places DIM candelabras via CandelabraBlockEntity.setData(new CandelabraData(List.of(Blocks.CANDLE x3))); the 4.8 template 'Candles' NBT loads as-is",
+     "not ported (loading-screen tips feature): 4.8 lang key twilightforest.tips.candelabra; the fork has no tips system",
+     "other-locale strings for the new subtitles and the 17 ominous candle names: merged later by tools/merge_upstream_lang.py",
+     "verifier: boot test on a dedicated server plus a client with a 4.3 world containing candelabras (CandelabraEvents migration, BER/ISTER rendering, ominous candle render types); .cache manifests not refreshed"
+    ],
+    "source": "workflow waves-8-10 bundle D05-candelabra+ominous-candles"
+   },
+   {
+    "bundle": "sinister-spawner (porter, D06)",
+    "ids": [
+     "sinister-spawner"
+    ],
+    "deferred": [
+     "lich-tower-revamp: LichTowerWingRoom's sinister_spawner data marker (putSinisterSpawner places the block, configures it and calls setLootTable(TFLootTables.OMINOUS_SPAWNER_DROPS)), together with the Lich Tower bridge and room NBT templates that contain twilightforest:sinister_spawner.",
+     "translation-refresh / tools/merge_upstream_lang.py: the non-English block.twilightforest.sinister_spawner strings (ko_kr, uk_ua, zh_cn, ja_jp upstream). Only en_us was added."
+    ],
+    "source": "workflow waves-8-10 bundle D06-sinister-spawner"
+   },
+   {
+    "bundle": "lich-boss-rework (porter, D07)",
+    "ids": [
+     "lich-boss-rework"
+    ],
+    "deferred": [
+     "4.8 tips (lich_deflection, lich_scepters, minion_buff): there is no tips system in 4.3 and no feature id owns them.",
+     "Attribute display names (attribute.name.lich.*): 4.8 ships no lang entries for them either, so none were added.",
+     "4.8's trophy refactor (LichModel implements TrophyBlockModel and LichTrophyModel is deleted) is not part of this feature. The fork keeps LichTrophyModel, which works with the new texture.",
+     "Lich loot table changes in 4.8 (the exanimate essence drop): goes to lich-tower-revamp or a loot feature, as already noted in the carryover.",
+     "In-world verification (deflection feel, the legacy-tower 8-block radius, candle theatrics in the new boss room) should happen when lich-tower-revamp lands and a boot test runs."
+    ],
+    "source": "workflow waves-8-10 bundle D07-lich-boss-rework"
+   },
+   {
+    "bundle": "dried-foods-and-tanning (porter, D08)",
+    "ids": [
+     "dried-foods-and-tanning"
+    ],
+    "deferred": [
+     "camp-structure: the twilightforest:camp_tent, camp_drying_rack and camp_pot loot tables (TFLootTables.CAMP_TENT/CAMP_DRYING_RACK/CAMP_POT as root ResourceLocations, ChestLootTables, generated loot_tables/*.json) are already here. camp-structure only adds camp_armor_rack and must not add the other three again.",
+     "berry-bushes: add TFItems.BERRY_MEDLEY to forge:foods (ItemTagGenerator FOODS, between the gelatinous drops and maze_wafer, plus the generated data/forge/tags/items/foods.json), and add the 4.8 twilight_dinner criteria 'berry' (raspberry/blackberry/blueberry/maloberry) and 'berry_medley' to TFAdvancementGenerator (append them and extend CountRequirementsStrategy), plus generated advancements/twilight_dinner.json.",
+     "emi-native-plugin: filter the stale bread drying recipe out of the EMI drying category, as TFEmiCompat does in 4.8. JEI already does this.",
+     "travellers-gear: TFArmorMaterials travellers repair ingredient TFItems.TANNED_LEATHER, the six traveller's recipes made from tanned_leather, and the tip craft_travellers_gear.",
+     "Not applicable: loading-screen tips twilightforest.tips.jerky / craft_travellers_gear (4.3 has no tips system); REI HideItemFilterRule for stale bread (4.3 has no REI plugin).",
+     "translation-refresh: other locales for the 22 new or changed en_us keys (item.twilightforest.*jerky, gelatinous drops, moss_soup, tannin, treated/tanned leather, stale_bread, advancement.twilightforest.chicken_jerky, the twilight_dining.desc wording, death.attack.twilightforest.stale_sandwich) via tools/merge_upstream_lang.py."
+    ],
+    "source": "workflow waves-8-10 bundle D08-dried-foods-and-tanning"
+   },
+   {
+    "bundle": "camp-structure (porter, D09)",
+    "ids": [
+     "camp-structure"
+    ],
+    "deferred": [
+     "In-game check (any later boot test): /locate structure twilightforest:camp in a fresh TF world. Then look at tents (wool and bed colours, camp_tent chest), the tent barrel (camp_pot loot), drying racks with items, the armour rack, the luxury-tent painting, campfire slab seats and the rack_path-to-rack chains. Not done here because runData and boot are out of scope for porters."
+    ],
+    "source": "workflow waves-8-10 bundle D09-camp-structure"
+   },
+   {
+    "bundle": "jade-top-providers+emi-native-plugin (porter, D10)",
+    "ids": [
+     "jade-top-providers",
+     "emi-native-plugin"
+    ],
+    "deferred": [
+     "emi-native-plugin: EmiTravellersGearGrindstoneRecipe, EmiTravellersGearModifierRecipe and the TRAVELLERS_* entries in CANT_USE_ENCHANTS -> travellers-modifier-framework / travellers-gear (the Traveller's Gear items and recipes do not exist in the fork yet)",
+     "emi-native-plugin: 4.8 LangGenerator.translateTag 'tag.item.twilightforest.*' tag names that EMI displays -> no feature id (see the passive-tempt-tags carryover note)",
+     "emi-native-plugin: REI plugin (compat/rei) -> no feature id; 4.3 has no REI plugin",
+     "emi-native-plugin: only OMINOUS_FIRE is synced; MAGIC_MAP_BIOME_COLOR and ORE_MAP_ORE_COLOR (synced in 4.8) are not, because nothing reads them on the client -> add them to TFDataMaps.SYNCED_DATA_MAPS when a feature needs them",
+     "emi-native-plugin: while EMI is installed the JEI recipe transfer handler, click areas and recipe-book exclusion area for UncraftingScreen are skipped, as in 4.8; no EMI recipe handler or exclusion area was added -> no feature id",
+     "jei-plugin-upgrades carryover: JEI 19 layout APIs still not used (compiles against JEI 15.2.0.25) -> wave-9 recipe-viewer polish",
+     "jade-top-providers: the 4.8 'Quest Ram' -> 'Questing Ram' lang rename (017cd832f) is a global rename, not part of this feature -> no feature id"
+    ],
+    "source": "workflow waves-8-10 bundle D10-jade-top+emi"
+   },
+   {
+    "bundle": "lich-tower-revamp (porter, D11)",
+    "ids": [
+     "lich-tower-revamp"
+    ],
+    "deferred": [
+     "RESOLVED by part B (D12-lich-tower-population: db41226, 63b85f4) except where the D12 entry re-lists it; the waves-8-10 verifier boot-generated a full tower (366 pieces, casket_loot, sinister spawners, no jigsaw/processor errors). Original part-A list follows.",
+     "lich-tower-revamp (part B): loot table contents for the 7 ids registered in TFLootTables (TOWER_FOYER, TOWER_POTION, TOWER_ENCHANTING, TOWER_JARS, CASKET_LOOT, TOWER_GRAVE_UPPER, TOWER_GRAVE_LOWER = twilightforest:chests/<name>). Port 4.8 ChestLootTables entries (dd92f91ab, c1563920a, d297e2a60, 9278617c1) and hand-write src/generated/resources/data/twilightforest/loot_tables/chests/*.json. Translate 1.21-only functions: enchanted_count_increase, copy_components to copy_nbt, registry-keyed set_enchantments. Drop minecraft:bundle (feature-flagged off in 1.20.1). Move the flasks the wave-5 port put into tower_library/tower_room back into tower_potion, and apply the 4.8 tower_room/tower_library/tower_foyer/grave changes. Optionally add TFLootTables.SUSPICIOUS_STEW and nest it in hut_junk. Until then, mason jars fall back to an item or stay empty, and the casket, grave, potion, enchanting and foyer chests generate empty.",
+     "lich-tower-revamp (part B): 4.8 facc450f5 vegetation clearance for the yard. Append AvoidLandmarkModifier.checkVegetation() to PLACED_MAYAPPLE, PLACED_MUSHGLOOM_CLUSTER, PLACED_FLOWER_PLACER, PLACED_FLOWER_PLACER_ALT and the patch_tall_grass / patch_large_fern / flower_forest_flowers / patch_grass_* placements, plus the 4.8 biome JSON changes. Do NOT re-add it to dense_ferns or dense_large_ferns (already done in b053426). Regenerate the placed_feature JSONs.",
+     "lich-tower-revamp (part B): 4.8 dc6ae022a, trees allowed inside the Lich Tower zone. Add tfTreeCheckArea overloads that take HolderSet<Structure> structuresAllowed and pass the LICH_TOWER holder to the tree placements: canopy_trees, dense_canopy_trees, firefly_forest_trees, dead_canopy_tree and the tree selectors. Hand-edit the generated placed_feature JSONs. Without this, trees are kept out of every lich tower piece box, yard included, because chunk_clearance_radius is now 0 (per piece).",
+     "lich-tower-revamp (part B): 4.8 46a06ef13. Add CanopyMushroomFeature.isReplaceable and use it in CanopyMushroomFeature and RedCanopyMushroomFeature, so mushroom canopies no longer overwrite Lich Tower blocks.",
+     "lich-tower-revamp (part B): 4.8 EntityEvents.handleLeashPathingOverrides, which drops the leash flag once a mob can no longer be leashed. The flag key is the persistent-data boolean LichTowerPieces.LEASH_PATHFINDER_OVERRIDE. On 1.20.1 a reloaded mob restores its leash from leashInfoTag only on its first tick, so a join-time isLeashed() check would strip the flag from every reloaded yard zombie. Use a delayed check instead, e.g. a living tick once tickCount > 1 and !isLeashed(). This is harmless if skipped.",
+     "lich-tower-revamp (part B), boot test: on a fresh TF world, run /locate structure twilightforest:lich_tower and check that:\n- no jigsaw or structure blocks remain;\n- the grave chests (casket_loot, tower_grave_lower) carry loot tables;\n- sinister and room spawners have mobs;\n- the leashed perimeter and trap zombies stay leashed and do not path back to the knot (the leashpathing coremod applies on Arclight);\n- vanilla paintings and the magic gallery paintings hang;\n- skull candles show their candles;\n- the yard is flattened and the BEARD_BOX beards look right (see the TFBeardifier WARP_NOISE_TO_DENSITY carryover note);\n- spawns are rising zombies in the yard, monsters inside and nothing in the foyer;\n- a 4.3-generated tower still loads and spawns interior monsters.\nAlso watch for 'Tried to access a block entity before it was created' spam.",
+     "lich-boss-rework (D07): the Lich's home and teleport logic around the new boss room (lich_boss_spawner in tower_boss_room) and candle relighting are not part of this tower port.",
+     "Not applicable and not ported:\n- b7fe8333f's density_function max changes (4.8 chunkgen, excluded);\n- the structure_icon / TFMapDecorations.LICH_TOWER map decoration and the landmark_grid placement (no 1.20.1 or 4.3 equivalent, so forced_landmark is kept);\n- a841a573e's Peaceful gate for Death Tome lecterns and shelves (upstream removed it again in 8c535fc57, so HEAD has none)."
+    ],
+    "source": "workflow waves-8-10 bundle D11-lich-tower-core"
+   },
+   {
+    "bundle": "lich-tower-revamp (porter, D12)",
+    "ids": [
+     "lich-tower-revamp"
+    ],
+    "deferred": [
+     "Boot test (verifier/integration): start a dedicated server, generate a fresh TF dimension, and check a new Lich Tower: trees in the yard, Rising Zombies spawning, leashed zombies, wing room loot. Not run here, as part A also noted.",
+     "Docs (integrator, outside ports/twilightforest): okf/modpack/twilightforest-backport.md still says Part B (vegetation and tree placement) is open; that sentence now needs updating. The divergences list should also record that tower_room inlines the suspicious stew, and the leashInfoTag access transformer plus the join-time flag cleanup.",
+     "Carryover bookkeeping (integrator): mark these lich-tower-revamp items in ports/twilightforest-backport-carryover.json as done: lines 224/225/665 (checkVegetation and tfTreeCheckArea), 409 (tower_library/tower_room), 347 (the Peaceful gate; reverted upstream, runtime gate already present), and part A's open points (leash cleanup on join, canopy mushroom fix).",
+     "Verifier: refresh the datagen .cache manifests for the 2 loot table and 8 placed_feature JSONs that changed.",
+     "Optional, no feature id: carryover line 677. A real chests/suspicious_stew table (TFLootTables.SUSPICIOUS_STEW) is still not added. hut_junk, tower_foyer and now tower_room write the same stew inline, which gives the same loot."
+    ],
+    "source": "workflow waves-8-10 bundle D12-lich-tower-population"
+   },
+   {
+    "bundle": "travellers-gear (porter, D13)",
+    "ids": [
+     "travellers-gear"
+    ],
+    "deferred": [
+     "/tf travellers_gear add_modifier/remove_modifier command and its commands.tffeature.* lang strings -> travellers-modifier-framework (needs the modifier registry)",
+     "Firing twilightforest:add_modifier when a modifier is crafted in (4.8 TravellersGearEvents#fireCraftingModifierTrigger) -> travellers-modifier-framework; the trigger and both advancements already exist",
+     "modify_travellers_gear advancement icon with the water_walk modifier NBT (it is plain travellers_boots for now) -> travellers-modifier-framework, once the modifier NBT layout exists",
+     "TravellersArmorItem.getInsertedModifierIds(stack) is a stub that returns List.of(). It drives the item model sprite layering and the empty-slot tooltip count. Fill it in, and add the ability/modifier tooltip lines (travellers_gear.ability, info_indent, shift_info) -> travellers-modifier-framework",
+     "Blocking anvil combining of two Traveller's Gear pieces (AnvilUpdateEvent) and deactivating modifiers on broken gear (isModifierActive must check TravellersArmorItem.isTravellersArmorAndBroken) -> travellers-modifier-framework",
+     "Built-in abilities: Swift Swim on the vest (ForgeMod.SWIM_SPEED) -> travellers-vest-modifiers; Step-Up on the boots -> travellers-boots-modifiers; High Jump on the wings -> travellers-wings-mobility",
+     "Goggles: Zoom ability, the travellers_layer_1_down armor texture while zooming (getArmorTexture override; the texture is already copied), and isEnderMask -> travellers-goggles-modifiers; Item Display storage, tooltip and map ticking -> travellers-goggles-item-display",
+     "Belt: Swap Hotbar storage, tooltip, blacklist tag, and drawing the belt on wings that carry the swap_hotbar modifier (TravellersArmorRenderer LEGS case) -> travellers-belt-swap-hotbar",
+     "Loading-screen tips twilightforest.tips.craft_travellers_gear / modify_travellers_gear -> no feature id; 4.3 has no tips system",
+     "Other-locale lang strings for the 14 new keys -> tools/merge_upstream_lang.py (en_us is done)",
+     "Config lang keys config.twilightforest.first_person_glove_overlay(.tooltip) were not added, because the fork's en_us has no config translation keys"
+    ],
+    "source": "workflow waves-8-10 bundle D13-travellers-gear"
+   },
+   {
+    "bundle": "travellers-modifier-framework (porter, D14)",
+    "ids": [
+     "travellers-modifier-framework"
+    ],
+    "deferred": [
+     "travellers-wings-mobility / travellers-boots-modifiers / travellers-vest-modifiers / travellers-goggles-modifiers / travellers-auto-repair / travellers-belt-swap-hotbar: what each modifier does. The framework only stores and reports them via TravellersModifiersManager.isModifierActive and the TravellersGearData components.",
+     "Built-in abilities need item defaults via TravellersArmorItem#withDefaultComponent in TFItems: goggles ZOOM_ABILITY_MODIFIER 0.3F (travellers-goggles-modifiers); vest SWIFT_SWIM plus the attribute from TravellersModifiersManager.travellersSwiftSwim() (travellers-vest-modifiers); wings HIGH_JUMP_AMPLIFIER 1 (travellers-wings-mobility); boots HIGH_STEP plus travellersHighStep() (travellers-boots-modifiers); belt SWAP_HOTBAR_ABILITY plus the 9-slot CONTAINER (travellers-belt-swap-hotbar).",
+     "travellers-goggles-modifiers: emulate Aquatic Agility's 1.21 oxygen-bonus and submerged-mining-speed attributes; the definition carries only the twilightforest:aquatic_agility marker with empty attribute_modifiers.",
+     "travellers-belt-swap-hotbar: define the TravellersGearData.CONTAINER (minecraft:container) format, currently raw NBT, and return the stored hotbar at the grindstone (4.8 extractItemsFromSwapHotbarModifier, 20fc691f5, 75cad471f). Forge 47's GrindstoneEvent.OnTakeItem has no getPlayer(), so this needs another hook.",
+     "travellers-goggles-item-display: define the TravellersGearData.ITEM_DISPLAY format (raw NBT now), add the item_display.clock.unknown and item_display.compass.lodestone lang strings, and return stored items at the grindstone (4.8 b5d9d8939).",
+     "Key mappings behind the ${tfkeybinds/...} placeholders in modifier names (zoom, red_thread_vision, swap_hotbar, item_display_map_cycle). Until they exist, tooltips show 'Nonexistent key'. They go to travellers-goggles-modifiers / travellers-belt-swap-hotbar / travellers-goggles-item-display as the existing carryover says."
+    ],
+    "source": "workflow waves-8-10 bundle D14-travellers-modifier-framework"
+   },
+   {
+    "bundle": "travellers-wings-mobility+travellers-boots-modifiers (porter, D15)",
+    "ids": [
+     "travellers-wings-mobility",
+     "travellers-boots-modifiers"
+    ],
+    "deferred": [
+     "Real-boot / in-game test of both features (not run here). Check especially: the coremod on Forge's IForgeBlock#getFriction (an interface), and whether Arclight's own Entity#move changes keep the stuckSpeedMultiplier hook working. If either fails, the coremod only logs an error; it does not crash.",
+     "TravellersWingsAnimAttachment.doubleJump reset was not ported: 4.8 never sets that flag to true, so the reset is dead code."
+    ],
+    "source": "workflow waves-8-10 bundle D15-travellers-wings+boots"
+   },
+   {
+    "bundle": "travellers-vest-modifiers+travellers-goggles-modifiers+travellers-belt-swap-hotbar+travellers-auto-repair (porter, D16)",
+    "ids": [
+     "travellers-vest-modifiers",
+     "travellers-goggles-modifiers",
+     "travellers-belt-swap-hotbar",
+     "travellers-auto-repair"
+    ],
+    "deferred": [
+     "travellers-goggles-item-display: return the Item Display contents at the grindstone by adding a second returnModifierItems(event, TravellersModifiersManager.ITEM_DISPLAY_MODIFIER, <extractor>) call in TravellersGearEvents#extractItemsFromSwapHotbarModifier (08807f4), as 4.8 does in one listener. Add ITEM_DISPLAY_MAP_CYCLE_KEY to client/TFKeyBinds between RED_THREAD_VISION_KEY and ZOOM_KEY (4.8 order). When ITEM_DISPLAY gets a real codec, reuse TravellersContainerContents' ItemStack#save-based item codec.",
+     "travellers-boots-modifiers: register the boots' built-in Step Up attribute with TravellersArmorItem#withBuiltinAttribute(TravellersModifiersManager::travellersHighStep) in TFItems. That is the mechanism added for the vest's Swift Swim in 7c3437c; do not add a second path in getAttributeModifiers. The modifier UUID comes from the id and slot (TravellersAttributeEntry#createModifier), so 4.8's disableHighStepWhileSneaking must remove or add that same UUID.",
+     "Not boot-tested in a real client or server (compile plus coremod harness only). Worth an in-game check: Efficient Eater under Arclight, which also mixes into Player#checkMovementStatistics/jumpFromGround; zoom FOV and mouse slowdown; the Swap Hotbar grindstone hand-back."
+    ],
+    "source": "workflow waves-8-10 bundle D16-travellers-vest+goggles+belt+repair"
+   },
+   {
+    "bundle": "travellers-goggles-item-display (porter, D17)",
+    "ids": [
+     "travellers-goggles-item-display"
+    ],
+    "deferred": [
+     "4.8's config-screen strings for the Item Display settings (LangGenerator configCategory/configEntry) are not added: the fork has no config-screen lang entries for any option. No feature id.",
+     "Other locales for the new strings (key.twilightforest.item_display_map_cycle, item_display.clock.unknown, item_display.compass.lodestone, the cycle_maps subtitles) -> merged later by tools/merge_upstream_lang.py; en_us is done.",
+     "Runtime check, no feature id: on the first boot of the fork jar on Arclight, look for no 'Twilight Forest goggles_maps.js' ERROR and no coremod transform failures. In game: the map, compass, clock and Moon Dial on the HUD (map markers drawn above the map), cycling with C, the tooltip slots, and the grindstone giving the stored items back."
+    ],
+    "source": "workflow waves-8-10 bundle D17-travellers-goggles-item-display"
+   }
+  ],
+  "final-audit": [
+   {
+    "bundle": "food-creative-tab (final audit of dried-foods-and-tanning / berry-bushes)",
+    "ids": [
+     "dried-foods-and-tanning",
+     "berry-bushes",
+     "oreberries"
+    ],
+    "deferred": [
+     "4.8's 'Twilight Forest: Food' creative tab is not ported, and until this audit nothing recorded it. 4.8 registers it in TFCreativeTabs.java:603 (FOOD = TABS.register(\"food\", ...).withTabsBefore(EQUIPMENT.getKey()), title itemGroup.twilightforest.food) with the torchberries, berries, Berry Medley, Moss Soup and the jerkies; it came with 485d7e0a7 'Squashed and rebased onto 1.21.1 main', the construct-update squash these features were ported from. The fork keeps 4.3's three tabs (blocks, items, equipment) and lists the new foods in the Items tab (RASPBERRY, BERRY_MEDLEY, MOSS_SOUP, BEEF_JERKY, GELATINOUS_SLIME_DROP, ...). Every item of 4.8's tabs is in a fork tab, so nothing is unlisted: cosmetic and creative-only. Deferred instead of listed as a quick port because it adds a creative_mode_tab registry entry and a lang key. To port (about 1 h): copy the FOOD builder from 4.8 TFCreativeTabs.java:603 (DeferredHolder becomes RegistryObject), move those entries out of ITEMS, add itemGroup.twilightforest.food = 'Twilight Forest: Food' to LangGenerator and src/generated en_us.json (other locales through tools/merge_upstream_lang.py)."
+    ],
+    "source": "final audit"
+   },
+   {
+    "bundle": "dnv-terrain-recheck (final audit of custom-density-terraforming / avoid-landmark-grid-placement)",
+    "ids": [
+     "custom-density-terraforming",
+     "avoid-landmark-grid-placement"
+    ],
+    "deferred": [
+     "Runtime check, no code, due now: the inventory's Dungeons & Villages risk note asks for a re-check once 4.8's structure placement or Beardifier changes are backported, and both are. TFBeardifier.forStructuresInChunk (TFBeardifier.java:51) selects every structure with terrain_adaptation != NONE or a CustomDensitySource, TF or not, so D&V's twilight_village and dungeon_hedge (minecraft:jigsaw, terrain_adaptation beard_box; structure sets random_spread spacing 34 / separation 8, no landmark exclusion) now reshape TF terrain, which 4.3 never did. This matches 4.8, where vanilla's Beardifier applies to every structure. After the TF dimension reset, /locate a few D&V villages and hedge dungeons near landmarks and check their terrain (beard boxes, no floating or buried pieces) and any overlap with landmarks; record the result in okf/modpack/twilightforest-backport.md. Twilight Treehouses are unaffected (terrain_adaptation none)."
+    ],
+    "source": "final audit"
+   }
+  ]
+ }
+}

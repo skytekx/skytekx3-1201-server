@@ -5,16 +5,19 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the bundled mods, 35 since 2026-10-31. **Verify the blockers yourself before trusting them.**
+Researched automatically across all 40 bundled mods. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **29** mods are fine to bundle (open license or author allows modpacks).
-- **0** need a quick manual check (CurseForge modpack flag unconfirmed).
-- **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
+- **34** mods are fine to bundle (open license or author allows modpacks).
+- **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
+- **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
+- `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
 
 ## BLOCKERS (resolve before publishing)
+
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight and Alternative Twilight (Remastered) carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (c825572), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here.
 
 These cannot legally be bundled in a public modpack as-is:
 
@@ -24,6 +27,12 @@ These cannot legally be bundled in a public modpack as-is:
 - **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
 - **🟨⬛!!Fireflies!!🟨⬛** (`fireflies-1.0.0-forge-1.20.1.jar`) — All Rights Reserved. The mod has only one file (version 1.0.0 for Forge 1.20.1, released 2024-10-15). It is exclusively on CurseForge and is not available on Modrinth, so CDN-linking is not an option. The CurseForge modpack permission flag could not be confirmed via web scraping (JavaScript-rendered); if supermj767 has enabled "Allow modpack use" on the CurseForge project settings, the reason would upgrade to "Special permission" and redistribution would be OK — verify manually on the CurseForge mod page or by contacting the author.
 - **Hexxit Additions** (`hexxit_additions-1.0.2-forge-1.20.1.jar`) — All Rights Reserved. The CurseForge "Allow 3rd party / modpack distribution" flag is set to disabled by the author for all file versions. This mod does not appear on Modrinth under any matching slug. Contact starboiluke directly (CurseForge profile) to request explicit modpack inclusion permission before distributing this jar.
+
+## Manual check (resolve before publishing)
+
+Permission depends on a CurseForge flag nobody has confirmed yet (Status VERIFY):
+
+- **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
 
 ## Could be CDN-linked instead of bundled
 
@@ -47,6 +56,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `fireflies-1.0.0-forge-1.20.1.jar` | 🟨⬛!!Fireflies!!🟨⬛ | All Rights Reserved | No permission | **NO** | - |
 | `hexxit_additions-1.0.2-forge-1.20.1.jar` | Hexxit Additions | All Rights Reserved | No permission | **NO** | - |
 | `alltheleaks-1.1.1+1.20.1-forge.jar` | All The Leaks | MIT | Licensed | yes | - |
+| `at_mod-0.0.2-1.20.1-skytekx.1.jar` | Alternative Twilight (Remastered) (1.20.1 backport by SkyTekx) | GPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `bibliocraft-1.20.1-1.3.1.jar` | BiblioCraft Legacy (Expanded) | MIT | Licensed | yes | - |
 | `birdsnests-1.20.1-2.1.5.jar` | Birds Nests | LGPL-3.0 | Licensed | yes | - |
 | `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm: Spellbooks (SkyTekx build) | MIT | Licensed | yes | - |
@@ -71,10 +81,17 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `refurbished_furniture-forge-1.20.1-1.0.20.jar` | MrCrayfish's Furniture Mod: Refurbished | Custom (MIT for source code; All Rights Reserved for assets) | Special permission | yes | - |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
 | `skytekx-compat-2.1.3.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
+| `skytekx-compat-2.0.0.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
+| `spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` | Spiced Twilight (1.20.1 backport by SkyTekx) | LGPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `traverse-forge-7.0.12.jar` | Traverse Reforged | LGPL-3.0-only | Licensed | yes | - |
 | `trumpet_skeleton-1.2-forge-1.20.1.jar` | Trumpet Skeleton: Reforged | MIT | Licensed | yes | - |
 | `Tumbleweed-forge-1.20.1-0.5.5.jar` | Tumbleweed | LGPL-3.0-only | Licensed | yes | yes |
-| `twilightforest-1.20.1-4.3-universal.jar` | The Twilight Forest | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures) | Special permission | yes | - |
+| `twilight_construct-1.0.7.jar` | Twilight Construct | LGPL-2.1 | Licensed | yes | - |
+| `twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar` | Twilight Crossbow (1.20.1 backport by SkyTekx) | MIT (code); CC BY-NC-SA 4.0 (textures adapted from The Twilight Forest) | Licensed | yes | 1.21.1 only |
+| `twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar` | Twilight Mobs Loots (1.20.1 backport by SkyTekx) | MIT | Licensed | yes | 1.21.1 only |
+| `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar` | The Twilight Forest (SkyTekx 1.20.1 fork, TF 4.8 backport) | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures), MIT (Mystic Crown Compat parts) | Special permission | yes | - |
+| `twilightforestfinalboss-1.0.1-forge-1.20.1.jar` | The King of Twilight | MIT | Licensed | yes | - |
+| `twilighttweaks-1.20.x-1.2.jar` | Twilight Tweaks | LGPL-2.1 | Licensed | yes | - |
 
 ## How to fill the form
 

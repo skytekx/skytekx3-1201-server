@@ -1,0 +1,31 @@
+{
+  "parent": "twilightforest:craft_travellers_gear",
+  "criteria": {
+    "add_any_modifier": {
+      "conditions": {},
+      "trigger": "twilightforest:add_modifier"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.twilightforest.modify_travellers_gear.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "twilightforest:travellers_boots",
+      "nbt": "{Damage:0,\"twilightforest:water_walk\":{}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.twilightforest.modify_travellers_gear"
+    }
+  },
+  "requirements": [
+    [
+      "add_any_modifier"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

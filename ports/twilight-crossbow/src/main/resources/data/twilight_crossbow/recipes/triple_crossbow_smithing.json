@@ -1,0 +1,16 @@
+{
+  "type": "twilight_crossbow:rebuild_template_smithing",
+  "template": {
+    "item": "twilight_crossbow:crossbow_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "twilightforest:triple_bow"
+  },
+  "addition": {
+    "item": "minecraft:gold_ingot"
+  },
+  "result": {
+    "item": "twilight_crossbow:triple_crossbow",
+    "count": 1
+  }
+}

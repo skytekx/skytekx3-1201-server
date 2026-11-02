@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "tag": "forge:nuggets/iron"
+    },
+    "l": {
+      "item": "twilightforest:tanned_leather"
+    },
+    "x": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:chests/wooden"
+      },
+      "subtracted": {
+        "tag": "forge:chests/trapped"
+      }
+    }
+  },
+  "pattern": [
+    "lll",
+    "ixi",
+    "lll"
+  ],
+  "result": {
+    "item": "twilightforest:travellers_belt"
+  },
+  "show_notification": true
+}

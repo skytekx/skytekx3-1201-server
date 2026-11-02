@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.lvedy.at_mod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "at_mod.refmap.json",
+  "mixins": [
+    "Naga.NagaMixin",
+    "Naga.NagaMovementPatternMixin",
+    "Lich.LichMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

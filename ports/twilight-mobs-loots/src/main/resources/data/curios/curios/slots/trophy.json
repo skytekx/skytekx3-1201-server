@@ -1,0 +1,5 @@
+{
+  "order": 200,
+  "icon": "twilight_mobs_loots:slot/empty_trophy_slot",
+  "validators": ["curios:tag"]
+}

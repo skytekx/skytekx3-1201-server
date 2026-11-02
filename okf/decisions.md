@@ -3,7 +3,7 @@ type: Decisions
 title: Decisions
 description: Every owner ruling on SkyTekx 3 from 2026-06-26 to 2026-10-31, grouped by area, with its status on 2026-10-31 and the page or file where it lives.
 tags: [decisions, rulings, owner]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Decisions
@@ -196,6 +196,9 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 | 2026-11-01 21:15 | The Skylands stay at noon all the time, with no mob griefing and no explosion damage to blocks there, done on the server only | Built. Dimension type `fixed_time` 6000 and skytekx-compat 2.1.4 on the server, clients unchanged | [Skylands worldgen](content/skylands-worldgen.md) |
 | 2026-11-02 13:12 | Whatever a diamond tool mines in vanilla stays mineable with it, and new blocks may ask for a higher tier | Done at 13:22. Nyx 1.0.1 gives the meteor tier its own empty tag, and all 1003 vanilla blocks passed the diamond tier check on the live server | [Nyx](content/nyx.md#history) |
 | 2026-11-02 13:11 | It never rains in the Skylands | Done at 13:13. None of the 15 Skylands biomes has precipitation (e55c731a) | [Skylands worldgen](content/skylands-worldgen.md#biomes) |
+| 2026-11-02 13:39, 13:48 and 13:51 | Mobs in the Skylands are weaker than in the overworld, because everybody builds a home there. At 13:48 no hostile mobs there at all, at 13:51 levels 1 to 5 would be fine but not level 50 | Done at 13:51 with no hostile mobs. `kubejs/server_scripts/skylands_no_mobs.js` refuses them and removed 70 when it loaded. A level cap of 1 to 5 instead is open | [Skylands worldgen](content/skylands-worldgen.md#sleep-and-hostile-mobs) |
+| 2026-11-02 13:42 and 13:48 | Give back the inventory lost in the deaths at a Skylands bed | Done at 13:43 and again at 13:52 from the playerdata snapshot of 13:32, written while the player was kicked. Checked at 13:53 | [Change log](log.md#2026-11-02-the-twilight-forest-backport-goes-live) |
+| 2026-11-01 20:11, 2026-11-02 13:31, 13:45, 14:04 and 14:07 | Sleeping in the Skylands turns night into day in the overworld | Live at 14:10. `kubejs/server_scripts/skylands_sleep.js` moves the overworld to the next morning, and `playersSleepingPercentage` went from 100 to 0, so one sleeping player is enough | [Skylands worldgen](content/skylands-worldgen.md#sleep-and-hostile-mobs) |
 
 Related: [OKF index](index.md), [Open items](open-items.md), [Change log](log.md),
 [History](history.md).

@@ -3,7 +3,7 @@ type: Feature
 title: Skylands worldgen
 description: The skytekx3:skylands floating islands dimension, a pure vanilla datapack generator that also runs on unmodded Spigot.
 tags: [content, worldgen, skylands, datapack]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Skylands worldgen
@@ -37,6 +37,11 @@ for 2026-10-31) and are cited by local time.
 - The same generator must work on an unmodded Spigot server (2026-07-12 20:39).
 - A new map with a light Halloween theme, not the world that is already generated
   (2026-10-31 16:56).
+- Sleeping in the Skylands turns night into day in the overworld (2026-11-01 20:11, 2026-11-02 13:31,
+  13:45, 14:04 and 14:07).
+- Hostile mobs in the Skylands are weaker than in the overworld, because everybody builds a home there
+  (2026-11-02 13:39). At 13:48 the owner asked for no hostile mobs there at all, and at 13:51 said that
+  levels 1 to 5 would be fine but not level 50.
 - Standing rule since 2026-06-30 01:20: decisions that improve speed and reliability win
   (memory `skytekx3-performance-priority.md`).
 
@@ -280,6 +285,31 @@ plains, mountains or the Nether. This also makes the shared pack free of mod ref
 deploy copies this world and its `level.dat`, the defect moves with it until the fix lands. A fresh world
 loads the file packs after all mod packs (commit 1c6f8d4), which should let the overrides win there.
 Nobody has checked that in game.
+
+## Sleep and hostile mobs
+
+Two KubeJS server scripts set the rules for living in the Skylands. Both run on the Mac mini since
+2026-11-02 and need no restart, because `/kubejs reload server_scripts` loads them.
+
+Sleep comes from `kubejs/server_scripts/skylands_sleep.js`. With its fixed time the dimension never
+counts as day, so beds work there at any hour. When everybody sleeps, vanilla sets the time of the
+Skylands only, and that time follows the overworld, so the night in the overworld went on. The script
+moves the overworld to the next morning and ends its rain once enough players in the Skylands sleep, one
+tick before vanilla wakes them. At day in the overworld the sleepers get the vanilla message instead. It
+runs in a level tick, because Arclight replaces the Forge sleeping time check when a player lies down.
+The rule `playersSleepingPercentage` is 0 since 14:10, so one sleeping player is enough in every
+dimension. With the default of 100, a second player who was awake in the Skylands kept the night going,
+which is why sleeping there still failed at 14:03.
+
+The hostile mobs go through `kubejs/server_scripts/skylands_no_mobs.js`. Since the Skylands stay at noon
+without counting as day, zombies and skeletons no longer burned there, and mobs from the caves gathered
+around the homes. L2Hostility also gave them levels near 50, because mod dimensions start at a base level
+of 20 with a variation of 16 and a scale of 1.5, plus 10 for each dimension a player has visited
+(`config/l2_configs/l2hostility-common.toml`). The script refuses every entity with the vanilla `Enemy`
+interface that joins the Skylands, whether it comes from a natural spawn, a spawner, a portal or a chunk
+loaded from disk, and it removes those already there when it loads. Its first working load at 13:51
+removed 70. Animals and other peaceful mobs stay. Whether weak mobs of levels 1 to 5 should come back
+instead is open, see [open items](../open-items.md#owner-decisions).
 
 ## Edit workflow
 
@@ -596,6 +626,9 @@ implemented, on 2026-10-31.
   [deploy of 2026-11-01](#deploy-of-2026-11-01).
 - 2026-11-01, 02:51: skytekx-compat 2.1.2 replaced 2.1.0 on the Mac mini. It also keeps swamp hut stilts
   and the sky stone of meteorites out of the void.
+- 2026-11-02: the Skylands became dry at 13:13, lost their hostile mobs at 13:51 and got sleep that turns
+  the overworld to day at 14:10, see [biomes](#biomes) and
+  [sleep and hostile mobs](#sleep-and-hostile-mobs).
 
 Related: [Skylands travel](aether-fall.md), [world reset](../server/world-reset.md),
 [performance](../server/performance.md), [mod set](../modpack/mod-set.md), [decisions](../decisions.md).

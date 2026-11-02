@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Open items
@@ -105,6 +105,14 @@ evidence and the page with the details. The rulings behind the first section are
   history of the build machine. See [Secrets](server/secrets.md#exposed-values-to-rotate).
 - The two local backup branches `backup-pre-reconstruct` and `backup-pre-scrub` hold the history before
   the rewrites of 2026-06-29. Keep or delete them.
+- Weak mobs or none in the Skylands. Since 2026-11-02 13:51 no hostile mob may join the Skylands, while
+  the owner said at 13:51 that levels 1 to 5 would be fine. An L2Hostility difficulty file for the
+  Skylands in a datapack (base 1, variation 2, scale 0, trait chance 0) would cap them near 1 to 5, and
+  the no mobs script would go. See
+  [Skylands worldgen](content/skylands-worldgen.md#sleep-and-hostile-mobs).
+- One sleeper for everybody. Since 2026-11-02 14:10 the rule `playersSleepingPercentage` is 0, so one
+  sleeping player turns night into day for the whole server. It was set to make sleeping in the Skylands
+  work. The value 50 would ask for half of the players in a dimension instead.
 
 ## Defects to fix
 

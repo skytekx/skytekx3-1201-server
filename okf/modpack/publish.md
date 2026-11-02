@@ -61,6 +61,10 @@ the Modrinth `version_number`), `versionId` in `modrinth.index.json`, and a new
    everything since the last upload recorded under *State* (3.1.0 also covers the never-uploaded 3.0.5).
    If a permission blocker is resolved by dropping a jar, drop it from the changelog too. Use absolute
    GitHub URLs, not relative `okf/` links, which break on Modrinth. The dry run prints the text.
+4. **Project page.** `publish_modrinth.py` sends `docs/MODPACK_DESCRIPTION.md` only when it creates the
+   project, and the project exists, so an upload does not change the page. When the description has
+   changed (for 3.1.0: the Twilight Forest is now bundled), paste it into the project's Description on
+   Modrinth (or `PATCH /v2/project/skytekx3` with a new `body`).
 
 ## State
 - Last upload recorded here: **3.0.4** (213 index files + overrides; `.mrpack` ≈ 50 MB). An upload of

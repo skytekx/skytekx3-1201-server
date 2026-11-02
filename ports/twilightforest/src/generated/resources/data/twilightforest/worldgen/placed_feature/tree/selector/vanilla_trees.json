@@ -18,7 +18,7 @@
       "occupies_surface": true,
       "occupies_underground": false,
       "occupies_vegetation": false,
-      "structures_allowed": []
+      "structures_allowed": "twilightforest:lich_tower"
     },
     {
       "type": "minecraft:block_predicate_filter",

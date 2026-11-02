@@ -754,6 +754,20 @@
      "Pack changelog: players who already completed twilightforest:twilight_dinner see it reopen (now 14 criteria: berries, berry medley, jerky, slime drop, moss soup) and get its 75 XP and challenge announcement again on re-completion."
     ],
     "source": "dried-foods-and-tanning review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "jade-top-providers+emi-native-plugin",
+    "ids": [
+     "jade-top-providers",
+     "emi-native-plugin"
+    ],
+    "deferred": [
+     "travellers-gear: add TFItems.TRAVELLERS_GOGGLES/VEST/GLOVES/BELT/WINGS/BOOTS.get() to TFEmiCompat.CANT_USE_ENCHANTS, same order as 4.8 TFEmiCompat (goggles, vest, gloves, belt, wings, boots, after FORTIFICATION_SCEPTER), and remove the \"4.8 also lists the six Traveller's Gear pieces\" comment. Without it EMI shows made-up anvil enchant and grindstone disenchant recipes for the gear once it lands.",
+     "travellers-modifier-framework: port 4.8 compat/emi/recipes/EmiTravellersGearGrindstoneRecipe and EmiTravellersGearModifierRecipe. In TFEmiCompat.register call EmiTravellersGearGrindstoneRecipe.register(registry) right after the drying loop. In the crafting loop add `else if (crafting instanceof TravellersGearModifierRecipe recipe && TravellersModifiersManager.isModifierEnabled(Minecraft.getInstance().level.registryAccess(), recipe.getTravellersModifierKey())) emiRecipe = new EmiTravellersGearModifierRecipe(recipe);` (4.8 fbd63cc75: no display with an empty output for a deleted modifier). The JEI side of the Traveller's categories/extensions is already handed to travellers-* by the wave-5 jei-plugin-upgrades entry.",
+     "jei-plugin-upgrades (wave-5 item '4.8's JEI 19 layout APIs -> emi-native-plugin / wave-9 recipe-viewer polish'): dropped, no feature id. setStandardSlotBackground, setOutputSlotBackground, getRecipeArrow, ITooltipBuilder and onDisplayedIngredientsUpdate need a jei_version above the fork's 15.2.0.25, and in this pack EMI is installed, so JEICompat.isEmiInstalled turns the TF JEI plugin off and none of it would be visible. The JEI ominous fire category uses the furnace arrow instead of getRecipeArrow. Revisit only if the pack drops EMI and the fork moves to JEI 15.20+.",
+     "Recipe-viewer tag names -> no feature id (follow-up for whoever polishes recipe viewers): 4.8's 52 LangGenerator.translateTag entries (TFLangProvider.translateTag writes tag.<registry>.<namespace>.<path with / as .>, e.g. tag.item.twilightforest.boar_tempt_items, plus FluidTagGenerator.FIRE_JET_FUEL) are still missing, so EMI shows raw tag ids for TF tag ingredients. passive-tempt-tags skipped them because 4.3 had no EMI plugin; that reason is gone now. Port the helper and only the entries whose tags exist in this fork, using the fork's tag ids (forge:ingots/..., forge:storage_blocks/... where 4.8 uses c:), and hand-write the sorted keys into the generated en_us.json."
+    ],
+    "source": "jade-top-providers+emi-native-plugin review (waves 8-10 integrator)"
    }
   ]
  }

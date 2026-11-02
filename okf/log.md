@@ -461,7 +461,7 @@ logs stay on the Mac and are not in the repo.
   logs the Sophisticated recipes it drops from the recipe book. The owner's client `SkyTekx3-test`
   and the second MacBook got the same swap, and the build machine's `mods/` matches the Mac mini by
   SHA-256. See [Mod set](modpack/mod-set.md#backpack).
-- In the evening the Mac mini moved to a new network and is now reached at 192.168.178.50. On the
+- In the evening the Mac mini moved to a new local network and got a new LAN address. On the
   owner's ask Elementary Staffs came back as our Forge 1.20.1 port of Kroko's MIT mod
   (`elementary-staffs-1.20.1-2.0.0.1.jar`, public repo `skytekx/elementary-staffs`, 25 GameTests). After
   a test with the owner's client on the test server and a chat warning, a backup ran at 19:56

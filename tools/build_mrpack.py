@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Assemble SkyTekx3.mrpack (client+server) from resolved Modrinth metadata.
-- writes modrinth.index.json
+"""Assemble SkyTekx3.mrpack (client+server) from the committed modrinth.index.json.
+- reads modrinth.index.json as committed (never rewrites it) and checks versionId/forge against
+  VERSION/FORGE below
 - splits client-only jars out of the server mods/ dir
 - zips overrides (config, kubejs, defaultconfigs) + index into the .mrpack
 """
 import json, os, shutil, zipfile, sys
 
 REPO = "/home/snekmin/git/skytekx3-1201-server"
-SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
 VERSION = "3.1.0"
 FORGE = "47.4.6"
 
@@ -41,29 +41,23 @@ if bad:
                  "for a private/draft build that must not be uploaded")
     print("--allow-unpermitted: building anyway; do NOT upload this .mrpack")
 
-# mod file list: session scratch from resolve_all.py when present, else the committed index
-if os.path.exists(SC+"/mrpack_files.json"):
-    files = json.load(open(SC+"/mrpack_files.json"))
-else:
-    files = json.load(open(REPO+"/modrinth.index.json"))["files"]
-    print("mrpack_files.json scratch missing, using modrinth.index.json files list")
-# dedupe by path (last wins)
-byp = {}
-for f in files:
-    byp[f["path"]] = f
-files = list(byp.values())
-
-index = {
-    "formatVersion": 1,
-    "game": "minecraft",
-    "versionId": VERSION,
-    "name": "SkyTekx3",
-    "summary": "Hexxit + Tekkit + SkyFactory-style tech/magic/adventure kitchen-sink — the gen-3 rebuild of SkyTekx on 1.20.1.",
-    "files": files,
-    "dependencies": {"minecraft": "1.20.1", "forge": FORGE},
-}
-os.makedirs(REPO, exist_ok=True)
-json.dump(index, open(REPO+"/modrinth.index.json", "w"), indent=2)
+# --- mod file list: always the committed index ---
+# The index is the source of truth and is shipped as committed. (Until 3.1.0 a resolve_all.py scratch
+# list silently replaced it and was written back over the index, dropping every index-only entry.)
+INDEX = REPO + "/modrinth.index.json"
+index = json.load(open(INDEX, encoding="utf-8"))
+files = index["files"]
+paths = [f["path"] for f in files]
+problems = []
+dups = sorted({p for p in paths if paths.count(p) > 1})
+if dups:
+    problems.append("duplicate paths: %s" % dups)
+if index.get("versionId") != VERSION:
+    problems.append("versionId %r != VERSION %r (bump them together)" % (index.get("versionId"), VERSION))
+if index.get("dependencies", {}).get("forge") != FORGE:
+    problems.append("dependencies.forge %r != FORGE %r" % (index.get("dependencies", {}).get("forge"), FORGE))
+if problems:
+    sys.exit("modrinth.index.json does not match this build: " + "; ".join(problems))
 
 # --- split client-only jars out of the server mods/ dir ---
 clientonly = REPO+"/client-only-mods"

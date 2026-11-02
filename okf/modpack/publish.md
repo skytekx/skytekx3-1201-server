@@ -14,6 +14,11 @@ python3 tools/build_mrpack.py     # builds SkyTekx3-<ver>.mrpack from the index 
 
 - Bundles every [Modrinth-resolvable mod](mod-set.md) from `modrinth.index.json` plus the
   `local-mods/` overrides and the [`skylands-datapack/`](../content/skylands-worldgen.md).
+- Ships `modrinth.index.json` exactly as committed and never rewrites it. It refuses to build when the
+  index's `versionId` or Forge version differs from `VERSION`/`FORGE` in the script, or when a path is
+  listed twice. The `WROTE` line must report the index's file count (225 for 3.1.0). Before 3.1.0 the
+  script preferred a `tools/resolve_all.py` scratch list when one existed and wrote it over the index,
+  which silently dropped every index-only mod (such as the TF addons).
 - `python3 tools/publish_modrinth.py <PAT> --go` uploads it as a new version to Modrinth project
   **`skytekx3`** using the PAT from the [vault](../server/secrets.md) (`vault_modrinth_pat`). Loader
   Forge, MC 1.20.1. Without `--go` it is a dry run.

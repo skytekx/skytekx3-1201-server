@@ -21,11 +21,15 @@ python3 tools/build_mrpack.py     # builds SkyTekx3-<ver>.mrpack from the index 
   which silently dropped every index-only mod (such as the TF addons).
 - `python3 tools/publish_modrinth.py <PAT> --go` uploads it as a new version to Modrinth project
   **`skytekx3`** using the PAT from the [vault](../server/secrets.md) (`vault_modrinth_pat`). Loader
-  Forge, MC 1.20.1. Without `--go` it is a dry run.
+  Forge, MC 1.20.1. Without `--go` it is a dry run that prints the changelog it would send.
+- The version's changelog on Modrinth is the file `docs/changelog/<VERSION>.md`. `publish_modrinth.py`
+  refuses to run when that file is missing or empty. (Until 3.1.0 the changelog was a string inside the
+  script, and the 3.1.0 bump would have uploaded the 3.0.4 Nyx/Skylands text.)
 
-The version is hard-coded in three places, bump them together: `VERSION` in `tools/build_mrpack.py`
+The version is hard-coded in four places, bump them together: `VERSION` in `tools/build_mrpack.py`
 (the `.mrpack` name and `versionId`), `VERSION` in `tools/publish_modrinth.py` (the file it uploads and
-the Modrinth `version_number`) and `versionId` in `modrinth.index.json`.
+the Modrinth `version_number`), `versionId` in `modrinth.index.json`, and a new
+`docs/changelog/<VERSION>.md` for the new version.
 
 ## Before uploading
 1. **Permissions.** Every `local-mods/` jar needs a [`modrinth-permissions/`](../../modrinth-permissions/README.md)
@@ -44,12 +48,17 @@ the Modrinth `version_number`) and `versionId` in `modrinth.index.json`.
    `git ls-tree origin/master ports/twilightforest ports/spiced-twilight ports/alternative-twilight-remastered`
    lists all three and that the three `tree/master/ports/...` URLs open without logging in (the repo is
    public). Do not rewrite the URLs: they are baked into the SHA-pinned jars.
+3. **Changelog.** Check that `docs/changelog/<VERSION>.md` exists and describes this release, for
+   everything since the last upload recorded under *State* (3.1.0 also covers the never-uploaded 3.0.5).
+   If a permission blocker is resolved by dropping a jar, drop it from the changelog too. Use absolute
+   GitHub URLs, not relative `okf/` links, which break on Modrinth. The dry run prints the text.
 
 ## State
 - Last upload recorded here: **3.0.4** (213 index files + overrides; `.mrpack` ≈ 50 MB). An upload of
   3.0.5 (master, vanilla Skylands rework) is not recorded.
 - Next version: **3.1.0** (225 index files + overrides; the [TF 4.8 backport](twilightforest-backport.md)
-  and its addons). Not uploaded yet; blocked by the two checks above.
+  and its addons; changelog `docs/changelog/3.1.0.md`). Not uploaded yet; blocked by the permission and
+  source-link checks above.
 - The Modrinth **project itself is still in `draft`** — uploaded versions aren't publicly listed until
   someone publishes the project.
 

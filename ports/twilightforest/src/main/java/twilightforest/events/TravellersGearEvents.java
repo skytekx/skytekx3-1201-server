@@ -90,6 +90,11 @@ public class TravellersGearEvents {
 			attachment.doubleJumpValidator.count = 0;
 			attachment.hasDoubleJumpSafeFallDistance = false;
 		}
+		// Local fix over 4.8: the safe fall distance of a double jump ends with the landing even when the Double Jump
+		// modifier was lost mid-air (wings taken off, modifier removed). 4.8 only drops it when hasDoubleJump changes,
+		// so it stayed on for every later fall. The landing's fall event has already fired by this tick start.
+		if (attachment.hasDoubleJumpSafeFallDistance && (player.onGround() || TravellersGearLogic.isInLiquid(player) || player.onClimbable()))
+			attachment.hasDoubleJumpSafeFallDistance = false;
 
 		if (!player.level().isClientSide()) {
 			boolean modifierActive = TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.GRADUAL_GLIDE_MODIFIER);

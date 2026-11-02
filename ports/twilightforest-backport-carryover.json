@@ -1149,6 +1149,31 @@
     ],
     "source": "workflow waves-8-10 bundle D17-travellers-goggles-item-display"
    }
+  ],
+  "final-audit": [
+   {
+    "bundle": "food-creative-tab (final audit of dried-foods-and-tanning / berry-bushes)",
+    "ids": [
+     "dried-foods-and-tanning",
+     "berry-bushes",
+     "oreberries"
+    ],
+    "deferred": [
+     "4.8's 'Twilight Forest: Food' creative tab is not ported, and until this audit nothing recorded it. 4.8 registers it in TFCreativeTabs.java:603 (FOOD = TABS.register(\"food\", ...).withTabsBefore(EQUIPMENT.getKey()), title itemGroup.twilightforest.food) with the torchberries, berries, Berry Medley, Moss Soup and the jerkies; it came with 485d7e0a7 'Squashed and rebased onto 1.21.1 main', the construct-update squash these features were ported from. The fork keeps 4.3's three tabs (blocks, items, equipment) and lists the new foods in the Items tab (RASPBERRY, BERRY_MEDLEY, MOSS_SOUP, BEEF_JERKY, GELATINOUS_SLIME_DROP, ...). Every item of 4.8's tabs is in a fork tab, so nothing is unlisted: cosmetic and creative-only. Deferred instead of listed as a quick port because it adds a creative_mode_tab registry entry and a lang key. To port (about 1 h): copy the FOOD builder from 4.8 TFCreativeTabs.java:603 (DeferredHolder becomes RegistryObject), move those entries out of ITEMS, add itemGroup.twilightforest.food = 'Twilight Forest: Food' to LangGenerator and src/generated en_us.json (other locales through tools/merge_upstream_lang.py)."
+    ],
+    "source": "final audit"
+   },
+   {
+    "bundle": "dnv-terrain-recheck (final audit of custom-density-terraforming / avoid-landmark-grid-placement)",
+    "ids": [
+     "custom-density-terraforming",
+     "avoid-landmark-grid-placement"
+    ],
+    "deferred": [
+     "Runtime check, no code, due now: the inventory's Dungeons & Villages risk note asks for a re-check once 4.8's structure placement or Beardifier changes are backported, and both are. TFBeardifier.forStructuresInChunk (TFBeardifier.java:51) selects every structure with terrain_adaptation != NONE or a CustomDensitySource, TF or not, so D&V's twilight_village and dungeon_hedge (minecraft:jigsaw, terrain_adaptation beard_box; structure sets random_spread spacing 34 / separation 8, no landmark exclusion) now reshape TF terrain, which 4.3 never did. This matches 4.8, where vanilla's Beardifier applies to every structure. After the TF dimension reset, /locate a few D&V villages and hedge dungeons near landmarks and check their terrain (beard boxes, no floating or buried pieces) and any overlap with landmarks; record the result in okf/modpack/twilightforest-backport.md. Twilight Treehouses are unaffected (terrain_adaptation none)."
+    ],
+    "source": "final audit"
+   }
   ]
  }
 }

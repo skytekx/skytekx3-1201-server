@@ -63,7 +63,9 @@ public class StructureTreeGrower extends AbstractTreeGrower {
 		ChunkPos start = new ChunkPos(SectionPos.blockToSectionCoord(boundingbox.minX()), SectionPos.blockToSectionCoord(boundingbox.minZ()));
 		ChunkPos end = new ChunkPos(SectionPos.blockToSectionCoord(boundingbox.maxX()), SectionPos.blockToSectionCoord(boundingbox.maxZ()));
 
-		if (ChunkPos.rangeClosed(start, end).noneMatch(currentChunkPos -> level.isLoaded(currentChunkPos.getWorldPosition())))
+		// 4.8 only gives up when none of the covered chunks is loaded; like vanilla PlaceCommand, give up when any of them is unloaded,
+		// so a sapling ticking near the edge of the simulation distance waits instead of loading/generating chunks on the server thread
+		if (ChunkPos.rangeClosed(start, end).anyMatch(currentChunkPos -> !level.isLoaded(currentChunkPos.getWorldPosition())))
 			return false;
 
 		level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);

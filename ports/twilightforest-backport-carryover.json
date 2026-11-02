@@ -801,6 +801,84 @@
     ],
     "source": "travellers-gear review (waves 8-10 integrator)"
    }
+  ],
+  "addons": [
+   {
+    "bundle": "twilight-mobs-loots",
+    "ids": [
+     "twilight-mobs-loots"
+    ],
+    "deferred": [
+     "Twilight Moonshine Moon Rabbit trophy compat (MoonRabbitCurioRenderer, MoonRabbitRendererBridge and the twilightmoonshine:moon_rabbit_trophy entries in curios:head and curios:trophy). Twilight Moonshine has no 1.20.1 build and is not in the pack, and its unresolved id would have dropped both curios tags.",
+     "Re-registering Twilight Forest's nine boss trophies as curios and giving them this mod's TrophyCurioRenderer. Nothing is lost: the fork already gives them a curio capability (TrophyItem/CurioItem) and an equivalent CurioHeadRenderer. They are still added to the curios:trophy tag so they fit the new slot.",
+     "Not runtime-tested: client rendering (block entity renderer, item renderer, Curios renderer, hiding the player's head). Only a dedicated server was booted. It compiles against the client classes, and the reflection names were checked.",
+     "Not runtime-tested: the actual trophy drop. The pool needs a player kill, and no player can join the headless server. The injected pool did run on the redcap and bighorn tables without error.",
+     "No 4.8-only mobs had to be skipped: all 48 MobHead entries exist in the fork."
+    ],
+    "source": "workflow tf-addon-backports bundle E01-twilight-mobs-loots"
+   },
+   {
+    "bundle": "twilight-crossbow",
+    "ids": [
+     "twilight-crossbow"
+    ],
+    "deferred": [
+     "Knight Crossbow (KnightCrossBowItem): upstream never registers it, so neither the item nor upstream's getChargeDuration CrossbowItemMixin is ported.",
+     "TwilightCrossBowClient: an empty config-screen entry point upstream (the mod has no configs). Dropped; client setup is merged into ClientRegistrar.",
+     "Client-only code compiled and its refmap entries were checked, but none of it ran (dedicated-server test only): the crossbow model predicates, the HumanoidModel and ItemInHandRenderer mixins, the IceFireworkEntityRenderer, and the JEI smithing extension.",
+     "A Snow Guardian actually shooting a player with RangedCrossbowAttackGoal was not tested (needs a player). The shooting code it uses was tested through pillagers.",
+     "Under Arclight, Bukkit's EntityShootBowEvent does not fire for these four crossbows, because they skip CrossbowItem#shootProjectile. No Arclight boot was run.",
+     "In 1.21 the charging sounds come from enchantment components; on 1.20.1 the crossbows use the vanilla charging sounds.",
+     "The addon's entry in ports/twilightforest-backport-inventory.json still says action needs_backport. Left alone to avoid merge conflicts with the other workflows."
+    ],
+    "source": "workflow tf-addon-backports bundle E02-twilight-crossbow"
+   },
+   {
+    "bundle": "spiced-twilight",
+    "ids": [
+     "spiced-twilight"
+    ],
+    "deferred": [
+     "Naga jump attack (upstream NagaMovementPatternMixin) is not ported on purpose: it conflicts with the Naga rework in Alternative Twilight Remastered, which is backported into the same pack. This is documented in NOTICE, the mods.toml description and okf.",
+     "Lich minion to Skeleton Druid conversion (LichAbsorbMinionsGoal mixin) applies cleanly but was not seen in-game. In the headless test the summoned Lich removed itself (it was not in its tower), so no low-health absorb phase happened. It needs a real fight to check.",
+     "The Lich#getTeleportInvisibility check is looked up by reflection and only takes effect once the fork's Lich rework (waves 8-10) adds that method. Until then the check always passes.",
+     "The kobold ironwood-helmet branch for twilightforest:highlands_underground matches nothing until the fork has that biome (wave 7 worldgen). It uses a plain ResourceKey, so it needs no code change when the biome lands.",
+     "Client-side parts were only compiled and checked with javap, not run in a client: the helmet crab hide model, the baby kobold head and armor layer on both the default and the Jappa kobold models, the Maze Slime Beetle renderer, the thrown maze slime ball renderer, and the Cinder Pouch bundle tooltip and use particles.",
+     "Natural Maze Slime Beetle spawning inside the Labyrinth (the LevelEvent.PotentialSpawns hook) was not observed: natural spawning needs a player online. Only the structure tag resolution was checked.",
+     "The datagen run was not executed. The recipe and advancement JSON in src/generated were hand-written in the 1.20.1 datagen format. The ported CraftingGenerator would produce the same files.",
+     "Not boot-tested on Arclight, only on plain Forge 47.4.18. The vanilla brewing-stand mixins are HEAD injects with no overwrites."
+    ],
+    "source": "workflow tf-addon-backports bundle E03-spiced-twilight"
+   },
+   {
+    "bundle": "alternative-twilight-remastered",
+    "ids": [
+     "alternative-twilight-remastered"
+    ],
+    "deferred": [
+     "Boss music audio: the 8 upstream .ogg tracks (naga, lich, hydra, ur_ghast, knight_phantom, snow_queen, minoshroom, alpha_yeti; about 33 MB) and their sounds.json are not shipped. Their metadata shows Bilibili video downloads of unknown authorship, which the GPL grant does not cover. The music system is ported and registers the at_mod:music.<boss> sound events; it plays only if a resource pack defines them in assets/at_mod/sounds.json and stays silent otherwise.",
+     "NeoForge in-game config screen (ConfigurationScreen): Forge 47 has no generic equivalent. Edit config/at_mod_config.toml instead.",
+     "MDK template leftovers: at_mod:example_block, its block item, its creative-tab entry, and the HELLO log listeners.",
+     "Client-side runtime check: the spear arm pose and models, the Knight Phantom aurora post shader and the boss music tracker compile but were not run in a game client (server-only test environment).",
+     "Upstream master rewrite (8f5c978, com.alternative_twilight package, 1.0.0): not ported, because it is unfinished TODO stubs with no boss logic.",
+     "1.20.5+ damage type tags minecraft:no_knockback and minecraft:bypasses_wolf_armor are dropped because they do not exist in 1.20.1. no_knockback is emulated for the venom with LivingKnockBackEvent; wolf armor does not exist in 1.20.1.",
+     "Full-pack Arclight boot: not done here. The jar needs the fork TF jar to replace the stock twilightforest-1.20.1-4.3-universal.jar in local-mods/ before the pack can load it."
+    ],
+    "source": "workflow tf-addon-backports bundle E04-alternative-twilight-remastered"
+   },
+   {
+    "bundle": "mystic-crown-curios",
+    "ids": [
+     "mystic-crown-curios"
+    ],
+    "deferred": [
+     "In-game checks that need a real logged-in player were not run on the headless server: putting the crown in a Curios head slot (GUI or right-click) and having it count there, the curio head rendering, Twilight Scepter Lich-bomb shots, double Lifedrain damage from scepter use, and the Zombie Scepter gear roll and Knockback II stick. The code paths are compiled and partly exercised: the crown check on non-Curios mobs, the Lich-bomb immunity, shield behaviour, CrownSummoned NBT and the 4-damage attack.",
+     "Addon config translations: the addon's lang file only had MDK template keys. The fork's existing config options have no lang entries, so the two new options don't either.",
+     "Datagen .cache was not updated for curios/tags/items/head.json. Like the other recent feature commits, I left it for the next 'chore(twilightforest): regenerate datagen output' run.",
+     "config/twilightforest-common.toml in the repo does not list the two new options (it also lacks other newer options). Forge fills in the defaults (true/true) on first boot."
+    ],
+    "source": "workflow tf-addon-backports bundle E05-mystic-crown-curios"
+   }
   ]
  }
 }

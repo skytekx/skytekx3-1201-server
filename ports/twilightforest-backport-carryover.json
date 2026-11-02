@@ -574,6 +574,18 @@
      "oreberries: UndergroundPlantFeature now has (codec) and (codec, boolean spawnInStructure) constructors and a deferred isInsideLandmark lookup (a9683b9dd, #2532). When porting OREBERRY_BUSHES, merge 4.8's (codec, int maxCount) and (codec, int maxCount, boolean) constructors and the maxCount loop limit into this version, keep the spawnInStructure field and the deferred landmark lookup, and default maxCount to Integer.MAX_VALUE for the existing constructors."
     ],
     "source": "cave-carver-rework+highlands-underground-troll-caves review (wave 7 integrator)"
+   },
+   {
+    "bundle": "speleothem-config-datadriven+chunk-blanketing",
+    "ids": [
+     "speleothem-config-datadriven",
+     "chunk-blanketing"
+    ],
+    "deferred": [
+     "13712dc34/37f62ed62 (Yeti Cave drainWater + getWorldY(4) lattice height): N/A on 4.3 terrain, belongs to landmark-density-terrain. The speleothem port places the Yeti Cave and Hydra Lair lattices at the world heights 4.8 used while it still had 4.3's deformTerrainForYetiLair / raiseHills terrain; whoever ports the density-shaped landmark terrain must move these lattice heights to the 4.8 values in the same commit (Yeti Cave: drainWater and getWorldY(4), 13712dc34/37f62ed62).",
+     "chunk-blanketing: worlds created with 4.3 store dark_forest_canopy_height=19 in level.dat; the ChunkGeneratorTwilight codec keeps it as an optional ignored field, so new Dark Forest chunks use the 4.8 canopy (height 14, 1x thickness) and show a ~5-block step against explored chunks. Mitigation is a TF dimension reset or a server datapack overriding data/twilightforest/twilight/chunk_blanket_processors/dark_forest_canopy.json with \"height\": 19 (height only; the processor has no thickness field)."
+    ],
+    "source": "speleothem-config-datadriven+chunk-blanketing review (wave 7 integrator)"
    }
   ],
   "8": [

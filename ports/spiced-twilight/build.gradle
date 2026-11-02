@@ -101,6 +101,9 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
+    // byte-reproducible jar, so the SHA-1 in modrinth-permissions/ can be checked against a rebuild
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
     // LGPL-3.0: ship the license texts and the modification notice inside the jar
     from('LICENSE.md') {
         rename { "LICENSE_${project.mod_id}.md" }

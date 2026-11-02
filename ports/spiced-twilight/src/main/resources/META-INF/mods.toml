@@ -10,7 +10,7 @@ displayName="${mod_name}"
 displayURL="https://modrinth.com/mod/spiced-twilight"
 logoFile="logo.png"
 authors="${mod_authors}"
-credits="Original mod by baguchi (https://github.com/baguchi/SpicedTwilight). Modified Forge 1.20.1 backport for SkyTekx 3, see NOTICE_spiced_twilight."
+credits="Original mod by baguchi (https://github.com/baguchi/SpicedTwilight). Modified Forge 1.20.1 backport for SkyTekx 3, see NOTICE_spiced_twilight. Source of this build: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/spiced-twilight"
 description='''
 This addon "spices up" Twilight Forest's monsters.
 

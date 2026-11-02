@@ -70,6 +70,8 @@ public class CommonEvents {
      * Adds the Maze Slime Beetle to the monster spawns inside the structures tagged
      * {@code #spiced_twilight:labyrinth_maze_slime_spawn} (the Labyrinth). Twilight Forest replaces the spawn list
      * inside its landmarks, so a biome modifier cannot reach them; this hooks the list after Twilight Forest built it.
+     * Like Twilight Forest's own per-piece lookup, it only applies inside one of the structure's pieces (the rest of
+     * the bounding box keeps its biome spawns) and leaves pieces without monster spawns (vaults, boss room) empty.
      */
     @SubscribeEvent
     public static void onPotentialSpawns(LevelEvent.PotentialSpawns event) {
@@ -77,8 +79,12 @@ public class CommonEvents {
             return;
         }
         for (Holder<Structure> structure : level.registryAccess().registryOrThrow(Registries.STRUCTURE).getTagOrEmpty(MAZE_SLIME_BEETLE_SPAWN_STRUCTURES)) {
-            StructureStart start = level.structureManager().getStructureAt(event.getPos(), structure.value());
+            StructureStart start = level.structureManager().getStructureWithPieceAt(event.getPos(), structure.value());
             if (start.isValid()) {
+                // Twilight Forest empties the list in pieces that must not spawn monsters; keep it that way
+                if (event.getSpawnerDataList().isEmpty()) {
+                    return;
+                }
                 // a conquered landmark falls back to its biome's spawns
                 if (!(start instanceof TFStructureStart tfStart && tfStart.isConquered())) {
                     event.addSpawnerData(MAZE_SLIME_BEETLE_SPAWN.get());

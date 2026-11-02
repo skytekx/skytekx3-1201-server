@@ -471,7 +471,10 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   `spiced_twilight:add_table` loot modifier (Fire Beetle Powder from fire beetles, Hydra Hide from the
   Hydra). The Maze Slime Beetle joins the Labyrinth's monster list through `LevelEvent.PotentialSpawns`
   (structure tag `#spiced_twilight:labyrinth_maze_slime_spawn`), because TF replaces the spawn list inside
-  landmarks; upstream's biome modifier only reached the swamp surface. Mixin targets: `FireBeetle#registerGoals`
+  landmarks; upstream's biome modifier only reached the swamp surface. Like TF's own lookup it only
+  applies inside a structure piece (`getStructureWithPieceAt`; the rest of the bounding box keeps its biome
+  spawns), skips conquered Labyrinths and leaves the pieces TF keeps free of monsters (vaults, boss room)
+  empty. Mixin targets: `FireBeetle#registerGoals`
   (TAIL, swaps `BreathAttackGoal` for a breath with a wind-up), `HelmetCrab#registerGoals`,
   `#defineSynchedData`, `#addAdditionalSaveData`, `#readAdditionalSaveData`, the same three on `Kobold`
   plus new overrides of `isBaby`, `setBaby`, `finalizeSpawn`, `populateDefaultEquipmentSlots`,
@@ -488,7 +491,9 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   used once it exists. Not ported: the Naga jump attack (`NagaMovementPattern` mixin), which conflicts
   with Alternative Twilight Remastered's Naga rework.
   **Bundled** as `local-mods/spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` with its `modrinth-permissions/`
-  file. Like Twilight Mobs Loots it needs the fork jar in `local-mods/`: next to the stock
+  file; the jar build is byte-reproducible, and its NOTICE and mods.toml credits link the source
+  (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/spiced-twilight), as the LGPL asks
+  for a modified build. Like Twilight Mobs Loots it needs the fork jar in `local-mods/`: next to the stock
   `twilightforest-1.20.1-4.3-universal.jar` Forge refuses to load it. Land the fork jar swap before or
   together with any release that ships this jar, then boot the full pack once on Arclight (Done, 0 FATAL,
   no mixin errors) and refuel one brewing stand with Fire Beetle Powder; the porter's boot test ran on
@@ -528,7 +533,7 @@ on is in the fork (details in the table below):
 | [Create: Shimmer](https://www.curseforge.com/minecraft/mc-mods/create-shimmer) | needs_backport | yes | 1.21.1 NeoForge only (1.3.1, 2026-08-13). Needs create [6.0.7,), create_dragons_plus [1.8.0,), curios 9 and twilightforest [4.7.0,). |
 | [Twilight Mobs Loots](https://modrinth.com/mod/twilight-mobs-loots) | backported_bundled | yes | 1.21.1 NeoForge 1.1.1 only. twilightforest [4.8,5.0). 24 classes, no mixins. Done: ported in `ports/twilight-mobs-loots/` (22 classes, Twilight Moonshine compat dropped) and bundled as `local-mods/twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar`. |
 | [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | backported_held | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. Done: ported in `ports/twilight-crossbow/` (Knight Crossbow left out, upstream never registers it). The jar is not bundled until the fork jar replaces the 4.3 jar in `local-mods/`. |
-| [Spiced Twilight (baguchi)](https://modrinth.com/mod/spiced-twilight) | needs_backport | yes | 1.21.1 NeoForge 1.21.1-2.0.0 only. twilightforest [4.8.3287,). 32 classes, 9 mixins into 4.8 entity code. |
+| [Spiced Twilight (baguchi)](https://modrinth.com/mod/spiced-twilight) | backported_bundled | yes | 1.21.1 NeoForge 1.21.1-2.0.0 only. twilightforest [4.8.3287,). 32 classes, 9 mixins into 4.8 entity code. Done: ported in `ports/spiced-twilight/` (Naga jump attack left out) and bundled as `local-mods/spiced_twilight-2.0.0-1.20.1-skytekx.1.jar`. |
 | [Mystic Crown Compat](https://modrinth.com/mod/mystic-crown-compat) | skip | no | 1.21.1 NeoForge 1.1.0 only. twilightforest [4.8,). 14 classes, 5 mixins. |
 | [Twilight Forest Cave Fix](https://modrinth.com/mod/twilight-forest-cave-fix) | skip | no | 1.20.1 Forge 1.0.0 only. twilightforest [4.3.2145,). |
 | [Twilight Iris Xe Fix / TF-Intel-Fix](https://modrinth.com/mod/twilight-iris-xe-fix) | skip | no | 1.20.1 Forge 1.0.0 each. |

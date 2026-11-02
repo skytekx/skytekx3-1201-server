@@ -3857,8 +3857,8 @@
     "fits_reason": "Optional. Only worth it after the 4.8 entity/Naga changes are backported.",
     "license": "LGPL-3.0-or-later (github.com/baguchi/SpicedTwilight).",
     "on_modrinth": true,
-    "risk_with_tf_48_features": "It mixes into 4.8 entity classes, so it is portable only on top of a backport that matches the 4.8 code. Its Naga mixin conflicts with Alternative Twilight.",
-    "action": "needs_backport"
+    "risk_with_tf_48_features": "It mixes into 4.8 entity classes, so it is portable only on top of a backport that matches the 4.8 code. Its Naga mixin conflicts with Alternative Twilight. Done: backported from source in ports/spiced-twilight/ (2.0.0-1.20.1-skytekx.1, from upstream 1.21.1-2.0.0 commit 92a6b60be; the Naga jump attack is left out because Alternative Twilight Remastered owns the Naga). Requires twilightforest [4.3.2508-skytekx.1,), so local-mods/ needs the fork TF jar. Bundled as local-mods/spiced_twilight-2.0.0-1.20.1-skytekx.1.jar with modrinth-permissions/ attribution.",
+    "action": "backported_bundled"
    },
    {
     "name": "Mystic Crown Compat",

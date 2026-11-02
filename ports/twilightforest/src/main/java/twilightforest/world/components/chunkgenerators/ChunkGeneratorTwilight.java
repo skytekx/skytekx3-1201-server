@@ -42,6 +42,7 @@ import twilightforest.init.TFBiomes;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructures;
+import twilightforest.init.custom.ChunkBlanketProcessors;
 import twilightforest.util.LegacyLandmarkPlacements;
 import twilightforest.util.Vec2i;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
@@ -69,16 +70,18 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	public static final Codec<ChunkGeneratorTwilight> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
 			ChunkGenerator.CODEC.fieldOf("wrapped_generator").forGetter(o -> o.delegate),
 			NoiseGeneratorSettings.CODEC.fieldOf("noise_generation_settings").forGetter(o -> o.noiseGeneratorSettings),
-			Codec.BOOL.fieldOf("generate_dark_forest_canopy").forGetter(o -> o.genDarkForestCanopy),
-			Codec.INT.optionalFieldOf("dark_forest_canopy_height").forGetter(o -> o.darkForestCanopyHeight),
+			// TF 4.3 fields, unused since the Dark Forest canopy became a chunk blanket processor (twilight/chunk_blanket_processors).
+			// Still read and written back, as the generator is stored in the level.dat of existing worlds
+			Codec.BOOL.optionalFieldOf("generate_dark_forest_canopy").forGetter(o -> o.legacyGenDarkForestCanopy),
+			Codec.INT.optionalFieldOf("dark_forest_canopy_height").forGetter(o -> o.legacyDarkForestCanopyHeight),
 			Codec.unboundedMap(ResourceKey.codec(Registries.BIOME), TFLandmark.CODEC.listOf().xmap(ImmutableSet::copyOf, ImmutableList::copyOf)).fieldOf("landmark_placement_allowed_biomes").forGetter(o -> o.biomeLandmarkOverrides)
 	).apply(instance, ChunkGeneratorTwilight::new));
 
 	private final Map<ResourceKey<Biome>, ImmutableSet<TFLandmark>> biomeLandmarkOverrides;
 
 	private final Holder<NoiseGeneratorSettings> noiseGeneratorSettings;
-	private final boolean genDarkForestCanopy;
-	private final Optional<Integer> darkForestCanopyHeight;
+	private final Optional<Boolean> legacyGenDarkForestCanopy;
+	private final Optional<Integer> legacyDarkForestCanopyHeight;
 
 	private final BlockState defaultBlock;
 	private final BlockState defaultFluid;
@@ -91,13 +94,17 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	// Every chunk of an arena needs the same value, and sampling it costs 16 base height lookups.
 	private final Cache<Long, Integer> arenaGroundLevels = CacheBuilder.newBuilder().maximumSize(64).build();
 
-	public ChunkGeneratorTwilight(ChunkGenerator delegate, Holder<NoiseGeneratorSettings> noiseGenSettings, boolean genDarkForestCanopy, Optional<Integer> darkForestCanopyHeight, Map<ResourceKey<Biome>, ImmutableSet<TFLandmark>> biomeLandmarkOverrides) {
+	public ChunkGeneratorTwilight(ChunkGenerator delegate, Holder<NoiseGeneratorSettings> noiseGenSettings, Map<ResourceKey<Biome>, ImmutableSet<TFLandmark>> biomeLandmarkOverrides) {
+		this(delegate, noiseGenSettings, Optional.empty(), Optional.empty(), biomeLandmarkOverrides);
+	}
+
+	public ChunkGeneratorTwilight(ChunkGenerator delegate, Holder<NoiseGeneratorSettings> noiseGenSettings, Optional<Boolean> legacyGenDarkForestCanopy, Optional<Integer> legacyDarkForestCanopyHeight, Map<ResourceKey<Biome>, ImmutableSet<TFLandmark>> biomeLandmarkOverrides) {
 		super(delegate);
 
 		this.biomeLandmarkOverrides = biomeLandmarkOverrides;
 		this.noiseGeneratorSettings = noiseGenSettings;
-		this.genDarkForestCanopy = genDarkForestCanopy;
-		this.darkForestCanopyHeight = darkForestCanopyHeight;
+		this.legacyGenDarkForestCanopy = legacyGenDarkForestCanopy;
+		this.legacyDarkForestCanopyHeight = legacyDarkForestCanopyHeight;
 
 		if (delegate instanceof NoiseBasedChunkGenerator noiseGen && noiseGen.generatorSettings().isBound()) {
 			this.defaultBlock = noiseGen.generatorSettings().get().defaultBlock();
@@ -377,47 +384,8 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 
 		super.buildSurface(world, manager, random, chunk);
 
-		this.darkForestCanopyHeight.ifPresent(integer -> this.addDarkForestCanopy(world, chunk, integer));
-
-		addGlaciers(world, chunk);
-	}
-
-	private void addGlaciers(WorldGenRegion primer, ChunkAccess chunk) {
-
-		BlockState glacierBase = Blocks.GRAVEL.defaultBlockState();
-		BlockState glacierMain = Blocks.PACKED_ICE.defaultBlockState();
-		BlockState glacierTop = Blocks.ICE.defaultBlockState();
-
-		for (int z = 0; z < 16; z++) {
-			for (int x = 0; x < 16; x++) {
-				Optional<ResourceKey<Biome>> biome = primer.getBiome(primer.getCenter().getWorldPosition().offset(x, 0, z)).unwrapKey();
-				if (biome.isEmpty() || !TFBiomes.GLACIER.location().equals(biome.get().location())) continue;
-
-				// find the (current) top block
-				int gBase = -1;
-				for (int y = 127; y >= 0; y--) {
-					BlockPos old1 = primer.getCenter().getWorldPosition().offset(x, 0, z);
-					Block currentBlock = primer.getBlockState(old1.atY(y)).getBlock();
-					if (currentBlock == Blocks.STONE) {
-						gBase = y;
-						BlockPos old = primer.getCenter().getWorldPosition().offset(x, 0, z);
-						primer.setBlock(old.atY(y), glacierBase, 3);
-						break;
-					}
-				}
-
-				// raise the glacier from that top block
-				int gHeight = 32;
-				int gTop = Math.min(gBase + gHeight, 127);
-
-				for (int y = gBase; y < gTop; y++) {
-					BlockPos old = primer.getCenter().getWorldPosition().offset(x, 0, z);
-					primer.setBlock(old.atY(y), glacierMain, 3);
-				}
-				BlockPos old = primer.getCenter().getWorldPosition().offset(x, 0, z);
-				primer.setBlock(old.atY(gTop), glacierTop, 3);
-			}
-		}
+		// The Dark Forest canopy and the Glacier ice (4.3's addDarkForestCanopy and addGlaciers) are datapack processors since TF 4.8
+		ChunkBlanketProcessors.chunkBlanketing(chunk, world);
 	}
 
 	@Override
@@ -804,102 +772,6 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		// ice floor
 		if (hollowFloor < hollowCeiling && hollowFloor < this.getSeaLevel() + 3) {
 			primer.setBlock(movingPos.setY(hollowFloor), Blocks.PACKED_ICE.defaultBlockState(), 3);
-		}
-	}
-
-	/**
-	 * Adds dark forest canopy.  This version uses the "unzoomed" array of biomes used in land generation to determine how many of the nearby blocks are dark forest
-	 */
-	private void addDarkForestCanopy(WorldGenRegion primer, ChunkAccess chunk, int height) {
-		BlockPos blockpos = primer.getCenter().getWorldPosition();
-		int[] thicks = new int[5 * 5];
-		boolean biomeFound = false;
-
-		for (int dZ = 0; dZ < 5; dZ++) {
-			for (int dX = 0; dX < 5; dX++) {
-				for (int bx = -1; bx <= 1; bx++) {
-					for (int bz = -1; bz <= 1; bz++) {
-						BlockPos p = blockpos.offset((dX + bx) << 2, 0, (dZ + bz) << 2);
-						Biome biome = biomeSource.getNoiseBiome(p.getX() >> 2, 256, p.getZ() >> 2, null).value();
-						if (TFBiomes.DARK_FOREST.location().equals(primer.registryAccess().registryOrThrow(Registries.BIOME).getKey(biome)) || TFBiomes.DARK_FOREST_CENTER.location().equals(primer.registryAccess().registryOrThrow(Registries.BIOME).getKey(biome))) {
-							thicks[dX + dZ * 5]++;
-							biomeFound = true;
-						}
-					}
-				}
-			}
-		}
-
-		if (!biomeFound) return;
-
-		Vec2i nearCenter = new Vec2i();
-		TFLandmark nearFeature = LegacyLandmarkPlacements.getNearestLandmark(primer.getCenter().x, primer.getCenter().z, primer, nearCenter);
-
-		double d = 0.03125D;
-		//depthBuffer = noiseGen4.generateNoiseOctaves(depthBuffer, chunkX * 16, chunkZ * 16, 0, 16, 16, 1, d * 2D, d * 2D, d * 2D);
-
-		for (int dZ = 0; dZ < 16; dZ++) {
-			for (int dX = 0; dX < 16; dX++) {
-				int qx = dX >> 2;
-				int qz = dZ >> 2;
-
-				float xweight = (dX % 4) * 0.25F + 0.125F;
-				float zweight = (dZ % 4) * 0.25F + 0.125F;
-
-				float thickness = thicks[qx + (qz) * 5] * (1F - xweight) * (1F - zweight)
-						+ thicks[qx + 1 + (qz) * 5] * (xweight) * (1F - zweight)
-						+ thicks[qx + (qz + 1) * 5] * (1F - xweight) * (zweight)
-						+ thicks[qx + 1 + (qz + 1) * 5] * (xweight) * (zweight)
-						- 4;
-
-				// make sure we're not too close to the tower
-				if (nearFeature == TFLandmark.DARK_TOWER) {
-					int hx = nearCenter.x;
-					int hz = nearCenter.z;
-
-					int rx = dX - hx;
-					int rz = dZ - hz;
-					int dist = (int) Mth.sqrt(rx * rx + rz * rz);
-
-					if (dist < 24) {
-						thickness -= (24 - dist);
-					}
-				}
-
-				// TODO Clean up this math
-				if (thickness > 1) {
-					// We can use the Deltas here because the methods called will just
-					final int dY = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, dX, dZ);
-					final int oceanFloor = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, dX, dZ);
-					BlockPos pos = primer.getCenter().getWorldPosition().offset(dX, dY, dZ);
-
-					// Skip any blocks over water
-					if (chunk.getBlockState(pos).liquid())
-						continue;
-
-					// just use the same noise generator as the terrain uses for stones
-					//int noise = Math.min(3, (int) (depthBuffer[dZ & 15 | (dX & 15) << 4] / 1.25f));
-					int noise = 0;// FIXME [1.18] Math.min(3, (int) (this.surfaceNoiseGetter.getSurfaceNoiseValue((blockpos.getX() + dX) * 0.0625D, (blockpos.getZ() + dZ) * 0.0625D, 0.0625D, dX * 0.0625D) * 15F / 1.25F));
-
-					// manipulate top and bottom
-					int treeBottom = pos.getY() + height - (int) (thickness * 0.5F);
-					int treeTop = treeBottom + (int) (thickness * 1.5F);
-
-					treeBottom -= noise;
-
-					BlockState darkLeaves = TFBlocks.HARDENED_DARK_LEAVES.get().defaultBlockState();
-
-					for (int y = treeBottom; y < treeTop; y++) {
-						primer.setBlock(pos.atY(y), darkLeaves, 3);
-					}
-
-					// What are you gonna do, call the cops?
-					forceHeightMapLevel(chunk, Heightmap.Types.WORLD_SURFACE_WG, pos, dY);
-					forceHeightMapLevel(chunk, Heightmap.Types.WORLD_SURFACE, pos, dY);
-					forceHeightMapLevel(chunk, Heightmap.Types.OCEAN_FLOOR_WG, pos, oceanFloor);
-					forceHeightMapLevel(chunk, Heightmap.Types.OCEAN_FLOOR, pos, oceanFloor);
-				}
-			}
 		}
 	}
 

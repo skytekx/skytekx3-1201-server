@@ -8,6 +8,7 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.*;
 import twilightforest.init.custom.BiomeLayerStack;
+import twilightforest.init.custom.ChunkBlanketProcessors;
 import twilightforest.init.custom.MagicPaintingVariants;
 import twilightforest.init.custom.Restrictions;
 import twilightforest.init.custom.StructureSpeleothemConfigs;
@@ -36,7 +37,8 @@ public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
 			.add(Restrictions.RESTRICTION_KEY, Restrictions::bootstrap)
 			.add(MagicPaintingVariants.REGISTRY_KEY, MagicPaintingVariants::bootstrap)
 			.add(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlers::bootstrap)
-			.add(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfigs::bootstrap);
+			.add(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfigs::bootstrap)
+			.add(ChunkBlanketProcessors.CHUNK_BLANKET_PROCESSORS_KEY, ChunkBlanketProcessors::bootstrap);
 
 	public RegistryDataGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
 		super(output, provider, BUILDER, Set.of("minecraft", TwilightForestMod.ID));

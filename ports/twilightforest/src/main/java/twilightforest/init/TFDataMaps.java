@@ -1,14 +1,23 @@
 package twilightforest.init;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.network.SyncDataMapPacket;
+import twilightforest.network.TFPacketHandler;
 import twilightforest.util.datamaps.DataMapLoader;
 import twilightforest.util.datamaps.DataMapType;
 import twilightforest.util.datamaps.EntityTransformation;
@@ -35,9 +44,37 @@ public class TFDataMaps {
 
 	private static final List<DataMapType<?, ?>> DATA_MAPS = List.of(MAGIC_MAP_BIOME_COLOR, ORE_MAP_ORE_COLOR, OMINOUS_FIRE);
 
+	// 4.8 registers every data map as synced. Only the ominous fire map has a client reader here (the recipe viewers),
+	// so only it is sent; add a data map here once client code reads it through DataMapType#getSyncedValues
+	private static final List<DataMapType<?, ?>> SYNCED_DATA_MAPS = List.of(OMINOUS_FIRE);
+
+	@Nullable
+	public static DataMapType<?, ?> getSyncedDataMap(ResourceLocation id) {
+		for (DataMapType<?, ?> type : SYNCED_DATA_MAPS) {
+			if (type.id().equals(id))
+				return type;
+		}
+		return null;
+	}
+
 	@SubscribeEvent
 	public static void addReloadListener(AddReloadListenerEvent event) {
 		event.addListener(new DataMapLoader(DATA_MAPS));
+	}
+
+	// Sent on join and after every /reload, before the recipe and tag packets that make the recipe viewers reload
+	@SubscribeEvent
+	public static void syncDataMaps(OnDatapackSyncEvent event) {
+		RegistryAccess access = event.getPlayerList().getServer().registryAccess();
+		List<ServerPlayer> players = event.getPlayer() != null ? List.of(event.getPlayer()) : event.getPlayerList().getPlayers();
+		for (DataMapType<?, ?> type : SYNCED_DATA_MAPS) {
+			SyncDataMapPacket packet = SyncDataMapPacket.create(type, access);
+			for (ServerPlayer player : players) {
+				if (!(player instanceof FakePlayer)) {
+					TFPacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
+				}
+			}
+		}
 	}
 
 	// Tag entries are resolved lazily, so lookups made with the old tags have to be redone

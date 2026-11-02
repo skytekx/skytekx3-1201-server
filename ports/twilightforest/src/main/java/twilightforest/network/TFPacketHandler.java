@@ -26,7 +26,8 @@ public class TFPacketHandler {
 	// .10: the synced twilightforest:magic_paintings registry gains author, back_texture, local_lighting and the 4.8 opacity modifier fields.
 	// .11: LifedrainParticlePacket draws the Lifedrain Scepter trail for everyone watching the user (4.8 31a235c1c).
 	// .12: SetMasonJarItemPacket syncs the contents of a Mason Jar (4.8 9eaa6db1e).
-	private static final String PROTOCOL_VERSION = "2-skytekx.12";
+	// .13: SyncDataMapPacket syncs the ominous fire data map to clients for the recipe viewers (4.8 TFDataMaps synced(...)).
+	private static final String PROTOCOL_VERSION = "2-skytekx.13";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -63,5 +64,6 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, WipeOreMeterPacket.class, WipeOreMeterPacket::encode, WipeOreMeterPacket::new, WipeOreMeterPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		CHANNEL.registerMessage(id++, LifedrainParticlePacket.class, LifedrainParticlePacket::encode, LifedrainParticlePacket::new, LifedrainParticlePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, SetMasonJarItemPacket.class, SetMasonJarItemPacket::encode, SetMasonJarItemPacket::new, SetMasonJarItemPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, SyncDataMapPacket.class, SyncDataMapPacket::encode, SyncDataMapPacket::new, SyncDataMapPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 }

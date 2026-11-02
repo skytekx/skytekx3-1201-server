@@ -21,6 +21,8 @@ import twilightforest.TwilightForestMod;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +47,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * non-vanilla registry. Files from all datapacks are applied in pack order; a later value or removal for an entry
  * overrides an earlier one. Tags are resolved on lookup, so they always reflect the loaded tags.
  * <p>
- * Loaded server side only, by {@link DataMapLoader}; nothing here is synced to clients.
+ * Loaded server side only, by {@link DataMapLoader}. Data maps listed in {@code TFDataMaps.SYNCED_DATA_MAPS} are also sent
+ * to clients (4.8 marks them {@code synced}) by {@link twilightforest.network.SyncDataMapPacket}; a client reads its copy
+ * through {@link #getSyncedValues()}, which is kept apart from the server's entries so a singleplayer client never replaces them.
  */
 public final class DataMapType<R, T> {
 	private final ResourceLocation id;
@@ -54,6 +58,7 @@ public final class DataMapType<R, T> {
 
 	private volatile List<Entry<R, T>> entries = List.of();
 	private final Map<ResourceLocation, Optional<T>> resolved = new ConcurrentHashMap<>();
+	private volatile Map<ResourceLocation, T> syncedValues = Map.of();
 
 	public DataMapType(ResourceLocation id, ResourceKey<? extends Registry<R>> registryKey, Codec<T> codec) {
 		this.id = id;
@@ -103,6 +108,30 @@ public final class DataMapType<R, T> {
 				value = entry.value();
 		}
 		return value;
+	}
+
+	/**
+	 * Server side: the value of every entry of the registry that has one, with tags resolved, in registry order.
+	 */
+	public Map<ResourceLocation, T> resolveAll(Registry<R> registry) {
+		Map<ResourceLocation, T> values = new LinkedHashMap<>();
+		registry.holders().forEach(holder -> {
+			T value = this.get(holder);
+			if (value != null)
+				values.put(holder.key().location(), value);
+		});
+		return values;
+	}
+
+	/**
+	 * Client side: the values the server last synced, keyed by registry id. Empty until the server sent them.
+	 */
+	public Map<ResourceLocation, T> getSyncedValues() {
+		return this.syncedValues;
+	}
+
+	public void setSyncedValues(Map<ResourceLocation, T> values) {
+		this.syncedValues = Collections.unmodifiableMap(new LinkedHashMap<>(values));
 	}
 
 	/**

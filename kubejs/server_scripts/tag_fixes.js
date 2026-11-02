@@ -32,3 +32,14 @@ if (!Platform.isLoaded('neapolitan')) {
     })
   })
 }
+
+// TF 4.8 backport: upstream tags its edible berries c:foods/berry (1.21). The 1.20.1 Forge tag that
+// Farmer's Delight (fruit_salad, cooking/stuffed_pumpkin_block) and Medieval Embroidery
+// (mixedberry_pie) read is forge:berries.
+ServerEvents.tags('item', event => {
+  event.add('forge:berries', [
+    'twilightforest:torchberries', 'twilightforest:raspberry', 'twilightforest:blackberry',
+    'twilightforest:blueberry', 'twilightforest:maloberry', 'twilightforest:duskberry',
+    'twilightforest:skyberry', 'twilightforest:blightberry', 'twilightforest:stingberry'
+  ])
+})

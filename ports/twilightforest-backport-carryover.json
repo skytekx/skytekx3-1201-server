@@ -611,6 +611,18 @@
      "jade-top-providers: the Jade/TOP spawn providers for the chiseled shelf and their config string."
     ],
     "source": "chiseled-canopy-bookshelf review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "candelabra-overhaul+ominous-candles",
+    "ids": [
+     "candelabra-overhaul",
+     "ominous-candles"
+    ],
+    "deferred": [
+     "ominous-candles: Lich.turnNearbyCandles (candles to ominous candles with the CANDLE_MAP.containsKey guard from #2563, plus the CANDELABRA_OMINOUS sound) -> lich-boss-rework. OminousCandleBlock.CANDLE_MAP is in place; the lich-fight-fixes entry in wave 5 about the literal containsKey check is settled once this lands.",
+     "candelabra-overhaul: 4.8 tip twilightforest.tips.candelabra (assets/twilightforest/tips/candelabra.json) -> no feature id; 4.3 has no tips system"
+    ],
+    "source": "candelabra-overhaul+ominous-candles review (waves 8-10 integrator)"
    }
   ],
   "9": [

@@ -5,6 +5,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import twilightforest.init.TFBlockEntities;
 
 /**
@@ -25,6 +26,15 @@ public class OminousCandleBlockEntity extends BlockEntity {
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	/**
+	 * Forge 47 defaults to the collision shape, which for a single candle ends well below the bobbing candle the
+	 * renderer draws; NeoForge 21.1 (and so 4.8) defaults to the full block.
+	 */
+	@Override
+	public AABB getRenderBoundingBox() {
+		return new AABB(this.getBlockPos());
 	}
 
 	public double getVisualHeight(int index) {

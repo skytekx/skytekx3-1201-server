@@ -2,6 +2,7 @@ package twilightforest.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -100,7 +101,10 @@ public class CandelabraBlockEntity extends BlockEntity {
 
 	@Override
 	public CompoundTag getUpdateTag() {
-		return this.saveWithoutMetadata();
+		CompoundTag tag = this.saveWithoutMetadata();
+		// An empty candelabra saves no Candles list; 1.20.1 drops an empty update tag, so send an empty list to clear client candles
+		if (!tag.contains(CandelabraData.CANDLES_TAG)) tag.put(CandelabraData.CANDLES_TAG, new ListTag());
+		return tag;
 	}
 
 	@Override

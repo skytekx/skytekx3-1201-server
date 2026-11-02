@@ -10,8 +10,9 @@ Researched automatically across all 40 bundled mods. **Verify the blockers yours
 ## TL;DR
 
 - **34** mods are fine to bundle (open license or author allows modpacks).
-- **0** need a quick manual check (CurseForge modpack flag unconfirmed).
-- **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
+- **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
+- **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
+- `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or a **Status** that does not start with `OK` (`--allow-unpermitted` builds a private/draft pack that must not be uploaded).
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
 
 ## BLOCKERS (resolve before publishing)
@@ -21,9 +22,14 @@ These cannot legally be bundled in a public modpack as-is:
 - **The Aether: Genesis** (`aether_genesis-1.20.1-0.0.1-neoforge.jar`) — LGPL-3.0 (code) / All Rights Reserved (assets). Version 0.0.1 is a bleeding-edge CircleCI build from the 1.20.1-develop branch — there are no official GitHub releases. The mod is not on Modrinth or CurseForge, so CDN-linking is not an option. The Aether Team must be contacted via Discord (Oz#1986 on the Aether Community Discord) for modpack redistribution permission.
 - **Connectivity** (`connectivity-1.20.1-7.6.jar`) — All Rights Reserved. The author (someaddon) has explicitly disabled the CurseForge third-party distribution flag, which covers modpack redistribution. The GitHub repository (https://github.com/someaddons/connectivity) contains no LICENSE file and no modpack permission statement. Contact someaddon directly via CurseForge or GitHub before including this mod in any redistributed modpack.
 - **Cupboard** (`cupboard-1.20.1-3.7.jar`) — All Rights Reserved. The exact matching file (cupboard-1.20.1-3.7.jar) is at https://www.curseforge.com/minecraft/mc-mods/cupboard/files/7905744. CurseForge's Curse Maven integration explicitly states third-party sharing is disabled for this mod. The GitHub repo (https://github.com/someaddons/cupboard) has no license file. The mod is not present on Modrinth at all (Modrinth API search returns zero hits for "cupboard someaddon").
-- **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
 - **🟨⬛!!Fireflies!!🟨⬛** (`fireflies-1.0.0-forge-1.20.1.jar`) — All Rights Reserved. The mod has only one file (version 1.0.0 for Forge 1.20.1, released 2024-10-15). It is exclusively on CurseForge and is not available on Modrinth, so CDN-linking is not an option. The CurseForge modpack permission flag could not be confirmed via web scraping (JavaScript-rendered); if supermj767 has enabled "Allow modpack use" on the CurseForge project settings, the reason would upgrade to "Special permission" and redistribution would be OK — verify manually on the CurseForge mod page or by contacting the author.
 - **Hexxit Additions** (`hexxit_additions-1.0.2-forge-1.20.1.jar`) — All Rights Reserved. The CurseForge "Allow 3rd party / modpack distribution" flag is set to disabled by the author for all file versions. This mod does not appear on Modrinth under any matching slug. Contact starboiluke directly (CurseForge profile) to request explicit modpack inclusion permission before distributing this jar.
+
+## Manual check (resolve before publishing)
+
+Permission depends on a CurseForge flag nobody has confirmed yet (Status VERIFY):
+
+- **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
 
 ## Could be CDN-linked instead of bundled
 

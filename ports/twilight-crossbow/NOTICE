@@ -31,3 +31,27 @@ Changes in this backport (version 1.5.0-1.20.1-skytekx.1):
   * the Ender Crossbow also gets the loaded-crossbow first-person pose.
 - Not ported: the unreleased Knight Crossbow (registration commented out upstream) and its
   getChargeDuration mixin; the empty config-screen client entry point.
+
+Licenses
+--------
+
+- Code and data (Java sources, JSON models, recipes, loot tables, tags, lang files): MIT,
+  Copyright (c) 2025 baguchi. The text ships in this jar as LICENSE_twilight_crossbow.
+- Assets: the 24 crossbow item textures in assets/twilight_crossbow/textures/item/
+
+    {triple,seeker,ice,ender}_crossbow.png
+    {triple,seeker,ice,ender}_crossbow_pulling_0.png, _pulling_1.png, _pulling_2.png
+    {triple,seeker,ice,ender}_crossbow_arrow.png
+    {triple,seeker,ice,ender}_crossbow_firework.png
+
+  are adapted by baguchi from The Twilight Forest's bow textures (triple_bow, seeker_bow,
+  ice_bow_clear / ice_bow_solid and ender_bow, with their pulling frames) by TeamTwilight
+  (https://github.com/TeamTwilight/twilightforest). Those textures are licensed under Creative
+  Commons Attribution-NonCommercial-ShareAlike 4.0 International
+  (https://creativecommons.org/licenses/by-nc-sa/4.0/). baguchi's adaptations (the bow limbs
+  combined with a new crossbow stock and loaded-ammo overlays) are therefore distributed under
+  CC BY-NC-SA 4.0 as well, not under MIT, and may not be used commercially. The text ships in this
+  jar as ASSET_LICENSE_twilight_crossbow. This backport did not change these 24 files: they are
+  byte-identical to upstream commit 00085635.
+  crossbow_upgrade_smithing_template.png and empty_slot_bow.png are not derived from Twilight Forest
+  textures and fall under the MIT licence with the rest of the mod.

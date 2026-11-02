@@ -337,6 +337,11 @@ public final class FeaturePlacers {
             if (isRootBlocked(worldReader, worldPlacer, rootPos))
                 return; // End root if this block cannot be penetrated
 
+            // Logs are in the skip tag only so exposed roots trace through trunk walls (4.8 bf74ddf65); underground
+            // roots still end on buried logs, as they did before and as 4.8's traceRoot does
+            if (worldReader.isStateAtPosition(rootPos, state -> state.is(BlockTags.LOGS)))
+                return;
+
             if (worldReader.isStateAtPosition(rootPos, FeatureLogic.ROOT_SHOULD_SKIP))
                 continue; // Ignore pos if this block should be checked (root, or one of the protected block IDs)
 

@@ -506,7 +506,10 @@ logs stay on the Mac and are not in the repo.
   inventory. On the owner's ask it came back at 13:43 and again at 13:52 from the playerdata snapshot of
   13:32. The file was rewritten while the player was kicked, with newer items kept and the duplicates
   picked up from the death drops left out. A death in lava at 14:18:45 burned it again, and at 14:20 it
-  came back the same way from the save of 14:17:31, 21 stacks and XP level 2.
+  came back the same way from the save of 14:17:31, 21 stacks and XP level 2. A second death in lava,
+  in the overworld at 14:37:10, followed. The player stayed on the death screen, and a respawn empties
+  the inventory of a dead player's file, so the restore waited for the respawn at 14:39:18. At 14:39:20
+  the save of 14:32:31 came back, 27 stacks with the XP level 4 the player had at death.
 - At 13:39 the owner asked for weaker mobs in the Skylands, where everybody builds a home, and at 13:48
   for none at all. With the Skylands at noon but never at day, undead no longer burned there, and
   L2Hostility gave the mobs levels near 50. `kubejs/server_scripts/skylands_no_mobs.js` refuses every

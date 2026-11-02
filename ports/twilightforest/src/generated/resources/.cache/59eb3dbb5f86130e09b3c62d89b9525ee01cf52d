@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-02T05:01:19.840669894	Loot Tables
+// 1.20.1	2026-11-02T06:52:14.588724527	Loot Tables
 afe7197a19b997d2f5c5980d9805b6093191b44f data/twilightforest/loot_tables/blocks/acacia_banister.json
 752190be1f464cbcb3312adb8333f98a58360d40 data/twilightforest/loot_tables/blocks/acacia_drying_rack.json
 d29388fb46e8211e8d3624b744d195b3a6f4c6ff data/twilightforest/loot_tables/blocks/alpha_yeti_trophy.json
@@ -543,9 +543,9 @@ b7411d3f0573ff5c70493b1b9cfe9f27f6cec9f0 data/twilightforest/loot_tables/chests/
 eb64a43e57ca74ca0b429adffa5c07b7e2bce52c data/twilightforest/loot_tables/chests/tower_grave_lower.json
 f95865b236502fed10aca686cf7d7c53cdbf1152 data/twilightforest/loot_tables/chests/tower_grave_upper.json
 86f758d7b5588f62bd972f84306ca7e640fe8624 data/twilightforest/loot_tables/chests/tower_jars.json
-d93aa765ade95edbd1efdfa9b607d060f215a661 data/twilightforest/loot_tables/chests/tower_library.json
+ad324c02e8d2943ea2c576afe38c4a6d1c8dc625 data/twilightforest/loot_tables/chests/tower_library.json
 94d84e16a132f8e4629cee8da7ae8a3af488a162 data/twilightforest/loot_tables/chests/tower_potion.json
-5036e71365e4e257f9cfcb6e566c48b684a78082 data/twilightforest/loot_tables/chests/tower_room.json
+3705a2545bdea2f227c4253d7d849a6885f05791 data/twilightforest/loot_tables/chests/tower_room.json
 31b45d9db9588bba026826976b306b9d01a97666 data/twilightforest/loot_tables/chests/tree_cache.json
 86c23dfdf59608dbbb28ac7c6f0b43dad11fec52 data/twilightforest/loot_tables/chests/troll_garden.json
 a180266f1238f04e963e60d02ad913905541091b data/twilightforest/loot_tables/chests/troll_vault.json

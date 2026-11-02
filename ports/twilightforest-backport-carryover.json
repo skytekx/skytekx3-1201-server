@@ -562,6 +562,20 @@
     "source": "porter report, waves 5-6 orchestrator"
    }
   ],
+  "7": [
+   {
+    "bundle": "cave-carver-rework+highlands-underground-troll-caves",
+    "ids": [
+     "cave-carver-rework",
+     "highlands-underground-troll-caves"
+    ],
+    "deferred": [
+     "giant-house-split (troll-cloud CloudComponent) or any later feature that ports 4.8's Troll Cave structure placement: 4.8 raises Troll Caves by 11 blocks (TrollCaveStructure.getFirstPiece passes y + 11, 4a68b96e3). This port keeps 4.3's height and instead lowers the highland_caves tunnel band and the troll_mushglooms cap by TFCaveCarvers.TROLL_CAVE_HEIGHT_OFFSET = 11. Whoever ports the y + 11 change must set TROLL_CAVE_HEIGHT_OFFSET to 0 in the same commit and hand-regenerate src/generated/resources/data/twilightforest/worldgen/configured_carver/highland_caves.json (biased_to_bottom absolute 8..32, inner 16) and worldgen/placed_feature/troll_mushglooms.json (height_range max absolute 15) to match 4.8, or the tunnels and mushglooms are shifted twice.",
+     "oreberries: UndergroundPlantFeature now has (codec) and (codec, boolean spawnInStructure) constructors and a deferred isInsideLandmark lookup (a9683b9dd, #2532). When porting OREBERRY_BUSHES, merge 4.8's (codec, int maxCount) and (codec, int maxCount, boolean) constructors and the maxCount loop limit into this version, keep the spawnInStructure field and the deferred landmark lookup, and default maxCount to Integer.MAX_VALUE for the existing constructors."
+    ],
+    "source": "cave-carver-rework+highlands-underground-troll-caves review (wave 7 integrator)"
+   }
+  ],
   "8": [
    {
     "bundle": "ominous-fire-exanimate-essence+scepter-rework",

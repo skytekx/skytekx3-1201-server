@@ -20,6 +20,7 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import twilightforest.TwilightForestMod;
 import twilightforest.world.components.placements.ChunkBlanketingModifier;
 import twilightforest.world.components.placements.ChunkCenterModifier;
@@ -164,11 +165,20 @@ public class TFPlacedFeatures {
 	public static final ResourceKey<PlacedFeature> FLOWER_FOREST_FLOWERS = registerKey("flower_forest_flowers");
 
 	private static List<PlacementModifier> tfTreeCheckArea(BlockState sapling) {
-		return List.of(InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(), PlacementUtils.filteredByBlockSurvival(sapling.getBlock()), BiomeFilter.biome());
+		return tfTreeCheckArea(sapling, AvoidLandmarkModifier.noStructures());
+	}
+
+	// Trees may grow inside the listed structures, such as in the Lich Tower's yard (TF 4.8 dc6ae022a)
+	private static List<PlacementModifier> tfTreeCheckArea(BlockState sapling, HolderSet<Structure> structuresAllowed) {
+		return List.of(InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(structuresAllowed), PlacementUtils.filteredByBlockSurvival(sapling.getBlock()), BiomeFilter.biome());
 	}
 
 	private static List<PlacementModifier> tfTreeCheckArea(PlacementModifier count, BlockState sapling) {
-		return ImmutableList.of(count, InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(), PlacementUtils.filteredByBlockSurvival(sapling.getBlock()), BiomeFilter.biome());
+		return tfTreeCheckArea(count, sapling, AvoidLandmarkModifier.noStructures());
+	}
+
+	private static List<PlacementModifier> tfTreeCheckArea(PlacementModifier count, BlockState sapling, HolderSet<Structure> structuresAllowed) {
+		return ImmutableList.of(count, InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(structuresAllowed), PlacementUtils.filteredByBlockSurvival(sapling.getBlock()), BiomeFilter.biome());
 	}
 
 	private static List<PlacementModifier> darkForestTreeCheck(PlacementModifier count) {
@@ -208,6 +218,8 @@ public class TFPlacedFeatures {
 		HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);
 		HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
 		AvoidLandmarkModifier avoidLichTower = AvoidLandmarkModifier.checkVegetation();
+		Holder.Reference<Structure> lichTowerHolder = context.lookup(Registries.STRUCTURE).getOrThrow(TFStructures.LICH_TOWER);
+		HolderSet.Direct<Structure> allowLichTower = HolderSet.direct(lichTowerHolder);
 
 		context.register(PLACED_LAKE_LAVA, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.LAKE_LAVA), tfFeatureCheckArea(AvoidLandmarkModifier.checkBoth(), 10).build()));
 		context.register(PLACED_LAKE_WATER, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.LAKE_WATER), tfFeatureCheckArea(AvoidLandmarkModifier.checkBoth(), 32).build()));
@@ -299,31 +311,31 @@ public class TFPlacedFeatures {
 		context.register(PLACED_FLOWER_PLACER, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.FLOWER_PLACER), ImmutableList.<PlacementModifier>builder().add(PlacementUtils.HEIGHTMAP_WORLD_SURFACE, CountPlacement.of(3), InSquarePlacement.spread(), RarityFilter.onAverageOnceEvery(2), BiomeFilter.biome(), avoidLichTower).build()));
 		context.register(PLACED_FLOWER_PLACER_ALT, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.FLOWER_PLACER_ALT), ImmutableList.<PlacementModifier>builder().add(PlacementUtils.HEIGHTMAP_WORLD_SURFACE, CountPlacement.of(3), InSquarePlacement.spread(), RarityFilter.onAverageOnceEvery(2), BiomeFilter.biome(), avoidLichTower).build()));
 
-		context.register(PLACED_DEAD_CANOPY_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DEAD_CANOPY_TREE), tfTreeCheckArea(PlacementUtils.countExtra(2, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState())));
+		context.register(PLACED_DEAD_CANOPY_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DEAD_CANOPY_TREE), tfTreeCheckArea(PlacementUtils.countExtra(2, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState(), allowLichTower)));
 		context.register(PLACED_MEGA_CANOPY_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.MEGA_CANOPY_TREE), ImmutableList.of(ChunkCenterModifier.center(), RarityFilter.onAverageOnceEvery(20), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(), PlacementUtils.filteredByBlockSurvival(TFBlocks.CANOPY_SAPLING.get()), BiomeFilter.biome())));
 		context.register(PLACED_MANGROVE_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.MANGROVE_TREE), List.of(PlacementUtils.countExtra(3, 0.1F, 1), InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(6), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(), PlacementUtils.filteredByBlockSurvival(TFBlocks.MANGROVE_SAPLING.get()), BiomeFilter.biome(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE))); // Check Ocean floor first for the sapling check then shift to water level as Surface_WG
-		context.register(PLACED_TWILIGHT_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.TWILIGHT_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(1, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
-		context.register(PLACED_LARGE_TWILIGHT_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.LARGE_TWILIGHT_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(1, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
+		context.register(PLACED_TWILIGHT_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.TWILIGHT_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(1, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState(), allowLichTower)));
+		context.register(PLACED_LARGE_TWILIGHT_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.LARGE_TWILIGHT_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(1, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState(), allowLichTower)));
 		context.register(PLACED_FOREST_MEGA_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.FOREST_MEGA_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(7, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
 		context.register(PLACED_SAVANNAH_MEGA_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.SAVANNAH_MEGA_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(0, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
 		context.register(PLACED_FOREST_CANOPY_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.FOREST_CANOPY_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(7, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
 		context.register(PLACED_SAVANNAH_CANOPY_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.SAVANNAH_CANOPY_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(0, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
-		context.register(PLACED_SAVANNAH_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.TWILIGHT_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(1, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
+		context.register(PLACED_SAVANNAH_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.TWILIGHT_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(1, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState(), allowLichTower)));
 		context.register(PLACED_SWAMPY_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.SWAMPY_OAK_TREE), tfTreeCheckArea(PlacementUtils.countExtra(4, 0.1F, 1), TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
 		context.register(PLACED_OAK_BUSH, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.OAK_BUSH), tfTreeCheckArea(PlacementUtils.countExtra(1, 1 / 3F, 1), Blocks.OAK_SAPLING.defaultBlockState())));  // 0.33F raise exception
 		context.register(PLACED_OAK_BUSH_DENSE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.OAK_BUSH), tfTreeCheckArea(PlacementUtils.countExtra(2, 1 / 3F, 2), Blocks.OAK_SAPLING.defaultBlockState())));  // 0.33F raise exception
 		context.register(PLACED_DARKWOOD_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DARKWOOD_TREE), List.of(PlacementUtils.countExtra(5, 0.1F, 1), InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, new AvoidLandmarkModifier(true, false, 16, AvoidLandmarkModifier.noStructures()), PlacementUtils.filteredByBlockSurvival(TFBlocks.DARKWOOD_SAPLING.get()), BiomeFilter.biome())));
 		context.register(PLACED_HOLLOW_OAK_TREE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.HOLLOW_TREE), List.of(SurfaceWaterDepthFilter.forMaxDepth(0), RarityFilter.onAverageOnceEvery(35), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, ChunkCenterModifier.center(), new AvoidLandmarkModifier(true, false, 32, AvoidLandmarkModifier.noStructures()), PlacementUtils.filteredByBlockSurvival(TFBlocks.HOLLOW_OAK_SAPLING.get()), BiomeFilter.biome())));
 
-		context.register(PLACED_CANOPY_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.CANOPY_TREES), tfTreeCheckArea(PlacementUtils.countExtra(7, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState())));
-		context.register(PLACED_DENSE_CANOPY_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DENSE_CANOPY_TREES), tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState())));
-		context.register(PLACED_FIREFLY_FOREST_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.FIREFLY_FOREST_TREES), tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState())));
+		context.register(PLACED_CANOPY_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.CANOPY_TREES), tfTreeCheckArea(PlacementUtils.countExtra(7, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState(), allowLichTower)));
+		context.register(PLACED_DENSE_CANOPY_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DENSE_CANOPY_TREES), tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState(), allowLichTower)));
+		context.register(PLACED_FIREFLY_FOREST_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.FIREFLY_FOREST_TREES), tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState(), allowLichTower)));
 		context.register(PLACED_DARK_FOREST_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DARKWOOD_TREE), darkForestTreeCheck(PlacementUtils.countExtra(8, 0.1F, 1))));
 		context.register(PLACED_DARK_FOREST_TREE_MIX, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.DARK_FOREST_TREES), darkForestTreeCheck(PlacementUtils.countExtra(3, 0.1F, 1))));
 		context.register(PLACED_HIGHLANDS_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.HIGHLANDS_TREES), tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1), Blocks.SPRUCE_SAPLING.defaultBlockState())));
 		context.register(PLACED_ENCHANTED_FOREST_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.ENCHANTED_FOREST_TREES), tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1), TFBlocks.RAINBOW_OAK_SAPLING.get().defaultBlockState())));
 		context.register(PLACED_SNOWY_FOREST_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.SNOWY_FOREST_TREES), List.of(PlacementUtils.countExtra(10, 0.1F, 1), InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, AvoidLandmarkModifier.checkSurface(), EnvironmentScanPlacement.scanningFor(Direction.UP, BlockPredicate.not(BlockPredicate.matchesBlocks(Blocks.POWDER_SNOW)), 8), BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Direction.DOWN.getNormal(), Blocks.SNOW_BLOCK, Blocks.POWDER_SNOW)), BiomeFilter.biome())));
-		context.register(PLACED_VANILLA_TF_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.VANILLA_TF_TREES), tfTreeCheckArea(TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState())));
+		context.register(PLACED_VANILLA_TF_TREES, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.VANILLA_TF_TREES), tfTreeCheckArea(TFBlocks.TWILIGHT_OAK_SAPLING.get().defaultBlockState(), allowLichTower)));
 		context.register(PLACED_VANILLA_TF_BIG_MUSH, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.VANILLA_TF_BIG_MUSH), tfTreeCheckArea(TFBlocks.CANOPY_SAPLING.get().defaultBlockState())));
 
 		context.register(PLACED_CANOPY_MUSHROOMS_SPARSE, new PlacedFeature(features.getOrThrow(TFConfiguredFeatures.CANOPY_MUSHROOMS_SPARSE), tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1), TFBlocks.CANOPY_SAPLING.get().defaultBlockState())));

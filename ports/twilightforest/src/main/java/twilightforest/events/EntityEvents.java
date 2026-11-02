@@ -25,6 +25,7 @@ import net.minecraft.world.entity.Interaction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -96,6 +97,7 @@ import twilightforest.util.EntityUtil;
 import twilightforest.util.OminousFireDamageSource;
 import twilightforest.util.datamaps.EntityTransformation;
 import twilightforest.world.components.structures.finalcastle.FinalCastleBossGazeboComponent;
+import twilightforest.world.components.structures.lichtowerrevamp.LichTowerPieces;
 
 import java.util.List;
 import java.util.Optional;
@@ -433,6 +435,22 @@ public class EntityEvents {
 						enderMan.goalSelector.removeGoal(g.getGoal());
 						enderMan.goalSelector.addGoal(g.getPriority(), new ExtendedEndermanTakeBlockGoal((EnderMan.EndermanTakeBlockGoal) g.getGoal(), enderMan));
 					});
+		}
+	}
+
+	/**
+	 * A Lich Tower zombie that has broken free of its lead loses its leash pathing override the next time it joins a level, so a lead that a
+	 * player ties to it later pulls it back like any other mob (TF 4.8 handleLeashPathingOverrides, 2c9cbe869). 4.8 keeps the override while
+	 * Leashable#mayBeLeashed holds: the mob is tied to a holder, or still holds the lead it was saved with, which 1.20.1 restores on its first
+	 * tick from leashInfoTag.
+	 */
+	@SubscribeEvent
+	public static void handleLeashPathingOverrides(EntityJoinLevelEvent event) {
+		if (!(event.getEntity() instanceof PathfinderMob mob) || !mob.getPersistentData().contains(LichTowerPieces.LEASH_PATHFINDER_OVERRIDE))
+			return;
+
+		if (!mob.isLeashed() && mob.leashInfoTag == null) {
+			mob.getPersistentData().remove(LichTowerPieces.LEASH_PATHFINDER_OVERRIDE);
 		}
 	}
 

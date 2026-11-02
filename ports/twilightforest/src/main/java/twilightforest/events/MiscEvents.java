@@ -27,6 +27,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import twilightforest.TwilightForestMod;
+import twilightforest.block.SinisterSpawnerBlock;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.entity.monster.DeathTome;
 import twilightforest.entity.passive.Bighorn;
@@ -105,6 +106,20 @@ public class MiscEvents {
 				}
 
 			}
+		}
+	}
+
+	/**
+	 * Spawn eggs set a sinister spawner's mob even when the player sneaks, as in 4.8. A sneaking player holding an item
+	 * skips Block#use, and 1.20.1's SpawnEggItem#useOn would then spawn the mob next to the spawner, so the egg is
+	 * handled here, before both.
+	 */
+	@SubscribeEvent
+	public static void useSpawnEggOnSinisterSpawner(PlayerInteractEvent.RightClickBlock event) {
+		InteractionResult result = SinisterSpawnerBlock.useSpawnEgg(event.getLevel(), event.getPos(), event.getEntity(), event.getItemStack());
+		if (result != InteractionResult.PASS) {
+			event.setCancellationResult(result);
+			event.setCanceled(true);
 		}
 	}
 

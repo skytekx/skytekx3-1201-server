@@ -1,6 +1,7 @@
 package twilightforest.item.travellers_gear;
 
 import com.google.common.base.Suppliers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,6 +30,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.components.entity.SlimySolesAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.components.item.TravellersGearData;
+import twilightforest.init.TFDimensionSettings;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
@@ -36,6 +38,7 @@ import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.TravellersWingsStatePacket;
+import twilightforest.util.TFMathUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -44,9 +47,9 @@ import java.util.function.Supplier;
 
 /**
  * Logic of the Traveller's Gear and its modifiers. Backport of 4.8's TravellersGearLogic: the wing animation state
- * machine, the Traveller's Vest modifiers (Stealth, Haste), the Traveller's Wings modifiers (High Jump, Gradual Glide,
- * Sidestep, Double Jump) and the Traveller's Boots modifiers (Step-Up, Water Walk, Straight Ahead, Unrestrained, Slimy
- * Soles). The other pieces' modifiers come with their travellers-* features.
+ * machine, Auto-Repair, the Traveller's Vest modifiers (Stealth, Haste), the Traveller's Wings modifiers (High Jump,
+ * Gradual Glide, Sidestep, Double Jump) and the Traveller's Boots modifiers (Step-Up, Water Walk, Straight Ahead,
+ * Unrestrained, Slimy Soles). The other pieces' modifiers come with their travellers-* features.
  */
 public class TravellersGearLogic {
 
@@ -72,6 +75,16 @@ public class TravellersGearLogic {
 	public static final float DOUBLE_JUMP_SAFE_FALL_DISTANCE = 2.0F;
 
 	/**
+	 * The game time a Traveller's Gear piece worn by the entity last took damage, in the entity's persistent data. 4.8
+	 * keeps it in the saved {@code twilightforest:last_damage_armor_time} attachment, which a respawned player does not
+	 * keep either.
+	 */
+	public static final String LAST_DAMAGE_ARMOR_TIME = "twilightforest:last_damage_armor_time";
+	private static final int AUTO_REPAIR_PAUSE = 10 * 20;  // 10 seconds
+	private static final double AUTO_REPAIR_SUNLIGHT_BOOST = 3;
+	private static final double AUTO_REPAIR_TWILIGHT_BOOST = AUTO_REPAIR_SUNLIGHT_BOOST / 2;
+
+	/**
 	 * Stealth: a player sneaking in a vest with the modifier turns invisible. The server keeps a two-tick Invisibility
 	 * effect running ({@code invisibilityHandler}), the client sets the invisible flag every frame so the player vanishes
 	 * at once. When the player stops sneaking, the flag is cleared as soon as the effect is about to run out.
@@ -87,6 +100,60 @@ public class TravellersGearLogic {
 			if (invisibilityEffect != null && invisibilityEffect.getDuration() < 2)
 				player.setInvisible(false);
 		}
+	}
+
+	public static void setLastDamageArmorTime(LivingEntity livingEntity) {
+		livingEntity.getPersistentData().putLong(LAST_DAMAGE_ARMOR_TIME, livingEntity.level().getGameTime());
+	}
+
+	/**
+	 * Auto-Repair: every tick each worn piece with the modifier regains a point of durability with the modifier's
+	 * probability (0.1% with the stock definition), boosted under the open sky by day (x3) and in the Twilight Forest
+	 * (x1.5), but not within 10 seconds of the gear taking damage. It also repairs broken gear.
+	 */
+	public static void travellersGearAutoRepair(LivingEntity livingEntity) {
+		// 4.8 reads the attachment first; most entities wear no Traveller's Gear, so that is checked first
+		boolean wearsTravellersGear = false;
+		for (ItemStack stack : livingEntity.getArmorSlots()) {
+			if (TravellersArmorItem.isTravellersGear(stack)) {
+				wearsTravellersGear = true;
+				break;
+			}
+		}
+		if (!wearsTravellersGear)
+			return;
+
+		long lastHitTime = livingEntity.getPersistentData().getLong(LAST_DAMAGE_ARMOR_TIME);
+		if (livingEntity.level().getGameTime() - lastHitTime <= AUTO_REPAIR_PAUSE)
+			return;
+
+		livingEntity.getArmorSlots().forEach(slot -> {
+			if (!TravellersArmorItem.isTravellersGear(slot) || !TravellersModifiersManager.isModifierActive(livingEntity, slot, TravellersModifiersManager.AUTO_REPAIR_MODIFIER))
+				return;
+			Float probability = TravellersGearData.AUTO_REPAIR_PROBABILITY.get(slot);
+			if (probability == null)
+				return;
+			Level level = livingEntity.level();
+			double boostedProbability = getAutoRepairChance(probability, level, livingEntity.blockPosition());
+
+			// 4.8 also rewrites the damage of an undamaged piece; skipping it spares the stack an NBT write
+			if (boostedProbability > level.random.nextFloat() && slot.getDamageValue() > 0)
+				slot.setDamageValue(slot.getDamageValue() - 1);
+		});
+	}
+
+	private static double getAutoRepairChance(double baseProb, Level level, BlockPos pos) {
+		if (!level.canSeeSky(pos))
+			return baseProb;
+
+		double boostFactor;  // 1 tick in boost ≈ boostFactor ticks without boost
+		if (level.dimensionTypeRegistration().is(TFDimensionSettings.TWILIGHT_DIM_TYPE))
+			boostFactor = AUTO_REPAIR_TWILIGHT_BOOST;
+		else if (level.isDay())
+			boostFactor = AUTO_REPAIR_SUNLIGHT_BOOST;
+		else
+			return baseProb;
+		return TFMathUtil.probabilityOfAtLeastOneSuccess(baseProb, boostFactor);
 	}
 
 	/**

@@ -76,8 +76,9 @@ import java.util.stream.Stream;
 /**
  * Common events of the Traveller's Gear core, its modifier framework and the modifiers ported so far. Backport of 4.8's
  * TravellersGearEvents (the wing state update, the broken-state attribute switch, the anvil combining block, stripping
- * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Goggles, Vest,
- * Belt, Wings and Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
+ * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload, Auto-Repair and the Traveller's
+ * Goggles, Vest, Belt, Wings and Boots modifiers); the listeners of the other pieces' modifiers come with their
+ * travellers-* features.
  * <p>
  * 1.20.1 has no entity tick post event: 4.8's EntityTickEvent.Post work runs at the start of the next tick instead
  * (LivingTickEvent), its PlayerTickEvent.Pre work in the START phase of Forge's PlayerTickEvent.
@@ -319,6 +320,13 @@ public class TravellersGearEvents {
 		LivingEntity livingEntity = event.getEntity();
 		if (!livingEntity.level().isClientSide())
 			TravellersGearLogic.travellersVestHaste(livingEntity);
+	}
+
+	@SubscribeEvent
+	public static void autoRepairTravellersGear(LivingEvent.LivingTickEvent event) {
+		LivingEntity livingEntity = event.getEntity();
+		if (!livingEntity.level().isClientSide())
+			TravellersGearLogic.travellersGearAutoRepair(livingEntity);
 	}
 
 	/**

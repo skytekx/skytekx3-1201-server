@@ -13,6 +13,7 @@ import twilightforest.init.custom.MagicPaintingVariants;
 import twilightforest.init.custom.Restrictions;
 import twilightforest.init.custom.StructureSpeleothemConfigs;
 import twilightforest.init.custom.TemplateMarkerHandlers;
+import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.init.custom.WoodPalettes;
 
 import java.util.Set;
@@ -38,7 +39,8 @@ public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
 			.add(MagicPaintingVariants.REGISTRY_KEY, MagicPaintingVariants::bootstrap)
 			.add(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlers::bootstrap)
 			.add(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfigs::bootstrap)
-			.add(ChunkBlanketProcessors.CHUNK_BLANKET_PROCESSORS_KEY, ChunkBlanketProcessors::bootstrap);
+			.add(ChunkBlanketProcessors.CHUNK_BLANKET_PROCESSORS_KEY, ChunkBlanketProcessors::bootstrap)
+			.add(TravellersModifiersManager.TRAVELLERS_MODIFIERS_KEY, TravellersModifiersManager::bootstrap);
 
 	public RegistryDataGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
 		super(output, provider, BUILDER, Set.of("minecraft", TwilightForestMod.ID));

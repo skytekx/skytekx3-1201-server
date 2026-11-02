@@ -1,6 +1,7 @@
 package twilightforest.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderType;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.model.armor.TFArmorModel;
+import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.util.ArmorUtil;
 
@@ -29,6 +32,27 @@ import twilightforest.util.ArmorUtil;
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class TravellersClientEvents {
 	private static final ResourceLocation GLOVE_TEXTURE = TwilightForestMod.prefix("textures/models/armor/travellers_layer_1.png");
+
+	/**
+	 * Whether Shift is held, for the modifier descriptions in the Traveller's Gear tooltip (4.8 TooltipFlag#hasShiftDown).
+	 */
+	public static boolean hasShiftDown() {
+		return Screen.hasShiftDown();
+	}
+
+	/**
+	 * The modifier cache is static and the server only clears it when it reloads its data. A client that joins another
+	 * server, whose data packs define the modifiers differently, must not keep the definitions of the last one.
+	 */
+	@SubscribeEvent
+	public static void clearModifierCacheOnLogin(ClientPlayerNetworkEvent.LoggingIn event) {
+		TravellersModifiersManager.clearCache();
+	}
+
+	@SubscribeEvent
+	public static void clearModifierCacheOnLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+		TravellersModifiersManager.clearCache();
+	}
 
 	/**
 	 * Draws the Traveller's Gloves over the first-person arm, the same way PlayerRenderer#renderHand draws the sleeve.

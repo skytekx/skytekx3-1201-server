@@ -34,6 +34,7 @@ public class TFCommand {
                 .then(MapBiomesCommand.register())
                 .then(ShieldCommand.register())
                 .then(SinisterSpawnerCommand.register(buildContext))
+                .then(TravellersGearCommand.register())
                 .then(structureBranch);
         LiteralCommandNode<CommandSourceStack> node = dispatcher.register(builder);
         dispatcher.register(Commands.literal("tf").executes(TFCommand::run).redirect(node));

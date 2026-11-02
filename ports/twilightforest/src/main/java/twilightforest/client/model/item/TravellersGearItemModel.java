@@ -149,7 +149,8 @@ public class TravellersGearItemModel implements IUnbakedGeometry<TravellersGearI
 			if (overridden != originalModel)
 				return overridden;
 
-			List<ResourceLocation> modifiers = TravellersArmorItem.getInsertedModifierIds(stack);
+			// the modifier definitions are a synced datapack registry, read from the level the stack is drawn in
+			List<ResourceLocation> modifiers = level == null ? List.of() : TravellersArmorItem.getInsertedModifierIds(level.registryAccess(), stack);
 			boolean broken = TravellersArmorItem.isTravellersArmorAndBroken(stack);
 			boolean gloves = TravellersArmorItem.hasGloves(stack);
 			if (modifiers.isEmpty() && !broken && !gloves)

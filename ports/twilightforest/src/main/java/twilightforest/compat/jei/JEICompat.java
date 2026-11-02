@@ -28,6 +28,7 @@ import twilightforest.compat.jei.extension.CasketRepairExtension;
 import twilightforest.compat.jei.extension.ExanimateEssenceRepairExtension;
 import twilightforest.compat.jei.extension.MoonwormQueenExtension;
 import twilightforest.compat.jei.extension.ScepterRepairExtension;
+import twilightforest.compat.jei.extension.TravellersGearModifierExtension;
 import twilightforest.compat.jei.extension.TravellersVestGlovesMergeExtension;
 import twilightforest.compat.jei.renderers.*;
 import twilightforest.compat.jei.subtype.CasketSubtypeInterpreter;
@@ -42,6 +43,7 @@ import twilightforest.item.recipe.CasketRepairRecipe;
 import twilightforest.item.recipe.EssenceRepairRecipe;
 import twilightforest.item.recipe.MoonwormQueenRepairRecipe;
 import twilightforest.item.recipe.ScepterRepairRecipe;
+import twilightforest.item.recipe.travellers.TravellersGearModifierRecipe;
 import twilightforest.item.recipe.travellers.TravellersVestGlovesMergeRecipe;
 
 import java.util.Collections;
@@ -123,6 +125,8 @@ public class JEICompat implements IModPlugin {
 		registration.getCraftingCategory().addCategoryExtension(CasketRepairRecipe.class, CasketRepairExtension::new);
 		registration.getCraftingCategory().addCategoryExtension(EssenceRepairRecipe.class, ExanimateEssenceRepairExtension::new);
 		registration.getCraftingCategory().addCategoryExtension(TravellersVestGlovesMergeRecipe.class, recipe -> new TravellersVestGlovesMergeExtension());
+		// JEI 15.2 has no grindstone category, so 4.8's GrindstoneTravellersRecipesGetter display has nowhere to go
+		registration.getCraftingCategory().addCategoryExtension(TravellersGearModifierRecipe.class, TravellersGearModifierExtension::new);
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package twilightforest.item.travellers_gear;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -19,18 +21,30 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.client.TravellersClientEvents;
 import twilightforest.client.renderer.armor.TravellersArmorRenderer;
+import twilightforest.components.item.TravellersComponentType;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.enums.TwilightArmorMaterial;
 import twilightforest.init.TFItems;
+import twilightforest.init.custom.TravellersModifiersManager;
+import twilightforest.item.travellers_gear.modifiers.TravellersAttributeEntry;
+import twilightforest.item.travellers_gear.modifiers.TravellersModifiable;
+import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
 
 import java.util.EnumSet;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * A piece of Traveller's Gear: Goggles, Vest, Gloves, Wings, Belt or Boots, all made from Tanned Leather.
@@ -40,10 +54,14 @@ import java.util.function.Consumer;
  * properties ({@link Part}), except the gloves a vest gains through the merge recipe ({@link TravellersGearData}).
  * <p>
  * Traveller's Gear never breaks: damage stops at one point of durability, where the piece is "broken". A broken piece
- * keeps its name with a " (Broken)" suffix, switches to its broken item texture and gives no attribute modifiers (see
- * {@code TravellersGearEvents}) until it is repaired with Tanned Leather in an anvil.
+ * keeps its name with a " (Broken)" suffix, switches to its broken item texture, gives no attribute modifiers (see
+ * {@code TravellersGearEvents}) and its modifiers stop working until it is repaired with Tanned Leather in an anvil.
+ * <p>
+ * Goggles, Vest, Wings and Boots take up to {@link #getModifierSlots} Traveller's modifiers
+ * ({@link TravellersModifiersManager}). A built-in ability is a component the item carries as a default
+ * ({@link #withDefaultComponent}), the 1.20.1 stand-in for 4.8's default item components.
  */
-public class TravellersArmorItem extends ArmorItem {
+public class TravellersArmorItem extends ArmorItem implements TravellersModifiable {
 	private static final MutableComponent GLOVES_TOOLTIP = Component.translatable("item.twilightforest.travellers_gloves.desc").withStyle(ChatFormatting.GRAY);
 	private static final String OUTER_TEXTURE = TwilightForestMod.prefix("textures/models/armor/travellers_layer_1.png").toString();
 	private static final String INNER_TEXTURE = TwilightForestMod.prefix("textures/models/armor/travellers_layer_2.png").toString();
@@ -51,6 +69,7 @@ public class TravellersArmorItem extends ArmorItem {
 	private final int insertableModifierSlots;
 	private final Set<Part> parts;
 	private final boolean cosmetic;
+	private final Map<TravellersComponentType<?>, Object> defaultComponents = new IdentityHashMap<>();
 
 	/**
 	 * @param durability the 4.8 durability multiplier, scaled by the vanilla armor health factor of the slot. 0 makes a
@@ -73,8 +92,25 @@ public class TravellersArmorItem extends ArmorItem {
 		};
 	}
 
+	@Override
 	public int getModifierSlots() {
 		return this.insertableModifierSlots;
+	}
+
+	/**
+	 * Gives every stack of this item {@code value} for {@code component} unless the stack NBT holds its own, like a 4.8
+	 * item property component. The built-in abilities ({@code twilightforest:builtin} modifiers and built-in
+	 * {@code twilightforest:attribute} modifiers) are present on the items that carry their component this way.
+	 */
+	public <T> TravellersArmorItem withDefaultComponent(TravellersComponentType<T> component, T value) {
+		this.defaultComponents.put(component, value);
+		return this;
+	}
+
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public <T> T getDefaultComponent(TravellersComponentType<T> component) {
+		return (T) this.defaultComponents.get(component);
 	}
 
 	public boolean hasPart(Part part) {
@@ -102,11 +138,10 @@ public class TravellersArmorItem extends ArmorItem {
 
 	/**
 	 * The ids of the modifiers inserted into this stack, in the order the item model layers their overlay sprites
-	 * ({@code textures/item/travellers_modifiers/<piece>/<modifier path>.png}). The modifier system is not ported yet
-	 * (feature travellers-modifier-framework), so no stack carries any.
+	 * ({@code textures/item/travellers_modifiers/<piece>/<modifier path>.png}).
 	 */
-	public static List<ResourceLocation> getInsertedModifierIds(ItemStack stack) {
-		return List.of();
+	public static List<ResourceLocation> getInsertedModifierIds(RegistryAccess registries, ItemStack stack) {
+		return TravellersModifiersManager.findAllInsertableModifiers(registries, stack).stream().map(modifier -> modifier.key().location()).toList();
 	}
 
 	@Override
@@ -123,23 +158,78 @@ public class TravellersArmorItem extends ArmorItem {
 		return this.cosmetic ? ImmutableMultimap.of() : super.getDefaultAttributeModifiers(slot);
 	}
 
+	/**
+	 * The defaults plus the attribute modifiers inserted by {@code twilightforest:attribute} modifiers. 4.8 merges both
+	 * into the stack's attribute modifier component; 1.20.1's AttributeModifiers NBT would drop the item defaults, so the
+	 * inserted ones are kept apart and added here. While the piece is broken TravellersGearEvents clears them all.
+	 */
+	@Override
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+		Multimap<Attribute, AttributeModifier> defaults = super.getAttributeModifiers(slot, stack);
+		List<TravellersAttributeEntry> inserted = TravellersGearData.INSERTED_ATTRIBUTE_MODIFIERS.get(stack);
+		if (inserted == null || inserted.isEmpty())
+			return defaults;
+
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+		builder.putAll(defaults);
+		for (TravellersAttributeEntry entry : inserted) {
+			if (entry.slot().test(slot))
+				builder.put(entry.attribute(), entry.createModifier(slot));
+		}
+		return builder.build();
+	}
+
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
 		return slot == EquipmentSlot.LEGS ? INNER_TEXTURE : OUTER_TEXTURE;
 	}
 
+	/**
+	 * Lists the built-in abilities, the inserted modifiers (with their descriptions while Shift is held) and the empty
+	 * modifier slots. Backport of 4.8's TravellersArmorItem#appendHoverText (613e64609, d3b7f702a).
+	 */
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, level, tooltip, flag);
+		// the modifiers come from the level's registries (4.8: the tooltip context's); without a level only the empty slots show
+		RegistryAccess registries = level == null ? null : level.registryAccess();
+		boolean shiftDown = isShiftDown();
 
-		int insertedModifiers = getInsertedModifierIds(stack).size();
-		for (int i = insertedModifiers; i < this.getModifierSlots(); i++) {
+		List<Holder.Reference<TravellersModifier>> abilityModifiers = registries == null ? List.of() : TravellersModifiersManager.findAllAbilityModifiers(registries, stack);
+		for (Holder.Reference<TravellersModifier> travellersModifierReference : abilityModifiers) {
+			tooltip.add(Component.translatable("travellers_gear.ability", TravellersModifiersManager.getModifierTooltipComponent(travellersModifierReference).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.GOLD));
+		}
+
+		List<Holder.Reference<TravellersModifier>> insertableModifiers = registries == null ? List.of() : TravellersModifiersManager.findAllInsertableModifiers(registries, stack);
+		for (Holder.Reference<TravellersModifier> modifier : insertableModifiers) {
+			tooltip.add(Component.literal("- ").append(TravellersModifiersManager.getModifierTooltipComponent(modifier).withStyle(ChatFormatting.GRAY)));
+			if (shiftDown) {
+				for (Component description : modifier.value().getDescription()) {
+					tooltip.add(Component.literal("").append(Component.translatable("travellers_gear.info_indent").withStyle(ChatFormatting.BOLD)).append(description));
+				}
+			}
+		}
+
+		for (int i = insertableModifiers.size(); i < this.getModifierSlots(); i++) {
 			tooltip.add(Component.literal("- ").append(Component.translatable("travellers_gear.modifier.empty").withStyle(ChatFormatting.DARK_GRAY)));
 		}
 
 		if (this.hasPart(Part.GLOVES)) {
 			tooltip.add(GLOVES_TOOLTIP);
 		}
+
+		if (!shiftDown) {
+			boolean hasHiddenDescriptions = Stream.concat(abilityModifiers.stream(), insertableModifiers.stream()).map(Holder::value).map(TravellersModifier::getDescription).anyMatch(Predicate.not(List::isEmpty));
+			if (hasHiddenDescriptions) {
+				tooltip.add(Component.translatable("travellers_gear.shift_info", Component.literal("Shift").withStyle(ChatFormatting.YELLOW)).withStyle(ChatFormatting.WHITE));
+			}
+		}
+	}
+
+	// 1.20.1's TooltipFlag has no hasShiftDown; ask the client's keyboard, a dedicated server has no Shift to hold
+	private static boolean isShiftDown() {
+		Boolean shiftDown = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> TravellersClientEvents::hasShiftDown);
+		return shiftDown != null && shiftDown;
 	}
 
 	/**

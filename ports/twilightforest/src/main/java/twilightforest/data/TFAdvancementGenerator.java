@@ -1,5 +1,6 @@
 package twilightforest.data;
 
+import net.minecraft.Util;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.HolderLookup;
@@ -7,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +23,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.*;
 import twilightforest.block.Experiment115Block;
+import twilightforest.components.item.TravellersGearData;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.*;
 import twilightforest.item.BrittleFlaskItem;
@@ -324,7 +327,7 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 				.save(consumer, "twilightforest:craft_travellers_gear");
 
 		Advancement.Builder.advancement().parent(gear).display(
-						TFItems.TRAVELLERS_BOOTS.get(),
+						Util.make(new ItemStack(TFItems.TRAVELLERS_BOOTS.get()), boots -> TravellersGearData.WATER_WALK.set(boots, Unit.INSTANCE)),
 						Component.translatable("advancement.twilightforest.modify_travellers_gear"),
 						Component.translatable("advancement.twilightforest.modify_travellers_gear.desc"),
 						null, FrameType.TASK, true, true, false)

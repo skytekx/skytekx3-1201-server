@@ -36,6 +36,21 @@ public final class TFKeyBinds {
 		return "key." + TwilightForestMod.ID + ".categories." + name;
 	}
 
+	/**
+	 * The key bound to the Twilight Forest key mapping {@code name}, with its modifier, for the
+	 * {@code ${tfkeybinds/<name>}} placeholders of the Traveller's modifier names (4.8 TooltipStringInterpolator).
+	 */
+	public static String getBoundKeyName(String name) {
+		return KEY_MAPPINGS.stream()
+			.filter(keyMapping -> keyMapping.getName().equals(name))
+			.findFirst()
+			.map(keyMapping -> {
+				InputConstants.Key key = keyMapping.getKey();
+				return keyMapping.getKeyModifier().getCombinedName(key, key::getDisplayName).getString();
+			})
+			.orElse("Nonexistent key");
+	}
+
 	@SubscribeEvent
 	public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
 		KEY_MAPPINGS.forEach(event::register);

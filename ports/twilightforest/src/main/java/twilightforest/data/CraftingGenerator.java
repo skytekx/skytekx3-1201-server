@@ -21,15 +21,19 @@ import twilightforest.TwilightForestMod;
 import twilightforest.data.custom.DryingRecipeBuilder;
 import twilightforest.data.custom.NoSmithingTemplateRecipeBuilder;
 import twilightforest.data.custom.ScepterRecipeBuilder;
+import twilightforest.data.custom.TravellersGearModifierRecipeBuilder;
 import twilightforest.data.custom.UncraftingGenerator;
 import twilightforest.data.helpers.CraftingDataHelper;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFRecipes;
+import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.recipe.UncraftingTableCondition;
 import twilightforest.util.ArmorUtil;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class CraftingGenerator extends CraftingDataHelper {
@@ -53,6 +57,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 		fieryConversions(consumer);
 		dryingRecipes(consumer);
 		travellersGearRecipes(consumer);
+		travellersModifierRecipes(consumer);
 
 		nagastoneRecipes(consumer);
 		darkTowerRecipes(consumer);
@@ -588,6 +593,136 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.define('s', Tags.Items.STRING)
 				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
 				.save(consumer, locEquip(TFItems.TRAVELLERS_GLOVES.getId().getPath()));
+	}
+
+	// 4.8 CraftingGenerator, the add_modifier_to_travellers_gear recipes. 4.8's c: tags are forge: tags here, its
+	// neoforge:components potion ingredients forge:partial_nbt ones
+	private void travellersModifierRecipes(Consumer<FinishedRecipe> consumer) {
+		Ingredient goggles = Ingredient.of(TFItems.TRAVELLERS_GOGGLES.get());
+		Ingredient vest = Ingredient.of(TFItems.TRAVELLERS_VEST.get());
+		Ingredient wings = Ingredient.of(TFItems.TRAVELLERS_WINGS.get());
+		Ingredient boots = Ingredient.of(TFItems.TRAVELLERS_BOOTS.get());
+		Ingredient swiftness = CompoundIngredient.of(potion(Potions.SWIFTNESS), potion(Potions.LONG_SWIFTNESS), potion(Potions.STRONG_SWIFTNESS));
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.RED_THREAD_VISION_MODIFIER,
+				Map.of('R', Ingredient.of(TFBlocks.RED_THREAD.get()), 'G', goggles),
+				" R ",
+				"RGR");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.PERFECT_DODGE_MODIFIER,
+				Map.of('E', Ingredient.of(Items.ENDER_EYE), 'P', Ingredient.of(Items.ENDER_PEARL), 'V', vest, 'S', Ingredient.of(Items.SUGAR)),
+				" E ",
+				"PVP",
+				" S ");
+
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.STEALTH_MODIFIER,
+				CompoundIngredient.of(potion(Potions.INVISIBILITY), potion(Potions.LONG_INVISIBILITY)),
+				Ingredient.of(Items.ENDER_EYE),
+				Ingredient.of(Items.SPIDER_EYE),
+				Ingredient.of(Items.GOLDEN_CARROT),
+				vest);
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.HASTE_MODIFIER,
+				Map.of('R', Ingredient.of(Items.REDSTONE_BLOCK), 'V', vest, 'O', Ingredient.of(Items.OBSIDIAN)),
+				"RRR",
+				"RVR",
+				"OOO");
+
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.ARROW_MAGNETISM_MODIFIER,
+				Ingredient.of(TFItems.EXANIMATE_ESSENCE.get()),
+				Ingredient.of(TFItems.ORE_MAGNET.get()),
+				Ingredient.of(TFItems.LIVEROOT.get()),
+				Ingredient.of(Items.CHICKEN),
+				vest);
+
+		// the bundle is experimental in 1.20.1; the Questing Ram reward still hands one out
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.EFFICIENT_EATER_MODIFIER,
+				Ingredient.of(TFItems.HYDRA_CHOP.get()),
+				Ingredient.of(TFItems.HYDRA_CHOP.get()),
+				Ingredient.of(TFItems.HYDRA_CHOP.get()),
+				Ingredient.of(Items.BUNDLE),
+				vest);
+
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.SWAP_HOTBAR_MODIFIER,
+				wings,
+				Ingredient.of(TFItems.TRAVELLERS_BELT.get()));
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.GRADUAL_GLIDE_MODIFIER,
+				Map.of('F', Ingredient.of(Items.FEATHER), 'C', Ingredient.of(Items.COBWEB), 'W', wings, 'E', Ingredient.of(TFItems.BORER_ESSENCE.get())),
+				"FCF",
+				"FWF",
+				"FEF");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.DOUBLE_JUMP_MODIFIER,
+				Map.of('L', CompoundIngredient.of(potion(Potions.LEAPING), potion(Potions.LONG_LEAPING), potion(Potions.STRONG_LEAPING)), 'S', Ingredient.of(Tags.Items.STRING), 'W', wings, 'P', Ingredient.of(Items.PISTON)),
+				" L ",
+				"SWS",
+				"P P");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AGILE_RANGER_MODIFIER,
+				Map.of('P', swiftness, 'H', Ingredient.of(Items.RABBIT_HIDE), 'W', wings, 'F', Ingredient.of(TFItems.RAVEN_FEATHER.get())),
+				"FPF",
+				"HWH");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.SIDESTEP_MODIFIER,
+				Map.of('S', Ingredient.of(Tags.Items.STRING), 'B', Ingredient.of(Tags.Items.BONES), 'P', Ingredient.of(Items.PISTON), 'W', wings),
+				"SBS",
+				"PWP",
+				"SBS");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.WATER_WALK_MODIFIER,
+				Map.of('B', boots, 'S', Ingredient.of(TFItems.MAZE_SLIME_BALL.get()), 'L', Ingredient.of(Items.LILY_PAD)),
+				"SBS",
+				"L L");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.UNRESTRAINED_MODIFIER,
+				Map.of('b', boots, 'k', Ingredient.of(ItemTagGenerator.KNIGHTMETAL_INGOTS), 'n', Ingredient.of(Tags.Items.NUGGETS_IRON), 'i', Ingredient.of(Tags.Items.INGOTS_IRON)),
+				"n n",
+				"kbk",
+				"i i");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.SLIMY_SOLES_MODIFIER,
+				Map.of('W', Ingredient.of(Tags.Items.STRING), 'B', boots, 'S', Ingredient.of(Items.SLIME_BLOCK)),
+				"WBW",
+				"S S");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.STRAIGHT_AHEAD_MODIFIER,
+				Map.of('M', Ingredient.of(TFItems.RAW_MEEF.get()), 'P', swiftness, 'B', boots, 'H', Ingredient.of(Items.RABBIT_HIDE)),
+				"MPM",
+				"HBH");
+
+		// 4.8 lists the four pieces in one key and splits it into one recipe per piece (CartesianShapedRecipeBuilder)
+		for (Ingredient piece : List.of(goggles, vest, wings, boots)) {
+			TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AUTO_REPAIR_MODIFIER,
+					Map.of('E', Ingredient.of(Items.EXPERIENCE_BOTTLE), 'M', Ingredient.of(TFBlocks.MOSS_PATCH.get()), 'T', piece),
+					" E ",
+					"MTM",
+					" E ");
+
+			TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AUTO_REPAIR_MODIFIER, true,
+					Map.of('M', Ingredient.of(TFBlocks.MOSS_PATCH.get()), 'E', Ingredient.of(Items.EXPERIENCE_BOTTLE), 'T', piece),
+					" M ",
+					"ETE",
+					" M ");
+		}
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.ALL_NIGHT_GOGGLES_MODIFIER,
+				Map.of('M', Ingredient.of(Items.PHANTOM_MEMBRANE), 'Y', Ingredient.of(Items.YELLOW_STAINED_GLASS_PANE), 'G', goggles),
+				"M M",
+				"YGY",
+				"M M");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.ITEM_DISPLAY_MODIFIER,
+				Map.of('i', Ingredient.of(Items.ITEM_FRAME), 's', Ingredient.of(Tags.Items.RODS_WOODEN), 'g', goggles),
+				"sss",
+				"igi",
+				"sss");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER,
+				Map.of('b', Ingredient.of(Items.BAMBOO), 'w', CompoundIngredient.of(potion(Potions.WATER_BREATHING), potion(Potions.LONG_WATER_BREATHING)), 's', Ingredient.of(Tags.Items.SLIMEBALLS), 'g', goggles),
+				" b",
+				"gb",
+				"sw");
 	}
 
 	private void equipmentRecipes(Consumer<FinishedRecipe> consumer) {

@@ -144,6 +144,20 @@ dependencies {
 }
 
 tasks.named('jar', Jar).configure {
+    // byte-reproducible jar (no file timestamps, fixed entry order, no build timestamp in the
+    // manifest), so the SHA-1 recorded in modrinth-permissions/ can be checked against a rebuild
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    // LGPL-2.1: ship the license texts and the modification notice inside the jar
+    from('LICENSE') {
+        rename { "LICENSE_${project.mod_id}" }
+    }
+    from('ASSET_LICENSE') {
+        rename { "ASSET_LICENSE_${project.mod_id}" }
+    }
+    from('NOTICE') {
+        rename { "NOTICE_${project.mod_id}" }
+    }
     manifest {
         archiveClassifier = 'universal'
         attributes([
@@ -152,8 +166,7 @@ tasks.named('jar', Jar).configure {
                 'Specification-Version'   : "1",
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : "TeamTwilight",
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                'Implementation-Vendor'   : "TeamTwilight (modified build: SkyTekx)",
         ])
     }
 

@@ -1,0 +1,49 @@
+The Twilight Forest - modified SkyTekx build for Forge 1.20.1
+============================================================
+
+This is a MODIFIED version of The Twilight Forest.
+
+Original work
+-------------
+  The Twilight Forest by TeamTwilight (originally by Benimatic)
+  Source:   https://github.com/TeamTwilight/twilightforest
+  Base:     branch 1.20.1 @ 1bc3a4c21213bc443967e92125613cb9ef47891e (Twilight Forest 4.3, Forge 47)
+  Backport: content taken from branch 1.21.1 @ 9e40a75721c716b2fdf80c16d1058fe718825e9f
+            (Twilight Forest 4.8, NeoForge 1.21.1)
+
+Modifications
+-------------
+  Modified by SkyTekx (Florian Kleber), 2026, for the SkyTekx 3 modpack. The result still runs on
+  Minecraft 1.20.1 with Forge 47, keeps the mod id twilightforest and is versioned
+  4.3.2508-skytekx.1.
+
+  Summary of the changes:
+  - Twilight Forest 4.8 bugfixes, features and content backported onto the 4.3 code: crash,
+    concurrency and multiplayer fixes; boss and mob reworks (Lich, Knight Phantom, Hydra, Ur-Ghast,
+    multiplayer boss scaling); finished 4.3 work-in-progress items and blocks; new blocks and items;
+    worldgen content for newly generated chunks (lakes, berry and oreberry bushes, hollow trees,
+    fallen trunks, troll caves and more); the revamped Lich Tower; drying racks, foods and camps;
+    Traveller's Gear and its modifiers; density-shaped landmark terrain; refreshed translations.
+  - 1.21.1 APIs translated to 1.20.1 ones: Data Components became item stack NBT, Data Attachments
+    became Forge capabilities and entity NBT, new packets are registered on the existing Forge
+    SimpleChannel (with a protocol version bump), NeoForge data maps became datapack reload
+    listeners, and copied 4.8 data uses the 1.20.1 folder names and formats.
+  - Mystic Crown Compat (an MIT-licensed 1.21.1 addon by 741741) is integrated into the mod's own
+    classes; see META-INF/NOTICE-mystic-crown-compat.txt.
+  - Content that needs 1.21 game features is not included.
+
+  The complete change history is the git history of the ports/twilightforest directory of
+  https://github.com/skytekx/skytekx3-1201-server
+  That directory is the source code of this jar: the exact source of a given jar is that directory
+  at the commit that added the jar to local-mods/.
+
+Licenses
+--------
+  - Code: GNU Lesser General Public License, version 2.1. The text ships in this jar as
+    LICENSE_twilightforest.
+  - Assets other than sounds and structure templates: Creative Commons Attribution-NonCommercial-
+    ShareAlike 4.0 International. The text ships in this jar as ASSET_LICENSE_twilightforest.
+  - Sounds and structure templates: All Rights Reserved by TeamTwilight. They are upstream's files;
+    some 4.3 structure templates carry upstream 4.8 changes re-applied for 1.20.1.
+  - Code derived from Mystic Crown Compat: MIT License. See META-INF/LICENSE-mystic-crown-compat.txt
+    and META-INF/NOTICE-mystic-crown-compat.txt.

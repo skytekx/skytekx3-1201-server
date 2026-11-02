@@ -1,8 +1,9 @@
 package twilightforest.block.entity.spawner;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -11,6 +12,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import twilightforest.entity.boss.Lich;
 import twilightforest.init.TFBlockEntities;
 import twilightforest.init.TFEntities;
+import twilightforest.init.TFParticleType;
 
 public class LichSpawnerBlockEntity extends BossSpawnerBlockEntity<Lich> {
 
@@ -24,18 +26,32 @@ public class LichSpawnerBlockEntity extends BossSpawnerBlockEntity<Lich> {
 		return closestPlayer != null && closestPlayer.getY() > this.getBlockPos().getY() - 4;
 	}
 
+	/**
+	 * Spawns the Lich standing on the floor below a spawner that floats above it (4.8 3e5ad54dc), with its home one block
+	 * above that floor spot so the boss chest lands where it stood (3c7c7576d). A spawner in a 4.3 tower floats one block
+	 * over the floor, so the Lich's home there is still the spawner position.
+	 */
 	@Override
 	protected boolean spawnMyBoss(ServerLevelAccessor accessor) {
-
 		Lich myCreature = this.makeMyCreature();
 
-		myCreature.moveTo(this.getBlockPos(), accessor.getLevel().random.nextFloat() * 360F, 0.0F);
-		ForgeEventFactory.onFinalizeSpawn(myCreature, accessor, accessor.getCurrentDifficultyAt(this.getBlockPos()), MobSpawnType.SPAWNER, null, null);
+		BlockPos.MutableBlockPos mutableBlockPos = this.getBlockPos().mutable();
+		while (true) {
+			if (accessor.getMinBuildHeight() >= mutableBlockPos.getY()) break;
+			if (accessor.getBlockState(mutableBlockPos.below()).isAir()) {
+				mutableBlockPos.move(Direction.DOWN);
+			} else break;
+		}
+
+		mutableBlockPos.move(Direction.UP);
+
+		myCreature.moveTo(mutableBlockPos, accessor.getLevel().getRandom().nextFloat() * 360F, 0.0F);
+		ForgeEventFactory.onFinalizeSpawn(myCreature, accessor, accessor.getCurrentDifficultyAt(mutableBlockPos), MobSpawnType.SPAWNER, null, null);
 		myCreature.setAttackCooldown(40);
 		myCreature.setExtinguishTimer();
 
 		// set creature's home to this
-		this.initializeCreature(myCreature);
+		myCreature.setRestrictionPoint(GlobalPos.of(myCreature.level().dimension(), mutableBlockPos.immutable()));
 
 		// spawn it
 		return accessor.addFreshEntity(myCreature);
@@ -43,6 +59,6 @@ public class LichSpawnerBlockEntity extends BossSpawnerBlockEntity<Lich> {
 
 	@Override
 	public ParticleOptions getSpawnerParticle() {
-		return ParticleTypes.ANGRY_VILLAGER;
+		return TFParticleType.OMINOUS_FLAME.get();
 	}
 }

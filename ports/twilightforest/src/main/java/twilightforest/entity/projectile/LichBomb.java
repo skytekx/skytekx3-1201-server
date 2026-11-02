@@ -6,19 +6,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ItemSupplier;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import twilightforest.entity.boss.Lich;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFEntities;
 
-@OnlyIn(value = Dist.CLIENT, _interface = ItemSupplier.class)
-public class LichBomb extends TFThrowable implements ItemSupplier {
+public class LichBomb extends TFThrowable {
 
 	public LichBomb(EntityType<? extends LichBomb> type, Level world) {
 		super(type, world);
@@ -40,9 +34,10 @@ public class LichBomb extends TFThrowable implements ItemSupplier {
 			double sy = 0.5 * (this.random.nextDouble() - this.random.nextDouble()) + this.getDeltaMovement().y();
 			double sz = 0.5 * (this.random.nextDouble() - this.random.nextDouble()) + this.getDeltaMovement().z();
 
-			double dx = this.getX() + sx;
-			double dy = this.getY() + sy;
-			double dz = this.getZ() + sz;
+			// behind the bomb, drifting back (4.8 65e29df27)
+			double dx = this.getX() - sx;
+			double dy = this.getY() - sy;
+			double dz = this.getZ() - sz;
 
 			this.level().addParticle(ParticleTypes.FLAME, dx, dy, dz, sx * -0.25, sy * -0.25, sz * -0.25);
 		}
@@ -107,10 +102,5 @@ public class LichBomb extends TFThrowable implements ItemSupplier {
 	@Override
 	public boolean ignoreExplosion() {
 		return true;
-	}
-
-	@Override
-	public ItemStack getItem() {
-		return new ItemStack(Items.MAGMA_CREAM);
 	}
 }

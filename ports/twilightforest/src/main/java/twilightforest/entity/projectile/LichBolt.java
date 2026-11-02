@@ -97,13 +97,14 @@ public class LichBolt extends TFThrowable {
 	}
 
 	/**
-	 * Lich bolts fly through shadow clones, other Lich projectiles and wand bolts, and only hit a Lich once a player has
-	 * reflected them, so a Lich no longer hits itself or its clones (4.8 9bc309831, 2a37097ce, 1e04187ab).
+	 * Lich bolts fly through other Lich projectiles, wand bolts and a Lich that is invisible after a teleport. A Lich (or
+	 * clone) in phase 1 is only hit once a player has reflected the bolt, so a Lich no longer hits itself or its clones
+	 * (4.8 9bc309831, 2a37097ce, 1e04187ab). From phase 2 on the Lich deflects bolts instead (see Lich#deflectsProjectile).
 	 */
 	@Override
 	protected boolean canHitEntity(Entity target) {
 		if (!super.canHitEntity(target)) return false;
-		if (target instanceof Lich lich && (lich.isShadowClone() || !(this.getOwner() instanceof Player))) return false;
+		if (target instanceof Lich lich && (lich.getTeleportInvisibility() > 0 || (!(this.getOwner() instanceof Player) && lich.getPhase() == 1))) return false;
 		return !(target instanceof LichBomb) && !(target instanceof LichBolt) && !(target instanceof TwilightWandBolt);
 	}
 

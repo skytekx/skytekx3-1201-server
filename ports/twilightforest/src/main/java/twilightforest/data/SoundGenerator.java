@@ -139,8 +139,8 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.LICH_CLONE_HURT, SoundEvents.FIRE_EXTINGUISH);
 		this.generateExistingSoundWithSubtitle(TFSounds.LICH_DEATH, SoundEvents.BLAZE_DEATH);
 		this.generateExistingSoundWithSubtitle(TFSounds.LICH_HURT, SoundEvents.BLAZE_HURT);
-		this.generateExistingSoundWithSubtitle(TFSounds.LICH_POP_MOB, SoundEvents.CHICKEN_EGG);
-		this.generateExistingSoundWithSubtitle(TFSounds.LICH_SHOOT, SoundEvents.GHAST_SHOOT);
+		this.generateNewSoundWithSubtitle(TFSounds.LICH_POP_MOB, "random/scepter/drain", 3);
+		this.generateNewSoundWithSubtitle(TFSounds.LICH_SHOOT, "random/scepter/twilight_use", 3);
 		this.generateExistingSoundWithSubtitle(TFSounds.LICH_TELEPORT, SoundEvents.CHORUS_FRUIT_TELEPORT);
 
 		this.generateExistingSoundWithSubtitle(TFSounds.LOYAL_ZOMBIE_AMBIENT, SoundEvents.ZOMBIE_AMBIENT);
@@ -161,7 +161,7 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.MINION_DEATH, SoundEvents.ZOMBIE_DEATH);
 		this.generateExistingSoundWithSubtitle(TFSounds.MINION_HURT, SoundEvents.ZOMBIE_HURT);
 		this.makeStepSound(TFSounds.MINION_STEP, SoundEvents.ZOMBIE_STEP);
-		this.generateExistingSoundWithSubtitle(TFSounds.MINION_SUMMON, SoundEvents.ITEM_PICKUP);
+		this.generateNewSoundWithSubtitle(TFSounds.MINION_SUMMON, "random/scepter/zombie", 1);
 
 		this.generateExistingSoundWithSubtitle(TFSounds.MINOSHROOM_AMBIENT, SoundEvents.COW_AMBIENT);
 		this.generateExistingSoundWithSubtitle(TFSounds.MINOSHROOM_ATTACK, SoundEvents.IRON_GOLEM_ATTACK);

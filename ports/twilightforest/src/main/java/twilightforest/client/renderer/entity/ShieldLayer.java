@@ -33,8 +33,9 @@ public class ShieldLayer<T extends LivingEntity, M extends EntityModel<T>> exten
 	}
 
 	private int getShieldCount(T entity) {
-		return entity instanceof Lich
-						? ((Lich) entity).getShieldStrength()
+		// a Lich hides its shields while it is invisible after a teleport (4.8 027ed618e)
+		return entity instanceof Lich lich
+						? (lich.getTeleportInvisibility() > 0 ? 0 : lich.getShieldStrength())
 						: entity.getCapability(CapabilityList.SHIELDS).map(IShieldCapability::shieldsLeft).orElse(0);
 	}
 

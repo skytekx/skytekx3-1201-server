@@ -1,5 +1,6 @@
 package twilightforest.client.renderer;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -10,6 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 import twilightforest.TwilightForestMod;
+import twilightforest.client.renderer.entity.LichRenderer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -26,6 +28,25 @@ public class TFRenderTypes extends RenderType {
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(NO_CULL)
                     .setLightmapState(LIGHTMAP).setOverlayState(OVERLAY)
                     .createCompositeState(false));
+
+    public static final TransparencyStateShard TRANSPARENCY_STATE_SHARD = new TransparencyStateShard("shadow_clone", () -> {
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+    }, () -> {
+        RenderSystem.disableBlend();
+        RenderSystem.defaultBlendFunc();
+    });
+
+    // The see-through body of a Lich shadow clone (4.8 7c465f29d)
+    public static final RenderType SHADOW_CLONE = create("shadow_clone", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+            RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER)
+                    .setTextureState(new RenderStateShard.TextureStateShard(LichRenderer.TEXTURE, false, false))
+                    .setTransparencyState(TRANSPARENCY_STATE_SHARD)
+                    .setCullState(NO_CULL)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true));
 
     @OnlyIn(Dist.CLIENT)
     public static final class ProtectionBoxTexturingStateShard extends RenderStateShard.TexturingStateShard {

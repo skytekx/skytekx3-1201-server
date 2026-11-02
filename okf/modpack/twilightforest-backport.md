@@ -68,6 +68,9 @@ Still open before the release is deployed and published:
 ## Changelog for players
 
 For pack release **3.1.0**, which ships `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`.
+The Modrinth version changelog, [`docs/changelog/3.1.0.md`](../../docs/changelog/3.1.0.md), carries the
+player parts of this section (not the operator steps) plus the unreleased 3.0.5 Skylands changes; keep
+the two in step.
 
 New in the Twilight Forest (TF 4.8 content on 1.20.1):
 - The rebuilt Lich Tower (graveyard yard, wings, gallery, new boss room) and a reworked Lich fight with

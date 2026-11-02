@@ -4,7 +4,9 @@ Usage: publish_modrinth.py <PAT> [--go]   (without --go = dry run / inspect only
 
 Before any network call it checks the .mrpack it would upload: the file exists, its index has this
 VERSION, and every jar inside it has a modrinth-permissions/<jar>.md with Status OK
-(tools/mrpack_permissions.py). A failed check stops the dry run too; there is no override.
+(tools/mrpack_permissions.py). The version changelog is read from docs/changelog/<VERSION>.md, which
+must exist and not be empty, so a VERSION bump cannot reuse an old changelog. A failed check stops the
+dry run too; there is no override. The dry run prints the changelog it would send.
 """
 import json, os, sys, mimetypes, urllib.request, urllib.error, uuid, zipfile
 
@@ -16,6 +18,7 @@ GO = "--go" in sys.argv
 REPO = "/home/snekmin/git/skytekx3-1201-server"
 VERSION = "3.1.0"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
+CHANGELOG = REPO + f"/docs/changelog/{VERSION}.md"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
 SLUG = "skytekx3"
@@ -45,7 +48,15 @@ def preflight():
     print(f"preflight OK: {MRPACK} ({os.path.getsize(MRPACK)//1024} KiB), versionId {VERSION}, "
           f"{len(idx.get('files', []))} index files, {len(jars)} bundled jars, all with permission")
 
+def read_changelog():
+    """The player changelog for this VERSION; refuses a missing or empty file."""
+    text = open(CHANGELOG, encoding="utf-8").read().strip() if os.path.exists(CHANGELOG) else ""
+    if not text:
+        sys.exit(f"{CHANGELOG} is missing or empty; write the {VERSION} changelog before uploading")
+    return text
+
 preflight()
+CHANGELOG_TEXT = read_changelog()
 
 def req(method, path, headers=None, data=None):
     h = {"Authorization": PAT, "User-Agent": UA}
@@ -88,6 +99,7 @@ except urllib.error.HTTPError as e:
 
 if not GO:
     print("\n[dry run] .mrpack:", MRPACK, os.path.getsize(MRPACK))
+    print(f"[dry run] changelog from {CHANGELOG}:\n" + CHANGELOG_TEXT + "\n")
     print("[dry run] re-run with --go to create/upload.")
     sys.exit(0)
 
@@ -119,7 +131,7 @@ vdata = {
     "name": f"SkyTekx3 {VERSION}",
     "version_number": VERSION,
     "project_id": project_id,
-    "changelog": "Full **Nyx** port (night/moon mechanics, meteors, lunar water) shipped server+client (env required/required). Skylands worldgen overhaul: fixed the island floor to y0 and added many new structures (villages, swamp huts, Dungeons Arise, Cataclysm, Botania mystical flowers). Added an Aether-style void-fall (drop off the Skylands islands and free-fall back into the overworld). Full all-dimension reset/regen so the new structure-sets, biome-tags and Nyx worldgen appear everywhere. Retuned AlmostUnified priorities.",
+    "changelog": CHANGELOG_TEXT,
     "dependencies": [],
     "game_versions": ["1.20.1"],
     "version_type": "beta",

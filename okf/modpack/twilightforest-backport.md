@@ -201,6 +201,11 @@ Everything here changes only ungenerated chunks. Bundle it into one release and 
 | `giant-house-split` — Troll clouds as a structure piece (giant house cloud fixes) | structure | medium | 8 | new piece id TFCloud; old troll caves keep their old cloud; new chunks only |
 | `final-castle-template-hooks` — Final Castle modpack template hooks and punchable WIP text | structure | medium | 8 | none for existing castles |
 
+Live-server notes for `chunk-blanketing` and `speleothem-config-datadriven`:
+
+- The TF dimension's level.dat generator keeps `dark_forest_canopy_height` (19 on worlds created with 4.3), but the value is now ignored. New Dark Forest chunks get the 4.8 canopy: 14 blocks above the floor and as thick as the biome share instead of 1.5x. Where explored terrain meets new chunks the canopy steps by about 5 blocks. The TF dimension reset above avoids that. Without a reset, pregenerate around the Dark Forest borders, or ship a server datapack that overrides `data/twilightforest/twilight/chunk_blanket_processors/dark_forest_canopy.json` with `"height": 19`. That only removes the height step, because the processor has no thickness field.
+- Stalactite lists moved from `data/<ns>/stalactites/` to `data/<ns>/twilight/stalactites/` in the 4.8 format. A 4.3-format datapack still loads: its entries become ore stalactites of that hill size and every larger one. An entry whose blocks all belong to absent mods is skipped with an error instead of becoming a stone spike. Per-block ore weights must be 0 or more.
+
 ## Wave 8: Lich Tower and Lich
 
 The headline 4.8 content, scheduled once all infrastructure (wave 3) and decor blocks (wave 6) exist. Lich fight fixes shipped in wave 4, so this wave is the full rework. The tower is the single largest item (about 70h); plan a second TF dimension reset or accept that new towers appear only in unexplored areas.

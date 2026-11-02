@@ -37,7 +37,7 @@ public record Stalactite(Map<Block, Integer> ores, float sizeVariation, int maxL
 	// 1.20.1's defaulted block registry reads an unknown id (such as an ore of a mod that is not installed) as air instead of failing like 1.21.
 	// Reject it, so the entry is skipped with an error instead of carving air spikes into the ceiling
 	private static final Codec<Block> BLOCK_CODEC = ExtraCodecs.validate(BuiltInRegistries.BLOCK.byNameCodec(), block -> block == Blocks.AIR ? DataResult.error(() -> "Unknown block, or air") : DataResult.success(block));
-	private static final Codec<Pair<Block, Integer>> WEIGHTED_BLOCK_CODEC = Codec.pair(BLOCK_CODEC.fieldOf("block").codec(), Codec.INT.fieldOf("weight").codec());
+	private static final Codec<Pair<Block, Integer>> WEIGHTED_BLOCK_CODEC = Codec.pair(BLOCK_CODEC.fieldOf("block").codec(), ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weight").codec());
 	private static final Codec<Map<Block, Integer>> ORES_CODEC = Codec.either(WEIGHTED_BLOCK_CODEC.listOf(), BLOCK_CODEC).xmap(
 			either -> either.map(Stalactite::toOreMap, block -> Map.of(block, 1)),
 			ores -> ores.size() == 1 ? Either.right(ores.keySet().iterator().next()) : Either.left(ores.entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue())).toList())
@@ -82,7 +82,13 @@ public record Stalactite(Map<Block, Integer> ores, float sizeVariation, int maxL
 				TwilightForestMod.LOGGER.warn("Skipping unknown block {} in legacy stalactite entry", GsonHelper.getAsString(entry, "block"));
 				continue;
 			}
-			map.put(block, GsonHelper.getAsInt(entry, "weight"));
+			// A negative weight would make Weight.of throw on the worldgen thread when the spike is placed
+			int w = GsonHelper.getAsInt(entry, "weight");
+			if (w < 0) {
+				TwilightForestMod.LOGGER.warn("Skipping block {} with negative weight {} in legacy stalactite entry", blockId, w);
+				continue;
+			}
+			map.put(block, w);
 		}
 
 		return new Stalactite(Collections.unmodifiableMap(map), size, maxLength, weight);

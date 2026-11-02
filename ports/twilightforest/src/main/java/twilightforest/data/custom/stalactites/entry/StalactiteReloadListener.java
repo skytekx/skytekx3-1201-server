@@ -141,8 +141,15 @@ public class StalactiteReloadListener extends CodecResourceReloadListener<Speleo
 				return Optional.empty();
 			}
 
-			if (!stalObject.has("ores") && stalObject.has("blocks"))
-				return Optional.of(Stalactite.fromLegacyJson(stalObject));
+			if (!stalObject.has("ores") && stalObject.has("blocks")) {
+				Stalactite legacy = Stalactite.fromLegacyJson(stalObject);
+				// Every block was skipped (e.g. only ores of absent mods): BlockSpikeFeature would read the empty map as stone spikes
+				if (legacy.ores().isEmpty()) {
+					TwilightForestMod.LOGGER.error("Legacy stalactite entry {} has no known blocks, skipping it", fileLocation);
+					return Optional.empty();
+				}
+				return Optional.of(legacy);
+			}
 
 			return Stalactite.CODEC.parse(JsonOps.INSTANCE, stalObject).resultOrPartial(error -> TwilightForestMod.LOGGER.error("Failed to parse stalactite entry {}: {}", fileLocation, error));
 		} catch (RuntimeException | IOException e) {

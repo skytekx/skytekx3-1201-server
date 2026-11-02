@@ -4,12 +4,6 @@
   "at_mod.configuration.title": "暮色：另类",
   "at_mod.configuration.section.at_mod.common.toml": "暮色：另类",
   "at_mod.configuration.section.at_mod.common.toml.title": "暮色：另类",
-  "at_mod.configuration.items": "物品列表",
-  "at_mod.configuration.logDirtBlock": "日志",
-  "at_mod.configuration.magicNumberIntroduction": "Magic Number Text",
-  "at_mod.configuration.magicNumber": "Magic Number",
-
-  "item.at_mod.example_item": "试验物品",
 
   "item.at_mod.spear.wooden_spear": "木矛",
   "item.at_mod.spear.stone_spear": "石矛",
@@ -29,6 +23,8 @@
 
   "effect.at_mod.blood_lust": "嗜血",
   "effect.at_mod.blood_lust_curse": "嗜血诅咒",
+
+  "entity.at_mod.naga_venom": "娜迦毒液",
 
   "config.at_mod.naga.maxHealth": "娜迦最大生命值",
   "config.at_mod.naga.nonDazedDamageMultiplier": "非眩晕状态伤害倍率",

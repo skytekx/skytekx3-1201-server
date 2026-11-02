@@ -529,16 +529,26 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   `{ShieldStrength:6,MinionsToSummon:3}`. Not shipped: the eight boss music `.ogg` files (Bilibili
   downloads of unknown authorship); the tracker only plays `at_mod:music.<boss>` when a resource pack
   defines it, otherwise it stays silent. Also not ported: NeoForge's config screen and the MDK example
-  block. Fixed on the way: Blood Lust Curse expiry damage lands on the next entity tick instead of inside
-  `MobEffectEvent.Expired` (mid-iteration of the effect map), and the venom damage is read per hit.
+  block (with its lang keys). Fixed on the way: Blood Lust Curse expiry damage lands on the next entity
+  tick instead of inside `MobEffectEvent.Expired` (mid-iteration of the effect map), the venom damage is
+  read per hit, and the venom projectile has an entity name (`entity.at_mod.naga_venom`, missing
+  upstream).
   **Bundled** as `local-mods/at_mod-0.0.2-1.20.1-skytekx.1.jar` with its `modrinth-permissions/` file; the
   jar build is byte-reproducible and its NOTICE and mods.toml credits link the source
   (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/alternative-twilight-remastered), as
   the GPL asks. Like the other ports it needs the fork jar in `local-mods/`: next to the stock
   `twilightforest-1.20.1-4.3-universal.jar` Forge refuses to load it. After the fork jar swap, boot the
   full pack once on Arclight (Done, 0 FATAL, no mixin errors) and fight a Lich and a Naga once; the
-  porter's boot test ran on plain Forge 47.4.18 (with and without Spiced Twilight). The client-only parts
+  porter's boot test ran on plain Forge 47.4.18 (with and without Spiced Twilight), and the integration
+  boot on top of the Lich Tower part A (fork jar, this jar, Spiced Twilight and Twilight Mobs Loots) also
+  reached Done with 0 ERROR, all three mixins applied and a 210-health Naga. The client-only parts
   (spear arm pose and models, aurora post shader, boss music) were compiled but not run in a client.
+  Static checks pass (Forge 47's `EffectInstance` takes namespaced programs, `f_110009_` is
+  `PostChain.passes`, the 1.20.1 level PoseStack carries the view rotation), but the aurora is a
+  main-target `PostChain` and the pack ships Embeddium. Pending before release, one client smoke test with
+  the full pack: join a world, hold and dash a spear in first and third person, look at a spear in the GUI
+  and on the ground, and summon Knight Phantoms to check that the aurora renders at the spawner without
+  breaking particles or hand rendering. Record the result here.
 
 ### Planned backports (1.21.1-only addons)
 

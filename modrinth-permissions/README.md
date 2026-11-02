@@ -75,7 +75,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `infernalmobs-1.20.1.11.jar` | AtomicStryker's Infernal Mobs | Custom License (All Rights Reserved with stated modpack exception) | Special permission | yes | - |
 | `inventorysorter-1.20.1-23.0.11.jar` | Inventory Sorter | GPL-3.0 | Licensed | yes | - |
 | `nvlforcefields-1.20.1-10.jar` | NVL Force Fields | Public Domain | Licensed | yes | - |
-| `nyx-1.20.1-1.0.0.jar` | Nyx (1.20.1 port by SkyTekx) | MIT | Licensed | yes | - |
+| `nyx-1.20.1-1.0.1.jar` | Nyx (1.20.1 port by SkyTekx) | MIT | Licensed | yes | - |
 | `offlineskins-1.20.1-v1.jar` | OfflineSkins | MIT | Licensed | yes | yes |
 | `parry-2.5.0.jar` | Shield Parry | LGPL-2.1 | Licensed | yes | - |
 | `refurbished_furniture-forge-1.20.1-1.0.20.jar` | MrCrayfish's Furniture Mod: Refurbished | Custom (MIT for source code; All Rights Reserved for assets) | Special permission | yes | - |

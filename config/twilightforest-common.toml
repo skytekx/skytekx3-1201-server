@@ -2,8 +2,15 @@
 originDimension = "minecraft:overworld"
 #Allow portals to the Twilight Forest to be made outside of the 'origin' dimension. May be considered an exploit.
 allowPortalsInOtherDimensions = false
+#Legacy option, prefer `portalCreationPermission`.
 #Allow portals only for admins (Operators). This severely reduces the range in which the mod usually scans for valid portal conditions, and it scans near ops only.
+#If true, this requires at least permission level 1 on top of `portalCreationPermission`.
 adminOnlyPortals = false
+#Allows people with the specified permission or higher to create portals. This is based off of Vanilla's permission system.
+#You can read about them here: https://minecraft.wiki/w/Permission_level
+#At level 3 (admins) or higher the mod only scans for valid portal conditions in a small range around permitted players.
+#Range: 0 ~ 4
+portalCreationPermission = 0
 #Disable Twilight Forest portal creation entirely. Provided for server operators looking to restrict action to the dimension.
 disablePortalCreation = false
 #Determines if new portals should be pre-checked for safety. If enabled, portals will fail to form rather than redirect to a safe alternate destination.
@@ -26,12 +33,29 @@ skull_candles = false
 #Please note that this doesnt affect the crafting recipes themselves, you will need a datapack to change those.
 default_item_enchantments = true
 #If true, Twilight Forest's bosses will put their drops inside of a chest where they originally spawned instead of dropping the loot directly.
-#Note that the Knight Phantoms are not affected by this as their drops work differently.
+#The Knight Phantoms share one chest, filled by the last knight to fall; if false, each knight drops its own loot and the last one also drops the trophy.
 boss_drop_chests = true
 #Dictates how many blocks down from a cloud block should the game logic check for handling weather related code.
 #Lower if experiencing low tick rate. Set to 0 to turn all cloud precipitation logic off.
 #Range: > 0
 cloudBlockPrecipitationDistance = 32
+#Determines how bosses should adjust to multiplayer fights. There are 4 possible values that can be put here:
+#NONE: doesnt do anything when multiple people participate in a bossfight. Bosses will act the same as they do in singleplayer or solo fights.
+#MORE_LOOT: adds additional drops to a boss' loot table based on how many players participated in the fight. These are fully controlled through the entity's loot table, using the `twilightforest:multiplayer_addition` loot function and the `twilightforest:multiplayer_rolls` number provider. Note that these will only do things to entities that are included in the `twilightforest:multiplayer_inclusive_entities` tag.
+#MORE_HEALTH: increases the health of each boss in that tag by 10 hearts on Easy, 20 on Normal and 30 on Hard for each additional player nearby when it spawns.
+#MORE_LOOT_AND_HEALTH: does both of the above functions for each boss.
+#Allowed Values: NONE, MORE_LOOT, MORE_HEALTH, MORE_LOOT_AND_HEALTH
+multiplayerFightAdjuster = "NONE"
+#If true and Curios is installed, the Mystic Crown can also be worn in a Curios head slot, where it counts as worn for all of its effects.
+#This common option is not synced: keep the same value on the server and on every client, or the crown can ghost in the slot until the inventory resyncs.
+mysticCrownCurios = true
+#If true, a worn Mystic Crown also empowers the scepters:
+#the Twilight Scepter has a 10% chance to fire an extra Lich bomb, and the wearer takes no damage from any Lich bomb, including the Lich boss's own;
+#the Lifedrain Scepter drains twice as much health;
+#temporary Fortification shields no longer run out over time, they only break from hits;
+#Zombie Scepter zombies keep their strength for 3 minutes instead of 1, may wear leather armor (baby zombies get a full set and a Knockback II stick) and hit for 4 damage instead of 7.
+#If false, the crown keeps only its normal effects: a 5% chance to save a scepter charge, 50% longer temporary shields and a 10% chance to summon a baby zombie.
+mysticCrownScepterBonuses = true
 
 #Settings that are not reversible without consequences.
 ["Dimension Settings"]
@@ -68,6 +92,10 @@ cloudBlockPrecipitationDistance = 32
 	#If true, the uncrafting table will also be allowed to uncraft shapeless recipes.
 	#The table was originally intended to only take shaped recipes, but this option remains for people who wish to keep the functionality.
 	enableShapelessCrafting = false
+	#If true, the uncrafting table will no longer allow you to switch between ingredients if a recipe uses a tag for crafting.
+	#This will remove the functionality for ALL RECIPES!
+	#If you want to prevent certain ingredients from showing up in the first place, use the "twilightforest:banned_uncrafting_ingredients" tag.
+	disableIngredientSwitching = false
 	#Disables the uncrafting function of the uncrafting table. Recommended as a last resort if there's too many things to change about its behavior (or you're just lazy, I dont judge).
 	#Do note that special uncrafting recipes are not disabled as the mod relies on them for other things.
 	disableUncrafting = false
@@ -82,22 +110,26 @@ cloudBlockPrecipitationDistance = 32
 	#If true, prevents the Timewood Core from functioning.
 	disableTimeCore = false
 	#Defines the radius at which the Timewood Core works. Can be a number anywhere between 1 and 128.
-	#Range: 1 ~ 128
+	#Set to 0 to prevent the Timewood Core from functioning.
+	#Range: 0 ~ 128
 	timeCoreRange = 16
 	#If true, prevents the Transformation Core from functioning.
 	disableTransformationCore = false
 	#Defines the radius at which the Transformation Core works. Can be a number anywhere between 1 and 128.
-	#Range: 1 ~ 128
+	#Set to 0 to prevent the Transformation Core from functioning.
+	#Range: 0 ~ 128
 	transformationCoreRange = 16
 	#If true, prevents the Minewood Core from functioning.
 	disableMiningCore = false
 	#Defines the radius at which the Minewood Core works. Can be a number anywhere between 1 and 128.
-	#Range: 1 ~ 128
+	#Set to 0 to prevent the Minewood Core from functioning.
+	#Range: 0 ~ 128
 	miningCoreRange = 16
 	#If true, prevents the Sortingwood Core from functioning.
 	disableSortingCore = false
 	#Defines the radius at which the Sortingwood Core works. Can be a number anywhere between 1 and 128.
-	#Range: 1 ~ 128
+	#Set to 0 to prevent the Sortingwood Core from functioning.
+	#Range: 0 ~ 128
 	sortingCoreRange = 16
 
 #We recommend downloading the Shield Parry mod for parrying, but these controls remain for without.

@@ -576,7 +576,7 @@ a fresh world (plain Forge 1.20.1-47.4.18) reached `Done` with 0 FATAL, crash or
 ERROR from an addon or from TF. On 2026-11-02 the full pack with the fork jar also booted on the fixed
 Arclight jar (`safeiter2`, see [Arclight](../server/arclight.md)): `Done`, 0 FATAL, no error signature that
 plain Forge does not log too. (The earlier `MinecraftServerMixin` failure came from the broken `safeiter`
-jar, not from the pack.) Final boots of the release tree, 2026-11-02: on Arclight `safeiter2` at 79acbd2
+jar, not from the pack.) Final boots before the release commits, 2026-11-02: on Arclight `safeiter2` at 79acbd2
 (fork jar SHA-1 `9417577d`, 274 mods, fresh world, forced chunk generation in the overworld, the Twilight
 Forest and the Skylands) the server reached `Done` with 0 FATAL, crash or watchdog lines and stopped
 cleanly. Every server-side mixin of Twilight Crossbow (`CrossbowItem`, `FireworkRocketEntity`,
@@ -589,7 +589,10 @@ the same watchdog on plain Forge on the same host that day, after passing there 
 the sandbox's load, not the jar; do not claim 0 watchdog at the default setting from these runs.
 Pregenerate with Chunky (asynchronous), not with large `forceload` areas. After the crossbow jar's
 licence-only rebuild (4f82c56) a plain Forge boot at aaf6a5e reached `Done` (273 mods, 0 FATAL, crash or
-watchdog, the crossbow mixins applied) with no error signature the earlier runs lacked. Final static check against the shipped jar (SHA-1 `9417577d`, 2026-11-02): every
+watchdog, the crossbow mixins applied) with no error signature the earlier runs lacked; that run forced
+no chunk generation. The Arclight run at 79acbd2 used the crossbow jar from before the rebuild (SHA-1
+`7b9ba212`); the shipped jar (`ee22819b`) has the same 27 classes and differs only in mods.toml, the
+NOTICE and the added `ASSET_LICENSE_twilight_crossbow`, and was booted on plain Forge only. Final static check against the shipped jar (SHA-1 `9417577d`, 2026-11-02): every
 class, field and method that the 38 other `local-mods/` jars, the 224 Modrinth index jars and the crossbow
 jar link resolves (0 missing; members that resolve through vanilla superclasses could not be checked and
 are marked unverified, most of them in `at_mod` and Spiced Twilight). The pack-wide data scan found one TF
@@ -658,8 +661,10 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   jar ships the CC text as `ASSET_LICENSE_twilight_crossbow`, and mods.toml declares both licences (4f82c56). Like the
   other ports it needs the fork jar, which `local-mods/` carries since c825572 (next to the stock `4.3` jar
   Forge refused to load it). Unlike them, this jar build is not byte-reproducible (the jar keeps file
-  times), so record the new SHA-1 whenever the jar is rebuilt. The full pack boots on Arclight with it and
-  its mixins apply (final boots under [In the pack](#in-the-pack-2026-11-01)). Pending: fire each crossbow
+  times), so record the new SHA-1 whenever the jar is rebuilt. The full pack booted on Arclight with the
+  pre-rebuild jar (`7b9ba212`, same classes; the rebuild changed only licence files) and its mixins
+  applied; the shipped `ee22819b` jar booted on plain Forge at aaf6a5e (final boots under
+  [In the pack](#in-the-pack-2026-11-01)). Pending: fire each crossbow
   once in game.
 - **Spiced Twilight** (baguchi, LGPL-3.0-or-later): `ports/spiced-twilight/`, a standalone NeoGradle 6
   project like the fork. Build the fork first (`ports/twilightforest`, `./gradlew build`); the port compiles

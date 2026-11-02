@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
-"""Comprehensive Modrinth resolver for SkyTekx3: records .mrpack metadata + downloads jars + resolves deps."""
-import json, os, sys, time, urllib.request, urllib.error
+"""Legacy Modrinth resolver for SkyTekx3: resolves the hard-coded SLUGS list below + their deps,
+downloads the jars into REPO/mods and writes mrpack_files.json/resolve_report.json.
+
+It does NOT read modrinth.index.json, so entries that exist only in the index (such as the TF addons)
+are not fetched, and tools/build_mrpack.py no longer reads its output. Assemble mods/ as in README
+step 4 instead. Usage: resolve_all.py <PAT> [<output dir>]   (default: a fresh temp dir)
+"""
+import json, os, sys, tempfile, time, urllib.request, urllib.error
 
 PAT = sys.argv[1]
 REPO = "/home/snekmin/git/skytekx3-1201-server"
@@ -100,7 +106,9 @@ while queue:
         rec["status"]=f"ERR_{type(e).__name__}"; report.append(rec); print("!!",key,e)
     time.sleep(0.12)
 
-SC="/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
+SC = sys.argv[2] if len(sys.argv) > 2 else tempfile.mkdtemp(prefix="resolve_all-")
+os.makedirs(SC, exist_ok=True)
+print("writing mrpack_files.json and resolve_report.json to", SC)
 json.dump(index, open(SC+"/mrpack_files.json","w"), indent=1)
 json.dump(report, open(SC+"/resolve_report.json","w"), indent=1)
 ok=[r for r in report if r["status"]=="OK"]

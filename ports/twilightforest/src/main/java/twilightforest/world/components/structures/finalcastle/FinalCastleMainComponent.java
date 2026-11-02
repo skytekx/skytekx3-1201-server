@@ -18,7 +18,6 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilde
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructurePieceTypes;
-import twilightforest.util.LegacyLandmarkPlacements;
 import twilightforest.util.RotationUtil;
 import twilightforest.world.components.structures.TFStructureComponentOld;
 
@@ -37,23 +36,12 @@ public class FinalCastleMainComponent extends TFStructureComponentOld {
 		this.setOrientation(Direction.SOUTH);
 		this.spawnListIndex = 1; // main monsters
 
-		x = ((x + 127) >> 8) << 8;
-		z = ((z + 127) >> 8) << 8;
-
+		// Centred on the structure's own position (TF 4.8 06da77134). TF 4.3 snapped the castle to the nearest multiple of 256 blocks,
+		// 7 blocks away from that position in x and z
 		this.boundingBox = TFLandmark.getComponentToAddBoundingBox(x, y, z, -24, 120, -24, 48, 40, 48, Direction.SOUTH, false);
 
-		BlockPos cc = LegacyLandmarkPlacements.getNearestCenterXZ(x >> 4, z >> 4);
-
-		int cx = (x >> 8) << 8;
-		int cz = (z >> 8) << 8;
-
-		//TwilightForestMod.LOGGER.debug("Making castle at {}, {}. center is {}, {}", x, z, cc.getX(), cc.getZ());
-		//TwilightForestMod.LOGGER.debug("Natural center at {}, {}", cx, cz);
-
 		// decorator
-		if (this.deco == null) {
-			this.deco = new StructureTFDecoratorCastle();
-		}
+		this.deco = new StructureTFDecoratorCastle();
 	}
 
 	@Override

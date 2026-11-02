@@ -16,9 +16,11 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Interaction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -42,6 +44,7 @@ import net.minecraft.world.level.block.WallSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -54,6 +57,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -88,6 +92,7 @@ import twilightforest.item.YetiArmorItem;
 import twilightforest.util.EntityUtil;
 import twilightforest.util.OminousFireDamageSource;
 import twilightforest.util.datamaps.EntityTransformation;
+import twilightforest.world.components.structures.finalcastle.FinalCastleBossGazeboComponent;
 
 import java.util.List;
 import java.util.Optional;
@@ -471,6 +476,18 @@ public class EntityEvents {
 		LivingEntity living = event.getEntity();
 		if (!living.level().isClientSide()) {
 			living.getCapability(CapabilityList.MULTIPLAYER_FIGHT).ifPresent(data -> data.grantGroupAdvancement(living));
+		}
+	}
+
+	@SubscribeEvent
+	public static void onAttackEvent(AttackEntityEvent event) {
+		// For clearing our Display text entities at the Final Castle Gazebo, there's no other way to remove them otherwise
+		// The tag distinguishes our Interaction entities from other Mods' utilization
+		if (event.getTarget().level() instanceof ServerLevel level && event.getTarget() instanceof Interaction interaction
+				&& interaction.getTags().contains(FinalCastleBossGazeboComponent.INTERACTION_TAG)) {
+			AABB bounds = interaction.getBoundingBox();
+			level.getEntities(interaction, bounds, e -> e instanceof Display).forEach(Entity::discard);
+			interaction.discard();
 		}
 	}
 

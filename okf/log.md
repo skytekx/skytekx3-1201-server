@@ -558,6 +558,12 @@ logs stay on the Mac and are not in the repo.
   datapack reload at 17:23 took yellorium out of the uranium tags (974c39a6). The stop at 17:20 wrote
   Mekanism's ore switch back to `true`, so a second restart at 17:32 brought it in with the server down
   (f5f3d44d). See [AlmostUnified](modpack/almostunified.md#one-item-per-material).
+- At 18:23 the owner reported creepers of level 34 on the sky islands again. The Skylands difficulty file
+  of 14:26 had never loaded, because L2Library skips config files in a namespace that is no loaded mod
+  and does not start with `_`, and the check at 14:27 had only seen the one-shot script. The restart of
+  17:20 dropped those values. Since 18:28 the file sits under `data/_skytekx3/`, a datapack reload
+  loaded it, and 37 hostile mobs of level 6 to 59 left the Skylands. See
+  [Skylands worldgen](content/skylands-worldgen.md#the-namespace-trap-of-l2hostility).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -310,18 +310,33 @@ L2Hostility sets a mob's level from the base of its dimension, a random variatio
 nearest player times a scale, and 0.003 levels per block of distance from the origin
 (`config/l2_configs/l2hostility-common.toml`). The Skylands had no entry and used the default for mod
 dimensions, base 20, variation 16 and scale 1.5. A player's level grows by 10 for each dimension the
-player has visited, so mobs there reached about level 50. Since 14:26
-`skylands-datapack-forge/data/skytekx3/l2hostility_config/difficulty/skylands.json` gives the Skylands
-base 0, variation 1, scale 0 and no traits. Mobs sampled near the homes at 14:27 had levels 0 to 3, and
+player has visited, so mobs there reached about level 50. Since 14:26 a difficulty file gives the
+Skylands base 0, variation 1, scale 0 and no traits. It loads only since 18:28, from
+`skylands-datapack-forge/data/_skytekx3/l2hostility_config/difficulty/skylands.json`, see
+[the namespace trap](#the-namespace-trap-of-l2hostility). Mobs sampled near the homes at 14:27 had levels 0 to 3, and
 2,000 blocks out the distance alone adds 6. Since 14:28 `dimensionIDBlackList` in
 `config/infernalmobs.cfg` keeps Infernal Mobs elites out of the Skylands.
 
 L2Hostility reads its difficulty files only when the datapacks load, and Infernal Mobs reads its config
 only at startup. One-shot KubeJS scripts therefore put the same values into the running server at
-14:26:47 and 14:28:02, and the files take over at the next start. A `/reload` was avoided, because it
-makes every client rebuild its EMI index. From 13:51 to 14:26 `kubejs/server_scripts/skylands_no_mobs.js`
+14:26:47 and 14:28:02. A `/reload` was avoided, because it makes every client rebuild its EMI index. From 13:51 to 14:26 `kubejs/server_scripts/skylands_no_mobs.js`
 refused every hostile mob in the Skylands and removed 70 on its first load. It went when the owner chose
 weak mobs over none.
+
+### The namespace trap of L2Hostility
+
+The difficulty file first sat under `data/skytekx3/` and never loaded. L2Library, which reads the
+config files of L2Hostility, skips every file whose namespace is neither a loaded mod nor starts with
+`_`, and no mod is called `skytekx3`. The check at 14:27 only saw the values of the one-shot script.
+After the restart of 17:20 the Skylands fell back to the default, and at 18:23 the owner reported
+creepers of level 34 there again. A creeper 40 blocks from the owner had level 29 and the trait tank,
+and L2Hostility's merged config held entries for the overworld, the nether and the end only.
+
+Since 18:28 the file sits under `data/_skytekx3/`. A datapack reload at 18:28:34 loaded it, and the
+merged config then held the Skylands entry with base 0. A one-shot script removed the 37 hostile mobs
+of level 6 to 59 in the loaded Skylands at 18:28:52 and kept 32 of level 0 to 5. Named, tamed and
+persistent mobs were spared. A value that a one-shot script puts into memory proves nothing about the
+file behind it, so such a file is checked after a reload or a start.
 
 ## Nether portals
 

@@ -11,6 +11,36 @@ SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratc
 VERSION = "3.1.0"
 FORGE = "47.4.6"
 
+# --- permission guard: every bundled jar needs modrinth-permissions/<jar>.md with Status OK ---
+# Runs before anything is written or moved. --allow-unpermitted is for private/draft builds only.
+def unpermitted_local_mods(repo):
+    bad = []
+    lm = os.path.join(repo, "local-mods")
+    if not os.path.isdir(lm):
+        return bad
+    for fn in sorted(os.listdir(lm)):
+        if not fn.endswith(".jar"):
+            continue
+        pf = os.path.join(repo, "modrinth-permissions", fn + ".md")
+        if not os.path.exists(pf):
+            bad.append((fn, "no modrinth-permissions/%s.md" % fn))
+            continue
+        status = next((l.split("**Status:**", 1)[1].strip()
+                       for l in open(pf, encoding="utf-8") if l.startswith("**Status:**")), None)
+        if status is None or not status.startswith("OK"):
+            bad.append((fn, "Status: %s" % status))
+    return bad
+
+bad = unpermitted_local_mods(REPO)
+if bad:
+    print("local-mods/ jars without distribution permission (modrinth-permissions/ Status is not OK):")
+    for fn, why in bad:
+        print("  %s -- %s" % (fn, why))
+    if "--allow-unpermitted" not in sys.argv:
+        sys.exit("refusing to build a public .mrpack; resolve them first, or pass --allow-unpermitted "
+                 "for a private/draft build that must not be uploaded")
+    print("--allow-unpermitted: building anyway; do NOT upload this .mrpack")
+
 # mod file list: session scratch from resolve_all.py when present, else the committed index
 if os.path.exists(SC+"/mrpack_files.json"):
     files = json.load(open(SC+"/mrpack_files.json"))

@@ -171,7 +171,7 @@ public abstract class AbstractTrophyBlock extends BaseEntityBlock {
 						break;
 					case LICH:
 						for (int a = 0; a < 5; a++) {
-							server.sendParticles(ParticleTypes.ANGRY_VILLAGER,
+							server.sendParticles(TFParticleType.ANGRY_LICH.get(),
 									(double) pos.getX() + rand.nextFloat() * 0.5 * 2.0F,
 									(double) pos.getY() + 0.5 + rand.nextFloat() * 0.25,
 									(double) pos.getZ() + rand.nextFloat() * 0.5 * 2.0F, 1,

@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -77,6 +78,7 @@ import twilightforest.block.entity.SkullCandleBlockEntity;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.enchantment.ChillAuraEnchantment;
+import twilightforest.entity.boss.Lich;
 import twilightforest.entity.projectile.ITFProjectile;
 import twilightforest.entity.projectile.LichBomb;
 import twilightforest.init.TFBlocks;
@@ -285,6 +287,29 @@ public class EntityEvents {
 						event.setCanceled(true);
 					}
 				}
+			}
+		}
+	}
+
+	private static final String LICH_DEFLECTED_BY = TwilightForestMod.ID + ":lich_deflected_by";
+
+	/**
+	 * From phase 2 on, a Lich bounces #twilightforest:lich_deflects_phase_2 projectiles off instead of being hit (4.8
+	 * 2a37097ce). 1.21 does this through Entity#deflection; here the impact is cancelled on both sides and the projectile
+	 * thrown up on the side that sees it. Like 1.21's Projectile#lastDeflectedBy, a projectile only bounces off the same
+	 * Lich once and afterwards passes through it.
+	 */
+	@SubscribeEvent
+	public static void lichDeflectsProjectiles(ProjectileImpactEvent event) {
+		if (event.getRayTraceResult() instanceof EntityHitResult result && result.getEntity() instanceof Lich lich) {
+			Projectile projectile = event.getProjectile();
+			if (lich.deflectsProjectile(projectile)) {
+				CompoundTag data = projectile.getPersistentData();
+				if (!data.hasUUID(LICH_DEFLECTED_BY) || !data.getUUID(LICH_DEFLECTED_BY).equals(lich.getUUID())) {
+					lich.deflectProjectile(projectile);
+					data.putUUID(LICH_DEFLECTED_BY, lich.getUUID());
+				}
+				event.setCanceled(true);
 			}
 		}
 	}

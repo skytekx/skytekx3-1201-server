@@ -1,7 +1,9 @@
 package twilightforest.entity.boss;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -21,13 +23,18 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -36,57 +43,78 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.AbstractCandleBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CandleBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.block.LightableBlock;
+import twilightforest.block.OminousCandleBlock;
 import twilightforest.capabilities.shield.ShieldCapabilityHandler;
 import twilightforest.client.particle.data.ColorParticleData;
 import twilightforest.data.tags.DamageTypeTagGenerator;
+import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.entity.ai.goal.*;
 import twilightforest.entity.monster.LichMinion;
+import twilightforest.entity.projectile.LichBomb;
 import twilightforest.init.*;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.util.EntityUtil;
-import twilightforest.util.WorldUtil;
+import twilightforest.world.components.structures.lichtower.TowerMainComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * The Lich, reworked as in TF 4.8: attribute-driven clone, shield and minion counts, teleport invisibility, retargeting
+ * between players, a strafing phase 2 that deflects projectiles, a golden sword phase 3, candle theatrics and a longer
+ * death animation.
+ * <p>
+ * Unlike 4.8, a shadow clone is still marked by the synced IS_CLONE flag (saved as "ShadowClone") rather than by a synced
+ * master UUID, so clones saved by 4.3 without a "MasterLich" stay clones and adopt the nearest Lich.
+ */
 public class Lich extends BaseTFBoss {
-	public static final int DEATH_ANIMATION_DURATION = 175; //How many ticks until the body disappears
-	public static final int DEATH_ANIMATION_POINT_A = 50;
-	private static final int DEATH_ANIMATION_POINT_B = 70;
+	public static final int PARTICLE_BURST_COOLDOWN = 23; //How many ticks between bursts of particles during the start of the death animation
+	public static final int DEATH_ANIMATION_POINT_A = PARTICLE_BURST_COOLDOWN * 5; //How many bursts of particles should happen
+	public static final int DEATH_ANIMATION_POINT_B = DEATH_ANIMATION_POINT_A + 16; //How long should the crown be falling down for
+	public static final int DEATH_ANIMATION_POINT_C = DEATH_ANIMATION_POINT_B + 32; //How long should the crown just kinda sit there
+	public static final int DEATH_ANIMATION_DURATION = DEATH_ANIMATION_POINT_C + 132; //How many ticks of the purple flames coalescing into a loot chest
 
 	private static final EntityDataAccessor<Boolean> IS_CLONE = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Integer> SHIELD_STRENGTH = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> MINIONS_LEFT = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> ATTACK_TYPE = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> TELEPORT_INVISIBILITY = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
 
 	private static final ItemParticleOption BONE_PARTICLE = new ItemParticleOption(ParticleTypes.ITEM, Items.BONE.getDefaultInstance());
-	public static final int MAX_SHADOW_CLONES = 2;
-	public static final int INITIAL_SHIELD_STRENGTH = 6;
 	public static final int MAX_ACTIVE_MINIONS = 3;
-	public static final int INITIAL_MINIONS_TO_SUMMON = 9;
+
 	public static final int MAX_HEALTH = 100;
+	public static final int MAX_SHADOW_CLONES = 2;
+	public static final int MAX_SHIELD_STRENGTH = 6;
+	public static final int MAX_MINIONS_TO_SUMMON = 9;
 	/**
-	 * How far (in blocks) the Lich may stray from its spawner before it teleports back. Sized for the 4.3 tower's boss
-	 * room, as upstream did before the tower rework (77ac28cb2).
+	 * How far (in blocks) a Lich whose spawner sits in a 4.3 Lich Tower may stray before it teleports back. That tower's
+	 * boss room is small, so it keeps the radius upstream used for it (77ac28cb2); 4.8's boss room uses {@link #getHomeRadius()}.
 	 */
-	public static final int HOME_ROOM_RADIUS = 8;
+	public static final int LEGACY_ROOM_RADIUS = 8;
 
 	/**
 	 * The master of a shadow clone. Saved as "MasterLich" so the link survives a reload (4.8 00b68267f).
@@ -102,12 +130,21 @@ public class Lich extends BaseTFBoss {
 	private int heldScepterTime;
 	private int spawnTime;
 	private int previousPhase = 1; // the phase the boss bar was last styled for, not saved: a reloaded Lich restyles on its first tick
+	private int babyMinionsSummoned = 0;
+	private int hitsWithoutTeleport = 0;
+	/**
+	 * Whether the home point is in a 4.3 Lich Tower, looked up once on the server.
+	 */
+	@Nullable
+	private Boolean homeInLegacyTower;
 
 	public Lich(EntityType<? extends Lich> type, Level world) {
 		super(type, world);
 
 		this.setShadowClone(false);
 		this.xpReward = 217;
+		this.setShieldStrength((int) this.getAttributeValue(TFAttributes.SHIELD_STRENGTH.get()));
+		this.setMinionsToSummon((int) this.getAttributeValue(TFAttributes.MINION_COUNT.get()));
 	}
 
 	public Lich(Level level, Lich otherLich) {
@@ -115,36 +152,95 @@ public class Lich extends BaseTFBoss {
 
 		this.setShadowClone(true);
 		this.setMasterUUID(otherLich.getUUID());
+		this.setRestrictionPoint(otherLich.getRestrictionPoint());
+	}
+
+	@Nullable
+	@Override
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficulty, MobSpawnType type, @Nullable SpawnGroupData data, @Nullable CompoundTag tag) {
+		SpawnGroupData groupData = super.finalizeSpawn(accessor, difficulty, type, data, tag);
+		if (!this.isShadowClone()) {
+			this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(TFItems.FORTIFICATION_SCEPTER.get()));
+			this.playSound(TFSounds.SHIELD_ADD.get(), 1.5F, this.getVoicePitch());
+			this.swing(InteractionHand.MAIN_HAND);
+		}
+		return groupData;
 	}
 
 	public static AttributeSupplier.Builder registerAttributes() {
 		return Monster.createMonsterAttributes()
 				.add(Attributes.MAX_HEALTH, MAX_HEALTH)
 				.add(Attributes.ATTACK_DAMAGE, 3.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.45D); // Same speed as an angry enderman
+				.add(Attributes.MOVEMENT_SPEED, 0.45D) // Same speed as an angry enderman
+				.add(Attributes.FOLLOW_RANGE, 35.0D)
+				.add(TFAttributes.CLONE_COUNT.get(), MAX_SHADOW_CLONES)
+				.add(TFAttributes.SHIELD_STRENGTH.get(), MAX_SHIELD_STRENGTH)
+				.add(TFAttributes.MINION_COUNT.get(), MAX_MINIONS_TO_SUMMON);
 	}
 
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 		this.getEntityData().define(IS_CLONE, false);
-		this.getEntityData().define(SHIELD_STRENGTH, INITIAL_SHIELD_STRENGTH);
-		this.getEntityData().define(MINIONS_LEFT, INITIAL_MINIONS_TO_SUMMON);
+		this.getEntityData().define(SHIELD_STRENGTH, MAX_SHIELD_STRENGTH);
+		this.getEntityData().define(MINIONS_LEFT, MAX_MINIONS_TO_SUMMON);
 		this.getEntityData().define(ATTACK_TYPE, 0);
+		this.getEntityData().define(TELEPORT_INVISIBILITY, 0);
+	}
+
+	@Override
+	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
+		return 1.95F;
 	}
 
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(0, new AttemptToGoHomeGoal<>(this, 1.25D) {
+			@Override
+			public boolean canUse() {
+				return super.canUse() && Lich.this.isOutsideHomeRange(Lich.this.position());
+			}
+
+			@Override
+			public boolean requiresUpdateEveryTick() {
+				return true;
+			}
+
+			@Override
+			public void tick() {
+				if (Lich.this.getTeleportInvisibility() > 0) return;
+				if (Lich.this.getNavigation().getPath() == null || Lich.this.getNavigation().isStuck() || !Lich.this.getNavigation().getPath().canReach()) {
+					if (!Lich.this.teleportToNewTarget(Lich.this.getTarget(), 20.0F, null)) Lich.this.teleportHome();
+				}
+			}
+		});
+		this.goalSelector.addGoal(1, new RandomLookAroundIfBoredGoal(this));
 		this.goalSelector.addGoal(1, new AlwaysWatchTargetGoal(this));
 		this.goalSelector.addGoal(1, new LichPopMobsGoal(this));
 		this.goalSelector.addGoal(1, new LichAbsorbMinionsGoal(this));
-		this.goalSelector.addGoal(2, new LichShadowsGoal(this));
-		this.goalSelector.addGoal(3, new LichMinionsGoal(this));
-		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.75D, true) {
+		this.goalSelector.addGoal(2, new LichShadowsGoal(this, 30.0F)); // Phase 1
+		this.goalSelector.addGoal(3, new LichMinionsGoal(this)); // Phase 2
+		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.75D, true) { // Phase 3
+			// MeleeAttackGoal keeps its speed modifier private in 1.20.1
+			private static final double SPEED_MODIFIER = 0.75D;
+
 			@Override
 			public boolean canUse() {
-				return getPhase() == 3 && super.canUse();
+				return Lich.this.getPhase() == 3 && super.canUse();
+			}
+
+			@Override
+			public void tick() {
+				if (Lich.this.getTeleportInvisibility() > 0) return;
+				super.tick();
+				LivingEntity target = this.mob.getTarget();
+				// 1.20.1 has no Mob#isWithinMeleeAttackRange; this is the reach check MeleeAttackGoal itself uses
+				if (target != null && this.mob.distanceToSqr(target) > this.getAttackReachSqr(target) && this.mob.getNavigation().isDone()) {
+					if (!this.mob.getNavigation().moveTo(target, SPEED_MODIFIER)) {
+						Lich.this.teleportToSightOfEntity(target);
+					}
+				}
 			}
 
 			@Override
@@ -182,13 +278,15 @@ public class Lich extends BaseTFBoss {
 		}
 		compound.putInt("ShieldStrength", this.getShieldStrength());
 		compound.putInt("MinionsToSummon", this.getMinionsToSummon());
+		compound.putInt("BabyMinionsSummoned", this.babyMinionsSummoned);
+		compound.putInt("HitsWithoutTeleport", this.hitsWithoutTeleport);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.setShadowClone(compound.getBoolean("ShadowClone"));
-		// A clone saved before this key existed has no master yet and adopts the nearest Lich in LichShadowsGoal, as before.
+		// A 4.3 clone has ShadowClone but no MasterLich; it adopts the nearest Lich in LichShadowsGoal, as before.
+		this.setShadowClone(compound.getBoolean("ShadowClone") || compound.hasUUID("MasterLich"));
 		if (compound.hasUUID("MasterLich")) {
 			this.setMasterUUID(compound.getUUID("MasterLich"));
 		}
@@ -199,13 +297,38 @@ public class Lich extends BaseTFBoss {
 		}
 		this.setShieldStrength(compound.getInt("ShieldStrength"));
 		this.setMinionsToSummon(compound.getInt("MinionsToSummon"));
+		this.babyMinionsSummoned = compound.getInt("BabyMinionsSummoned");
+		this.hitsWithoutTeleport = compound.getInt("HitsWithoutTeleport");
 	}
 
 	@Override
 	public void aiStep() {
 		super.aiStep();
 
+		int tpInvisibility = this.getTeleportInvisibility();
+		if (tpInvisibility > 0) {
+			if (this.getTarget() != null) {
+				this.getLookControl().setLookAt(this.getTarget());
+				this.getLookControl().tick();
+			}
+			this.setTeleportInvisibility(tpInvisibility - 1);
+			if (tpInvisibility - 1 <= 0) {
+				this.lichTeleportParticles(true);
+				this.playSound(TFSounds.LICH_TELEPORT.get(), 1.125F, 1.125F);
+			}
+			return;
+		}
+
 		if (this.isDeadOrDying()) return;
+
+		if (this.getPhase() == 3) {
+			this.level().addParticle(TFParticleType.ANGRY_LICH.get(),
+					this.getRandomX(0.65F),
+					this.getEyeY() + 0.25D + this.getRandom().nextFloat() * 0.5D,
+					this.getRandomZ(0.65F),
+					this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D);
+			return;
+		}
 
 		// determine the hand position
 		float angle = ((this.yBodyRot * Mth.PI) / 180F);
@@ -213,7 +336,6 @@ public class Lich extends BaseTFBoss {
 		double dx = this.getX() + (Mth.cos(angle) * 0.65);
 		double dy = this.getY() + (this.getBbHeight() * 0.94);
 		double dz = this.getZ() + (Mth.sin(angle) * 0.65);
-
 
 		// add particles!
 
@@ -239,13 +361,6 @@ public class Lich extends BaseTFBoss {
 
 			this.level().addParticle(ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), red, grn, blu), dx + (this.getRandom().nextGaussian() * 0.025), dy + (this.getRandom().nextGaussian() * 0.025), dz + (this.getRandom().nextGaussian() * 0.025), 0.0F, 0.0F, 0.0F);
 		}
-
-		if (this.getPhase() == 3)
-			this.level().addParticle(ParticleTypes.ANGRY_VILLAGER,
-					this.getX() + this.getRandom().nextFloat() * this.getBbWidth() * 2.0F - this.getBbWidth(),
-					this.getY() + 1.0D + this.getRandom().nextFloat() * this.getBbHeight(),
-					this.getZ() + this.getRandom().nextFloat() * this.getBbWidth() * 2.0F - this.getBbWidth(),
-					this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D, this.getRandom().nextGaussian() * 0.02D);
 	}
 
 	/**
@@ -257,7 +372,42 @@ public class Lich extends BaseTFBoss {
 		if (!this.isRestrictionPointValid(this.level().dimension())) return false;
 		BlockPos point = Objects.requireNonNull(this.getRestrictionPoint()).pos();
 		if (this.getTarget() == null && pos.y() < point.getY() - 2) return true;
-		return point.distToCenterSqr(pos) > (HOME_ROOM_RADIUS * HOME_ROOM_RADIUS) || (this.getPhase() == 3 && pos.y() < point.getY() - 3);
+		int radius = this.getRoomRadius();
+		return point.distToCenterSqr(pos) > (radius * radius) || (this.getPhase() == 3 && pos.y() < point.getY() - 3);
+	}
+
+	/**
+	 * The radius of the room the Lich fights in: {@link #getHomeRadius()} (4.8's boss room), or {@link #LEGACY_ROOM_RADIUS}
+	 * when the spawner sat in the main tower of a 4.3 Lich Tower.
+	 */
+	public int getRoomRadius() {
+		if (this.homeInLegacyTower == null && this.level() instanceof ServerLevel server) {
+			this.homeInLegacyTower = this.isHomeInLegacyTower(server);
+		}
+		return Boolean.TRUE.equals(this.homeInLegacyTower) ? LEGACY_ROOM_RADIUS : this.getHomeRadius();
+	}
+
+	/**
+	 * Whether the home point lies in the main tower of a 4.3 Lich Tower, or null while that cannot be told yet (home
+	 * chunk not loaded).
+	 */
+	@Nullable
+	private Boolean isHomeInLegacyTower(ServerLevel level) {
+		if (!this.isRestrictionPointValid(level.dimension())) return false;
+		BlockPos home = Objects.requireNonNull(this.getRestrictionPoint()).pos();
+		if (!level.isLoaded(home)) return null;
+		StructureStart start = level.structureManager().getStructureWithPieceAt(home, TFStructures.LICH_TOWER);
+		if (!start.isValid()) return false;
+		for (StructurePiece piece : start.getPieces()) {
+			if (piece instanceof TowerMainComponent && piece.getBoundingBox().isInside(home)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void setRestrictionPoint(@Nullable GlobalPos pos) {
+		super.setRestrictionPoint(pos);
+		this.homeInLegacyTower = null;
 	}
 
 	@Override
@@ -265,7 +415,7 @@ public class Lich extends BaseTFBoss {
 		super.customServerAiStep();
 
 		// Teleport home if we get too far away from it
-		if (this.isOutsideHomeRange(this.position())) this.teleportHome();
+		if (this.isOutsideHomeRange(this.position()) && this.getTeleportInvisibility() <= 0) this.teleportHome();
 
 		if (this.getAttackCooldown() > 0 && this.spawnTime <= 0) {
 			this.attackCooldown--;
@@ -284,20 +434,19 @@ public class Lich extends BaseTFBoss {
 		}
 
 		if (this.getTarget() != null) {
-			if (this.spawnTime > 0 && this.hasLineOfSight(this.getTarget())) {
-				this.spawnTime--;
-				if (this.spawnTime <= 0) {
-					this.extinguishNearbyCandles();
-				}
+			if (this.spawnTime > 0 && this.spawnTime-- < 40) {
+				this.turnNearbyCandles(40 - this.spawnTime, !(this.spawnTime - 1 > 0 && this.spawnTime - 1 < 40));
 			}
 		}
 	}
 
 	@Override
 	public boolean hurt(DamageSource src, float damage) {
+		if (this.getTeleportInvisibility() > 0 && !src.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return false;
+
 		// if we're in a wall, teleport for gosh sakes
 		if (src.is(DamageTypes.IN_WALL) && this.getTarget() != null) {
-			teleportToSightOfEntity(this.getTarget());
+			this.teleportToNewTarget(this.getTarget(), 20.0F, null);
 		}
 
 		if (this.isShadowClone() && !src.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
@@ -315,14 +464,19 @@ public class Lich extends BaseTFBoss {
 			if (src.is(DamageTypeTagGenerator.BREAKS_LICH_SHIELDS) && damage > 2) {
 				// reduce shield for magic damage greater than 1 heart
 				if (this.getShieldStrength() > 0) {
-					this.setShieldStrength(this.getShieldStrength() - 1);
+					int newShieldStrength = this.getShieldStrength() - 1;
+					this.setShieldStrength(newShieldStrength);
+					// The break grows louder with every shield lost (4.8 7a178eb83)
+					float volume = 1.5F;
 					// Only the server may send the particle packet; the client also runs hurt() for player attacks (#2384).
 					if (!this.level().isClientSide()) ShieldCapabilityHandler.addShieldBreakParticles(src, this);
-					this.playSound(TFSounds.SHIELD_BREAK.get(), 1.0F, this.getVoicePitch() * 2.0F);
+					if (newShieldStrength < 6) volume += 0.25F * (6 - newShieldStrength);
+					if (newShieldStrength == 0) volume += 0.5F;
+					this.playSound(TFSounds.SHIELD_BREAK.get(), volume, this.getVoicePitch() * 1.25F);
 					this.gameEvent(GameEvent.ENTITY_DAMAGE);
 				}
 			} else {
-				this.playSound(TFSounds.SHIELD_BLOCK.get(), 0.5F, this.getVoicePitch() * 2.0F);
+				this.playSound(TFSounds.SHIELD_BLOCK.get(), 0.75F, this.getVoicePitch() * 1.75F);
 				this.gameEvent(GameEvent.ENTITY_DAMAGE);
 				if (src.getEntity() instanceof LivingEntity living) {
 					this.setLastHurtByMob(living);
@@ -333,8 +487,10 @@ public class Lich extends BaseTFBoss {
 		}
 
 		if (super.hurt(src, damage)) {
-			if (this.getRandom().nextInt(this.getPhase() == 3 ? 6 : 3) == 0) {
-				this.teleportToSightOfEntity(this.getTarget());
+			// Every hit without a teleport makes the next one likelier (4.8 4ddde9d5a)
+			if (this.getRandom().nextInt(this.getPhase() == 3 ? 6 : 3) <= this.hitsWithoutTeleport++ && !this.isDeadOrDying()) {
+				this.hitsWithoutTeleport = 0;
+				this.teleportToNewTarget(this.getTarget(), 20.0F, null);
 			}
 
 			return true;
@@ -347,7 +503,7 @@ public class Lich extends BaseTFBoss {
 	public void die(DamageSource cause) {
 		super.die(cause);
 		if (!this.level().isClientSide() && !this.isShadowClone()) {
-			this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+			this.despawnClones();
 			// A Lich killed through its shield (e.g. by /kill) drops the shield instead of keeping it through the death animation (#1998)
 			if (this.getShieldStrength() > 0) {
 				this.setShieldStrength(0);
@@ -357,16 +513,20 @@ public class Lich extends BaseTFBoss {
 	}
 
 	/**
-	 * A destroyed shadow clone drops out of its master's clone list (4.8 00b68267f). BaseTFBoss deposits the boss chest.
+	 * A destroyed shadow clone drops out of its master's clone list (4.8 00b68267f), and a Lich that is killed or
+	 * discarded relights the candles it turned ominous. BaseTFBoss deposits the boss chest.
 	 */
 	@Override
 	protected void postRemoval(ServerLevel serverLevel, RemovalReason reason) {
 		super.postRemoval(serverLevel, reason);
-		if (reason.shouldDestroy() && this.isShadowClone()) {
+		if (!reason.shouldDestroy()) return;
+		if (this.isShadowClone()) {
 			Lich master = this.getMaster();
 			if (master != null) {
 				master.summonedClones.remove(this.getUUID());
 			}
+		} else {
+			this.lightNearbyCandles();
 		}
 	}
 
@@ -375,18 +535,22 @@ public class Lich extends BaseTFBoss {
 	//-----------------------------------------//
 
 	public void launchProjectileAt(ThrowableProjectile projectile) {
-		float bodyFacingAngle = ((this.yBodyRot * Mth.PI) / 180F);
-		double sx = getX() + (Mth.cos(bodyFacingAngle) * 0.65D);
-		double sy = getY() + (this.getBbHeight() * 0.82D);
-		double sz = getZ() + (Mth.sin(bodyFacingAngle) * 0.65D);
+		if (this.getTarget() == null) return;
 
-		double tx = Objects.requireNonNull(this.getTarget()).getX() - sx;
+		float bodyFacingAngle = ((this.yBodyRot * Mth.PI) / 180F);
+		double sx = this.getX() + (Mth.cos(bodyFacingAngle) * 0.65D);
+		double sy = this.getY() + (this.getBbHeight() * 0.82D);
+		double sz = this.getZ() + (Mth.sin(bodyFacingAngle) * 0.65D);
+
+		double tx = this.getTarget().getX() - sx;
 		double ty = (this.getTarget().getBoundingBox().minY + this.getTarget().getBbHeight() / 2.0F) - (this.getY() + this.getBbHeight() / 2.0F);
 		double tz = this.getTarget().getZ() - sz;
 
-		this.playSound(TFSounds.LICH_SHOOT.get(), this.getSoundVolume(), (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.2F + 1.0F);
+		float pitch = (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.2F + 1.0F;
+		if (projectile instanceof LichBomb) pitch *= 0.85F;
+		this.playSound(TFSounds.LICH_SHOOT.get(), this.getSoundVolume(), pitch);
 
-		projectile.moveTo(sx, sy, sz, getYRot(), getXRot());
+		projectile.moveTo(sx, sy, sz, this.getYRot(), this.getXRot());
 		projectile.shoot(tx, ty, tz, 0.5F, 1.0F);
 
 		this.level().addFreshEntity(projectile);
@@ -398,6 +562,46 @@ public class Lich extends BaseTFBoss {
 
 	public List<UUID> getClones() {
 		return this.summonedClones;
+	}
+
+	/**
+	 * The loaded shadow clones of this Lich (none for a clone, or on the client).
+	 */
+	public List<Lich> getAllClones() {
+		if (!this.isShadowClone()) {
+			List<Lich> clones = new ArrayList<>();
+			if (this.level() instanceof ServerLevel server) {
+				for (UUID uuid : this.getClones()) {
+					if (server.getEntity(uuid) instanceof Lich clone && clone.getMaster() == this) clones.add(clone);
+				}
+			}
+			return clones;
+		} else return List.of();
+	}
+
+	/**
+	 * Removes only this Lich's own clones, not those of another Lich nearby, in a puff of smoke.
+	 */
+	public void despawnClones() {
+		if (this.level() instanceof ServerLevel server) {
+			// Iterate over a copy: removing a clone also drops it from this list
+			for (UUID uuid : List.copyOf(this.getClones())) {
+				if (server.getEntity(uuid) instanceof Lich clone && clone.getMaster() == this) {
+					ParticlePacket particlePacket = new ParticlePacket();
+
+					for (int j = 0; j < 128; ++j) {
+						double x = clone.getX((this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D)) * 1.5D);
+						double y = clone.getY(this.random.nextDouble() * this.random.nextDouble() * 1.25D);
+						double z = clone.getZ((this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D)) * 1.5D);
+						particlePacket.queueParticle(ParticleTypes.SMOKE, false, x, y, z, 0.0D, 0.0D, 0.0D);
+					}
+
+					TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
+
+					clone.remove(Entity.RemovalReason.DISCARDED);
+				}
+			}
+		}
 	}
 
 	@Nullable
@@ -424,7 +628,7 @@ public class Lich extends BaseTFBoss {
 	}
 
 	public boolean wantsNewClone(Lich clone) {
-		return clone.isShadowClone() && this.countMyClones() < Lich.MAX_SHADOW_CLONES;
+		return clone.isShadowClone() && this.countMyClones() < this.getAttributeValue(TFAttributes.CLONE_COUNT.get());
 	}
 
 	public int countMyClones() {
@@ -444,7 +648,7 @@ public class Lich extends BaseTFBoss {
 	}
 
 	public boolean wantsNewMinion() {
-		return countMyMinions() < Lich.MAX_ACTIVE_MINIONS;
+		return this.countMyMinions() < Lich.MAX_ACTIVE_MINIONS;
 	}
 
 	public int countMyMinions() {
@@ -454,9 +658,48 @@ public class Lich extends BaseTFBoss {
 				.count();
 	}
 
+	/**
+	 * Whether this Lich bounces the projectile off instead of being hit: from phase 2 on, projectiles in
+	 * #twilightforest:lich_deflects_phase_2 shot by a player, a Lich or nobody (4.8 2a37097ce, 1e04187ab).
+	 * 1.20.1 has no Entity#deflection, so {@code EntityEvents} applies this through ProjectileImpactEvent.
+	 */
+	public boolean deflectsProjectile(Projectile projectile) {
+		Entity owner = projectile.getOwner();
+		return projectile.getType().is(EntityTagGenerator.LICH_DEFLECTS_PHASE_2) && (owner instanceof Player || owner instanceof Lich || owner == null) && this.getPhase() > 1;
+	}
+
+	/**
+	 * Throws the projectile up and away. 1.21's Projectile#deflect restores the projectile's previous owner after the
+	 * deflection callback, so the owner is left unchanged here as well.
+	 */
+	public void deflectProjectile(Projectile projectile) {
+		projectile.setDeltaMovement(this.getDeltaMovement().add(0.5D - this.getRandom().nextDouble(), 0.75D, 0.5D - this.getRandom().nextDouble()).multiply(0.75D, 1.5D, 0.75D));
+		if (!this.level().isClientSide()) {
+			this.playSound(TFSounds.SHIELD_BLOCK.get(), 0.5F, this.getVoicePitch() * 1.5F);
+			this.swing(InteractionHand.MAIN_HAND);
+		}
+	}
+
 	//-----------------------------------------//
 	//              TELEPORTATION              //
 	//-----------------------------------------//
+
+	@Override
+	public boolean isInvisible() {
+		return super.isInvisible() || this.getTeleportInvisibility() > 0 || (this.isShadowClone() && this.tickCount <= 10);
+	}
+
+	@Override
+	public ItemStack getMainHandItem() {
+		if (this.getTeleportInvisibility() > 0 && this.level().isClientSide()) return ItemStack.EMPTY;
+		return super.getMainHandItem();
+	}
+
+	@Override
+	public boolean canBeSeenAsEnemy() {
+		if (this.getTeleportInvisibility() > 0) return false;
+		return super.canBeSeenAsEnemy();
+	}
 
 	/**
 	 * Teleports the Lich back to its spawner, putting a block under it first if the floor is gone, so it cannot keep
@@ -472,9 +715,34 @@ public class Lich extends BaseTFBoss {
 	}
 
 	/**
-	 * Teleports to a spot that can see the entity and returns whether it found one. findVecInLOSOf already checks the
-	 * line of sight from there, so the Lich no longer teleports straight back to where it was whenever its stale
-	 * sensing cache said it could not see the entity (491731ff4, as simplified in bf5b1c104).
+	 * Picks a random living player in range as the new target (so the Lich switches between players in multiplayer) and
+	 * teleports to a spot that can see it, taking its clones along. Returns whether it teleported.
+	 */
+	public boolean teleportToNewTarget(@Nullable LivingEntity target, float range, @Nullable LichShadowsGoal lichShadowsGoal) {
+		List<Player> possibleTargets = new ArrayList<>();
+		for (Player player : this.level().players()) {
+			// unlike 4.8, never pick a creative or spectator player (say, an admin watching the fight)
+			if (player.distanceTo(this) < range && !player.isDeadOrDying() && player.canBeSeenAsEnemy()) possibleTargets.add(player);
+		}
+
+		if (!possibleTargets.isEmpty()) target = possibleTargets.get(this.getRandom().nextInt(possibleTargets.size()));
+
+		if (target != null) {
+			this.setTarget(target);
+			if (this.teleportToSightOfEntity(target)) {
+				for (Lich clone : this.getAllClones()) {
+					clone.setTarget(target);
+					clone.teleportToSightOfEntity(target);
+				}
+				if (lichShadowsGoal != null) lichShadowsGoal.checkAndSpawnClones(target);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Teleports to a spot that can see the entity and returns whether it found one.
 	 */
 	public boolean teleportToSightOfEntity(@Nullable Entity entity) {
 		if (entity == null) return false;
@@ -490,7 +758,8 @@ public class Lich extends BaseTFBoss {
 	}
 
 	/**
-	 * Returns coords that would be good to teleport to.
+	 * Returns coords that would be good to teleport to: in the room, on the ground, at least 5 blocks from the entity and
+	 * if possible not below it.
 	 * Returns null if we can't find anything
 	 */
 	@Nullable
@@ -504,17 +773,22 @@ public class Lich extends BaseTFBoss {
 		for (int i = 0; i < tries; i++) {
 			// we abuse LivingEntity.attemptTeleport, which does all the collision/ground checking for us, then teleport back to our original spot
 			double tx = targetEntity.getX() + this.getRandom().nextGaussian() * 16D;
-			double ty = targetEntity.getY();
+			double ty = targetEntity.getY() + 2;
 			double tz = targetEntity.getZ() + this.getRandom().nextGaussian() * 16D;
 
-			boolean destClear = this.randomTeleport(tx, ty, tz, true);
+			boolean destClear = this.randomTeleport(tx, ty, tz, false);
+			if (destClear) {
+				tx = this.getX();
+				ty = this.getY();
+				tz = this.getZ();
+			}
 			boolean canSeeTargetAtDest = this.hasLineOfSight(targetEntity); // Don't use senses cache because we're in a temporary position
 			this.teleportTo(origX, origY, origZ);
 
+			Vec3 tpPos = new Vec3(tx, ty, tz);
+			if (i < 85 && ty < targetEntity.getY()) continue; // Try to not TP below the playa
 			// Skip spots outside the room, the Lich would only teleport straight back home from there
-			if (destClear && canSeeTargetAtDest && !this.isOutsideHomeRange(new Vec3(tx, ty, tz))) {
-				return new Vec3(tx, ty, tz);
-			}
+			if (destClear && canSeeTargetAtDest && !this.isOutsideHomeRange(tpPos) && tpPos.distanceToSqr(targetEntity.position()) >= 25.0F) return tpPos;
 		}
 
 		return null;
@@ -524,39 +798,59 @@ public class Lich extends BaseTFBoss {
 	 * Does not check that the teleport destination is valid, we just go there
 	 */
 	private void teleportToNoChecks(double destX, double destY, double destZ) {
-		// save original position
-		double srcX = this.getX();
-		double srcY = this.getY();
-		double srcZ = this.getZ();
+		this.lichTeleportParticles(false);
 
 		// change position
 		this.teleportTo(destX, destY, destZ);
 
-		this.makeTeleportTrail(srcX, srcY, srcZ, destX, destY, destZ);
-		this.level().playSound(null, srcX, srcY, srcZ, TFSounds.LICH_TELEPORT.get(), this.getSoundSource(), 1.0F, 1.0F);
-		this.playSound(TFSounds.LICH_TELEPORT.get(), 1.0F, 1.0F);
+		this.playSound(TFSounds.LICH_TELEPORT.get(), 0.75F, 0.75F);
 		this.gameEvent(GameEvent.TELEPORT);
+		if (this.level() instanceof ServerLevel serverLevel) serverLevel.broadcastEntityEvent(this, (byte) 46);
+		this.setTeleportInvisibility(20);
 
 		// sometimes we need to do this
 		this.jumping = false;
+		//extinguish when teleporting
+		this.clearFire();
 	}
 
 	//-----------------------------------------//
 	//                PARTICLES                //
 	//-----------------------------------------//
 
-	public void makeTeleportTrail(double srcX, double srcY, double srcZ, double destX, double destY, double destZ) {
-		// make particle trail
-		int particles = 128;
-		for (int i = 0; i < particles; i++) {
-			double trailFactor = i / (particles - 1.0D);
-			float f = (this.getRandom().nextFloat() - 0.5F) * 0.2F;
-			float f1 = (this.getRandom().nextFloat() - 0.5F) * 0.2F;
-			float f2 = (this.getRandom().nextFloat() - 0.5F) * 0.2F;
-			double tx = srcX + (destX - srcX) * trailFactor + (this.getRandom().nextDouble() - 0.5D) * this.getBbWidth() * 2D;
-			double ty = srcY + (destY - srcY) * trailFactor + this.getRandom().nextDouble() * this.getBbHeight();
-			double tz = srcZ + (destZ - srcZ) * trailFactor + (this.getRandom().nextDouble() - 0.5D) * this.getBbWidth() * 2D;
-			this.level().addParticle(ParticleTypes.EFFECT, tx, ty, tz, f, f1, f2);
+	@Override
+	public void handleEntityEvent(byte id) {
+		// no vanilla portal particles, lichTeleportParticles sends its own
+		if (id == 46) return;
+		super.handleEntityEvent(id);
+	}
+
+	/**
+	 * Smoke where the Lich vanishes, and ominous flames (smoke for a clone) drawn in where it reappears.
+	 */
+	public void lichTeleportParticles(boolean appear) {
+		if (this.level() instanceof ServerLevel) {
+			ParticlePacket particlePacket = new ParticlePacket();
+
+			if (appear) {
+				for (int j = 0; j < 64; ++j) {
+					Vec3 pos = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+					ParticleOptions options = this.isShadowClone() ? ParticleTypes.SMOKE : TFParticleType.OMINOUS_FLAME.get();
+					double x = this.getX(this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D));
+					double y = this.getY(this.random.nextDouble());
+					double z = this.getZ(this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D));
+					particlePacket.queueParticle(options, false, x, y, z, (x - pos.x()) * 0.0625D, (y - pos.y()) * 0.0625D, (z - pos.z()) * 0.0625D);
+				}
+			} else {
+				for (int j = 0; j < (!this.isShadowClone() ? 128 : 64); ++j) {
+					double x = this.getX((this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D)) * 2.0D);
+					double y = this.getY(this.random.nextDouble() * 1.125D);
+					double z = this.getZ((this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D)) * 2.0D);
+					particlePacket.queueParticle(ParticleTypes.SMOKE, false, x, y, z, 0.0D, 0.0D, 0.0D);
+				}
+			}
+
+			TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), particlePacket);
 		}
 	}
 
@@ -581,17 +875,61 @@ public class Lich extends BaseTFBoss {
 		}
 	}
 
-	private void extinguishNearbyCandles() {
-		for (BlockPos pos : WorldUtil.getAllAround(this.blockPosition(), 10)) {
-			// Other mods' candle blocks may lack the LIT property (4.8 #2563 guards the same loop against foreign candles)
-			if (this.level().getBlockState(pos).getBlock() instanceof AbstractCandleBlock && this.level().getBlockState(pos).getOptionalValue(BlockStateProperties.LIT).orElse(false)) {
-				this.level().setBlockAndUpdate(pos, this.level().getBlockState(pos).setValue(BlockStateProperties.LIT, false));
-				this.level().playSound(null, pos, SoundEvents.CANDLE_EXTINGUISH, SoundSource.BLOCKS, 2.0F, 1.0F);
-			} else if (this.level().getBlockState(pos).getBlock() instanceof LightableBlock && this.level().getBlockState(pos).getValue(LightableBlock.LIGHTING) == LightableBlock.Lighting.NORMAL) {
-				this.level().setBlockAndUpdate(pos, this.level().getBlockState(pos).setValue(LightableBlock.LIGHTING, LightableBlock.Lighting.OMINOUS));
-				this.level().playSound(null, pos, SoundEvents.CANDLE_EXTINGUISH, SoundSource.BLOCKS, 2.0F, 0.75F);
+	/**
+	 * A Lich turned back into a spawner (peaceful) relights the candles it turned ominous.
+	 */
+	@Override
+	public void placeSpawner(BlockPos pos) {
+		super.placeSpawner(pos);
+		this.lightNearbyCandles();
+	}
+
+	/**
+	 * Over the 40 ticks after the Lich first spots a target, candles and candelabra around its home turn ominous one by
+	 * one in a growing radius, and the rest at once on the last tick (4.8 ab746200d, afae1e514).
+	 */
+	protected void turnNearbyCandles(int tick, boolean done) {
+		if (!(this.level() instanceof ServerLevel)) return;
+
+		int range = (int) (((float) tick / 2.5F) + 2);
+		int yRange = (int) (((float) tick / 2.0F) + 2);
+		for (BlockPos pos : BlockPos.betweenClosed(this.homeOrElseCurrent().offset(-range, -3, -range), this.homeOrElseCurrent().offset(range, yRange, range))) {
+			if (this.random.nextInt(Math.max(40 - tick, 2)) == 1 || done) {
+				// Never load chunks just for the theatrics
+				if (!this.level().isLoaded(pos)) continue;
+				BlockState state = this.level().getBlockState(pos);
+				// Other mods' candles may not be in CANDLE_MAP or lack the LIT property (#2563)
+				if (state.getBlock() instanceof AbstractCandleBlock candleBlock && OminousCandleBlock.CANDLE_MAP.containsKey(candleBlock) && state.getOptionalValue(CandleBlock.LIT).orElse(false)) {
+					this.level().setBlockAndUpdate(pos, OminousCandleBlock.CANDLE_MAP.get(candleBlock).get().defaultBlockState().setValue(OminousCandleBlock.CANDLES, state.getValue(CandleBlock.CANDLES)));
+					this.level().playSound(null, pos, TFSounds.OMINOUS_FIRE.get(), SoundSource.BLOCKS, 0.5F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.75F);
+				} else if (state.getBlock() instanceof LightableBlock && state.getValue(LightableBlock.LIGHTING) == LightableBlock.Lighting.NORMAL) {
+					this.level().setBlockAndUpdate(pos, state.setValue(LightableBlock.LIGHTING, LightableBlock.Lighting.OMINOUS));
+					this.level().playSound(null, pos, TFSounds.CANDELABRA_OMINOUS.get(), SoundSource.BLOCKS, 0.5F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.75F);
+				}
 			}
 		}
+	}
+
+	/**
+	 * Turns ominous candles back into lit candles and ominous candelabra back to normal ones, within 40 blocks of home.
+	 */
+	protected void lightNearbyCandles() {
+		for (BlockPos pos : BlockPos.betweenClosed(this.homeOrElseCurrent().offset(-40, -3, -40), this.homeOrElseCurrent().offset(40, 40, 40))) {
+			// Never load chunks just to relight candles, e.g. when the Lich is discarded with nobody around
+			if (!this.level().isLoaded(pos)) continue;
+			BlockState state = this.level().getBlockState(pos);
+			if (state.getBlock() instanceof OminousCandleBlock candleBlock) {
+				this.level().setBlockAndUpdate(pos, candleBlock.candle.defaultBlockState().setValue(CandleBlock.CANDLES, state.getValue(OminousCandleBlock.CANDLES)).setValue(BlockStateProperties.LIT, true));
+				this.level().playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.25F, 1.5F);
+			} else if (state.getBlock() instanceof LightableBlock && state.getValue(LightableBlock.LIGHTING) == LightableBlock.Lighting.OMINOUS) {
+				this.level().setBlockAndUpdate(pos, state.setValue(LightableBlock.LIGHTING, LightableBlock.Lighting.NORMAL));
+				this.level().playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 0.25F, 1.15F);
+			}
+		}
+	}
+
+	protected BlockPos homeOrElseCurrent() {
+		return this.isRestrictionPointValid(this.level().dimension()) ? Objects.requireNonNull(this.getRestrictionPoint()).pos() : this.blockPosition();
 	}
 
 	//-----------------------------------------//
@@ -599,7 +937,7 @@ public class Lich extends BaseTFBoss {
 	//-----------------------------------------//
 
 	public void setExtinguishTimer() {
-		this.spawnTime = 20;
+		this.spawnTime = 40;
 	}
 
 	/**
@@ -682,6 +1020,25 @@ public class Lich extends BaseTFBoss {
 		this.getEntityData().set(ATTACK_TYPE, attackType);
 	}
 
+	/**
+	 * Ticks left of the short invisibility after a teleport, during which the Lich cannot be hurt, attack or be targeted.
+	 */
+	public int getTeleportInvisibility() {
+		return this.getEntityData().get(TELEPORT_INVISIBILITY);
+	}
+
+	public void setTeleportInvisibility(int ticks) {
+		this.getEntityData().set(TELEPORT_INVISIBILITY, ticks);
+	}
+
+	public int getBabyMinionsSummoned() {
+		return this.babyMinionsSummoned;
+	}
+
+	public void setBabyMinionsSummoned(int babyMinionsSummoned) {
+		this.babyMinionsSummoned = babyMinionsSummoned;
+	}
+
 
 	//-----------------------------------------//
 	//                OVERRIDES                //
@@ -726,7 +1083,7 @@ public class Lich extends BaseTFBoss {
 
 	@Override
 	public int getHomeRadius() {
-		return 20;
+		return 30;
 	}
 
 	@Override
@@ -762,7 +1119,7 @@ public class Lich extends BaseTFBoss {
 	protected void tickBossBar() {
 		this.getBossBar().setVisible(!this.isShadowClone());
 		int phase = this.getPhase();
-		if (phase == 1) this.getBossBar().setProgress((float) (this.getShieldStrength()) / (float) (INITIAL_SHIELD_STRENGTH));
+		if (phase == 1) this.getBossBar().setProgress((float) (this.getShieldStrength()) / (float) (this.getAttributeValue(TFAttributes.SHIELD_STRENGTH.get())));
 		else this.getBossBar().setProgress(this.getHealth() / this.getMaxHealth());
 		if (phase != this.previousPhase) this.getBossBar().updateStyle(this.getBossBarColor(), this.getBossBarOverlay(), this.previousPhase != 1);
 		this.previousPhase = phase;
@@ -786,19 +1143,22 @@ public class Lich extends BaseTFBoss {
 		return this.deathTime >= (this.isShadowClone() ? 20 : DEATH_ANIMATION_DURATION);
 	}
 
+	/**
+	 * About 300 ticks: the Lich shakes and sheds bones, its crown falls and rests, then purple flames swirl from it into
+	 * the loot chest.
+	 */
 	@Override
 	public void tickDeathAnimation() {
 		if (this.isShadowClone()) return;
 
 		if (this.deathTime <= DEATH_ANIMATION_POINT_A) {
 			boolean done = this.deathTime == DEATH_ANIMATION_POINT_A;
-			boolean hurt = this.deathTime % 17 == 0;
+			boolean hurt = this.deathTime % PARTICLE_BURST_COOLDOWN == 0;
 
-			if (hurt) {
-				this.playLocalSound(this.getHurtSound(this.damageSources().generic()));
-			}
 			if (done) {
 				this.playLocalSound(this.getDeathSound());
+			} else if (hurt) {
+				this.playLocalSound(this.getHurtSound(this.damageSources().generic()));
 			}
 
 			Vec3 pos = this.position();
@@ -820,6 +1180,14 @@ public class Lich extends BaseTFBoss {
 					double z1 = z + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
 					this.level().addParticle(this.getRandom().nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, false, pos.x() + x1, pos.y() + y1, pos.z() + z1, 0.0D, 0.0D, 0.0D);
 				}
+
+				Vec3 added = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+				for (int i = 0; i < (done ? 18 : 6); i++) {
+					double x1 = this.getX(this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D));
+					double y1 = this.getY(this.random.nextDouble());
+					double z1 = this.getZ(this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D));
+					this.level().addParticle(ParticleTypes.SMOKE, x1, y1, z1, (x1 - added.x()) * 0.0125D, (y1 - added.y()) * 0.0125D, (z1 - added.z()) * 0.0125D);
+				}
 			}
 
 			if (done) {
@@ -837,21 +1205,60 @@ public class Lich extends BaseTFBoss {
 				double z = (this.getRandom().nextDouble() - 0.5D) * 0.75D;
 				this.level().addParticle(ParticleTypes.CLOUD, false, pos.x() + x, pos.y(), pos.z() + z, 0.0D, 0.0D, 0.0D);
 			}
-		} else if (this.deathTime > DEATH_ANIMATION_POINT_B) {
+		} else if (this.deathTime > DEATH_ANIMATION_POINT_C) {
 			Vec3 start = this.position().add(0.0D, 0.45F, 0.0D);
 			Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
-			int deathTime2 = this.deathTime - DEATH_ANIMATION_POINT_B;
-			double factor = (double) deathTime2 / 105.0D;
-			double powFactor = Math.pow(factor, 2.0D) * 2.0D;
+			int deathTime2 = this.deathTime - DEATH_ANIMATION_POINT_C;
+			double factor = (double) deathTime2 / (double) (DEATH_ANIMATION_DURATION - DEATH_ANIMATION_POINT_C);
+			double powFactor = factor * factor * 2.0D;
 			double expandFactor = (Math.cos((factor + 0.5D) * Math.PI * 2) + 1.0D) * 0.5D;
-			Vec3 particlePos = start.add(end.subtract(start).scale(Math.min(((double) deathTime2 / (double) DEATH_ANIMATION_POINT_B) * 1.25D, 1.0D)));
+			Vec3 particlePos = start.add(end.subtract(start).scale(Math.min(factor * 2.0D, 1.0D)));
 
 			for (double i = 0.0D; i < 1.0D; i += 0.2D) {
-				double x = Math.sin((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.25D;
-				double z = Math.cos((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.25D;
+				double x = Math.sin((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.75D;
+				double z = Math.cos((powFactor + i) * Math.PI * 2.0D) * expandFactor * 1.75D;
 				this.level().addParticle(TFParticleType.OMINOUS_FLAME.get(), false, particlePos.x() + x, particlePos.y() - 0.25D, particlePos.z() + z, 0.0D, 0.0D, 0.0D);
 			}
 		}
+
+		if (this.deathTime > DEATH_ANIMATION_POINT_B && this.random.nextFloat() <= 0.33F) {
+			Vec3 start = this.position().add(0.0D, 0.15F, 0.0D);
+			double x = (this.getRandom().nextDouble() - 0.5D) * 0.25D;
+			double y = this.getRandom().nextDouble() * this.getBbHeight() * 0.1D;
+			double z = (this.getRandom().nextDouble() - 0.5D) * 0.25D;
+			this.level().addParticle(ParticleTypes.SMOKE, false, start.x() + x, start.y() + y, start.z() + z, 0.0D, 0.0D, 0.0D);
+		}
+	}
+
+	/**
+	 * While it shakes, the dying Lich keeps facing its killer; once its body is gone it drops what it held.
+	 */
+	@Override
+	protected void tickDeath() {
+		super.tickDeath();
+		if (this.deathTime >= DEATH_ANIMATION_POINT_A) {
+			this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+		} else if (this.lookAtUponDeath() instanceof LivingEntity living) {
+			double d0 = living.getX() - this.getX();
+			double d2 = living.getZ() - this.getZ();
+			float f = (float) (Mth.atan2(d2, d0) * 180.0D / Math.PI) - 90.0F;
+			this.setYHeadRot(this.rotLerp(this.getYHeadRot(), f));
+			this.setXRot(0.0F);
+		}
+	}
+
+	private float rotLerp(float angle, float targetAngle) {
+		float f = Mth.wrapDegrees(targetAngle - angle);
+		if (f > 30.0F) f = 30.0F;
+		if (f < -30.0F) f = -30.0F;
+		return angle + f;
+	}
+
+	@Nullable
+	protected Entity lookAtUponDeath() {
+		if (this.getTarget() != null) return this.getTarget();
+		else if (this.lastHurtByPlayer != null) return this.lastHurtByPlayer;
+		else return this.level().getNearestPlayer(this, 20.0D);
 	}
 
 	private void playLocalSound(@Nullable SoundEvent sound) {

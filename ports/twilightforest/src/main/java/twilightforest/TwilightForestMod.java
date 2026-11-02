@@ -100,6 +100,7 @@ public class TwilightForestMod {
 
 		IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
 
+		TFAttributes.ATTRIBUTES.register(modbus);
 		TFBannerPatterns.BANNER_PATTERNS.register(modbus);
 		TFBlockEntities.BLOCK_ENTITIES.register(modbus);
 		TFBlocks.BLOCKS.register(modbus);

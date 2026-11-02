@@ -265,9 +265,14 @@ public class TravellersArmorItem extends ArmorItem implements TravellersModifiab
 
 	/**
 	 * Clamps armor damage so the piece stops at one point of durability instead of breaking, and plays the item break
-	 * sound to the wearer when it reaches that broken state. Replaces 4.8's ArmorHurtEvent listener
-	 * (TravellersGearEvents#stopDamagingTravellersGear); unlike 4.8 the sound also plays when a single hit would have
-	 * overshot the broken state.
+	 * sound to the wearer when it reaches that broken state. Replaces 4.8's ArmorHurtEvent listeners
+	 * (TravellersGearEvents#stopDamagingTravellersGear and #setLastDamageArmorTime); unlike 4.8 the sound also plays when
+	 * a single hit would have overshot the broken state.
+	 * <p>
+	 * Damage that gets through also pauses Auto-Repair. 4.8 pauses it when any armor piece of the wearer takes damage;
+	 * Forge 47 has no armor damage event, so only damage to a Traveller's Gear piece counts. A hit on the armor damages
+	 * every worn piece at once, so this only differs when all the pieces hit are broken Traveller's Gear or other armor
+	 * (a falling block only hits the helmet).
 	 */
 	@Override
 	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
@@ -276,6 +281,7 @@ public class TravellersArmorItem extends ArmorItem implements TravellersModifiab
 			return 0;
 
 		int damage = Math.min(amount, remaining);
+		TravellersGearLogic.setLastDamageArmorTime(entity);
 		if (damage == remaining && entity instanceof ServerPlayer player)
 			player.playNotifySound(SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, player.getVoicePitch());
 		return damage;

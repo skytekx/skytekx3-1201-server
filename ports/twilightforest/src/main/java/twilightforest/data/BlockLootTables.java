@@ -26,6 +26,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.*;
 import twilightforest.block.entity.JarBlockEntity;
@@ -35,6 +36,7 @@ import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.loot.TFLootTables;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -241,6 +243,23 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.TERRORCOTTA_CURVES.get());
 		dropSelf(TFBlocks.TERRORCOTTA_LINES.get());
 		add(TFBlocks.OMINOUS_FIRE.get(), noDrop());
+		ominousCandle(TFBlocks.OMINOUS_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_WHITE_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_ORANGE_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_MAGENTA_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_LIGHT_BLUE_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_YELLOW_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_LIME_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_PINK_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_GRAY_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_LIGHT_GRAY_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_CYAN_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_PURPLE_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_BLUE_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_BROWN_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_GREEN_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_RED_CANDLE);
+		ominousCandle(TFBlocks.OMINOUS_BLACK_CANDLE);
 		dropPottedContents(TFBlocks.POTTED_TWILIGHT_OAK_SAPLING.get());
 		dropPottedContents(TFBlocks.POTTED_CANOPY_SAPLING.get());
 		dropPottedContents(TFBlocks.POTTED_MANGROVE_SAPLING.get());
@@ -542,6 +561,30 @@ public class BlockLootTables extends BlockLootSubProvider {
 		dropSelf(TFBlocks.SORTING_CHEST.get());
 		dropSelf(TFBlocks.SORTING_TRAPPED_CHEST.get());
 
+	}
+
+	protected void ominousCandle(RegistryObject<OminousCandleBlock> block) {
+		this.add(block.get(), LootTable.lootTable()
+				.withPool(
+						LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1.0F))
+								.add(
+										this.applyExplosionDecay(
+												block.get(),
+												LootItem.lootTableItem(block.get().candle)
+														.apply(
+																List.of(2, 3, 4),
+																value -> SetItemCountFunction.setCount(ConstantValue.exactly((float) value))
+																		.when(
+																				LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
+																						.setProperties(
+																								StatePropertiesPredicate.Builder.properties().hasProperty(OminousCandleBlock.CANDLES, value)
+																						)
+																		)
+														)
+										)
+								)
+				));
 	}
 
 	private void registerLeavesNoSapling(Block leaves) {

@@ -149,6 +149,18 @@ public class TFBlockEntities {
 	public static final RegistryObject<BlockEntityType<CandelabraBlockEntity>> CANDELABRA = BLOCK_ENTITIES.register("candelabra", () ->
 			BlockEntityType.Builder.of(CandelabraBlockEntity::new, TFBlocks.CANDELABRA.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<OminousCandleBlockEntity>> OMINOUS_CANDLE = BLOCK_ENTITIES.register("ominous_candle", () ->
+			BlockEntityType.Builder.of(OminousCandleBlockEntity::new,
+					TFBlocks.OMINOUS_CANDLE.get(), TFBlocks.OMINOUS_WHITE_CANDLE.get(),
+					TFBlocks.OMINOUS_ORANGE_CANDLE.get(), TFBlocks.OMINOUS_MAGENTA_CANDLE.get(),
+					TFBlocks.OMINOUS_LIGHT_BLUE_CANDLE.get(), TFBlocks.OMINOUS_YELLOW_CANDLE.get(),
+					TFBlocks.OMINOUS_LIME_CANDLE.get(), TFBlocks.OMINOUS_PINK_CANDLE.get(),
+					TFBlocks.OMINOUS_GRAY_CANDLE.get(), TFBlocks.OMINOUS_LIGHT_GRAY_CANDLE.get(),
+					TFBlocks.OMINOUS_CYAN_CANDLE.get(), TFBlocks.OMINOUS_PURPLE_CANDLE.get(),
+					TFBlocks.OMINOUS_BLUE_CANDLE.get(), TFBlocks.OMINOUS_BROWN_CANDLE.get(),
+					TFBlocks.OMINOUS_GREEN_CANDLE.get(), TFBlocks.OMINOUS_RED_CANDLE.get(),
+					TFBlocks.OMINOUS_BLACK_CANDLE.get()).build(null));
+
 	@OnlyIn(Dist.CLIENT)
 	public static void registerTileEntityRenders() {
 		// tile entities
@@ -169,5 +181,6 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(JAR.get(), JarRenderer::new);
 		BlockEntityRenderers.register(MASON_JAR.get(), JarRenderer.MasonJarRenderer::new);
 		BlockEntityRenderers.register(CANDELABRA.get(), CandelabraRenderer::new);
+		BlockEntityRenderers.register(OMINOUS_CANDLE.get(), OminousCandleRenderer::new);
 	}
 }

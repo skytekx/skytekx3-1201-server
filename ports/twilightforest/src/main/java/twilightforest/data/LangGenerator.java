@@ -207,6 +207,23 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.TERRORCOTTA_CURVES, "Terrorcotta Curves");
 		this.addBlock(TFBlocks.TERRORCOTTA_LINES, "Terrorcotta Lines");
 		this.addBlock(TFBlocks.OMINOUS_FIRE, "Ominous Fire");
+		this.addBlock(TFBlocks.OMINOUS_CANDLE, "Ominous Candle");
+		this.addBlock(TFBlocks.OMINOUS_WHITE_CANDLE, "Ominous White Candle");
+		this.addBlock(TFBlocks.OMINOUS_ORANGE_CANDLE, "Ominous Orange Candle");
+		this.addBlock(TFBlocks.OMINOUS_MAGENTA_CANDLE, "Ominous Magenta Candle");
+		this.addBlock(TFBlocks.OMINOUS_LIGHT_BLUE_CANDLE, "Ominous Light Blue Candle");
+		this.addBlock(TFBlocks.OMINOUS_YELLOW_CANDLE, "Ominous Yellow Candle");
+		this.addBlock(TFBlocks.OMINOUS_LIME_CANDLE, "Ominous Lime Candle");
+		this.addBlock(TFBlocks.OMINOUS_PINK_CANDLE, "Ominous Pink Candle");
+		this.addBlock(TFBlocks.OMINOUS_GRAY_CANDLE, "Ominous Gray Candle");
+		this.addBlock(TFBlocks.OMINOUS_LIGHT_GRAY_CANDLE, "Ominous Light Gray Candle");
+		this.addBlock(TFBlocks.OMINOUS_CYAN_CANDLE, "Ominous Cyan Candle");
+		this.addBlock(TFBlocks.OMINOUS_PURPLE_CANDLE, "Ominous Purple Candle");
+		this.addBlock(TFBlocks.OMINOUS_BLUE_CANDLE, "Ominous Blue Candle");
+		this.addBlock(TFBlocks.OMINOUS_BROWN_CANDLE, "Ominous Brown Candle");
+		this.addBlock(TFBlocks.OMINOUS_GREEN_CANDLE, "Ominous Green Candle");
+		this.addBlock(TFBlocks.OMINOUS_RED_CANDLE, "Ominous Red Candle");
+		this.addBlock(TFBlocks.OMINOUS_BLACK_CANDLE, "Ominous Black Candle");
 
 		this.addBlock(TFBlocks.SKULL_CHEST, "Skull Chest");
 		this.add("block.twilightforest.skull_chest.locked", "This Skull Chest can only be opened by %s!");

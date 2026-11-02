@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " CA",
+    " BC",
+    "B  "
+  ],
+  "key": {
+    "A": {
+      "item": "twilightforest:knightmetal_ingot"
+    },
+    "B": {
+      "item": "twilightforest:ironwood_ingot"
+    },
+    "C": {
+      "item": "twilightforest:naga_scale"
+    }
+  },
+  "result": {
+    "item": "at_mod:spear/knight_spear"
+  }
+}

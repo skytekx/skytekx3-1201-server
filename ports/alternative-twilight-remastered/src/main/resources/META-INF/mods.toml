@@ -1,0 +1,38 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="${mod_license}"
+issueTrackerURL="https://github.com/Lvedy114/alternative-twilight/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://modrinth.com/mod/alternative-twilight-remastered"
+authors="${mod_authors}"
+credits="Original mod by lvedy (Lvedy114), GPL-3.0. Minecraft 1.20.1 / Forge 47 backport for SkyTekx 3; source: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/alternative-twilight-remastered"
+description='''
+This mod aims to increase the difficulty of the original Twilight Forest and expand its replayability.
+
+Unofficial Minecraft 1.20.1 Forge backport of the 1.21.1 NeoForge "Alternative Twilight (Remastered)", built for the SkyTekx Twilight Forest fork.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="twilightforest"
+    mandatory=true
+    versionRange="[${tf_version},)"
+    ordering="AFTER"
+    side="BOTH"

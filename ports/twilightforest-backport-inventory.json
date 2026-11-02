@@ -3845,8 +3845,8 @@
     "fits_reason": "Small equipment extension. Optional.",
     "license": "MIT (github.com/baguchi/TwilightCrossbow).",
     "on_modrinth": true,
-    "risk_with_tf_48_features": "Port is medium: 1.21 crossbows store ChargedProjectiles as a data component, so this needs a rewrite to 1.20.1 NBT and CrossbowItem internals. Loot injection into the Aurora Palace chest tables needs 4.3 loot ids. Done: backported from source in ports/twilight-crossbow/ (1.5.0-1.20.1-skytekx.1; the unregistered Knight Crossbow is left out). Requires twilightforest [4.3.2508-skytekx.1,), so the jar is held: it goes into local-mods/, with its modrinth-permissions/ attribution, together with the fork TF jar that replaces the 4.3 jar.",
-    "action": "backported_held"
+    "risk_with_tf_48_features": "Port is medium: 1.21 crossbows store ChargedProjectiles as a data component, so this needs a rewrite to 1.20.1 NBT and CrossbowItem internals. Loot injection into the Aurora Palace chest tables needs 4.3 loot ids. Done: backported from source in ports/twilight-crossbow/ (1.5.0-1.20.1-skytekx.1; the unregistered Knight Crossbow is left out). Requires twilightforest [4.3.2508-skytekx.1,), so local-mods/ needs the fork TF jar. Bundled as local-mods/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar (2c73904) with modrinth-permissions/ attribution (MIT code, CC BY-NC-SA 4.0 textures adapted from TF's bows, 50c1b6a).",
+    "action": "backported_bundled"
    },
    {
     "name": "Spiced Twilight (baguchi)",

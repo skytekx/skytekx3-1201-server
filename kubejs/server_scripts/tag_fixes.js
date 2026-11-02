@@ -43,3 +43,18 @@ ServerEvents.tags('item', event => {
     'twilightforest:skyberry', 'twilightforest:blightberry', 'twilightforest:stingberry'
   ])
 })
+
+// Yellorium is its own material, not uranium. Every Extreme Reactors part asks for yellorium itself,
+// but Extreme Reactors also lists its ingot, dust and ore in the uranium tags. The uranium recipes of
+// other mods then took them too and gave Mekanism uranium, and the furnace or the crafting grid could
+// pick either recipe, for example yellorium ingot to nuggets or yellorite ore to an ingot. Out of the
+// uranium tags only the Extreme Reactors recipes take them. Almost Unified ignores bigreactors items
+// since 2026-11-02 for the same reason, and kubejs/server_scripts/unify_inventory.js skips them.
+ServerEvents.tags('item', event => {
+  event.remove('forge:ingots/uranium', 'bigreactors:yellorium_ingot')
+  event.remove('forge:dusts/uranium', 'bigreactors:yellorium_dust')
+  event.remove('forge:ores/uranium', 'bigreactors:yellorite_ore')
+})
+ServerEvents.tags('block', event => {
+  event.remove('forge:ores/uranium', 'bigreactors:yellorite_ore')
+})

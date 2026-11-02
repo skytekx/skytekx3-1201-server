@@ -6,8 +6,13 @@ var Opcodes = Java.type('org.objectweb.asm.Opcodes');
 var MethodInsnNode = Java.type('org.objectweb.asm.tree.MethodInsnNode');
 var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode');
 
+var PLAYER_HOOKS = 'twilightforest/asmhooks/PlayerHooks';
+
 // Efficient Eater (Traveller's Vest): reduces the food exhaustion of moving and jumping. Port of 4.8's tf-asm
 // ReduceMovementFoodExhaustionTransformer; 1.20.1 keeps checkMovementStatistics in Player, 1.21 moved it to ServerPlayer.
+// The jump exhaustion is reduced inside causeFoodExhaustion instead of before its calls in jumpFromGround: Arclight's
+// PlayerMixin replaces that argument with the Spigot world config's jump exhaustion (@ModifyArg, applied after the JS
+// coremods), which would throw a value reduced at the call site away. jumpFromGround only marks the jumping player.
 // noinspection JSUnusedGlobalSymbols
 function initializeCoreMod() {
     return {
@@ -30,7 +35,59 @@ function initializeCoreMod() {
                 'methodDesc': '()V'
             },
             'transformer': function (/*org.objectweb.asm.tree.MethodNode*/ methodNode) {
-                return reduceFoodExhaustion(methodNode, 'jumpFromGround');
+                // PlayerHooks.beginJump(this); <body>; PlayerHooks.endJump(); before every return
+                var /*org.objectweb.asm.tree.InsnList*/ instructions = methodNode.instructions;
+                var returns = [];
+                for (var index = 0; index < instructions.size(); index++) {
+                    var /*org.objectweb.asm.tree.AbstractInsnNode*/ node = instructions.get(index);
+                    if (node.getOpcode() === Opcodes.RETURN)
+                        returns.push(node);
+                }
+                returns.forEach(function (/*org.objectweb.asm.tree.InsnNode*/ value, index, array) {
+                    instructions.insertBefore(
+                        value,
+                        new MethodInsnNode(Opcodes.INVOKESTATIC, PLAYER_HOOKS, 'endJump', '()V', false)
+                        );
+                });
+                instructions.insert(
+                    ASM.listOf(
+                        new VarInsnNode(Opcodes.ALOAD, 0),
+                        new MethodInsnNode(
+                            Opcodes.INVOKESTATIC,
+                            PLAYER_HOOKS,
+                            'beginJump',
+                            '(Lnet/minecraft/world/entity/player/Player;)V',
+                            false
+                            )
+                        )
+                    );
+                return methodNode;
+            }
+        },
+        'efficient_eater_jump_exhaustion': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.player.Player',
+                'methodName': ASM.mapMethod('m_36399_'), // causeFoodExhaustion
+                'methodDesc': '(F)V'
+            },
+            'transformer': function (/*org.objectweb.asm.tree.MethodNode*/ methodNode) {
+                // f = PlayerHooks.getJumpFoodExhaustion(f, this); <body>
+                methodNode.instructions.insert(
+                    ASM.listOf(
+                        new VarInsnNode(Opcodes.FLOAD, 1),
+                        new VarInsnNode(Opcodes.ALOAD, 0),
+                        new MethodInsnNode(
+                            Opcodes.INVOKESTATIC,
+                            PLAYER_HOOKS,
+                            'getJumpFoodExhaustion',
+                            '(FLnet/minecraft/world/entity/player/Player;)F',
+                            false
+                            ),
+                        new VarInsnNode(Opcodes.FSTORE, 1)
+                        )
+                    );
+                return methodNode;
             }
         }
     }
@@ -61,7 +118,7 @@ function reduceFoodExhaustion(/*org.objectweb.asm.tree.MethodNode*/ methodNode, 
                 new VarInsnNode(Opcodes.ALOAD, 0),
                 new MethodInsnNode(
                     Opcodes.INVOKESTATIC,
-                    'twilightforest/asmhooks/PlayerHooks',
+                    PLAYER_HOOKS,
                     'getFoodExhaustion',
                     '(FLnet/minecraft/world/entity/player/Player;)F',
                     false

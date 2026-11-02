@@ -14,6 +14,12 @@ import twilightforest.item.travellers_gear.TravellersArmorItem;
 @SuppressWarnings("unused")
 public final class PlayerHooks {
 
+	/**
+	 * The player whose {@code jumpFromGround} is running on this thread, so its {@code causeFoodExhaustion} knows the
+	 * exhaustion is the jump's.
+	 */
+	private static final ThreadLocal<Player> JUMPING = new ThreadLocal<>();
+
 	private PlayerHooks() {
 	}
 
@@ -21,10 +27,11 @@ public final class PlayerHooks {
 	 * Efficient Eater: the movement and jump exhaustion of a player in a Traveller's Vest with the modifier is divided
 	 * by the modifier's value (halved with the stock definition).
 	 * <p>
-	 * Injection Points (before every {@code causeFoodExhaustion} call):<br/>
+	 * Injection Point (before every {@code causeFoodExhaustion} call):<br/>
 	 * {@code net.minecraft.world.entity.player.Player#checkMovementStatistics(double, double, double)} (in
-	 * ServerPlayer in 1.21)<br/>
-	 * {@code net.minecraft.world.entity.player.Player#jumpFromGround()}
+	 * ServerPlayer in 1.21)
+	 * <p>
+	 * The jump exhaustion goes through {@link #getJumpFoodExhaustion} instead.
 	 */
 	public static float getFoodExhaustion(float f, Player player) {
 		ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
@@ -35,5 +42,38 @@ public final class PlayerHooks {
 		if (!TravellersModifiersManager.isModifierActive(player, chestStack, TravellersModifiersManager.EFFICIENT_EATER_MODIFIER) || divisor == null)
 			return f;
 		return f * (1 / divisor);
+	}
+
+	/**
+	 * Marks {@code player} as jumping until {@link #endJump}.
+	 * <p>
+	 * Injection Point (at the head):<br/>
+	 * {@code net.minecraft.world.entity.player.Player#jumpFromGround()}
+	 */
+	public static void beginJump(Player player) {
+		JUMPING.set(player);
+	}
+
+	/**
+	 * Injection Point (before every return):<br/>
+	 * {@code net.minecraft.world.entity.player.Player#jumpFromGround()}
+	 */
+	public static void endJump() {
+		JUMPING.remove();
+	}
+
+	/**
+	 * Efficient Eater for the jump exhaustion: the first exhaustion a jumping player causes is reduced like
+	 * {@link #getFoodExhaustion}. It runs inside {@code causeFoodExhaustion}, after Arclight has replaced the argument
+	 * of the call in {@code jumpFromGround} with the Spigot world config's jump exhaustion.
+	 * <p>
+	 * Injection Point (at the head, replacing the argument):<br/>
+	 * {@code net.minecraft.world.entity.player.Player#causeFoodExhaustion(float)}
+	 */
+	public static float getJumpFoodExhaustion(float f, Player player) {
+		if (JUMPING.get() != player)
+			return f;
+		JUMPING.remove();
+		return getFoodExhaustion(f, player);
 	}
 }

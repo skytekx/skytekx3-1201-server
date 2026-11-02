@@ -349,6 +349,10 @@ public class BlockstateGenerator extends BlockModelBuilders {
 					.texture("2", item.getNamespace() + ":block/" + item.getPath());
 		}
 
+		registerBush(TFBlocks.IRON_OREBERRY.get());
+		registerBush(TFBlocks.GOLD_OREBERRY.get());
+		registerBush(TFBlocks.COPPER_OREBERRY.get());
+		registerBush(TFBlocks.ESSENCE_OREBERRY.get(), 3, 3);
 		registerBush(TFBlocks.RASPBERRY_BUSH.get());
 		registerBush(TFBlocks.BLUEBERRY_BUSH.get());
 		registerBush(TFBlocks.BLACKBERRY_BUSH.get());
@@ -1011,11 +1015,12 @@ public class BlockstateGenerator extends BlockModelBuilders {
 							  BiConsumer<Direction, ModelBuilder<BlockModelBuilder>.ElementBuilder.FaceBuilder> faces) {
 		if (snowHeight > y2 - SnowLoggable.SNOW_Z_FIGHTING)
 			return;
+		// 4.8 sets the light on the element. Forge 47's ModelBuilder does not write element-level forge_data, so the light
+		// goes on each face instead; it renders the same. With 0 light the faces keep the default data and write nothing.
 		b.element()
 			.from(x1, Math.max(y1, snowHeight + SnowLoggable.SNOW_Z_FIGHTING), z1)
 			.to(x2, y2, z2)
-			.allFaces(faces)
-			.emissivity(blockLight, skyLight)
+			.allFaces(faces.andThen((direction, faceBuilder) -> faceBuilder.emissivity(blockLight, skyLight)))
 			.end();
 	}
 

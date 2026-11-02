@@ -53,6 +53,8 @@ public class TFFeatures {
 	public static final RegistryObject<Feature<DiskConfiguration>> MYCELIUM_BLOB = FEATURES.register("mycelium_blob", () -> new CheckAbovePatchFeature(DiskConfiguration.CODEC));
 	public static final RegistryObject<Feature<BlockStateConfiguration>> UNDERGROUND_PLANTS = FEATURES.register("underground_plants", () -> new UndergroundPlantFeature(BlockStateConfiguration.CODEC));
 	public static final RegistryObject<Feature<BlockStateConfiguration>> UNDERGROUND_PLANTS_IN_STRUCTURE = FEATURES.register("underground_plants_in_structure", () -> new UndergroundPlantFeature(BlockStateConfiguration.CODEC, true));
+	public static final RegistryObject<Feature<BlockStateConfiguration>> OREBERRY_BUSHES = FEATURES.register("oreberry_bushes", () -> new UndergroundPlantFeature(BlockStateConfiguration.CODEC, 1));
+	// Troll vines grow inside Troll Caves, so they skip the landmark check the other underground plants make
 	public static final RegistryObject<Feature<BlockStateConfiguration>> TROLL_VINES = FEATURES.register("troll_vines", () -> new UndergroundPlantFeature(BlockStateConfiguration.CODEC, true));
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> TROLL_BIG_MUSHGLOOM = FEATURES.register("troll_cave_big_mushgloom", () -> new TrollBigMushgloomFeature(HugeMushroomFeatureConfiguration.CODEC));
 	public static final RegistryObject<Feature<HugeMushroomFeatureConfiguration>> TROLL_HUGE_RED_MUSHROOM = FEATURES.register("troll_cave_huge_red_mushroom", () -> new TrollHugeRedMushroomFeature(HugeMushroomFeatureConfiguration.CODEC));

@@ -211,6 +211,10 @@ public class ItemModelGenerator extends ItemModelProvider {
 		generated(TFBlocks.MUSHGLOOM.getId().getPath(), prefix("block/mushgloom"), prefix("block/mushgloom_head"));
 		generated(TFBlocks.TORCHBERRY_PLANT.getId().getPath(), prefix("block/torchberry_plant"));
 		generated(TFBlocks.ROOT_STRAND.getId().getPath(), prefix("block/root_strand"));
+		bushBlock(TFBlocks.IRON_OREBERRY.get());
+		bushBlock(TFBlocks.GOLD_OREBERRY.get());
+		bushBlock(TFBlocks.COPPER_OREBERRY.get());
+		bushBlock(TFBlocks.ESSENCE_OREBERRY.get());
 		bushBlock(TFBlocks.RASPBERRY_BUSH.get());
 		bushBlock(TFBlocks.BLUEBERRY_BUSH.get());
 		bushBlock(TFBlocks.BLACKBERRY_BUSH.get());
@@ -596,6 +600,11 @@ public class ItemModelGenerator extends ItemModelProvider {
 				.texture("particle", prefix("item/berry_medley"))
 				.texture("layer0", new ResourceLocation("item/bowl"))
 				.texture("layer1", prefix("item/berry_medley"));
+		singleTex(TFItems.IRON_BERRY);
+		singleTex(TFItems.GOLD_BERRY);
+		singleTex(TFItems.COPPER_BERRY);
+		singleTexFullbright(TFItems.ESSENCE_BERRY);
+		singleTex(TFItems.COPPER_NUGGET);
 		singleTex(TFItems.MAGIC_MAP);
 		singleTex(TFItems.MAZE_MAP);
 		singleTex(TFItems.ORE_MAP);

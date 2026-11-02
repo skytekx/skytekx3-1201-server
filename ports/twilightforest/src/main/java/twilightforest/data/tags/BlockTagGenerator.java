@@ -70,6 +70,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 	public static final TagKey<Block> TF_BERRY_BUSHES_REPLACE = BlockTags.create(TwilightForestMod.prefix("tf_berry_bushes_replace"));
 	public static final TagKey<Block> DARK_TOWER_BERRY_BUSHES_SURVIVE = BlockTags.create(TwilightForestMod.prefix("dark_tower_berry_bushes_survive"));
 	public static final TagKey<Block> DARK_TOWER_BERRY_BUSHES_DIE = BlockTags.create(TwilightForestMod.prefix("dark_tower_berry_bushes_die"));
+	public static final TagKey<Block> OREBERRY_BUSHES_SURVIVE = BlockTags.create(TwilightForestMod.prefix("oreberry_bushes_survive"));
 
 	public static final TagKey<Block> COMMON_PROTECTIONS = BlockTags.create(TwilightForestMod.prefix("common_protections"));
 	public static final TagKey<Block> ANNIHILATION_INCLUSIONS = BlockTags.create(TwilightForestMod.prefix("annihilation_inclusions"));
@@ -674,6 +675,24 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(DARK_TOWER_BERRY_BUSHES_DIE)
 				.addTags(BlockTags.NYLIUM);
+
+		tag(OREBERRY_BUSHES_SURVIVE)
+				.addTag(Tags.Blocks.STONE)
+				.addTag(BlockTags.STONE_BRICKS)
+				.addTag(Tags.Blocks.ORES_IN_GROUND_STONE)
+				.addTag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE)
+				.addTag(Tags.Blocks.ORES_IN_GROUND_NETHERRACK)
+				.addTag(Tags.Blocks.COBBLESTONE)
+				.addTag(Tags.Blocks.NETHERRACK)
+				.add(TFBlocks.GIANT_COBBLESTONE.get())
+				.add(Blocks.POLISHED_ANDESITE)
+				.add(Blocks.POLISHED_DIORITE)
+				.add(Blocks.POLISHED_GRANITE)
+				.add(Blocks.SMOOTH_STONE)
+				.add(Blocks.INFESTED_CHISELED_STONE_BRICKS)
+				.add(Blocks.INFESTED_CRACKED_STONE_BRICKS)
+				.add(Blocks.INFESTED_MOSSY_STONE_BRICKS)
+				.add(Blocks.INFESTED_STONE_BRICKS);
 
 		tag(TIME_CORE_EXCLUDED).add(Blocks.NETHER_PORTAL);
 

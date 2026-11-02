@@ -5,61 +5,79 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.LandmarkUtil;
 
+import java.util.Optional;
+
+/**
+ * Walks down from the origin and places the configured plant in empty spots it can survive in, wandering a few blocks
+ * sideways on the way. Stops after {@code maxCount} plants and, unless {@code spawnInStructure}, skips spots inside the
+ * nearest landmark.
+ */
 public class UndergroundPlantFeature extends Feature<BlockStateConfiguration> {
+	private final int maxCount;
 	private final boolean spawnInStructure;
 
-	public UndergroundPlantFeature(Codec<BlockStateConfiguration> config) {
-		this(config, false);
+	public UndergroundPlantFeature(Codec<BlockStateConfiguration> config, int maxCount) {
+		this(config, maxCount, false);
 	}
 
-	/**
-	 * @param spawnInStructure whether the plants may also grow inside the bounding box of the nearest landmark (Troll
-	 *                         Cave vegetation). Otherwise they are kept out of landmark structures, as in 4.8 (#2532).
-	 */
+	public UndergroundPlantFeature(Codec<BlockStateConfiguration> config) {
+		this(config, Integer.MAX_VALUE, false);
+	}
+
 	public UndergroundPlantFeature(Codec<BlockStateConfiguration> config, boolean spawnInStructure) {
+		this(config, Integer.MAX_VALUE, spawnInStructure);
+	}
+
+	public UndergroundPlantFeature(Codec<BlockStateConfiguration> config, int maxCount, boolean spawnInStructure) {
 		super(config);
+		this.maxCount = maxCount;
 		this.spawnInStructure = spawnInStructure;
 	}
 
 	@Override
 	public boolean place(FeaturePlaceContext<BlockStateConfiguration> ctx) {
 		WorldGenLevel world = ctx.level();
-		BlockPos pos = ctx.origin();
+		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();
 
-		int copyX = pos.getX();
-		int copyZ = pos.getZ();
+		int x = origin.getX();
+		int z = origin.getZ();
+		int placed = 0;
 
-		for (; pos.getY() > world.getMinBuildHeight(); pos = pos.below()) {
-			if (world.isEmptyBlock(pos) && random.nextInt(6) > 0) {
-				if (ctx.config().state.canSurvive(ctx.level(), pos) && (this.spawnInStructure || !isInsideLandmark(world, pos))) {
-					if (ctx.config().state.is(TFBlocks.TROLLVIDR.get()) && random.nextInt(10) == 0) {
-						world.setBlock(pos, TFBlocks.UNRIPE_TROLLBER.get().defaultBlockState(), 16 | 2);
-					} else {
-						world.setBlock(pos, ctx.config().state, 16 | 2);
-					}
-				}
-			} else {
-				pos = new BlockPos(
-						copyX + random.nextInt(4) - random.nextInt(4),
-						pos.getY(),
-						copyZ + random.nextInt(4) - random.nextInt(4)
-				);
+		for (int y = origin.getY(); y > world.getMinBuildHeight(); y--) {
+			if (placed >= this.maxCount)
+				break;
+
+			BlockPos pos = new BlockPos(x, y, z);
+			if (!world.isEmptyBlock(pos) || random.nextInt(6) == 0) {
+				x = origin.getX() + random.nextInt(4) - random.nextInt(4);
+				z = origin.getZ() + random.nextInt(4) - random.nextInt(4);
+				continue;
+			}
+
+			BlockState state = ctx.config().state;
+			if (state.is(TFBlocks.TROLLVIDR.get()) && random.nextInt(10) == 0)
+				state = TFBlocks.UNRIPE_TROLLBER.get().defaultBlockState();
+			// 4.8 looks the landmark up before the survival check; it consumes no randomness, so only looking it up when needed places the same plants
+			if (state.canSurvive(world, pos) && (this.spawnInStructure || !isInsideLandmark(world, pos))) {
+				world.setBlock(pos, state, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+				placed++;
 			}
 		}
-		return true;
+		return placed > 0;
 	}
 
-	// Only looked up once a plant could actually be placed, as the landmark lookup is not free
 	private static boolean isInsideLandmark(WorldGenLevel world, BlockPos pos) {
-		return LandmarkUtil.locateNearestLandmarkStart(world, SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()))
-				.map(start -> start.getBoundingBox().isInside(pos))
-				.orElse(false);
+		Optional<StructureStart> structureStart = LandmarkUtil.locateNearestLandmarkStart(world, SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+		return structureStart.isPresent() && structureStart.get().getBoundingBox().isInside(pos);
 	}
 }

@@ -49,6 +49,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> STEELEAF_INGOTS = makeForgeTag("ingots/steeleaf");
 	public static final TagKey<Item> WROUGHT_IRON_INGOTS = makeForgeTag("ingots/wrought_iron");
 
+	public static final TagKey<Item> NUGGETS_COPPER = makeForgeTag("nuggets/copper");
+
 	public static final TagKey<Item> STORAGE_BLOCKS_ARCTIC_FUR = makeForgeTag("storage_blocks/arctic_fur");
 	public static final TagKey<Item> STORAGE_BLOCKS_CARMINITE = makeForgeTag("storage_blocks/carminite");
 	public static final TagKey<Item> STORAGE_BLOCKS_FIERY = makeForgeTag("storage_blocks/fiery");
@@ -205,6 +207,9 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(Tags.Items.INGOTS)
 				.addTag(IRONWOOD_INGOTS).addTag(FIERY_INGOTS)
 				.addTag(KNIGHTMETAL_INGOTS).addTag(STEELEAF_INGOTS);
+
+		tag(NUGGETS_COPPER).add(TFItems.COPPER_NUGGET.get());
+		tag(Tags.Items.NUGGETS).addTag(NUGGETS_COPPER);
 
 		tag(RAW_MATERIALS_IRONWOOD).add(TFItems.RAW_IRONWOOD.get());
 		tag(RAW_MATERIALS_KNIGHTMETAL).add(TFItems.ARMOR_SHARD_CLUSTER.get());

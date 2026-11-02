@@ -454,6 +454,10 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.CLOVER_PATCH, "Clover Patch");
 		this.addBlock(TFBlocks.TORCHBERRY_PLANT, "Torchberry Plant");
 		this.addBlock(TFBlocks.ROOT_STRAND, "Root Strands");
+		this.addBlock(TFBlocks.IRON_OREBERRY, "Iron Oreberry Bush");
+		this.addBlock(TFBlocks.GOLD_OREBERRY, "Gold Oreberry Bush");
+		this.addBlock(TFBlocks.COPPER_OREBERRY, "Copper Oreberry Bush");
+		this.addBlock(TFBlocks.ESSENCE_OREBERRY, "Essence Berry Bush");
 		this.addBlock(TFBlocks.RASPBERRY_BUSH, "Raspberry Bush");
 		this.addBlock(TFBlocks.BLUEBERRY_BUSH, "Blueberry Bush");
 		this.addBlock(TFBlocks.BLACKBERRY_BUSH, "Blackberry Bush");
@@ -685,6 +689,11 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.SKYBERRY, "Skyberry");
 		this.addItem(TFItems.STINGBERRY, "Stingberry");
 		this.addItem(TFItems.BERRY_MEDLEY, "Berry Medley");
+		this.addItem(TFItems.COPPER_NUGGET, "Copper Nugget");
+		this.addItem(TFItems.IRON_BERRY, "Iron Oreberry");
+		this.addItem(TFItems.GOLD_BERRY, "Gold Oreberry");
+		this.addItem(TFItems.COPPER_BERRY, "Copper Oreberry");
+		this.addItem(TFItems.ESSENCE_BERRY, "Concentrated Essence Berry");
 		this.addItem(TFItems.RAW_MEEF, "Raw Meef");
 		this.addItem(TFItems.COOKED_MEEF, "Meef Steak");
 		this.addItem(TFItems.MEEF_STROGANOFF, "Meef Stroganoff");
@@ -1187,6 +1196,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addDeathMessage("expired.player", "%1$s's life expired");
 		this.addDeathMessage("ominousFire.zombified_player", "%1$s was killed by the zombified remains of %2$s");
 		this.addDeathMessage("ominousFire.zombified_player.self", "%1$s was killed by the zombified remains of themselves");
+		this.addDeathMessage("oreberry", "%1$s was stabbed to death by an oreberry bush");
+		this.addDeathMessage("oreberry.player", "%1$s was stabbed to death by an oreberry bush while escaping %2$s");
 
 		this.addDeathMessage("axing", "%1$s was chopped up by %2$s");
 		this.addDeathMessage("axing.item", "%1$s was chopped up by %2$s using %3$s");

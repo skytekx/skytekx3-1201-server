@@ -125,6 +125,11 @@ public class TFItems {
 		new StackableEffectInstance(MobEffects.DIG_SLOWDOWN, 10, 0.75F)
 	));
 	public static final RegistryObject<Item> BERRY_MEDLEY = ITEMS.register("berry_medley", () -> new BowlFoodItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(0.6F).build()).stacksTo(1)));
+	public static final RegistryObject<Item> IRON_BERRY = ITEMS.register("iron_berry", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> GOLD_BERRY = ITEMS.register("gold_berry", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COPPER_BERRY = ITEMS.register("copper_berry", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> ESSENCE_BERRY = ITEMS.register("essence_berry", () -> new EssenceBerryItem(new Item.Properties()));
+	public static final RegistryObject<Item> COPPER_NUGGET = ITEMS.register("copper_nugget", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> ORE_MAGNET = ITEMS.register("ore_magnet", () -> new OreMagnetItem(new Item.Properties().durability(64)));
 	public static final RegistryObject<Item> CRUMBLE_HORN = ITEMS.register("crumble_horn", () -> new CrumbleHornItem(new Item.Properties().durability(1024).rarity(Rarity.RARE)));
 	public static final RegistryObject<Item> PEACOCK_FEATHER_FAN = ITEMS.register("peacock_feather_fan", () -> new PeacockFanItem(new Item.Properties().durability(1024).rarity(Rarity.RARE)));

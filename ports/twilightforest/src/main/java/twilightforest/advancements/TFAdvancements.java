@@ -15,6 +15,7 @@ public class TFAdvancements {
     public static final KillAllPhantomsTrigger KILL_ALL_PHANTOMS = CriteriaTriggers.register(new KillAllPhantomsTrigger());
     public static final UncraftItemTrigger UNCRAFT_ITEM = CriteriaTriggers.register(new UncraftItemTrigger());
     public static final BrokeGlassSwordTrigger BROKE_GLASS_SWORD = CriteriaTriggers.register(new BrokeGlassSwordTrigger());
+    public static final AddModifierTrigger ADD_MODIFIER = CriteriaTriggers.register(new AddModifierTrigger());
 
     public static void init() {}
 }

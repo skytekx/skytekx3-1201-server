@@ -28,6 +28,7 @@ import twilightforest.compat.jei.extension.CasketRepairExtension;
 import twilightforest.compat.jei.extension.ExanimateEssenceRepairExtension;
 import twilightforest.compat.jei.extension.MoonwormQueenExtension;
 import twilightforest.compat.jei.extension.ScepterRepairExtension;
+import twilightforest.compat.jei.extension.TravellersVestGlovesMergeExtension;
 import twilightforest.compat.jei.renderers.*;
 import twilightforest.compat.jei.subtype.CasketSubtypeInterpreter;
 import twilightforest.compat.jei.util.OminousFireRecipe;
@@ -41,6 +42,7 @@ import twilightforest.item.recipe.CasketRepairRecipe;
 import twilightforest.item.recipe.EssenceRepairRecipe;
 import twilightforest.item.recipe.MoonwormQueenRepairRecipe;
 import twilightforest.item.recipe.ScepterRepairRecipe;
+import twilightforest.item.recipe.travellers.TravellersVestGlovesMergeRecipe;
 
 import java.util.Collections;
 import java.util.List;
@@ -120,6 +122,7 @@ public class JEICompat implements IModPlugin {
 		registration.getCraftingCategory().addCategoryExtension(ScepterRepairRecipe.class, ScepterRepairExtension::new);
 		registration.getCraftingCategory().addCategoryExtension(CasketRepairRecipe.class, CasketRepairExtension::new);
 		registration.getCraftingCategory().addCategoryExtension(EssenceRepairRecipe.class, ExanimateEssenceRepairExtension::new);
+		registration.getCraftingCategory().addCategoryExtension(TravellersVestGlovesMergeRecipe.class, recipe -> new TravellersVestGlovesMergeExtension());
 	}
 
 	@Override

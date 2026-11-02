@@ -60,6 +60,7 @@ import twilightforest.client.model.block.forcefield.ForceFieldModelLoader;
 import twilightforest.client.model.block.giantblock.GiantBlockModelLoader;
 import twilightforest.client.model.block.leaves.BakedLeavesModel;
 import twilightforest.client.model.block.patch.PatchModelLoader;
+import twilightforest.client.model.item.TravellersGearItemModel;
 import twilightforest.client.model.item.TrollsteinnModel;
 import twilightforest.client.renderer.TFSkyRenderer;
 import twilightforest.client.renderer.entity.MagicPaintingRenderer;
@@ -95,6 +96,7 @@ public class TFClientEvents {
 			event.register("force_field", ForceFieldModelLoader.INSTANCE);
 			event.register("connected_texture_block", ConnectedTextureModelLoader.INSTANCE);
 			event.register("royal_rags", RoyalRagsModelLoader.INSTANCE);
+			event.register("travellers_gear", TravellersGearItemModel.Loader.INSTANCE);
 		}
 
 		@SubscribeEvent

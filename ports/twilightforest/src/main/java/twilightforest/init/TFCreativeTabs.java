@@ -646,6 +646,12 @@ public class TFCreativeTabs {
 				output.accept(TFItems.LIFEDRAIN_SCEPTER.get());
 				output.accept(TFItems.ZOMBIE_SCEPTER.get());
 				output.accept(TFItems.FORTIFICATION_SCEPTER.get());
+				output.accept(TFItems.TRAVELLERS_GOGGLES.get());
+				output.accept(TFItems.TRAVELLERS_VEST.get());
+				output.accept(TFItems.TRAVELLERS_WINGS.get());
+				output.accept(TFItems.TRAVELLERS_BOOTS.get());
+				output.accept(TFItems.TRAVELLERS_BELT.get());
+				output.accept(TFItems.TRAVELLERS_GLOVES.get());
 				output.accept(TFItems.LAMP_OF_CINDERS.get());
 				output.accept(TFItems.EMPERORS_CLOTH.get());
 				output.accept(TFItems.ORE_MAGNET.get());

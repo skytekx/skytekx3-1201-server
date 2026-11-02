@@ -19,6 +19,7 @@ public class TFStructureTypes {
 	public static final RegistryObject<StructureType<ProgressionWrappedStructure>> PROGRESSION_WRAPPED = registerType("progression", () -> () -> ProgressionWrappedStructure.CODEC);
 	public static final RegistryObject<StructureType<FallenTrunkStructure>> FALLEN_TRUNK = registerType("fallen_trunk", () -> () -> FallenTrunkStructure.CODEC);
 	public static final RegistryObject<StructureType<HollowTreeStructure>> HOLLOW_TREE = registerType("hollow_tree", () -> () -> HollowTreeStructure.CODEC);
+	public static final RegistryObject<StructureType<CampStructure>> CAMP = registerType("camp", () -> () -> CampStructure.CODEC);
 
 	public static final RegistryObject<StructureType<HedgeMazeStructure>> HEDGE_MAZE = registerType("hedge_maze", () -> () -> HedgeMazeStructure.CODEC);
 	public static final RegistryObject<StructureType<HollowHillStructure>> HOLLOW_HILL = registerType("hollow_hill", () -> () -> HollowHillStructure.CODEC);

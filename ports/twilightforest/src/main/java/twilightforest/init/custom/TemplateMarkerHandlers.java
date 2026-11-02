@@ -1,20 +1,31 @@
 package twilightforest.init.custom;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.PaintingVariantTags;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.world.level.block.BarrelBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
+import twilightforest.init.TFBlocks;
+import twilightforest.loot.TFLootTables;
 import twilightforest.world.components.structures.markerhandler.*;
 import twilightforest.world.components.structures.util.TemplateMarkerHandlerList;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -43,8 +54,33 @@ public class TemplateMarkerHandlers {
 	public static final RegistryObject<TemplateMarkerHandlerType> PAINTING = TEMPLATE_MARKER_HANDLER_TYPES.register("painting", () -> () -> PaintingMarkerHandler.CODEC);
 	public static final RegistryObject<TemplateMarkerHandlerType> LOOT = TEMPLATE_MARKER_HANDLER_TYPES.register("loot", () -> () -> LootMarkerHandler.CODEC);
 
-	// TF 4.8 registers its first list here, twilightforest:camp_marker_handlers. It arrives with the Traveller camps, together with the
-	// camp loot tables that list references
+	public static final ResourceKey<TemplateMarkerHandlerList> CAMP_MARKER_HANDLERS = ResourceKey.create(TEMPLATE_MARKER_HANDLER_LIST_KEY, TwilightForestMod.prefix("camp_marker_handlers"));
+
 	public static void bootstrap(BootstapContext<TemplateMarkerHandlerList> context) {
+		BlockPlaceMarkerHandler campfireSeat = new BlockPlaceMarkerHandler(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder()
+			.add(TFBlocks.TWILIGHT_OAK_SLAB.get().defaultBlockState(), 1)
+			.add(Blocks.AIR.defaultBlockState(), 3)
+			.build()));
+
+		DryingRackMarkerHandler armorRack = new DryingRackMarkerHandler(BlockStateProvider.simple(TFBlocks.CANOPY_DRYING_RACK.get()), TFLootTables.CAMP_ARMOR_RACK);
+
+		DryingRackMarkerHandler birchDryingRack = new DryingRackMarkerHandler(BlockStateProvider.simple(TFBlocks.BIRCH_DRYING_RACK.get()), TFLootTables.CAMP_DRYING_RACK);
+
+		PaintingMarkerHandler painting = new PaintingMarkerHandler(PaintingVariantTags.PLACEABLE);
+
+		// TF 4.8 fills a decorated pot here. 1.20.1 decorated pots have no inventory (LootMarkerHandler would place an empty pot and report the
+		// marker unhandled), so the tent pot is an upright barrel holding the same loot
+		LootMarkerHandler tentPot = new LootMarkerHandler(BlockStateProvider.simple(Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)), TFLootTables.CAMP_POT);
+
+		Map<String, Holder<TemplateMarkerHandler>> keyedHandlers = Map.of(
+			"twilight_oak_slab", Holder.direct(campfireSeat),
+			"camp_armor_rack", Holder.direct(armorRack),
+			"birch_drying_rack", Holder.direct(birchDryingRack),
+			"painting", Holder.direct(painting),
+			"tent_pot", Holder.direct(tentPot)
+		);
+		context.register(CAMP_MARKER_HANDLERS, TemplateMarkerHandlerList.of(
+			new RotationMarkerHandler(Holder.direct(new SwitchMarkerHandler(keyedHandlers)))
+		));
 	}
 }

@@ -46,11 +46,24 @@ are listed in the wave tables below. Waves 8-10, with the feature commit first a
 The fork also merges the 4.8 translations for the backported content (5bbde50) and ships the licence
 texts and a change NOTICE in the jar (de5b8c5). Items a port left out on purpose, and follow-ups handed
 between features, are recorded in `ports/twilightforest-backport-carryover.json`; deliberate behaviour
-differences are under [Local divergences](#local-divergences-from-upstream-keep-on-re-sync). Open deploy
-steps: the `remove-seed-coremod` seed check (see [Critic corrections](#critic-corrections-applied-during-porting)),
-one full-pack boot with the final jar on the production Arclight, and the single TF dimension reset with
-pregen (steps under [Changelog for players](#changelog-for-players), background under
-[Savegame impact](#savegame-impact)). Player-facing notes: [Changelog for players](#changelog-for-players).
+differences are under [Local divergences](#local-divergences-from-upstream-keep-on-re-sync).
+Player-facing notes: [Changelog for players](#changelog-for-players).
+
+Still open before the release is deployed and published:
+- The `remove-seed-coremod` seed check (see [Critic corrections](#critic-corrections-applied-during-porting)),
+  on the live server while it still runs the old jar.
+- One full-pack boot with the final jar on the production Arclight. The sandbox boots passed (see the
+  final boots under [In the pack](#in-the-pack-2026-11-01)).
+- The single TF dimension reset with pregen (steps in the operator notes under
+  [Changelog for players](#changelog-for-players), background under [Savegame impact](#savegame-impact)).
+- Picking `multiplayerFightAdjuster`, which ships as `"NONE"` (same operator notes).
+- The client smoke test for Alternative Twilight (Remastered): spears and the Knight Phantom aurora (see
+  [Backported 1.21.1-only addons](#backported-1211-only-addons)).
+- In-game checks: fire each crossbow once, refuel a brewing stand with Fire Beetle Powder, fight a Lich
+  and a Naga once.
+- Before the `.mrpack` is published: merge this branch to `master`, because the LGPL/GPL source links in
+  the NOTICEs, mods.toml credits and `modrinth-permissions/` files point at `tree/master/ports/...`, and
+  resolve the bundled-jar permission blockers ([publish](publish.md#before-uploading)).
 
 ## Changelog for players
 
@@ -525,7 +538,20 @@ a fresh world (plain Forge 1.20.1-47.4.18) reached `Done` with 0 FATAL, crash or
 ERROR from an addon or from TF. On 2026-11-02 the full pack with the fork jar also booted on the fixed
 Arclight jar (`safeiter2`, see [Arclight](../server/arclight.md)): `Done`, 0 FATAL, no error signature that
 plain Forge does not log too. (The earlier `MinecraftServerMixin` failure came from the broken `safeiter`
-jar, not from the pack.) Final static check against the shipped jar (SHA-1 `9417577d`, 2026-11-02): every
+jar, not from the pack.) Final boots of the release tree, 2026-11-02: on Arclight `safeiter2` at 79acbd2
+(fork jar SHA-1 `9417577d`, 274 mods, fresh world, forced chunk generation in the overworld, the Twilight
+Forest and the Skylands) the server reached `Done` with 0 FATAL, crash or watchdog lines and stopped
+cleanly. Every server-side mixin of Twilight Crossbow (`CrossbowItem`, `FireworkRocketEntity`,
+`SnowGuardian`), Spiced Twilight (`BrewingStandBlockEntity`, `BrewingStandMenu$FuelSlot`, `FireBeetle`,
+`HelmetCrab`, `Kobold`, `LichAbsorbMinionsGoal`) and Alternative Twilight (Remastered) (`Lich`, `Naga`,
+`NagaMovementPattern`) applied, and no error signature came from TF or an addon. Caveat: that run used
+`max-tick-time=180000`. With the default 60000 the watchdog fired after `Done`, while the test harness
+force-loaded 145 TF chunks synchronously on the main thread. The older 273ee01-era jar (`f38f160d`) hit
+the same watchdog on plain Forge on the same host that day, after passing there earlier, so the cause is
+the sandbox's load, not the jar; do not claim 0 watchdog at the default setting from these runs.
+Pregenerate with Chunky (asynchronous), not with large `forceload` areas. After the crossbow jar's
+licence-only rebuild (4f82c56) a plain Forge boot at aaf6a5e reached `Done` (273 mods, 0 FATAL, crash or
+watchdog, the crossbow mixins applied) with no error signature the earlier runs lacked. Final static check against the shipped jar (SHA-1 `9417577d`, 2026-11-02): every
 class, field and method that the 38 other `local-mods/` jars, the 224 Modrinth index jars and the crossbow
 jar link resolves (0 missing; members that resolve through vanilla superclasses could not be checked and
 are marked unverified, most of them in `at_mod` and Spiced Twilight). The pack-wide data scan found one TF
@@ -594,8 +620,9 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   jar ships the CC text as `ASSET_LICENSE_twilight_crossbow`, and mods.toml declares both licences (4f82c56). Like the
   other ports it needs the fork jar, which `local-mods/` carries since c825572 (next to the stock `4.3` jar
   Forge refused to load it). Unlike them, this jar build is not byte-reproducible (the jar keeps file
-  times), so record the new SHA-1 whenever the jar is rebuilt. Pending: boot the full pack once on Arclight
-  and fire each crossbow once.
+  times), so record the new SHA-1 whenever the jar is rebuilt. The full pack boots on Arclight with it and
+  its mixins apply (final boots under [In the pack](#in-the-pack-2026-11-01)). Pending: fire each crossbow
+  once in game.
 - **Spiced Twilight** (baguchi, LGPL-3.0-or-later): `ports/spiced-twilight/`, a standalone NeoGradle 6
   project like the fork. Build the fork first (`ports/twilightforest`, `./gradlew build`); the port compiles
   against `../twilightforest/build/libs/twilightforest-1.20.1-<tf_version>-universal.jar` (flatDir plus
@@ -629,9 +656,10 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   file; the jar build is byte-reproducible, and its NOTICE and mods.toml credits link the source
   (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/spiced-twilight), as the LGPL asks
   for a modified build. Like Twilight Mobs Loots it needs the fork jar, which `local-mods/` carries since
-  c825572 (next to the stock `4.3` jar Forge refused to load it). Boot the full pack once on Arclight
-  (Done, 0 FATAL, no mixin errors) and refuel one brewing stand with Fire Beetle Powder; the porter's boot
-  test ran on plain Forge 47.4.18.
+  c825572 (next to the stock `4.3` jar Forge refused to load it). The full pack boots on Arclight with it
+  and all its server mixins apply (final boots under [In the pack](#in-the-pack-2026-11-01)); the porter's
+  own boot test ran on plain Forge 47.4.18. Pending: refuel one brewing stand with Fire Beetle Powder in
+  game.
 - **Alternative Twilight (Remastered)** (lvedy, GPL-3.0-or-later): `ports/alternative-twilight-remastered/`,
   a standalone NeoGradle 6 project like the fork. Build the fork first (`ports/twilightforest`,
   `./gradlew build`); the port compiles against
@@ -666,7 +694,8 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   jar build is byte-reproducible and its NOTICE and mods.toml credits link the source
   (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/alternative-twilight-remastered), as
   the GPL asks. Like the other ports it needs the fork jar, which `local-mods/` carries since c825572.
-  Boot the full pack once on Arclight (Done, 0 FATAL, no mixin errors) and fight a Lich and a Naga once; the
+  The full pack boots on Arclight with it and its three mixins apply (final boots under
+  [In the pack](#in-the-pack-2026-11-01)). Pending: fight a Lich and a Naga once in game. The
   porter's boot test ran on plain Forge 47.4.18 (with and without Spiced Twilight), and the integration
   boot on top of the Lich Tower part A (fork jar, this jar, Spiced Twilight and Twilight Mobs Loots) also
   reached Done with 0 ERROR, all three mixins applied and a 210-health Naga. The client-only parts

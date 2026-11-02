@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-02T02:55:05.307635117	Twilight Forest Block Tags
+// 1.20.1	2026-11-02T05:01:19.899651914	Twilight Forest Block Tags
 a10ef0864e630b44949959994b373ec7ee07dcb1 data/alexscaves/tags/blocks/ferromagnetic_blocks.json
 ddfcbead67bb9487c003af137a276963e5b20022 data/alexscaves/tags/blocks/gloomoth_light_sources.json
 c365018bd78f1335cd4508b5d74bc4500ae951bd data/alexscaves/tags/blocks/underzealot_light_sources.json
@@ -31,7 +31,7 @@ d3606357bb7f5a88902b70183dfd0b2ef323608d data/minecraft/tags/blocks/dampens_vibr
 6be3f00e1fa63bb65b978bb8e2c63bbf79b5775e data/minecraft/tags/blocks/dirt.json
 1094f05635217cf3ce4a1062e85d14129a347cef data/minecraft/tags/blocks/dragon_immune.json
 58b5e0d0eea5536fb5d46cc844c5b8b71bc34f86 data/minecraft/tags/blocks/enchantment_power_provider.json
-f285ead821ac84499caf16d88d7a2b79c397953b data/minecraft/tags/blocks/features_cannot_replace.json
+e3608a1e45288fc2d2c5f2258d8d69b2e3c61ca3 data/minecraft/tags/blocks/features_cannot_replace.json
 211134157771c86a72a0c5a1985c2b05da55729b data/minecraft/tags/blocks/fence_gates.json
 b84211b8bce51b7d8233bc8e8ea4ea0fc6befdf0 data/minecraft/tags/blocks/fire.json
 e121d38615572a340044db73e20622af4e2a0a7c data/minecraft/tags/blocks/flower_pots.json
@@ -43,7 +43,7 @@ e121d38615572a340044db73e20622af4e2a0a7c data/minecraft/tags/blocks/flower_pots.
 0af80d33dcbb7226a5afcb9d8a4c1a73a2c38c9d data/minecraft/tags/blocks/logs_that_burn.json
 bd51be68bd3bdbae9fe6b554dfe35ab6dfc016ca data/minecraft/tags/blocks/mineable/axe.json
 7177f5d8a3deacfcbfc12170902b73749e87213c data/minecraft/tags/blocks/mineable/hoe.json
-a9507c0a21b4ff28a4ba7d6e090dd29bfbcf2bc9 data/minecraft/tags/blocks/mineable/pickaxe.json
+4859385be6fcae7022cd1b461b6c257e260b016f data/minecraft/tags/blocks/mineable/pickaxe.json
 944d5178d1a94490d123e31a73bc58d4eea852ab data/minecraft/tags/blocks/mineable/shovel.json
 44cc0123e6b6b654303a046d924b4e8fca617f41 data/minecraft/tags/blocks/moss_replaceable.json
 6be3f00e1fa63bb65b978bb8e2c63bbf79b5775e data/minecraft/tags/blocks/mushroom_grow_block.json

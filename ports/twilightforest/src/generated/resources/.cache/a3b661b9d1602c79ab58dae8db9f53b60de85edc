@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-02T02:55:05.336211084	Twilight Forest Item Tags
+// 1.20.1	2026-11-02T05:01:19.958167573	Twilight Forest Item Tags
 3c5895c72cfffe09615ec2b28267a726fcbf52e8 data/alexscaves/tags/items/ferns.json
 72085a9bba79fcd76273dd6c4fde21956050845d data/alexscaves/tags/items/ferromagnetic_items.json
 42afac82c004061587d5b1ae20c2e66c0d399c8c data/alexscaves/tags/items/raw_meats.json
@@ -8,10 +8,10 @@
 85d5cbf2f3a880967bb00f05ff03bc9a06ee945a data/curios/tags/items/head.json
 42afac82c004061587d5b1ae20c2e66c0d399c8c data/farmersdelight/tags/items/cabbage_roll_ingredients.json
 b40c8354ed3ca1a2a7af96684c97bc7afdeb9f05 data/forbidden_arcanus/tags/items/modifier/eternal_incompatible.json
-017a0eae9dcb1c009506ab7fb1bf5ed2867507aa data/forge/tags/items/armors/boots.json
-03872ed5aa0d028cd3b99a2831294e3a644fe8cc data/forge/tags/items/armors/chestplates.json
-026e98f4ffeff627fe9fe8cfc5cb65d8cb836366 data/forge/tags/items/armors/helmets.json
-655cef31e84248dab842522100e9d348cc681c2d data/forge/tags/items/armors/leggings.json
+e6310c3557b6f2eda314bf196573de59e6bd02e2 data/forge/tags/items/armors/boots.json
+f7b4fa55744707eb6d517dcfee57082b485e2908 data/forge/tags/items/armors/chestplates.json
+90500e01972f73a947baba969478f59478975b19 data/forge/tags/items/armors/helmets.json
+de922ecc908796766dfc143c598531824cf573b1 data/forge/tags/items/armors/leggings.json
 dbb45e0d36df554b46ceb4028ec61bc7b7a6315a data/forge/tags/items/chests/trapped.json
 44154bfab8aa5f48a23729d5e1312a8b8c0ae87c data/forge/tags/items/chests/wooden.json
 359528c25cb6b4d29dc01cbafbeb8f161c0dac0f data/forge/tags/items/feathers.json
@@ -56,7 +56,7 @@ a60dbce39527970b03af723b64656128b26f70e6 data/minecraft/tags/items/axes.json
 e69d5be074938c1ff9a1853ff8da6782500ff92f data/minecraft/tags/items/breaks_decorated_pots.json
 dc2f26c3fd06fccd7385a8d16527701a68efb05a data/minecraft/tags/items/chest_boats.json
 387c3d6fc3d958d7d90aea6c542e7a1a46ed16d9 data/minecraft/tags/items/cluster_max_harvestables.json
-e66649b3248e051912913e282cb83d3b5006cde0 data/minecraft/tags/items/freeze_immune_wearables.json
+5c9a2961361f53116d1a8b154044951a6fa455cd data/minecraft/tags/items/freeze_immune_wearables.json
 6fe1e441c4085be357b16f3ef9158eda9139f939 data/minecraft/tags/items/hanging_signs.json
 b696524eda9e607bebc1b307e19c2b1633b8b0b1 data/minecraft/tags/items/hoes.json
 30b260e82242a2b548549ed7a4f89117c8d2c3c3 data/minecraft/tags/items/leaves.json

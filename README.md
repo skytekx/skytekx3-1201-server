@@ -179,7 +179,8 @@ python3 tools/build_mrpack.py           # builds SkyTekx3-<ver>.mrpack from the 
 ## Secrets
 
 `ansible/group_vars/all/vault.yml` is ansible-vault encrypted (AES256) and holds `vault_modrinth_pat`
-(the Modrinth PAT used by `tools/` to fetch mods and publish the pack).
+(the Modrinth PAT used by `tools/publish_modrinth.py` to publish the pack and by the legacy
+`tools/resolve_all.py`; the step-4 mod fetch needs no token).
 
 - The vault password is **never committed**. Put it in `.vault_pass.txt` (gitignored); `ansible/ansible.cfg` points to it.
 - `server.properties` and `unit.conf` are gitignored (they carry the RCON password). Commit only `server.properties.example`.

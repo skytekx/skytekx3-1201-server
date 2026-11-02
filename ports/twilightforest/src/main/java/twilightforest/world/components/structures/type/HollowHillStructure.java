@@ -13,6 +13,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.structure.*;
 import twilightforest.data.tags.BiomeTagGenerator;
@@ -20,9 +22,13 @@ import twilightforest.init.TFEntities;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.init.TFStructureTypes;
 import twilightforest.init.custom.StructureSpeleothemConfigs;
+import twilightforest.world.components.chunkgenerators.FocusedDensityFunction;
+import twilightforest.world.components.chunkgenerators.HollowHillFunction;
+import twilightforest.world.components.structures.CustomDensitySource;
 import twilightforest.world.components.structures.HollowHillComponent;
 import twilightforest.world.components.structures.StructureSpeleothemConfig;
 import twilightforest.world.components.structures.util.ConfigurableSpawns;
+import twilightforest.world.components.structures.util.DensityTerrainPiece;
 import twilightforest.world.components.structures.util.LandmarkStructure;
 
 import java.util.Arrays;
@@ -31,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class HollowHillStructure extends LandmarkStructure implements ConfigurableSpawns {
+public class HollowHillStructure extends LandmarkStructure implements ConfigurableSpawns, CustomDensitySource {
     public static final Codec<HollowHillStructure> CODEC = RecordCodecBuilder.create(instance -> instance
             .group(
                     // TODO Clean up findGenerationPoint() first before even thinking about increasing upper limit
@@ -68,9 +74,9 @@ public class HollowHillStructure extends LandmarkStructure implements Configurab
     protected StructurePiece getFirstPiece(GenerationContext context, RandomSource random, ChunkPos chunkPos, int x, int y, int z) {
         var speleothemConfigKey = StructureSpeleothemConfigs.keyOf(this.speleothemConfig, StructureSpeleothemConfigs.getHollowHillKey(this.size));
         return switch (this.size) { // TODO Clean up once TFLandmark params are no longer necessary
-            case 1 -> new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, this.size, x - 3, y - 2, z - 3, speleothemConfigKey);
-            case 2 -> new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, this.size, x - 7, y - 5, z - 7, speleothemConfigKey);
-            default -> new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, this.size, x - 11, y - 5, z - 11, speleothemConfigKey);
+            case 1 -> new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, this.size, x - 3, y - 2, z - 3, speleothemConfigKey, true);
+            case 2 -> new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, this.size, x - 7, y - 5, z - 7, speleothemConfigKey, true);
+            default -> new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, this.size, x - 11, y - 5, z - 11, speleothemConfigKey, true);
         };
     }
 
@@ -156,5 +162,53 @@ public class HollowHillStructure extends LandmarkStructure implements Configurab
                         TerrainAdjustment.NONE
                 )
         );
+    }
+
+    @Override
+    public DensityFunction getStructureTerraformer(ChunkPos chunkSliceAt, StructureStart structurePieceSource) {
+        // Hills saved by TF 4.3 keep the terrain of ChunkGeneratorTwilight.raiseHills
+        if (!DensityTerrainPiece.isDensityShaped(structurePieceSource))
+            return DensityFunctions.zero();
+
+        int hillSize = this.size;
+
+        final float radius = (hillSize * 4 + 0.8f) * 8;
+        final float radiusInner = radius - 8;
+
+        final BoundingBox structureBox = structurePieceSource.getBoundingBox();
+        final int width = Math.min(structureBox.getXSpan(), structureBox.getZSpan());
+        final int yCeilingFocus = structureBox.minY();
+        final BlockPos hillCenter = structureBox.getCenter();
+
+        // Main mound density field. All values above mount surface are 0 while other values under the mound are 1.
+        DensityFunction hillMound = HollowHillFunction.fromPos(hillCenter.atY(yCeilingFocus + 10), radius, 0.7f)
+                .clamp(0, 1);
+
+        // Similar field like above, but all per-position values multiplied by -1. Positive terrain field above (hill mound) and negative terrain field below (inner hill gap)
+        DensityFunction innerCeiling = DensityFunctions.mul(
+                DensityFunctions.constant(-1),
+                HollowHillFunction.fromPos(hillCenter.atY(yCeilingFocus + 6), radiusInner, 0.675f)
+        );
+
+        // Field that domes upwards instead of downwards like above 2 DensityFunctions.
+        // Negative terrain field above (inner hill gap) and positive terrain field below (stone underground)
+        DensityFunction innerFloor = HollowHillFunction.fromPos(hillCenter.atY(yCeilingFocus + hillSize + hillSize / 2), 2 - radiusInner, 1 / 10f);
+
+        // Merge the inner ceiling & inner floor density functions, and obtain the maximum value.
+        // Resulting terrain field will "carve" out the interior space, using negative field values past 0.
+        DensityFunction interior = DensityFunctions.max(innerCeiling, innerFloor);
+
+        DensityFunction interiorMask = FocusedDensityFunction.fromPos(hillCenter.atY(yCeilingFocus), radiusInner * 0.52f, -radiusInner, 1);
+
+        DensityFunction interiorMasked = DensityFunctions.max(interiorMask, interior);
+
+        // Finally combine the hill mound & interior fields, resulting field containing per-position minimums from both.
+        // Everything above the hill mound surface are zeros. The interior's field has negative values where "inside" is and positive values where "not inside" is, with zeros forming the interior surfaces.
+        // This min() function combines these two surfaces formed by said zeros
+        DensityFunction hollowHill = DensityFunctions.min(hillMound, interiorMasked);
+
+        DensityFunction maskingSphere = FocusedDensityFunction.fromPos(hillCenter.below(Mth.ceil(radius * 0.1)), width * 0.5f + 5, width * 0.25f, 0).clamp(0, 1);
+
+        return DensityFunctions.mul(maskingSphere, DensityFunctions.mul(DensityFunctions.constant(8), hollowHill));
     }
 }

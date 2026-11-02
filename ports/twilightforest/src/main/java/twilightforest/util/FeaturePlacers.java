@@ -3,6 +3,7 @@ package twilightforest.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.HolderSet;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraftforge.event.ForgeEventFactory;
 import twilightforest.entity.EnforcedHomePoint;
 import twilightforest.init.TFBlocks;
@@ -380,6 +383,83 @@ public final class FeaturePlacers {
 
                 // Good to go!
                 worldPlacer.getPlacer().accept(exposedPos, exposedRoot.getState(random, exposedPos));
+            }
+        }
+    }
+
+    // TF 4.8 (5d2221cc5, 26c244635): the Labyrinth's entrance mound and the Hydra Lair's floor, swapping blocks of the density-shaped terrain in a dome.
+    // As in 4.8 the center column is processed with radius² for its height, the other columns with (radius² - distance²) * squish
+    @Deprecated
+    @SuppressWarnings("SameParameterValue")
+    public static void replaceBlocksDome(WorldGenLevel level, BlockPos centerPos, float radius, float squish, BoundingBox chunkBox, BoundingBox structureBox, Block target, BlockState replacement) {
+        float radiusSquared = radius * radius;
+
+        BoundingBox commonRegion = BoundingBoxUtils.getIntersectionOfSBBs(chunkBox, structureBox);
+        if (commonRegion == null) return;
+
+        processDomeColumn(level, centerPos, radiusSquared, commonRegion, target, replacement);
+
+        for (int z = 1; z <= radius; z++) {
+            for (int x = 0; x <= radius; x++) {
+                int distSq = x * x + z * z;
+
+                if (distSq <= radiusSquared) {
+                    float height = (radiusSquared - distSq) * squish;
+
+                    processDomeColumn(level, centerPos.offset(x, 0, z), height, commonRegion, target, replacement);
+                    processDomeColumn(level, centerPos.offset(-x, 0, -z), height, commonRegion, target, replacement);
+                    processDomeColumn(level, centerPos.offset(-z, 0, x), height, commonRegion, target, replacement);
+                    processDomeColumn(level, centerPos.offset(z, 0, -x), height, commonRegion, target, replacement);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    public static void replaceBlocksDome(WorldGenLevel level, BlockPos centerPos, float radius, float squish, BoundingBox chunkBox, BoundingBox structureBox, HolderSet<Block> target, BlockState replacement) {
+        float radiusSquared = radius * radius;
+
+        BoundingBox commonRegion = BoundingBoxUtils.getIntersectionOfSBBs(chunkBox, structureBox);
+        if (commonRegion == null) return;
+
+        processDomeColumn(level, centerPos, radiusSquared, commonRegion, target, replacement);
+
+        for (int z = 1; z <= radius; z++) {
+            for (int x = 0; x <= radius; x++) {
+                int distSq = x * x + z * z;
+
+                if (distSq <= radiusSquared) {
+                    float height = (radiusSquared - distSq) * squish;
+
+                    processDomeColumn(level, centerPos.offset(x, 0, z), height, commonRegion, target, replacement);
+                    processDomeColumn(level, centerPos.offset(-x, 0, -z), height, commonRegion, target, replacement);
+                    processDomeColumn(level, centerPos.offset(-z, 0, x), height, commonRegion, target, replacement);
+                    processDomeColumn(level, centerPos.offset(z, 0, -x), height, commonRegion, target, replacement);
+                }
+            }
+        }
+    }
+
+    public static void processDomeColumn(WorldGenLevel level, BlockPos pos, float height, BoundingBox mask, HolderSet<Block> target, BlockState replacement) {
+        if (!mask.isInside(pos)) return;
+
+        for (int dY = 0; dY < height; dY++) {
+            BlockPos posElevated = pos.above(dY);
+
+            if (level.getBlockState(posElevated).is(target)) {
+                level.setBlock(posElevated, replacement, Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    public static void processDomeColumn(WorldGenLevel level, BlockPos pos, float height, BoundingBox mask, Block target, BlockState replacement) {
+        if (!mask.isInside(pos)) return;
+
+        for (int dY = 0; dY < height; dY++) {
+            BlockPos posElevated = pos.above(dY);
+
+            if (level.getBlockState(posElevated).is(target)) {
+                level.setBlock(posElevated, replacement, Block.UPDATE_ALL);
             }
         }
     }

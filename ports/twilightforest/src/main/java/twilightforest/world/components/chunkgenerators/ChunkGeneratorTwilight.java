@@ -60,6 +60,7 @@ import twilightforest.world.components.structures.type.HollowHillStructure;
 import twilightforest.world.components.structures.type.LichTowerStructure;
 import twilightforest.world.components.structures.type.NagaCourtyardStructure;
 import twilightforest.world.components.structures.util.ControlledSpawns;
+import twilightforest.world.components.structures.util.DensityTerrainPiece;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -409,6 +410,10 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 		final int relativeFeatureZ = featureRelativePos.z;
 
 		if (LegacyLandmarkPlacements.isTheseFeatures(nearFeature, TFLandmark.SMALL_HILL, TFLandmark.MEDIUM_HILL, TFLandmark.LARGE_HILL, TFLandmark.HYDRA_LAIR)) {
+			// Hills and lairs generated since the TF 4.8 terrain backport are shaped by their structure's terraformer in doFill
+			if (hasDensityTerrain(primer, primer.getCenter().getMinBlockX() + relativeFeatureX, primer.getCenter().getMinBlockZ() + relativeFeatureZ))
+				return;
+
 			int hdiam = (nearFeature.size * 2 + 1) * 16;
 
 			for (int xInChunk = 0; xInChunk < 16; xInChunk++) {
@@ -432,6 +437,10 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 				}
 			}
 		} else if (nearFeature == TFLandmark.YETI_CAVE) {
+			// Yeti Caves generated since the TF 4.8 terrain backport are shaped by YetiCaveStructure's terraformer in doFill
+			if (hasDensityTerrain(primer, primer.getCenter().getMinBlockX() + relativeFeatureX, primer.getCenter().getMinBlockZ() + relativeFeatureZ))
+				return;
+
 			for (int xInChunk = 0; xInChunk < 16; xInChunk++) {
 				for (int zInChunk = 0; zInChunk < 16; zInChunk++) {
 					int featureDX = xInChunk - relativeFeatureX;
@@ -553,6 +562,19 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Whether the landmark centred at (centerX, centerZ) shapes its terrain with its structure's CustomDensitySource terraformer, which
+	 * TFBeardifier adds while doFill fills the noise (TF 4.8; see {@link DensityTerrainPiece}). Hollow Hills, Hydra Lairs and Yeti Caves
+	 * saved by TF 4.3 return false, so their chunks generated after the update keep 4.3's raiseHills and deformTerrainForYetiLair and match
+	 * the chunks already generated. A grid cell without any start (its landmark's biome check failed) keeps the deformer as well, as in 4.3.
+	 */
+	private static boolean hasDensityTerrain(WorldGenRegion primer, int centerX, int centerZ) {
+		// The start sits in the landmark's centre chunk. SURFACE has a range of 8 chunks and these landmarks reach at most 3 chunks from
+		// their centre, so the centre chunk is in the region and past STRUCTURE_STARTS.
+		ChunkAccess centerChunk = primer.getChunk(SectionPos.blockToSectionCoord(centerX), SectionPos.blockToSectionCoord(centerZ), ChunkStatus.STRUCTURE_STARTS, false);
+		return centerChunk != null && centerChunk.getAllStarts().values().stream().anyMatch(DensityTerrainPiece::isDensityShaped);
 	}
 
 	/**

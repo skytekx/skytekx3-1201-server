@@ -16,12 +16,14 @@ import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.world.components.structures.TFStructureComponentOld;
+import twilightforest.world.components.structures.util.DensityTerrainPiece;
 
 
-public class MazeMoundComponent extends TFStructureComponentOld {
+public class MazeMoundComponent extends TFStructureComponentOld implements DensityTerrainPiece {
 
 	public MazeMoundComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		super(TFStructurePieceTypes.TFMMMound.get(), nbt);
+		this.densityTerrain = DensityTerrainPiece.readFlag(nbt);
 	}
 
 	public static final int DIAMETER = 35;
@@ -29,9 +31,28 @@ public class MazeMoundComponent extends TFStructureComponentOld {
 
 	private MazeUpperEntranceComponent mazeAbove;
 
+	// Whether LabyrinthStructure's terraformer raises the mound (TF 4.8, 78a3dd526) instead of this piece, see DensityTerrainPiece
+	private final boolean densityTerrain;
+
 	public MazeMoundComponent(int i, RandomSource rand, int x, int y, int z) {
+		this(i, rand, x, y, z, false);
+	}
+
+	public MazeMoundComponent(int i, RandomSource rand, int x, int y, int z, boolean densityTerrain) {
 		super(TFStructurePieceTypes.TFMMMound.get(), i, new BoundingBox(x, y, z, x + DIAMETER, y + 12, z + DIAMETER));
 		this.setOrientation(Direction.Plane.HORIZONTAL.getRandomDirection(rand));
+		this.densityTerrain = densityTerrain;
+	}
+
+	@Override
+	protected void addAdditionalSaveData(StructurePieceSerializationContext ctx, CompoundTag tagCompound) {
+		super.addAdditionalSaveData(ctx, tagCompound);
+		DensityTerrainPiece.writeFlag(tagCompound, this.densityTerrain);
+	}
+
+	@Override
+	public boolean hasDensityTerrain() {
+		return this.densityTerrain;
 	}
 
 	/**
@@ -42,13 +63,18 @@ public class MazeMoundComponent extends TFStructureComponentOld {
 		super.addChildren(structurecomponent, list, random);
 
 		// add aboveground maze entrance building
-		mazeAbove = new MazeUpperEntranceComponent(3, random, boundingBox.minX() + 10, boundingBox.minY(), boundingBox.minZ() + 10);
+		mazeAbove = new MazeUpperEntranceComponent(3, random, boundingBox.minX() + 10, boundingBox.minY(), boundingBox.minZ() + 10, this.densityTerrain);
 		list.addPiece(mazeAbove);
 		mazeAbove.addChildren(this, list, random);
 	}
 
 	@Override
 	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
+		if (this.densityTerrain) {
+			// Mound shape contributed by Structure itself
+			return;
+		}
+
 		/*if (this.averageGroundLevel < generator.getMinY()) {
 			this.averageGroundLevel = this.getAverageGroundLevel(world, generator, sbb);
 

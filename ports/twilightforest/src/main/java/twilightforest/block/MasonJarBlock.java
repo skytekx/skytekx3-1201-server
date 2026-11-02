@@ -114,6 +114,9 @@ public class MasonJarBlock extends JarBlock {
 		return 0;
 	}
 
+	// Forge 47 has no hasDynamicLightEmission, so a full chunk relight (forceUpgrade, eraseCache) finds light sources by
+	// probing each section palette at BlockPos.ZERO and misses the contents' light. MasonJarBlockEntity.onLoad runs
+	// checkBlock for a lit jar, which relights it once its block entity loads.
 	@Override
 	public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
 		return Math.max(super.getLightEmission(state, level, pos), MasonJarBlockEntity.getContentLight(level, pos));

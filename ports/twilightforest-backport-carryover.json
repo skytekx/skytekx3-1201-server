@@ -102,8 +102,8 @@
      "block-spike-fixes: the Yeti Cave stalagmite elevation fix (cfadbd358) is not applicable yet. It fixes floor stalagmites that only the 4.8 speleothem-config Yeti Cave places; the 4.3 YetiCaveComponent places hanging spikes only. Revisit with speleothem-config-datadriven.",
      "block-spike-fixes: the HollowHillStructure mound offset (+8 to +10) in 38e3b8504 belongs to the 4.8 density-function hollow hill, which 4.3 does not have (chunkgen overhaul is excluded).",
      "block-spike-fixes: 4.3's StalactiteReloadListener still ignores the per-stalactite 'weight' when choosing a stalactite. 4.8 fixed this with StructureSpeleothemConfig weighted lists, which belongs to speleothem-config-datadriven.",
-     "entity-gameplay-bugfixes: the LichMinion Hard-only buff gate from 29a82d83b is not ported. 4.8 HEAD reverted it in the lich rework (Speed III, no gate), so it belongs to lich-boss-rework.",
-     "entity-gameplay-bugfixes: the LichBomb flame particle direction change in 65e29df27 is a client visual, left to client-visual-fixes.",
+     "entity-gameplay-bugfixes: the LichMinion Hard-only buff gate from 29a82d83b is not ported. 4.8 HEAD reverted it in the lich rework (Speed III, no gate), so it belongs to lich-boss-rework. DONE in lich-boss-rework (3657290c2): Speed III and Strength II on any difficulty, as 4.8 HEAD.",
+     "entity-gameplay-bugfixes: the LichBomb flame particle direction change in 65e29df27 is a client visual, left to client-visual-fixes. DONE in lich-boss-rework (3657290c2): the trail is emitted behind the bomb (65e29df27).",
      "entity-gameplay-bugfixes: the moonworm queen crash fix 4fa55a769 (stop setting WATERLOGGED) is not applicable. The 4.3 CritterBlock still has the WATERLOGGED property, so setting it from the fluid state is correct here."
     ]
    },
@@ -296,12 +296,12 @@
      "boss-base-class-refactor"
     ],
     "deferred": [
-     "custom-rgb-boss-bars: BaseTFBoss still uses the vanilla ServerBossEvent, and getBossBarColor() returns BossEvent.BossBarColor. Swap these for ServerTFBossBar/TFBossBarPacket and an int colour. The Lich's per-phase bar changes are in Lich.tickBossBar(); move them to updateStyle as 15ab0d12a does.",
+     "custom-rgb-boss-bars: BaseTFBoss still uses the vanilla ServerBossEvent, and getBossBarColor() returns BossEvent.BossBarColor. Swap these for ServerTFBossBar/TFBossBarPacket and an int colour. The Lich's per-phase bar changes are in Lich.tickBossBar(); move them to updateStyle as 15ab0d12a does. DONE: custom-rgb-boss-bars (9914f8f) moved the Lich's per-phase bar to updateStyle.",
      "multiplayer-boss-scaling: the hurt_boss credit currently lives in BaseTFBoss (actuallyHurt fills a list; postmortem, and KnightPhantom.die, trigger HURT_BOSS). Replace it with the MultiplayerInclusivityAttachment/EntityEvents version and delete the list.",
      "knight-phantom-rework: only the last knight marks the stronghold conquered and makes the STRONGHOLD_BOSS chest (shouldSpawnLoot() is false). Still to port: the 4.8 postmortem/giveKnightLoot/IT_IS_OVER loot sharing, the dying ascent and untouchable size, KILL_ALL_PHANTOMS for nearby players, conquest on /kill, and returning false from hurt() for a shield block.",
      "hydra-death-and-named-heads: MAX_HEADS, the HydraPart.markedDead death sequence, the HeadNames serializer and the NumHeads bitmask are not ported. Hydra.tickDeath already removes as KILLED at 200 and calls tickDeathAnimation() on the client.",
      "ur-ghast-tweaks: done in this commit: the own attack/look goals, removing the ExplosionPower-era 1000-damage reflection (reflected fireballs now do normal damage through the old 'thrown' conversion in hurt()), and the 90-tick client death animation. Still to port: switching to 4.8's isReflectedFireball in isInvulnerableTo; inTrapCounter at 20 with trap damage not counting toward tantrum; EventHooks.finalizeMobSpawn for ghastlings; the fire/descending death rendering; and dropping the eye-height-2.6 and ambient-interval-160 overrides if 4.8's values are wanted.",
-     "lich-boss-rework: the Lich keeps 4.3's IS_CLONE/masterLich and has no teleport-home. Lich.placeSpawner and postRemoval are ready to override for candle relighting, as 4.8 does.",
+     "lich-boss-rework: the Lich keeps 4.3's IS_CLONE/masterLich and has no teleport-home. Lich.placeSpawner and postRemoval are ready to override for candle relighting, as 4.8 does. DONE in lich-boss-rework (3657290c2): teleport-home, candle relighting in placeSpawner and postRemoval, and IS_CLONE/masterLich kept for compatibility.",
      "unassigned upstream tweak in 5db77f784: Snow Queen block breaking switched from ICE/PACKED_ICE to BlockTags.ICE. It is not in any feature and not ported."
     ],
     "source": "porter report, waves 3-4 orchestrator"
@@ -393,10 +393,10 @@
      "fortification-shield-rework: config.* translation keys for shield_indicator / shield_indicator_creative were not added, because 4.3 ships no config.* lang keys (same decision as the wave-2 charm-system-rework carryover).",
      "fortification-shield-rework: 4.8's rename of the shield.add/shield.break sound event ids to fortification_shield.* was not ported. The old ids are kept for registry-id safety, and only the new block/expire events use 4.8 names.",
      "fortification-shield-rework: b4f716995's removal of the invulnerable-player check in the shield hit handler was not ported on purpose. In 1.20.1 LivingAttackEvent fires before Player.hurt's invulnerability check, so dropping the check would let creative players lose shields, which 4.8 never does.",
-     "lich-fight-fixes: the rework-era teleport and clone logic (teleportToNewTarget multi-target retargeting, d3835bf37 teleportHome fallback in LichShadowsGoal, 6bcadba0a, teleport invisibility, minimum 5-block distance and below-target retries in findVecInLOSOf, clones inheriting the master's restriction point, the Lich home radius of 30) -> lich-boss-rework.",
-     "lich-fight-fixes: the literal OminousCandleBlock.CANDLE_MAP containsKey check from #2563 -> ominous-candles / lich-boss-rework, when CANDLE_MAP and turnNearbyCandles land. 4.3 only gets the equivalent LIT-property guard.",
-     "lich-fight-fixes: 7a178eb83's Lich shield break volume escalation and its 0.75F/1.75F block-sound tuning, and 00b68267f's teleport-sound and candle-range tweaks -> lich-boss-rework.",
-     "lich-fight-fixes: the LichBomb trail particle direction (65e29df27) is still not ported. It was handed to client-visual-fixes in wave 2, but the 4.3 code still has the old direction."
+     "lich-fight-fixes: the rework-era teleport and clone logic (teleportToNewTarget multi-target retargeting, d3835bf37 teleportHome fallback in LichShadowsGoal, 6bcadba0a, teleport invisibility, minimum 5-block distance and below-target retries in findVecInLOSOf, clones inheriting the master's restriction point, the Lich home radius of 30) -> lich-boss-rework. DONE in lich-boss-rework (3657290c2).",
+     "lich-fight-fixes: the literal OminousCandleBlock.CANDLE_MAP containsKey check from #2563 -> ominous-candles / lich-boss-rework, when CANDLE_MAP and turnNearbyCandles land. 4.3 only gets the equivalent LIT-property guard. DONE in lich-boss-rework (3657290c2).",
+     "lich-fight-fixes: 7a178eb83's Lich shield break volume escalation and its 0.75F/1.75F block-sound tuning, and 00b68267f's teleport-sound and candle-range tweaks -> lich-boss-rework. DONE in lich-boss-rework (3657290c2).",
+     "lich-fight-fixes: the LichBomb trail particle direction (65e29df27) is still not ported. It was handed to client-visual-fixes in wave 2, but the 4.3 code still has the old direction. DONE in lich-boss-rework (3657290c2)."
     ],
     "source": "porter report, waves 5-6 orchestrator"
    },
@@ -736,10 +736,23 @@
      "ominous-candles"
     ],
     "deferred": [
-     "ominous-candles: Lich.turnNearbyCandles (candles to ominous candles with the CANDLE_MAP.containsKey guard from #2563, plus the CANDELABRA_OMINOUS sound) -> lich-boss-rework. OminousCandleBlock.CANDLE_MAP is in place; the lich-fight-fixes entry in wave 5 about the literal containsKey check is settled once this lands.",
+     "ominous-candles: Lich.turnNearbyCandles (candles to ominous candles with the CANDLE_MAP.containsKey guard from #2563, plus the CANDELABRA_OMINOUS sound) -> lich-boss-rework. OminousCandleBlock.CANDLE_MAP is in place; the lich-fight-fixes entry in wave 5 about the literal containsKey check is settled once this lands. DONE in lich-boss-rework (3657290c2).",
      "candelabra-overhaul: 4.8 tip twilightforest.tips.candelabra (assets/twilightforest/tips/candelabra.json) -> no feature id; 4.3 has no tips system"
     ],
     "source": "candelabra-overhaul+ominous-candles review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "lich-boss-rework",
+    "ids": [
+     "lich-boss-rework"
+    ],
+    "deferred": [
+     "lich-tower-revamp: Lich.getRoomRadius() returns 30 unless the home point lies inside a 4.3 TowerMainComponent (decided once per home point via StructureManager.getStructureWithPieceAt), so Liches in new-tower boss rooms get 4.8's radius of 30 without changes.",
+     "lich-tower-revamp: LichSpawnerBlockEntity now drops the Lich to the floor and sets its home one block above the floor, as in 4.8. A spawner placed on the floor gives home = spawner + 1, so the loot chest lands where the spawner stood. In a 4.3 tower the home stays the spawner position.",
+     "lich-tower-revamp: the candle theatrics (turnNearbyCandles, relighting on death/discard/Peaceful) are centred on the Lich's home point; place the boss-room candles and candelabra within the growing radius around it.",
+     "translation-refresh: the attribute.name.lich.* keys have an en_us entry added here (4.8 has none); other locales have no translation."
+    ],
+    "source": "porter report + review, waves 8-10 integrator"
    }
   ],
   "9": [

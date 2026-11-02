@@ -48,6 +48,10 @@ public class LangGenerator extends TFLangProvider {
 
 		this.add("dimension.twilightforest.twilight_forest", "Twilight Forest");
 
+		this.add("attribute.name.lich.clone_count", "Lich Clone Count");
+		this.add("attribute.name.lich.shield_strength", "Lich Max Shield Strength");
+		this.add("attribute.name.lich.minion_count", "Lich Minion Count");
+
 		this.addStructure(TFStructures.HEDGE_MAZE, "Hedge Maze");
 		this.addStructure(TFStructures.HOLLOW_HILL_SMALL, "Small Hollow Hill");
 		this.addStructure(TFStructures.HOLLOW_HILL_MEDIUM, "Medium Hollow Hill");

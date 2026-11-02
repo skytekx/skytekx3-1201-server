@@ -180,8 +180,7 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(Tags.Items.SLIMEBALLS).add(TFItems.MAZE_SLIME_BALL.get());
 		tag(STORAGE_BLOCKS_SLIME).add(TFBlocks.MAZE_SLIME_BLOCK.get().asItem());
 
-		// 4.8 also lists berry_medley (between the slime drops and maze_wafer), which arrives with the berry bushes
-		tag(FOODS).addTag(FOODS_JERKY).add(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get(), TFItems.MAZE_WAFER.get());
+		tag(FOODS).addTag(FOODS_JERKY).add(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get(), TFItems.BERRY_MEDLEY.get(), TFItems.MAZE_WAFER.get());
 		tag(FOODS_JERKY).add(
 				TFItems.MONSTER_JERKY.get(), TFItems.BEEF_JERKY.get(),
 				TFItems.PORK_JERKY.get(), TFItems.CHICKEN_JERKY.get(),

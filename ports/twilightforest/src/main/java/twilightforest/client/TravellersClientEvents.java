@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -52,9 +53,9 @@ import java.util.UUID;
 
 /**
  * Client events of the Traveller's Gear core and the modifiers ported so far. Backport of 4.8's TravellersClientEvents:
- * the glove overlay, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide) and the
- * Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces' modifiers come with their
- * travellers-* features.
+ * the glove overlay, the Traveller's Vest's Stealth, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile
+ * Ranger, Gradual Glide) and the Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces'
+ * modifiers come with their travellers-* features.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class TravellersClientEvents {
@@ -79,6 +80,20 @@ public class TravellersClientEvents {
 	@SubscribeEvent
 	public static void clearModifierCacheOnLogout(ClientPlayerNetworkEvent.LoggingOut event) {
 		TravellersModifiersManager.clearCache();
+	}
+
+	/**
+	 * Hides sneaking players with Stealth at once, before the server's Invisibility effect reaches the client. 4.8 does
+	 * this on RenderFrameEvent.Pre, the start of the render tick here.
+	 */
+	@SubscribeEvent
+	public static void handleStealth(TickEvent.RenderTickEvent event) {
+		if (event.phase != TickEvent.Phase.START || Minecraft.getInstance().level == null)
+			return;
+		for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
+			if (entity instanceof Player player)
+				TravellersGearLogic.travellersStealth(player, player1 -> player1.setInvisible(true));  // call it on client to make player invisible instantly
+		}
 	}
 
 	/**

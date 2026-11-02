@@ -215,6 +215,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> PENGUIN_AMBIENT = createEvent("entity.twilightforest.penguin.ambient");
 	public static final RegistryObject<SoundEvent> PENGUIN_DEATH = createEvent("entity.twilightforest.penguin.death");
 	public static final RegistryObject<SoundEvent> PENGUIN_HURT = createEvent("entity.twilightforest.penguin.hurt");
+	public static final RegistryObject<SoundEvent> PERFECT_DODGE = createEvent("item.twilightforest.travellers_gear.perfect_dodge");
 	public static final RegistryObject<SoundEvent> PICKED_TORCHBERRIES = createEvent("block.twilightforest.torchberry.harvest");
 	public static final RegistryObject<SoundEvent> PINCH_BEETLE_AMBIENT = createEvent("entity.twilightforest.pinch_beetle.ambient");
 	public static final RegistryObject<SoundEvent> PINCH_BEETLE_ATTACK = createEvent("entity.twilightforest.pinch_beetle.attack");

@@ -2,25 +2,34 @@ package twilightforest.events;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -28,6 +37,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.TwilightForestMod;
@@ -35,12 +45,15 @@ import twilightforest.advancements.TFAdvancements;
 import twilightforest.components.entity.SlimySolesAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.components.item.TravellersGearData;
+import twilightforest.init.TFParticleType;
+import twilightforest.init.TFSounds;
 import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
 import twilightforest.item.travellers_gear.modifiers.InsertableTravellersModifier;
 import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
 import twilightforest.network.GradualGlidePacket;
+import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 
 import java.util.List;
@@ -48,7 +61,7 @@ import java.util.List;
 /**
  * Common events of the Traveller's Gear core, its modifier framework and the modifiers ported so far. Backport of 4.8's
  * TravellersGearEvents (the wing state update, the broken-state attribute switch, the anvil combining block, stripping
- * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Wings and
+ * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Vest, Wings and
  * Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
  * <p>
  * 1.20.1 has no entity tick post event: 4.8's EntityTickEvent.Post work runs at the start of the next tick instead
@@ -207,6 +220,90 @@ public class TravellersGearEvents {
 		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(event.getEntity());
 		if (attachment != null && attachment.hasDoubleJumpSafeFallDistance)
 			event.setDistance(Math.max(0.0F, event.getDistance() - TravellersGearLogic.DOUBLE_JUMP_SAFE_FALL_DISTANCE));
+	}
+
+	/**
+	 * Arrow Magnetism: an arrow shot by the wearer of a vest with the modifier that hits a block within its first ten
+	 * seconds goes straight back into the shooter's inventory (players) or vanishes (other shooters), unless it could
+	 * not have been picked up.
+	 */
+	@SubscribeEvent
+	public static void magnetizeArrows(ProjectileImpactEvent event) {
+		Projectile projectile = event.getProjectile();
+		Entity entity = projectile.getOwner();
+		if (!(entity instanceof LivingEntity livingEntity) || event.getRayTraceResult().getType() != HitResult.Type.BLOCK || projectile.tickCount >= 200)
+			return;
+
+		if (!TravellersModifiersManager.isModifierActive(livingEntity, TravellersModifiersManager.ARROW_MAGNETISM_MODIFIER)
+			|| !(projectile instanceof AbstractArrow arrow) || projectile.level().isClientSide())
+			return;
+
+		if (!(livingEntity instanceof Player player)) {
+			projectile.discard();
+			return;
+		}
+		AbstractArrow.Pickup pickup = arrow.pickup;
+		// 1.21 Player#hasInfiniteMaterials and AbstractArrow#getPickupItemStackOrigin; getPickupItem is public through the access transformer
+		if (!player.getAbilities().instabuild && pickup == AbstractArrow.Pickup.ALLOWED) {
+			ItemHandlerHelper.giveItemToPlayer(player, arrow.getPickupItem());
+			player.getInventory().setChanged();
+		}
+		if (pickup == AbstractArrow.Pickup.ALLOWED || pickup == AbstractArrow.Pickup.CREATIVE_ONLY && player.isCreative())
+			projectile.discard();
+	}
+
+	/**
+	 * Perfect Dodge: a projectile hitting the wearer of a vest with the modifier misses with the modifier's probability
+	 * (30% with the stock definition), with a sound and a puff of particles where it would have hit. The client always
+	 * lets the projectile pass, the server decides whether it hits.
+	 */
+	@SubscribeEvent
+	public static void performPerfectDodge(ProjectileImpactEvent event) {
+		HitResult rayResult = event.getRayTraceResult();
+		if (!(rayResult instanceof EntityHitResult entityHitResult) || !(entityHitResult.getEntity() instanceof LivingEntity livingEntity))
+			return;
+		ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+		if (!TravellersArmorItem.isTravellersGear(chest) || !TravellersModifiersManager.isModifierActive(livingEntity, chest, TravellersModifiersManager.PERFECT_DODGE_MODIFIER))
+			return;
+		Float probability = TravellersGearData.PERFECT_DODGE_PROBABILITY.get(chest);
+		if (probability == null)
+			return;
+		Level level = livingEntity.level();
+		if (level.isClientSide()) {
+			event.setCanceled(true); // always cancel on the client side because the game sends a damage packet when it hits the player
+			return;
+		}
+		if (probability <= level.random.nextFloat())
+			return;
+		Entity projectile = event.getEntity();
+		Vec3 hitPosition = projectile.position().add(projectile.getDeltaMovement());
+		level.playSound(null, hitPosition.x(), hitPosition.y(), hitPosition.z(), TFSounds.PERFECT_DODGE.get(), livingEntity.getSoundSource(), 1.5F, livingEntity.getVoicePitch());
+		event.setCanceled(true);
+		ParticlePacket particlePacket = new ParticlePacket();
+		for (int particleNumber = 0; particleNumber < 20; particleNumber++) {
+			Vec3 particleVelocity = new Vec3(
+				(level.random.nextDouble() - 0.5),
+				(level.random.nextDouble() - 0.5),
+				(level.random.nextDouble() - 0.5)
+			);
+			ParticleOptions type = TFParticleType.PERFECT_DODGE.get();
+			particlePacket.queueParticle(type, false, hitPosition, particleVelocity);
+		}
+		TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), particlePacket);
+	}
+
+	@SubscribeEvent
+	public static void performStealth(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide()) {
+			TravellersGearLogic.travellersStealth(event.player, player -> player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 2, 0, false, false, false)));
+		}
+	}
+
+	@SubscribeEvent
+	public static void applyVestHaste(LivingEvent.LivingTickEvent event) {
+		LivingEntity livingEntity = event.getEntity();
+		if (!livingEntity.level().isClientSide())
+			TravellersGearLogic.travellersVestHaste(livingEntity);
 	}
 
 	@SubscribeEvent

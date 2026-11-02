@@ -1244,6 +1244,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.TWILIGHT_SCEPTER_USE, "Twilight Scepter throws pearl");
 		this.addSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "Loyal Zombie summoned");
 		this.addSubtitle(TFSounds.WOOD_SHIELD_SHATTERS, "Wooden Shield shatters");
+		this.addSubtitle(TFSounds.PERFECT_DODGE, "Attack dodged");
 
 		this.addSubtitle(TFSounds.DOUBLE_JUMP, "Double Jump performed");
 		this.addSubtitle(TFSounds.SIDE_STEP, "Side Step performed");

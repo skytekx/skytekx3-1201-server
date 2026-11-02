@@ -1246,6 +1246,9 @@ public class LangGenerator extends TFLangProvider {
 		this.addStat("uncrafting_table_interactions", "Interactions with Uncrafting Table");
 
 		this.add("config.jade.plugin_twilightforest.quest_ram_wool", "Quest Ram Wool");
+		this.add("config.jade.plugin_twilightforest.chiseled_bookshelf_spawner", "Chiseled Canopy Bookshelf Spawns");
+		this.add("config.jade.plugin_twilightforest.drying_rack", "Drying Rack Time");
+		this.add("jade.drying_rack.remaining", "%s remaining");
 
 		this.add("twilightforest.book.author", "a forgotten explorer");
 

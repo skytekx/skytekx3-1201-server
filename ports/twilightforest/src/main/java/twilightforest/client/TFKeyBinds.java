@@ -6,6 +6,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 import twilightforest.TwilightForestMod;
 
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ public final class TFKeyBinds {
 	private static final List<KeyMapping> KEY_MAPPINGS = new ArrayList<>();
 
 	public static final String TRAVELLERS_GEAR = categoryName("travellers_gear");
+
+	public static final KeyMapping RED_THREAD_VISION_KEY = register("red_thread_vision", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, TRAVELLERS_GEAR);
+	public static final KeyMapping ZOOM_KEY = register("zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, TRAVELLERS_GEAR);
 
 	private TFKeyBinds() {
 	}

@@ -103,6 +103,8 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> GHAST_TRAP_SPINDOWN = createEvent("block.twilightforest.ghast_trap.spindown");
 	public static final RegistryObject<SoundEvent> GHAST_TRAP_WARMUP = createEvent("block.twilightforest.ghast_trap.warmup");
 	public static final RegistryObject<SoundEvent> GLASS_SWORD_BREAK = createEvent("item.twilightforest.glass_sword.break");
+	public static final RegistryObject<SoundEvent> GOGGLES_ZOOM_IN = createEvent("item.twilightforest.travellers_goggles.zoom_in");
+	public static final RegistryObject<SoundEvent> GOGGLES_ZOOM_OUT = createEvent("item.twilightforest.travellers_goggles.zoom_out");
 	public static final RegistryObject<SoundEvent> GOBLIN_KNIGHT_AMBIENT = createEvent("entity.twilightforest.goblin_knight.ambient");
 	public static final RegistryObject<SoundEvent> GOBLIN_KNIGHT_DEATH = createEvent("entity.twilightforest.goblin_knight.death");
 	public static final RegistryObject<SoundEvent> GOBLIN_KNIGHT_HURT = createEvent("entity.twilightforest.goblin_knight.hurt");

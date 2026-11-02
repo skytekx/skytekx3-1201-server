@@ -37,12 +37,15 @@ import net.minecraftforge.fml.common.Mod;
 import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.model.armor.TFArmorModel;
+import twilightforest.components.entity.TravellersGogglesZoomAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.data.tags.ItemTagGenerator;
+import twilightforest.init.TFSounds;
 import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
+import twilightforest.network.GogglesZoomPacket;
 import twilightforest.network.GradualGlidePacket;
 import twilightforest.network.PerformDoubleJumpPacket;
 import twilightforest.network.PerformSidestepPacket;
@@ -53,13 +56,28 @@ import java.util.UUID;
 
 /**
  * Client events of the Traveller's Gear core and the modifiers ported so far. Backport of 4.8's TravellersClientEvents:
- * the glove overlay, the Traveller's Vest's Stealth, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile
- * Ranger, Gradual Glide) and the Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces'
- * modifiers come with their travellers-* features.
+ * the glove overlay, the Traveller's Goggles' Zoom and Red Thread Vision, the Traveller's Vest's Stealth, the
+ * Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide) and the Traveller's Boots' Straight
+ * Ahead; the key and movement handlers of the other pieces' modifiers come with their travellers-* features.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class TravellersClientEvents {
 	private static final ResourceLocation GLOVE_TEXTURE = TwilightForestMod.prefix("textures/models/armor/travellers_layer_1.png");
+
+	/**
+	 * Whether goggles with Red Thread Vision show the red thread, toggled with its key. 4.8 keeps it in the
+	 * {@code travellers_goggles_red_thread_vision} attachment of the client player, which only ever changes on the client
+	 * and so starts over whenever the client player is recreated; here it lives for the whole game session.
+	 */
+	private static boolean redThreadVision = true;
+
+	private static boolean isZoomKeyHeld(Player player) {
+		return TFKeyBinds.ZOOM_KEY.isDown() && !player.isScoping();
+	}
+
+	public static boolean isRedThreadVisionEnabled() {
+		return redThreadVision;
+	}
 
 	/**
 	 * Whether Shift is held, for the modifier descriptions in the Traveller's Gear tooltip (4.8 TooltipFlag#hasShiftDown).
@@ -272,6 +290,72 @@ public class TravellersClientEvents {
 		TravellersWingsAttachment attachment = player == null ? null : TravellersWingsAttachment.get(player);
 		if (attachment != null)
 			attachment.isGraduallyGliding = isGraduallyGliding;
+	}
+
+	/**
+	 * Zoom: while the zoom key is held with goggles that have the ability, the field of view shrinks by the ability's
+	 * factor. A change of the zoom state plays the zoom sound and is sent to the server, which passes it on to the other
+	 * players.
+	 */
+	@SubscribeEvent
+	public static void updateZoomState(ComputeFovModifierEvent event) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null) return;
+		boolean wasUsingZoom = TravellersGogglesZoomAttachment.isUsingZoom(player);
+		ItemStack headStack = player.getItemBySlot(EquipmentSlot.HEAD);
+		Float zoomModifier = TravellersArmorItem.isTravellersGear(headStack) ? TravellersGearData.ZOOM_ABILITY_MODIFIER.get(headStack) : null;
+		boolean isUsingZoom = zoomModifier != null && isZoomKeyHeld(player) && TravellersModifiersManager.isModifierActive(player, headStack, TravellersModifiersManager.ZOOM_ABILITY);
+		if (isUsingZoom)
+			event.setNewFovModifier(event.getNewFovModifier() * zoomModifier);
+		if (isUsingZoom == wasUsingZoom)
+			return;
+
+		TravellersGogglesZoomAttachment.setUsingZoom(player, isUsingZoom);
+		player.playSound(isUsingZoom ? TFSounds.GOGGLES_ZOOM_IN.get() : TFSounds.GOGGLES_ZOOM_OUT.get(), 1.0F, 1.0F);
+		TFPacketHandler.CHANNEL.sendToServer(new GogglesZoomPacket(isUsingZoom, player.getUUID()));
+	}
+
+	/**
+	 * Slows the mouse down while zooming with the goggles, like a spyglass. 4.8 listens to NeoForge's
+	 * CalculatePlayerTurnEvent; Forge 47 has none, so {@code META-INF/asm/zoom.js} calls this from MouseHandler#turnPlayer
+	 * with the mouse sensitivity option, and the returned value takes its place.
+	 */
+	@SuppressWarnings("unused")
+	public static double modifyMouseSensitivity(double mouseSensitivity) {
+		Minecraft minecraft = Minecraft.getInstance();
+		Player player = minecraft.player;
+		// a sensitivity of 0 would turn the camera by NaN below
+		if (minecraft.options.smoothCamera || player == null || mouseSensitivity <= 0.0D)
+			return mouseSensitivity;
+
+		ItemStack headStack = player.getItemBySlot(EquipmentSlot.HEAD);
+		Float zoomModifier = TravellersArmorItem.isTravellersGear(headStack) ? TravellersGearData.ZOOM_ABILITY_MODIFIER.get(headStack) : null;
+		// 4.8 does not check that the ability works here, so broken goggles slowed the mouse down without zooming
+		if (zoomModifier == null || !isZoomKeyHeld(player) || !TravellersModifiersManager.isModifierActive(player, headStack, TravellersModifiersManager.ZOOM_ABILITY))
+			return mouseSensitivity;
+
+		// vanilla math for turning is (m * 0.6 + 0.2)³ * 8; where m is the mouse sensitivity
+		// vanilla spyglasses avoid using the "* 8" part, so we probably want to as well
+		// the mod value to reverse that was borrowed from IE since they also have zoom functionality
+		// we can then divide by our zoom modifier (and add 0.05 to slow it down slightly) to set the sensitivity to a reasonable value when zooming
+		double mod = 0.5D - 1 / (6 * mouseSensitivity);
+		double fovMod = zoomModifier + 0.05F;
+		return mod * mouseSensitivity / fovMod;
+	}
+
+	/**
+	 * Red Thread Vision: its key turns the glowing red thread of goggles with the modifier on and off.
+	 */
+	@SubscribeEvent
+	public static void toggleRedThreadVision(InputEvent.Key event) {
+		if (!TFKeyBinds.RED_THREAD_VISION_KEY.consumeClick())
+			return;
+
+		Player player = Minecraft.getInstance().player;
+		if (player == null || !TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.RED_THREAD_VISION_MODIFIER))
+			return;
+
+		redThreadVision = !redThreadVision;
 	}
 
 	/**

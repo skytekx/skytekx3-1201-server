@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,9 +23,11 @@ import net.minecraft.world.phys.Vec3;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.entity.RedThreadBlockEntity;
 import twilightforest.client.TFShaders;
+import twilightforest.client.TravellersClientEvents;
 import twilightforest.client.model.TFModelLayers;
 import twilightforest.client.model.entity.RedThreadModel;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.custom.TravellersModifiersManager;
 
 public class RedThreadRenderer<T extends RedThreadBlockEntity> implements BlockEntityRenderer<T> {
 	private static final ResourceLocation textureLoc = TwilightForestMod.getModelTexture("red_thread.png");
@@ -47,7 +50,13 @@ public class RedThreadRenderer<T extends RedThreadBlockEntity> implements BlockE
 	@Override
 	public void render(T thread, float ticks, PoseStack poseStack, MultiBufferSource source, int light, int overlay) {
 		BlockState state = thread.getBlockState();
-		boolean glow = Minecraft.getInstance().player != null && Minecraft.getInstance().player.isHolding(TFBlocks.RED_THREAD.get().asItem());
+		Player player = Minecraft.getInstance().player;
+		if (player == null)
+			return;
+
+		// 4.8: Traveller's Goggles with Red Thread Vision (switched on with its key) show the thread like holding it does
+		boolean wearsActivatedTravellersGoggles = TravellersClientEvents.isRedThreadVisionEnabled() && TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.RED_THREAD_VISION_MODIFIER);
+		boolean glow = player.isHolding(TFBlocks.RED_THREAD.get().asItem()) || wearsActivatedTravellersGoggles;
 
 		for (Direction face : Direction.values()) {
 			if (state.getValue(PipeBlock.PROPERTY_BY_DIRECTION.get(face))) {

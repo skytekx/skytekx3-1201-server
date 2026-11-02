@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.TravellersClientEvents;
 import twilightforest.client.renderer.armor.TravellersArmorRenderer;
+import twilightforest.components.entity.TravellersGogglesZoomAttachment;
 import twilightforest.components.item.TravellersComponentType;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.enums.TwilightArmorMaterial;
@@ -68,6 +69,7 @@ import java.util.stream.Stream;
 public class TravellersArmorItem extends ArmorItem implements TravellersModifiable {
 	private static final MutableComponent GLOVES_TOOLTIP = Component.translatable("item.twilightforest.travellers_gloves.desc").withStyle(ChatFormatting.GRAY);
 	private static final String OUTER_TEXTURE = TwilightForestMod.prefix("textures/models/armor/travellers_layer_1.png").toString();
+	private static final String OUTER_TEXTURE_ZOOMING = TwilightForestMod.prefix("textures/models/armor/travellers_layer_1_down.png").toString();
 	private static final String INNER_TEXTURE = TwilightForestMod.prefix("textures/models/armor/travellers_layer_2.png").toString();
 
 	private final int insertableModifierSlots;
@@ -203,9 +205,14 @@ public class TravellersArmorItem extends ArmorItem implements TravellersModifiab
 		return builder.build();
 	}
 
+	/**
+	 * The outer layer flips the goggles down over the eyes while the wearer zooms with them (4.8 98ad4b10b).
+	 */
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-		return slot == EquipmentSlot.LEGS ? INNER_TEXTURE : OUTER_TEXTURE;
+	public String getArmorTexture(ItemStack stack, @Nullable Entity entity, EquipmentSlot slot, String type) {
+		if (slot == EquipmentSlot.LEGS)
+			return INNER_TEXTURE;
+		return entity != null && TravellersGogglesZoomAttachment.isUsingZoom(entity) ? OUTER_TEXTURE_ZOOMING : OUTER_TEXTURE;
 	}
 
 	/**

@@ -34,6 +34,7 @@ attribution for each one. [`modrinth-permissions/`](../../modrinth-permissions/R
   leftovers such as `license="All rights reserved"` in an LGPL project are common. CurseForge's
   `allowModDistribution` flag only covers its own launcher API.
 - Keep the jar byte-identical to the upstream file and record the file id and SHA-1 in its `.md`.
+  The exception is a backport we build ourselves from `ports/<name>/` (see below).
 - If a mod is on Modrinth, put it in the index instead (even when All Rights Reserved), because the
   file then comes from the Modrinth CDN.
 - All Rights Reserved without written permission stays out (e.g. Twilight Spellbooks, see the
@@ -43,9 +44,14 @@ The TF addons Twilight Construct, Twilight Tweaks and The King of Twilight are b
 other TF addons are index entries; see the [TF backport](twilightforest-backport.md#in-the-pack-2026-11-01).
 
 A backport built from source (a 1.21.1-only mod ported to 1.20.1) cannot be byte-identical to an upstream
-file. Keep its source in `ports/<mod>/` with the upstream LICENSE and a NOTICE (upstream URL, commit,
-changes), make the jar build reproducible, and record the build command and SHA-1 in its
-`modrinth-permissions/` file instead. Example: Twilight Mobs Loots (`ports/twilight-mobs-loots/`).
+file. Its license must allow redistributing a modified build. Keep its source in `ports/<mod>/` with the
+upstream license file and a NOTICE (upstream URL, commit, changes), ship both in the jar, make the jar
+build reproducible, and record the upstream commit, the build command and the jar SHA-1 in its
+`modrinth-permissions/` file instead. Bundled this way: Twilight Mobs Loots (`ports/twilight-mobs-loots/`,
+MIT) and Spiced Twilight (`ports/spiced-twilight/`, LGPL-3.0-or-later, so the modified source stays public
+in that directory). Twilight Crossbow (`ports/twilight-crossbow/`) is ported but held back. All three
+need the fork TF jar in `local-mods/` instead of the stock `4.3` jar; see the
+[TF backport](twilightforest-backport.md#backported-1211-only-addons).
 
 ## ⚠️ Known gap
 A few non-Modrinth jars are referenced but not yet bundled in `local-mods/` nor given a manual index

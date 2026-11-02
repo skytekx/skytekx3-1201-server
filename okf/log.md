@@ -472,5 +472,18 @@ logs stay on the Mac and are not in the repo.
   are now unchanged releases in the public repos `skytekx/battletowers` and
   `skytekx/falling-meteors-reimagined`, for the next pack to download.
 
+## 2026-11-02: The Twilight Forest backport goes live
+
+- On the owner's ask the cloud branch `claude/twilight-forest-port-mods-j2owbq` was renamed to
+  `feat/twilight-forest` and merged into master (160438ff). The pack index kept the fixes of the
+  unreleased 3.0.8 (every mod required, the Backpack port, the GitHub hosted mods) and moved to 3.1.0.
+- The seed gate of the fork passed at 12:50: the 4.3 hook and the level held the same seed, so the
+  Twilight Forest dimension was not reset.
+- At 12:51 the Mac mini started on the fork jar `4.3.2508-skytekx.1` with its seven bundled addons, the
+  nine new index mods and the `safeiter2` Arclight jar, 251 jars in all. The boot reached `Done` with the
+  three known errors. Only the files the merge changed went over, not a full sync, because the Mac
+  holds newer configs than the checkout.
+- Both MacBooks got the same Twilight Forest jars and the two Twilight configs.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

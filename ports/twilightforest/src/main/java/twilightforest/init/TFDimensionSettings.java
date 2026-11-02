@@ -19,7 +19,6 @@ import twilightforest.world.registration.biomes.BiomeMaker;
 import twilightforest.world.registration.surface_rules.TFSurfaceRules;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalLong;
 
 public class TFDimensionSettings {
@@ -161,8 +160,6 @@ public class TFDimensionSettings {
 				new ChunkGeneratorTwilight(
 						wrappedChunkGenerator,
 						noiseGenSettings.getOrThrow(TFDimensionSettings.TWILIGHT_NOISE_GEN),
-						true,
-						Optional.of(19),
 						BiomeMaker.BIOME_FEATURES_SETS));
 
 		context.register(TWILIGHT_LEVEL_STEM, stem);

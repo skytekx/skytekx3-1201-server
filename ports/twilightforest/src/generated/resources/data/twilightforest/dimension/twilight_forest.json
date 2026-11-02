@@ -2,8 +2,6 @@
   "type": "twilightforest:twilight_forest_type",
   "generator": {
     "type": "twilightforest:structure_locating_wrapper",
-    "dark_forest_canopy_height": 19,
-    "generate_dark_forest_canopy": true,
     "landmark_placement_allowed_biomes": {
       "twilightforest:dark_forest": [
         "knight_stronghold"

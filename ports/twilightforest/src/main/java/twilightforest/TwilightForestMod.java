@@ -143,6 +143,7 @@ public class TwilightForestMod {
 		Restrictions.RESTRICTIONS.register(modbus);
 		MagicPaintingVariants.MAGIC_PAINTINGS.register(modbus);
 		TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_TYPES.register(modbus);
+		ChunkBlanketProcessors.CHUNK_BLANKETING_TYPES.register(modbus);
 
 		modbus.addListener(this::sendIMCs);
 		modbus.addListener(this::init);
@@ -173,6 +174,7 @@ public class TwilightForestMod {
 		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_KEY, TemplateMarkerHandlers.DISPATCH_CODEC);
 		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlerList.CODEC);
 		event.dataPackRegistry(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfig.CODEC);
+		event.dataPackRegistry(ChunkBlanketProcessors.CHUNK_BLANKET_PROCESSORS_KEY, ChunkBlanketProcessors.DISPATCH_CODEC);
 	}
 
 	public void registerExtraStuff(RegisterEvent evt) {

@@ -1,0 +1,47 @@
+{
+  "itemGroup.at_mod": "Alternative Twilight",
+
+  "at_mod.configuration.title": "Alternative Twilight Configs",
+  "at_mod.configuration.section.at_mod.common.toml": "Alternative Twilight Configs",
+  "at_mod.configuration.section.at_mod.common.toml.title": "Alternative Twilight Configs",
+  "at_mod.configuration.items": "Item List",
+  "at_mod.configuration.logDirtBlock": "Log Dirt Block",
+  "at_mod.configuration.magicNumberIntroduction": "Magic Number Text",
+  "at_mod.configuration.magicNumber": "Magic Number",
+
+  "item.at_mod.example_item": "Example Item",
+
+  "item.at_mod.spear.wooden_spear": "Wooden Spear",
+  "item.at_mod.spear.stone_spear": "Stone Spear",
+  "item.at_mod.spear.copper_spear": "Copper Spear",
+  "item.at_mod.spear.iron_spear": "Iron Spear",
+  "item.at_mod.spear.golden_spear": "Golden Spear",
+  "item.at_mod.spear.diamond_spear": "Diamond Spear",
+  "item.at_mod.spear.netherite_spear": "Netherite Spear",
+  "item.at_mod.spear.ironwood_spear": "Ironwood Spear",
+  "item.at_mod.spear.knight_spear": "Knight Spear",
+
+  "death.attack.at_mod.spear": "%1$s was pierced by %2$s",
+  "death.attack.at_mod.spear.item": "%1$s was pierced by %2$s using %3$s",
+  "death.attack.at_mod.naga_venom": "%1$s was dissolved by Naga's venom",
+  "death.attack.at_mod.naga_venom.item": "%1$s was dissolved by Naga's venom",
+  "death.attack.at_mod.blood_curse": "%1$s was consumed by the blood curse",
+  "death.attack.at_mod.blood_curse.item": "%1$s was consumed by the blood curse",
+
+  "effect.at_mod.blood_lust": "Blood Lust",
+  "effect.at_mod.blood_lust_curse": "Blood Lust Curse",
+
+  "config.at_mod.naga.maxHealth": "Naga Max Health",
+  "config.at_mod.naga.nonDazedDamageMultiplier": "Non-Dazed Damage Multiplier",
+  "config.at_mod.naga.dazedDamageMultiplier": "Dazed Damage Multiplier",
+  "config.at_mod.naga.dazeSpeedThreshold": "Daze Speed Threshold",
+  "config.at_mod.naga.phase2HealthRatio": "Phase 2 Health Ratio",
+  "config.at_mod.naga.phase3HealthRatio": "Phase 3 Health Ratio",
+  "config.at_mod.naga.venom.count": "Venom Projectile Count",
+  "config.at_mod.naga.venom.spread": "Venom Spread Range",
+  "config.at_mod.naga.venom.lingerTicks": "Venom Linger Duration",
+  "config.at_mod.effect.bloodLustCurse.damagePerLevel": "Blood Lust Curse Damage Per Level",
+  "config.at_mod.effect.bloodLust.attackPerLevel": "Blood Lust Attack Bonus Per Level",
+  "config.at_mod.effect.bloodLust.speedPerLevel": "Blood Lust Speed Bonus Per Level",
+  "config.at_mod.spear.hitProtectionTicks": "Spear Hit Protection Ticks"
+}

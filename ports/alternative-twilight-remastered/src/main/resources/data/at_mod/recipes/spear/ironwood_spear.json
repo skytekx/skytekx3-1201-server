@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  A",
+    " B ",
+    "B  "
+  ],
+  "key": {
+    "A": {
+      "item": "twilightforest:ironwood_ingot"
+    },
+    "B": {
+      "item": "twilightforest:liveroot"
+    }
+  },
+  "result": {
+    "item": "at_mod:spear/ironwood_spear"
+  }
+}

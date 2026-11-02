@@ -29,9 +29,14 @@ the Modrinth `version_number`) and `versionId` in `modrinth.index.json`.
 
 ## Before uploading
 1. **Permissions.** Every `local-mods/` jar needs a [`modrinth-permissions/`](../../modrinth-permissions/README.md)
-   file whose **Status** starts with `OK`. `build_mrpack.py` checks this first and refuses to build
-   otherwise; `--allow-unpermitted` builds a private/draft pack that must not be uploaded. As of 3.1.0,
-   five BLOCKER jars and one VERIFY jar (Deadly World) still stop a public build.
+   file with exactly one **Status** line that starts with the word `OK` (`OK`, `OK (author allows)`).
+   Both scripts check this through `tools/mrpack_permissions.py`. `build_mrpack.py` checks
+   `local-mods/` first; on a refusal it also deletes any `SkyTekx3-<ver>.mrpack` left from an earlier
+   build. `--allow-unpermitted` writes a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack`,
+   which must not be uploaded. `publish_modrinth.py` opens the `SkyTekx3-<ver>.mrpack` it would upload
+   and refuses, in the dry run too and with no override, when a jar inside it lacks permission or the
+   pack's `versionId` is not `VERSION`. As of 3.1.0, five BLOCKER jars and one VERIFY jar (Deadly World)
+   still stop a public build.
 2. **Source links.** Merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL
    source offers of the modified builds (the TF fork, Spiced Twilight, Alternative Twilight (Remastered))
    point at `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` from their

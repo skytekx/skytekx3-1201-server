@@ -12,7 +12,7 @@ Researched automatically across all 40 bundled mods. **Verify the blockers yours
 - **34** mods are fine to bundle (open license or author allows modpacks).
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
 - **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
-- `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or a **Status** that does not start with `OK` (`--allow-unpermitted` builds a private/draft pack that must not be uploaded).
+- `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
 
 ## BLOCKERS (resolve before publishing)

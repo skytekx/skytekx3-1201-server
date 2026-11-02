@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Change log

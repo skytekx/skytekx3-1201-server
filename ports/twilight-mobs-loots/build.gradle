@@ -1,0 +1,112 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+version = project.mod_version
+group = project.group_name
+
+base {
+    archivesName = project.mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// The Twilight Forest fork is not published to a maven; it is consumed from its own Gradle build
+// output (../twilightforest/build/libs by default, override with -Ptf_libs=<dir>).
+def tfLibs = file(project.tf_libs)
+def tfJarName = "twilightforest-${project.minecraft_version}-${project.tf_version}-universal.jar"
+if (!new File(tfLibs, tfJarName).exists()) {
+    logger.warn("[twilight_mobs_loots] ${tfJarName} not found in ${tfLibs}. Build the Twilight Forest fork first: " +
+            "(cd ../twilightforest && ./gradlew build), or pass -Ptf_libs=<dir containing ${tfJarName}>.")
+}
+
+minecraft {
+    mappings channel: project.mapping_channel, version: project.mapping_version
+
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+
+            mods {
+                "${project.mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            taskName "Minecraft_Client_${project.minecraft_version}"
+        }
+
+        server {
+            taskName "Minecraft_Server_${project.minecraft_version}"
+            args '--nogui'
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        name 'TwilightForestFork'
+        dirs tfLibs
+    }
+    maven {
+        name 'theillusivec4\'s Maven' // Curios
+        url 'https://maven.theillusivec4.top/'
+    }
+}
+
+dependencies {
+    minecraft "net.neoforged:forge:${project.minecraft_version}-${project.neo_version}"
+
+    // Twilight Forest fork (ports/twilightforest), remapped from its SRG-named release jar.
+    implementation fg.deobf("blank:twilightforest-${project.minecraft_version}:${project.tf_version}:universal")
+
+    // Curios API, the version the pack ships. Optional at runtime (see CuriosCompat).
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${project.curios_version}+${project.minecraft_version}")
+}
+
+def replaceProperties = [
+        mod_id         : project.mod_id,
+        mod_name       : project.mod_name,
+        mod_license    : project.mod_license,
+        mod_version    : project.mod_version,
+        tf_min_version : project.tf_min_version,
+        upstream_version: project.upstream_version,
+]
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    from('LICENSE') { into 'META-INF' rename { "LICENSE_${project.mod_id}" } }
+    from('NOTICE') { into 'META-INF' rename { "NOTICE_${project.mod_id}" } }
+    manifest {
+        attributes([
+                'Specification-Title'     : project.mod_id,
+                'Specification-Vendor'    : 'wdd1118',
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.mod_name,
+                'Implementation-Version'  : project.mod_version,
+                'Implementation-Vendor'   : 'wdd1118 (1.20.1 backport: SkyTekx)',
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

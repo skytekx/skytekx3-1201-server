@@ -1,0 +1,77 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 40
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:chicken_jerky",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:mutton_jerky",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:pork_jerky",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:venison_jerky",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:beef_jerky",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:tanned_leather",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:rabbit_jerky",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_helmet"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_chestplate"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_leggings"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "twilightforest:gelatinous_slime_drop",
+          "weight": 2
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "twilightforest:camp_drying_rack"
+}

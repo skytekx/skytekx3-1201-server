@@ -1,0 +1,556 @@
+package twilightforest.events;
+
+import com.mojang.authlib.GameProfile;
+import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Interaction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.LeadItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractSkullBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.level.block.WallSkullBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
+import twilightforest.TFConfig;
+import twilightforest.TwilightForestMod;
+import twilightforest.advancements.DrinkFromFlaskTrigger;
+import twilightforest.block.*;
+import twilightforest.block.entity.SkullChestBlockEntity;
+import twilightforest.block.entity.SkullCandleBlockEntity;
+import twilightforest.capabilities.CapabilityList;
+import twilightforest.data.tags.EntityTagGenerator;
+import twilightforest.enchantment.ChillAuraEnchantment;
+import twilightforest.entity.boss.Lich;
+import twilightforest.entity.projectile.ITFProjectile;
+import twilightforest.entity.projectile.LichBomb;
+import twilightforest.init.TFBlocks;
+import twilightforest.init.TFDamageTypes;
+import twilightforest.init.TFDataMaps;
+import twilightforest.init.TFItems;
+import twilightforest.init.TFMobEffects;
+import twilightforest.init.TFDimensionSettings;
+import twilightforest.init.TFStats;
+import twilightforest.item.FieryArmorItem;
+import twilightforest.item.MysticCrownItem;
+import twilightforest.item.PotionFlaskTracking;
+import twilightforest.item.YetiArmorItem;
+import twilightforest.util.EntityUtil;
+import twilightforest.util.OminousFireDamageSource;
+import twilightforest.util.datamaps.EntityTransformation;
+import twilightforest.world.components.structures.finalcastle.FinalCastleBossGazeboComponent;
+import twilightforest.world.components.structures.lichtowerrevamp.LichTowerPieces;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Mod.EventBusSubscriber(modid = TwilightForestMod.ID)
+public class EntityEvents {
+
+	private static final boolean SHIELD_PARRY_MOD_LOADED = ModList.get().isLoaded("parry");
+	// 4.8 names this modifier twilightforest:group_health_boost; 1.20.1 modifiers are keyed by UUID (nameUUIDFromBytes of that id)
+	private static final UUID GROUP_HEALTH_BOOST_UUID = UUID.fromString("14263e84-cfde-3f33-aeb8-990f4c6f4a62");
+
+	// things killed by ominous fire rise again: players as a zombie that remembers them, other mobs as set by the ominous_fire data map
+	@SubscribeEvent
+	public static void ominousFireConversion(LivingDeathEvent event) {
+		if (!event.isCanceled() && event.getSource().is(TFDamageTypes.OMINOUS_FIRE)) {
+			LivingEntity living = event.getEntity();
+
+			if (living instanceof ServerPlayer player) {
+				Zombie zombie = EntityType.ZOMBIE.create(player.level());
+				if (zombie != null) {
+					EntityUtil.setZombifiedPlayer(zombie, player.getGameProfile());
+					zombie.setCustomName(player.getName());
+					zombie.copyPosition(player);
+					zombie.setCanPickUpLoot(true);
+					zombie.setBaby(false);
+					ForgeEventFactory.onFinalizeSpawn(zombie, player.serverLevel(), player.level().getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.CONVERSION, null, null);
+					player.level().addFreshEntity(zombie);
+				}
+			} else if (living.level() instanceof ServerLevel) {
+				EntityTransformation transformation = TFDataMaps.OMINOUS_FIRE.get(living.getType().builtInRegistryHolder());
+				if (transformation != null) {
+					EntityUtil.convertEntity(living, transformation.result());
+				}
+			}
+		}
+	}
+
+	// the zombified remains of a player hit with a damage source that names that player in death messages
+	@SubscribeEvent
+	public static void zombifiedPlayerAttacks(LivingAttackEvent event) {
+		if (event.getSource().getEntity() instanceof Zombie zombie && !(event.getSource() instanceof OminousFireDamageSource) && EntityUtil.getZombifiedPlayer(zombie) != null) {
+			float amount = event.getAmount();
+			event.setCanceled(true);
+			event.getEntity().hurt(new OminousFireDamageSource(event.getSource()), amount);
+		}
+	}
+
+	// Mystic Crown Compat: an empowering Mystic Crown protects its wearer from every Lich bomb blast: the extra bombs of its Twilight Scepter and the Lich boss's own
+	@SubscribeEvent
+	public static void mysticCrownBlocksLichBombs(LivingAttackEvent event) {
+		if (event.getSource().is(TFDamageTypes.LICH_BOMB) && MysticCrownItem.empowersScepters(event.getEntity())) {
+			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public static void alertPlayerCastleIsWIP(AdvancementEvent.AdvancementEarnEvent event) {
+		if (event.getAdvancement().getId().equals(TwilightForestMod.prefix("progression_end"))) {
+			event.getEntity().sendSystemMessage(Component.translatable("gui.twilightforest.progression_end.message", Component.translatable("gui.twilightforest.progression_end.discord").withStyle(style -> style.withColor(ChatFormatting.BLUE).applyFormat(ChatFormatting.UNDERLINE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.experiment115.com/")))));
+		}
+	}
+
+	@SubscribeEvent
+	public static void resetFlaskLogic(AdvancementEvent.AdvancementEarnEvent event) {
+		for (Criterion criterion : event.getAdvancement().getCriteria().values()) {
+			if (criterion.getTrigger() instanceof DrinkFromFlaskTrigger.Instance) {
+				PotionFlaskTracking.resetDoses(event.getEntity());
+				break;
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void attachLeadToWroughtFence(PlayerInteractEvent.RightClickBlock event) {
+		Player player = event.getEntity();
+		ItemStack stack = player.getItemInHand(event.getHand());
+		if (stack.is(Items.LEAD)) {
+			BlockPos pos = event.getPos();
+			BlockState state = event.getLevel().getBlockState(pos);
+			if (state.is(TFBlocks.WROUGHT_IRON_FENCE.get()) && state.getValue(WroughtIronFenceBlock.POST) != WroughtIronFenceBlock.PostState.NONE) {
+				if (!event.getLevel().isClientSide()) {
+					LeadItem.bindPlayerMobs(player, event.getLevel(), event.getPos());
+					event.setCanceled(true);
+					event.setCancellationResult(InteractionResult.SUCCESS);
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void entityHurts(LivingHurtEvent event) {
+		LivingEntity living = event.getEntity();
+		DamageSource source = event.getSource();
+		Entity trueSource = source.getEntity();
+
+		// fire react and chill aura
+		if (source.getEntity() != null && trueSource != null && event.getAmount() > 0) {
+			int fireLevel = getGearCoverage(living, false) * 5;
+			int chillLevel = getGearCoverage(living, true);
+
+			if (fireLevel > 0 && living.getRandom().nextInt(25) < fireLevel && !trueSource.fireImmune()) {
+				trueSource.setSecondsOnFire(fireLevel / 2);
+			}
+
+			if (trueSource instanceof LivingEntity target) {
+				ChillAuraEnchantment.doChillAuraEffect(target, chillLevel * 5 + 5, chillLevel, chillLevel > 0);
+			}
+		}
+
+		// triple bow strips invulnerableTime
+		if (source.getMsgId().equals("arrow") && trueSource instanceof Player player) {
+
+			if (player.getItemInHand(player.getUsedItemHand()).is(TFItems.TRIPLE_BOW.get())) {
+				living.invulnerableTime = 0;
+			}
+		}
+	}
+
+	@SubscribeEvent
+	//if our casket is owned by someone and that player isnt the one breaking it, stop them
+	public static void onCasketBreak(BlockEvent.BreakEvent event) {
+		Player player = event.getPlayer();
+		//covers the Keepsake Casket and the Skull Chest it degrades into
+		if (event.getState().getBlock() instanceof SkullChestBlock) {
+			BlockEntity te = event.getLevel().getBlockEntity(event.getPos());
+			if (te instanceof SkullChestBlockEntity casket) {
+				if (casket.owner != null && !casket.isEmpty()) {
+					//skytekx: upstream cancels unless the breaker is an op AND the owner. Since caskets can now be
+					//fluid-logged and encased (obsidian/stone), a non-op owner could otherwise never reach their items.
+					//Let the owner or an operator break it, block everyone else.
+					if (!player.hasPermissions(3) && !casket.isOwner(player)) {
+						event.setCanceled(true);
+					}
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onCrafting(PlayerEvent.ItemCraftedEvent event) {
+		ItemStack itemStack = event.getCrafting();
+
+		// if we've crafted 64 planks from a giant log, sneak 192 more planks into the player's inventory or drop them nearby
+		if (itemStack.is(Items.OAK_PLANKS) && itemStack.getCount() == 64 && event.getInventory().countItem(TFBlocks.GIANT_LOG.get().asItem()) > 0) {
+			Player player = event.getEntity();
+			ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(Items.OAK_PLANKS, 64));
+			ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(Items.OAK_PLANKS, 64));
+			ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(Items.OAK_PLANKS, 64));
+		}
+	}
+
+	@SubscribeEvent
+	public static void onLivingHurtEvent(LivingHurtEvent event) {
+		LivingEntity living = event.getEntity();
+		if (living != null) {
+			Optional.ofNullable(living.getEffect(TFMobEffects.FROSTY.get())).ifPresent(mobEffectInstance -> {
+				if (event.getSource().is(DamageTypes.FREEZE)) {
+					event.setAmount(event.getAmount() + (float)(mobEffectInstance.getAmplifier() / 2));
+				} else if (event.getSource().is(DamageTypeTags.IS_FIRE)) {
+					living.removeEffect(TFMobEffects.FROSTY.get());
+					mobEffectInstance.amplifier -= 1;
+					if (mobEffectInstance.amplifier >= 0) living.addEffect(mobEffectInstance);
+				}
+			});
+		}
+	}
+
+	// Parrying
+	@SubscribeEvent
+	public static void onParryProjectile(ProjectileImpactEvent event) {
+		final Projectile projectile = event.getProjectile();
+
+		if (!projectile.getCommandSenderWorld().isClientSide() && !SHIELD_PARRY_MOD_LOADED && (TFConfig.COMMON_CONFIG.SHIELD_INTERACTIONS.parryNonTwilightAttacks.get() || projectile instanceof ITFProjectile)) {
+			if (event.getRayTraceResult() instanceof EntityHitResult result) {
+				Entity entity = result.getEntity();
+
+				if (event.getEntity() != null && entity instanceof LivingEntity entityBlocking) {
+					if (entityBlocking.isBlocking() && entityBlocking.getUseItem().getUseDuration() - entityBlocking.getUseItemRemainingTicks() <= TFConfig.COMMON_CONFIG.SHIELD_INTERACTIONS.shieldParryTicks.get()) {
+						projectile.setOwner(entityBlocking);
+						Vec3 rebound = entityBlocking.getLookAngle();
+						projectile.shoot(rebound.x(), rebound.y(), rebound.z(), 1.1F, 0.1F);  // reflect faster and more accurately
+						if (projectile instanceof AbstractHurtingProjectile hurting) {
+							hurting.xPower = rebound.x() * 0.1D;
+							hurting.yPower = rebound.y() * 0.1D;
+							hurting.zPower = rebound.z() * 0.1D;
+						}
+
+						event.setCanceled(true);
+					}
+				}
+			}
+		}
+	}
+
+	private static final String LICH_DEFLECTED_BY = TwilightForestMod.ID + ":lich_deflected_by";
+
+	/**
+	 * From phase 2 on, a Lich bounces #twilightforest:lich_deflects_phase_2 projectiles off instead of being hit (4.8
+	 * 2a37097ce). 1.21 does this through Entity#deflection; here the impact is cancelled on both sides and the projectile
+	 * thrown up on the side that sees it. Like 1.21's Projectile#lastDeflectedBy, a projectile only bounces off the same
+	 * Lich once and afterwards passes through it.
+	 */
+	@SubscribeEvent
+	public static void lichDeflectsProjectiles(ProjectileImpactEvent event) {
+		if (event.getRayTraceResult() instanceof EntityHitResult result && result.getEntity() instanceof Lich lich) {
+			Projectile projectile = event.getProjectile();
+			if (lich.deflectsProjectile(projectile)) {
+				CompoundTag data = projectile.getPersistentData();
+				if (!data.hasUUID(LICH_DEFLECTED_BY) || !data.getUUID(LICH_DEFLECTED_BY).equals(lich.getUUID())) {
+					lich.deflectProjectile(projectile);
+					data.putUUID(LICH_DEFLECTED_BY, lich.getUUID());
+				}
+				event.setCanceled(true);
+			}
+		}
+	}
+
+	/**
+	 * Checks if the player is attempting to create a skull candle
+	 */
+	// I wanted to make sure absolutely nothing broke, so I also check against the namespaces of the item to make sure theyre vanilla.
+	// Worst case some stupid mod adds their own stuff to the minecraft namespace and breaks this, then you can disable this via config.
+	@SubscribeEvent
+	public static void createSkullCandle(PlayerInteractEvent.RightClickBlock event) {
+		ItemStack stack = event.getItemStack();
+		Level level = event.getLevel();
+		BlockPos pos = event.getPos();
+		BlockState state = level.getBlockState(pos);
+		if (!TFConfig.COMMON_CONFIG.disableSkullCandles.get()) {
+			if (stack.is(ItemTags.CANDLES) && ForgeRegistries.ITEMS.getKey(stack.getItem()).getNamespace().equals("minecraft") && !event.getEntity().isShiftKeyDown()) {
+				if (state.getBlock() instanceof AbstractSkullBlock skull && ForgeRegistries.BLOCKS.getKey(state.getBlock()).getNamespace().equals("minecraft")) {
+					SkullBlock.Types type = (SkullBlock.Types) skull.getType();
+					boolean wall = state.getBlock() instanceof WallSkullBlock;
+					switch (type) {
+						case SKELETON -> {
+							if (wall) makeWallSkull(event, TFBlocks.SKELETON_WALL_SKULL_CANDLE.get());
+							else makeFloorSkull(event, TFBlocks.SKELETON_SKULL_CANDLE.get());
+						}
+						case WITHER_SKELETON -> {
+							if (wall) makeWallSkull(event, TFBlocks.WITHER_SKELE_WALL_SKULL_CANDLE.get());
+							else makeFloorSkull(event, TFBlocks.WITHER_SKELE_SKULL_CANDLE.get());
+						}
+						case PLAYER -> {
+							if (wall) makeWallSkull(event, TFBlocks.PLAYER_WALL_SKULL_CANDLE.get());
+							else makeFloorSkull(event, TFBlocks.PLAYER_SKULL_CANDLE.get());
+						}
+						case ZOMBIE -> {
+							if (wall) makeWallSkull(event, TFBlocks.ZOMBIE_WALL_SKULL_CANDLE.get());
+							else makeFloorSkull(event, TFBlocks.ZOMBIE_SKULL_CANDLE.get());
+						}
+						case CREEPER -> {
+							if (wall) makeWallSkull(event, TFBlocks.CREEPER_WALL_SKULL_CANDLE.get());
+							else makeFloorSkull(event, TFBlocks.CREEPER_SKULL_CANDLE.get());
+						}
+						case PIGLIN -> {
+							if (wall) makeWallSkull(event, TFBlocks.PIGLIN_WALL_SKULL_CANDLE.get());
+							else makeFloorSkull(event, TFBlocks.PIGLIN_SKULL_CANDLE.get());
+						}
+						default -> {
+							return;
+						}
+					}
+					if (!event.getEntity().getAbilities().instabuild) stack.shrink(1);
+					event.getEntity().swing(event.getHand());
+					if (event.getEntity() instanceof ServerPlayer)
+						event.getEntity().awardStat(TFStats.SKULL_CANDLES_MADE.get());
+					//this is to prevent anything from being placed afterwords
+					event.setCanceled(true);
+				}
+			}
+		}
+	}
+
+	private static void makeFloorSkull(PlayerInteractEvent.RightClickBlock event, Block newBlock) {
+		GameProfile profile = null;
+		Level level = event.getLevel();
+		if (level.getBlockEntity(event.getPos()) instanceof SkullBlockEntity skull)
+			profile = skull.getOwnerProfile();
+		level.playSound(null, event.getPos(), SoundEvents.CANDLE_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+		level.setBlockAndUpdate(event.getPos(), newBlock.defaultBlockState()
+				.setValue(AbstractSkullCandleBlock.LIGHTING, LightableBlock.Lighting.NONE)
+				.setValue(SkullCandleBlock.ROTATION, level.getBlockState(event.getPos()).getValue(SkullBlock.ROTATION)));
+		level.setBlockEntity(new SkullCandleBlockEntity(event.getPos(),
+				newBlock.defaultBlockState()
+						.setValue(AbstractSkullCandleBlock.LIGHTING, LightableBlock.Lighting.NONE)
+						.setValue(SkullCandleBlock.ROTATION, level.getBlockState(event.getPos()).getValue(SkullBlock.ROTATION)),
+				AbstractSkullCandleBlock.candleToCandleColor(event.getItemStack().getItem()).getValue(), 1));
+		if (level.getBlockEntity(event.getPos()) instanceof SkullCandleBlockEntity sc) sc.setOwner(profile);
+	}
+
+	private static void makeWallSkull(PlayerInteractEvent.RightClickBlock event, Block newBlock) {
+		GameProfile profile = null;
+		Level level = event.getLevel();
+		if (level.getBlockEntity(event.getPos()) instanceof SkullBlockEntity skull)
+			profile = skull.getOwnerProfile();
+		level.playSound(null, event.getPos(), SoundEvents.CANDLE_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+		level.setBlockAndUpdate(event.getPos(), newBlock.defaultBlockState()
+				.setValue(AbstractSkullCandleBlock.LIGHTING, LightableBlock.Lighting.NONE)
+				.setValue(WallSkullCandleBlock.FACING, level.getBlockState(event.getPos()).getValue(WallSkullBlock.FACING)));
+		level.setBlockEntity(new SkullCandleBlockEntity(event.getPos(),
+				newBlock.defaultBlockState()
+						.setValue(AbstractSkullCandleBlock.LIGHTING, LightableBlock.Lighting.NONE)
+						.setValue(WallSkullCandleBlock.FACING, level.getBlockState(event.getPos()).getValue(WallSkullBlock.FACING)),
+				AbstractSkullCandleBlock.candleToCandleColor(event.getItemStack().getItem()).getValue(), 1));
+		if (level.getBlockEntity(event.getPos()) instanceof SkullCandleBlockEntity sc) sc.setOwner(profile);
+	}
+
+	/**
+	 * Add up the number of armor pieces the player is wearing (either fiery or yeti)
+	 */
+	public static int getGearCoverage(LivingEntity entity, boolean yeti) {
+		int amount = 0;
+
+		for (ItemStack armor : entity.getArmorSlots()) {
+			if (!armor.isEmpty() && (yeti ? armor.getItem() instanceof YetiArmorItem : armor.getItem() instanceof FieryArmorItem)) {
+				amount++;
+			}
+		}
+
+		return amount;
+	}
+
+	/**
+	 * Endermen do not pick up blocks in the Twilight Forest (4.8). The vanilla take-block goal is swapped for a wrapper
+	 * that refuses to start in the Twilight Forest dimension type, so endermen can still place a block they carry in.
+	 */
+	@SubscribeEvent
+	public static void stopEndermenFromGrabbingBlocksInTF(EntityJoinLevelEvent event) {
+		if (event.getEntity() instanceof EnderMan enderMan) {
+			enderMan.goalSelector.getAvailableGoals().stream()
+					.filter(g -> g.getGoal() instanceof EnderMan.EndermanTakeBlockGoal && !(g.getGoal() instanceof ExtendedEndermanTakeBlockGoal))
+					.findAny()
+					.ifPresent(g -> {
+						enderMan.goalSelector.removeGoal(g.getGoal());
+						enderMan.goalSelector.addGoal(g.getPriority(), new ExtendedEndermanTakeBlockGoal((EnderMan.EndermanTakeBlockGoal) g.getGoal(), enderMan));
+					});
+		}
+	}
+
+	/**
+	 * A Lich Tower zombie that has broken free of its lead loses its leash pathing override the next time it joins a level, so a lead that a
+	 * player ties to it later pulls it back like any other mob (TF 4.8 handleLeashPathingOverrides, 2c9cbe869). 4.8 keeps the override while
+	 * Leashable#mayBeLeashed holds: the mob is tied to a holder, or still holds the lead it was saved with, which 1.20.1 restores on its first
+	 * tick from leashInfoTag.
+	 */
+	@SubscribeEvent
+	public static void handleLeashPathingOverrides(EntityJoinLevelEvent event) {
+		if (!(event.getEntity() instanceof PathfinderMob mob) || !mob.getPersistentData().contains(LichTowerPieces.LEASH_PATHFINDER_OVERRIDE))
+			return;
+
+		if (!mob.isLeashed() && mob.leashInfoTag == null) {
+			mob.getPersistentData().remove(LichTowerPieces.LEASH_PATHFINDER_OVERRIDE);
+		}
+	}
+
+	static class ExtendedEndermanTakeBlockGoal extends EnderMan.EndermanTakeBlockGoal {
+
+		private final EnderMan.EndermanTakeBlockGoal delegate;
+		private final EnderMan enderman;
+
+		public ExtendedEndermanTakeBlockGoal(EnderMan.EndermanTakeBlockGoal delegate, EnderMan enderman) {
+			super(enderman);
+			this.delegate = delegate;
+			this.enderman = enderman;
+		}
+
+		@Override
+		public boolean canUse() {
+			return this.delegate.canUse() && !this.enderman.level().dimensionTypeRegistration().is(TFDimensionSettings.TWILIGHT_DIM_TYPE);
+		}
+
+		@Override
+		public void tick() {
+			this.delegate.tick();
+		}
+	}
+
+	@SubscribeEvent
+	public static void onLivingJumpEvent(LivingEvent.LivingJumpEvent event) {
+		LivingEntity living = event.getEntity();
+		if (living != null && living.level().isClientSide() && !living.isSpectator() && living.level().getBlockState(living.getOnPos()).getBlock() instanceof CloudBlock) {
+			for (int i = 0; i < 12; i++) CloudBlock.addEntityMovementParticles(living.level(), living.getOnPos(), living, true);
+		}
+	}
+
+	// Multiplayer-inclusive boss fights, backported from TF 4.8 (#1987, EntityEvents.adjustEntityHealthInMultiplayerFights)
+	@SubscribeEvent
+	public static void adjustEntityHealthInMultiplayerFights(MobSpawnEvent.FinalizeSpawn event) {
+		Mob mob = event.getEntity();
+		if (mob.getType().is(EntityTagGenerator.MULTIPLAYER_INCLUSIVE_ENTITIES)) {
+			if (TFConfig.multiplayerFightAdjuster.adjustsHealth()) {
+				List<ServerPlayer> nearbyPlayers = event.getLevel().getEntitiesOfClass(ServerPlayer.class, mob.getBoundingBox().inflate(32, 10, 32), player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.and(EntitySelector.ENTITY_STILL_ALIVE).test(player));
+				AttributeInstance maxHealth = mob.getAttribute(Attributes.MAX_HEALTH);
+				// a mob can be finalized twice (e.g. by another mod), and adding the same modifier twice throws
+				if (nearbyPlayers.size() > 1 && maxHealth != null && maxHealth.getModifier(GROUP_HEALTH_BOOST_UUID) == null) {
+					double bonus = getHealthBasedOnDifficulty(event.getDifficulty().getDifficulty()) * (nearbyPlayers.size() - 1);
+					maxHealth.addPermanentModifier(new AttributeModifier(GROUP_HEALTH_BOOST_UUID, TwilightForestMod.prefix("group_health_boost").toString(), bonus, AttributeModifier.Operation.ADDITION));
+					// 4.8 only raises the maximum, so most bosses would start the fight missing the bonus. Grant it as actual health too.
+					mob.setHealth(mob.getHealth() + (float) bonus);
+				}
+			}
+		}
+	}
+
+	private static double getHealthBasedOnDifficulty(Difficulty difficulty) {
+		return switch (difficulty) {
+			case EASY -> 20.0D;
+			case NORMAL -> 40.0D;
+			case HARD -> 60.0D;
+			default -> 0.0D;
+		};
+	}
+
+	// 4.8 listens to LivingDamageEvent.Post. On 1.20.1 LivingDamageEvent fires right before the health is lowered, so listen last and
+	// skip cancelled events: every player whose damage goes through is counted, including the one landing the killing blow.
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void addQualifiedGroupPlayerIfNeeded(LivingDamageEvent event) {
+		LivingEntity living = event.getEntity();
+		if (!living.level().isClientSide() && living.getType().is(EntityTagGenerator.MULTIPLAYER_INCLUSIVE_ENTITIES) && event.getSource().getEntity() != null) {
+			living.getCapability(CapabilityList.MULTIPLAYER_FIGHT).ifPresent(data -> data.maybeAddQualifiedPlayer(event.getSource().getEntity()));
+		}
+	}
+
+	// Every player that took part gets the hurt_boss trigger, which the boss progression advancements accept
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void grantGroupAdvancementIfNeeded(LivingDeathEvent event) {
+		LivingEntity living = event.getEntity();
+		if (!living.level().isClientSide()) {
+			living.getCapability(CapabilityList.MULTIPLAYER_FIGHT).ifPresent(data -> data.grantGroupAdvancement(living));
+		}
+	}
+
+	@SubscribeEvent
+	public static void onAttackEvent(AttackEntityEvent event) {
+		// For clearing our Display text entities at the Final Castle Gazebo, there's no other way to remove them otherwise
+		// The tag distinguishes our Interaction entities from other Mods' utilization
+		if (event.getTarget().level() instanceof ServerLevel level && event.getTarget() instanceof Interaction interaction
+				&& interaction.getTags().contains(FinalCastleBossGazeboComponent.INTERACTION_TAG)) {
+			AABB bounds = interaction.getBoundingBox();
+			level.getEntities(interaction, bounds, e -> e instanceof Display).forEach(Entity::discard);
+			interaction.discard();
+		}
+	}
+
+	/**
+	 * Lich bombs neither destroy dropped items (such as the loot of a player who died in the fight) nor set off other
+	 * bombs (4.8 b4428ffda).
+	 */
+	@SubscribeEvent
+	public static void lichBombsDontBlowUpItems(ExplosionEvent.Detonate event) {
+		if (event.getExplosion().getDirectSourceEntity() instanceof LichBomb) {
+			event.getAffectedEntities().removeIf(entity -> entity instanceof ItemEntity || entity instanceof LichBomb);
+		}
+	}
+}

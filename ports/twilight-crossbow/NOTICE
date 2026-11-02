@@ -1,0 +1,57 @@
+Twilight CrossBow - Minecraft 1.20.1 / Forge 47 backport (SkyTekx)
+==================================================================
+
+This is a MODIFIED version of "Twilight CrossBow" by baguchi.
+
+  Upstream:         https://github.com/baguchi/TwilightCrossbow
+  Upstream commit:  00085635b09c2b3072dec3de7feb917685d1f9a9 ("ender crossbow", 2026-08-28),
+                    the 1.21.1-1.5.0 release plus the Ender Crossbow
+  Upstream license: MIT, Copyright (c) 2025 baguchi (see LICENSE, kept unchanged)
+
+Changes in this backport (version 1.5.0-1.20.1-skytekx.1):
+
+- Rewritten from Minecraft 1.21.1 / NeoForge 21.1 to Minecraft 1.20.1 / Forge 47, against the
+  SkyTekx Twilight Forest fork (twilightforest 4.3.2508-skytekx.1, ports/twilightforest).
+- Crossbow loading/shooting: 1.21 stores loaded ammo in the charged_projectiles data component and
+  shoots through overridable CrossbowItem methods. 1.20.1 keeps it in "Charged"/"ChargedProjectiles"
+  NBT and shoots through private static methods, so the items share a base class with an instance
+  copy of the vanilla pipeline, and a mixin on CrossbowItem#performShooting routes them to it.
+- Data: NeoForge add_table loot modifier -> a Forge global loot modifier with the same JSON shape;
+  1.20.1 folder names (recipes/, loot_tables/); recipe results use {"item": ...}; 1.21-only
+  enchantable item tags are dropped (1.20.1 enchantability follows `instanceof CrossbowItem`) and
+  the crossbows are tagged forge:tools/crossbows instead.
+- Fixes to upstream behaviour:
+  * the Crossbow Upgrade Smithing Template loot never generated upstream (wrong loot table id,
+    wrong table name, invalid item id); it now has a 25% chance in Aurora Palace cache chests
+    (twilightforest:chests/aurora_cache), as intended;
+  * the Ice Firework's freezing blast was dead code upstream (a private explode() cannot override
+    the private vanilla one); a mixin on FireworkRocketEntity#explode now runs it;
+  * the death messages overrode the vanilla "death.attack.fireworks" keys for every firework;
+    they now use the ice_firework damage type's own message id;
+  * the Ender Crossbow also gets the loaded-crossbow first-person pose.
+- Not ported: the unreleased Knight Crossbow (registration commented out upstream) and its
+  getChargeDuration mixin; the empty config-screen client entry point.
+
+Licenses
+--------
+
+- Code and data (Java sources, JSON models, recipes, loot tables, tags, lang files): MIT,
+  Copyright (c) 2025 baguchi. The text ships in this jar as LICENSE_twilight_crossbow.
+- Assets: the 24 crossbow item textures in assets/twilight_crossbow/textures/item/
+
+    {triple,seeker,ice,ender}_crossbow.png
+    {triple,seeker,ice,ender}_crossbow_pulling_0.png, _pulling_1.png, _pulling_2.png
+    {triple,seeker,ice,ender}_crossbow_arrow.png
+    {triple,seeker,ice,ender}_crossbow_firework.png
+
+  are adapted by baguchi from The Twilight Forest's bow textures (triple_bow, seeker_bow,
+  ice_bow_clear / ice_bow_solid and ender_bow, with their pulling frames) by TeamTwilight
+  (https://github.com/TeamTwilight/twilightforest). Those textures are licensed under Creative
+  Commons Attribution-NonCommercial-ShareAlike 4.0 International
+  (https://creativecommons.org/licenses/by-nc-sa/4.0/). baguchi's adaptations (the bow limbs
+  combined with a new crossbow stock and loaded-ammo overlays) are therefore distributed under
+  CC BY-NC-SA 4.0 as well, not under MIT, and may not be used commercially. The text ships in this
+  jar as ASSET_LICENSE_twilight_crossbow. This backport did not change these 24 files: they are
+  byte-identical to upstream commit 00085635.
+  crossbow_upgrade_smithing_template.png and empty_slot_bow.png are not derived from Twilight Forest
+  textures and fall under the MIT licence with the rest of the mod.

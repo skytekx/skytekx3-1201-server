@@ -1,0 +1,1287 @@
+package twilightforest.data;
+
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.CompoundIngredient;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.DifferenceIngredient;
+import net.minecraftforge.registries.ForgeRegistries;
+import twilightforest.TwilightForestMod;
+import twilightforest.data.custom.DryingRecipeBuilder;
+import twilightforest.data.custom.NoSmithingTemplateRecipeBuilder;
+import twilightforest.data.custom.ScepterRecipeBuilder;
+import twilightforest.data.custom.TravellersGearModifierRecipeBuilder;
+import twilightforest.data.custom.UncraftingGenerator;
+import twilightforest.data.helpers.CraftingDataHelper;
+import twilightforest.data.tags.ItemTagGenerator;
+import twilightforest.init.TFBlocks;
+import twilightforest.init.TFItems;
+import twilightforest.init.TFRecipes;
+import twilightforest.init.custom.TravellersModifiersManager;
+import twilightforest.item.recipe.UncraftingTableCondition;
+import twilightforest.util.ArmorUtil;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+public class CraftingGenerator extends CraftingDataHelper {
+	private static final String[] CORAL_SPECIES = {"tube", "brain", "bubble", "fire", "horn"};
+	private static final String[] CORAL_TYPES = {"", "_block", "_fan"};
+
+	public CraftingGenerator(PackOutput output) {
+		super(output);
+	}
+
+	@Override
+	protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+		StonecuttingGenerator.buildRecipes(consumer);
+		UncraftingGenerator.buildRecipes(consumer);
+
+		// The Recipe Builder currently doesn't support enchantment-resulting recipes, those must be manually created.
+		blockCompressionRecipes(consumer);
+		equipmentRecipes(consumer);
+		emptyMapRecipes(consumer);
+		woodRecipes(consumer);
+		fieryConversions(consumer);
+		dryingRecipes(consumer);
+		travellersGearRecipes(consumer);
+		travellersModifierRecipes(consumer);
+
+		nagastoneRecipes(consumer);
+		darkTowerRecipes(consumer);
+		castleRecipes(consumer);
+
+		bannerPattern(consumer, "naga_banner_pattern", TFBlocks.NAGA_TROPHY, TFItems.NAGA_BANNER_PATTERN);
+		bannerPattern(consumer, "lich_banner_pattern", TFBlocks.LICH_TROPHY, TFItems.LICH_BANNER_PATTERN);
+		bannerPattern(consumer, "minoshroom_banner_pattern", TFBlocks.MINOSHROOM_TROPHY, TFItems.MINOSHROOM_BANNER_PATTERN);
+		bannerPattern(consumer, "hydra_banner_pattern", TFBlocks.HYDRA_TROPHY, TFItems.HYDRA_BANNER_PATTERN);
+		bannerPattern(consumer, "knight_phantom_banner_pattern", TFBlocks.KNIGHT_PHANTOM_TROPHY, TFItems.KNIGHT_PHANTOM_BANNER_PATTERN);
+		bannerPattern(consumer, "ur_ghast_banner_pattern", TFBlocks.UR_GHAST_TROPHY, TFItems.UR_GHAST_BANNER_PATTERN);
+		bannerPattern(consumer, "alpha_yeti_banner_pattern", TFBlocks.ALPHA_YETI_TROPHY, TFItems.ALPHA_YETI_BANNER_PATTERN);
+		bannerPattern(consumer, "snow_queen_banner_pattern", TFBlocks.SNOW_QUEEN_TROPHY, TFItems.SNOW_QUEEN_BANNER_PATTERN);
+		bannerPattern(consumer, "questing_ram_banner_pattern", TFBlocks.QUEST_RAM_TROPHY, TFItems.QUEST_RAM_BANNER_PATTERN);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.MOSS_BLOCK)
+				.pattern("mmm")
+				.pattern("mtm")
+				.pattern("mmm")
+				.define('m', Ingredient.of(TFBlocks.MOSS_PATCH.get()))
+				.define('t', Ingredient.of(TFItems.TRANSFORMATION_POWDER.get()))
+				.unlockedBy("has_item", has(TFItems.TRANSFORMATION_POWDER.get()))
+				.save(consumer, TwilightForestMod.prefix("tf_moss_to_vanilla"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.MOSS_PATCH.get(), 8)
+				.requires(Ingredient.of(Items.MOSS_BLOCK))
+				.requires(Ingredient.of(TFItems.TRANSFORMATION_POWDER.get()))
+				.unlockedBy("has_item", has(TFItems.TRANSFORMATION_POWDER.get()))
+				.save(consumer, TwilightForestMod.prefix("vanilla_to_tf_moss"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.HUGE_LILY_PAD.get())
+				.requires(Ingredient.of(Blocks.LILY_PAD), 4)
+				.requires(Ingredient.of(TFItems.TRANSFORMATION_POWDER.get()))
+				.unlockedBy("has_item", has(TFItems.TRANSFORMATION_POWDER.get()))
+				.save(consumer, TwilightForestMod.prefix("vanilla_to_tf_lilypad"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, Blocks.LILY_PAD, 4)
+				.requires(Ingredient.of(TFBlocks.HUGE_LILY_PAD.get()))
+				.requires(Ingredient.of(TFItems.TRANSFORMATION_POWDER.get()))
+				.unlockedBy("has_item", has(TFItems.TRANSFORMATION_POWDER.get()))
+				.save(consumer, TwilightForestMod.prefix("tf_to_vanilla_lilypad"));
+
+		slabBlock(consumer, "aurora_slab", TFBlocks.AURORA_SLAB, TFBlocks.AURORA_BLOCK);
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.AURORA_PILLAR.get(), 2)
+				.pattern("#")
+				.pattern("#")
+				.define('#', Ingredient.of(TFBlocks.AURORA_BLOCK.get()))
+				.unlockedBy("has_slab", has(TFBlocks.AURORA_SLAB.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.IRON_LADDER.get(), 3)
+				.pattern("-#-")
+				.pattern("-#-")
+				.define('#', Ingredient.of(Blocks.IRON_BARS))
+				.define('-', Tags.Items.NUGGETS_IRON)
+				.unlockedBy("has_iron_bars", has(Blocks.IRON_BARS))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.ROPE.get(), 8)
+				.pattern("#")
+				.pattern("#")
+				.pattern("#")
+				.define('#', Ingredient.of(TFBlocks.ROOT_STRAND.get()))
+				.unlockedBy("has_root_strand", has(TFBlocks.ROOT_STRAND.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.CANOPY_WINDOW.get(), 4)
+				.pattern("GPG")
+				.pattern("PPP")
+				.pattern("GPG")
+				.define('G', Tags.Items.GLASS)
+				.define('P', Ingredient.of(TFBlocks.CANOPY_PLANKS.get()))
+				.unlockedBy("has_planks", has(TFBlocks.CANOPY_PLANKS.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.CANOPY_WINDOW_PANE.get(), 16)
+				.pattern("GGG")
+				.pattern("GGG")
+				.define('G', Ingredient.of(TFBlocks.CANOPY_WINDOW.get()))
+				.unlockedBy("has_windows", has(TFBlocks.CANOPY_WINDOW.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.WROUGHT_IRON_FENCE.get(), 3)
+				.pattern("###")
+				.pattern("###")
+				.define('#', ItemTagGenerator.WROUGHT_IRON_INGOTS)
+				.unlockedBy("has_wrought_iron", has(ItemTagGenerator.WROUGHT_IRON_INGOTS))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.CANDELABRA.get(), 2)
+				.pattern("###")
+				.pattern(" # ")
+				.define('#', ItemTagGenerator.WROUGHT_IRON_INGOTS)
+				.unlockedBy("has_wrought_iron", has(ItemTagGenerator.WROUGHT_IRON_INGOTS))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFItems.MASON_JAR.get(), 4)
+				.pattern("GLG")
+				.pattern("G G")
+				.pattern("GGG")
+				.define('G', Ingredient.of(Items.GLASS))
+				.define('L', Ingredient.of(TFBlocks.TWILIGHT_OAK_LOG.get()))
+				.unlockedBy("has_tf_oak", has(TFBlocks.TWILIGHT_OAK_LOG.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.FIREFLY_JAR.get())
+				.requires(Ingredient.of(TFBlocks.FIREFLY.get()))
+				.requires(Ingredient.of(TFItems.MASON_JAR.get()))
+				.unlockedBy("has_item", has(TFBlocks.FIREFLY.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.FIREFLY_SPAWNER.get())
+				.requires(Ingredient.of(TFBlocks.FIREFLY_JAR.get()))
+				.requires(Ingredient.of(TFBlocks.FIREFLY.get()))
+				.requires(Ingredient.of(Blocks.POPPY))
+				.unlockedBy("has_jar", has(TFBlocks.FIREFLY_JAR.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TFBlocks.CICADA_JAR.get())
+				.requires(Ingredient.of(TFBlocks.CICADA.get()))
+				.requires(Ingredient.of(TFItems.MASON_JAR.get()))
+				.unlockedBy("has_item", has(TFBlocks.CICADA.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.MAGENTA_DYE)
+				.requires(Ingredient.of(TFBlocks.HUGE_WATER_LILY.get()))
+				.unlockedBy("has_item", has(TFBlocks.HUGE_WATER_LILY.get()))
+				.save(consumer, TwilightForestMod.prefix("waterlily_to_magenta"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.RED_DYE)
+				.requires(Ingredient.of(TFBlocks.THORN_ROSE.get()))
+				.unlockedBy("has_item", has(TFBlocks.THORN_ROSE.get()))
+				.save(consumer, TwilightForestMod.prefix("thorn_rose_to_red"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.STICK)
+				.requires(Ingredient.of(TFBlocks.ROOT_STRAND.get()))
+				.unlockedBy("has_item", has(TFBlocks.ROOT_STRAND.get()))
+				.group("sticks")
+				.save(consumer, TwilightForestMod.prefix("root_stick"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Blocks.TORCH, 5)
+				.pattern("∴")
+				.pattern("|")
+				.define('∴', Ingredient.of(TFItems.TORCHBERRIES.get()))
+				.define('|', Tags.Items.RODS_WOODEN)
+				.unlockedBy("has_item", has(TFItems.TORCHBERRIES.get()))
+				.save(consumer, TwilightForestMod.prefix("berry_torch"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TFItems.BERRY_MEDLEY.get())
+				.requires(Items.BOWL)
+				.requires(TFItems.RASPBERRY.get())
+				.requires(TFItems.BLUEBERRY.get())
+				.requires(TFItems.BLACKBERRY.get())
+				.requires(TFItems.MALOBERRY.get())
+				.unlockedBy("has_raspberry", has(TFItems.RASPBERRY.get()))
+				.unlockedBy("has_blueberry", has(TFItems.BLUEBERRY.get()))
+				.unlockedBy("has_blackberry", has(TFItems.BLACKBERRY.get()))
+				.unlockedBy("has_maloberry", has(TFItems.MALOBERRY.get()))
+				.save(consumer);
+
+		ConditionalRecipe.builder().addCondition(UncraftingTableCondition.INSTANCE).addRecipe(
+						ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.UNCRAFTING_TABLE.get())
+								.pattern("###")
+								.pattern("#X#")
+								.pattern("###")
+								.define('#', Blocks.CRAFTING_TABLE)
+								.define('X', TFItems.MAZE_MAP_FOCUS.get())
+								.unlockedBy("has_uncrafting_table", has(TFBlocks.UNCRAFTING_TABLE.get()))
+								::save)
+				.generateAdvancement(TwilightForestMod.prefix("recipes/decorations/uncrafting_table"))
+				.build(consumer, TwilightForestMod.prefix("uncrafting_table"));
+
+		// 4.8 passes a water bottle stack to Ingredient.of, which keeps only the item; the water check is what it intends
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TFItems.MOSS_SOUP.get())
+				.requires(TFBlocks.MOSS_PATCH.get())
+				.requires(Items.BOWL)
+				.requires(potion(Potions.WATER))
+				.unlockedBy("has_moss", has(TFBlocks.MOSS_PATCH.get()))
+				.save(consumer);
+
+		cookingRecipes(consumer, "smelted", RecipeSerializer.SMELTING_RECIPE, 200);
+		cookingRecipes(consumer, "smoked", RecipeSerializer.SMOKING_RECIPE, 100);
+		cookingRecipes(consumer, "campfired", RecipeSerializer.CAMPFIRE_COOKING_RECIPE, 600);
+
+		ingotRecipes(consumer, "smelted", RecipeSerializer.SMELTING_RECIPE, 200);
+		ingotRecipes(consumer, "blasted", RecipeSerializer.BLASTING_RECIPE, 100);
+
+		oreberryRecipes(consumer, "smelted", RecipeSerializer.SMELTING_RECIPE, 200);
+		oreberryRecipes(consumer, "blasted", RecipeSerializer.BLASTING_RECIPE, 100);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.COPPER_INGOT)
+				.requires(Ingredient.of(ItemTagGenerator.NUGGETS_COPPER), 9)
+				.unlockedBy("has_item", has(ItemTagGenerator.NUGGETS_COPPER))
+				.save(consumer, TwilightForestMod.prefix("copper_nuggets_to_ingot"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.COPPER_NUGGET.get(), 9)
+				.requires(Ingredient.of(Tags.Items.INGOTS_COPPER))
+				.unlockedBy("has_item", has(Tags.Items.INGOTS_COPPER))
+				.save(consumer, TwilightForestMod.prefix("copper_ingot_to_nuggets"));
+
+		crackedWoodRecipes(consumer);
+		crackedStoneRecipes(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.EMPTY_CANOPY_BOOKSHELF.get())
+				.pattern("---")
+				.pattern("   ")
+				.pattern("---")
+				.define('-', TFBlocks.CANOPY_SLAB.get())
+				.unlockedBy("has_item", has(TFBlocks.CANOPY_SLAB.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.CANOPY_BOOKSHELF.get())
+				.pattern("---")
+				.pattern("B B")
+				.pattern("---")
+				.define('-', TFBlocks.CANOPY_PLANKS.get())
+				.define('B', Items.BOOK)
+				.unlockedBy("has_item", has(TFBlocks.CANOPY_PLANKS.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.ARMOR_SHARD_CLUSTER.get())
+				.requires(Ingredient.of(TFItems.ARMOR_SHARD.get()), 9)
+				.unlockedBy("has_item", has(TFItems.ARMOR_SHARD.get()))
+				.save(consumer, TwilightForestMod.prefix("material/" + TFItems.ARMOR_SHARD_CLUSTER.getId().getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MOSSY_UNDERBRICK.get(), 1)
+				.requires(Ingredient.of(Blocks.VINE, Blocks.MOSS_BLOCK))
+				.requires(Ingredient.of(TFBlocks.UNDERBRICK.get()))
+				.unlockedBy("has_item", has(TFBlocks.UNDERBRICK.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MOSSY_MAZESTONE.get(), 1)
+				.requires(Ingredient.of(Blocks.VINE, Blocks.MOSS_BLOCK))
+				.requires(Ingredient.of(TFBlocks.MAZESTONE_BRICK.get()))
+				.unlockedBy("has_item", has(TFBlocks.MAZESTONE_BRICK.get()))
+				.save(consumer, TwilightForestMod.prefix("maze_stone/mossy_mazestone"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.CARMINITE.get())
+				.requires(Ingredient.of(TFItems.BORER_ESSENCE.get()))
+				.requires(Tags.Items.DUSTS_REDSTONE)
+				.requires(Ingredient.of(TFItems.BORER_ESSENCE.get()))
+				.requires(Tags.Items.DUSTS_REDSTONE)
+				.requires(Ingredient.of(Items.GHAST_TEAR))
+				.requires(Tags.Items.DUSTS_REDSTONE)
+				.requires(Ingredient.of(TFItems.BORER_ESSENCE.get()))
+				.requires(Tags.Items.DUSTS_REDSTONE)
+				.requires(Ingredient.of(TFItems.BORER_ESSENCE.get()))
+				.unlockedBy("has_item", has(TFItems.BORER_ESSENCE.get()))
+				.save(consumer, TwilightForestMod.prefix("material/" + TFItems.CARMINITE.getId().getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.RAW_IRONWOOD.get(), 2)
+				.requires(Ingredient.of(TFItems.LIVEROOT.get()))
+				.requires(Ingredient.of(Items.RAW_IRON))
+				.requires(Tags.Items.NUGGETS_GOLD)
+				.unlockedBy("has_item", has(TFItems.LIVEROOT.get()))
+				.save(consumer, TwilightForestMod.prefix("material/" + TFItems.RAW_IRONWOOD.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.RAINY_CLOUD.get(), 8)
+				.pattern("ccc")
+				.pattern("cbc")
+				.pattern("ccc")
+				.define('c', Ingredient.of(TFBlocks.FLUFFY_CLOUD.get()))
+				.define('b', Ingredient.of(Items.WATER_BUCKET))
+				.unlockedBy("has_item", has(TFBlocks.FLUFFY_CLOUD.get()))
+				.save(consumer, TwilightForestMod.prefix("rainy_cloud"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.SNOWY_CLOUD.get(), 8)
+				.pattern("ccc")
+				.pattern("cbc")
+				.pattern("ccc")
+				.define('c', Ingredient.of(TFBlocks.FLUFFY_CLOUD.get()))
+				.define('b', Ingredient.of(Items.POWDER_SNOW_BUCKET))
+				.unlockedBy("has_item", has(TFBlocks.FLUFFY_CLOUD.get()))
+				.save(consumer, TwilightForestMod.prefix("snowy_cloud"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.MYSTIC_CROWN.get(), 1)
+				.pattern("ttt")
+				.pattern("t t")
+				.pattern("ttt")
+				.define('t', Ingredient.of(TFItems.CROWN_SPLINTER.get()))
+				.unlockedBy("has_item", has(TFItems.CROWN_SPLINTER.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.LEAD, 2)
+				.define('~', Items.STRING)
+				.define('O', TFItems.MAZE_SLIME_BALL.get())
+				.pattern("~~ ")
+				.pattern("~O ")
+				.pattern("  ~")
+				.unlockedBy("has_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer, TwilightForestMod.prefix("lead_maze_ver"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BREWING, Items.MAGMA_CREAM)
+				.requires(Items.BLAZE_POWDER)
+				.requires(TFItems.MAZE_SLIME_BALL.get())
+				.unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER))
+				.save(consumer, TwilightForestMod.prefix("magma_cream_maze_ver"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.STICKY_PISTON)
+				.define('P', Blocks.PISTON)
+				.define('S', TFItems.MAZE_SLIME_BALL.get())
+				.pattern("S")
+				.pattern("P")
+				.unlockedBy("has_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer, TwilightForestMod.prefix("sticky_piston_maze_ver"));
+	}
+
+	private void dryingRecipes(Consumer<FinishedRecipe> consumer) {
+		DryingRecipeBuilder.drying(Ingredient.of(ItemTags.SAPLINGS), new ItemStack(Items.DEAD_BUSH), 6)
+				.unlockedBy("has_sapling", has(ItemTags.SAPLINGS))
+				.save(consumer, TwilightForestMod.prefix("drying/sapling_to_dead_bush"));
+
+		DryingRecipeBuilder.drying(Items.MUD, Items.CLAY, 6)
+				.unlockedBy("has_mud", has(Items.MUD))
+				.save(consumer, TwilightForestMod.prefix("drying/mud_to_clay"));
+
+		DryingRecipeBuilder.drying(Items.WET_SPONGE, Items.SPONGE, 2)
+				.unlockedBy("has_wet_sponge", has(Items.WET_SPONGE))
+				.save(consumer, TwilightForestMod.prefix("drying/sponge"));
+
+		DryingRecipeBuilder.drying(Items.KELP, Items.DRIED_KELP, 3)
+				.unlockedBy("has_kelp", has(Items.KELP))
+				.save(consumer, TwilightForestMod.prefix("drying/kelp"));
+
+		DryingRecipeBuilder.drying(Items.ROTTEN_FLESH, TFItems.MONSTER_JERKY.get())
+				.unlockedBy("has_meat", has(Items.ROTTEN_FLESH))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.BEEF, TFItems.BEEF_JERKY.get())
+				.unlockedBy("has_meat", has(Items.BEEF))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.CHICKEN, TFItems.CHICKEN_JERKY.get())
+				.unlockedBy("has_meat", has(Items.CHICKEN))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.PORKCHOP, TFItems.PORK_JERKY.get())
+				.unlockedBy("has_meat", has(Items.PORKCHOP))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.MUTTON, TFItems.MUTTON_JERKY.get())
+				.unlockedBy("has_meat", has(Items.MUTTON))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.RABBIT, TFItems.RABBIT_JERKY.get())
+				.unlockedBy("has_meat", has(Items.RABBIT))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.COD, TFItems.COD_JERKY.get())
+				.unlockedBy("has_meat", has(Items.COD))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.SALMON, TFItems.SALMON_JERKY.get())
+				.unlockedBy("has_meat", has(Items.SALMON))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.TROPICAL_FISH, TFItems.TROPICAL_FISH_JERKY.get())
+				.unlockedBy("has_meat", has(Items.TROPICAL_FISH))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.PUFFERFISH, TFItems.FUGU_JERKY.get())
+				.unlockedBy("has_meat", has(Items.PUFFERFISH))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.RAW_VENISON.get(), TFItems.VENISON_JERKY.get())
+				.unlockedBy("has_meat", has(TFItems.RAW_VENISON.get()))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.RAW_MEEF.get(), TFItems.MEEF_JERKY.get())
+				.unlockedBy("has_meat", has(TFItems.RAW_MEEF.get()))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.SLIME_BALL, TFItems.GELATINOUS_SLIME_DROP.get())
+				.unlockedBy("has_slime_ball", has(Items.SLIME_BALL))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.MAZE_SLIME_BALL.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get())
+				.unlockedBy("has_maze_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.TREATED_LEATHER.get(), TFItems.TANNED_LEATHER.get())
+				.unlockedBy("has_treated", has(TFItems.TREATED_LEATHER.get()))
+				.save(consumer);
+
+		dryingRackCoralRecipes(consumer);
+
+		// no unlock criterion on purpose: Stale Bread is a hidden joke recipe (DryingRecipeBuilder exempts its id)
+		DryingRecipeBuilder.drying(Items.BREAD, TFItems.STALE_BREAD.get()).save(consumer);
+	}
+
+	private void dryingRackCoralRecipes(Consumer<FinishedRecipe> consumer) {
+		for (String name : CORAL_SPECIES) {
+			for (String type : CORAL_TYPES) {
+				registerCoral(consumer, name + "_coral" + type);
+			}
+		}
+	}
+
+	private void registerCoral(Consumer<FinishedRecipe> consumer, String coral) {
+		Item living = ForgeRegistries.ITEMS.getValue(new ResourceLocation(coral));
+		Item dead = ForgeRegistries.ITEMS.getValue(new ResourceLocation("dead_" + coral));
+		// saved under the default id (minecraft:dead_<coral>), as in 4.8; vanilla 1.20.1 has no recipe by that id
+		DryingRecipeBuilder.drying(living, dead, 1 / 30F)
+				.unlockedBy("has_coral", has(living))
+				.save(consumer);
+	}
+
+	private void darkTowerRecipes(Consumer<FinishedRecipe> consumer) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TFBlocks.ENCASED_FIRE_JET.get())
+				.pattern("#∴#")
+				.pattern("∴^∴")
+				.pattern("uuu")
+				.define('∴', Tags.Items.DUSTS_REDSTONE)
+				.define('#', Ingredient.of(TFBlocks.ENCASED_TOWERWOOD.get()))
+				.define('^', Ingredient.of(TFBlocks.FIRE_JET.get()))
+				.define('u', Ingredient.of(Items.LAVA_BUCKET))
+				.unlockedBy("has_item", has(TFBlocks.FIRE_JET.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TFBlocks.ENCASED_SMOKER.get())
+				.pattern("#∴#")
+				.pattern("∴^∴")
+				.pattern("#∴#")
+				.define('∴', Tags.Items.DUSTS_REDSTONE)
+				.define('#', Ingredient.of(TFBlocks.ENCASED_TOWERWOOD.get()))
+				.define('^', Ingredient.of(TFBlocks.SMOKER.get()))
+				.unlockedBy("has_item", has(TFBlocks.SMOKER.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TFBlocks.CARMINITE_BUILDER.get())
+				.pattern("#6#")
+				.pattern("6o6")
+				.pattern("#6#")
+				.define('6', ItemTagGenerator.CARMINITE_GEMS)
+				.define('#', Ingredient.of(TFBlocks.ENCASED_TOWERWOOD.get()))
+				.define('o', Ingredient.of(Blocks.DISPENSER))
+				.unlockedBy("has_item", has(ItemTagGenerator.CARMINITE_GEMS))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TFBlocks.CARMINITE_REACTOR.get())
+				.pattern("#6#")
+				.pattern("6%6")
+				.pattern("#6#")
+				.define('6', ItemTagGenerator.CARMINITE_GEMS)
+				.define('#', Ingredient.of(TFBlocks.ENCASED_TOWERWOOD.get()))
+				.define('%', Tags.Items.ORES_REDSTONE)
+				.unlockedBy("has_item", has(ItemTagGenerator.CARMINITE_GEMS))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TFBlocks.REAPPEARING_BLOCK.get(), 2)
+				.pattern("#∴#")
+				.pattern("∴6∴")
+				.pattern("#∴#")
+				.define('∴', Tags.Items.DUSTS_REDSTONE)
+				.define('#', Ingredient.of(TFBlocks.ENCASED_TOWERWOOD.get()))
+				.define('6', ItemTagGenerator.CARMINITE_GEMS)
+				.unlockedBy("has_item", has(TFBlocks.REAPPEARING_BLOCK.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TFBlocks.VANISHING_BLOCK.get(), 8)
+				.pattern("#w#")
+				.pattern("w6w")
+				.pattern("#w#")
+				.define('w', ItemTagGenerator.TOWERWOOD)
+				.define('#', Ingredient.of(TFBlocks.ENCASED_TOWERWOOD.get()))
+				.define('6', ItemTagGenerator.CARMINITE_GEMS)
+				.unlockedBy("has_item", has(TFBlocks.REAPPEARING_BLOCK.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MOSSY_TOWERWOOD.get())
+				.requires(Ingredient.of(TFBlocks.TOWERWOOD.get()))
+				.requires(Ingredient.of(Blocks.VINE, Blocks.MOSS_BLOCK))
+				.unlockedBy("has_item", has(TFBlocks.TOWERWOOD.get()))
+				.save(consumer, TwilightForestMod.prefix("wood/" + TFBlocks.MOSSY_TOWERWOOD.getId().getPath()));
+
+	}
+
+	private void travellersGearRecipes(Consumer<FinishedRecipe> consumer) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_GOGGLES.get())
+				.pattern("l l")
+				.pattern("plp")
+				.pattern("g g")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('p', Tags.Items.GLASS_PANES_COLORLESS)
+				.define('g', Tags.Items.INGOTS_GOLD)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_GOGGLES.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_VEST.get())
+				.pattern("l l")
+				.pattern("lwl")
+				.pattern("lwl")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('w', ItemTags.WOOL)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_VEST.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_WINGS.get())
+				.pattern("g g")
+				.pattern("ili")
+				.pattern("ici")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('g', Tags.Items.INGOTS_GOLD)
+				.define('i', Tags.Items.INGOTS_COPPER)
+				.define('c', ItemTagGenerator.CARMINITE_GEMS)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_WINGS.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_BOOTS.get())
+				.pattern("s s")
+				.pattern("l l")
+				.pattern("l l")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('s', Tags.Items.STRING)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_BOOTS.getId().getPath()));
+
+		// 4.8 d4d90e268: trapped chests are also in the wooden chest tag, keep them out of the belt
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_BELT.get())
+				.pattern("lll")
+				.pattern("ixi")
+				.pattern("lll")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('x', DifferenceIngredient.of(Ingredient.of(Tags.Items.CHESTS_WOODEN), Ingredient.of(Tags.Items.CHESTS_TRAPPED)))
+				.define('i', Tags.Items.NUGGETS_IRON)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_BELT.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_GLOVES.get())
+				.pattern("s s")
+				.pattern("l l")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('s', Tags.Items.STRING)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_GLOVES.getId().getPath()));
+	}
+
+	// 4.8 CraftingGenerator, the add_modifier_to_travellers_gear recipes. 4.8's c: tags are forge: tags here, its
+	// neoforge:components potion ingredients forge:partial_nbt ones
+	private void travellersModifierRecipes(Consumer<FinishedRecipe> consumer) {
+		Ingredient goggles = Ingredient.of(TFItems.TRAVELLERS_GOGGLES.get());
+		Ingredient vest = Ingredient.of(TFItems.TRAVELLERS_VEST.get());
+		Ingredient wings = Ingredient.of(TFItems.TRAVELLERS_WINGS.get());
+		Ingredient boots = Ingredient.of(TFItems.TRAVELLERS_BOOTS.get());
+		Ingredient swiftness = CompoundIngredient.of(potion(Potions.SWIFTNESS), potion(Potions.LONG_SWIFTNESS), potion(Potions.STRONG_SWIFTNESS));
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.RED_THREAD_VISION_MODIFIER,
+				Map.of('R', Ingredient.of(TFBlocks.RED_THREAD.get()), 'G', goggles),
+				" R ",
+				"RGR");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.PERFECT_DODGE_MODIFIER,
+				Map.of('E', Ingredient.of(Items.ENDER_EYE), 'P', Ingredient.of(Items.ENDER_PEARL), 'V', vest, 'S', Ingredient.of(Items.SUGAR)),
+				" E ",
+				"PVP",
+				" S ");
+
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.STEALTH_MODIFIER,
+				CompoundIngredient.of(potion(Potions.INVISIBILITY), potion(Potions.LONG_INVISIBILITY)),
+				Ingredient.of(Items.ENDER_EYE),
+				Ingredient.of(Items.SPIDER_EYE),
+				Ingredient.of(Items.GOLDEN_CARROT),
+				vest);
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.HASTE_MODIFIER,
+				Map.of('R', Ingredient.of(Items.REDSTONE_BLOCK), 'V', vest, 'O', Ingredient.of(Items.OBSIDIAN)),
+				"RRR",
+				"RVR",
+				"OOO");
+
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.ARROW_MAGNETISM_MODIFIER,
+				Ingredient.of(TFItems.EXANIMATE_ESSENCE.get()),
+				Ingredient.of(TFItems.ORE_MAGNET.get()),
+				Ingredient.of(TFItems.LIVEROOT.get()),
+				Ingredient.of(Items.CHICKEN),
+				vest);
+
+		// the bundle is experimental in 1.20.1; the Questing Ram reward still hands one out
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.EFFICIENT_EATER_MODIFIER,
+				Ingredient.of(TFItems.HYDRA_CHOP.get()),
+				Ingredient.of(TFItems.HYDRA_CHOP.get()),
+				Ingredient.of(TFItems.HYDRA_CHOP.get()),
+				Ingredient.of(Items.BUNDLE),
+				vest);
+
+		TravellersGearModifierRecipeBuilder.shapeless(consumer, TravellersModifiersManager.SWAP_HOTBAR_MODIFIER,
+				wings,
+				Ingredient.of(TFItems.TRAVELLERS_BELT.get()));
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.GRADUAL_GLIDE_MODIFIER,
+				Map.of('F', Ingredient.of(Items.FEATHER), 'C', Ingredient.of(Items.COBWEB), 'W', wings, 'E', Ingredient.of(TFItems.BORER_ESSENCE.get())),
+				"FCF",
+				"FWF",
+				"FEF");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.DOUBLE_JUMP_MODIFIER,
+				Map.of('L', CompoundIngredient.of(potion(Potions.LEAPING), potion(Potions.LONG_LEAPING), potion(Potions.STRONG_LEAPING)), 'S', Ingredient.of(Tags.Items.STRING), 'W', wings, 'P', Ingredient.of(Items.PISTON)),
+				" L ",
+				"SWS",
+				"P P");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AGILE_RANGER_MODIFIER,
+				Map.of('P', swiftness, 'H', Ingredient.of(Items.RABBIT_HIDE), 'W', wings, 'F', Ingredient.of(TFItems.RAVEN_FEATHER.get())),
+				"FPF",
+				"HWH");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.SIDESTEP_MODIFIER,
+				Map.of('S', Ingredient.of(Tags.Items.STRING), 'B', Ingredient.of(Tags.Items.BONES), 'P', Ingredient.of(Items.PISTON), 'W', wings),
+				"SBS",
+				"PWP",
+				"SBS");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.WATER_WALK_MODIFIER,
+				Map.of('B', boots, 'S', Ingredient.of(TFItems.MAZE_SLIME_BALL.get()), 'L', Ingredient.of(Items.LILY_PAD)),
+				"SBS",
+				"L L");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.UNRESTRAINED_MODIFIER,
+				Map.of('b', boots, 'k', Ingredient.of(ItemTagGenerator.KNIGHTMETAL_INGOTS), 'n', Ingredient.of(Tags.Items.NUGGETS_IRON), 'i', Ingredient.of(Tags.Items.INGOTS_IRON)),
+				"n n",
+				"kbk",
+				"i i");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.SLIMY_SOLES_MODIFIER,
+				Map.of('W', Ingredient.of(Tags.Items.STRING), 'B', boots, 'S', Ingredient.of(Items.SLIME_BLOCK)),
+				"WBW",
+				"S S");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.STRAIGHT_AHEAD_MODIFIER,
+				Map.of('M', Ingredient.of(TFItems.RAW_MEEF.get()), 'P', swiftness, 'B', boots, 'H', Ingredient.of(Items.RABBIT_HIDE)),
+				"MPM",
+				"HBH");
+
+		// 4.8 lists the four pieces in one key and splits it into one recipe per piece (CartesianShapedRecipeBuilder)
+		for (Ingredient piece : List.of(goggles, vest, wings, boots)) {
+			TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AUTO_REPAIR_MODIFIER,
+					Map.of('E', Ingredient.of(Items.EXPERIENCE_BOTTLE), 'M', Ingredient.of(TFBlocks.MOSS_PATCH.get()), 'T', piece),
+					" E ",
+					"MTM",
+					" E ");
+
+			TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AUTO_REPAIR_MODIFIER, true,
+					Map.of('M', Ingredient.of(TFBlocks.MOSS_PATCH.get()), 'E', Ingredient.of(Items.EXPERIENCE_BOTTLE), 'T', piece),
+					" M ",
+					"ETE",
+					" M ");
+		}
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.ALL_NIGHT_GOGGLES_MODIFIER,
+				Map.of('M', Ingredient.of(Items.PHANTOM_MEMBRANE), 'Y', Ingredient.of(Items.YELLOW_STAINED_GLASS_PANE), 'G', goggles),
+				"M M",
+				"YGY",
+				"M M");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.ITEM_DISPLAY_MODIFIER,
+				Map.of('i', Ingredient.of(Items.ITEM_FRAME), 's', Ingredient.of(Tags.Items.RODS_WOODEN), 'g', goggles),
+				"sss",
+				"igi",
+				"sss");
+
+		TravellersGearModifierRecipeBuilder.shaped(consumer, TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER,
+				Map.of('b', Ingredient.of(Items.BAMBOO), 'w', CompoundIngredient.of(potion(Potions.WATER_BREATHING), potion(Potions.LONG_WATER_BREATHING)), 's', Ingredient.of(Tags.Items.SLIMEBALLS), 'g', goggles),
+				" b",
+				"gb",
+				"sw");
+	}
+
+	private void equipmentRecipes(Consumer<FinishedRecipe> consumer) {
+		bootsItem(consumer, "arctic_boots", TFItems.ARCTIC_BOOTS, ItemTagGenerator.ARCTIC_FUR);
+		chestplateItem(consumer, "arctic_chestplate", TFItems.ARCTIC_CHESTPLATE, ItemTagGenerator.ARCTIC_FUR);
+		helmetItem(consumer, "arctic_helmet", TFItems.ARCTIC_HELMET, ItemTagGenerator.ARCTIC_FUR);
+		leggingsItem(consumer, "arctic_leggings", TFItems.ARCTIC_LEGGINGS, ItemTagGenerator.ARCTIC_FUR);
+
+		bootsItem(consumer, "knightmetal_boots", TFItems.KNIGHTMETAL_BOOTS, ItemTagGenerator.KNIGHTMETAL_INGOTS);
+		chestplateItem(consumer, "knightmetal_chestplate", TFItems.KNIGHTMETAL_CHESTPLATE, ItemTagGenerator.KNIGHTMETAL_INGOTS);
+		helmetItem(consumer, "knightmetal_helmet", TFItems.KNIGHTMETAL_HELMET, ItemTagGenerator.KNIGHTMETAL_INGOTS);
+		leggingsItem(consumer, "knightmetal_leggings", TFItems.KNIGHTMETAL_LEGGINGS, ItemTagGenerator.KNIGHTMETAL_INGOTS);
+		pickaxeItem(consumer, "knightmetal_pickaxe", TFItems.KNIGHTMETAL_PICKAXE, ItemTagGenerator.KNIGHTMETAL_INGOTS, Tags.Items.RODS_WOODEN);
+		swordItem(consumer, "knightmetal_sword", TFItems.KNIGHTMETAL_SWORD, ItemTagGenerator.KNIGHTMETAL_INGOTS, Tags.Items.RODS_WOODEN);
+		axeItem(consumer, "knightmetal_axe", TFItems.KNIGHTMETAL_AXE, ItemTagGenerator.KNIGHTMETAL_INGOTS, Tags.Items.RODS_WOODEN);
+
+		// fiery gear shares a recipe-book group with its iron-gear + fiery vial conversion recipe
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.FIERY_BOOTS.get())
+				.pattern("# #")
+				.pattern("# #")
+				.define('#', ItemTagGenerator.FIERY_INGOTS)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_INGOTS))
+				.group("fiery_boots")
+				.save(consumer, locEquip("fiery_boots"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.FIERY_LEGGINGS.get())
+				.pattern("###")
+				.pattern("# #")
+				.pattern("# #")
+				.define('#', ItemTagGenerator.FIERY_INGOTS)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_INGOTS))
+				.group("fiery_leggings")
+				.save(consumer, locEquip("fiery_leggings"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.FIERY_CHESTPLATE.get())
+				.pattern("# #")
+				.pattern("###")
+				.pattern("###")
+				.define('#', ItemTagGenerator.FIERY_INGOTS)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_INGOTS))
+				.group("fiery_chestplate")
+				.save(consumer, locEquip("fiery_chestplate"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.FIERY_HELMET.get())
+				.pattern("###")
+				.pattern("# #")
+				.define('#', ItemTagGenerator.FIERY_INGOTS)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_INGOTS))
+				.group("fiery_helmet")
+				.save(consumer, locEquip("fiery_helmet"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TFItems.FIERY_PICKAXE.get())
+				.pattern("###")
+				.pattern(" X ")
+				.pattern(" X ")
+				.define('#', ItemTagGenerator.FIERY_INGOTS)
+				.define('X', Tags.Items.RODS_BLAZE)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_INGOTS))
+				.group("fiery_pickaxe")
+				.save(consumer, locEquip("fiery_pickaxe"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.FIERY_SWORD.get())
+				.pattern("#")
+				.pattern("#")
+				.pattern("X")
+				.define('#', ItemTagGenerator.FIERY_INGOTS)
+				.define('X', Tags.Items.RODS_BLAZE)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_INGOTS))
+				.group("fiery_sword")
+				.save(consumer, locEquip("fiery_sword"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TFItems.GIANT_PICKAXE.get())
+				.pattern("###")
+				.pattern(" X ")
+				.pattern(" X ")
+				.define('#', TFBlocks.GIANT_COBBLESTONE.get())
+				.define('X', TFBlocks.GIANT_LOG.get())
+				.unlockedBy("has_item", has(TFBlocks.GIANT_COBBLESTONE.get()))
+				.save(consumer, locEquip(TFItems.GIANT_PICKAXE.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TFItems.GIANT_SWORD.get())
+				.pattern("#")
+				.pattern("#")
+				.pattern("X")
+				.define('#', TFBlocks.GIANT_COBBLESTONE.get())
+				.define('X', TFBlocks.GIANT_LOG.get())
+				.unlockedBy("has_item", has(TFBlocks.GIANT_COBBLESTONE.get()))
+				.save(consumer, locEquip(TFItems.GIANT_SWORD.getId().getPath()));
+
+		charmRecipe(consumer, "charm_of_keeping_2", TFItems.CHARM_OF_KEEPING_2, TFItems.CHARM_OF_KEEPING_1);
+		charmRecipe(consumer, "charm_of_keeping_3", TFItems.CHARM_OF_KEEPING_3, TFItems.CHARM_OF_KEEPING_2);
+		charmRecipe(consumer, "charm_of_life_2", TFItems.CHARM_OF_LIFE_2, TFItems.CHARM_OF_LIFE_1);
+
+		SpecialRecipeBuilder.special(TFRecipes.MOONWORM_QUEEN_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("moonworm_queen_repair_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.CASKET_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("casket_repair_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.MAGIC_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("magic_map_cloning_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.MAZE_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("maze_map_cloning_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.EMPERORS_CLOTH_RECIPE.get()).save(consumer, TwilightForestMod.prefix("emperors_cloth_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.ESSENCE_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("essence_repair_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.TRAVELLERS_VEST_GLOVES_MERGE_RECIPE.get()).save(consumer, TwilightForestMod.prefix("travellers_vest_gloves_merge_recipe").toString());
+
+		NoSmithingTemplateRecipeBuilder
+				.noTemplate(Ingredient.of(ItemTagGenerator.EMPERORS_CLOTH_APPLICABLE), Ingredient.of(TFItems.EMPERORS_CLOTH.get()), RecipeCategory.MISC)
+				.attachData(tag -> tag.putBoolean(ArmorUtil.EMPERORS_CLOTH_TAG, true))
+				.unlocks("has_cloth", has(TFItems.EMPERORS_CLOTH.get()))
+				.save(consumer, TwilightForestMod.prefix("emperors_cloth_smithing"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Blocks.COBBLESTONE, 64)
+				.requires(TFBlocks.GIANT_COBBLESTONE.get())
+				.unlockedBy("has_item", has(TFBlocks.GIANT_COBBLESTONE.get()))
+				.save(consumer, TwilightForestMod.prefix(TFBlocks.GIANT_COBBLESTONE.getId().getPath() + "_to_" + ForgeRegistries.ITEMS.getKey(Items.COBBLESTONE).getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Blocks.OAK_LOG, 64)
+				.requires(TFBlocks.GIANT_LOG.get())
+				.unlockedBy("has_item", has(TFBlocks.GIANT_LOG.get()))
+				.save(consumer, TwilightForestMod.prefix(TFBlocks.GIANT_LOG.getId().getPath() + "_to_" + ForgeRegistries.ITEMS.getKey(Items.OAK_LOG).getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Blocks.OAK_LEAVES, 64)
+				.requires(TFBlocks.GIANT_LEAVES.get())
+				.unlockedBy("has_item", has(TFBlocks.GIANT_LEAVES.get()))
+				.save(consumer, TwilightForestMod.prefix(TFBlocks.GIANT_LEAVES.getId().getPath() + "_to_" + ForgeRegistries.ITEMS.getKey(Items.OAK_LEAVES).getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Blocks.OBSIDIAN, 64)
+				.requires(TFBlocks.GIANT_OBSIDIAN.get())
+				.unlockedBy("has_item", has(TFBlocks.GIANT_OBSIDIAN.get()))
+				.save(consumer, TwilightForestMod.prefix(TFBlocks.GIANT_OBSIDIAN.getId().getPath() + "_to_" + ForgeRegistries.ITEMS.getKey(Items.OBSIDIAN).getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TFItems.BLOCK_AND_CHAIN.get())
+				.requires(Ingredient.of(ItemTagGenerator.STORAGE_BLOCKS_KNIGHTMETAL))
+				.requires(Ingredient.of(ItemTagGenerator.KNIGHTMETAL_INGOTS), 3)
+				.requires(Ingredient.of(TFItems.KNIGHTMETAL_RING.get()))
+				.unlockedBy("has_block", has(ItemTagGenerator.STORAGE_BLOCKS_KNIGHTMETAL))
+				.unlockedBy("has_ingot", has(ItemTagGenerator.KNIGHTMETAL_INGOTS))
+				.unlockedBy("has_ring", has(TFItems.KNIGHTMETAL_RING.get()))
+				.save(consumer, locEquip(TFItems.BLOCK_AND_CHAIN.getId().getPath()));
+
+		// 4.8 registers has_block three times (sapling, root strand, leaves) and the last one wins;
+		// 1.20.1's Advancement.Builder rejects duplicate criteria, so only the leaves criterion is kept
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.TANNIN.get())
+				.requires(potion(Potions.WATER))
+				.requires(TFBlocks.TWILIGHT_OAK_SAPLING.get())
+				.requires(TFBlocks.ROOT_STRAND.get())
+				.requires(TFBlocks.TWILIGHT_OAK_LEAVES.get())
+				.unlockedBy("has_block", has(TFBlocks.TWILIGHT_OAK_LEAVES.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.TREATED_LEATHER.get())
+				.requires(TFItems.TANNIN.get())
+				.requires(Tags.Items.LEATHER)
+				.unlockedBy("has_tannin", has(TFItems.TANNIN.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TFItems.KNIGHTMETAL_RING.get())
+				.pattern(" - ")
+				.pattern("- -")
+				.pattern(" - ")
+				.define('-', ItemTagGenerator.KNIGHTMETAL_INGOTS)
+				.unlockedBy("has_item", has(ItemTagGenerator.KNIGHTMETAL_INGOTS))
+				.save(consumer, locEquip(TFItems.KNIGHTMETAL_RING.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, TFItems.KNIGHTMETAL_SHIELD.get())
+				.pattern("-#")
+				.pattern("-o")
+				.pattern("-#")
+				.define('-', ItemTagGenerator.KNIGHTMETAL_INGOTS)
+				.define('#', ItemTagGenerator.TOWERWOOD)
+				.define('o', Ingredient.of(TFItems.KNIGHTMETAL_RING.get()))
+				.unlockedBy("has_ingot", has(ItemTagGenerator.KNIGHTMETAL_INGOTS))
+				.unlockedBy("has_ring", has(TFItems.KNIGHTMETAL_RING.get()))
+				.save(consumer, locEquip(TFItems.KNIGHTMETAL_SHIELD.getId().getPath()));
+
+		ScepterRecipeBuilder.repairFor(TFItems.LIFEDRAIN_SCEPTER.get(), 9)
+				.addRepairIngredient(Items.FERMENTED_SPIDER_EYE)
+				.save(consumer, locEquip(TFItems.LIFEDRAIN_SCEPTER.getId().getPath()));
+
+		ScepterRecipeBuilder.repairFor(TFItems.FORTIFICATION_SCEPTER.get(), 9)
+				.addRepairIngredient(Ingredient.of(Items.GOLDEN_APPLE))
+				.save(consumer, locEquip(TFItems.FORTIFICATION_SCEPTER.getId().getPath()));
+
+		ScepterRecipeBuilder.repairFor(TFItems.TWILIGHT_SCEPTER.get(), 9)
+				.addRepairIngredient(Tags.Items.ENDER_PEARLS)
+				.save(consumer, locEquip(TFItems.TWILIGHT_SCEPTER.getId().getPath()));
+
+		ScepterRecipeBuilder.repairFor(TFItems.ZOMBIE_SCEPTER.get(), 9)
+				.addRepairIngredient(CompoundIngredient.of(potion(Potions.STRENGTH), potion(Potions.LONG_STRENGTH), potion(Potions.STRONG_STRENGTH)))
+				.addRepairIngredient(Items.ROTTEN_FLESH)
+				.save(consumer, locEquip(TFItems.ZOMBIE_SCEPTER.getId().getPath()));
+	}
+
+	private void blockCompressionRecipes(Consumer<FinishedRecipe> consumer) {
+		reverseCompressBlock(consumer, "arctic_block_to_item", TFItems.ARCTIC_FUR, ItemTagGenerator.STORAGE_BLOCKS_ARCTIC_FUR);
+		reverseCompressBlock(consumer, "carminite_block_to_item", TFItems.CARMINITE, ItemTagGenerator.STORAGE_BLOCKS_CARMINITE);
+		reverseCompressBlock(consumer, "ironwood_block_ingot", TFItems.IRONWOOD_INGOT, ItemTagGenerator.STORAGE_BLOCKS_IRONWOOD);
+		reverseCompressBlock(consumer, "knightmetal_block_ingot", TFItems.KNIGHTMETAL_INGOT, ItemTagGenerator.STORAGE_BLOCKS_KNIGHTMETAL);
+		reverseCompressBlock(consumer, "steeleaf_block_ingot", TFItems.STEELEAF_INGOT, ItemTagGenerator.STORAGE_BLOCKS_STEELEAF);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.FIERY_INGOT.get(), 9)
+				.requires(ItemTagGenerator.STORAGE_BLOCKS_FIERY)
+				.unlockedBy("has_item", has(ItemTagGenerator.STORAGE_BLOCKS_FIERY))
+				.group("fiery_ingot")
+				.save(consumer, TwilightForestMod.prefix("compressed_blocks/reversed/fiery_block_to_ingot"));
+
+		compressedBlock(consumer, "arctic_block", TFBlocks.ARCTIC_FUR_BLOCK, ItemTagGenerator.ARCTIC_FUR);
+		compressedBlock(consumer, "carminite_block", TFBlocks.CARMINITE_BLOCK, ItemTagGenerator.CARMINITE_GEMS);
+		compressedBlock(consumer, "fiery_block", TFBlocks.FIERY_BLOCK, ItemTagGenerator.FIERY_INGOTS);
+		compressedBlock(consumer, "ironwood_block", TFBlocks.IRONWOOD_BLOCK, ItemTagGenerator.IRONWOOD_INGOTS);
+		compressedBlock(consumer, "knightmetal_block", TFBlocks.KNIGHTMETAL_BLOCK, ItemTagGenerator.KNIGHTMETAL_INGOTS);
+		compressedBlock(consumer, "steeleaf_block", TFBlocks.STEELEAF_BLOCK, ItemTagGenerator.STEELEAF_INGOTS);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.MAZE_SLIME_BALL.get(), 9)
+				.requires(TFBlocks.MAZE_SLIME_BLOCK.get())
+				.unlockedBy("has_item", has(TFBlocks.MAZE_SLIME_BLOCK.get()))
+				.save(consumer, TwilightForestMod.prefix("compressed_blocks/reversed/maze_slime_block"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MAZE_SLIME_BLOCK.get())
+				.pattern("###")
+				.pattern("###")
+				.pattern("###")
+				.define('#', TFItems.MAZE_SLIME_BALL.get())
+				.unlockedBy("has_item", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer, TwilightForestMod.prefix("compressed_blocks/maze_slime"));
+	}
+
+	private void emptyMapRecipes(Consumer<FinishedRecipe> consumer) {
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.MAGIC_MAP_FOCUS.get())
+				.requires(TFItems.RAVEN_FEATHER.get())
+				.requires(TFItems.TORCHBERRIES.get())
+				.requires(Tags.Items.DUSTS_GLOWSTONE)
+				.unlockedBy("has_berries", has(TFItems.TORCHBERRIES.get()))
+				.unlockedBy("has_feather", has(TFItems.RAVEN_FEATHER.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TFItems.MAGIC_MAP.get())
+				.pattern("###")
+				.pattern("#•#")
+				.pattern("###")
+				.define('#', ItemTagGenerator.PAPER)
+				.define('•', Ingredient.of(TFItems.MAGIC_MAP_FOCUS.get()))
+				.unlockedBy("has_item", has(TFItems.MAGIC_MAP_FOCUS.get()))
+				.save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TFItems.MAZE_MAP.get())
+				.pattern("###")
+				.pattern("#•#")
+				.pattern("###")
+				.define('#', ItemTagGenerator.PAPER)
+				.define('•', Ingredient.of(TFItems.MAZE_MAP_FOCUS.get()))
+				.unlockedBy("has_item", has(TFItems.MAZE_MAP_FOCUS.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.ORE_MAP.get())
+				.requires(TFItems.MAZE_MAP.get())
+				.requires(Tags.Items.STORAGE_BLOCKS_DIAMOND)
+				.requires(Tags.Items.STORAGE_BLOCKS_GOLD)
+				.requires(Tags.Items.STORAGE_BLOCKS_IRON)
+				.unlockedBy("has_item", has(TFItems.MAZE_MAP.get()))
+				.save(consumer);
+	}
+
+	private void woodRecipes(Consumer<FinishedRecipe> consumer) {
+		buttonBlock(consumer, "canopy", TFBlocks.CANOPY_BUTTON, TFBlocks.CANOPY_PLANKS);
+		buttonBlock(consumer, "dark", TFBlocks.DARK_BUTTON, TFBlocks.DARK_PLANKS);
+		buttonBlock(consumer, "mangrove", TFBlocks.MANGROVE_BUTTON, TFBlocks.MANGROVE_PLANKS);
+		buttonBlock(consumer, "mining", TFBlocks.MINING_BUTTON, TFBlocks.MINING_PLANKS);
+		buttonBlock(consumer, "sorting", TFBlocks.SORTING_BUTTON, TFBlocks.SORTING_PLANKS);
+		buttonBlock(consumer, "time", TFBlocks.TIME_BUTTON, TFBlocks.TIME_PLANKS);
+		buttonBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_BUTTON, TFBlocks.TRANSFORMATION_PLANKS);
+		buttonBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_BUTTON, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		doorBlock(consumer, "canopy", TFBlocks.CANOPY_DOOR, TFBlocks.CANOPY_PLANKS);
+		doorBlock(consumer, "dark", TFBlocks.DARK_DOOR, TFBlocks.DARK_PLANKS);
+		doorBlock(consumer, "mangrove", TFBlocks.MANGROVE_DOOR, TFBlocks.MANGROVE_PLANKS);
+		doorBlock(consumer, "mining", TFBlocks.MINING_DOOR, TFBlocks.MINING_PLANKS);
+		doorBlock(consumer, "sorting", TFBlocks.SORTING_DOOR, TFBlocks.SORTING_PLANKS);
+		doorBlock(consumer, "time", TFBlocks.TIME_DOOR, TFBlocks.TIME_PLANKS);
+		doorBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_DOOR, TFBlocks.TRANSFORMATION_PLANKS);
+		doorBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_DOOR, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		fenceBlock(consumer, "canopy", TFBlocks.CANOPY_FENCE, TFBlocks.CANOPY_PLANKS);
+		fenceBlock(consumer, "dark", TFBlocks.DARK_FENCE, TFBlocks.DARK_PLANKS);
+		fenceBlock(consumer, "mangrove", TFBlocks.MANGROVE_FENCE, TFBlocks.MANGROVE_PLANKS);
+		fenceBlock(consumer, "mining", TFBlocks.MINING_FENCE, TFBlocks.MINING_PLANKS);
+		fenceBlock(consumer, "sorting", TFBlocks.SORTING_FENCE, TFBlocks.SORTING_PLANKS);
+		fenceBlock(consumer, "time", TFBlocks.TIME_FENCE, TFBlocks.TIME_PLANKS);
+		fenceBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_FENCE, TFBlocks.TRANSFORMATION_PLANKS);
+		fenceBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_FENCE, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		gateBlock(consumer, "canopy", TFBlocks.CANOPY_GATE, TFBlocks.CANOPY_PLANKS);
+		gateBlock(consumer, "dark", TFBlocks.DARK_GATE, TFBlocks.DARK_PLANKS);
+		gateBlock(consumer, "mangrove", TFBlocks.MANGROVE_GATE, TFBlocks.MANGROVE_PLANKS);
+		gateBlock(consumer, "mining", TFBlocks.MINING_GATE, TFBlocks.MINING_PLANKS);
+		gateBlock(consumer, "sorting", TFBlocks.SORTING_GATE, TFBlocks.SORTING_PLANKS);
+		gateBlock(consumer, "time", TFBlocks.TIME_GATE, TFBlocks.TIME_PLANKS);
+		gateBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_GATE, TFBlocks.TRANSFORMATION_PLANKS);
+		gateBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_GATE, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		planksBlock(consumer, "canopy", TFBlocks.CANOPY_PLANKS, ItemTagGenerator.CANOPY_LOGS);
+		planksBlock(consumer, "dark", TFBlocks.DARK_PLANKS, ItemTagGenerator.DARKWOOD_LOGS);
+		planksBlock(consumer, "mangrove", TFBlocks.MANGROVE_PLANKS, ItemTagGenerator.MANGROVE_LOGS);
+		planksBlock(consumer, "mining", TFBlocks.MINING_PLANKS, ItemTagGenerator.MINING_LOGS);
+		planksBlock(consumer, "sorting", TFBlocks.SORTING_PLANKS, ItemTagGenerator.SORTING_LOGS);
+		planksBlock(consumer, "time", TFBlocks.TIME_PLANKS, ItemTagGenerator.TIME_LOGS);
+		planksBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_PLANKS, ItemTagGenerator.TRANSFORMATION_LOGS);
+		planksBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_PLANKS, ItemTagGenerator.TWILIGHT_OAK_LOGS);
+
+		woodBlock(consumer, "canopy", TFBlocks.CANOPY_WOOD, TFBlocks.CANOPY_LOG);
+		woodBlock(consumer, "dark", TFBlocks.DARK_WOOD, TFBlocks.DARK_LOG);
+		woodBlock(consumer, "mangrove", TFBlocks.MANGROVE_WOOD, TFBlocks.MANGROVE_LOG);
+		woodBlock(consumer, "mining", TFBlocks.MINING_WOOD, TFBlocks.MINING_LOG);
+		woodBlock(consumer, "sorting", TFBlocks.SORTING_WOOD, TFBlocks.SORTING_LOG);
+		woodBlock(consumer, "time", TFBlocks.TIME_WOOD, TFBlocks.TIME_LOG);
+		woodBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_WOOD, TFBlocks.TRANSFORMATION_LOG);
+		woodBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_WOOD, TFBlocks.TWILIGHT_OAK_LOG);
+
+		strippedWoodBlock(consumer, "canopy", TFBlocks.STRIPPED_CANOPY_WOOD, TFBlocks.STRIPPED_CANOPY_LOG);
+		strippedWoodBlock(consumer, "dark", TFBlocks.STRIPPED_DARK_WOOD, TFBlocks.STRIPPED_DARK_LOG);
+		strippedWoodBlock(consumer, "mangrove", TFBlocks.STRIPPED_MANGROVE_WOOD, TFBlocks.STRIPPED_MANGROVE_LOG);
+		strippedWoodBlock(consumer, "mining", TFBlocks.STRIPPED_MINING_WOOD, TFBlocks.STRIPPED_MINING_LOG);
+		strippedWoodBlock(consumer, "sorting", TFBlocks.STRIPPED_SORTING_WOOD, TFBlocks.STRIPPED_SORTING_LOG);
+		strippedWoodBlock(consumer, "time", TFBlocks.STRIPPED_TIME_WOOD, TFBlocks.STRIPPED_TIME_LOG);
+		strippedWoodBlock(consumer, "transformation", TFBlocks.STRIPPED_TRANSFORMATION_WOOD, TFBlocks.STRIPPED_TRANSFORMATION_LOG);
+		strippedWoodBlock(consumer, "twilight_oak", TFBlocks.STRIPPED_TWILIGHT_OAK_WOOD, TFBlocks.STRIPPED_TWILIGHT_OAK_LOG);
+
+		plateBlock(consumer, "canopy", TFBlocks.CANOPY_PLATE, TFBlocks.CANOPY_PLANKS);
+		plateBlock(consumer, "dark", TFBlocks.DARK_PLATE, TFBlocks.DARK_PLANKS);
+		plateBlock(consumer, "mangrove", TFBlocks.MANGROVE_PLATE, TFBlocks.MANGROVE_PLANKS);
+		plateBlock(consumer, "mining", TFBlocks.MINING_PLATE, TFBlocks.MINING_PLANKS);
+		plateBlock(consumer, "sorting", TFBlocks.SORTING_PLATE, TFBlocks.SORTING_PLANKS);
+		plateBlock(consumer, "time", TFBlocks.TIME_PLATE, TFBlocks.TIME_PLANKS);
+		plateBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_PLATE, TFBlocks.TRANSFORMATION_PLANKS);
+		plateBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_PLATE, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		woodenSlabBlock(consumer, "canopy", TFBlocks.CANOPY_SLAB, TFBlocks.CANOPY_PLANKS);
+		woodenSlabBlock(consumer, "dark", TFBlocks.DARK_SLAB, TFBlocks.DARK_PLANKS);
+		woodenSlabBlock(consumer, "mangrove", TFBlocks.MANGROVE_SLAB, TFBlocks.MANGROVE_PLANKS);
+		woodenSlabBlock(consumer, "mining", TFBlocks.MINING_SLAB, TFBlocks.MINING_PLANKS);
+		woodenSlabBlock(consumer, "sorting", TFBlocks.SORTING_SLAB, TFBlocks.SORTING_PLANKS);
+		woodenSlabBlock(consumer, "time", TFBlocks.TIME_SLAB, TFBlocks.TIME_PLANKS);
+		woodenSlabBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_SLAB, TFBlocks.TRANSFORMATION_PLANKS);
+		woodenSlabBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_SLAB, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		woodenStairsBlock(consumer, locWood("canopy_stairs"), TFBlocks.CANOPY_STAIRS, TFBlocks.CANOPY_PLANKS, TFBlocks.CANOPY_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("dark_stairs"), TFBlocks.DARK_STAIRS, TFBlocks.DARK_PLANKS, TFBlocks.DARK_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("mangrove_stairs"), TFBlocks.MANGROVE_STAIRS, TFBlocks.MANGROVE_PLANKS, TFBlocks.MANGROVE_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("mining_stairs"), TFBlocks.MINING_STAIRS, TFBlocks.MINING_PLANKS, TFBlocks.MINING_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("sorting_stairs"), TFBlocks.SORTING_STAIRS, TFBlocks.SORTING_PLANKS, TFBlocks.SORTING_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("time_stairs"), TFBlocks.TIME_STAIRS, TFBlocks.TIME_PLANKS, TFBlocks.TIME_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("transformation_stairs"), TFBlocks.TRANSFORMATION_STAIRS, TFBlocks.TRANSFORMATION_PLANKS, TFBlocks.TRANSFORMATION_PLANKS.get());
+		woodenStairsBlock(consumer, locWood("twilight_oak_stairs"), TFBlocks.TWILIGHT_OAK_STAIRS, TFBlocks.TWILIGHT_OAK_PLANKS, TFBlocks.TWILIGHT_OAK_PLANKS.get());
+
+		trapdoorBlock(consumer, "canopy", TFBlocks.CANOPY_TRAPDOOR, TFBlocks.CANOPY_PLANKS);
+		trapdoorBlock(consumer, "dark", TFBlocks.DARK_TRAPDOOR, TFBlocks.DARK_PLANKS);
+		trapdoorBlock(consumer, "mangrove", TFBlocks.MANGROVE_TRAPDOOR, TFBlocks.MANGROVE_PLANKS);
+		trapdoorBlock(consumer, "mining", TFBlocks.MINING_TRAPDOOR, TFBlocks.MINING_PLANKS);
+		trapdoorBlock(consumer, "sorting", TFBlocks.SORTING_TRAPDOOR, TFBlocks.SORTING_PLANKS);
+		trapdoorBlock(consumer, "time", TFBlocks.TIME_TRAPDOOR, TFBlocks.TIME_PLANKS);
+		trapdoorBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_TRAPDOOR, TFBlocks.TRANSFORMATION_PLANKS);
+		trapdoorBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_TRAPDOOR, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		signBlock(consumer, "canopy", TFItems.CANOPY_SIGN, TFBlocks.CANOPY_PLANKS);
+		signBlock(consumer, "dark", TFItems.DARK_SIGN, TFBlocks.DARK_PLANKS);
+		signBlock(consumer, "mangrove", TFItems.MANGROVE_SIGN, TFBlocks.MANGROVE_PLANKS);
+		signBlock(consumer, "mining", TFItems.MINING_SIGN, TFBlocks.MINING_PLANKS);
+		signBlock(consumer, "sorting", TFItems.SORTING_SIGN, TFBlocks.SORTING_PLANKS);
+		signBlock(consumer, "time", TFItems.TIME_SIGN, TFBlocks.TIME_PLANKS);
+		signBlock(consumer, "transformation", TFItems.TRANSFORMATION_SIGN, TFBlocks.TRANSFORMATION_PLANKS);
+		signBlock(consumer, "twilight_oak", TFItems.TWILIGHT_OAK_SIGN, TFBlocks.TWILIGHT_OAK_PLANKS);
+
+		hangingSignBlock(consumer, "canopy", TFItems.CANOPY_HANGING_SIGN, TFBlocks.STRIPPED_CANOPY_LOG);
+		hangingSignBlock(consumer, "dark", TFItems.DARK_HANGING_SIGN, TFBlocks.STRIPPED_DARK_LOG);
+		hangingSignBlock(consumer, "mangrove", TFItems.MANGROVE_HANGING_SIGN, TFBlocks.STRIPPED_MANGROVE_LOG);
+		hangingSignBlock(consumer, "mining", TFItems.MINING_HANGING_SIGN, TFBlocks.STRIPPED_MINING_LOG);
+		hangingSignBlock(consumer, "sorting", TFItems.SORTING_HANGING_SIGN, TFBlocks.STRIPPED_SORTING_LOG);
+		hangingSignBlock(consumer, "time", TFItems.TIME_HANGING_SIGN, TFBlocks.STRIPPED_TIME_LOG);
+		hangingSignBlock(consumer, "transformation", TFItems.TRANSFORMATION_HANGING_SIGN, TFBlocks.STRIPPED_TRANSFORMATION_LOG);
+		hangingSignBlock(consumer, "twilight_oak", TFItems.TWILIGHT_OAK_HANGING_SIGN, TFBlocks.STRIPPED_TWILIGHT_OAK_LOG);
+
+		banisterBlock(consumer, "canopy", TFBlocks.CANOPY_BANISTER, TFBlocks.CANOPY_SLAB);
+		banisterBlock(consumer, "dark", TFBlocks.DARK_BANISTER, TFBlocks.DARK_SLAB);
+		banisterBlock(consumer, "mangrove", TFBlocks.MANGROVE_BANISTER, TFBlocks.MANGROVE_SLAB);
+		banisterBlock(consumer, "mining", TFBlocks.MINING_BANISTER, TFBlocks.MINING_SLAB);
+		banisterBlock(consumer, "sorting", TFBlocks.SORTING_BANISTER, TFBlocks.SORTING_SLAB);
+		banisterBlock(consumer, "time", TFBlocks.TIME_BANISTER, TFBlocks.TIME_SLAB);
+		banisterBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_BANISTER, TFBlocks.TRANSFORMATION_SLAB);
+		banisterBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_BANISTER, TFBlocks.TWILIGHT_OAK_SLAB);
+
+		banisterBlock(consumer, "oak", TFBlocks.OAK_BANISTER, Blocks.OAK_SLAB);
+		banisterBlock(consumer, "spruce", TFBlocks.SPRUCE_BANISTER, Blocks.SPRUCE_SLAB);
+		banisterBlock(consumer, "birch", TFBlocks.BIRCH_BANISTER, Blocks.BIRCH_SLAB);
+		banisterBlock(consumer, "jungle", TFBlocks.JUNGLE_BANISTER, Blocks.JUNGLE_SLAB);
+		banisterBlock(consumer, "acacia", TFBlocks.ACACIA_BANISTER, Blocks.ACACIA_SLAB);
+		banisterBlock(consumer, "dark_oak", TFBlocks.DARK_OAK_BANISTER, Blocks.DARK_OAK_SLAB);
+		banisterBlock(consumer, "crimson", TFBlocks.CRIMSON_BANISTER, Blocks.CRIMSON_SLAB);
+		banisterBlock(consumer, "warped", TFBlocks.WARPED_BANISTER, Blocks.WARPED_SLAB);
+		banisterBlock(consumer, "vangrove", TFBlocks.VANGROVE_BANISTER, Blocks.MANGROVE_SLAB);
+		banisterBlock(consumer, "bamboo", TFBlocks.BAMBOO_BANISTER, Blocks.BAMBOO_SLAB);
+		banisterBlock(consumer, "cherry", TFBlocks.CHERRY_BANISTER, Blocks.CHERRY_SLAB);
+
+		dryingRackBlock(consumer, "canopy", TFBlocks.CANOPY_DRYING_RACK, TFBlocks.CANOPY_SLAB);
+		dryingRackBlock(consumer, "dark", TFBlocks.DARK_DRYING_RACK, TFBlocks.DARK_SLAB);
+		dryingRackBlock(consumer, "mangrove", TFBlocks.MANGROVE_DRYING_RACK, TFBlocks.MANGROVE_SLAB);
+		dryingRackBlock(consumer, "mining", TFBlocks.MINING_DRYING_RACK, TFBlocks.MINING_SLAB);
+		dryingRackBlock(consumer, "sorting", TFBlocks.SORTING_DRYING_RACK, TFBlocks.SORTING_SLAB);
+		dryingRackBlock(consumer, "time", TFBlocks.TIME_DRYING_RACK, TFBlocks.TIME_SLAB);
+		dryingRackBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_DRYING_RACK, TFBlocks.TRANSFORMATION_SLAB);
+		dryingRackBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_DRYING_RACK, TFBlocks.TWILIGHT_OAK_SLAB);
+
+		dryingRackBlock(consumer, "oak", TFBlocks.OAK_DRYING_RACK, Blocks.OAK_SLAB);
+		dryingRackBlock(consumer, "spruce", TFBlocks.SPRUCE_DRYING_RACK, Blocks.SPRUCE_SLAB);
+		dryingRackBlock(consumer, "birch", TFBlocks.BIRCH_DRYING_RACK, Blocks.BIRCH_SLAB);
+		dryingRackBlock(consumer, "jungle", TFBlocks.JUNGLE_DRYING_RACK, Blocks.JUNGLE_SLAB);
+		dryingRackBlock(consumer, "acacia", TFBlocks.ACACIA_DRYING_RACK, Blocks.ACACIA_SLAB);
+		dryingRackBlock(consumer, "dark_oak", TFBlocks.DARK_OAK_DRYING_RACK, Blocks.DARK_OAK_SLAB);
+		dryingRackBlock(consumer, "crimson", TFBlocks.CRIMSON_DRYING_RACK, Blocks.CRIMSON_SLAB);
+		dryingRackBlock(consumer, "warped", TFBlocks.WARPED_DRYING_RACK, Blocks.WARPED_SLAB);
+		dryingRackBlock(consumer, "vangrove", TFBlocks.VANGROVE_DRYING_RACK, Blocks.MANGROVE_SLAB);
+		dryingRackBlock(consumer, "bamboo", TFBlocks.BAMBOO_DRYING_RACK, Blocks.BAMBOO_SLAB);
+		dryingRackBlock(consumer, "cherry", TFBlocks.CHERRY_DRYING_RACK, Blocks.CHERRY_SLAB);
+
+		chestBlock(consumer, "twilight_oak", TFBlocks.TWILIGHT_OAK_CHEST, TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST, TFBlocks.TWILIGHT_OAK_PLANKS);
+		chestBlock(consumer, "canopy", TFBlocks.CANOPY_CHEST, TFBlocks.CANOPY_TRAPPED_CHEST, TFBlocks.CANOPY_PLANKS);
+		chestBlock(consumer, "mangrove", TFBlocks.MANGROVE_CHEST, TFBlocks.MANGROVE_TRAPPED_CHEST, TFBlocks.MANGROVE_PLANKS);
+		chestBlock(consumer, "dark", TFBlocks.DARK_CHEST, TFBlocks.DARK_TRAPPED_CHEST, TFBlocks.DARK_PLANKS);
+		chestBlock(consumer, "time", TFBlocks.TIME_CHEST, TFBlocks.TIME_TRAPPED_CHEST, TFBlocks.TIME_PLANKS);
+		chestBlock(consumer, "transformation", TFBlocks.TRANSFORMATION_CHEST, TFBlocks.TRANSFORMATION_TRAPPED_CHEST, TFBlocks.TRANSFORMATION_PLANKS);
+		chestBlock(consumer, "mining", TFBlocks.MINING_CHEST, TFBlocks.MINING_TRAPPED_CHEST, TFBlocks.MINING_PLANKS);
+		chestBlock(consumer, "sorting", TFBlocks.SORTING_CHEST, TFBlocks.SORTING_TRAPPED_CHEST, TFBlocks.SORTING_PLANKS);
+
+		buildBoats(consumer, TFItems.TWILIGHT_OAK_BOAT, TFItems.TWILIGHT_OAK_CHEST_BOAT, TFBlocks.TWILIGHT_OAK_PLANKS);
+		buildBoats(consumer, TFItems.CANOPY_BOAT, TFItems.CANOPY_CHEST_BOAT, TFBlocks.CANOPY_PLANKS);
+		buildBoats(consumer, TFItems.MANGROVE_BOAT, TFItems.MANGROVE_CHEST_BOAT, TFBlocks.MANGROVE_PLANKS);
+		buildBoats(consumer, TFItems.DARK_BOAT, TFItems.DARK_CHEST_BOAT, TFBlocks.DARK_PLANKS);
+		buildBoats(consumer, TFItems.TIME_BOAT, TFItems.TIME_CHEST_BOAT, TFBlocks.TIME_PLANKS);
+		buildBoats(consumer, TFItems.TRANSFORMATION_BOAT, TFItems.TRANSFORMATION_CHEST_BOAT, TFBlocks.TRANSFORMATION_PLANKS);
+		buildBoats(consumer, TFItems.MINING_BOAT, TFItems.MINING_CHEST_BOAT, TFBlocks.MINING_PLANKS);
+		buildBoats(consumer, TFItems.SORTING_BOAT, TFItems.SORTING_CHEST_BOAT, TFBlocks.SORTING_PLANKS);
+	}
+
+	private void nagastoneRecipes(Consumer<FinishedRecipe> consumer) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.SPIRAL_BRICKS.get(), 8)
+				.pattern("BSS")
+				.pattern("BSS")
+				.pattern("BBB")
+				.define('B', Ingredient.of(Blocks.STONE_BRICKS, Blocks.MOSSY_STONE_BRICKS, Blocks.CRACKED_STONE_BRICKS, Blocks.CHISELED_STONE_BRICKS))//Ingredient.merge(ImmutableList.of(Ingredient.fromTag(Tags.Items.STONE), Ingredient.fromItems(Blocks.STONE_BRICKS, Blocks.MOSSY_STONE_BRICKS, Blocks.CRACKED_STONE_BRICKS, Blocks.CHISELED_STONE_BRICKS))))
+				.define('S', Ingredient.of(Blocks.STONE_SLAB, Blocks.STONE_BRICK_SLAB))
+				.unlockedBy("has_item", has(TFBlocks.SPIRAL_BRICKS.get()))
+				.save(consumer, locNaga("nagastone_spiral"));
+
+		stairsBlock(consumer, locNaga("nagastone_stairs_left"), TFBlocks.NAGASTONE_STAIRS_LEFT, TFBlocks.ETCHED_NAGASTONE, TFBlocks.ETCHED_NAGASTONE.get());
+		stairsRightBlock(consumer, locNaga("nagastone_stairs_right"), TFBlocks.NAGASTONE_STAIRS_RIGHT, TFBlocks.ETCHED_NAGASTONE, TFBlocks.ETCHED_NAGASTONE.get());
+
+		stairsBlock(consumer, locNaga("mossy_nagastone_stairs_left"), TFBlocks.MOSSY_NAGASTONE_STAIRS_LEFT, TFBlocks.MOSSY_ETCHED_NAGASTONE, TFBlocks.MOSSY_ETCHED_NAGASTONE.get());
+		stairsRightBlock(consumer, locNaga("mossy_nagastone_stairs_right"), TFBlocks.MOSSY_NAGASTONE_STAIRS_RIGHT, TFBlocks.MOSSY_ETCHED_NAGASTONE, TFBlocks.MOSSY_ETCHED_NAGASTONE.get());
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MOSSY_ETCHED_NAGASTONE.get(), 1)
+				.requires(Ingredient.of(Blocks.VINE, Blocks.MOSS_BLOCK))
+				.requires(Ingredient.of(TFBlocks.ETCHED_NAGASTONE.get()))
+				.unlockedBy("has_item", has(TFBlocks.ETCHED_NAGASTONE.get()))
+				.save(consumer, locNaga("mossy_etched_nagastone"));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MOSSY_NAGASTONE_PILLAR.get(), 1)
+				.requires(Ingredient.of(Blocks.VINE, Blocks.MOSS_BLOCK))
+				.requires(Ingredient.of(TFBlocks.NAGASTONE_PILLAR.get()))
+				.unlockedBy("has_item", has(TFBlocks.NAGASTONE_PILLAR.get()))
+				.save(consumer, locNaga("mossy_nagastone_pillar"));
+
+		stairsBlock(consumer, locNaga("cracked_nagastone_stairs_left"), TFBlocks.CRACKED_NAGASTONE_STAIRS_LEFT, TFBlocks.CRACKED_ETCHED_NAGASTONE, TFBlocks.CRACKED_ETCHED_NAGASTONE.get());
+		stairsRightBlock(consumer, locNaga("cracked_nagastone_stairs_right"), TFBlocks.CRACKED_NAGASTONE_STAIRS_RIGHT, TFBlocks.CRACKED_ETCHED_NAGASTONE, TFBlocks.CRACKED_ETCHED_NAGASTONE.get());
+	}
+
+	private void castleRecipes(Consumer<FinishedRecipe> consumer) {
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, TFBlocks.MOSSY_CASTLE_BRICK.get(), 1)
+				.requires(Ingredient.of(Blocks.VINE, Blocks.MOSS_BLOCK))
+				.requires(Ingredient.of(TFBlocks.CASTLE_BRICK.get()))
+				.unlockedBy("has_item", has(TFBlocks.CASTLE_BRICK.get()))
+				.save(consumer, locCastle("mossy_castle_brick"));
+
+		castleBlock(consumer, TFBlocks.THICK_CASTLE_BRICK, TFBlocks.CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.MOSSY_CASTLE_BRICK.get());
+		castleBlock(consumer, TFBlocks.BOLD_CASTLE_BRICK_PILLAR, TFBlocks.THICK_CASTLE_BRICK.get());
+		castleBlock(consumer, TFBlocks.BOLD_CASTLE_BRICK_TILE, TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get());
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get(), 4)
+				.pattern("##")
+				.pattern("##")
+				.define('#', Ingredient.of(TFBlocks.BOLD_CASTLE_BRICK_TILE.get()))
+				.unlockedBy("has_castle_brick", has(TFBlocks.CASTLE_BRICK.get()))
+				.save(consumer, locCastle("bold_castle_pillar_from_tile"));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), 6)
+				.pattern("#H#")
+				.pattern("#H#")
+				.define('#', Ingredient.of(TFBlocks.CASTLE_BRICK.get(), TFBlocks.WORN_CASTLE_BRICK.get(), TFBlocks.CRACKED_CASTLE_BRICK.get(), TFBlocks.MOSSY_CASTLE_BRICK.get(), TFBlocks.THICK_CASTLE_BRICK.get()))
+				.define('H', Ingredient.of(TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), TFBlocks.ENCASED_CASTLE_BRICK_TILE.get(), TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get()))
+				.unlockedBy("has_castle_brick", has(TFBlocks.CASTLE_BRICK.get()))
+				.save(consumer, locCastle("encased_castle_pillar"));
+
+		stairsBlock(consumer, locCastle("bold_castle_brick_stairs"), TFBlocks.BOLD_CASTLE_BRICK_STAIRS, TFBlocks.BOLD_CASTLE_BRICK_PILLAR, TFBlocks.BOLD_CASTLE_BRICK_PILLAR.get(), TFBlocks.BOLD_CASTLE_BRICK_TILE.get());
+		stairsBlock(consumer, locCastle("castle_brick_stairs"), TFBlocks.CASTLE_BRICK_STAIRS, TFBlocks.CASTLE_BRICK, TFBlocks.CASTLE_BRICK.get());
+		stairsBlock(consumer, locCastle("cracked_castle_brick_stairs"), TFBlocks.CRACKED_CASTLE_BRICK_STAIRS, TFBlocks.CRACKED_CASTLE_BRICK, TFBlocks.CRACKED_CASTLE_BRICK.get());
+		stairsBlock(consumer, locCastle("encased_castle_brick_stairs"), TFBlocks.ENCASED_CASTLE_BRICK_STAIRS, TFBlocks.ENCASED_CASTLE_BRICK_PILLAR, TFBlocks.ENCASED_CASTLE_BRICK_PILLAR.get(), TFBlocks.ENCASED_CASTLE_BRICK_TILE.get());
+		stairsBlock(consumer, locCastle("mossy_castle_brick_stairs"), TFBlocks.MOSSY_CASTLE_BRICK_STAIRS, TFBlocks.MOSSY_CASTLE_BRICK, TFBlocks.MOSSY_CASTLE_BRICK.get());
+		stairsBlock(consumer, locCastle("worn_castle_brick_stairs"), TFBlocks.WORN_CASTLE_BRICK_STAIRS, TFBlocks.WORN_CASTLE_BRICK, TFBlocks.WORN_CASTLE_BRICK.get());
+	}
+
+	private void fieryConversions(Consumer<FinishedRecipe> consumer) {
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.FIERY_INGOT.get())
+				.requires(Ingredient.of(ItemTagGenerator.FIERY_VIAL))
+				.requires(Ingredient.of(Tags.Items.INGOTS_IRON))
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_VIAL))
+				.group("fiery_ingot")
+				.save(consumer, locEquip("fiery_ingot_crafting"));
+
+		fieryConversion(consumer, TFItems.FIERY_HELMET, Items.IRON_HELMET, 5);
+		fieryConversion(consumer, TFItems.FIERY_CHESTPLATE, Items.IRON_CHESTPLATE, 8);
+		fieryConversion(consumer, TFItems.FIERY_LEGGINGS, Items.IRON_LEGGINGS, 7);
+		fieryConversion(consumer, TFItems.FIERY_BOOTS, Items.IRON_BOOTS, 4);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TFItems.FIERY_SWORD.get())
+				.requires(Items.IRON_SWORD)
+				.requires(Ingredient.of(ItemTagGenerator.FIERY_VIAL), 2)
+				.requires(Ingredient.of(Tags.Items.RODS_BLAZE))
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_VIAL))
+				.group("fiery_sword")
+				.save(consumer, locEquip("fiery_" + ForgeRegistries.ITEMS.getKey(Items.IRON_SWORD).getPath()));
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, TFItems.FIERY_PICKAXE.get())
+				.requires(Items.IRON_PICKAXE)
+				.requires(Ingredient.of(ItemTagGenerator.FIERY_VIAL), 3)
+				.requires(Ingredient.of(Tags.Items.RODS_BLAZE), 2)
+				.unlockedBy("has_item", has(ItemTagGenerator.FIERY_VIAL))
+				.group("fiery_pickaxe")
+				.save(consumer, locEquip("fiery_" + ForgeRegistries.ITEMS.getKey(Items.IRON_PICKAXE).getPath()));
+	}
+
+	private void cookingRecipes(Consumer<FinishedRecipe> consumer, String processName, RecipeSerializer<? extends AbstractCookingRecipe> process, int smeltingTime) {
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.RAW_MEEF.get()), RecipeCategory.FOOD, TFItems.COOKED_MEEF.get(), 0.35F, smeltingTime, process).unlockedBy("has_food", has(TFItems.RAW_MEEF.get())).save(consumer, TwilightForestMod.prefix("food/" + processName + "_meef").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.RAW_VENISON.get()), RecipeCategory.FOOD, TFItems.COOKED_VENISON.get(), 0.35F, smeltingTime, process).unlockedBy("has_food", has(TFItems.RAW_VENISON.get())).save(consumer, TwilightForestMod.prefix("food/" + processName + "_venison").toString());
+	}
+
+	private void ingotRecipes(Consumer<FinishedRecipe> consumer, String processName, RecipeSerializer<? extends AbstractCookingRecipe> process, int smeltingTime) {
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.ARMOR_SHARD_CLUSTER.get()), RecipeCategory.MISC, TFItems.KNIGHTMETAL_INGOT.get(), 1.0f, smeltingTime, process).unlockedBy("has_item", has(TFItems.ARMOR_SHARD_CLUSTER.get())).group("knightmetal_ingot").save(consumer, TwilightForestMod.prefix("material/" + processName + "_knightmetal_ingot").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.RAW_IRONWOOD.get()), RecipeCategory.MISC, TFItems.IRONWOOD_INGOT.get(), 1.0f, smeltingTime, process).unlockedBy("has_item", has(TFItems.RAW_IRONWOOD.get())).group("ironwood_ingot").save(consumer, TwilightForestMod.prefix("material/" + processName + "_ironwood_ingot").toString());
+	}
+
+	private void oreberryRecipes(Consumer<FinishedRecipe> consumer, String processName, RecipeSerializer<? extends AbstractCookingRecipe> process, int smeltingTime) {
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.IRON_BERRY.get()), RecipeCategory.MISC, Items.IRON_NUGGET, 1.0F, smeltingTime, process).unlockedBy("has_item", has(TFItems.IRON_BERRY.get())).group("iron_nugget").save(consumer, TwilightForestMod.prefix("material/" + processName + "_iron_nugget").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.GOLD_BERRY.get()), RecipeCategory.MISC, Items.GOLD_NUGGET, 1.0F, smeltingTime, process).unlockedBy("has_item", has(TFItems.GOLD_BERRY.get())).group("gold_nugget").save(consumer, TwilightForestMod.prefix("material/" + processName + "_gold_nugget").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFItems.COPPER_BERRY.get()), RecipeCategory.MISC, TFItems.COPPER_NUGGET.get(), 1.0F, smeltingTime, process).unlockedBy("has_item", has(TFItems.COPPER_BERRY.get())).group("copper_nugget").save(consumer, TwilightForestMod.prefix("material/" + processName + "_copper_nugget").toString());
+	}
+
+	private void crackedWoodRecipes(Consumer<FinishedRecipe> consumer) {
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFBlocks.TOWERWOOD.get()), RecipeCategory.BUILDING_BLOCKS, TFBlocks.CRACKED_TOWERWOOD.get(), 0.1F, 100, RecipeSerializer.SMOKING_RECIPE).unlockedBy("has_item", has(TFBlocks.TOWERWOOD.get())).save(consumer, TwilightForestMod.prefix("wood/" + "smoked" + "_cracked_towerwood").toString());
+	}
+
+	private void crackedStoneRecipes(Consumer<FinishedRecipe> consumer) {
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFBlocks.NAGASTONE_PILLAR.get()), RecipeCategory.BUILDING_BLOCKS, TFBlocks.CRACKED_NAGASTONE_PILLAR.get(), 0.1F, 200, RecipeSerializer.SMELTING_RECIPE).unlockedBy("has_item", has(TFBlocks.NAGASTONE_PILLAR.get())).save(consumer, TwilightForestMod.prefix("nagastone/" + "smelted" + "_cracked_nagastone_pillar").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFBlocks.ETCHED_NAGASTONE.get()), RecipeCategory.BUILDING_BLOCKS, TFBlocks.CRACKED_ETCHED_NAGASTONE.get(), 0.1F, 200, RecipeSerializer.SMELTING_RECIPE).unlockedBy("has_item", has(TFBlocks.ETCHED_NAGASTONE.get())).save(consumer, TwilightForestMod.prefix("nagastone/" + "smelted" + "_cracked_etched_nagastone").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFBlocks.MAZESTONE_BRICK.get()), RecipeCategory.BUILDING_BLOCKS, TFBlocks.CRACKED_MAZESTONE.get(), 0.1F, 200, RecipeSerializer.SMELTING_RECIPE).unlockedBy("has_item", has(TFBlocks.MAZESTONE_BRICK.get())).save(consumer, TwilightForestMod.prefix("maze_stone/" + "smelted" + "_maze_stone_cracked").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFBlocks.CASTLE_BRICK.get()), RecipeCategory.BUILDING_BLOCKS, TFBlocks.CRACKED_CASTLE_BRICK.get(), 0.1F, 200, RecipeSerializer.SMELTING_RECIPE).unlockedBy("has_item", has(TFBlocks.CASTLE_BRICK.get())).save(consumer, TwilightForestMod.prefix("castleblock/" + "smelted" + "_cracked_castle_brick").toString());
+		SimpleCookingRecipeBuilder.generic(Ingredient.of(TFBlocks.UNDERBRICK.get()), RecipeCategory.BUILDING_BLOCKS, TFBlocks.CRACKED_UNDERBRICK.get(), 0.1F, 200, RecipeSerializer.SMELTING_RECIPE).unlockedBy("has_item", has(TFBlocks.UNDERBRICK.get())).save(consumer, TwilightForestMod.prefix("smelted" + "_cracked_underbrick").toString());
+	}
+}

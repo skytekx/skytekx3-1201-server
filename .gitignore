@@ -1,5 +1,7 @@
 # --- runtime / generated ---
 world/
+# ...but not Java packages named `world` inside vendored mod sources
+!ports/**/src/**/world/
 world_*/
 DIM*/
 logs/

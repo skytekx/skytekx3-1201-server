@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "fiery_leggings",
+  "key": {
+    "#": {
+      "tag": "forge:ingots/fiery"
+    }
+  },
+  "pattern": [
+    "###",
+    "# #",
+    "# #"
+  ],
+  "result": {
+    "item": "twilightforest:fiery_leggings"
+  },
+  "show_notification": true
+}

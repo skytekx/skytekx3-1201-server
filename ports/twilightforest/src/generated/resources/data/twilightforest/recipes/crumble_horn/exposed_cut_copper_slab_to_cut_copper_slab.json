@@ -1,0 +1,5 @@
+{
+  "type": "twilightforest:crumble_horn",
+  "from": "minecraft:exposed_cut_copper_slab",
+  "to": "minecraft:cut_copper_slab"
+}

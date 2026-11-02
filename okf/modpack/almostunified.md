@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, and how it fits with Polymorph and KubeJS.
 tags: [modpack, recipes, unification]
-timestamp: 2026-10-31
+timestamp: 2026-11-01
 ---
 
 # AlmostUnified

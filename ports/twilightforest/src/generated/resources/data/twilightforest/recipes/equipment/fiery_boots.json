@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "fiery_boots",
+  "key": {
+    "#": {
+      "tag": "forge:ingots/fiery"
+    }
+  },
+  "pattern": [
+    "# #",
+    "# #"
+  ],
+  "result": {
+    "item": "twilightforest:fiery_boots"
+  },
+  "show_notification": true
+}

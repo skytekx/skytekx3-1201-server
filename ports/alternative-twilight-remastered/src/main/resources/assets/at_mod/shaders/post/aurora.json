@@ -1,0 +1,25 @@
+{
+  "_comment": [
+    "幻影骑士极光 PostChain。",
+    "pass[0] aurora 读 main + main:depth，叠加蓝色极光后写入 swap。",
+    "pass[1] blit  把 swap 拷回 minecraft:main，让世界画面被覆盖更新。"
+  ],
+  "targets": [
+    "swap"
+  ],
+  "passes": [
+    {
+      "name": "at_mod:aurora",
+      "intarget": "minecraft:main",
+      "outtarget": "swap",
+      "auxtargets": [
+        { "name": "DepthSampler", "id": "minecraft:main:depth" }
+      ]
+    },
+    {
+      "name": "at_mod:blit",
+      "intarget": "swap",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}

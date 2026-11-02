@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "drying_rack",
+  "key": {
+    "-": {
+      "item": "twilightforest:mangrove_slab"
+    }
+  },
+  "pattern": [
+    "---"
+  ],
+  "result": {
+    "item": "twilightforest:mangrove_drying_rack"
+  },
+  "show_notification": true
+}

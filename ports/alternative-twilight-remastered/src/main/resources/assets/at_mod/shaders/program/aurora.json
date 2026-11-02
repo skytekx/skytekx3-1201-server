@@ -1,0 +1,34 @@
+{
+  "_comment": [
+    "aurora pass 的 program 配置。",
+    "uniforms 这里给的 values 仅是占位默认值；运行时由 AuroraRenderHooks 每帧覆盖。",
+    "samplers 里 DiffuseSampler 自动绑 intarget，DepthSampler 由 auxtargets 注入。"
+  ],
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "at_mod:aurora",
+  "fragment": "at_mod:aurora",
+  "attributes": [ "Position" ],
+  "samplers": [
+    { "name": "DiffuseSampler" },
+    { "name": "DepthSampler" }
+  ],
+  "uniforms": [
+    { "name": "ProjMat",                 "type": "matrix4x4", "count": 16,
+      "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+    { "name": "InverseTransformMatrix",  "type": "matrix4x4", "count": 16,
+      "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+    { "name": "InverseModelViewMatrix",  "type": "matrix4x4", "count": 16,
+      "values": [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ] },
+    { "name": "OutSize",          "type": "float", "count": 2, "values": [ 1, 1 ] },
+    { "name": "CameraPosition",   "type": "float", "count": 3, "values": [ 0, 0, 0 ] },
+    { "name": "AnchorPosition",   "type": "float", "count": 3, "values": [ 0, 0, 0 ] },
+    { "name": "AuroraRadius",     "type": "float", "count": 1, "values": [ 32 ] },
+    { "name": "AuroraIntensity",  "type": "float", "count": 1, "values": [ 0 ] },
+    { "name": "AuroraTime",       "type": "float", "count": 1, "values": [ 0 ] },
+    { "name": "AuroraColor",      "type": "float", "count": 3, "values": [ 0.55, 0.85, 1.0 ] }
+  ]
+}

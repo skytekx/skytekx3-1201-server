@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "t": {
+      "item": "twilightforest:crown_splinter"
+    }
+  },
+  "pattern": [
+    "ttt",
+    "t t",
+    "ttt"
+  ],
+  "result": {
+    "item": "twilightforest:mystic_crown"
+  },
+  "show_notification": true
+}

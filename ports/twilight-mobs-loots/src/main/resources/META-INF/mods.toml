@@ -1,0 +1,47 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://modrinth.com/mod/twilight-mobs-loots"
+authors="wdd1118"
+credits="Original mod by wdd1118 (MIT). Minecraft 1.20.1 / Forge backport of ${upstream_version} by SkyTekx."
+description='''
+Trophies for every regular Twilight Forest mob. Kill a Twilight Forest mob for a chance at its trophy:
+place it on the floor or a wall (right-click it for the mob's sound and particles), wear it on your head,
+or put it in the Curios head or trophy slot.
+
+Unofficial Minecraft 1.20.1 / Forge backport of Twilight Mobs Loots ${upstream_version} (1.21.1 NeoForge).
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="twilightforest"
+    mandatory=true
+    versionRange="[${tf_min_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+# Optional: trophies go into the Curios head and trophy slots when Curios is installed.
+[[dependencies.${mod_id}]]
+    modId="curios"
+    mandatory=false
+    versionRange="[5.8,6)"
+    ordering="NONE"
+    side="BOTH"

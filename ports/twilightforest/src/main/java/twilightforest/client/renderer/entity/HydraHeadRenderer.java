@@ -1,0 +1,111 @@
+package twilightforest.client.renderer.entity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
+import org.joml.Matrix4f;
+import twilightforest.TwilightForestMod;
+import twilightforest.client.model.TFModelLayers;
+import twilightforest.client.model.entity.HydraHeadModel;
+import twilightforest.entity.boss.Hydra;
+import twilightforest.entity.boss.HydraHead;
+import twilightforest.entity.boss.HydraHeadContainer;
+
+import org.jetbrains.annotations.Nullable;
+
+public class HydraHeadRenderer extends TFPartRenderer<HydraHead, HydraHeadModel> {
+
+	private static final ResourceLocation textureLoc = TwilightForestMod.getModelTexture("hydra4.png");
+
+
+	public HydraHeadRenderer(EntityRendererProvider.Context manager) {
+		super(manager, new HydraHeadModel(manager.bakeLayer(TFModelLayers.NEW_HYDRA_HEAD)));
+	}
+
+	@Override
+	public void render(HydraHead entity, float yaw, float partialTicks, PoseStack stack, MultiBufferSource buffer, int light) {
+		// get the HydraHeadContainer that we're taking about
+		HydraHeadContainer headCon = getHeadObject(entity);
+
+		if (headCon != null) {
+			// see whether we want to render these
+			if (entity.isActive()) {
+				stack.mulPose(Axis.YP.rotationDegrees(-180));
+				super.render(entity, yaw, partialTicks, stack, buffer, light);
+			}
+
+		} else {
+			super.render(entity, yaw, partialTicks, stack, buffer, light);
+		}
+	}
+
+	@Override
+	protected boolean shouldShowName(HydraHead head) {
+		return shouldShowHeadName(head);
+	}
+
+	@Override
+	protected void renderNameTag(HydraHead head, Component component, PoseStack stack, MultiBufferSource source, int light) {
+		renderHeadNameTag(this.entityRenderDispatcher, this.getFont(), head, component, stack, source, light);
+	}
+
+	/**
+	 * Heads named with a Name Tag always show their name, like named mobs.
+	 */
+	public static boolean shouldShowHeadName(HydraHead head) {
+		return head.hasCustomName() && !head.getCustomName().getString().isEmpty();
+	}
+
+	/**
+	 * [VanillaCopy] of EntityRenderer.renderNameTag, turned back around (the head renderers spin the pose 180 degrees) and drawn at
+	 * twice the size to suit the big heads.
+	 */
+	public static void renderHeadNameTag(EntityRenderDispatcher dispatcher, Font font, HydraHead head, Component component, PoseStack stack, MultiBufferSource source, int light) {
+		double d0 = dispatcher.distanceToSqr(head);
+		if (ForgeHooksClient.isNameplateInRenderDistance(head, d0)) {
+			boolean flag = !head.isDiscrete();
+			float f = head.getNameTagOffsetY();
+			stack.pushPose();
+			stack.translate(0.0F, f, 0.0F);
+			stack.mulPose(Axis.YP.rotationDegrees(180.0F));
+			stack.mulPose(dispatcher.cameraOrientation());
+			stack.scale(-0.05F, -0.05F, 0.05F);
+			Matrix4f matrix4f = stack.last().pose();
+			float f1 = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
+			int j = (int) (f1 * 255.0F) << 24;
+			float f2 = (float) (-font.width(component) / 2);
+			font.drawInBatch(component, f2, 0.0F, 553648127, false, matrix4f, source, flag ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL, j, light);
+			if (flag) {
+				font.drawInBatch(component, f2, 0.0F, -1, false, matrix4f, source, Font.DisplayMode.NORMAL, 0, light);
+			}
+
+			stack.popPose();
+		}
+	}
+
+	@Nullable
+	public static HydraHeadContainer getHeadObject(HydraHead entity) {
+		Hydra hydra = entity.getParent();
+
+		if (hydra != null) {
+			for (int i = 0; i < hydra.numHeads; i++) {
+				if (hydra.hc[i].headEntity == entity) {
+					return hydra.hc[i];
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(HydraHead entity) {
+		return textureLoc;
+	}
+}

@@ -1,0 +1,17 @@
+{
+  "item.twilight_crossbow.triple_crossbow": "Triple Crossbow",
+  "item.twilight_crossbow.ice_crossbow": "Ice Crossbow",
+  "item.twilight_crossbow.seeker_crossbow": "Seeker Crossbow",
+  "item.twilight_crossbow.ender_crossbow": "Ender Crossbow",
+  "entity.twilight_crossbow.ice_firework": "Ice Firework",
+  "entity.twilight_crossbow.seeker_firework": "Seeker Firework",
+  "item.twilight_crossbow.crossbow_upgrade_smithing_template": "Crossbow Upgrade Smithing Template",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.additions_slot_description": "Put Supported Bow Material Here",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.applies_to": "Bow",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.base_slot_description": "Put Bow Here",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.ingredients": "Supported Bow Material",
+  "upgrade.twilight_crossbow.crossbow_upgrade": "Supported Bow Material",
+  "death.attack.twilight_crossbow.frozen": "%1$s went off with a Freeze bang by %2$s",
+  "death.attack.twilight_crossbow.frozen.item": "%1$s went off with a bang due to a ice firework fired from %3$s by %2$s",
+  "death.attack.twilight_crossbow.frozen.player": "%1$s went off with a Freeze bang whilst fighting %2$s"
+}

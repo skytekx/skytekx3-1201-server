@@ -1,0 +1,6 @@
+{
+  "parent": "item/crossbow",
+  "textures": {
+    "layer0": "twilight_crossbow:item/ender_crossbow_pulling_0"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "twilight_crossbow:item/crossbow_upgrade_smithing_template"
+  }
+}

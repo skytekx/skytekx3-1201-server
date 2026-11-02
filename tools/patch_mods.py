@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Re-apply local boot-log fixes to Modrinth-resolved mod jars.
 
-mods/ is rebuilt from modrinth.index.json by tools/resolve_all.py, which overwrites these jar-level
-fixes. Run this AFTER resolve_all so the fixes persist. Idempotent: safe to run repeatedly.
+mods/ is assembled as in README step 4 (copy local-mods/*.jar, then a sha1-checked fetch of the
+server-side files in modrinth.index.json). Re-fetching or replacing a jar overwrites these jar-level
+fixes, so run this after every change to mods/. Idempotent: safe to run repeatedly.
 
 Fixes third-party boot WARN/ERROR spam that can only be addressed inside the mod jar:
 - mixin configs missing the required "minVersion" property (logged as ERROR by Mixin),
@@ -279,6 +280,7 @@ def swap_field_for_getter(jar, inner, owner, field, getter, desc, expect):
 def main():
     print("patch_mods: applying jar-level boot fixes")
     add_min_version(find_jar("doomangelring*.jar"), "doomangelring.forge.mixins.json")
+    add_min_version(find_jar("tf_dnv-*.jar"), "mixins.tf_dnv.json")
     remove_mixins(find_jar("aether-redux*.jar"), "aether_redux.mixins.json",
                   ["common.block.GreenAercloudBlockMixin", "common.block.OrangeTreeMixin",
                    "common.block.PurpleAercloudBlockMixin"])

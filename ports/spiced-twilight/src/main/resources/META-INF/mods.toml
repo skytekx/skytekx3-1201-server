@@ -1,0 +1,39 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="${mod_license}"
+issueTrackerURL="https://github.com/baguchi/SpicedTwilight/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://modrinth.com/mod/spiced-twilight"
+logoFile="logo.png"
+authors="${mod_authors}"
+credits="Original mod by baguchi (https://github.com/baguchi/SpicedTwilight). Modified Forge 1.20.1 backport for SkyTekx 3, see NOTICE_spiced_twilight. Source of this build: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/spiced-twilight"
+description='''
+This addon "spices up" Twilight Forest's monsters.
+
+Unofficial Forge 1.20.1 backport of Spiced Twilight 1.21.1-2.0.0, built against the SkyTekx Twilight Forest fork. The Naga jump attack is not included.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="twilightforest"
+    mandatory=true
+    versionRange="[${tf_version},)"
+    ordering="AFTER"
+    side="BOTH"

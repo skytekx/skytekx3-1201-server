@@ -1,0 +1,10 @@
+{
+  "type": "twilightforest:drying",
+  "filter_time": 7200,
+  "input": {
+    "tag": "minecraft:saplings"
+  },
+  "result": {
+    "item": "minecraft:dead_bush"
+  }
+}

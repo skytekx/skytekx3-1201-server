@@ -1,0 +1,17 @@
+{
+  "item.twilight_crossbow.triple_crossbow": "トライクロスボウ",
+  "item.twilight_crossbow.ice_crossbow": "アイスクロスボウ",
+  "item.twilight_crossbow.seeker_crossbow": "シーカークロスボウ",
+  "item.twilight_crossbow.ender_crossbow": "エンダークロスボウ",
+  "entity.twilight_crossbow.ice_firework": "氷の花火",
+  "entity.twilight_crossbow.seeker_firework": "シーカーの花火",
+  "item.twilight_crossbow.crossbow_upgrade_smithing_template": "クロスボウ強化用鍛冶型",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.additions_slot_description": "対応する素材をここに入れてください",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.applies_to": "弓",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.base_slot_description": "弓をここに入れてください",
+  "item.twilight_crossbow.smithing_template.crossbow_upgrade.ingredients": "弓に対応する素材",
+  "upgrade.twilight_crossbow.crossbow_upgrade": "弓に対応する素材",
+  "death.attack.twilight_crossbow.frozen": "%1$sは%2$sの放った氷の花火の破裂に耐え切れなかった",
+  "death.attack.twilight_crossbow.frozen.item": "%1$sは、%2$sが%3$sで発射した氷の花火に凍らされた",
+  "death.attack.twilight_crossbow.frozen.player": "%1$sは%2$sとの戦闘中に氷の花火に凍らされた"
+}

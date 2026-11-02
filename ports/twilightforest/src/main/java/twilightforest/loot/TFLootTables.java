@@ -47,6 +47,8 @@ public class TFLootTables {
 	public static final TFLootTables TOWER_JARS = new TFLootTables("tower_jars");
 	public static final TFLootTables TOWER_FOYER = new TFLootTables("tower_foyer");
 	public static final TFLootTables CASKET_LOOT = new TFLootTables("casket_loot");
+	// Shared bone roll of both grave tables, as in 4.8
+	public static final TFLootTables JUST_BONES = new TFLootTables("just_bones");
 	public static final TFLootTables BASEMENT = new TFLootTables("basement");
 	public static final TFLootTables HUT_JUNK = new TFLootTables("hut_junk");
 	public static final TFLootTables FOUNDATION_BASEMENT = new TFLootTables("foundation_basement");

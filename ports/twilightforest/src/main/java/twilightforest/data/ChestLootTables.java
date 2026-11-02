@@ -660,6 +660,120 @@ public class ChestLootTables implements LootTableSubProvider {
 								.add(LootItem.lootTableItem(Items.OBSIDIAN).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))).setWeight(25))
 								.add(LootItem.lootTableItem(TFItems.GREATER_FLASK.get()).setWeight(25))));
 
+		register.accept(TFLootTables.TOWER_POTION.lootTable,
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(4))
+								.add(LootItem.lootTableItem(Items.GLISTERING_MELON_SLICE).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 6))))
+								.add(LootItem.lootTableItem(Items.GHAST_TEAR).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+								.add(LootItem.lootTableItem(Items.FERMENTED_SPIDER_EYE).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))))
+								.add(LootItem.lootTableItem(Items.BLAZE_POWDER).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 9))))
+								.add(LootItem.lootTableItem(Items.GLASS_BOTTLE).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))))
+								.add(LootItem.lootTableItem(Items.MAGMA_CREAM).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+								.add(LootItem.lootTableItem(Items.SUGAR).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 7))))
+								.add(LootItem.lootTableItem(Items.GUNPOWDER).apply(SetItemCountFunction.setCount(UniformGenerator.between(8, 20))))
+								.add(LootItem.lootTableItem(Items.NETHER_WART).apply(SetItemCountFunction.setCount(UniformGenerator.between(6, 13)))))
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(2))
+								.add(LootItem.lootTableItem(Items.GOLDEN_CARROT).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+								.add(LootItem.lootTableItem(Items.REDSTONE).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 7))))
+								.add(LootItem.lootTableItem(Items.GLOWSTONE_DUST).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 6))))
+								.add(LootItem.lootTableItem(Items.SPLASH_POTION).apply(SetPotionFunction.setPotion(Potions.HEALING)))
+								.add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.STRENGTH)))
+								.add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.FIRE_RESISTANCE))))
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1))
+								.add(LootItem.lootTableItem(Items.GOLDEN_APPLE).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))).setWeight(75))
+								.add(LootItem.lootTableItem(Items.BLAZE_ROD).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))).setWeight(75))
+								.add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.STRONG_HEALING)).setWeight(75))
+								.add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.SWIFTNESS)).setWeight(75))
+								.add(LootItem.lootTableItem(Items.POTION).apply(SetPotionFunction.setPotion(Potions.REGENERATION)).setWeight(75))
+								.add(LootItem.lootTableItem(TFItems.CROWN_SPLINTER.get()).setWeight(75))
+								.add(LootItem.lootTableItem(Items.BREWING_STAND).setWeight(25))
+								.add(LootItem.lootTableItem(TFItems.GREATER_FLASK.get()).setWeight(25)))
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1))
+								.add(LootItem.lootTableItem(TFItems.BRITTLE_FLASK.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))));
+
+		// 4.8 rolls its 1-weight jackpot through an inline nested table (49-50 bones plus 39 bones), which 1.20.1 loot tables cannot hold.
+		// A single 88-89 bone entry rolls the same total, and the stack splitter breaks it into full stacks.
+		register.accept(TFLootTables.JUST_BONES.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(Items.BONE).apply(SetItemCountFunction.setCount(UniformGenerator.between(88.0F, 89.0F))))
+						.add(LootItem.lootTableItem(Items.BONE).apply(SetItemCountFunction.setCount(ConstantValue.exactly(15.0F))).setWeight(50))
+						.add(LootItem.lootTableItem(Items.BONE).apply(SetItemCountFunction.setCount(ConstantValue.exactly(16.0F))).setWeight(50))
+						.add(LootItem.lootTableItem(Items.BONE).apply(SetItemCountFunction.setCount(UniformGenerator.between(12.0F, 13.0F))).setWeight(50))
+						.add(LootItem.lootTableItem(Items.BONE).apply(SetItemCountFunction.setCount(ConstantValue.exactly(13.0F))).setWeight(50))));
+
+		register.accept(TFLootTables.TOWER_GRAVE_UPPER.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().add(LootTableReference.lootTableReference(TFLootTables.JUST_BONES.lootTable)))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.SKELETON_SKULL)))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.IRON_CHESTPLATE).apply(SetItemDamageFunction.setDamage(UniformGenerator.between(0.1F, 0.2F)))))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(Items.DIAMOND))
+						.add(LootItem.lootTableItem(Items.GOLDEN_APPLE))
+						.add(LootItem.lootTableItem(TFItems.CHARM_OF_KEEPING_1.get())))
+		);
+
+		register.accept(TFLootTables.TOWER_GRAVE_LOWER.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().add(LootTableReference.lootTableReference(TFLootTables.JUST_BONES.lootTable)))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.LEATHER_BOOTS).apply(SetItemDamageFunction.setDamage(UniformGenerator.between(0.1F, 0.2F)))))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.IRON_LEGGINGS).apply(SetItemDamageFunction.setDamage(UniformGenerator.between(0.1F, 0.2F)))))
+		);
+
+		register.accept(TFLootTables.TOWER_ENCHANTING.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(Items.LAPIS_LAZULI).apply(SetItemCountFunction.setCount(UniformGenerator.between(4, 12)))))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(Items.EXPERIENCE_BOTTLE).apply(SetItemCountFunction.setCount(UniformGenerator.between(5, 15)))))
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(Items.BOOK).apply(SetItemCountFunction.setCount(UniformGenerator.between(16, 32))))));
+
+		register.accept(TFLootTables.TOWER_JARS.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+						.add(LootItem.lootTableItem(Items.CHAIN))
+						.add(LootItem.lootTableItem(Items.ENDER_PEARL))
+						.add(LootItem.lootTableItem(Items.SPIDER_EYE))
+						.add(LootItem.lootTableItem(Items.FERMENTED_SPIDER_EYE))
+						.add(LootItem.lootTableItem(Items.BROWN_MUSHROOM))
+						.add(LootItem.lootTableItem(Items.RED_MUSHROOM))
+						.add(LootItem.lootTableItem(TFItems.RAVEN_FEATHER.get()))
+						.add(LootItem.lootTableItem(TFItems.LIVEROOT.get()))
+						.add(LootItem.lootTableItem(Items.BONE_MEAL))
+						.add(LootItem.lootTableItem(Items.INK_SAC))
+						.add(LootItem.lootTableItem(Items.PAPER))
+						.add(LootItem.lootTableItem(Items.ROTTEN_FLESH))
+						.add(LootItem.lootTableItem(Items.ZOMBIE_HEAD))
+						.add(LootItem.lootTableItem(Items.SKELETON_SKULL))
+						.add(EmptyLootItem.emptyItem().setWeight(8))));
+
+		// 4.8 (c1563920a) references its chests/suspicious_stew table here; like HUT_JUNK, the stew is inlined with the same effects and weight.
+		register.accept(TFLootTables.TOWER_FOYER.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().setRolls(UniformGenerator.between(3, 4))
+						.add(LootItem.lootTableItem(Items.ROTTEN_FLESH).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))).setWeight(6))
+						.add(LootItem.lootTableItem(Items.BONE).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))).setWeight(6))
+						.add(LootItem.lootTableItem(Items.CHARCOAL).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))).setWeight(6))
+						.add(LootItem.lootTableItem(TFItems.RAVEN_FEATHER.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))).setWeight(6))
+						.add(LootItem.lootTableItem(TFItems.TORCHBERRIES.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))).setWeight(6))
+						.add(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))).setWeight(6))
+						.add(LootItem.lootTableItem(Items.BREAD).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))).setWeight(3))
+						.add(LootItem.lootTableItem(Items.POTATO).apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))).setWeight(3))
+						.add(LootItem.lootTableItem(Items.SUSPICIOUS_STEW).setWeight(3).apply(SetStewEffectFunction.stewEffect()
+								.withEffect(MobEffects.JUMP, UniformGenerator.between(7, 10))
+								.withEffect(MobEffects.WEAKNESS, UniformGenerator.between(6, 8))
+								.withEffect(MobEffects.BLINDNESS, UniformGenerator.between(5, 7))
+								.withEffect(MobEffects.POISON, UniformGenerator.between(10, 20))
+								.withEffect(MobEffects.SATURATION, UniformGenerator.between(7, 10))
+								.withEffect(MobEffects.WITHER, UniformGenerator.between(6, 10))))
+						.add(LootItem.lootTableItem(TFItems.CHARM_OF_KEEPING_1.get()))
+						.add(LootItem.lootTableItem(Items.DIAMOND))
+				));
+
+		register.accept(TFLootTables.CASKET_LOOT.lootTable, LootTable.lootTable()
+				.withPool(LootPool.lootPool().setRolls(UniformGenerator.between(8, 16))
+						.add(LootItem.lootTableItem(Items.ROTTEN_FLESH))
+						.add(LootItem.lootTableItem(Items.BONE).setWeight(3))));
+
 		//all values in this loot table have been halved so I can fill both chests that appear in the dead ends
 		register.accept(TFLootTables.LABYRINTH_DEAD_END.lootTable,
 				LootTable.lootTable()

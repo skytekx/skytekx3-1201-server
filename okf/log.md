@@ -512,7 +512,10 @@ logs stay on the Mac and are not in the repo.
   the save of 14:32:31 came back, 27 stacks with the XP level 4 the player had at death. A third death
   in lava, at 14:46:40 while fleeing Silverfish, took the obsidian the owner had farmed since. At the
   owner's ask of 14:47 the save of 14:42:31 came back at 14:50, 31 stacks with XP level 4, and its one
-  obsidian became 12, the count the player statistics show as picked up and never placed.
+  obsidian became 12, the count the player statistics show as picked up and never placed. At 17:11:33
+  a Crimson Mosquito killed the player, and a death in lava followed at 17:13:00. On the owner's ask of
+  17:13 the save of 17:07:34 came back at 17:15:02 after the respawn, 33 stacks with XP level 4, and the
+  rejoin at 17:15:09 showed them.
 - At 13:39 the owner asked for weaker mobs in the Skylands, where everybody builds a home, and at 13:48
   for none at all. With the Skylands at noon but never at day, undead no longer burned there, and
   L2Hostility gave the mobs levels near 50. `kubejs/server_scripts/skylands_no_mobs.js` refuses every

@@ -43,9 +43,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The recipe port from SkyTekx 2 (2026-06-27 10:34). The port notes in `docs/RECIPE_PORT.md` still have
   VERIFY rows, and most of `kubejs/server_scripts/gameplay.js` is commented out. See
   [KubeJS](modpack/kubejs.md).
-- No real names in the credits (2026-06-29 10:24). The `authors` line in the Nyx jar's `mods.toml` and
-  lines 13 and 19 of `modrinth-permissions/nyx-1.20.1-1.0.0.jar.md` carry a real name. The jar needs a
-  rebuild from the fork. See [Nyx](content/nyx.md#open-points).
 - No dashes in commit messages (2026-06-29 22:14). Spaced hyphens used as dashes remain in the bodies of
   bc9a935 and 573b71b. A fix means another history rewrite and force push.
 

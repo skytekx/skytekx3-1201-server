@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,6 +31,7 @@ import twilightforest.components.item.TravellersGearData;
 import twilightforest.data.tags.CustomTagGenerator;
 import twilightforest.entity.TwilightBoat;
 import twilightforest.enums.TwilightArmorMaterial;
+import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.*;
 import twilightforest.item.StackableEffectItem.StackableEffectInstance;
 import twilightforest.item.travellers_gear.TravellersArmorBeltItem;
@@ -95,7 +97,9 @@ public class TFItems {
 	public static final RegistryObject<ArmorItem> TRAVELLERS_WINGS = ITEMS.register("travellers_wings", () -> new TravellersArmorBeltItem(ArmorItem.Type.LEGGINGS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.WINGS))
 		.withDefaultComponent(TravellersGearData.HIGH_JUMP_AMPLIFIER, 1));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_BELT = ITEMS.register("travellers_belt", () -> new TravellersArmorBeltItem(ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1), 0, 0, Set.of(TravellersArmorItem.Part.BELT)));
-	public static final RegistryObject<ArmorItem> TRAVELLERS_BOOTS = ITEMS.register("travellers_boots", () -> new TravellersArmorItem(ArmorItem.Type.BOOTS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.BOOTS)));
+	public static final RegistryObject<ArmorItem> TRAVELLERS_BOOTS = ITEMS.register("travellers_boots", () -> new TravellersArmorItem(ArmorItem.Type.BOOTS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.BOOTS))
+		.withDefaultComponent(TravellersGearData.HIGH_STEP, Unit.INSTANCE)
+		.withBuiltinAttribute(TravellersModifiersManager::travellersHighStep));
 	public static final RegistryObject<Item> STEELEAF_INGOT = ITEMS.register("steeleaf_ingot", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<ArmorItem> STEELEAF_HELMET = ITEMS.register("steeleaf_helmet", () -> new SteeleafArmorItem(TwilightArmorMaterial.ARMOR_STEELEAF, ArmorItem.Type.HELMET, new Item.Properties()));
 	public static final RegistryObject<ArmorItem> STEELEAF_CHESTPLATE = ITEMS.register("steeleaf_chestplate", () -> new SteeleafArmorItem(TwilightArmorMaterial.ARMOR_STEELEAF, ArmorItem.Type.CHESTPLATE, new Item.Properties()));

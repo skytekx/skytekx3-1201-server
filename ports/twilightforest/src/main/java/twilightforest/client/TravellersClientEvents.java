@@ -16,16 +16,21 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import twilightforest.TFConfig;
@@ -47,8 +52,9 @@ import java.util.UUID;
 
 /**
  * Client events of the Traveller's Gear core and the modifiers ported so far. Backport of 4.8's TravellersClientEvents:
- * the glove overlay and the Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide); the key
- * and movement handlers of the other pieces' modifiers come with their travellers-* features.
+ * the glove overlay, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide) and the
+ * Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces' modifiers come with their
+ * travellers-* features.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class TravellersClientEvents {
@@ -87,6 +93,7 @@ public class TravellersClientEvents {
 		if (attachment == null)
 			return;
 		handleAgileRanger(localPlayer, event.getInput());
+		handleStraightAhead(localPlayer);
 		speedUpControlledWhileSneaking(localPlayer, attachment);
 		handleSidestep(localPlayer, attachment);
 	}
@@ -102,6 +109,28 @@ public class TravellersClientEvents {
 			input.leftImpulse *= agileRangerModifier;
 			input.forwardImpulse *= agileRangerModifier;
 		}
+	}
+
+	/**
+	 * Straight Ahead speeds the local player up only while they walk forward, and not their strafing.
+	 */
+	private static void handleStraightAhead(LocalPlayer localPlayer) {
+		ItemStack bootsStack = localPlayer.getItemBySlot(EquipmentSlot.FEET);
+		Double multiplier = TravellersGearData.STRAIGHT_AHEAD_MULTIPLIER.get(bootsStack);
+		AttributeInstance attributeInstance = localPlayer.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
+		if (attributeInstance == null)
+			return;
+
+		Input input = localPlayer.input;
+		if (!TravellersModifiersManager.isModifierActive(localPlayer, bootsStack, TravellersModifiersManager.STRAIGHT_AHEAD_MODIFIER) || multiplier == null || input.forwardImpulse <= 0)
+			multiplier = 1D;
+		// 4.8 re-adds the modifier every tick (addOrUpdateTransientModifier); replacing it only when it changes gives the same speed
+		AttributeModifier current = attributeInstance.getModifier(TravellersGearLogic.STRAIGHT_AHEAD_MODIFIER_UUID);
+		if (current == null || current.getAmount() != multiplier - 1 || current.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL) {
+			attributeInstance.removeModifier(TravellersGearLogic.STRAIGHT_AHEAD_MODIFIER_UUID);
+			attributeInstance.addTransientModifier(TravellersGearLogic.createStraightAheadModifier(multiplier));
+		}
+		input.leftImpulse /= multiplier;
 	}
 
 	private static void speedUpControlledWhileSneaking(LocalPlayer localPlayer, TravellersWingsAttachment attachment) {
@@ -192,6 +221,29 @@ public class TravellersClientEvents {
 
 		attachment.isGraduallyGliding = isGraduallyGliding;
 		TFPacketHandler.CHANNEL.sendToServer(new GradualGlidePacket(isGraduallyGliding, player.getUUID()));
+	}
+
+	/**
+	 * Straight Ahead does not widen the field of view the way other speed boosts do: the view is computed as if the
+	 * player moved without it. 4.8 takes the modifier off around AbstractClientPlayer#getFieldOfViewModifier with a
+	 * coremod (GetFieldOfViewModifierTransformer); Forge's event receives the result, so the modifier's share of the
+	 * speed term ((speed / walking speed + 1) / 2) is divided out instead, before any other listener changes the view.
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void nullifyStraightAheadFov(ComputeFovModifierEvent event) {
+		AttributeInstance attributeInstance = event.getPlayer().getAttribute(Attributes.MOVEMENT_SPEED);
+		AttributeModifier modifier = attributeInstance == null ? null : attributeInstance.getModifier(TravellersGearLogic.STRAIGHT_AHEAD_MODIFIER_UUID);
+		float walkingSpeed = event.getPlayer().getAbilities().getWalkingSpeed();
+		if (modifier == null || modifier.getAmount() == 0 || modifier.getAmount() <= -1 || walkingSpeed == 0)
+			return;
+
+		float speed = (float) attributeInstance.getValue();
+		float speedWithoutStraightAhead = (float) (speed / (1 + modifier.getAmount()));
+		float speedTerm = speed / walkingSpeed + 1.0F;
+		float speedTermWithoutStraightAhead = speedWithoutStraightAhead / walkingSpeed + 1.0F;
+		float ratio = speedTermWithoutStraightAhead / speedTerm;
+		if (Float.isFinite(ratio))
+			event.setNewFovModifier(event.getNewFovModifier() * ratio);
 	}
 
 	/**

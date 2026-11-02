@@ -13,5 +13,6 @@
   "leashpathing": "META-INF/asm/leashpathing.js",
   "armor": "META-INF/asm/armor.js",
   "snow": "META-INF/asm/snow.js",
-  "damagesources": "META-INF/asm/damagesources.js"
+  "damagesources": "META-INF/asm/damagesources.js",
+  "travellers_boots": "META-INF/asm/travellers_boots.js"
 }

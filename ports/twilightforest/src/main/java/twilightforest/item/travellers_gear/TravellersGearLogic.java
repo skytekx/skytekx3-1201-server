@@ -1,7 +1,11 @@
 package twilightforest.item.travellers_gear;
 
+import com.google.common.base.Suppliers;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,14 +13,20 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.TwilightForestMod;
+import twilightforest.components.entity.SlimySolesAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.init.TFItems;
@@ -27,12 +37,32 @@ import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.TravellersWingsStatePacket;
 
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.function.Supplier;
+
 /**
  * Logic of the Traveller's Gear and its modifiers. Backport of 4.8's TravellersGearLogic: the wing animation state
- * machine and the Traveller's Wings modifiers (High Jump, Gradual Glide, Sidestep, Double Jump). The other pieces'
- * modifiers come with their travellers-* features.
+ * machine, the Traveller's Wings modifiers (High Jump, Gradual Glide, Sidestep, Double Jump) and the Traveller's Boots
+ * modifiers (Step-Up, Water Walk, Straight Ahead, Unrestrained, Slimy Soles). The other pieces' modifiers come with
+ * their travellers-* features.
  */
 public class TravellersGearLogic {
+
+	public static final double WATER_WALKING_MAX_SUBMERGED_HEIGHT = 0.4;
+
+	/**
+	 * 4.8 TFAttributeModifiers.STRAIGHT_AHEAD_ATTRIBUTE_MODIFIER_LOCATION, the movement speed modifier of Straight Ahead.
+	 * 1.20.1 keys attribute modifiers by UUID, derived from that id.
+	 */
+	public static final ResourceLocation STRAIGHT_AHEAD_MODIFIER_ID = TwilightForestMod.prefix("travellers_gear.boots_straight_ahead");
+	public static final UUID STRAIGHT_AHEAD_MODIFIER_UUID = UUID.nameUUIDFromBytes(STRAIGHT_AHEAD_MODIFIER_ID.toString().getBytes(StandardCharsets.UTF_8));
+
+	/**
+	 * The Step-Up modifier the boots give in their slot (4.8 TFAttributeModifiers.TRAVELLERS_HIGH_STEP), which a sneaking
+	 * player loses. Lazy, as Forge's step height attribute only exists once the registries are filled.
+	 */
+	public static final Supplier<AttributeModifier> HIGH_STEP_MODIFIER = Suppliers.memoize(() -> TravellersModifiersManager.travellersHighStep().createModifier(EquipmentSlot.FEET));
 
 	/**
 	 * How far below its usual safe fall distance an entity may land after a double jump without taking damage, 4.8's
@@ -137,6 +167,13 @@ public class TravellersGearLogic {
 		if (attachment == null || !attachment.hasDoubleJump || player.isFallFlying() || player.onClimbable() || player.onGround() || player.isSwimming() || player.getAbilities().flying || isInLiquid(player) || player.isPassenger())
 			return false;
 		player.jumpFromGround();
+		// a Slimy Soles bounce makes the next double jump stronger
+		Vec3 velocity = player.getDeltaMovement();
+		SlimySolesAttachment slimySoles = attachment.getSlimySolesIfPresent();
+		if (slimySoles != null && slimySoles.doubleJumpBoostVelocity != 0) {
+			player.setDeltaMovement(velocity.x(), Math.sqrt(Math.pow(velocity.y(), 2) + Math.pow(slimySoles.doubleJumpBoostVelocity, 2)), velocity.z());
+			slimySoles.doubleJumpBoostVelocity = 0;
+		}
 		player.resetFallDistance();
 		float pitchShift = 0.1F;
 		player.playSound(TFSounds.DOUBLE_JUMP.get(), 1.5F, (player.getVoicePitch() - 1) * (1 + pitchShift) + (1 - pitchShift * 0.2F));
@@ -168,6 +205,126 @@ public class TravellersGearLogic {
 			TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new TravellersWingsStatePacket(player.getId(), TravellersWingsAttachment.WingState.DOUBLE_JUMP, attachment.sidestepLeft, attachment.doubleJumpTimer, attachment.sidestepTimer));
 		}
 		return true;
+	}
+
+	public static void waterWalkingSplashEffect(LivingEntity livingEntity) {
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(livingEntity);
+		if (attachment == null)
+			return;
+		long lastTickWaterWalking = attachment.lastTickWaterWalking;
+		Level level = livingEntity.level();
+		Vec3 livingEntityVelocity = getKnownMovement(livingEntity);
+		if (lastTickWaterWalking + 1 == level.getGameTime() || livingEntityVelocity.horizontalDistance() < 0.01)
+			return;
+
+		attachment.lastTickWaterWalking = level.getGameTime();
+
+		ParticlePacket particlePacket = new ParticlePacket();  // we have to create it on client to avoid networking delays
+		for (int particleNumber = 0; particleNumber < livingEntity.getBbWidth(); particleNumber++) {
+			double dx = (level.random.nextDouble() * 2.0 - 1.0) * (double) livingEntity.getBbWidth() / 2D;
+			double dz = (level.random.nextDouble() * 2.0 - 1.0) * (double) livingEntity.getBbWidth() / 2D;
+			Vec3 particlePos = new Vec3(livingEntity.getX() + dx, livingEntity.getY() + WATER_WALKING_MAX_SUBMERGED_HEIGHT, livingEntity.getZ() + dz);
+			Vec3 particleVelocity = new Vec3(-livingEntityVelocity.x, 0.5, -livingEntityVelocity.z);
+			if (level.isClientSide()) {
+				level.addParticle(ParticleTypes.SPLASH, false, particlePos.x(), particlePos.y(), particlePos.z(), particleVelocity.x(), particleVelocity.y(), particleVelocity.z());
+			} else {
+				particlePacket.queueParticle(ParticleTypes.SPLASH, false, particlePos, particleVelocity);
+			}
+		}
+
+		if (!level.isClientSide())
+			TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> livingEntity), particlePacket);
+	}
+
+	public static boolean isBelowMaxWaterWalkingSubmergedHeight(LivingEntity livingEntity) {
+		double waterHeight = livingEntity.getFluidTypeHeight(ForgeMod.WATER_TYPE.get());
+		return waterHeight < WATER_WALKING_MAX_SUBMERGED_HEIGHT;
+	}
+
+	/**
+	 * 1.21's Entity#getKnownMovement. A server player is moved by its client's movement packets, its delta movement says
+	 * little; its movement during the last tick stands in for 1.21's last known client movement.
+	 */
+	public static Vec3 getKnownMovement(LivingEntity livingEntity) {
+		if (livingEntity instanceof ServerPlayer player) {
+			TravellersWingsAttachment attachment = TravellersWingsAttachment.get(player);
+			return attachment == null ? Vec3.ZERO : attachment.knownMovement;
+		}
+		return livingEntity.getDeltaMovement();
+	}
+
+	/**
+	 * Remembers how far a server player moved since the last tick, see {@link #getKnownMovement}.
+	 */
+	public static void updateKnownMovement(ServerPlayer player) {
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(player);
+		if (attachment == null)
+			return;
+		Vec3 position = player.position();
+		attachment.knownMovement = attachment.lastKnownPosition == null ? Vec3.ZERO : position.subtract(attachment.lastKnownPosition);
+		attachment.lastKnownPosition = position;
+	}
+
+	public static AttributeModifier createStraightAheadModifier(double multiplier) {
+		return new AttributeModifier(STRAIGHT_AHEAD_MODIFIER_UUID, STRAIGHT_AHEAD_MODIFIER_ID.toString(), multiplier - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+	}
+
+	/**
+	 * The server half of Straight Ahead: a wearer moves {@link TravellersGearData#STRAIGHT_AHEAD_MULTIPLIER} times as
+	 * fast. The local player's client turns the modifier off whenever it does not walk forward (TravellersClientEvents).
+	 */
+	public static void travellersBootsStraightAhead(LivingEntity livingEntity) {
+		ItemStack bootsStack = livingEntity.getItemBySlot(EquipmentSlot.FEET);
+		Double multiplier = TravellersGearData.STRAIGHT_AHEAD_MULTIPLIER.get(bootsStack);
+		AttributeInstance attributeInstance = livingEntity.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
+		if (attributeInstance == null)
+			return;
+		if (multiplier == null)
+			multiplier = 1D;
+		boolean hasModifier = TravellersModifiersManager.isModifierActive(livingEntity, bootsStack, TravellersModifiersManager.STRAIGHT_AHEAD_MODIFIER) && multiplier != 1;
+		if (hasModifier == (attributeInstance.getModifier(STRAIGHT_AHEAD_MODIFIER_UUID) != null))
+			return;
+		attributeInstance.removeModifier(STRAIGHT_AHEAD_MODIFIER_UUID);
+		if (hasModifier)
+			attributeInstance.addTransientModifier(createStraightAheadModifier(multiplier));
+	}
+
+	public static void travellersBootsUnrestrained(LivingEntity livingEntity) {
+		if (TravellersModifiersManager.isModifierActive(livingEntity, TravellersModifiersManager.UNRESTRAINED_MODIFIER))
+			livingEntity.stuckSpeedMultiplier = Vec3.ZERO;
+	}
+
+	public static void travellersBootsSlimySolesBounce(LivingEntity livingEntity) {
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(livingEntity);
+		SlimySolesAttachment slimySolesAttachment = attachment == null ? null : attachment.getSlimySolesIfPresent();
+		if (slimySolesAttachment == null || slimySolesAttachment.bounceVelocity == 0 || slimySolesAttachment.hasBounced)
+			return;
+		Vec3 velocity = livingEntity.getDeltaMovement();
+		livingEntity.playSound(SoundEvents.SLIME_JUMP, 0.5F, 1F);
+		travellersBootsSlimySolesParticles(livingEntity, slimySolesAttachment);
+		slimySolesAttachment.hasBounced = true;
+		livingEntity.setDeltaMovement(velocity.x(), Math.sqrt(Math.pow(velocity.y(), 2) + Math.pow(slimySolesAttachment.bounceVelocity, 2)), velocity.z());
+		slimySolesAttachment.forceBounce = Math.abs(livingEntity.getDeltaMovement().y()) > 0.25;
+	}
+
+	public static void travellersBootsSlimySolesParticles(LivingEntity entity, SlimySolesAttachment attachment) {
+		if (!(entity.level() instanceof ServerLevel level) || attachment.bounceVelocity <= 0)
+			return;
+
+		double particleX = entity.getX();
+		double particleY = entity.getY();
+		double particleZ = entity.getZ();
+		double intensity = Math.min(0.2 + attachment.bounceVelocity, 2.5);
+		int count = (int) (40 * intensity);
+
+		if (count > 0) {
+			level.sendParticles(
+				new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SLIME_BLOCK.defaultBlockState()),
+				particleX, particleY, particleZ,
+				count,
+				0.0, 0.0, 0.0, 0.15F
+			);
+		}
 	}
 
 	/**

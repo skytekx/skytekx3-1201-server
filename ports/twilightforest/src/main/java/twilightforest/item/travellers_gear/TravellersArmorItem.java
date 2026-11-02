@@ -1,5 +1,6 @@
 package twilightforest.item.travellers_gear;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
@@ -37,6 +38,7 @@ import twilightforest.item.travellers_gear.modifiers.TravellersAttributeEntry;
 import twilightforest.item.travellers_gear.modifiers.TravellersModifiable;
 import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -44,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -59,7 +62,8 @@ import java.util.stream.Stream;
  * <p>
  * Goggles, Vest, Wings and Boots take up to {@link #getModifierSlots} Traveller's modifiers
  * ({@link TravellersModifiersManager}). A built-in ability is a component the item carries as a default
- * ({@link #withDefaultComponent}), the 1.20.1 stand-in for 4.8's default item components.
+ * ({@link #withDefaultComponent}), the 1.20.1 stand-in for 4.8's default item components, plus the attribute modifiers
+ * of the ability ({@link #withBuiltinAttribute}).
  */
 public class TravellersArmorItem extends ArmorItem implements TravellersModifiable {
 	private static final MutableComponent GLOVES_TOOLTIP = Component.translatable("item.twilightforest.travellers_gloves.desc").withStyle(ChatFormatting.GRAY);
@@ -70,6 +74,7 @@ public class TravellersArmorItem extends ArmorItem implements TravellersModifiab
 	private final Set<Part> parts;
 	private final boolean cosmetic;
 	private final Map<TravellersComponentType<?>, Object> defaultComponents = new IdentityHashMap<>();
+	private final List<Supplier<TravellersAttributeEntry>> builtinAttributes = new ArrayList<>();
 
 	/**
 	 * @param durability the 4.8 durability multiplier, scaled by the vanilla armor health factor of the slot. 0 makes a
@@ -104,6 +109,16 @@ public class TravellersArmorItem extends ArmorItem implements TravellersModifiab
 	 */
 	public <T> TravellersArmorItem withDefaultComponent(TravellersComponentType<T> component, T value) {
 		this.defaultComponents.put(component, value);
+		return this;
+	}
+
+	/**
+	 * Gives every stack of this item the attribute modifier of {@code entry} in the entry's slots, like the attribute
+	 * modifiers 4.8 puts into the item properties of a piece with a built-in attribute ability (the boots' Step-Up). Lazy
+	 * and resolved once, as Forge registers its attributes after the items.
+	 */
+	public TravellersArmorItem withBuiltinAttribute(Supplier<TravellersAttributeEntry> entry) {
+		this.builtinAttributes.add(Suppliers.memoize(entry::get));
 		return this;
 	}
 
@@ -159,22 +174,31 @@ public class TravellersArmorItem extends ArmorItem implements TravellersModifiab
 	}
 
 	/**
-	 * The defaults plus the attribute modifiers inserted by {@code twilightforest:attribute} modifiers. 4.8 merges both
-	 * into the stack's attribute modifier component; 1.20.1's AttributeModifiers NBT would drop the item defaults, so the
-	 * inserted ones are kept apart and added here. While the piece is broken TravellersGearEvents clears them all.
+	 * The defaults, the built-in attribute modifiers ({@link #withBuiltinAttribute}) and the attribute modifiers inserted
+	 * by {@code twilightforest:attribute} modifiers. 4.8 merges them all into the stack's attribute modifier component;
+	 * 1.20.1's AttributeModifiers NBT would drop the item defaults, so the inserted ones are kept apart and added here.
+	 * While the piece is broken TravellersGearEvents clears them all.
 	 */
 	@Override
 	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
 		Multimap<Attribute, AttributeModifier> defaults = super.getAttributeModifiers(slot, stack);
 		List<TravellersAttributeEntry> inserted = TravellersGearData.INSERTED_ATTRIBUTE_MODIFIERS.get(stack);
-		if (inserted == null || inserted.isEmpty())
+		boolean hasInserted = inserted != null && !inserted.isEmpty();
+		if (!hasInserted && this.builtinAttributes.isEmpty())
 			return defaults;
 
 		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 		builder.putAll(defaults);
-		for (TravellersAttributeEntry entry : inserted) {
+		for (Supplier<TravellersAttributeEntry> builtin : this.builtinAttributes) {
+			TravellersAttributeEntry entry = builtin.get();
 			if (entry.slot().test(slot))
 				builder.put(entry.attribute(), entry.createModifier(slot));
+		}
+		if (hasInserted) {
+			for (TravellersAttributeEntry entry : inserted) {
+				if (entry.slot().test(slot))
+					builder.put(entry.attribute(), entry.createModifier(slot));
+			}
 		}
 		return builder.build();
 	}

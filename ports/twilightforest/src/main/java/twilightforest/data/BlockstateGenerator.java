@@ -327,6 +327,8 @@ public class BlockstateGenerator extends BlockModelBuilders {
 		simpleBlock(TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get(), bigSpawner);
 		simpleBlock(TFBlocks.FINAL_BOSS_BOSS_SPAWNER.get(), bigSpawner);
 
+		simpleBlock(TFBlocks.SINISTER_SPAWNER.get(), models().withExistingParent(TFBlocks.SINISTER_SPAWNER.getId().getPath(), "block/spawner").texture("all", TwilightForestMod.prefix("block/sinister_spawner")).renderType(CUTOUT));
+
 		BlockModelBuilder masonJar = this.makeJar(TFBlocks.MASON_JAR.getId().getPath());
 		simpleBlock(TFBlocks.MASON_JAR.get(), masonJar);
 		simpleBlock(TFBlocks.CICADA_JAR.get(), masonJar);

@@ -69,6 +69,7 @@ public class TFBlocks {
 	public static final RegistryObject<Block> ROPE = BLOCKS.register("rope", () -> new RopeBlock(BlockBehaviour.Properties.of().forceSolidOff().noOcclusion().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOL).strength(0.3F, 3.0F)));
 	public static final RegistryObject<GlassBlock> CANOPY_WINDOW = register("canopy_window", () -> new GlassBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, getter, pos, entity) -> false).isRedstoneConductor((state, getter, pos) -> false).isSuffocating((state, getter, pos) -> false).isViewBlocking((state, getter, pos) -> false)));
 	public static final RegistryObject<IronBarsBlock> CANOPY_WINDOW_PANE = register("canopy_window_pane", () -> new IronBarsBlock(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion()));
+	public static final RegistryObject<Block> SINISTER_SPAWNER = register("sinister_spawner", () -> new SinisterSpawnerBlock(BlockBehaviour.Properties.copy(Blocks.SPAWNER).noLootTable()));
 
 	//bushes
 	public static final RegistryObject<Block> IRON_OREBERRY = register("iron_oreberry", () -> new OreBerryBlock(false, TFLootTables.IRON_OREBERRY_BUSH_DROPS, BlockBehaviour.Properties.of().sound(SoundType.METAL).destroyTime(0.4F).randomTicks().dynamicShape().noOcclusion()));

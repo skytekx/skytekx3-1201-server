@@ -42,5 +42,7 @@ public class SpecialLootTables implements LootTableSubProvider {
         consumer.accept(TFLootTables.IRON_OREBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.IRON_BERRY.get()))));
         consumer.accept(TFLootTables.GOLD_OREBERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.GOLD_BERRY.get()))));
         consumer.accept(TFLootTables.ESSENCE_BERRY_BUSH_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.ESSENCE_BERRY.get()))));
+
+        consumer.accept(TFLootTables.OMINOUS_SPAWNER_DROPS, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFItems.EXANIMATE_ESSENCE.get()))));
     }
 }

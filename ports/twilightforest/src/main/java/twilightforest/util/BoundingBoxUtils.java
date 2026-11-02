@@ -94,4 +94,9 @@ public class BoundingBoxUtils {
 				vec3List.stream().mapToDouble(Vec3::z).reduce(first.z, Math::max) + expand
 		);
 	}
+
+	// Whether offset lies within a cube of the given radius (Chebyshev distance) around origin
+	public static boolean isPosWithinBox(BlockPos origin, BlockPos.MutableBlockPos offset, int range) {
+		return range >= Math.max(Math.abs(offset.getY() - origin.getY()), Math.max(Math.abs(offset.getX() - origin.getX()), Math.abs(offset.getZ() - origin.getZ())));
+	}
 }

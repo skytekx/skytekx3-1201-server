@@ -20,6 +20,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.init.TFBlocks;
 import twilightforest.init.TFStructureProcessors;
 
 import java.util.Map;
@@ -70,8 +71,7 @@ public class SpawnerProcessor extends StructureProcessor {
 	public StructureTemplate.StructureBlockInfo process(LevelReader level, BlockPos offset, BlockPos piecePos, StructureTemplate.StructureBlockInfo originalInfo, StructureTemplate.StructureBlockInfo modifiedInfo, StructurePlaceSettings placeSettings, @Nullable StructureTemplate template) {
 		CompoundTag nbtInfo = modifiedInfo.nbt();
 
-		// TODO sinister-spawner: also match TFBlocks.SINISTER_SPAWNER once that block is backported
-		if (nbtInfo != null && modifiedInfo.state().is(Blocks.SPAWNER)) {
+		if (nbtInfo != null && (modifiedInfo.state().is(Blocks.SPAWNER) || modifiedInfo.state().is(TFBlocks.SINISTER_SPAWNER.get()))) {
 			if (this.range.isPresent()) {
 				nbtInfo.putShort("SpawnRange", this.range.get());
 			}

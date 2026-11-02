@@ -48,8 +48,9 @@ texts and a change NOTICE in the jar (af618d1). Items a port left out on purpose
 between features, are recorded in `ports/twilightforest-backport-carryover.json`; deliberate behaviour
 differences are under [Local divergences](#local-divergences-from-upstream-keep-on-re-sync). Open deploy
 steps: the `remove-seed-coremod` seed check (see [Critic corrections](#critic-corrections-applied-during-porting)),
-one full-pack boot with the final jar on the production Arclight, and the TF dimension reset under
-[Savegame impact](#savegame-impact). Player-facing notes: [Changelog for players](#changelog-for-players).
+one full-pack boot with the final jar on the production Arclight, and the single TF dimension reset with
+pregen (steps under [Changelog for players](#changelog-for-players), background under
+[Savegame impact](#savegame-impact)). Player-facing notes: [Changelog for players](#changelog-for-players).
 
 ## Changelog for players
 
@@ -135,7 +136,7 @@ owner has not picked a mode yet (4e2f557; carryover entry `multiplayer-boss-scal
 
 ## Savegame impact
 
-Waves 1-6 add only new registry ids, new NBT keys or new optional SavedData, and change worldgen only in ungenerated chunks, so they need no TF dimension reset. These items touch existing saved data in a controlled way. Candelabra: a player-placed 4.3 candelabra gains has_candle_1..3 and a block entity and loads empty; it is WIP in 4.3 and never generated. Jars: firefly, cicada and moonworm jars gain a BE with the default twilight_oak lid. Hydra: NumHeads changes to a bitmask, so a living Hydra may reload once with a different head set. spiral_bricks gains waterlogged=false. Magic Paintings: Lucid Lands grows from 2x2 to 3x3 as in 4.8, so a Lucid Lands painting placed in 4.3 (creative only, the item was NYI) shifts half a block, and if the 3x3 area does not fit it pops off as an item that keeps its variant and has to be placed again. Naga Courtyard: keep TFNCTr, TFNCDu and TFNCSt registered as aliases, or old courtyards lose their terraces. Lich Tower: keep every old TFLT* piece type registered; 4.3's unused revamp stubs TFLTC2ST and TFLTSTRm become no-op aliases. Chiseled bookshelf: keep death_tome_spawner and empty_canopy_bookshelf registered and do not port 4.8's removal. Seed: removing seed.js must keep the identical seed value, or the landmark grid shifts. The Beardifier bridge makes terrain_adaptation take effect in the TF dimension for the first time, so structures that straddle old and new chunks can show a terrain seam. The worldgen waves 7 and 8 add berry bushes, oreberries, lakes, hollow-tree and fallen-trunk structures, Highlands Underground, carver changes, canopy and glacier blanketing, the Aurora Palace and Courtyard reworks, and the new Lich Tower. They only reach unexplored chunks, so on a pregenerated server a TF dimension reset (delete the twilightforest dimension folder, overworld untouched) followed by Chunky pregen is recommended once after wave 7 and again after wave 8. The overworld and the Skylands are unaffected. The excluded chunkgen overhaul is the only change that would have forced a full TF terrain reset and a level.dat generator rewrite.
+Waves 1-6 add only new registry ids, new NBT keys or new optional SavedData, and change worldgen only in ungenerated chunks, so they need no TF dimension reset. These items touch existing saved data in a controlled way. Candelabra: a player-placed 4.3 candelabra gains has_candle_1..3 and a block entity and loads empty; it is WIP in 4.3 and never generated. Jars: firefly, cicada and moonworm jars gain a BE with the default twilight_oak lid. Hydra: NumHeads changes to a bitmask, so a living Hydra may reload once with a different head set. spiral_bricks gains waterlogged=false. Magic Paintings: Lucid Lands grows from 2x2 to 3x3 as in 4.8, so a Lucid Lands painting placed in 4.3 (creative only, the item was NYI) shifts half a block, and if the 3x3 area does not fit it pops off as an item that keeps its variant and has to be placed again. Naga Courtyard: keep TFNCTr, TFNCDu and TFNCSt registered as aliases, or old courtyards lose their terraces. Lich Tower: keep every old TFLT* piece type registered; 4.3's unused revamp stubs TFLTC2ST and TFLTSTRm become no-op aliases. Chiseled bookshelf: keep death_tome_spawner and empty_canopy_bookshelf registered and do not port 4.8's removal. Seed: removing seed.js must keep the identical seed value, or the landmark grid shifts. The Beardifier bridge makes terrain_adaptation take effect in the TF dimension for the first time, so structures that straddle old and new chunks can show a terrain seam. The worldgen waves 7 and 8 add berry bushes, oreberries, lakes, hollow-tree and fallen-trunk structures, Highlands Underground, carver changes, canopy and glacier blanketing, the Aurora Palace and Courtyard reworks, and the new Lich Tower. They only reach unexplored chunks. Waves 7, 8 and 11 ship together in the one fork jar (`4.3.2508-skytekx.1`), so on a pregenerated server one TF dimension reset (delete the twilightforest dimension folder, overworld untouched) followed by Chunky pregen after the deploy is enough; the steps are in the operator notes under [Changelog for players](#changelog-for-players). The overworld and the Skylands are unaffected. The excluded chunkgen overhaul is the only change that would have forced a full TF terrain reset and a level.dat generator rewrite.
 
 ## Shared infrastructure
 
@@ -328,7 +329,7 @@ Live-server notes for `chunk-blanketing` and `speleothem-config-datadriven`:
 
 ## Wave 8: Lich Tower and Lich
 
-The headline 4.8 content, scheduled once all infrastructure (wave 3) and decor blocks (wave 6) exist. Lich fight fixes shipped in wave 4, so this wave is the full rework. The tower is the single largest item (about 70h); plan a second TF dimension reset or accept that new towers appear only in unexplored areas.
+The headline 4.8 content, scheduled once all infrastructure (wave 3) and decor blocks (wave 6) exist. Lich fight fixes shipped in wave 4, so this wave is the full rework. The tower is the single largest item (about 70h). Planned as a second TF dimension reset; since waves 7, 8 and 11 shipped in the same jar, the single reset after the deploy covers it (otherwise new towers appear only in unexplored areas).
 
 | Feature | Kind | Portability | h | Savegame |
 |---|---|---|---|---|
@@ -371,7 +372,7 @@ About 150h, built entirely on Data Components, Data Attachments and around 10 tf
 
 ## Wave 11: Optional: density-shaped landmark terrain
 
-Cosmetic replacement of 4.3's working block deformers. Do it only if the Beardifier bridge has proven stable and another TF dimension reset is acceptable.
+Cosmetic replacement of 4.3's working block deformers. Do it only if the Beardifier bridge has proven stable. It shipped in the same jar as waves 7 and 8, so the single TF dimension reset after the deploy covers it too.
 
 | Feature | Kind | Portability | h | Savegame |
 |---|---|---|---|---|

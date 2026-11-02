@@ -2,6 +2,7 @@
   "parent": "twilightforest:craft_travellers_gear",
   "criteria": {
     "add_any_modifier": {
+      "conditions": {},
       "trigger": "twilightforest:add_modifier"
     }
   },

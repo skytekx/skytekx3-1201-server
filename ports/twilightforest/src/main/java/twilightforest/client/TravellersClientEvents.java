@@ -46,6 +46,7 @@ import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorBeltItem;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
+import twilightforest.network.CycleMapSlotPacket;
 import twilightforest.network.GogglesZoomPacket;
 import twilightforest.network.GradualGlidePacket;
 import twilightforest.network.PerformDoubleJumpPacket;
@@ -58,10 +59,10 @@ import java.util.UUID;
 
 /**
  * Client events of the Traveller's Gear core and the modifiers ported so far. Backport of 4.8's TravellersClientEvents:
- * the glove overlay, the Traveller's Goggles' Zoom and Red Thread Vision, the Traveller's Vest's Stealth, the
- * Traveller's Belt's Swap Hotbar, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide)
- * and the Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces' modifiers come with
- * their travellers-* features.
+ * the glove overlay, the Traveller's Goggles' Zoom, Red Thread Vision and Item Display map cycling, the Traveller's
+ * Vest's Stealth, the Traveller's Belt's Swap Hotbar, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile
+ * Ranger, Gradual Glide) and the Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces'
+ * modifiers come with their travellers-* features.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class TravellersClientEvents {
@@ -359,6 +360,16 @@ public class TravellersClientEvents {
 			return;
 
 		redThreadVision = !redThreadVision;
+	}
+
+	/**
+	 * Item Display: its key asks the server to show the next map stored in the goggles.
+	 */
+	@SubscribeEvent
+	public static void cycleItemDisplayMap(InputEvent.Key event) {
+		if (Minecraft.getInstance().player == null || !TFKeyBinds.ITEM_DISPLAY_MAP_CYCLE_KEY.consumeClick())
+			return;
+		TFPacketHandler.CHANNEL.sendToServer(CycleMapSlotPacket.INSTANCE);
 	}
 
 	/**

@@ -53,6 +53,7 @@ import twilightforest.advancements.TFAdvancements;
 import twilightforest.components.entity.SlimySolesAttachment;
 import twilightforest.components.entity.TravellersGogglesZoomAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
+import twilightforest.components.item.ItemDisplayContents;
 import twilightforest.components.item.TravellersContainerContents;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.init.TFParticleType;
@@ -463,10 +464,10 @@ public class TravellersGearEvents {
 	}
 
 	/**
-	 * Gives the player the hotbar a piece of gear stored with Swap Hotbar when they take it out of the grindstone without
-	 * the modifier, so the stacks are not destroyed with it. Backport of 4.8
-	 * TravellersGearEvents#extractItemsFromSwapHotbarModifier (20fc691f5, 75cad471f); after the other listeners, so a
-	 * cancelled take returns nothing.
+	 * Gives the player the hotbar a piece of gear stored with Swap Hotbar, and the maps, compass, clock and Moon Dial
+	 * goggles stored with Item Display, when they take it out of the grindstone without the modifier, so the stacks are
+	 * not destroyed with it. Backport of 4.8 TravellersGearEvents#extractItemsFromSwapHotbarModifier (20fc691f5,
+	 * 75cad471f, 485d7e0a7); after the other listeners, so a cancelled take returns nothing.
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void extractItemsFromSwapHotbarModifier(GrindstoneEvent.OnTakeItem event) {
@@ -474,6 +475,14 @@ public class TravellersGearEvents {
 			TravellersModifiersManager.SWAP_HOTBAR_MODIFIER,
 			stack -> {
 				TravellersContainerContents contents = TravellersGearData.CONTAINER.get(stack);
+				return contents == null ? Stream.empty() : contents.nonEmptyStream();
+			}
+		);
+
+		returnModifierItems(event,
+			TravellersModifiersManager.ITEM_DISPLAY_MODIFIER,
+			stack -> {
+				ItemDisplayContents contents = TravellersGearData.ITEM_DISPLAY.get(stack);
 				return contents == null ? Stream.empty() : contents.nonEmptyStream();
 			}
 		);

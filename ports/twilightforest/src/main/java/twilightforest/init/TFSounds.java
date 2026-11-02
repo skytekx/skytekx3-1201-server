@@ -74,6 +74,8 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> CHARM_KEEP = createEvent("item.twilightforest.charm.keep");
 	public static final RegistryObject<SoundEvent> CHARM_LIFE = createEvent("item.twilightforest.charm.life");
 	public static final RegistryObject<SoundEvent> CICADA = createEvent("block.twilightforest.cicada");
+	public static final RegistryObject<SoundEvent> CYCLE_MAPS = createEvent("item.twilightforest.travellers_gear.cycle_maps");
+	public static final RegistryObject<SoundEvent> CYCLE_MAPS_EMPTY = createEvent("item.twilightforest.travellers_gear.cycle_maps_empty");
 	public static final RegistryObject<SoundEvent> DEATH_TOME_AMBIENT = createEvent("entity.twilightforest.death_tome.ambient");
 	public static final RegistryObject<SoundEvent> DEATH_TOME_DEATH = createEvent("entity.twilightforest.death_tome.death");
 	public static final RegistryObject<SoundEvent> DEATH_TOME_HURT = createEvent("entity.twilightforest.death_tome.hurt");

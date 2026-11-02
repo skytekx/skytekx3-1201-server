@@ -389,6 +389,8 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.GOGGLES_ZOOM_IN, SoundEvents.SPYGLASS_USE);
 		this.generateExistingSoundWithSubtitle(TFSounds.GOGGLES_ZOOM_OUT, SoundEvents.SPYGLASS_STOP_USING);
 		this.generateExistingSoundWithSubtitle(TFSounds.SWAP_HOTBAR, SoundEvents.ARMOR_EQUIP_LEATHER);
+		this.generateNewSoundMC(TFSounds.CYCLE_MAPS, "item/book/open_flip1", 1, true);
+		this.generateNewSoundMC(TFSounds.CYCLE_MAPS_EMPTY, "item/book/open_flip2", 1, true);
 		this.generateNewSoundWithSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "random/scepter/zombie", 1);
 
 		this.generateNewSoundWithSubtitle(TFSounds.DOUBLE_JUMP, "random/travellers/double_jump", 1);

@@ -4,9 +4,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
@@ -23,6 +20,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import twilightforest.TwilightForestMod;
+import twilightforest.components.item.ItemDisplayContents;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.item.travellers_gear.TravellersArmorBeltItem;
 import twilightforest.item.travellers_gear.modifiers.*;
@@ -113,7 +111,7 @@ public final class TravellersModifiersManager {
 		context.register(AQUATIC_AGILITY_MODIFIER, new TravellersEntryModifier(EquipmentSlotGroup.HEAD, List.of(), TravellersGearData.AQUATIC_AGILITY, componentText(AQUATIC_AGILITY_MODIFIER), false));
 		context.register(RED_THREAD_VISION_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.HEAD, TravellersGearData.RED_THREAD_VISION, Unit.INSTANCE, componentText(RED_THREAD_VISION_MODIFIER)));
 		context.register(ALL_NIGHT_GOGGLES_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.HEAD, TravellersGearData.ALL_NIGHT_GOGGLES, Unit.INSTANCE, componentText(ALL_NIGHT_GOGGLES_MODIFIER)));
-		context.register(ITEM_DISPLAY_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.HEAD, TravellersGearData.ITEM_DISPLAY, emptyItemDisplay(), componentText(ITEM_DISPLAY_MODIFIER)));
+		context.register(ITEM_DISPLAY_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.HEAD, TravellersGearData.ITEM_DISPLAY, ItemDisplayContents.EMPTY, componentText(ITEM_DISPLAY_MODIFIER)));
 
 		context.register(SWIFT_SWIM_ABILITY, new TravellersEntryModifier(EquipmentSlotGroup.CHEST, List.of(travellersSwiftSwim()), TravellersGearData.SWIFT_SWIM, true));
 		context.register(STEALTH_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.CHEST, TravellersGearData.STEALTH_CROUCHING, Unit.INSTANCE, componentText(STEALTH_MODIFIER)));
@@ -136,14 +134,6 @@ public final class TravellersModifiersManager {
 		context.register(SLIMY_SOLES_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.FEET, TravellersGearData.SLIMY_SOLES_COEFFICIENT, 0.5F, componentText(SLIMY_SOLES_MODIFIER)));
 		context.register(UNRESTRAINED_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.FEET, TravellersGearData.UNRESTRAINED, Unit.INSTANCE, componentText(UNRESTRAINED_MODIFIER)));
 		context.register(WATER_WALK_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.FEET, TravellersGearData.WATER_WALK, Unit.INSTANCE, componentText(WATER_WALK_MODIFIER)));
-	}
-
-	// 4.8 ItemDisplayContents.EMPTY
-	private static CompoundTag emptyItemDisplay() {
-		CompoundTag tag = new CompoundTag();
-		tag.put("chosen_map_slot", IntTag.valueOf(0));
-		tag.put("slots", new ListTag());
-		return tag;
 	}
 
 	private static List<Component> componentText(ResourceKey<TravellersModifier> modifier, Object... args) {

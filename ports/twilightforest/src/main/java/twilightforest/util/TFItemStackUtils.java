@@ -5,7 +5,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -185,6 +188,29 @@ public class TFItemStackUtils {
 			amount = stack.getItem().damageItem(stack, amount, entity, item -> {});
 			if (!(entity instanceof Player player && player.getAbilities().instabuild)) {
 				stack.hurt(amount, level.getRandom(), entity instanceof ServerPlayer serverPlayer ? serverPlayer : null);
+			}
+		}
+	}
+
+	/**
+	 * Puts the stack into the player's inventory, or drops it at their feet for them alone to pick up when it does not
+	 * fit. [VanillaCopy] GiveCommand#giveItem, as 4.8 copies it.
+	 */
+	public static void giveOrDrop(ItemStack itemStack, Player player) {
+		boolean flag = player.getInventory().add(itemStack);
+		if (flag && itemStack.isEmpty()) {
+			ItemEntity itementity1 = player.drop(itemStack.copy(), false);
+			if (itementity1 != null) {
+				itementity1.makeFakeItem();
+			}
+
+			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+			player.containerMenu.broadcastChanges();
+		} else {
+			ItemEntity itementity = player.drop(itemStack, false);
+			if (itementity != null) {
+				itementity.setNoPickUpDelay();
+				itementity.setTarget(player.getUUID());
 			}
 		}
 	}

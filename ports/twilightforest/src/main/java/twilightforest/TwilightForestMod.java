@@ -147,6 +147,7 @@ public class TwilightForestMod {
 		TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_TYPES.register(modbus);
 		ChunkBlanketProcessors.CHUNK_BLANKETING_TYPES.register(modbus);
 		TravellersModifierTypes.TYPES.register(modbus);
+		ItemDisplays.DISPLAYS.register(modbus);
 
 		modbus.addListener(this::sendIMCs);
 		modbus.addListener(this::init);

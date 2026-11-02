@@ -65,6 +65,17 @@ public class YetiCaveStructure extends ControlledSpawningStructure implements Cu
         return true;
     }
 
+    @Override
+    public BoundingBox adjustBoundingBox(BoundingBox box) {
+        // Caves saved by TF 4.3 have no hill-covering UtilityPiece, so they keep the 12-block margin their old bury adaptation gave
+        // the start box: the yeti_cave spawn overrides and ChunkGeneratorTwilight.gatherPotentialSpawns read that box, and their
+        // chunk references were built from it. Their start box is just the cave piece (69 wide); a new start also holds the
+        // UtilityPiece, which makes it 2 * HILL_RADIUS + 1 = 79 wide, and stays uninflated as in 4.8.
+        if (box.getXSpan() < 2 * YetiCaveComponent.HILL_RADIUS + 1)
+            return box.inflatedBy(12);
+        return super.adjustBoundingBox(box);
+    }
+
     public static YetiCaveStructure buildYetiCaveConfig(BootstapContext<Structure> context) {
         return new YetiCaveStructure(
                 ControlledSpawningConfig.firstIndexMonsters(new MobSpawnSettings.SpawnerData(TFEntities.YETI.get(), 5, 1, 2)),

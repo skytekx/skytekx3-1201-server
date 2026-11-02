@@ -484,6 +484,24 @@ logs stay on the Mac and are not in the repo.
   three known errors. Only the files the merge changed went over, not a full sync, because the Mac
   holds newer configs than the checkout.
 - Both MacBooks got the same Twilight Forest jars and the two Twilight configs.
+- At 13:07 the owner asked why a diamond pickaxe no longer mines obsidian. Nyx 1.0.0 registered its
+  meteor tool tier between diamond and netherite with the tag `minecraft:needs_diamond_tool`, so Forge's
+  tier sorting had taken every block that needs diamond away from diamond tools since Nyx came in on
+  2026-06-29. At 13:12 the owner ruled that whatever diamond mines in vanilla stays mineable with it, and
+  that new blocks may ask for a higher tier. Nyx 1.0.1 gives the meteor tier its own empty tag
+  `nyx:needs_meteor_tool` and credits the port to SkyTekx alone. The server stopped at 13:21:46 with
+  nobody online and reached `Done` with the new jar at 13:22:30, with 251 jars and the three known boot
+  errors. Two temporary KubeJS scripts, loaded with `/kubejs reload server_scripts` and removed right
+  after, found the diamond tier right for obsidian, crying obsidian, ancient debris, the respawn anchor
+  and the netherite block, iron still too weak for obsidian, and all 1003 vanilla blocks mineable at the
+  diamond tier. Only 10 blocks of Iron's Spellbooks, Mekanism Extras, Tinkers' Construct and Tinkers
+  Reforged ask for more than diamond. Both MacBooks got the jar at 13:22. A client with the old jar
+  still gets the drops but mines these blocks at the speed of a wrong tool. See
+  [Nyx](content/nyx.md#history).
+- At 13:11 the owner asked that it never rains in the Skylands. Commit e55c731a turned precipitation off
+  in the 11 Skylands biomes that still had it, so none of the 15 has rain or snow. The server restarted
+  with it at 13:13 and reached `Done` at 13:13:48. See
+  [Skylands worldgen](content/skylands-worldgen.md#biomes).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

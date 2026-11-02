@@ -517,7 +517,15 @@ logs stay on the Mac and are not in the repo.
   17:13 the save of 17:07:34 came back at 17:15:02 after the respawn, 33 stacks with XP level 4, and the
   rejoin at 17:15:09 showed them. At 17:45:19 a second player died in lava. On the owner's ask of
   17:46 that player's save of 17:43:20 came back at 17:47:46, after the respawn, with 38 stacks and XP
-  level 17, and the rejoin at 17:49:35 showed the level.
+  level 17, and the rejoin at 17:49:35 showed the level. Between 19:12:38 and 19:13:25 the owner died
+  four times in the overworld, to an explosion, twice to a Skeleton and to fire. On the owner's ask of
+  19:14 the save of 19:08:22 came back at 19:15:46 while the player was kicked, 31 stacks with XP level
+  2, and the rejoin at 19:17:43 showed them. Drops in unloaded chunks do not age, so at 19:19 a
+  force-load of the death area looked for the rest. Only 4 raw uranium lay there, and the loaded chunk
+  let them despawn by 19:24. At 19:25:41 commands gave back the 4 raw uranium and the ores the save of
+  19:13:22 listed, and the owner had them all in the backpack by 19:28:22. No save, no drop and not the
+  backpack held gold. Five more deaths at 19:21 and 19:22 cost nothing. The save of 19:23:22 holds every
+  item again.
 - At 13:39 the owner asked for weaker mobs in the Skylands, where everybody builds a home, and at 13:48
   for none at all. With the Skylands at noon but never at day, undead no longer burned there, and
   L2Hostility gave the mobs levels near 50. `kubejs/server_scripts/skylands_no_mobs.js` refuses every

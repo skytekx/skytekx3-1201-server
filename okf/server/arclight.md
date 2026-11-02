@@ -52,7 +52,11 @@ After a deploy, check:
 Verified on 2026-11-02 with the full pack (272 mods, fresh world, chunk generation in the overworld, the
 Twilight Forest and the Skylands): `Done`, 0 FATAL / crash / watchdog, no error signature that plain Forge
 47.4.18 does not log too, and an upgrade boot over a stale upstream `.arclight` cache re-extracted
-`safeiter2`. One known mod conflict, present before as well: Arclight's `arclight$mutePotion` redirect
+`safeiter2`. Re-checked on the release tree of the TF 4.8 backport (a46e591, 274 mods, same chunk
+generation): `Done`, 0 FATAL / crash / watchdog with `max-tick-time=180000`; at the default 60000 the
+test harness's synchronous 145-chunk `forceload` tripped the watchdog after `Done`, on this host with the
+older pack too (details in the [TF backport](../modpack/twilightforest-backport.md#in-the-pack-2026-11-01)).
+One known mod conflict, present before as well: Arclight's `arclight$mutePotion` redirect
 wins over Apothic Attributes' `apoth_sunderingHasEffect`, so Apothic's Sundering bonus damage does not
 apply on Arclight (it does on plain Forge).
 

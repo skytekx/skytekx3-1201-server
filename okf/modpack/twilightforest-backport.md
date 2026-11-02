@@ -396,8 +396,10 @@ Compatibility checks against the fork (2026-11-01 build): every `twilightforest/
 method that the 12 jars link exists. Every mixin target and injection point resolves, including the TF
 targets of The Lost Blocks and the three Twilight Tweaks coremods. A full-pack dedicated-server boot on
 a fresh world (plain Forge 1.20.1-47.4.18) reached `Done` with 0 FATAL, crash or watchdog lines and no
-ERROR from an addon or from TF. The tracked Arclight jar could not be used for this test: its own
-`MinecraftServerMixin` failed in the test sandbox even with an empty `mods/`.
+ERROR from an addon or from TF. On 2026-11-02 the full pack with the fork jar also booted on the fixed
+Arclight jar (`safeiter2`, see [Arclight](../server/arclight.md)): `Done`, 0 FATAL, no error signature that
+plain Forge does not log too. (The earlier `MinecraftServerMixin` failure came from the broken `safeiter`
+jar, not from the pack.)
 
 Re-check these when the matching 4.8 code is backported, because the addons hook them directly:
 - The Lost Blocks mixins: `HedgeBlock#attack` (anchor `INVOKE Level#scheduleTick`),

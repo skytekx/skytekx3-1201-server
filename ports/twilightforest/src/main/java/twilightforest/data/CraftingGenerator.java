@@ -2,7 +2,9 @@ package twilightforest.data;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
@@ -29,6 +31,9 @@ import twilightforest.util.ArmorUtil;
 import java.util.function.Consumer;
 
 public class CraftingGenerator extends CraftingDataHelper {
+	private static final String[] CORAL_SPECIES = {"tube", "brain", "bubble", "fire", "horn"};
+	private static final String[] CORAL_TYPES = {"", "_block", "_fan"};
+
 	public CraftingGenerator(PackOutput output) {
 		super(output);
 	}
@@ -319,6 +324,25 @@ public class CraftingGenerator extends CraftingDataHelper {
 		DryingRecipeBuilder.drying(Items.KELP, Items.DRIED_KELP, 3)
 				.unlockedBy("has_kelp", has(Items.KELP))
 				.save(consumer, TwilightForestMod.prefix("drying/kelp"));
+
+		dryingRackCoralRecipes(consumer);
+	}
+
+	private void dryingRackCoralRecipes(Consumer<FinishedRecipe> consumer) {
+		for (String name : CORAL_SPECIES) {
+			for (String type : CORAL_TYPES) {
+				registerCoral(consumer, name + "_coral" + type);
+			}
+		}
+	}
+
+	private void registerCoral(Consumer<FinishedRecipe> consumer, String coral) {
+		Item living = ForgeRegistries.ITEMS.getValue(new ResourceLocation(coral));
+		Item dead = ForgeRegistries.ITEMS.getValue(new ResourceLocation("dead_" + coral));
+		// saved under the default id (minecraft:dead_<coral>), as in 4.8; vanilla 1.20.1 has no recipe by that id
+		DryingRecipeBuilder.drying(living, dead, 1 / 30F)
+				.unlockedBy("has_coral", has(living))
+				.save(consumer);
 	}
 
 	private void darkTowerRecipes(Consumer<FinishedRecipe> consumer) {

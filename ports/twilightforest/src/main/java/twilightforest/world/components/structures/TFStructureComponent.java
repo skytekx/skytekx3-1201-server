@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -20,12 +20,14 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.Vec3;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
 import twilightforest.util.ColorUtil;
 import twilightforest.world.components.structures.util.ProgressionPiece;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Deprecated
 // We keep rehashing Vanillacopies and they'll keep breaking between ports, we should be adding TwilightFeature to the
@@ -109,26 +111,19 @@ public abstract class TFStructureComponent extends StructurePiece implements Pro
 		}
 	}
 
-	@SuppressWarnings({"SameParameterValue", "unused"})
-	protected void setDebugEntity(WorldGenLevel world, int x, int y, int z, BoundingBox sbb, String s) {
-		setInvisibleTextEntity(world, x, y, z, sbb, s, shouldDebug(), 0f);
-	}
-
-	protected void setInvisibleTextEntity(WorldGenLevel world, int x, int y, int z, BoundingBox sbb, String s, boolean forcePlace, float additionalYOffset) {
+	// Text Display entity instead of 4.3's invisible marker Armor Stand with a visible custom name (TF 4.8 914a837e4)
+	protected void setInvisibleTextEntity(WorldGenLevel world, int x, int y, int z, BoundingBox sbb, String s, boolean forcePlace, float additionalYOffset, Consumer<Vec3> positionAccumulator, Display.BillboardConstraints billboardConstraint) {
 		if (forcePlace) {
 			final BlockPos pos = new BlockPos(this.getWorldX(x, z), this.getWorldY(y), this.getWorldZ(x, z));
 
 			if (sbb.isInside(pos)) {
-				final ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, world.getLevel());
-				armorStand.setCustomName(Component.literal(s));
-				armorStand.moveTo(pos.getX() + 0.5, pos.getY() + additionalYOffset, pos.getZ() + 0.5, 0, 0);
-				armorStand.setInvisible(true);
-				armorStand.setCustomNameVisible(true);
-				armorStand.setSilent(true);
-				armorStand.setNoGravity(true);
-				// set marker flag
-				armorStand.getEntityData().set(ArmorStand.DATA_CLIENT_FLAGS, (byte) (armorStand.getEntityData().get(ArmorStand.DATA_CLIENT_FLAGS) | 16));
-				world.addFreshEntity(armorStand);
+				final Display.TextDisplay display = new Display.TextDisplay(EntityType.TEXT_DISPLAY, world.getLevel());
+				display.setText(Component.literal(s));
+				display.setBillboardConstraints(billboardConstraint);
+				display.moveTo(pos.getX() + 0.5, pos.getY() + additionalYOffset, pos.getZ() + 0.5, 0, 0);
+
+				if (world.addFreshEntity(display))
+					positionAccumulator.accept(display.position());
 			}
 		}
 	}

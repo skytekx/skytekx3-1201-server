@@ -10,6 +10,7 @@ import snownee.jade.api.EntityAccessor;
 import snownee.jade.api.IEntityComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.ui.IElementHelper;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.passive.QuestRam;
 import twilightforest.entity.passive.quest.ram.QuestingRamContext;
@@ -32,9 +33,9 @@ public enum QuestRamWoolProvider implements IEntityComponentProvider {
 				if (!ram.isColorPresent(entry.getKey())) {
 					ItemStack stack = quest.getDisplayStack(entry.getKey(), entry.getValue());
 					if (getRenderedWools % 8 == 0) {
-						tooltip.add(tooltip.getElementHelper().smallItem(stack).size(new Vec2(4.0F, 4.0F)));
+						tooltip.add(IElementHelper.get().smallItem(stack).size(new Vec2(4.0F, 4.0F)));
 					} else {
-						tooltip.append(tooltip.getElementHelper().smallItem(stack).size(new Vec2(4.0F, 4.0F)));
+						tooltip.append(IElementHelper.get().smallItem(stack).size(new Vec2(4.0F, 4.0F)));
 					}
 					tooltip.append(Component.literal(" "));
 					getRenderedWools++;

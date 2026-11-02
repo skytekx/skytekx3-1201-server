@@ -55,7 +55,8 @@ Edit only the two source folders, then run the sync script (see [Edit workflow](
 ## Terrain
 
 The dimension type (`data/skytekx3/dimension_type/skylands.json`) has `min_y` 0 and height 256, uses
-the overworld sky, lets beds work, disables respawn anchors and allows raids. The noise settings
+the overworld sky, lets beds work, disables respawn anchors and allows raids. Its `fixed_time` of 6000
+holds the sun at noon. The noise settings
 (`data/skytekx3/worldgen/noise_settings/skylands.json`) turn aquifers and ore veins off and set the sea
 level to -64, so there is no sea and no free water from aquifers.
 
@@ -125,6 +126,11 @@ vanilla overworld ores and three contained liquid features from the shared pack:
 `skytekx3:contained_spring_water` and `skytekx3:contained_spring_lava` (spring features with no open
 side that need stone around them) and `skytekx3:water_pool` (a small pond patch on solid ground, about
 one chunk in four). These replace free springs and lakes.
+
+Since 2026-11-02 (e55c731a) none of the 15 biomes has precipitation, so it neither rains nor snows in
+the Skylands, and thunderstorms bring no natural lightning there. The dimension still shares the
+overworld weather, so its sky turns a little grey while it rains in the overworld, as over a vanilla
+desert.
 
 The 14 island biomes are also added to `#minecraft:is_overworld` and `#forge:is_overworld`. That is how
 mod ores, features and mob spawns that target the overworld reach the islands, which the pack

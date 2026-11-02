@@ -13,6 +13,44 @@ Only content that works sensibly on 1.20.1 is ported; the rest is listed under *
 
 **133 features, ≈1038 h**, in 11 waves.
 
+## Status (2026-11-02)
+
+All 133 planned features are ported in `ports/twilightforest/` (mod version `4.3.2508-skytekx.1`), and
+`local-mods/` ships the fork jar `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar` (SHA-1
+`9417577d44548e730e958066ffe14662bea1db4a`) instead of the stock 4.3 jar. The waves 1-7 and 11 features
+are listed in the wave tables below. Waves 8-10, with the feature commit first and its review fixes after it:
+
+| Feature | Wave | Commits |
+|---|---|---|
+| Exanimate Essence and Ominous Fire | 8 | 106bda5, 92ac7a0 |
+| Scepter rework (repair recipe, essence repair, Renewal enchantment) | 8 | 1eb2ac8, 92ac7a0 |
+| Candelabra overhaul (wave 6 item, ported with the candles) and Ominous Candles | 6, 8 | db66825, 9fbeb2f, 1910826 |
+| Sinister Spawner | 8 | 1edbf86, 59b176b |
+| Jar revamp and Mason Jar | 8 | 893cb0f, 91bd7cf |
+| Chiseled Canopy Bookshelf | 8 | 86f2a8b, a747eb2 |
+| Lich boss rework | 8 | 6aa3cd6, 6e5d50d |
+| Lich Tower revamp: part A (jigsaw tower, pieces, spawns, tower loot), part B (yard trees, leash flag cleanup, wing room loot) | 8 | 884c75f, 65d7bdb, db41226, 63b85f4 |
+| Drying racks and the drying recipe type | 9 | d92b81c, 6791f41 |
+| Dried foods, Stale Bread, Moss Soup and tanning | 9 | 159a916, 72820f7 |
+| Traveller camps | 9 | c81859b |
+| Jade and TOP providers | 9 | 0e9b731 |
+| Native EMI plugin | 9 | 4ca7d1e |
+| Traveller's Gear core (6 pieces) | 10 | 1c78bc7, bec1225 |
+| Traveller's Gear modifier framework | 10 | 9530cec, 10e1abb, a22662e |
+| Wings mobility and Boots modifiers | 10 | b9617cc, d09e865, 54e5fff |
+| Vest and Goggles modifiers | 10 | 2889cef, c07e3af, 3839e9e |
+| Belt Swap Hotbar | 10 | 158a253 |
+| Auto Repair modifier | 10 | ca7d8c1 |
+| Goggles Item Display | 10 | 055def9 |
+
+The fork also merges the 4.8 translations for the backported content (5bbde50) and ships the licence
+texts and a change NOTICE in the jar (de5b8c5). Items a port left out on purpose, and follow-ups handed
+between features, are recorded in `ports/twilightforest-backport-carryover.json`; deliberate behaviour
+differences are under [Local divergences](#local-divergences-from-upstream-keep-on-re-sync). Open deploy
+steps: the `remove-seed-coremod` seed check (see [Critic corrections](#critic-corrections-applied-during-porting)),
+one full-pack boot with the final jar on the production Arclight, and the TF dimension reset under
+[Savegame impact](#savegame-impact).
+
 ## Savegame impact
 
 Waves 1-6 add only new registry ids, new NBT keys or new optional SavedData, and change worldgen only in ungenerated chunks, so they need no TF dimension reset. These items touch existing saved data in a controlled way. Candelabra: a player-placed 4.3 candelabra gains has_candle_1..3 and a block entity and loads empty; it is WIP in 4.3 and never generated. Jars: firefly, cicada and moonworm jars gain a BE with the default twilight_oak lid. Hydra: NumHeads changes to a bitmask, so a living Hydra may reload once with a different head set. spiral_bricks gains waterlogged=false. Magic Paintings: Lucid Lands grows from 2x2 to 3x3 as in 4.8, so a Lucid Lands painting placed in 4.3 (creative only, the item was NYI) shifts half a block, and if the 3x3 area does not fit it pops off as an item that keeps its variant and has to be placed again. Naga Courtyard: keep TFNCTr, TFNCDu and TFNCSt registered as aliases, or old courtyards lose their terraces. Lich Tower: keep every old TFLT* piece type registered; 4.3's unused revamp stubs TFLTC2ST and TFLTSTRm become no-op aliases. Chiseled bookshelf: keep death_tome_spawner and empty_canopy_bookshelf registered and do not port 4.8's removal. Seed: removing seed.js must keep the identical seed value, or the landmark grid shifts. The Beardifier bridge makes terrain_adaptation take effect in the TF dimension for the first time, so structures that straddle old and new chunks can show a terrain seam. The worldgen waves 7 and 8 add berry bushes, oreberries, lakes, hollow-tree and fallen-trunk structures, Highlands Underground, carver changes, canopy and glacier blanketing, the Aurora Palace and Courtyard reworks, and the new Lich Tower. They only reach unexplored chunks, so on a pregenerated server a TF dimension reset (delete the twilightforest dimension folder, overworld untouched) followed by Chunky pregen is recommended once after wave 7 and again after wave 8. The overworld and the Skylands are unaffected. The excluded chunkgen overhaul is the only change that would have forced a full TF terrain reset and a level.dat generator rewrite.
@@ -32,7 +70,7 @@ Waves 1-6 add only new registry ids, new NBT keys or new optional SavedData, and
 - Registry remap policy: extend 4.3's TFRemapper (MissingMappingsEvent) for block and item renames. For registries without MissingMappings (structure piece types, processors), keep old ids registered as aliases to the new deserializer: TFNCTr, TFNCDu and TFNCSt map to CourtyardTerrace, and 4.3's stubs TFLTC2ST and TFLTSTRm become no-op pieces. Never port 4.8's removal of death_tome_spawner and empty_canopy_bookshelf.
 - Coremod strategy: keep 4.3's JS coremods (META-INF/asm), extend conquered.js for StructureStart.loadStaticStart (knight_y), and add armor.js for Emperor's Cloth. Add a Mixin config to the fork only for the Traveller's hooks: water walk, unrestrained, FOV, food exhaustion, slime block, MouseHandler#turnPlayer, PhantomSpawner and snowy grass.
 - Verification harness: a fixed-seed TF biome and landmark dump compared before and after worldgen changes, plus structure-debug-commands, run against a copy of the server seed before each release. Boot rule from AGENTS.md: reach Done with 0 FATAL, crash or watchdog entries.
-- Pack-side glue in this repo: rebuild the local-mods/ TF jar from the fork (it is now named twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar). Its `modrinth-permissions/` file must then also list the MIT code folded in from Mystic Crown Compat (by 741741) next to the TeamTwilight terms; the jar carries that licence and notice as `META-INF/LICENSE-mystic-crown-compat.txt` and `META-INF/NOTICE-mystic-crown-compat.txt`. AlmostUnified is already prepared: `twilightforest` is last in modPriorities, so once TF datagen tags twilightforest:copper_nugget as forge:nuggets/copper it unifies to immersiveengineering:nugget_copper. The jerky need no unification entry. Ship any remaining compat tags through kubejs/server_scripts/tag_fixes.js.
+- Pack-side glue in this repo (done 2026-11-02): `local-mods/` ships the fork jar twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar instead of the stock 4.3 jar (c825572). Its [`modrinth-permissions/` file](../../modrinth-permissions/twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar.md) (b8d3c42) lists the MIT code folded in from Mystic Crown Compat (by 741741) next to the TeamTwilight terms, the licence files in the jar (`LICENSE_twilightforest`, `ASSET_LICENSE_twilightforest`, `NOTICE_twilightforest`, `META-INF/LICENSE-mystic-crown-compat.txt`, `META-INF/NOTICE-mystic-crown-compat.txt`), the jar's SHA-1 and the 8 modified All Rights Reserved structure templates. AlmostUnified needs no edit: `twilightforest` is last in modPriorities and TF datagen tags twilightforest:copper_nugget as forge:nuggets/copper, so it unifies to immersiveengineering:nugget_copper. The jerky need no unification entry. `kubejs/server_scripts/tag_fixes.js` adds the nine TF berries to `forge:berries` (4d9b8c9), and `config/twilightforest-common.toml` carries the fork's new keys (485dfdf).
 
 ## Wave 1: Crash, concurrency and multiplayer-correctness fixes (no new ids, no reset)
 
@@ -266,7 +304,7 @@ Deliberate behaviour that differs from TF 4.8. An upstream re-sync must not sile
 - `tree-feature-bugfixes` / root tracing (`FeaturePlacers.traceRoot`, `traceExposedRoot`): a root strand ends at a `minecraft:features_cannot_replace` block and keeps stepping over `twilightforest:tree_roots_skip` blocks, including roots the same tree already placed. 42c15869c ends a strand on any tree_roots_skip block, so in 4.8 every TreeRootsDecorator strand after the first dies on the shared start block. In 4.8 HEAD (e04ca7909) exposed roots only skip features_cannot_replace blocks; here they end there as well. Both are stricter than upstream about protected blocks and keep multi-strand roots, so root shapes differ from 4.8 near protected blocks.
 - `magic-painting-upgrades` / `MagicPaintingRenderer`: the `day_time` opacity modifier uses the day time wrapped to 0-24000; 4.8 feeds the raw day counter, so its day/night layers stop lining up after the first day. A lightning time recorded in another world (higher game time than the current level) is ignored instead of keeping the lightning layers lit. The default back texture lives in common code (`MagicPaintingVariants.DEFAULT_BACK_TEXTURE`) instead of 4.8's client-only `MagicPaintingTextureManager`, which a dedicated server must not load.
 - `mystic-crown` / Mystic Crown Compat: the 1.21.1 addon (MIT, by 741741, v1.1.0) is folded into the fork instead of being bundled. With Curios the crown also fits a `curios:head` slot (no armor there, drawn like a trophy by `CurioHeadRenderer`), and `MysticCrownItem.isWornBy` counts it as worn for every crown check. Right-click fills an empty helmet slot first, as in 4.8, and goes to the Curios slot only while a helmet is worn (the addon always used the Curios slot). The common option `mysticCrownScepterBonuses` (default true) adds the addon's scepter bonuses on top of 4.8's: a 10% extra Lich bomb from the Twilight Scepter and immunity to every Lich bomb for the wearer, which includes the Lich boss's own bombs in its fight, double Lifedrain damage, temporary Fortification shields that never time out (4.8: 50% longer), and Zombie Scepter zombies with 3 minutes of strength, leather gear (never dropped) and 4 attack damage instead of 7. `mysticCrownCurios` (default true) is the addon's Curios switch; it is a common option and is not synced, so keep it the same on the server and the clients. Turning it off makes Curios push any crown out of a Curios slot as a dropped item. Set `mysticCrownScepterBonuses = false` for 4.8 parity. The MIT licence and a notice listing the derived files ship in the jar under `META-INF/` (`LICENSE-mystic-crown-compat.txt`, `NOTICE-mystic-crown-compat.txt`), and mods.toml credits the addon. A re-sync of `TwilightWandItem`, `LifedrainScepterItem`, `ZombieWandItem`, `LoyalZombie` and `ShieldCapabilityHandler` must keep the `MysticCrownItem` checks.
-- `lich-tower-revamp` (part A) / jigsaw Lich Tower: new towers use the spawn list indices 0 = yard (Rising Zombies), 1 = interior and 2 = foyer (empty), picked per piece through `SpawnIndexProvider`; `ChunkGeneratorTwilight.getSpawnListIndexAt` ignores other Lich Tower pieces, and the pieces of towers that 4.3 generated map to the interior list. The tower's jigsaws run through `LichTowerUtil.JigsawNbtReplacementProcessor`, a copy of 1.20.1's `JigsawReplacementProcessor` that keeps the `final_state` NBT, because the grave chests carry their `casket_loot` and `tower_grave_lower` LootTable there and vanilla drops it. Room spawners leave out mobs wider than 0.8 blocks, since 4.8 shrinks them with `generic.scale`, which 1.20.1 lacks. Leashed yard and trap zombies carry the persistent-data flag `twilightforest:leash_pathfinder_override` instead of 4.8's data attachment, and the JS coremod `leashpathing.js` hooks every `IRETURN` of the vanilla `PathfinderMob#shouldStayCloseToLeashHolder` (`m_213814_`) so it returns false for flagged mobs; re-check it if another mod in the pack mixes into that method. The `tower_paintings` and `tower_boss_paintings` tags leave out the 19 painting variants added in 1.21. Loot: `chests/just_bones` rolls its 1-weight jackpot as one 88-89 bone entry (4.8 uses an inline nested table), and `chests/tower_foyer` inlines the effect stew instead of referencing `chests/suspicious_stew`. As in 4.8, every `TwilightTemplateStructurePiece`, Naga Courtyard and Quest Grove included, now places with `knownShape(true)` and the jigsaw-free postProcess, so a courtyard half generated under 4.3 and finished afterwards can show fences or walls that do not connect at the chunk seam (cosmetic). New towers appear only in ungenerated chunks, so reset the TF dimension and pregen with Chunky to get them. Part B is still open: until 4.8's vegetation and tree placement changes (facc450f5, dc6ae022a) land, flowers, grass and mayapples can grow on the yard paths and dirt (cosmetic).
+- `lich-tower-revamp` (part A 884c75f, part B db41226) / jigsaw Lich Tower: new towers use the spawn list indices 0 = yard (Rising Zombies), 1 = interior and 2 = foyer (empty), picked per piece through `SpawnIndexProvider`; `ChunkGeneratorTwilight.getSpawnListIndexAt` ignores other Lich Tower pieces, and the pieces of towers that 4.3 generated map to the interior list. The tower's jigsaws run through `LichTowerUtil.JigsawNbtReplacementProcessor`, a copy of 1.20.1's `JigsawReplacementProcessor` that keeps the `final_state` NBT, because the grave chests carry their `casket_loot` and `tower_grave_lower` LootTable there and vanilla drops it. Room spawners leave out mobs wider than 0.8 blocks, since 4.8 shrinks them with `generic.scale`, which 1.20.1 lacks. Leashed yard and trap zombies carry the persistent-data flag `twilightforest:leash_pathfinder_override` instead of 4.8's data attachment, and the JS coremod `leashpathing.js` hooks every `IRETURN` of the vanilla `PathfinderMob#shouldStayCloseToLeashHolder` (`m_213814_`) so it returns false for flagged mobs; re-check it if another mod in the pack mixes into that method. The flag is cleaned up when the mob joins a level (`EntityEvents.handleLeashPathingOverrides`, 4.8 2c9cbe869): it is removed only if the mob is not leashed and has no saved lead in `Mob.leashInfoTag`, because 1.20.1 restores a saved lead only on the mob's first tick, so a plain join-time `isLeashed()` check would strip the flag from every reloaded yard zombie. An access transformer opens `leashInfoTag` (`f_21359_`) for this; 4.8 keys the cleanup on `Leashable#mayBeLeashed` instead. The `tower_paintings` and `tower_boss_paintings` tags leave out the 19 painting variants added in 1.21. Loot: `chests/just_bones` rolls its 1-weight jackpot as one 88-89 bone entry (4.8 uses an inline nested table), and `chests/tower_foyer` and `chests/tower_room` (like `chests/hut_junk`) inline the effect stew with 4.8's weights instead of referencing 4.8's `chests/suspicious_stew` table, which the fork does not register. Enchanted loot uses 1.20.1's `enchant_with_levels` (treasure off) and `enchant_randomly` without a list where 4.8 names `#minecraft:on_random_loot`. As in 4.8, every `TwilightTemplateStructurePiece`, Naga Courtyard and Quest Grove included, now places with `knownShape(true)` and the jigsaw-free postProcess, so a courtyard half generated under 4.3 and finished afterwards can show fences or walls that do not connect at the chunk seam (cosmetic). New towers appear only in ungenerated chunks, so reset the TF dimension and pregen with Chunky to get them. Part B ported the rest: trees grow in the yard again (dc6ae022a: eight tree placements may place inside the tower's pieces), surface vegetation stays off the yard (facc450f5), and the wing rooms fill their library and room chests from 4.8's `chests/tower_library` and `chests/tower_room`.
 - `landmark-density-terrain` / Hollow Hills, Hydra Lair, Yeti Cave and Labyrinth terrain: only landmark starts created after the update get 4.8's density terraformers. Their pieces carry an additive `density_terrain` NBT flag (`DensityTerrainPiece`); landmarks saved by 4.3 lack it, so their terraformer returns zero and they keep the 4.3 terrain: `ChunkGeneratorTwilight` keeps `raiseHills` and `deformTerrainForYetiLair` for them, their `MazeMoundComponent` keeps placing its mound, and their pieces keep the 4.3 heights. Grid cells whose hill, hydra or yeti start was never created (the biome check failed) also keep the 4.3 block deformers; 4.8 gives them no terrain at all. `yeti_cave` is `none` as in 4.8 (0ceb8258d), but a density-shaped Yeti Cave adds a `UtilityPiece` over its whole hill (39 blocks around the centre, from the floor to one block over the roof at y 26) so the lair's roof, walls and floor stay protected and free of biome spawns; 4.8 has no such piece and its cave box ends 7 blocks under the roof. Yeti Caves saved by 4.3 have no `UtilityPiece`, so `YetiCaveStructure.adjustBoundingBox` keeps the 12-block inflation their old bury adaptation gave the start box (any start box narrower than 79 blocks), and the spawn overrides and `gatherPotentialSpawns` keep their old margin. Gravel is post-processed as in 4.8 (5d2221cc5) in every TF structure piece that places it through `TFStructureComponent`, not only the Labyrinth entrance building, and that includes pieces of 4.3-saved starts whose chunks generate after the update, so unsupported gravel there now falls. The upstream quirk in `FeaturePlacers.replaceBlocksDome` is kept: the centre column uses radius² as its height, which leaves one stone column through the grass on the Hydra hill's crown (pass `radiusSquared * squish` for the centre column to fix it). Reset the TF dimension and pregen with Chunky for consistent landmark terrain.
 - `travellers-wings-mobility` / `travellers-boots-modifiers` (b9617cc, d09e865): `GradualGlidePacket` on the server ignores the player UUID the client sends and only updates the sender (4.8 trusts the UUID). The client only starts a Gradual Glide while the modifier is active; 4.8 skipped that check, so a falling player without it bounced packets with the server every tick and sneaked through the air at gliding speed. The Sidestep recharge sound plays on the client only (4.8 played it on both sides, so the player heard it twice). The double jump / sidestep validator puts a rejected player back with `ServerGamePacketListenerImpl#teleport` instead of 4.8's raw position packet with teleport id 0. A double jump's 2-block safe fall ends with the landing even when the Double Jump modifier was lost mid-air; in 4.8 it then stayed on for every later fall until relog. 1.20.1 has no safe fall distance attribute, so `LivingFallEvent` (priority HIGH) shrinks the fall distance instead, and the boots' 4.8 tf-asm transformers are the JS coremod `META-INF/asm/travellers_boots.js`.
 
@@ -279,7 +317,7 @@ Deliberate behaviour that differs from TF 4.8. An upstream re-sync must not sile
 - `candelabra-overhaul`: This is not self-contained. CandelabraBlock line 202 needs TFItems.EXANIMATE_ESSENCE and the #twilightforest:scepters tag (scepter-rework) to switch on the ominous state, so add depends_on ominous-fire-exanimate-essence and scepter-rework, or move the essence item and the tag earlier. The block also gains a 'lighting' NORMAL/DIM/OMINOUS state next to has_candle_1..3; savegame_impact should mention both.
 - `jar-revamp-mason-jar`: No moonworm_jar exists in 4.3 or in 4.8. Only firefly_jar and cicada_jar become JarBlocks (FireflyJarBlock and CicadaJarBlock with the shared twilightforest:jar BE), plus the new mason_jar. The mason jar is also placed directly by 6 Lich Tower templates (5x5/potion, 7x7/desk, jar_study, shelved_jars, 9x9/cauldron_keep, tiered_spawner), not only from code.
 - `remove-seed-coremod`: Keep it easy, but put a verification gate in front of it. 4.3 seed.js stores the seed of the last WorldOptions constructed into TFDimensionSettings.seed, which LazyAreaContext and KeyBiomesLayer use. On the Arclight hybrid, extra WorldOptions instances (server.properties parsing, Bukkit or plugin worlds) can mean that value is not the overworld seed. Before switching to WorldUtil.getOverworldSeed(), log both values on the live server; if they differ, the switch shifts the biome and landmark map and the TF dimension needs a reset.
-  - Deploy gate (ported in 7e9d5f8; **status: not yet run**, it must pass before the first deploy of a jar that contains 7e9d5f8). On this server the risk is low: Arclight uses the vanilla world layout (world/DIM-1, world/dimensions), there are no Bukkit plugins and `level-seed` is blank, so after a restart the 4.3 hook holds the level.dat seed. It drifts only after `DedicatedServerProperties` is rebuilt (e.g. `/whitelist on|off`), which rolls a random seed until the next restart. If the live value differs, KeyBiomesLayer and LazyAreaContext offsets shift for TF chunks generated after the deploy.
+  - Deploy gate (ported in 7e9d5f8; **status: not yet run**, it must pass before the first deploy of a jar that contains 7e9d5f8; the fork jar in `local-mods/` since c825572 contains it). On this server the risk is low: Arclight uses the vanilla world layout (world/DIM-1, world/dimensions), there are no Bukkit plugins and `level-seed` is blank, so after a restart the 4.3 hook holds the level.dat seed. It drifts only after `DedicatedServerProperties` is rebuilt (e.g. `/whitelist on|off`), which rolls a random seed until the next restart. If the live value differs, KeyBiomesLayer and LazyAreaContext offsets shift for TF chunks generated after the deploy.
     1. On the live server, still on the stock 4.3 jar, restart it. Do not run `/whitelist on|off` (or anything else that reloads server.properties) before the check.
     2. Add a temporary `kubejs/server_scripts/seedcheck.js` (do not commit it): `ServerEvents.loaded(e => console.info('[seedcheck] hook=' + Java.loadClass('twilightforest.init.TFDimensionSettings').seed + ' level=' + e.server.getWorldData().worldGenOptions().seed()))`
     3. Restart, compare the two numbers in latest.log (or logs/kubejs/server.log), and compare both with `mcrcon -H localhost -P 65535 -p "$RCON_PW" "seed"`. Both script values pass through a JS double, so compare them with each other exactly; against `/seed` only the leading 15-16 significant digits are meaningful.
@@ -360,6 +398,7 @@ Each addon below is the newest 1.20.1 Forge build. Env is client / server as wri
 | The King of Twilight | 1.0.1 | `local-mods/` (CurseForge file 8029727) | both | MIT | The Twilight Lord final boss, spawned through Twilight Tweaks. |
 | Twilight Mobs Loots (1.20.1 backport) | 1.1.1-1.20.1-skytekx.1 | `local-mods/`, built from `ports/twilight-mobs-loots/` | both | MIT | Trophies for 48 regular TF mobs: 10% player-kill drop (giants 50%, +5% per Looting level), floor and wall blocks with the mob's sound and particles, wearable on the head or in the Curios head slot or a new `trophy` slot. |
 | Spiced Twilight | 2.0.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/spiced-twilight/`) | both | LGPL-3.0-or-later | Maze Slime Beetle in the Labyrinth, Helmet Crabs that hide, kobold armor and babies, Fire Beetle Powder, Hydra Hide, Cinder Pouch. 1.21.1-only upstream, backported here without the Naga jump attack. |
+| Twilight Crossbow (1.20.1 backport) | 1.5.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/twilight-crossbow/`) | both | MIT | Triple, Seeker, Ice and Ender Crossbows that fire TF arrows, plus ice and seeker fireworks; the upgrade smithing template drops in Aurora Palace caches. 1.21.1-only upstream. |
 | Alternative Twilight (Remastered) | 0.0.2-1.20.1-skytekx.1 | `local-mods/` (built from `ports/alternative-twilight-remastered/`) | both | GPL-3.0-or-later | Boss rework: three-phase Lich (shield-break minions and Blood Lust Curse, phase-2 damage cap, phase-3 power-up and magic orbs), a harder Naga (venom volleys, daze on frontal hits, chained charges), nine spears, Blood Lust effects, Knight Phantom aurora. 1.21.1-only upstream, backported here without its boss music files. |
 
 Distribution rules: a Modrinth-hosted addon goes into the index, even when it is All Rights Reserved,
@@ -375,9 +414,8 @@ redistribution, and the attribution file records the upstream commit and the bui
 Twilight Mobs Loots exists only for 1.21.1 NeoForge, so it is backported from source (upstream commit
 `41e447de`, 1.1.1, MIT) in [`ports/twilight-mobs-loots/`](../../ports/twilight-mobs-loots/README.md).
 Build `ports/twilightforest` first, then `./gradlew build` in the port; the jar is byte-reproducible.
-It requires `twilightforest` `[4.3.2508-skytekx.1,)`, so `local-mods/` must carry the fork jar, not the
-older `4.3` build: until that swap (the pack-side glue item above) lands, Forge refuses to load the
-addon and the full pack does not boot. Not ported: the Twilight Moonshine Moon Rabbit compat (no 1.20.1
+It requires `twilightforest` `[4.3.2508-skytekx.1,)`, which the fork jar in `local-mods/` provides (with
+the stock `4.3` jar, Forge refused to load the addon and the full pack did not boot). Not ported: the Twilight Moonshine Moon Rabbit compat (no 1.20.1
 build), and re-registering TF's boss trophies as curios (the fork already does it). Upstream's
 `trophy_silver.png` is a copy of TF's CC BY-NC-SA `trophy_minor.png`; the backport does not ship it and
 uses `twilightforest:item/trophy_minor` instead, so the jar stays MIT only (SHA-1 `03478ccb`, 135505
@@ -403,7 +441,12 @@ a fresh world (plain Forge 1.20.1-47.4.18) reached `Done` with 0 FATAL, crash or
 ERROR from an addon or from TF. On 2026-11-02 the full pack with the fork jar also booted on the fixed
 Arclight jar (`safeiter2`, see [Arclight](../server/arclight.md)): `Done`, 0 FATAL, no error signature that
 plain Forge does not log too. (The earlier `MinecraftServerMixin` failure came from the broken `safeiter`
-jar, not from the pack.)
+jar, not from the pack.) Final static check against the shipped jar (SHA-1 `9417577d`, 2026-11-02): every
+class, field and method that the 38 other `local-mods/` jars, the 224 Modrinth index jars and the crossbow
+jar link resolves (0 missing; members that resolve through vanilla superclasses could not be checked and
+are marked unverified, most of them in `at_mod` and Spiced Twilight). The pack-wide data scan found one TF
+id that an addon references and the fork lacked, `twilightforest:chests/casket_loot` (Dungeons &
+Villages); the fork now generates it with the Lich Tower loot.
 
 Re-check these when the matching 4.8 code is backported, because the addons hook them directly:
 - The Lost Blocks mixins: `HedgeBlock#attack` (anchor `INVOKE Level#scheduleTick`),
@@ -420,10 +463,10 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   and `TFItems.CICADA`, `FIREFLY` and `MOONWORM`. Also keep `block.SpecialMagicLogBlock` and the
   `ItemTagGenerator` and `EntityTagGenerator` tag constants, which Twilight Tweaks, Twilight Construct and
   Spartan TF use.
-- Content the addons expect from newer upstream TF: Treehouses place `twilightforest:rope` and
-  `twilightforest:mason_jar` (air until `rope` and `jar-revamp-mason-jar` land). Dungeons & Villages
-  rolls `twilightforest:chests/casket_loot` (missing, so that one pool is empty) and carries `twilightforest:jar`
-  block-entity data.
+- Content the addons expect from newer upstream TF, all present in the fork: Treehouses place
+  `twilightforest:rope` and `twilightforest:mason_jar` (the jars generate empty: the templates store
+  their item with 1.21's `count` key, which 1.20.1 does not read), and Dungeons & Villages rolls
+  `twilightforest:chests/casket_loot` and carries `twilightforest:jar` block-entity data.
 
 ### Pending permission
 
@@ -460,14 +503,12 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   `IceArrow(AbstractArrow)` and `SeekerArrow(AbstractArrow)` constructors, `util.TwilightItemTier`
   (`ICE`, `STEELEAF`), `TFCreativeTabs.EQUIPMENT` and `ITEMS` and the `twilightforest:chests/aurora_cache`
   loot id when re-syncing the fork. Not ported: the unregistered Knight Crossbow.
-  **Not bundled yet.** The crossbow jar only works with the fork jar in `local-mods/`: next to the stock
-  `twilightforest-1.20.1-4.3-universal.jar` (Forge version `4.3`), Forge refuses to load it, on the server
-  and on every client of the `.mrpack`. It goes into `local-mods/` together with the fork jar swap (the
-  pack-side glue item in [Shared infrastructure](#shared-infrastructure)): build the fork, then this port, copy
-  `build/libs/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar` to `local-mods/`, and add
-  `modrinth-permissions/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar.md` (Licensed, MIT,
-  https://github.com/baguchi/TwilightCrossbow, the upstream commit and the jar's SHA-1) plus its README
-  row. Then boot once on Arclight with the full pack and fire each crossbow once.
+  **Bundled** as `local-mods/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar` (fffbe6d) with its
+  `modrinth-permissions/` file (Licensed, MIT, upstream commit, SHA-1 `7b9ba212`, 92109 bytes). Like the
+  other ports it needs the fork jar, which `local-mods/` carries since c825572 (next to the stock `4.3` jar
+  Forge refused to load it). Unlike them, this jar build is not byte-reproducible (the jar keeps file
+  times), so record the new SHA-1 whenever the jar is rebuilt. Pending: boot the full pack once on Arclight
+  and fire each crossbow once.
 - **Spiced Twilight** (baguchi, LGPL-3.0-or-later): `ports/spiced-twilight/`, a standalone NeoGradle 6
   project like the fork. Build the fork first (`ports/twilightforest`, `./gradlew build`); the port compiles
   against `../twilightforest/build/libs/twilightforest-1.20.1-<tf_version>-universal.jar` (flatDir plus
@@ -500,11 +541,10 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   **Bundled** as `local-mods/spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` with its `modrinth-permissions/`
   file; the jar build is byte-reproducible, and its NOTICE and mods.toml credits link the source
   (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/spiced-twilight), as the LGPL asks
-  for a modified build. Like Twilight Mobs Loots it needs the fork jar in `local-mods/`: next to the stock
-  `twilightforest-1.20.1-4.3-universal.jar` Forge refuses to load it. Land the fork jar swap before or
-  together with any release that ships this jar, then boot the full pack once on Arclight (Done, 0 FATAL,
-  no mixin errors) and refuel one brewing stand with Fire Beetle Powder; the porter's boot test ran on
-  plain Forge 47.4.18.
+  for a modified build. Like Twilight Mobs Loots it needs the fork jar, which `local-mods/` carries since
+  c825572 (next to the stock `4.3` jar Forge refused to load it). Boot the full pack once on Arclight
+  (Done, 0 FATAL, no mixin errors) and refuel one brewing stand with Fire Beetle Powder; the porter's boot
+  test ran on plain Forge 47.4.18.
 - **Alternative Twilight (Remastered)** (lvedy, GPL-3.0-or-later): `ports/alternative-twilight-remastered/`,
   a standalone NeoGradle 6 project like the fork. Build the fork first (`ports/twilightforest`,
   `./gradlew build`); the port compiles against
@@ -538,9 +578,8 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   **Bundled** as `local-mods/at_mod-0.0.2-1.20.1-skytekx.1.jar` with its `modrinth-permissions/` file; the
   jar build is byte-reproducible and its NOTICE and mods.toml credits link the source
   (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/alternative-twilight-remastered), as
-  the GPL asks. Like the other ports it needs the fork jar in `local-mods/`: next to the stock
-  `twilightforest-1.20.1-4.3-universal.jar` Forge refuses to load it. After the fork jar swap, boot the
-  full pack once on Arclight (Done, 0 FATAL, no mixin errors) and fight a Lich and a Naga once; the
+  the GPL asks. Like the other ports it needs the fork jar, which `local-mods/` carries since c825572.
+  Boot the full pack once on Arclight (Done, 0 FATAL, no mixin errors) and fight a Lich and a Naga once; the
   porter's boot test ran on plain Forge 47.4.18 (with and without Spiced Twilight), and the integration
   boot on top of the Lich Tower part A (fork jar, this jar, Spiced Twilight and Twilight Mobs Loots) also
   reached Done with 0 ERROR, all three mixins applied and a 210-health Naga. The client-only parts
@@ -561,13 +600,12 @@ on is in the fork (details in the table below):
 - **Twilight Mobs Loots**, **Twilight Crossbow**, **Spiced Twilight** and **Alternative Twilight
   (Remastered)** are done: see
   [In the pack](#in-the-pack-2026-11-01) and
-  [Backported 1.21.1-only addons](#backported-1211-only-addons). The crossbow jar waits for the fork
-  jar in `local-mods/`; the Mobs Loots, Spiced Twilight and Alternative Twilight jars are bundled but
-  need it to load. Alternative Twilight (Remastered) replaces the 1.20.1 Alternative Twilight, which
+  [Backported 1.21.1-only addons](#backported-1211-only-addons). All four jars are bundled in
+  `local-mods/` next to the fork jar. Alternative Twilight (Remastered) replaces the 1.20.1 Alternative Twilight, which
   conflicts with the 4.8 boss rework.
 - **Mystic Crown Compat** is done too, folded into the fork itself (Curios head slot and scepter
   bonuses, no separate jar): see the `mystic-crown` entry in
-  [Local divergences from upstream](#local-divergences-from-upstream-keep-on-re-sync). It ships with the fork jar swap.
+  [Local divergences from upstream](#local-divergences-from-upstream-keep-on-re-sync). It ships inside the fork jar.
 
 ### Research (2026-11-01)
 
@@ -589,9 +627,9 @@ on is in the fork (details in the table below):
 | [Alternative Twilight (Remastered)](https://modrinth.com/mod/alternative-twilight-remastered) | backported_bundled | yes | 1.21.1 NeoForge only, 0.0.2 (2026-05-15). 34 classes, 3 mixins. Source github.com/Lvedy114/alternative-twilight. Done: ported in `ports/alternative-twilight-remastered/` (from `old` 99f43e08a; boss music files and the config screen left out) and bundled as `local-mods/at_mod-0.0.2-1.20.1-skytekx.1.jar`. |
 | [Create: Shimmer](https://www.curseforge.com/minecraft/mc-mods/create-shimmer) | needs_backport | yes | 1.21.1 NeoForge only (1.3.1, 2026-08-13). Needs create [6.0.7,), create_dragons_plus [1.8.0,), curios 9 and twilightforest [4.7.0,). |
 | [Twilight Mobs Loots](https://modrinth.com/mod/twilight-mobs-loots) | backported_bundled | yes | 1.21.1 NeoForge 1.1.1 only. twilightforest [4.8,5.0). 24 classes, no mixins. Done: ported in `ports/twilight-mobs-loots/` (22 classes, Twilight Moonshine compat dropped) and bundled as `local-mods/twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar`. |
-| [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | backported_held | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. Done: ported in `ports/twilight-crossbow/` (Knight Crossbow left out, upstream never registers it). The jar is not bundled until the fork jar replaces the 4.3 jar in `local-mods/`. |
+| [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | backported_bundled | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. Done: ported in `ports/twilight-crossbow/` (Knight Crossbow left out, upstream never registers it) and bundled as `local-mods/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar`. |
 | [Spiced Twilight (baguchi)](https://modrinth.com/mod/spiced-twilight) | backported_bundled | yes | 1.21.1 NeoForge 1.21.1-2.0.0 only. twilightforest [4.8.3287,). 32 classes, 9 mixins into 4.8 entity code. Done: ported in `ports/spiced-twilight/` (Naga jump attack left out) and bundled as `local-mods/spiced_twilight-2.0.0-1.20.1-skytekx.1.jar`. |
-| [Mystic Crown Compat](https://modrinth.com/mod/mystic-crown-compat) | folded_into_fork | yes | 1.21.1 NeoForge 1.1.0 only. twilightforest [4.8,). 14 classes, 5 mixins. Done: behaviour re-implemented in the TF fork's own code (7e94232), no mixins and no separate jar; it ships with the fork jar swap. See Local divergences / `mystic-crown`. |
+| [Mystic Crown Compat](https://modrinth.com/mod/mystic-crown-compat) | folded_into_fork | yes | 1.21.1 NeoForge 1.1.0 only. twilightforest [4.8,). 14 classes, 5 mixins. Done: behaviour re-implemented in the TF fork's own code (7e94232), no mixins and no separate jar; it ships inside the fork jar. See Local divergences / `mystic-crown`. |
 | [Twilight Forest Cave Fix](https://modrinth.com/mod/twilight-forest-cave-fix) | skip | no | 1.20.1 Forge 1.0.0 only. twilightforest [4.3.2145,). |
 | [Twilight Iris Xe Fix / TF-Intel-Fix](https://modrinth.com/mod/twilight-iris-xe-fix) | skip | no | 1.20.1 Forge 1.0.0 each. |
 | [Cloudertinker](https://www.curseforge.com/minecraft/mc-mods/cloudertinker) | skip | no | 1.20.1 Forge 1.2.11 (2026-10-02). twilightforest [4.2.1518,). TConstruct references resolve against 3.11.2. |

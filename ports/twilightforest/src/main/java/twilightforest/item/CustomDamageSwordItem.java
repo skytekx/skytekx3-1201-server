@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.enchantment.Enchantment;
 import twilightforest.init.TFDamageTypes;
 
 public class CustomDamageSwordItem extends SwordItem implements CustomDamageProvider {
@@ -36,5 +37,23 @@ public class CustomDamageSwordItem extends SwordItem implements CustomDamageProv
 	@Override
 	public int getDefaultTooltipHideFlags(ItemStack stack) {
 		return this.showAttributeTooltip ? super.getDefaultTooltipHideFlags(stack) : ItemStack.TooltipPart.MODIFIERS.getMask();
+	}
+
+	// In 4.8 this item (stale bread) is in no #minecraft:swords or #minecraft:enchantable/* tag, so neither the
+	// enchanting table nor the anvil offers it anything. On 1.20.1 every SwordItem matches the WEAPON, BREAKABLE
+	// and VANISHABLE enchantment categories, so these three overrides mirror 4.8 by refusing all enchantments.
+	@Override
+	public boolean isEnchantable(ItemStack stack) {
+		return false;
+	}
+
+	@Override
+	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+		return false;
+	}
+
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+		return false;
 	}
 }

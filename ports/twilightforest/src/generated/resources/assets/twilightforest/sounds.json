@@ -59,6 +59,18 @@
     ],
     "subtitle": "subtitles.twilightforest.block.builder.replace"
   },
+  "block.twilightforest.candelabra.light": {
+    "sounds": [
+      "twilightforest:random/candelabra/light"
+    ],
+    "subtitle": "subtitles.twilightforest.block.candelabra.light"
+  },
+  "block.twilightforest.candelabra.ominous": {
+    "sounds": [
+      "twilightforest:random/candelabra/ominous"
+    ],
+    "subtitle": "subtitles.twilightforest.block.candelabra.ominous"
+  },
   "block.twilightforest.casket.close": {
     "sounds": [
       "twilightforest:random/casket/close"

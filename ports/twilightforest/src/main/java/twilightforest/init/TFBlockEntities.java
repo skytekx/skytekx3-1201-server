@@ -146,6 +146,9 @@ public class TFBlockEntities {
 	public static final RegistryObject<BlockEntityType<MasonJarBlockEntity>> MASON_JAR = BLOCK_ENTITIES.register("mason_jar", () ->
 			BlockEntityType.Builder.of(MasonJarBlockEntity::new, TFBlocks.MASON_JAR.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<CandelabraBlockEntity>> CANDELABRA = BLOCK_ENTITIES.register("candelabra", () ->
+			BlockEntityType.Builder.of(CandelabraBlockEntity::new, TFBlocks.CANDELABRA.get()).build(null));
+
 	@OnlyIn(Dist.CLIENT)
 	public static void registerTileEntityRenders() {
 		// tile entities
@@ -165,5 +168,6 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(DRYING_RACK.get(), DryingRackRenderer::new);
 		BlockEntityRenderers.register(JAR.get(), JarRenderer::new);
 		BlockEntityRenderers.register(MASON_JAR.get(), JarRenderer.MasonJarRenderer::new);
+		BlockEntityRenderers.register(CANDELABRA.get(), CandelabraRenderer::new);
 	}
 }

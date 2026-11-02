@@ -1679,40 +1679,14 @@ public class BlockstateGenerator extends BlockModelBuilders {
 
 	@SuppressWarnings("SuspiciousNameCombination")
 	private void candelabra() {
-		// TODO variants
-		final List<ModelFile> candelabras = new ArrayList<>();
-		final List<ModelFile> wallCandelabras = new ArrayList<>();
-
-		final int minHeight = 4;
-		final int maxHeight = 5;
-		for (int right = minHeight; right <= maxHeight; right++) {
-			for (int center = minHeight; center <= maxHeight; center++) {
-				for (int left = minHeight; left <= maxHeight; left++) {
-					candelabras.add(this.buildCandelabra(left, center, right));
-					wallCandelabras.add(this.buildWallCandelabra(left, center, right));
-				}
-			}
-		}
-
-		this.getVariantBuilder(TFBlocks.CANDELABRA.get()).forAllStates(state -> {
+		ModelFile floorModel = this.buildCandelabra();
+		ModelFile wallModel = this.buildWallCandelabra();
+		this.getVariantBuilder(TFBlocks.CANDELABRA.get()).forAllStatesExcept(state -> {
 			Direction direction = state.getValue(CandelabraBlock.FACING);
 			boolean onWall = state.getValue(CandelabraBlock.ON_WALL);
-			boolean lit = state.getValue(CandelabraBlock.LIGHTING) != LightableBlock.Lighting.NONE;
 
-			ConfiguredModel.Builder<?> stateBuilder = ConfiguredModel.builder();
-
-			Iterator<ModelFile> models = onWall ? wallCandelabras.iterator() : candelabras.iterator();
-
-			while (models.hasNext()) {
-				ModelFile model = models.next();
-				stateBuilder.modelFile(this.models().getBuilder(model.getLocation().toString() + "_plain" + (lit ? "_lit" : "")).parent(model).renderType(CUTOUT).texture("candle", lit ? "minecraft:block/candle_lit" : "minecraft:block/candle")).rotationY((int) direction.toYRot());
-
-				if (models.hasNext())
-					stateBuilder = stateBuilder.nextModel();
-			}
-
-			return stateBuilder.build();
-		});
+			return ConfiguredModel.builder().modelFile(onWall ? wallModel : floorModel).rotationY((int) direction.toYRot()).build();
+		}, CandelabraBlock.LIGHTING, BlockStateProperties.WATERLOGGED, CandelabraBlock.CANDLES.get(0), CandelabraBlock.CANDLES.get(1), CandelabraBlock.CANDLES.get(2));
 	}
 
 	private void perFaceBlock(Block b, ResourceLocation inside, ResourceLocation outside) {

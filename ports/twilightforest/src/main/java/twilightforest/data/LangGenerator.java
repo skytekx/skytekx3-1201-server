@@ -1064,6 +1064,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.BUILDER_OFF, "Carminite Builder deactivates");
 		this.addSubtitle(TFSounds.BUILDER_ON, "Carminite Builder activates");
 		this.addSubtitle(TFSounds.BUILDER_REPLACE, "Built Block expires");
+		this.addSubtitle(TFSounds.CANDELABRA_LIGHT, "Candelabra dims");
+		this.addSubtitle(TFSounds.CANDELABRA_OMINOUS, "Candelabra sparks");
 		this.addSubtitle(TFSounds.CASKET_CLOSE, "Keepsake Casket closes");
 		this.addSubtitle(TFSounds.CASKET_LOCKED, "Keepsake Casket clicks");
 		this.addSubtitle(TFSounds.CASKET_OPEN, "Keepsake Casket opens");

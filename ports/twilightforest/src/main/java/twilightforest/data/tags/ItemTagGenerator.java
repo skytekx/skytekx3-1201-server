@@ -242,7 +242,6 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		);
 
 		tag(WIP).add(
-				TFBlocks.CANDELABRA.get().asItem(),
 				TFItems.CUBE_OF_ANNIHILATION.get()
 		);
 

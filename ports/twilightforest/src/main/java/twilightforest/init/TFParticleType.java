@@ -45,6 +45,7 @@ public class TFParticleType {
 			return LeafParticleData.codecLeaf();
 		}
 	});
+	public static final RegistryObject<SimpleParticleType> DIM_FLAME = PARTICLE_TYPES.register("dim_flame", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> OMINOUS_FLAME = PARTICLE_TYPES.register("ominous_flame", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> SORTING_PARTICLE = PARTICLE_TYPES.register("sorting_particle", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> TRANSFORMATION_PARTICLE = PARTICLE_TYPES.register("transformation_particle", () -> new SimpleParticleType(false));
@@ -79,6 +80,7 @@ public class TFParticleType {
 		event.registerSpriteSet(TFParticleType.WANDERING_FIREFLY.get(), FireflyParticle.WanderingProvider::new);
 		event.registerSpriteSet(TFParticleType.PARTICLE_SPAWNER_FIREFLY.get(), FireflyParticle.ParticleSpawnerProvider::new);
 		event.registerSpriteSet(TFParticleType.FALLEN_LEAF.get(), LeafParticle.Factory::new);
+		event.registerSpriteSet(TFParticleType.DIM_FLAME.get(), FlameParticle.SmallFlameProvider::new);
 		event.registerSpriteSet(TFParticleType.OMINOUS_FLAME.get(), FlameParticle.SmallFlameProvider::new);
 		event.registerSpriteSet(TFParticleType.SORTING_PARTICLE.get(), SortingParticle.Factory::new);
 		event.registerSpriteSet(TFParticleType.TRANSFORMATION_PARTICLE.get(), TransformationParticle.Factory::new);

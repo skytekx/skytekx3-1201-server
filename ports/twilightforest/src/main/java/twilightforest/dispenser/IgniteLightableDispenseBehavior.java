@@ -34,12 +34,10 @@ public class IgniteLightableDispenseBehavior extends OptionalDispenseItemBehavio
 
 	private static boolean tryLightBlock(ServerLevel level, BlockPos pos) {
 		BlockState blockstate = level.getBlockState(pos);
-		if (blockstate.getBlock() instanceof LightableBlock) {
-			LightableBlock.Lighting lightValue = blockstate.getValue(LightableBlock.LIGHTING);
-			if (lightValue == LightableBlock.Lighting.NONE) {
-				level.setBlockAndUpdate(pos, blockstate.setValue(LightableBlock.LIGHTING, LightableBlock.Lighting.NORMAL));
-				return true;
-			}
+		// canBeLit, as 4.8's FIRESTARTER_LIGHT tool action asks: a candelabra without candles or under water stays dark
+		if (blockstate.getBlock() instanceof LightableBlock lightable && lightable.canBeLit(blockstate)) {
+			level.setBlockAndUpdate(pos, blockstate.setValue(LightableBlock.LIGHTING, LightableBlock.Lighting.NORMAL));
+			return true;
 		}
 
 		return false;

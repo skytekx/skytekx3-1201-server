@@ -26,7 +26,9 @@ import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFRecipes;
+import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.recipe.*;
+import twilightforest.item.recipe.travellers.TravellersGearModifierRecipe;
 
 import java.util.List;
 import java.util.Objects;
@@ -105,6 +107,8 @@ public class TFEmiCompat implements EmiPlugin {
 			}
 		}
 
+		EmiTravellersGearGrindstoneRecipe.register(registry);
+
 		// the special crafting recipes are only listed while a data pack provides them (#2320)
 		for (CraftingRecipe crafting : manager.getAllRecipesFor(RecipeType.CRAFTING)) {
 			EmiRecipe emiRecipe = null;
@@ -125,6 +129,9 @@ public class TFEmiCompat implements EmiPlugin {
 				emiRecipe = new EmiCasketRepairRecipe(recipe.getId());
 			} else if (crafting instanceof EssenceRepairRecipe recipe) {
 				emiRecipe = new EmiExanimateEssenceRepairRecipe(recipe.getId());
+			} else if (crafting instanceof TravellersGearModifierRecipe recipe && TravellersModifiersManager.isModifierEnabled(Minecraft.getInstance().level.registryAccess(), recipe.getTravellersModifierKey())) {
+				// 4.8 fbd63cc75: no display with an empty output for a modifier a data pack deleted
+				emiRecipe = new EmiTravellersGearModifierRecipe(recipe);
 			}
 
 			if (emiRecipe != null) {

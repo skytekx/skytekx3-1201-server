@@ -44,6 +44,7 @@ import twilightforest.compat.CosmeticArmorCompat;
 import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.compat.top.TopCompat;
 import twilightforest.item.recipe.UncraftingTableCondition;
+import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
 import twilightforest.loot.modifiers.GiantToolGroupingModifier;
 import twilightforest.util.MagicPaintingVariant;
 import twilightforest.util.Restriction;
@@ -145,6 +146,7 @@ public class TwilightForestMod {
 		MagicPaintingVariants.MAGIC_PAINTINGS.register(modbus);
 		TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_TYPES.register(modbus);
 		ChunkBlanketProcessors.CHUNK_BLANKETING_TYPES.register(modbus);
+		TravellersModifierTypes.TYPES.register(modbus);
 
 		modbus.addListener(this::sendIMCs);
 		modbus.addListener(this::init);
@@ -176,6 +178,8 @@ public class TwilightForestMod {
 		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlerList.CODEC);
 		event.dataPackRegistry(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfig.CODEC);
 		event.dataPackRegistry(ChunkBlanketProcessors.CHUNK_BLANKET_PROCESSORS_KEY, ChunkBlanketProcessors.DISPATCH_CODEC);
+		// Synced: clients read the modifiers for tooltips, the item model overlays and the client side of the modifiers
+		event.dataPackRegistry(TravellersModifiersManager.TRAVELLERS_MODIFIERS_KEY, TravellersModifier.CODEC, TravellersModifier.CODEC);
 	}
 
 	public void registerExtraStuff(RegisterEvent evt) {

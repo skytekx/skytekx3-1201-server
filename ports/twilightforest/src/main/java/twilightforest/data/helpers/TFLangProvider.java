@@ -13,6 +13,7 @@ import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.text.WordUtils;
 import twilightforest.TwilightForestMod;
+import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
 
 import java.util.function.Supplier;
 
@@ -146,6 +147,15 @@ public abstract class TFLangProvider extends LanguageProvider {
 
 	public void addCommand(String key, String name) {
 		this.add("commands.tffeature." + key, name);
+	}
+
+	// 4.8 reads the prefix off the modifier definitions in the registries; every stock modifier uses the default one
+	public void addTravellersModifier(ResourceKey<TravellersModifier> modifier, String name) {
+		this.add(modifier.location().toLanguageKey("travellers_gear.modifier"), name);
+	}
+
+	public void addTravellersDescription(ResourceKey<TravellersModifier> modifier, String description) {
+		this.add(modifier.location().toLanguageKey("travellers_gear.modifier", "description"), description);
 	}
 
 	public void addTrim(String key, String name) {

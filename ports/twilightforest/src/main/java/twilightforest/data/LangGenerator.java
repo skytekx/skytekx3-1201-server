@@ -5,6 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import twilightforest.data.helpers.TFLangProvider;
 import twilightforest.init.*;
+import twilightforest.init.custom.TravellersModifiersManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +90,16 @@ public class LangGenerator extends TFLangProvider {
 		this.addCommand("teleport.player_only", "Command must be run by a player.");
 		this.addCommand("teleport.dimension_missing", "The Twilight Forest dimension is unavailable.");
 		this.addCommand("teleport.success", "Teleported to The Twilight Forest at %s %s %s");
+
+		this.addCommand("invalid_modifier", "%s is not a valid Traveller's Gear Modifier");
+		this.addCommand("not_travellers_gear", "You are not holding a piece of Traveller's Gear");
+		this.addCommand("too_many_modifiers", "This piece of Traveller's Gear already has the maximum amount of modifiers");
+		this.addCommand("no_modifier", "%s is not applied to this piece of Traveller's Gear");
+		this.addCommand("has_modifier", "This piece of Traveller's Gear already has %s");
+		this.addCommand("wrong_modifier_slot", "%s is not allowed on this piece of Traveller's Gear");
+		this.addCommand("ability_modifier", "Abilities cannot be added or removed from Traveller's Gear");
+		this.addCommand("added_modifier", "Added %s to %s!");
+		this.addCommand("removed_modifier", "Removed %s from %s!");
 
 		this.addGameRule(TFGameRules.ENFORCED_PROGRESSION_RULE, "Twilight Forest: Enforced Progression");
 		this.addGameRuleDescription(TFGameRules.ENFORCED_PROGRESSION_RULE, "Some Twilight Forest biomes are locked until you defeat certain bosses in the dimension. Check your advancements for the progression order.");
@@ -626,6 +637,62 @@ public class LangGenerator extends TFLangProvider {
 		this.add("travellers_gear.broken", " (Broken)");
 		this.add("travellers_gear.modifier.empty", "Empty");
 		this.add("key.twilightforest.categories.travellers_gear", "Twilight Forest (Traveller's Gear)");
+
+		// built-in modifiers; the ${tfkeybinds/...} key mappings come with the travellers-* features that add them
+		this.addTravellersModifier(TravellersModifiersManager.ZOOM_ABILITY, "Zoom (keybind: ${tfkeybinds/key.twilightforest.zoom})");
+		this.addTravellersModifier(TravellersModifiersManager.SWIFT_SWIM_ABILITY, "Swift Swim");
+		this.addTravellersModifier(TravellersModifiersManager.SWAP_HOTBAR_ABILITY, "Swap Hotbar (keybind: ${tfkeybinds/key.twilightforest.swap_hotbar})");
+		this.addTravellersModifier(TravellersModifiersManager.HIGH_JUMP_ABILITY, "High Jump");
+		this.addTravellersModifier(TravellersModifiersManager.STEP_UP_ABILITY, "Step-Up");
+
+		// insertable modifiers
+		this.addTravellersModifier(TravellersModifiersManager.AUTO_REPAIR_MODIFIER, "Auto-Repair");
+		this.addTravellersDescription(TravellersModifiersManager.AUTO_REPAIR_MODIFIER, "Repairs durability over time");
+
+		this.addTravellersModifier(TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER, "Aquatic Agility");
+		this.addTravellersDescription(TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER, "Respiration and Aqua Affinity in one");
+		this.addTravellersModifier(TravellersModifiersManager.RED_THREAD_VISION_MODIFIER, "Red Thread Vision (keybind: ${tfkeybinds/key.twilightforest.red_thread_vision})");
+		this.addTravellersDescription(TravellersModifiersManager.RED_THREAD_VISION_MODIFIER, "Allows you to see placed Red Thread");
+		this.addTravellersModifier(TravellersModifiersManager.ALL_NIGHT_GOGGLES_MODIFIER, "All-Night Goggles");
+		this.addTravellersDescription(TravellersModifiersManager.ALL_NIGHT_GOGGLES_MODIFIER, "Prevents Insomnia and Enderman aggression");
+		this.addTravellersModifier(TravellersModifiersManager.ITEM_DISPLAY_MODIFIER, "Item Display (keybind: ${tfkeybinds/key.twilightforest.item_display_map_cycle})");
+		this.addTravellersDescription(TravellersModifiersManager.ITEM_DISPLAY_MODIFIER, "Right-click items on the Goggles to add displays");
+
+		this.addTravellersModifier(TravellersModifiersManager.STEALTH_MODIFIER, "Stealth (sneak to activate)");
+		this.addTravellersDescription(TravellersModifiersManager.STEALTH_MODIFIER, "Sneak to turn invisible");
+		this.addTravellersModifier(TravellersModifiersManager.ARROW_MAGNETISM_MODIFIER, "Arrow Magnetism");
+		this.addTravellersDescription(TravellersModifiersManager.ARROW_MAGNETISM_MODIFIER, "Retrieves missed arrows");
+		this.addTravellersModifier(TravellersModifiersManager.EFFICIENT_EATER_MODIFIER, "Efficient Eater");
+		this.addTravellersDescription(TravellersModifiersManager.EFFICIENT_EATER_MODIFIER, "Reduces movement-based hunger drain");
+		this.addTravellersModifier(TravellersModifiersManager.PERFECT_DODGE_MODIFIER, "Perfect Dodge");
+		this.addTravellersDescription(TravellersModifiersManager.PERFECT_DODGE_MODIFIER, "30% chance to dodge projectiles");
+		this.addTravellersModifier(TravellersModifiersManager.HASTE_MODIFIER, "Haste");
+		this.addTravellersDescription(TravellersModifiersManager.HASTE_MODIFIER, "Grants Haste II");
+
+		this.addTravellersModifier(TravellersModifiersManager.SWAP_HOTBAR_MODIFIER, "Swap Hotbar (keybind: ${tfkeybinds/key.twilightforest.swap_hotbar})");
+		this.addTravellersDescription(TravellersModifiersManager.SWAP_HOTBAR_MODIFIER, "Allows you to store and withdraw your hotbar");
+
+		this.addTravellersModifier(TravellersModifiersManager.GRADUAL_GLIDE_MODIFIER, "Gradual Glide (sneak to activate)");
+		this.addTravellersDescription(TravellersModifiersManager.GRADUAL_GLIDE_MODIFIER, "Allows for gliding through the air");
+		this.addTravellersModifier(TravellersModifiersManager.AGILE_RANGER_MODIFIER, "Agile Ranger");
+		this.addTravellersDescription(TravellersModifiersManager.AGILE_RANGER_MODIFIER, "Allows normal movement when using bow-like items");
+		this.addTravellersModifier(TravellersModifiersManager.DOUBLE_JUMP_MODIFIER, "Double Jump");
+		this.addTravellersDescription(TravellersModifiersManager.DOUBLE_JUMP_MODIFIER, "Lets you do a second jump in mid-air");
+		this.addTravellersModifier(TravellersModifiersManager.SIDESTEP_MODIFIER, "Sidestep");
+		this.addTravellersDescription(TravellersModifiersManager.SIDESTEP_MODIFIER, "Double-tap %s or %s to do a dash");
+
+		this.addTravellersModifier(TravellersModifiersManager.STRAIGHT_AHEAD_MODIFIER, "Straight Ahead");
+		this.addTravellersDescription(TravellersModifiersManager.STRAIGHT_AHEAD_MODIFIER, "Increases forward movement speed");
+		this.addTravellersModifier(TravellersModifiersManager.SLIMY_SOLES_MODIFIER, "Slimy Soles");
+		this.addTravellersDescription(TravellersModifiersManager.SLIMY_SOLES_MODIFIER, "Prevents fall damage by making you bounce");
+		this.addTravellersModifier(TravellersModifiersManager.UNRESTRAINED_MODIFIER, "Unrestrained");
+		this.addTravellersDescription(TravellersModifiersManager.UNRESTRAINED_MODIFIER, "Prevents blocks from slowing you down");
+		this.addTravellersModifier(TravellersModifiersManager.WATER_WALK_MODIFIER, "Water Walk");
+		this.addTravellersDescription(TravellersModifiersManager.WATER_WALK_MODIFIER, "Allows you to walk on Water");
+
+		this.add("travellers_gear.ability", "Ability: %s");
+		this.add("travellers_gear.shift_info", "Hold %s for info");
+		this.add("travellers_gear.info_indent", "  ⤷ ");
 
 		this.addItem(TFItems.ARCTIC_FUR, "Arctic Fur");
 		this.addItem(TFItems.ARCTIC_HELMET, "Arctic Hood");

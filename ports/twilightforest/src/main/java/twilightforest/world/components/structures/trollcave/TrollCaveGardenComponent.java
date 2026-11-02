@@ -22,7 +22,7 @@ import twilightforest.init.TFBiomes;
 import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.init.TFConfiguredFeatures;
-import twilightforest.world.components.feature.BlockSpikeFeature;
+import twilightforest.world.components.structures.StructureSpeleothemConfig;
 
 import java.util.function.Predicate;
 
@@ -33,8 +33,8 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 		super(TFStructurePieceTypes.TFTCGard.get(), nbt);
 	}
 
-	public TrollCaveGardenComponent(int index, int x, int y, int z, int caveSize, int caveHeight, Direction direction) {
-		super(TFStructurePieceTypes.TFTCGard.get(), index, x, y, z);
+	public TrollCaveGardenComponent(int index, int x, int y, int z, int caveSize, int caveHeight, Direction direction, ResourceKey<StructureSpeleothemConfig> speleothemConfigKey) {
+		super(TFStructurePieceTypes.TFTCGard.get(), index, x, y, z, speleothemConfigKey);
 		this.size = caveSize;
 		this.height = caveHeight;
 		this.setOrientation(direction);
@@ -100,11 +100,7 @@ public class TrollCaveGardenComponent extends TrollCaveMainComponent {
 			generate(world, generator, rand.nextBoolean() ? TFConfiguredFeatures.TROLL_HUGE_BROWN_MUSHROOMS : TFConfiguredFeatures.TROLL_HUGE_RED_MUSHROOMS, decoRNG, dest.getX(), dest.setY(1).getY(), dest.getZ(), sbb);
 		}
 
-		// stone stalactites!
-		for (int i = 0; i < 128; i++) {
-			BlockPos dest = getCoordsInCave(decoRNG);
-			generateBlockSpike(world, BlockSpikeFeature.STONE_STALACTITE, dest.atY(this.height), sbb, true);
-		}
+		this.placeSpeleothems(world, rand, sbb, decoRNG);
 	}
 
 	protected void generate(WorldGenLevel world, ChunkGenerator generator, ResourceKey<ConfiguredFeature<?, ?>> feature, RandomSource rand, int x, int y, int z, BoundingBox sbb) {

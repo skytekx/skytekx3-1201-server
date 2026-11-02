@@ -10,6 +10,7 @@ import twilightforest.init.*;
 import twilightforest.init.custom.BiomeLayerStack;
 import twilightforest.init.custom.MagicPaintingVariants;
 import twilightforest.init.custom.Restrictions;
+import twilightforest.init.custom.StructureSpeleothemConfigs;
 import twilightforest.init.custom.TemplateMarkerHandlers;
 import twilightforest.init.custom.WoodPalettes;
 
@@ -34,7 +35,8 @@ public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
 			.add(Registries.TRIM_MATERIAL, TFTrimMaterials::bootstrap)
 			.add(Restrictions.RESTRICTION_KEY, Restrictions::bootstrap)
 			.add(MagicPaintingVariants.REGISTRY_KEY, MagicPaintingVariants::bootstrap)
-			.add(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlers::bootstrap);
+			.add(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlers::bootstrap)
+			.add(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfigs::bootstrap);
 
 	public RegistryDataGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
 		super(output, provider, BUILDER, Set.of("minecraft", TwilightForestMod.ID));

@@ -133,18 +133,8 @@ public class BlockSpikeFeature extends Feature<NoneFeatureConfiguration> {
 		return true;
 	}
 
-	/**
-	 * Makes a random stalactite appropriate to the cave size
-	 * <p>
-	 * All Stalactite configs are made through datapacks. They are found in modid:stalactites/entries
-	 */
-	public static Stalactite makeRandomOreStalactite(RandomSource rand, int hillSize) {
-		if (hillSize >= 3 && rand.nextInt(5) == 0) {
-			return Stalactite.getStalactiteConfig().getRandomStalactiteFromList(rand, Stalactite.getStalactiteConfig().getLargeStalactites());
-		}
-		if (hillSize >= 2 && rand.nextInt(5) == 0) {
-			return Stalactite.getStalactiteConfig().getRandomStalactiteFromList(rand, Stalactite.getStalactiteConfig().getMediumStalactites());
-		}
-		return Stalactite.getStalactiteConfig().getRandomStalactiteFromList(rand, Stalactite.getStalactiteConfig().getSmallStalactites());
+	// For empty random lists
+	public static Stalactite defaultRandom(@SuppressWarnings("unused") RandomSource rand) {
+		return STONE_STALACTITE;
 	}
 }

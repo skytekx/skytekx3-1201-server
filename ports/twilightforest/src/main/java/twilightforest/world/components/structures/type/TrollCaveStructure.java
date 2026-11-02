@@ -2,6 +2,7 @@ package twilightforest.world.components.structures.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.util.RandomSource;
@@ -18,6 +19,8 @@ import twilightforest.data.tags.BiomeTagGenerator;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.init.TFStructureTypes;
+import twilightforest.init.custom.StructureSpeleothemConfigs;
+import twilightforest.world.components.structures.StructureSpeleothemConfig;
 import twilightforest.world.components.structures.trollcave.TrollCaveMainComponent;
 import twilightforest.world.components.structures.util.ConfigurableSpawns;
 import twilightforest.world.components.structures.util.ControlledSpawns;
@@ -26,24 +29,31 @@ import twilightforest.world.components.structures.util.ProgressionStructure;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TrollCaveStructure extends ProgressionStructure implements ConfigurableSpawns {
     public static final Codec<TrollCaveStructure> CODEC = RecordCodecBuilder.create(instance -> instance
-                    .group(ControlledSpawns.ControlledSpawningConfig.FLAT_CODEC.forGetter(ConfigurableSpawns::getConfig))
+                    .group(
+                            ControlledSpawns.ControlledSpawningConfig.FLAT_CODEC.forGetter(ConfigurableSpawns::getConfig),
+                            // Optional so structure JSONs written for 4.3 still load; they fall back to the stock troll_cave config
+                            StructureSpeleothemConfigs.CODEC.optionalFieldOf("speleothem_config").forGetter(s -> s.speleothemConfig)
+                    )
                     .and(progressionCodec(instance))
                     .apply(instance, TrollCaveStructure::new)
     );
     private final ControlledSpawningConfig controlledSpawningConfig;
+    private final Optional<Holder<StructureSpeleothemConfig>> speleothemConfig;
 
-    public TrollCaveStructure(ControlledSpawningConfig controlledSpawningConfig, AdvancementLockConfig advancementLockConfig, HintConfig hintConfig, DecorationConfig decorationConfig, StructureSettings structureSettings) {
+    public TrollCaveStructure(ControlledSpawningConfig controlledSpawningConfig, Optional<Holder<StructureSpeleothemConfig>> speleothemConfig, AdvancementLockConfig advancementLockConfig, HintConfig hintConfig, DecorationConfig decorationConfig, StructureSettings structureSettings) {
         super(advancementLockConfig, hintConfig, decorationConfig, structureSettings);
         this.controlledSpawningConfig = controlledSpawningConfig;
+        this.speleothemConfig = speleothemConfig;
     }
 
     @Override
     protected @Nullable StructurePiece getFirstPiece(GenerationContext context, RandomSource random, ChunkPos chunkPos, int x, int y, int z) {
-        return new TrollCaveMainComponent(TFStructurePieceTypes.TFTCMai.get(), 0, x, y, z);
+        return new TrollCaveMainComponent(TFStructurePieceTypes.TFTCMai.get(), 0, x, y, z, StructureSpeleothemConfigs.keyOf(this.speleothemConfig, StructureSpeleothemConfigs.TROLL_CAVE));
     }
 
     @Override
@@ -73,6 +83,7 @@ public class TrollCaveStructure extends ProgressionStructure implements Configur
                         new MobSpawnSettings.SpawnerData(TFEntities.GIANT_MINER.get(), 10, 1, 1),
                         new MobSpawnSettings.SpawnerData(TFEntities.ARMORED_GIANT.get(), 10, 1, 1)
                 )), List.of(), List.of()),
+                Optional.of(context.lookup(StructureSpeleothemConfigs.REGISTRY_KEY).getOrThrow(StructureSpeleothemConfigs.TROLL_CAVE)),
                 new AdvancementLockConfig(List.of(TwilightForestMod.prefix("progress_merge"))),
                 new HintConfig(HintConfig.book("trollcave", 3), TFEntities.KOBOLD.get()),
                 new DecorationConfig(4, true, true, false),

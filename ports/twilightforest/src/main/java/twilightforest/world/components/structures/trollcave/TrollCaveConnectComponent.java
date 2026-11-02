@@ -3,6 +3,7 @@ package twilightforest.world.components.structures.trollcave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
@@ -18,18 +19,14 @@ import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.data.custom.stalactites.entry.Stalactite;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.util.HugeMushroomUtil;
 import twilightforest.util.RotationUtil;
-
-import java.util.Map;
+import twilightforest.world.components.structures.StructureSpeleothemConfig;
 
 public class TrollCaveConnectComponent extends TrollCaveMainComponent {
-	protected static final Stalactite STONE_STALACTITE_SMALL = new Stalactite(Map.of(Blocks.STONE, 1), 1.0F, 5, 1);
-
 	protected final boolean[] openingTowards = {false, false, true, false};
 
 	public TrollCaveConnectComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
@@ -40,8 +37,8 @@ public class TrollCaveConnectComponent extends TrollCaveMainComponent {
 		this.openingTowards[3] = nbt.getBoolean("openingTowards3");
 	}
 
-	public TrollCaveConnectComponent(int index, int x, int y, int z, int caveSize, int caveHeight, Direction direction) {
-		super(TFStructurePieceTypes.TFTCCon.get(), index, x, y, z);
+	public TrollCaveConnectComponent(int index, int x, int y, int z, int caveSize, int caveHeight, Direction direction, ResourceKey<StructureSpeleothemConfig> speleothemConfigKey) {
+		super(TFStructurePieceTypes.TFTCCon.get(), index, x, y, z, speleothemConfigKey);
 		this.size = caveSize;
 		this.height = caveHeight;
 		this.setOrientation(direction);
@@ -90,17 +87,7 @@ public class TrollCaveConnectComponent extends TrollCaveMainComponent {
 			}
 		}
 
-		decoRNG.setSeed(world.getSeed() + (this.boundingBox.minX() * 321534781L) ^ (this.boundingBox.minZ() * 756839L));
-		// stone stalactites!
-		for (int i = 0; i < 32; i++) {
-			BlockPos dest = getCoordsInCave(decoRNG);
-			generateBlockSpike(world, STONE_STALACTITE_SMALL, dest.atY(this.height), sbb, true);
-		}
-		// stone stalagmites!
-		for (int i = 0; i < 32; i++) {
-			BlockPos dest = getCoordsInCave(decoRNG);
-			generateBlockSpike(world, STONE_STALACTITE_SMALL, dest.atY(0), sbb, false);
-		}
+		this.placeSpeleothems(world, rand, sbb, decoRNG);
 
 		// possible treasure
 		decoRNG.setSeed(world.getSeed() + (this.boundingBox.minX() * 321534781L) ^ (this.boundingBox.minZ() * 756839L));
@@ -245,7 +232,7 @@ public class TrollCaveConnectComponent extends TrollCaveMainComponent {
 		Direction direction = getStructureRelativeRotation(rotation);
 		BlockPos dest = offsetTowerCCoords(x, y, z, caveSize, direction);
 
-		TrollCaveMainComponent cave = new TrollCaveGardenComponent(index, dest.getX(), dest.getY(), dest.getZ(), caveSize, caveHeight, direction);
+		TrollCaveMainComponent cave = new TrollCaveGardenComponent(index, dest.getX(), dest.getY(), dest.getZ(), caveSize, caveHeight, direction, this.speleothemConfigKey);
 		// check to see if it intersects something already there
 		StructurePiece intersect = list.findCollisionPiece(cave.getBoundingBox());
 		StructurePiece otherGarden = findNearbyGarden(list, cave.getBoundingBox());

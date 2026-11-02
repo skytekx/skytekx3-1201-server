@@ -2,6 +2,7 @@ package twilightforest.components.entity;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 import twilightforest.capabilities.CapabilityList;
@@ -16,9 +17,10 @@ import twilightforest.capabilities.CapabilityList;
  * attachment. The client-only render bookkeeping (4.8's {@code travellers_wings_anim} attachment) hangs off the same
  * object and is only created when the client first draws the wings.
  * <p>
- * The same object also holds the state of the Traveller's Wings modifiers, which 4.8 keeps in a dozen separate
- * attachments ({@code has_double_jump}, {@code double_jump_validator}, {@code is_gradually_gliding},
- * {@code last_horizontal_impulse} and so on). None of it has to survive a reload, so none of it is saved.
+ * The same object also holds the state of the Traveller's Wings and Boots modifiers, which 4.8 keeps in a dozen
+ * separate attachments ({@code has_double_jump}, {@code double_jump_validator}, {@code is_gradually_gliding},
+ * {@code last_horizontal_impulse}, {@code slimy_soles_bounce_info}, {@code last_tick_water_walking} and so on). None of
+ * it has to survive a reload, so none of it is saved.
  */
 public class TravellersWingsAttachment {
 	public static final ResourceLocation ID = TwilightForestMod.prefix("travellers_wings");
@@ -33,6 +35,8 @@ public class TravellersWingsAttachment {
 	public boolean shouldPlaySideStepCooldownSound;
 	@Nullable
 	private TravellersWingsAnimAttachment anim;
+	@Nullable
+	private SlimySolesAttachment slimySoles;
 
 	/**
 	 * 4.8 {@code has_double_jump}: whether the entity may still jump in mid-air, refilled on the ground, in liquids and
@@ -67,9 +71,37 @@ public class TravellersWingsAttachment {
 	public float lastNonZeroHorizontalImpulse;
 	public int lastHorizontalWalkingTime;
 
+	/**
+	 * 4.8 {@code last_tick_water_walking}: the game time of the last Water Walk splash.
+	 */
+	public long lastTickWaterWalking;
+	/**
+	 * What a server player moved during its last tick, from its movement packets; stands in for 1.21's
+	 * {@code ServerPlayer#getKnownMovement}, see {@link twilightforest.item.travellers_gear.TravellersGearLogic#getKnownMovement}.
+	 */
+	public Vec3 knownMovement = Vec3.ZERO;
+	@Nullable
+	public Vec3 lastKnownPosition;
+
 	public TravellersWingsAnimAttachment getAnim() {
 		if (this.anim == null) this.anim = new TravellersWingsAnimAttachment();
 		return this.anim;
+	}
+
+	/**
+	 * The Slimy Soles bounce state, created the first time an entity needs it.
+	 */
+	public SlimySolesAttachment getSlimySoles() {
+		if (this.slimySoles == null) this.slimySoles = new SlimySolesAttachment();
+		return this.slimySoles;
+	}
+
+	/**
+	 * The Slimy Soles bounce state, or null while the entity never needed one (all of it at rest).
+	 */
+	@Nullable
+	public SlimySolesAttachment getSlimySolesIfPresent() {
+		return this.slimySoles;
 	}
 
 	@Nullable

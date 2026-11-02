@@ -4,11 +4,18 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.GrindstoneEvent;
@@ -25,7 +32,9 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.TFAdvancements;
+import twilightforest.components.entity.SlimySolesAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
+import twilightforest.components.item.TravellersGearData;
 import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
@@ -39,8 +48,8 @@ import java.util.List;
 /**
  * Common events of the Traveller's Gear core, its modifier framework and the modifiers ported so far. Backport of 4.8's
  * TravellersGearEvents (the wing state update, the broken-state attribute switch, the anvil combining block, stripping
- * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Wings
- * modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
+ * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Wings and
+ * Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
  * <p>
  * 1.20.1 has no entity tick post event: 4.8's EntityTickEvent.Post work runs at the start of the next tick instead
  * (LivingTickEvent), its PlayerTickEvent.Pre work in the START phase of Forge's PlayerTickEvent.
@@ -101,10 +110,86 @@ public class TravellersGearEvents {
 	public static void updateOtherModifiers(LivingEvent.LivingTickEvent event) {
 		LivingEntity livingEntity = event.getEntity();
 		TravellersGearLogic.travellersWingsGradualGlide(livingEntity);
+		TravellersGearLogic.travellersBootsUnrestrained(livingEntity);
+		TravellersGearLogic.travellersBootsSlimySolesBounce(livingEntity);
 
 		if (livingEntity.level().isClientSide())
 			return;
+		if (livingEntity instanceof ServerPlayer player)
+			TravellersGearLogic.updateKnownMovement(player);
 		TravellersGearLogic.travellersWingsHighJump(livingEntity);
+		TravellersGearLogic.travellersBootsStraightAhead(livingEntity);
+	}
+
+	/**
+	 * Step-Up stops while the player sneaks, so they can creep along edges. Backport of 4.8
+	 * TravellersGearEvents#disableHighStepWhileSneaking; the modifier is the one the boots give in their slot, so taking
+	 * them off removes it as usual.
+	 */
+	@SubscribeEvent
+	public static void disableHighStepWhileSneaking(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.START)
+			return;
+		Player player = event.player;
+		if (!TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.STEP_UP_ABILITY))
+			return;
+		AttributeInstance attribute = player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+		if (attribute == null)
+			return;
+
+		AttributeModifier highStep = TravellersGearLogic.HIGH_STEP_MODIFIER.get();
+		boolean shouldHaveHighStepModifier = !player.isCrouching();
+		boolean hasHighStepModifier = attribute.getModifier(highStep.getId()) != null;
+		if (!shouldHaveHighStepModifier && hasHighStepModifier)
+			attribute.removeModifier(highStep.getId());
+		if (shouldHaveHighStepModifier && !hasHighStepModifier)
+			attribute.addTransientModifier(highStep);
+	}
+
+	/**
+	 * Slimy Soles: a fall that would hurt bounces the wearer back up instead, unless they sneak. Once bouncing, every
+	 * landing bounces until the bounces die down. Backport of 4.8 TravellersGearEvents#reduceSlimySolesFallDamage.
+	 */
+	@SubscribeEvent
+	public static void reduceSlimySolesFallDamage(LivingFallEvent event) {
+		LivingEntity livingEntity = event.getEntity();
+		ItemStack boots = livingEntity.getItemBySlot(EquipmentSlot.FEET);
+		Float coefficient = TravellersGearData.SLIMY_SOLES_COEFFICIENT.get(boots);
+		if (livingEntity.isShiftKeyDown() || coefficient == null || !TravellersModifiersManager.isModifierActive(livingEntity, boots, TravellersModifiersManager.SLIMY_SOLES_MODIFIER))
+			return;
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(livingEntity);
+		if (attachment == null)
+			return;
+		SlimySolesAttachment slimySolesAttachment = attachment.getSlimySoles();
+		if (calculateFallDamage(event) > 0 || slimySolesAttachment.forceBounce) {
+			event.setCanceled(true);
+			slimySolesAttachment.bounceVelocity = -livingEntity.getDeltaMovement().y() * Math.sqrt(coefficient);
+			slimySolesAttachment.doubleJumpBoostVelocity = slimySolesAttachment.bounceVelocity;
+			slimySolesAttachment.hasBounced = false;
+		}
+	}
+
+	// [VanillaCopy] LivingEntity#calculateFallDamage; 1.21 subtracts its safe fall distance attribute, which jump boost raises there
+	private static int calculateFallDamage(LivingFallEvent event) {
+		LivingEntity livingEntity = event.getEntity();
+		if (livingEntity.getType().is(EntityTypeTags.FALL_DAMAGE_IMMUNE))
+			return 0;
+		MobEffectInstance jumpBoost = livingEntity.getEffect(MobEffects.JUMP);
+		float jumpBoostSafeFallDistance = jumpBoost == null ? 0.0F : (float) (jumpBoost.getAmplifier() + 1);
+		return Mth.ceil((event.getDistance() - 3.0F - jumpBoostSafeFallDistance) * event.getDamageMultiplier());
+	}
+
+	/**
+	 * Jumping ends a Slimy Soles bounce. Backport of 4.8 TravellersGearEvents#cancelSlimySolesJump.
+	 */
+	@SubscribeEvent
+	public static void cancelSlimySolesJump(LivingEvent.LivingJumpEvent event) {
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(event.getEntity());
+		SlimySolesAttachment slimySolesAttachment = attachment == null ? null : attachment.getSlimySolesIfPresent();
+		if (slimySolesAttachment == null)
+			return;
+		slimySolesAttachment.bounceVelocity = 0;
+		slimySolesAttachment.forceBounce = false;
 	}
 
 	/**

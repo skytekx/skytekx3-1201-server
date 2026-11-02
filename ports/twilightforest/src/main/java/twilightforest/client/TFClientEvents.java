@@ -102,7 +102,7 @@ public class TFClientEvents {
 			TFItems.addItemModelProperties();
 
 			List<Map.Entry<ResourceLocation, BakedModel>> models =  event.getModels().entrySet().stream()
-					.filter(entry -> entry.getKey().getNamespace().equals(TwilightForestMod.ID) && ((entry.getKey().getPath().contains("leaves") && !entry.getKey().getPath().contains("dark")) || entry.getKey().getPath().contains("_bush"))).toList();
+					.filter(entry -> entry.getKey().getNamespace().equals(TwilightForestMod.ID) && ((entry.getKey().getPath().contains("leaves") && !entry.getKey().getPath().contains("dark")) || entry.getKey().getPath().contains("_bush") || entry.getKey().getPath().contains("_oreberry"))).toList();
 
 			models.forEach(entry -> event.getModels().put(entry.getKey(), new BakedLeavesModel(entry.getValue())));
 

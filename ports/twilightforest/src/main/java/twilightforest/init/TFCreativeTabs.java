@@ -14,6 +14,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -283,6 +284,10 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.THORN_ROSE.get());
 				output.accept(TFBlocks.THORN_LEAVES.get());
 				output.accept(TFBlocks.HEDGE.get());
+				output.accept(TFBlocks.IRON_OREBERRY.get());
+				output.accept(TFBlocks.GOLD_OREBERRY.get());
+				output.accept(TFBlocks.COPPER_OREBERRY.get());
+				output.accept(TFBlocks.ESSENCE_OREBERRY.get());
 				output.accept(TFBlocks.RASPBERRY_BUSH.get());
 				output.accept(TFBlocks.BLUEBERRY_BUSH.get());
 				output.accept(TFBlocks.BLACKBERRY_BUSH.get());
@@ -531,6 +536,10 @@ public class TFCreativeTabs {
 				output.accept(TFItems.EXANIMATE_ESSENCE.get());
 				output.accept(TFBlocks.RED_THREAD.get());
 				output.accept(TFItems.MAGIC_BEANS.get());
+				output.accept(TFItems.IRON_BERRY.get());
+				output.accept(TFItems.GOLD_BERRY.get());
+				output.accept(TFItems.COPPER_BERRY.get());
+				output.accept(TFItems.ESSENCE_BERRY.get());
 				output.accept(TFItems.CUBE_TALISMAN.get());
 				output.accept(TFItems.MUSIC_DISC_THREAD.get());
 				output.accept(TFItems.MUSIC_DISC_FINDINGS.get());
@@ -717,6 +726,9 @@ public class TFCreativeTabs {
 			variant.height() * variant.width()).thenComparing(MagicPaintingVariant::width));
 
 	public static void addToTabs(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+			event.getEntries().putAfter(new ItemStack(Items.IRON_NUGGET), new ItemStack(TFItems.COPPER_NUGGET.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+		}
 		// Magic paintings only come from structures, so like 4.8 they sit with the operator-only items
 		if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS && event.hasPermissions()) {
 			event.getParameters().holders().lookup(MagicPaintingVariants.REGISTRY_KEY).ifPresent((lookup) -> createPaintings(event, lookup));

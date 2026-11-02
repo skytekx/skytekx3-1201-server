@@ -104,6 +104,10 @@ public class TFLootTables {
 	public static final ResourceLocation CAMP_TENT = register("camp_tent");
 	public static final ResourceLocation CAMP_DRYING_RACK = register("camp_drying_rack");
 	public static final ResourceLocation CAMP_POT = register("camp_pot");
+	public static final ResourceLocation COPPER_OREBERRY_BUSH_DROPS = register("blocks/copper_oreberry_bush_berries");
+	public static final ResourceLocation IRON_OREBERRY_BUSH_DROPS = register("blocks/iron_oreberry_bush_berries");
+	public static final ResourceLocation GOLD_OREBERRY_BUSH_DROPS = register("blocks/gold_oreberry_bush_berries");
+	public static final ResourceLocation ESSENCE_BERRY_BUSH_DROPS = register("blocks/essence_berry_bush_berries");
 
 	//public static final ResourceLocation ALL_BOSSES = register("entities/all_bosses");
 

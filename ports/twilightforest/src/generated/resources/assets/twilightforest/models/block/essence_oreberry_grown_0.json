@@ -1,0 +1,71 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "forge_data": {
+            "block_light": 3,
+            "sky_light": 3
+          },
+          "texture": "#all"
+        },
+        "east": {
+          "cullface": "east",
+          "forge_data": {
+            "block_light": 3,
+            "sky_light": 3
+          },
+          "texture": "#all"
+        },
+        "north": {
+          "cullface": "north",
+          "forge_data": {
+            "block_light": 3,
+            "sky_light": 3
+          },
+          "texture": "#all"
+        },
+        "south": {
+          "cullface": "south",
+          "forge_data": {
+            "block_light": 3,
+            "sky_light": 3
+          },
+          "texture": "#all"
+        },
+        "up": {
+          "cullface": "up",
+          "forge_data": {
+            "block_light": 3,
+            "sky_light": 3
+          },
+          "texture": "#all"
+        },
+        "west": {
+          "cullface": "west",
+          "forge_data": {
+            "block_light": 3,
+            "sky_light": 3
+          },
+          "texture": "#all"
+        }
+      },
+      "from": [
+        0,
+        0.008,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "all": "twilightforest:block/essence_oreberry_ripe"
+  }
+}

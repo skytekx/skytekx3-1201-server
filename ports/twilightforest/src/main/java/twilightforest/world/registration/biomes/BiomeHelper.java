@@ -27,6 +27,7 @@ public abstract class BiomeHelper {
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_LARGE_FERN);
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_VANILLA_TF_TREES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_TWILIGHT_OAK_TREE);
@@ -49,6 +50,7 @@ public abstract class BiomeHelper {
 
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_DENSE_CANOPY_TREES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_VANILLA_TF_TREES);
@@ -68,6 +70,7 @@ public abstract class BiomeHelper {
 
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_FIREFLY_FOREST_TREES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_VANILLA_TF_TREES);
@@ -91,6 +94,7 @@ public abstract class BiomeHelper {
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PATCH_GRASS_FOREST);
 		addForestVegetation(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.FLOWER_FOREST_FLOWERS);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_DEFAULT_FALLEN_LOGS);
@@ -106,6 +110,7 @@ public abstract class BiomeHelper {
 
 		addForestVegetation(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_SAVANNAH_OAK_TREE);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_LARGE_TWILIGHT_OAK_TREE);
@@ -133,6 +138,10 @@ public abstract class BiomeHelper {
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_FLOWER_PLACER);
 		commonFeatures(biome);
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_IRON_OREBERRIES_ENCHANTED_FOREST);
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_GOLD_OREBERRIES_ENCHANTED_FOREST);
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_COPPER_OREBERRIES_ENCHANTED_FOREST);
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_ESSENCE_OREBERRIES_ENCHANTED_FOREST);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_ENCHANTED_FOREST_TREES);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_DENSE_CANOPY_TREES);
@@ -176,6 +185,7 @@ public abstract class BiomeHelper {
 
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_MYCELIUM_BLOB);
 
@@ -197,6 +207,7 @@ public abstract class BiomeHelper {
 
 		addForestVegetationAlt(biome);
 		commonFeatures(biome);
+		addOreberries(biome);
 
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_MYCELIUM_BLOB);
 
@@ -257,6 +268,7 @@ public abstract class BiomeHelper {
 		BiomeDefaultFeatures.addSurfaceFreezing(biome);
 
 		addLegacyOres(biome);
+		addOreberries(biome);
 		addSmallStoneClusters(biome);
 
 		return biome;
@@ -464,6 +476,12 @@ public abstract class BiomeHelper {
 		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_TROLL_ROOTS);
 		biome.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TFPlacedFeatures.PLACED_TROLL_MUSHGLOOMS);
 		addLegacyOres(biome);
+	}
+
+	public static void addOreberries(BiomeGenerationSettings.Builder biome) {
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_IRON_OREBERRIES);
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_GOLD_OREBERRIES);
+		biome.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TFPlacedFeatures.PLACED_COPPER_OREBERRIES);
 	}
 
 	public static void addLegacyOres(BiomeGenerationSettings.Builder biome) {

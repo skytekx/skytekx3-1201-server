@@ -1,0 +1,10 @@
+{
+  "type": "twilightforest:drying",
+  "filter_time": 6000,
+  "input": {
+    "item": "minecraft:cod"
+  },
+  "result": {
+    "item": "twilightforest:cod_jerky"
+  }
+}

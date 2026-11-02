@@ -11,5 +11,6 @@
   "cloud": "META-INF/asm/cloud.js",
   "lead": "META-INF/asm/lead.js",
   "armor": "META-INF/asm/armor.js",
-  "snow": "META-INF/asm/snow.js"
+  "snow": "META-INF/asm/snow.js",
+  "damagesources": "META-INF/asm/damagesources.js"
 }

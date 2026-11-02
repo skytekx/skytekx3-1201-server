@@ -60,6 +60,11 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> RAW_MATERIALS_IRONWOOD = makeForgeTag("raw_materials/ironwood");
 	public static final TagKey<Item> RAW_MATERIALS_KNIGHTMETAL = makeForgeTag("raw_materials/knightmetal");
 
+	// 4.8's c:foods conventions; Forge 47 has no food tags, so they live under forge:
+	public static final TagKey<Item> FOODS = makeForgeTag("foods");
+	public static final TagKey<Item> FOODS_JERKY = makeForgeTag("foods/jerky");
+	public static final TagKey<Item> FOODS_SOUP = makeForgeTag("foods/soup");
+
 	public static final TagKey<Item> PORTAL_ACTIVATOR = create("portal/activator");
 
 	public static final TagKey<Item> WIP = create("wip");
@@ -162,8 +167,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		this.copy(BlockTagGenerator.BANISTERS, BANISTERS);
 		this.copy(BlockTagGenerator.DRYING_RACKS, DRYING_RACKS);
 
-		// 4.8 also lists the gelatinous slime drops, which arrive with the dried foods
 		tag(RENDER_LOWER_ON_DRYING_RACK)
+				.add(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get())
 				.add(TFItems.ZOMBIE_SKULL_CANDLE.get(), TFItems.SKELETON_SKULL_CANDLE.get(), TFItems.WITHER_SKELETON_SKULL_CANDLE.get(), TFItems.CREEPER_SKULL_CANDLE.get(), TFItems.PLAYER_SKULL_CANDLE.get(), TFItems.PIGLIN_SKULL_CANDLE.get())
 				.add(Items.POINTED_DRIPSTONE, Items.RECOVERY_COMPASS, Items.CLOCK, Items.SPYGLASS, Items.TRIDENT)
 				.addTag(ItemTags.BANNERS)
@@ -174,6 +179,17 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(Tags.Items.FEATHERS).add(Items.FEATHER).add(TFItems.RAVEN_FEATHER.get());
 		tag(Tags.Items.SLIMEBALLS).add(TFItems.MAZE_SLIME_BALL.get());
 		tag(STORAGE_BLOCKS_SLIME).add(TFBlocks.MAZE_SLIME_BLOCK.get().asItem());
+
+		// 4.8 also lists berry_medley (between the slime drops and maze_wafer), which arrives with the berry bushes
+		tag(FOODS).addTag(FOODS_JERKY).add(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get(), TFItems.MAZE_WAFER.get());
+		tag(FOODS_JERKY).add(
+				TFItems.MONSTER_JERKY.get(), TFItems.BEEF_JERKY.get(),
+				TFItems.PORK_JERKY.get(), TFItems.CHICKEN_JERKY.get(),
+				TFItems.RABBIT_JERKY.get(), TFItems.MUTTON_JERKY.get(),
+				TFItems.VENISON_JERKY.get(), TFItems.MEEF_JERKY.get(),
+				TFItems.COD_JERKY.get(), TFItems.SALMON_JERKY.get(),
+				TFItems.TROPICAL_FISH_JERKY.get(), TFItems.FUGU_JERKY.get());
+		tag(FOODS_SOUP).add(TFItems.MEEF_STROGANOFF.get(), TFItems.MOSS_SOUP.get());
 
 		tag(FIERY_VIAL).add(TFItems.FIERY_BLOOD.get(), TFItems.FIERY_TEARS.get());
 

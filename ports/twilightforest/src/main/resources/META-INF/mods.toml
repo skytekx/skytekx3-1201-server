@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[47,)"
 issueTrackerURL="https://github.com/TeamTwilight/twilightforest/issues"
-license="GNU LESSER GENERAL PUBLIC LICENSE Version 2.1"
+license="GNU LESSER GENERAL PUBLIC LICENSE Version 2.1 (code; Mystic Crown Compat parts: MIT), CC BY-NC-SA 4.0 (assets except sounds and structures), All Rights Reserved (sounds and structures). See LICENSE_twilightforest, ASSET_LICENSE_twilightforest and NOTICE_twilightforest in the jar"
 
 [[mods]]
 modId="twilightforest"

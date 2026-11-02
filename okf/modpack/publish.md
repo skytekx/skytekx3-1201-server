@@ -42,12 +42,21 @@ the Modrinth `version_number`), `versionId` in `modrinth.index.json`, and a new
    pack's `versionId` is not `VERSION`. As of 3.1.0, five BLOCKER jars and one VERIFY jar (Deadly World)
    still stop a public build.
 2. **Source links.** Merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL
-   source offers of the modified builds (the TF fork, Spiced Twilight, Alternative Twilight (Remastered))
-   point at `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` from their
-   permission files, NOTICEs and mods.toml credits. Then check that
+   source offers of the three modified builds point into this repo, but not all in the same way:
+   - Spiced Twilight and Alternative Twilight (Remastered) carry
+     `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/{spiced-twilight,alternative-twilight-remastered}`
+     in their jar NOTICE and mods.toml credits (and in their permission files). Do not rewrite these
+     URLs: they are baked into the SHA-pinned jars.
+   - The TF fork's jar NOTICE names only the repo root and points at the history of
+     `ports/twilightforest` at the commit that added the jar to `local-mods/` (c825572); its mods.toml
+     has no SkyTekx link. The `tree/master/ports/twilightforest` URL is only in its
+     `modrinth-permissions/` file, which can still be edited. Check that c825572 is on master:
+     `git merge-base --is-ancestor c825572 origin/master`.
+
+   Then check that
    `git ls-tree origin/master ports/twilightforest ports/spiced-twilight ports/alternative-twilight-remastered`
    lists all three and that the three `tree/master/ports/...` URLs open without logging in (the repo is
-   public). Do not rewrite the URLs: they are baked into the SHA-pinned jars.
+   public).
 3. **Changelog.** Check that `docs/changelog/<VERSION>.md` exists and describes this release, for
    everything since the last upload recorded under *State* (3.1.0 also covers the never-uploaded 3.0.5).
    If a permission blocker is resolved by dropping a jar, drop it from the changelog too. Use absolute

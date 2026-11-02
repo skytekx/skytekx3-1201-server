@@ -17,7 +17,7 @@ Researched automatically across all 40 bundled mods. **Verify the blockers yours
 
 ## BLOCKERS (resolve before publishing)
 
-Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds (the TF fork, Spiced Twilight and Alternative Twilight (Remastered): their permission files, the NOTICEs and mods.toml credits baked into the jars) point at `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...`, which does not resolve until then. Do not change those URLs: they are inside the SHA-pinned jars.
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight and Alternative Twilight (Remastered) carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (c825572), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here.
 
 These cannot legally be bundled in a public modpack as-is:
 

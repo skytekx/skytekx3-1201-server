@@ -61,9 +61,12 @@ Still open before the release is deployed and published:
   [Backported 1.21.1-only addons](#backported-1211-only-addons)).
 - In-game checks: fire each crossbow once, refuel a brewing stand with Fire Beetle Powder, fight a Lich
   and a Naga once.
-- Before the `.mrpack` is published: merge this branch to `master`, because the LGPL/GPL source links in
-  the NOTICEs, mods.toml credits and `modrinth-permissions/` files point at `tree/master/ports/...`, and
-  resolve the bundled-jar permission blockers ([publish](publish.md#before-uploading)).
+- Before the `.mrpack` is published: merge this branch to `master`, because the LGPL/GPL source links
+  point there (Spiced Twilight and Alternative Twilight (Remastered) carry `tree/master/ports/...` in
+  their jar NOTICE and mods.toml credits; the TF fork's NOTICE points at the history of
+  `ports/twilightforest` at c825572, and only its `modrinth-permissions/` file carries the
+  `tree/master` URL), and resolve the bundled-jar permission blockers
+  ([publish](publish.md#before-uploading)).
 
 ## Changelog for players
 

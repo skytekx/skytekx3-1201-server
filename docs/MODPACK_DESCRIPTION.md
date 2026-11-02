@@ -8,7 +8,7 @@ Originally a 1.7.10 Technic pack, then a 1.12.2 hybrid server, SkyTekx now lands
 - **Tech:** Create (+ addons), Mekanism, Thermal Expansion/Foundation/Dynamics, Applied Energistics 2, Industrial Foregoing, Draconic Evolution, Railcraft Reborn.
 - **Tinkering:** Tinkers' Construct + Tool Leveling, Spartan Weaponry, Epic Knights, Better Combat.
 - **Magic:** Botania, Ars Nouveau, Iron's Spells 'n Spellbooks, Forbidden & Arcanus, Reliquary, Hexxit Gear.
-- **Adventure & RPG:** Apotheosis (affix loot + enchanting), L2 Hostility (elite mobs), When Dungeons Arise, YUNG's Better Dungeons, Blue Skies, the Aether, Alex's Mobs.
+- **Adventure & RPG:** the Twilight Forest (with the TF 4.8 content backported, plus addons), Apotheosis (affix loot + enchanting), L2 Hostility (elite mobs), When Dungeons Arise, YUNG's Better Dungeons, Blue Skies, the Aether, Alex's Mobs.
 - **World & life:** Pam's HarvestCraft 2, Farmer's Delight, Naturalist, Mo'Creatures, Aquaculture 2, Supplementaries, Decocraft.
 - **Quality of life:** EMI, Jade, Xaero's Minimap & World Map, Waystones, Sophisticated Backpacks, Carry On, Simple Voice Chat.
 
@@ -19,4 +19,4 @@ SkyTekx3 keeps the original's hallmark of **conflict-free recipes**: **AlmostUni
 Ships the modern Forge optimization stack — FerriteCore, ModernFix, Radium, EntityCulling — so the pack stays smooth despite its size.
 
 ---
-*Built by kleberbaum. A few CurseForge-only mods from the classic pack (e.g. Twilight Forest) are not bundled; you can add them locally if you like.*
+*Built by kleberbaum. The Twilight Forest is bundled as SkyTekx's own 1.20.1 build with the TF 4.8 content backported, together with its addons. Do not add another Twilight Forest jar: two TF jars are a duplicate mod, and a client with a different TF build cannot join a SkyTekx3 server.*

@@ -14,14 +14,14 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 
 | Item | Value | Evidence |
 |---|---|---|
-| Pack version | 3.0.7 | Field `versionId` in `modrinth.index.json`, written by the build and committed in 15430ce (3.0.6 in 3860591) |
+| Pack version | 3.1.0 since aaf6a5e9, not on Modrinth yet. 3.0.7 before | Field `versionId` in `modrinth.index.json`. The build wrote 3.0.7 in 15430ce and 3.0.6 in 3860591 |
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since a36207c, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 952,346,929 bytes since 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
+| Index entries | 226 since 4eca94b1, which added the GraveStone Mod, 223 of them from `cdn.modrinth.com` and 3 from GitHub. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,009,232,248 bytes since 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
 | Bundled jars | 35 in `local-mods/` since 507a8f2, 33 before | Tracked in git |
-| Jars the server loads | 236 in `mods/` after the update, 235 before | Counted 2026-10-31 |
+| Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
 
@@ -256,7 +256,10 @@ entries to newer builds and added mezz_config (092140d), 217 entries in all. Com
 the Nyx entry, whose jar is bundled anyway, which leaves 216. Commit ca131c3 added the client only
 Modflared for pack 3.0.7, 217 entries again. Commit 787cb1f dropped Placeable Items on 2026-11-01,
 which leaves 216, and 3afc3bf dropped Get It Together Drops on the owner's ruling of 05:52 that day,
-which leaves 215. Get It Together Drops ran only on the server, so clients lose nothing.
+which leaves 215. Get It Together Drops ran only on the server, so clients lose nothing. The Twilight
+Forest merge 3bdc98d6 of 2026-11-02 left 225. At 19:14 that day the owner asked for the grave mod that
+every SkyTekx had so far, and commit 4eca94b1 added the GraveStone Mod 1.0.35, required on both sides,
+for 226. The server runs it since 19:35, and both MacBooks got the jar, see [graves](../content/graves.md).
 
 Placeable Items 1.0.0 turned a right click with any item without durability into a mob named "Placed
 Block" whenever vanilla did nothing with the click, for example on a block just past the reach of 4.5

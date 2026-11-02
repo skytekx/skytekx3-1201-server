@@ -17,6 +17,7 @@ what was built or changed for the pack itself.
 | [Skylands travel](aether-fall.md) | Falling off an island into the overworld and climbing past Y 319 into the Skylands, done with datapack functions |
 | [Nyx](nyx.md) | The moon mod by Ellpeck, forked and ported to 1.20.1 |
 | [Combat](combat.md) | The 1.7 style melee: a KubeJS script that removes the attack cooldown, plus the client side swing |
+| [Graves](graves.md) | The GraveStone Mod: a grave with the items at the place of death, and the death history behind `/restore` |
 | [Boot fixes](boot-fixes.md) | The override datapack, the jar patches and the other fixes that took the boot from 152 errors to 3 |
 | [SkyTekx Compat](compat-mod.md) | The pack's own Forge mod, now only a crash guard for Bird's Nests |
 

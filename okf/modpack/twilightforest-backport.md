@@ -60,13 +60,21 @@ Still open before the release is deployed and published:
 - The client smoke test for Alternative Twilight (Remastered): spears and the Knight Phantom aurora (see
   [Backported 1.21.1-only addons](#backported-1211-only-addons)).
 - In-game checks: fire each crossbow once, refuel a brewing stand with Fire Beetle Powder, fight a Lich
-  and a Naga once.
+  and a Naga once. After the TF dimension reset, also `/locate` a few Dungeons & Villages villages and
+  hedge dungeons near landmarks and check their terrain and any landmark overlap: the Beardifier bridge
+  now applies their `beard_box` terrain adaptation, which 4.3 ignored (see the re-check list under
+  [In the pack](#in-the-pack-2026-11-01)).
 - Before the `.mrpack` is published: merge this branch to `master`, because the LGPL/GPL source links
   point there (Spiced Twilight and Alternative Twilight (Remastered) carry `tree/master/ports/...` in
   their jar NOTICE and mods.toml credits; the TF fork's NOTICE points at the history of
   `ports/twilightforest` at c825572, and only its `modrinth-permissions/` file carries the
   `tree/master` URL), and resolve the bundled-jar permission blockers
   ([publish](publish.md#before-uploading)).
+
+Deferred by the final audit (carryover key `final-audit`): 4.8's *Twilight Forest: Food* creative tab
+(4.8 `TFCreativeTabs.java:603`, from 485d7e0a7). The fork keeps 4.3's three tabs and lists the new foods
+in the Items tab, so no item is missing from creative; porting the tab adds a creative tab registry
+entry and a lang key (about 1 h).
 
 ## Changelog for players
 
@@ -614,6 +622,13 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   and `TFItems.CICADA`, `FIREFLY` and `MOONWORM`. Also keep `block.SpecialMagicLogBlock` and the
   `ItemTagGenerator` and `EntityTagGenerator` tag constants, which Twilight Tweaks, Twilight Construct and
   Spartan TF use.
+- Dungeons & Villages worldgen (due now; carryover `final-audit`): the inventory asked for a re-check
+  once 4.8's structure placement or Beardifier changes are backported, and both are
+  (`avoid-landmark-grid-placement`, `custom-density-terraforming`). `TFBeardifier` applies every
+  structure's `terrain_adaptation`, TF or not, so D&V's `twilight_village` and `dungeon_hedge` jigsaws
+  (`beard_box`; structure sets `random_spread` spacing 34, separation 8, no landmark exclusion) now
+  reshape TF terrain, as vanilla's Beardifier does for every structure in 4.8. Check them after the TF
+  dimension reset and record the result here. Twilight Treehouses use `terrain_adaptation` none.
 - Content the addons expect from newer upstream TF, all present in the fork: Treehouses place
   `twilightforest:rope` and `twilightforest:mason_jar` (the jars generate empty: the templates store
   their item with 1.21's `count` key, which 1.20.1 does not read), and Dungeons & Villages rolls

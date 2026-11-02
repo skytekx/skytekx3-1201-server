@@ -110,6 +110,10 @@ tasks.named('jar', Jar).configure {
     from('NOTICE') {
         rename { "NOTICE_${project.mod_id}" }
     }
+    // CC BY-NC-SA 4.0 text for the crossbow textures adapted from Twilight Forest's bows (see NOTICE)
+    from('../twilightforest/ASSET_LICENSE') {
+        rename { "ASSET_LICENSE_${project.mod_id}" }
+    }
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,

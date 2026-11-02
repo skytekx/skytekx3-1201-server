@@ -42,6 +42,7 @@ for 2026-10-31) and are cited by local time.
 - Hostile mobs in the Skylands are weaker than in the overworld, because everybody builds a home there
   (2026-11-02 13:39). At 13:48 the owner asked for no hostile mobs there at all, and at 13:51 said that
   levels 1 to 5 would be fine but not level 50. At 14:16 the owner chose weak mobs over none.
+- Nether portals work in the Skylands (2026-11-02 14:54 and 14:59).
 - Standing rule since 2026-06-30 01:20: decisions that improve speed and reliability win
   (memory `skytekx3-performance-priority.md`).
 
@@ -320,6 +321,23 @@ only at startup. One-shot KubeJS scripts therefore put the same values into the 
 makes every client rebuild its EMI index. From 13:51 to 14:26 `kubejs/server_scripts/skylands_no_mobs.js`
 refused every hostile mob in the Skylands and removed 70 on its first load. It went when the owner chose
 weak mobs over none.
+
+## Nether portals
+
+Vanilla lights a nether portal only in the overworld and the nether, and Arclight checks the same with
+its own level keys. A complete obsidian frame in the Skylands with a 2 by 3 inside therefore stayed shut
+on 2026-11-02 at 14:54. Since 15:05 `kubejs/server_scripts/skylands_portals.js` opens such a frame one
+tick after flint and steel or a fire charge was used on it, so the portal replaces the fire as it does in
+the overworld. The portal then leads to the nether at an eighth of the coordinates, which vanilla does on
+its own.
+
+In the nether vanilla always leads to the overworld. The script keeps the dimension of the last portal a
+player stood in outside the nether in the player data, under `skytekx3PortalOrigin`. A player who came
+from the Skylands goes back there after 60 ticks in a nether portal, before vanilla would send the player
+to the overworld after 80. The player lands at eight times the coordinates, in the closest portal within
+128 blocks or in a new one that vanilla builds there. Everybody else still goes to the overworld. Players
+in creative mode cross after one tick, before the script can act, so they land in the overworld. No
+player has used it yet.
 
 ## Edit workflow
 
@@ -637,8 +655,9 @@ implemented, on 2026-10-31.
 - 2026-11-01, 02:51: skytekx-compat 2.1.2 replaced 2.1.0 on the Mac mini. It also keeps swamp hut stilts
   and the sky stone of meteorites out of the void.
 - 2026-11-02: the Skylands became dry at 13:13, had no hostile mobs from 13:51, got sleep that turns the
-  overworld to day at 14:10 and weak mobs instead of none at 14:26, see [biomes](#biomes) and
-  [sleep and hostile mobs](#sleep-and-hostile-mobs).
+  overworld to day at 14:10, weak mobs instead of none at 14:26 and nether portals at 15:05, see
+  [biomes](#biomes), [sleep and hostile mobs](#sleep-and-hostile-mobs) and
+  [nether portals](#nether-portals).
 
 Related: [Skylands travel](aether-fall.md), [world reset](../server/world-reset.md),
 [performance](../server/performance.md), [mod set](../modpack/mod-set.md), [decisions](../decisions.md).

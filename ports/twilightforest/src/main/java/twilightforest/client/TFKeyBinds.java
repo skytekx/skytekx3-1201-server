@@ -26,6 +26,7 @@ public final class TFKeyBinds {
 
 	public static final KeyMapping RED_THREAD_VISION_KEY = register("red_thread_vision", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, TRAVELLERS_GEAR);
 	public static final KeyMapping ZOOM_KEY = register("zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, TRAVELLERS_GEAR);
+	public static final KeyMapping SWAP_HOTBAR_KEY = register("swap_hotbar", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, TRAVELLERS_GEAR);
 
 	private TFKeyBinds() {
 	}

@@ -638,6 +638,7 @@ public class LangGenerator extends TFLangProvider {
 		this.add("travellers_gear.modifier.empty", "Empty");
 		this.add("key.twilightforest.categories.travellers_gear", "Twilight Forest (Traveller's Gear)");
 		this.add("key.twilightforest.red_thread_vision", "See Red Thread with Goggles");
+		this.add("key.twilightforest.swap_hotbar", "Swap Hotbar");
 		this.add("key.twilightforest.zoom", "Zoom With Goggles");
 
 		// built-in modifiers; the ${tfkeybinds/...} key mappings come with the travellers-* features that add them
@@ -1249,6 +1250,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.PERFECT_DODGE, "Attack dodged");
 		this.addSubtitle(TFSounds.GOGGLES_ZOOM_IN, "Traveller's Goggles zoom in");
 		this.addSubtitle(TFSounds.GOGGLES_ZOOM_OUT, "Traveller's Goggles zoom out");
+		this.addSubtitle(TFSounds.SWAP_HOTBAR, "Belt rustles");
 
 		this.addSubtitle(TFSounds.DOUBLE_JUMP, "Double Jump performed");
 		this.addSubtitle(TFSounds.SIDE_STEP, "Side Step performed");

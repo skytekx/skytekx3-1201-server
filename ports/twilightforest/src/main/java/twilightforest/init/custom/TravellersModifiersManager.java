@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import twilightforest.TwilightForestMod;
 import twilightforest.components.item.TravellersGearData;
+import twilightforest.item.travellers_gear.TravellersArmorBeltItem;
 import twilightforest.item.travellers_gear.modifiers.*;
 
 import java.util.List;
@@ -122,8 +123,7 @@ public final class TravellersModifiersManager {
 		context.register(HASTE_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.CHEST, TravellersGearData.HASTE_AMPLIFIER, 1, componentText(HASTE_MODIFIER)));
 
 		context.register(SWAP_HOTBAR_ABILITY, new BuiltinTravellersComponentModifier(EquipmentSlotGroup.LEGS, TravellersGearData.SWAP_HOTBAR_ABILITY));
-		// 4.8 TravellersArmorBeltItem.DEFAULT_EMPTY_BELT_CONTAINER: a container component with no stacks
-		context.register(SWAP_HOTBAR_MODIFIER, new TransferableComponentModifier(EquipmentSlotGroup.LEGS, TravellersGearData.SWAP_HOTBAR_MODIFIER, TravellersGearData.CONTAINER, new ListTag(), componentText(SWAP_HOTBAR_MODIFIER)));
+		context.register(SWAP_HOTBAR_MODIFIER, new TransferableComponentModifier(EquipmentSlotGroup.LEGS, TravellersGearData.SWAP_HOTBAR_MODIFIER, TravellersGearData.CONTAINER, TravellersArmorBeltItem.DEFAULT_EMPTY_BELT_CONTAINER, componentText(SWAP_HOTBAR_MODIFIER)));
 
 		context.register(HIGH_JUMP_ABILITY, new BuiltinTravellersComponentModifier(EquipmentSlotGroup.LEGS, TravellersGearData.HIGH_JUMP_AMPLIFIER));
 		context.register(GRADUAL_GLIDE_MODIFIER, new TravellersComponentModifier(EquipmentSlotGroup.LEGS, TravellersGearData.GRADUALLY_GLIDING_MULTIPLIER, 1 - 1 / 6F, componentText(GRADUAL_GLIDE_MODIFIER)));

@@ -43,12 +43,14 @@ import twilightforest.components.item.TravellersGearData;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFSounds;
 import twilightforest.init.custom.TravellersModifiersManager;
+import twilightforest.item.travellers_gear.TravellersArmorBeltItem;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
 import twilightforest.network.GogglesZoomPacket;
 import twilightforest.network.GradualGlidePacket;
 import twilightforest.network.PerformDoubleJumpPacket;
 import twilightforest.network.PerformSidestepPacket;
+import twilightforest.network.SwapHotbarPacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.util.ArmorUtil;
 
@@ -57,8 +59,9 @@ import java.util.UUID;
 /**
  * Client events of the Traveller's Gear core and the modifiers ported so far. Backport of 4.8's TravellersClientEvents:
  * the glove overlay, the Traveller's Goggles' Zoom and Red Thread Vision, the Traveller's Vest's Stealth, the
- * Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide) and the Traveller's Boots' Straight
- * Ahead; the key and movement handlers of the other pieces' modifiers come with their travellers-* features.
+ * Traveller's Belt's Swap Hotbar, the Traveller's Wings modifiers (Double Jump, Sidestep, Agile Ranger, Gradual Glide)
+ * and the Traveller's Boots' Straight Ahead; the key and movement handlers of the other pieces' modifiers come with
+ * their travellers-* features.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID, value = Dist.CLIENT)
 public class TravellersClientEvents {
@@ -356,6 +359,22 @@ public class TravellersClientEvents {
 			return;
 
 		redThreadVision = !redThreadVision;
+	}
+
+	/**
+	 * Swap Hotbar: its key asks the server to swap the hotbar with the one stored in the belt or wings.
+	 */
+	@SubscribeEvent
+	public static void swapHotbar(InputEvent.Key event) {
+		if (!TFKeyBinds.SWAP_HOTBAR_KEY.consumeClick())
+			return;
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null)
+			return;
+		ItemStack legArmor = player.getItemBySlot(EquipmentSlot.LEGS);
+		if (!TravellersArmorBeltItem.hasSwapHotbar(player, legArmor) || TravellersGearData.CONTAINER.get(legArmor) == null)
+			return;
+		TFPacketHandler.CHANNEL.sendToServer(SwapHotbarPacket.INSTANCE);
 	}
 
 	/**

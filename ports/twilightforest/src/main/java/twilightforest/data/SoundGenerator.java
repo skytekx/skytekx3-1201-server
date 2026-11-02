@@ -388,6 +388,7 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateNewSoundWithSubtitle(TFSounds.PERFECT_DODGE, "random/travellers/perfect_dodge", 1);
 		this.generateExistingSoundWithSubtitle(TFSounds.GOGGLES_ZOOM_IN, SoundEvents.SPYGLASS_USE);
 		this.generateExistingSoundWithSubtitle(TFSounds.GOGGLES_ZOOM_OUT, SoundEvents.SPYGLASS_STOP_USING);
+		this.generateExistingSoundWithSubtitle(TFSounds.SWAP_HOTBAR, SoundEvents.ARMOR_EQUIP_LEATHER);
 		this.generateNewSoundWithSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "random/scepter/zombie", 1);
 
 		this.generateNewSoundWithSubtitle(TFSounds.DOUBLE_JUMP, "random/travellers/double_jump", 1);

@@ -26,7 +26,9 @@ import twilightforest.compat.jei.categories.DryingCategory;
 import twilightforest.compat.jei.categories.JEIUncraftingCategory;
 import twilightforest.compat.jei.categories.TransformationPowderCategory;
 import twilightforest.compat.jei.extension.CasketRepairExtension;
+import twilightforest.compat.jei.extension.ExanimateEssenceRepairExtension;
 import twilightforest.compat.jei.extension.MoonwormQueenExtension;
+import twilightforest.compat.jei.extension.ScepterRepairExtension;
 import twilightforest.compat.jei.renderers.*;
 import twilightforest.compat.jei.subtype.CasketSubtypeInterpreter;
 import twilightforest.init.TFBlocks;
@@ -36,7 +38,9 @@ import twilightforest.init.TFRecipes;
 import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.inventory.UncraftingMenu;
 import twilightforest.item.recipe.CasketRepairRecipe;
+import twilightforest.item.recipe.EssenceRepairRecipe;
 import twilightforest.item.recipe.MoonwormQueenRepairRecipe;
+import twilightforest.item.recipe.ScepterRepairRecipe;
 
 import java.util.Collections;
 import java.util.List;
@@ -103,7 +107,9 @@ public class JEICompat implements IModPlugin {
 		// the repair recipe is special, so JEI only lists it in the crafting category once something can draw it.
 		// A data pack that removes the recipe also removes the display (#2320)
 		registration.getCraftingCategory().addCategoryExtension(MoonwormQueenRepairRecipe.class, recipe -> new MoonwormQueenExtension());
+		registration.getCraftingCategory().addCategoryExtension(ScepterRepairRecipe.class, ScepterRepairExtension::new);
 		registration.getCraftingCategory().addCategoryExtension(CasketRepairRecipe.class, CasketRepairExtension::new);
+		registration.getCraftingCategory().addCategoryExtension(EssenceRepairRecipe.class, ExanimateEssenceRepairExtension::new);
 	}
 
 	@Override

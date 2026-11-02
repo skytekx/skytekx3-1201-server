@@ -383,7 +383,21 @@ public class EntityUtil {
 			}
 			try { // try copying what can be copied
 				UUID uuid = newEntity.getUUID();
-				newEntity.load(oldEntity.saveWithoutId(newEntity.saveWithoutId(new CompoundTag())));
+				CompoundTag old = oldEntity.saveWithoutId(new CompoundTag());
+				// Deliberate fix over 4.8, which copies these too: the old mob's attribute base values would replace the new
+				// type's (a zombie villager kept the villager's 0.5 movement speed), and its equipment lists, already emptied
+				// by convertTo, would wipe the gear convertTo just moved over, so a piglin's weapon vanished instead of dropping
+				old.remove("Attributes");
+				old.remove("ArmorItems");
+				old.remove("HandItems");
+				old.remove("ArmorDropChances");
+				old.remove("HandDropChances");
+				CompoundTag merged = newEntity.saveWithoutId(new CompoundTag());
+				for (String key : old.getAllKeys()) {
+					Tag value = old.get(key);
+					if (value != null) merged.put(key, value);
+				}
+				newEntity.load(merged);
 				newEntity.setUUID(uuid);
 				if (newEntity instanceof LivingEntity newLiving) {
 					newLiving.setHealth(newLiving.getMaxHealth());

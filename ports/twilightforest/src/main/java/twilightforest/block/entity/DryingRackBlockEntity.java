@@ -49,23 +49,28 @@ public class DryingRackBlockEntity extends BlockEntity {
 	}
 
 	public static void tick(Level level, BlockPos pos, BlockState state, DryingRackBlockEntity entity) {
-		if (!state.getValue(DryingRackBlock.WATERLOGGED) && !level.isClientSide()) {
-			if (!entity.getTheItem().isEmpty()) {
-				Container input = new SimpleContainer(entity.getTheItem());
-				DryingRecipe recipe = entity.quickCheck.getRecipeFor(input, level).orElse(null);
-				boolean recipeExists = recipe != null;
-				entity.updateDryingTime(recipeExists);
-				if (recipeExists) {
-					entity.dryTime++;
+		if (level.isClientSide()) return;
+		// TF 4.8 knocks the item off when a rack is waterlogged, which also clears the flag. This port keeps the item on
+		// block state changes, so stop drying here instead (dryTime is kept and resumes once the rack is drained).
+		if (state.getValue(DryingRackBlock.WATERLOGGED)) {
+			entity.updateDryingTime(false);
+			return;
+		}
+		if (!entity.getTheItem().isEmpty()) {
+			Container input = new SimpleContainer(entity.getTheItem());
+			DryingRecipe recipe = entity.quickCheck.getRecipeFor(input, level).orElse(null);
+			boolean recipeExists = recipe != null;
+			entity.updateDryingTime(recipeExists);
+			if (recipeExists) {
+				entity.dryTime++;
 
-					if (entity.dryTime >= entity.totalDryTime) {
-						entity.setTheItem(recipe.assemble(input, level.registryAccess()));
-						setChanged(level, pos, state);
-					}
+				if (entity.dryTime >= entity.totalDryTime) {
+					entity.setTheItem(recipe.assemble(input, level.registryAccess()));
+					setChanged(level, pos, state);
 				}
-			} else {
-				entity.updateDryingTime(false);
 			}
+		} else {
+			entity.updateDryingTime(false);
 		}
 	}
 

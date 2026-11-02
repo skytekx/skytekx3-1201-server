@@ -562,6 +562,20 @@
     ],
     "source": "porter report, waves 5-6 orchestrator"
    }
+  ],
+  "9": [
+   {
+    "bundle": "drying-rack",
+    "ids": [
+     "drying-rack"
+    ],
+    "deferred": [
+     "dried-foods-and-tanning: prepend .add(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get()) to tag(RENDER_LOWER_ON_DRYING_RACK) in ItemTagGenerator (4.8 lists them first), and insert \"twilightforest:gelatinous_slime_drop\", \"twilightforest:gelatinous_maze_slime_drop\" at the top of values in src/generated/resources/data/twilightforest/tags/items/lower_on_drying_rack.json.",
+     "dried-foods-and-tanning: in JEICompat.registerRecipes hide the stale bread drying recipe as 4.8 does: register manager.getAllRecipesFor(TFRecipes.DRYING_RECIPE.get()).stream().filter(r -> !r.getResult().is(TFItems.STALE_BREAD.get())).toList() for the drying category.",
+     "dried-foods-and-tanning: the 4.8 DryingRecipeBuilder calls in CraftingGenerator.dryingRecipes for the jerkies (rotten_flesh, beef, chicken, porkchop, mutton, rabbit, cod, salmon, tropical_fish, pufferfish, raw_venison, raw_meef), slime_ball -> gelatinous_slime_drop, maze_slime_ball -> gelatinous_maze_slime_drop, treated_leather -> tanned_leather, and bread -> stale_bread (no unlockedBy; DryingRecipeBuilder.ensureValid already exempts the stale_bread id). In 4.8 the coral recipes sit between tanned_leather and stale_bread; keep that order when adding them, and hand-write the generated recipes and advancements/recipes/drying files."
+    ],
+    "source": "drying-rack review (waves 8-10 integrator)"
+   }
   ]
  }
 }

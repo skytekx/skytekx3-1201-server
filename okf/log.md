@@ -545,6 +545,17 @@ logs stay on the Mac and are not in the repo.
   Skylands and sends a player who came from the Skylands back there from the nether. A portal opened in
   the Skylands at 15:06:26, and at 15:07:55 the owner went back from the nether to the Skylands. See
   [Skylands worldgen](content/skylands-worldgen.md#nether-portals).
+- At 16:02 the owner asked why their copper was the wrong one for brass plates, at 16:14 whether bronze
+  and brass are the same, and at 16:17 asked for one item per material that builds everything. A probe
+  of all 36,990 recipes against the 138 groups of AlmostUnified found that every readable recipe takes
+  every variant, apart from the yellow dye recipes and yellorium, which AlmostUnified counted as
+  uranium. At 17:09 the owner approved an inventory converter, the yellorium fix and one ore per metal
+  in new chunks. `kubejs/server_scripts/unify_inventory.js` swaps other variants for the preferred item
+  since 17:16:53 (8f46a335). The server restarted at 17:20 with Extreme Reactors out of AlmostUnified
+  (6a73d7be) and 16 duplicate ore features of Railcraft and Immersive Engineering off (7ad5fffd), and a
+  datapack reload at 17:23 took yellorium out of the uranium tags (f8308011). The stop at 17:20 wrote
+  Mekanism's ore switch back to `true`, so a second restart at 17:32 brought it in with the server down
+  (7c7ef1cd). See [AlmostUnified](modpack/almostunified.md#one-item-per-material).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

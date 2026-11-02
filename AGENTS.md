@@ -50,10 +50,10 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
 | Add or remove a Modrinth mod | The index `modrinth.index.json`, then the same jar in `mods/` by hand |
 | Update mods | Script `tools/update_mods.py`, then `tools/patch_mods.py` and a boot test |
 | Add a mod that is not on Modrinth | Folder `local-mods/` (tracked) and `mods/`, plus a file in `modrinth-permissions/` for the review |
-| Unify materials and duplicate recipes | File `config/almostunified/unify.json` (`modPriorities`) |
+| Unify materials and duplicate recipes | File `config/almostunified/unify.json` (`modPriorities`, `ignoredItems`), and script `kubejs/server_scripts/unify_inventory.js` for the items players carry |
 | Recipe and tag tweaks | Scripts `kubejs/server_scripts/recipe_fixes.js`, `tag_fixes.js` and `gameplay.js`. No loot code exists yet |
 | Combat feel (no attack cooldown) | Script `kubejs/server_scripts/combat_1_7.js` |
-| Broken data of other mods | The override datapack `world/datapacks/skytekx3_fixes/`, which has no other source |
+| Broken or unwanted data of other mods, such as duplicate ores | The override datapack `world/datapacks/skytekx3_fixes/`, which has no other source. Git ignores `world/`, so add its files with `git add -f` |
 | Fixes inside mod jars | Script `tools/patch_mods.py` |
 | Skylands travel | Functions in `skylands-datapack/data/skytekx3/functions/travel/` |
 | Skylands terrain and structures | Sources `skylands-datapack/` (shared, vanilla safe) and `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |

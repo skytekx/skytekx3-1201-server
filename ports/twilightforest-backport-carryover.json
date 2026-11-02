@@ -769,6 +769,25 @@
     ],
     "source": "jade-top-providers+emi-native-plugin review (waves 8-10 integrator)"
    }
+  ],
+  "10": [
+   {
+    "bundle": "travellers-gear",
+    "ids": [
+     "travellers-gear"
+    ],
+    "deferred": [
+     "travellers-modifier-framework: the /tf travellers_gear command, and firing TFAdvancements.ADD_MODIFIER (AddModifierTrigger, criterion twilightforest:add_modifier, already registered) from PlayerEvent.ItemCraftedEvent for every modifier the crafted Traveller's piece gained over the input copy (4.8 TravellersGearEvents#fireCraftingModifierTrigger). Until this lands twilightforest:modify_travellers_gear cannot be earned. Then switch its icon from plain travellers_boots to boots carrying the water_walk modifier, as 4.8's TFAdvancementGenerator does (TFAdvancementGenerator + the generated advancements/modify_travellers_gear.json). Put the modifier NBT in components/item/TravellersGearData under 4.8's component ids and fill TravellersArmorItem.getInsertedModifierIds, which the twilightforest:travellers_gear item model loader already reads for the overlay sprites.",
+     "travellers-modifier-framework: the anvil block on combining two Traveller's pieces (4.8 TravellersGearEvents#cancelCombiningTravellersGear) is already ported by the travellers-gear review fix, together with clearing the stale result slot that Forge 47 leaves on cancel. Do not port it a second time.",
+     "travellers-vest-modifiers: the vest's built-in Swift Swim (4.8 chestProperties: SWIFT_SWIM component plus Attributes.WATER_MOVEMENT_EFFICIENCY +1 ADD_VALUE, modifier id twilightforest:travellers_gear.vest_fast_swimming). WATER_MOVEMENT_EFFICIENCY is 1.21-only; substitute ForgeMod.SWIM_SPEED or a Depth-Strider-like travel hook, applied from TravellersArmorItem#getAttributeModifiers or ItemAttributeModifierEvent (TravellersGearEvents#deactivateBrokenTravellersGear already clears everything while broken). Also copy sounds/random/travellers/perfect_dodge.ogg and register item.twilightforest.travellers_gear.perfect_dodge (TFSounds + SoundGenerator + generated sounds.json + subtitle).",
+     "travellers-boots-modifiers: the boots' built-in Step Up (4.8 bootsProperties: HIGH_STEP component plus Attributes.STEP_HEIGHT +0.5 ADD_VALUE, id twilightforest:travellers_gear.boots_high_step). On 1.20.1 use ForgeMod.STEP_HEIGHT_ADDITION +0.5 ADDITION on the FEET slot, skipped while broken.",
+     "travellers-wings-mobility: the wings' built-in High Jump (4.8 wingsProperties: HIGH_JUMP_AMPLIFIER = 1). Copy sounds/random/travellers/double_jump.ogg, side_step.ogg and side_step_ready.ogg and register item.twilightforest.travellers_gear.double_jump / side_step / side_step_ready (TFSounds + SoundGenerator + generated sounds.json + subtitles). The sidestep, double-jump and cooldown fields already live in TravellersWingsAttachment (CapabilityList.TRAVELLERS_WINGS).",
+     "travellers-goggles-modifiers: the goggles' built-in Zoom (4.8 gogglesProperties: ZOOM_ABILITY_MODIFIER 0.3F), the ZOOM_KEY (twilightforest zoom, default Z) and RED_THREAD_VISION_KEY (red_thread_vision, unbound) key mappings in client/TFKeyBinds below the KEY_MAPPINGS list, the item.twilightforest.travellers_goggles.zoom_in sound, and 4.8's TravellersArmorItem#getArmorTexture switch to textures/models/armor/travellers_layer_1_down.png (outer layer) while the wearer zooms (4.8 IS_USING_GOGGLES_ZOOM_MODIFIER attachment). The texture is already copied; the port's getArmorTexture does not switch yet.",
+     "travellers-goggles-item-display: the ITEM_DISPLAY_MAP_CYCLE_KEY key mapping (item_display_map_cycle, default C) in client/TFKeyBinds and the item.twilightforest.travellers_gear.cycle_maps / cycle_maps_empty sounds.",
+     "travellers-belt-swap-hotbar: the belt's built-in Swap Hotbar and its 9-slot storage (4.8 TravellersArmorBeltItem#beltProperties: SWAP_HOTBAR_ABILITY plus a DataComponents.CONTAINER of 9 empty slots -> stack NBT in TravellersGearData), the SWAP_HOTBAR_KEY key mapping (swap_hotbar, default V) in client/TFKeyBinds, the item.twilightforest.travellers_gear.swap_hotbar sound, and drawing the belt on wings that carry Swap Hotbar (TravellersArmorRenderer#getHumanoidArmorModel LEGS branch, where a comment marks the spot)."
+    ],
+    "source": "travellers-gear review (waves 8-10 integrator)"
+   }
   ]
  }
 }

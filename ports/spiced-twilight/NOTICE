@@ -1,0 +1,74 @@
+Spiced Twilight - modified Forge 1.20.1 backport
+=================================================
+
+This is a MODIFIED version of Spiced Twilight.
+
+Original work
+-------------
+  Spiced Twilight by baguchi
+  Source:   https://github.com/baguchi/SpicedTwilight
+  Version:  1.21.1-2.0.0 (NeoForge 1.21.1), commit 92a6b60be56037d3e6785b5d8bdc35ec08d88332 (2026-07-20)
+  Modrinth: https://modrinth.com/mod/spiced-twilight
+  License:  GNU Lesser General Public License v3.0 or later (LGPL-3.0-or-later).
+            LICENSE.md is the upstream license file (LGPL-3.0 text). COPYING is the GNU GPL v3 text,
+            which the LGPL incorporates. Both ship inside the jar as LICENSE_spiced_twilight.md and
+            COPYING_spiced_twilight.
+
+Modifications
+-------------
+  Modified by SkyTekx (Florian Kleber), 2026-11-02: backported from NeoForge 1.21.1 to Forge 1.20.1
+  (Forge 47) for the SkyTekx 3 modpack, built against the SkyTekx fork of The Twilight Forest
+  (4.3.2508-skytekx.1, which carries most Twilight Forest 4.8 content). The modified source is the
+  ports/spiced-twilight directory of the skytekx3-1201-server repository; it is the Corresponding
+  Source of the jar spiced_twilight-2.0.0-1.20.1-skytekx.1.jar. The mod id (spiced_twilight), item,
+  entity and loot ids are unchanged.
+
+  Removed
+  - Naga jump attack (NagaMovementPatternMixin). Its mixin into the Naga movement pattern conflicts
+    with Alternative Twilight Remastered, which is backported into the same pack and reworks the Naga.
+    The Naga behaves as in Twilight Forest.
+
+  Ported (same behavior, 1.20.1 APIs)
+  - NeoForge data attachments -> synced entity data and entity NBT. The Helmet Crab hide flag is a
+    synced entity data value; cooldown and hide chance are saved under "SpicedTwilightHide". The baby
+    kobold flag is a synced entity data value, saved as "IsBaby" as upstream does.
+  - LivingIncomingDamageEvent -> LivingAttackEvent, EntityTickEvent -> LivingTickEvent,
+    RegisterSpawnPlacementsEvent -> SpawnPlacementRegisterEvent, DeferredHolder -> RegistryObject.
+  - neoforge:add_table loot modifier -> spiced_twilight:add_table (Forge 47 has no built-in one), with
+    forge:loot_table_id conditions and data/forge/loot_modifiers/global_loot_modifiers.json.
+  - Cinder Pouch: the 1.21 bundle_contents component -> the 1.20.1 bundle NBT layout ("Items" list,
+    capacity 64 Fire Beetle Powder). The 1.21 lore component -> a tooltip line in the lore style.
+  - Loot tables: enchanted_count_increase -> looting_enchant, random_chance_with_enchanted_bonus ->
+    random_chance_with_looting (same odds); 1.20.1 folder names (loot_tables/, recipes/,
+    advancements/); the recipe and its advancement in the 1.20.1 datagen format.
+  - EntityType.Builder#eyeHeight -> getEyeHeight override; baby kobolds use the 1.20.1 baby scale
+    (half size) plus an eye height override.
+  - All mixins re-targeted to the fork's classes and verified against its reobfuscated jar; a refmap
+    is generated. The model setupAnim injections use remap = false because the typed overloads keep
+    their names in the reobfuscated Twilight Forest jar.
+  - LichAbsorbMinionsGoal: the injection sits at HEAD instead of right after super.tick() (Goal#tick
+    is empty, so this is the same point). The "Lich is invisible after a teleport" check is looked up
+    at runtime until the fork's Lich gains getTeleportInvisibility.
+  - The kobold and helmet crab model mixins also apply to the fork's separate Jappa-pack model classes
+    (NewKoboldModel, NewHelmetCrabModel); 4.8 keeps both layer definitions in one class.
+  - The Maze Slime Beetle always renders with the default slime beetle model, which its texture is
+    laid out for.
+
+  Changed
+  - Maze Slime Beetle spawning. Upstream's biome modifier adds it to #twilightforest:valid_labyrinth_biomes
+    and names a structure tag, but NeoForge's add_spawns ignores the structure field, so upstream spawns
+    it on the swamp surface. Twilight Forest replaces the spawn list inside its landmarks, so a biome
+    modifier cannot reach the Labyrinth. The backport adds it (weight 3, group 1-2) through
+    LevelEvent.PotentialSpawns to the monster spawns inside structures tagged
+    #spiced_twilight:labyrinth_maze_slime_spawn (the Labyrinth, while it is not conquered).
+  - Hiding Helmet Crabs still take damage that bypasses invulnerability (/kill, the void).
+
+  Fixed upstream bugs
+  - Kobold heads keep turning: upstream calls head.resetPose() after setupAnim, which also wiped the
+    look rotation; only the head position is reset now.
+  - Kobolds that roll Steeleaf Boots wear them on the feet (upstream put them into the head slot).
+  - Helmet Crab hide state is saved (the upstream serializer returned null).
+  - The horn tips stay visible while a Helmet Crab hides.
+  - Maze Slime Ball splat particles are sent before the projectile is removed, and the Lich's shatter
+    animation runs before the minion is converted, so clients receive both.
+  - Dyed armor on kobolds renders the overlay layer untinted, as vanilla does.

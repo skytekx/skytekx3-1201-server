@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "spiced_twilight:fire_beetle_powder"
+    },
+    "H": {
+      "item": "spiced_twilight:hydra_hide"
+    }
+  },
+  "pattern": [
+    "HFH",
+    " H "
+  ],
+  "result": {
+    "item": "spiced_twilight:cinder_pouch"
+  },
+  "show_notification": true
+}

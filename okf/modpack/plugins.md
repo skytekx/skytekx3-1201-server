@@ -61,11 +61,11 @@ install a permissions plugin.
 The Mac mini got the second way. At 22:34 on 2026-10-31 LuckPerms-Bukkit 5.5.71 went into its `plugins/`
 (Modrinth version `b0mk8uS6`, SHA-512 checked against the API), and the server restarted. LuckPerms keeps
 its data in an H2 database in `plugins/LuckPerms/` on the Mac. The group `default`, which every player
-is in, holds 38 nodes of EssentialsX, each with the prefix `essentials.`: `tpa`, `tpaccept`, `tpdeny`,
-`tpahere`, `tpacancel`, `tpauto`, `home`, `sethome`, `sethome.multiple`, `delhome`, `back`,
+is in, holds 39 nodes of EssentialsX, each with the prefix `essentials.`: `tpa`, `tpaccept`, `tpdeny`,
+`tpahere`, `tpacancel`, `tpauto`, `home`, `home.bed`, `sethome`, `sethome.multiple`, `delhome`, `back`,
 `back.ondeath`, `spawn`, `warp`, `warp.list`, `msg`, `mail`, `mail.send`, `ignore`, `me`, `afk`, `list`,
 `seen`, `realname`, `motd`, `rules`, `help`, `helpop`, `ping`, `getpos`, `compass`, `depth`, `suicide`,
-`balance`, `balancetop`, `pay`, `worth` and `signs.use.*`. The admin commands stay with operators.
+`balance`, `balancetop`, `pay`, `worth` and `signs.use.*`. The admin commands stay with operators. `home.bed` came on 2026-11-02: without it `/home` of a player with no saved home ignores the bed and sends the player to the spawn, because `spawn-if-no-home` is on.
 `essentials.spawn` works since the spawn module came on 2026-11-01, see [spawn](#spawn). Change the
 set over RCON with `lp group default permission set <node>` or `unset <node>`, or with `/lp editor` in
 game as an operator.

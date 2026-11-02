@@ -205,7 +205,24 @@ The first edit at 21:13 did not hold. Forge writes its in-memory server config b
 every stop, and the file's time matched the `Finished unloading server configs` line of the stop at
 21:35:48. The value was set again with the JVM gone at 21:35:54 and holds since the boot that reached
 `Done` at 21:36:32. So edit files in `world/serverconfig/` only while the server is down. The setting
-lives in the world, so a new world needs it again, and the old world on the build machine lacks it.
+lives in the world, so a new world needs it again, and the old world on the build machine lacks it. The
+same holds for the server configs that some mods keep in `config/`, see
+[Mekanism's ore switch](#mekanisms-ore-switch-lost-at-a-stop-2026-11-02-172012).
+
+### Mekanism's ore switch lost at a stop (2026-11-02 17:20:12)
+
+On 2026-11-02 at 17:19:06 a `config/Mekanism/world.toml` with tin and lead ore turned off reached the
+Mac mini while the server ran. After the restart of 17:20 the file held `true` again, and its time fell
+in the minute of the stop at 17:20:12. Mekanism keeps its server configs in `config/` instead of
+`world/serverconfig/`, and Forge loads them and writes them back like the others. Its file watcher
+noticed neither that copy nor an edit in place at 17:29. The file copied at 17:32:44, after the old JVM
+had exited, holds since the boot that reached `Done` at 17:33:19.
+
+The debug log names every config that Forge loads with the server, in the lines "Built TOML config for"
+of the server thread. Outside `world/serverconfig/` they are `config/Mekanism/` (11 files),
+`config/MekanismExtras/` (5), `config/ars_nouveau/` (81 glyph files), `config/ars_nouveau-server.toml`,
+`config/colytra-server.toml`, `config/comforts-server.toml`, `config/veinmining-server.toml` and
+`config/veinmining-common.toml`. Edit them, like `world/serverconfig/`, only with the java process gone.
 
 ### Launch failures without a report
 

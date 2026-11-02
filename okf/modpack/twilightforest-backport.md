@@ -175,8 +175,8 @@ owner has not picked a mode yet (485dfdf; carryover entry `multiplayer-boss-scal
 - With `NONE`, group credit still works: every player who damages a boss in
   `#twilightforest:multiplayer_inclusive_entities` gets the hurt_boss advancement trigger. Only the health
   and loot scaling is off.
-- `MORE_HEALTH` adds 20/40/60 max health (Easy/Normal/Hard) for each extra non-creative player within 32
-  blocks when the boss spawns, so it only affects bosses that spawn after the change. Unlike 4.8, the
+- `MORE_HEALTH` adds 20/40/60 max health (Easy/Normal/Hard) for each extra living non-creative,
+  non-spectator player within 32 blocks horizontally and 10 vertically when the boss spawns, so it only affects bosses that spawn after the change. Unlike 4.8, the
   fork also grants the bonus as current health, so the boss does not start the fight hurt.
 - `MORE_LOOT` adds drops for each extra participant through `twilightforest:multiplayer_addition` and
   `twilightforest:multiplayer_rolls` in the boss loot tables.

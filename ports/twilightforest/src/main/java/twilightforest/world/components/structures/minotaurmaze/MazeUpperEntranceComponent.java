@@ -15,19 +15,40 @@ import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFStructurePieceTypes;
+import twilightforest.util.FeaturePlacers;
 import twilightforest.world.components.structures.TFStructureComponentOld;
+import twilightforest.world.components.structures.util.DensityTerrainPiece;
 
-public class MazeUpperEntranceComponent extends TFStructureComponentOld {
+public class MazeUpperEntranceComponent extends TFStructureComponentOld implements DensityTerrainPiece {
+	// Whether the building stands inside the mound LabyrinthStructure's terraformer raises (TF 4.8), see DensityTerrainPiece
+	private final boolean densityTerrain;
 
 	public MazeUpperEntranceComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		super(TFStructurePieceTypes.TFMMUE.get(), nbt);
+		this.densityTerrain = DensityTerrainPiece.readFlag(nbt);
 	}
 
 	public MazeUpperEntranceComponent(int i, RandomSource rand, int x, int y, int z) {
+		this(i, rand, x, y, z, false);
+	}
+
+	public MazeUpperEntranceComponent(int i, RandomSource rand, int x, int y, int z, boolean densityTerrain) {
 		super(TFStructurePieceTypes.TFMMUE.get(), i, x, y, z);
 		this.setOrientation(Direction.Plane.HORIZONTAL.getRandomDirection(rand));
 
 		this.boundingBox = new BoundingBox(x, y, z, x + 15, y + 4, z + 15);
+		this.densityTerrain = densityTerrain;
+	}
+
+	@Override
+	protected void addAdditionalSaveData(StructurePieceSerializationContext ctx, CompoundTag tagCompound) {
+		super.addAdditionalSaveData(ctx, tagCompound);
+		DensityTerrainPiece.writeFlag(tagCompound, this.densityTerrain);
+	}
+
+	@Override
+	public boolean hasDensityTerrain() {
+		return this.densityTerrain;
 	}
 
 	/**
@@ -40,6 +61,10 @@ public class MazeUpperEntranceComponent extends TFStructureComponentOld {
 
 	@Override
 	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
+		if (this.densityTerrain) {
+			// TF 4.8 (5d2221cc5, 26c244635): the terraformed mound around the building is dirt instead of stone
+			FeaturePlacers.replaceBlocksDome(world, this.boundingBox.getCenter().atY(this.getWorldY(-1)), 16, 0.8f, sbb, this.boundingBox.inflatedBy(8), Blocks.STONE, Blocks.DIRT.defaultBlockState());
+		}
 
 		// ceiling
 		this.generateMaybeBox(world, sbb, rand, 0.7F, 0, 5, 0, 15, 5, 15, TFBlocks.MAZESTONE.get().defaultBlockState(), AIR, true, false);

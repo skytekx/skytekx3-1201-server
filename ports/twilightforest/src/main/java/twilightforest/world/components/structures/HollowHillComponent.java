@@ -4,14 +4,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.CommonLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -21,9 +26,11 @@ import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructurePieceTypes;
 import twilightforest.init.custom.StructureSpeleothemConfigs;
 import twilightforest.loot.TFLootTables;
+import twilightforest.util.BoundingBoxUtils;
 import twilightforest.world.components.feature.BlockSpikeFeature;
+import twilightforest.world.components.structures.util.DensityTerrainPiece;
 
-public class HollowHillComponent extends TFStructureComponentOld {
+public class HollowHillComponent extends TFStructureComponentOld implements DensityTerrainPiece {
 	private static final float CHEST_SPAWN_CHANCE = 0.025f;
 	private static final float SPAWNER_SPAWN_CHANCE = 0.025f;
 	private static final float SPECIAL_SPAWN_CHANCE = CHEST_SPAWN_CHANCE + SPAWNER_SPAWN_CHANCE;
@@ -35,6 +42,10 @@ public class HollowHillComponent extends TFStructureComponentOld {
 	// Settings for placing features inside (Stalactites, Stalagmites, Chests, & Spawners): the lattice spacing and the stalactite chances and lists.
 	// Only the id is kept, the entry is looked up in the world's registries when a chunk is decorated
 	protected final ResourceKey<StructureSpeleothemConfig> speleothemConfigKey;
+
+	// Whether the structure's CustomDensitySource terraformer shapes this landmark (TF 4.8), see DensityTerrainPiece.
+	// Pieces saved by TF 4.3 keep ChunkGeneratorTwilight's raiseHills/deformTerrainForYetiLair terrain and the 4.3 feature heights
+	protected final boolean densityTerrain;
 
 	public HollowHillComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		this(ctx, TFStructurePieceTypes.TFHill.get(), nbt);
@@ -48,9 +59,14 @@ public class HollowHillComponent extends TFStructureComponentOld {
 
 		// Pieces saved before the speleothem configs existed have no config_id, they keep their structure's config
 		this.speleothemConfigKey = StructureSpeleothemConfigs.readKey(nbt, this.getDefaultSpeleothemConfig());
+		this.densityTerrain = DensityTerrainPiece.readFlag(nbt);
 	}
 
 	public HollowHillComponent(StructurePieceType piece, int i, int size, int x, int y, int z, ResourceKey<StructureSpeleothemConfig> speleothemConfigKey) {
+		this(piece, i, size, x, y, z, speleothemConfigKey, false);
+	}
+
+	public HollowHillComponent(StructurePieceType piece, int i, int size, int x, int y, int z, ResourceKey<StructureSpeleothemConfig> speleothemConfigKey, boolean densityTerrain) {
 		super(piece, i, x, y, z);
 
 		this.setOrientation(Direction.SOUTH);
@@ -64,6 +80,7 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		this.boundingBox = TFLandmark.getComponentToAddBoundingBox(x, y, z, -radius, -(3 + hillSize), -radius, radius * 2, radius / (hillSize == 1 ? 2 : hillSize), radius * 2, Direction.SOUTH, true);
 
 		this.speleothemConfigKey = speleothemConfigKey;
+		this.densityTerrain = densityTerrain;
 	}
 
 	@Override
@@ -71,6 +88,12 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		super.addAdditionalSaveData(ctx, tagCompound);
 		tagCompound.putInt("hillSize", hillSize);
 		StructureSpeleothemConfigs.writeKey(tagCompound, this.speleothemConfigKey);
+		DensityTerrainPiece.writeFlag(tagCompound, this.densityTerrain);
+	}
+
+	@Override
+	public boolean hasDensityTerrain() {
+		return this.densityTerrain;
 	}
 
 	/**
@@ -93,12 +116,20 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		float shortenedRadiusSq = this.radius * this.radius * 0.85f;
 		StructureSpeleothemConfig speleothemConfig = this.getSpeleothemConfig(world);
 
+		if (this.densityTerrain) {
+			// TF 4.8 (b87722951): the terraformer carves the hollow's floor below sea level, where the terrain fill leaves water.
+			// TF 4.3's raiseHills sets air there itself
+			float drainRadius = this.hillSize * 16.5f;
+
+			drainWater(generator, writeableBounds, this.boundingBox, world, this.hillSize * 3 + 2, Blocks.CAVE_AIR.defaultBlockState(), locatorPos.getX(), locatorPos.getZ(), drainRadius * drainRadius, Blocks.STONE.defaultBlockState());
+		}
+
 		// Use two rectangle-grid lattices to simulate a triangular-grid lattice, simulating an optimal hexagonal-packing pattern for filling this structure
 		// with stalactites, stalagmites, chests, and spawners
 
 		// RectangleLatticeIterator enables for approximately-even spacing across chunks
 		for (BlockPos.MutableBlockPos latticePos : speleothemConfig.latticeIterator(writeableBounds, 0)) {
-			int distSq = getDistSqFromCenter(locatorPos, latticePos);
+			float distSq = this.getFeatureDistSqFromCenter(locatorPos, latticePos);
 
 			if (distSq > shortenedRadiusSq) continue;
 
@@ -106,13 +137,61 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		}
 	}
 
-	private void setFeatures(WorldGenLevel world, RandomSource rand, BoundingBox writeableBounds, BlockPos.MutableBlockPos pos, int distSq, StructureSpeleothemConfig speleothemConfig) {
+	/**
+	 * TF 4.8 (b87722951) drains the water that the terrain fill leaves inside a density-shaped hollow hill, from sea level down to
+	 * {@code maxDepth} below it, and turns the dirt and sand under it into {@code undergroundBlock}.
+	 */
+	public static void drainWater(ChunkGenerator generator, BoundingBox chunkBox, BoundingBox structureBox, CommonLevelAccessor level, int maxDepth, BlockState airState, int xCenter, int zCenter, double radiusSq, BlockState undergroundBlock) {
+		BoundingBox bounds = BoundingBoxUtils.getIntersectionOfSBBs(chunkBox, structureBox);
+
+		if (bounds == null) return;
+
+		int seaLevel = generator.getSeaLevel();
+		int minY = seaLevel - maxDepth;
+
+		for (int z = bounds.minZ(); z <= bounds.maxZ(); z++) {
+			int dZ = zCenter - z;
+			for (int x = bounds.minX(); x <= bounds.maxX(); x++) {
+				int dX = xCenter - x;
+
+				float distSq = dX * dX + dZ * dZ;
+
+				if (distSq >= radiusSq) {
+					continue;
+				}
+
+				int maxY = Math.min(seaLevel, level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1);
+
+				boolean crossedFloor = false;
+
+				for (int y = maxY; y >= minY; y--) {
+					BlockPos posChecked = new BlockPos(x, y, z);
+
+					BlockState stateAt = level.getBlockState(posChecked);
+
+					if (stateAt.getFluidState().is(FluidTags.WATER)) {
+						level.setBlock(posChecked, airState, Block.UPDATE_ALL);
+					} else {
+						crossedFloor = true;
+					}
+
+					if (crossedFloor) {
+						if (stateAt.is(Blocks.DIRT) || stateAt.is(Blocks.SAND)) {
+							level.setBlock(posChecked, undergroundBlock, Block.UPDATE_ALL);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void setFeatures(WorldGenLevel world, RandomSource rand, BoundingBox writeableBounds, BlockPos.MutableBlockPos pos, float distSq, StructureSpeleothemConfig speleothemConfig) {
 		rand.setSeed(rand.nextLong() ^ pos.asLong());
 		this.placeCeilingFeature(world, rand, pos, distSq, speleothemConfig);
 		this.placeFloorFeature(world, rand, writeableBounds, pos, distSq, speleothemConfig);
 	}
 
-	private void placeFloorFeature(WorldGenLevel world, RandomSource rand, BoundingBox writeableBounds, BlockPos.MutableBlockPos pos, int distSq, StructureSpeleothemConfig speleothemConfig) {
+	private void placeFloorFeature(WorldGenLevel world, RandomSource rand, BoundingBox writeableBounds, BlockPos.MutableBlockPos pos, float distSq, StructureSpeleothemConfig speleothemConfig) {
 
 		int floorY = this.getFloorY(distSq);
 
@@ -144,7 +223,7 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		}
 	}
 
-	private void placeCeilingFeature(WorldGenLevel world, RandomSource rand, BlockPos.MutableBlockPos pos, int distSq, StructureSpeleothemConfig speleothemConfig) {
+	private void placeCeilingFeature(WorldGenLevel world, RandomSource rand, BlockPos.MutableBlockPos pos, float distSq, StructureSpeleothemConfig speleothemConfig) {
 		if (!speleothemConfig.shouldDoAStalactite(rand)) return;
 
 		BlockPos ceiling = pos.atY(this.getCeilingY(distSq));
@@ -155,11 +234,11 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		BlockSpikeFeature.startSpike(world, ceiling, speleothemConfig.getStalactite(rand), rand, true);
 	}
 
-	private int getCeilingY(int distSq) {
+	private int getCeilingY(float distSq) {
 		return this.getWorldY(Mth.ceil(this.getCeilingHeight(Mth.sqrt(distSq))));
 	}
 
-	private int getFloorY(int distSq) {
+	private int getFloorY(float distSq) {
 		return this.getWorldY(Mth.floor(this.getFloorHeight(Mth.sqrt(distSq)) + 0.25f));
 	}
 
@@ -256,7 +335,22 @@ public class HollowHillComponent extends TFStructureComponentOld {
 		};
 	}
 
-	public static int getDistSqFromCenter(BlockPos center, BlockPos to) {
+	/**
+	 * The squared distance a feature of this hill measures from the center: from the center block's middle for density-shaped hills,
+	 * whose terraformer is centered there (TF 4.8 b87722951), and from its corner for hills that keep TF 4.3's terrain.
+	 */
+	protected float getFeatureDistSqFromCenter(BlockPos center, BlockPos to) {
+		return this.densityTerrain ? getDistSqFromCenter(center, to) : getLegacyDistSqFromCenter(center, to);
+	}
+
+	public static float getDistSqFromCenter(BlockPos center, BlockPos to) {
+		float x = to.getX() - center.getX() - 0.5f;
+		float z = to.getZ() - center.getZ() - 0.5f;
+
+		return x * x + z * z;
+	}
+
+	public static int getLegacyDistSqFromCenter(BlockPos center, BlockPos to) {
 		int x = to.getX() - center.getX();
 		int z = to.getZ() - center.getZ();
 

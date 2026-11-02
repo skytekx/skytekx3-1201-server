@@ -72,6 +72,7 @@ public abstract class TFStructureComponent extends StructurePiece implements Pro
 			.add(TFBlocks.ORANGE_FORCE_FIELD.get())
 			.add(TFBlocks.BROWN_THORNS.get())
 			.add(TFBlocks.GREEN_THORNS.get())
+			.add(Blocks.GRAVEL) // TF 4.8 (5d2221cc5): so the gravel of the Labyrinth's entrance building settles once its chunk loads
 			.build();
 
 

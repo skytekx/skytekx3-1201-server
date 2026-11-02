@@ -141,7 +141,7 @@ only `DistanceManagerMixin.arclight$safeIter` swapped at bytecode level and a ne
 that forces re-extraction. Full-pack boot (272 mods) and an upgrade over the stale cache both pass.
 Reproducible rebuild: `tools/arclight/rebuild_safeiter.sh`. Details: [Arclight](server/arclight.md).
 
-## 2026-11-02 — Twilight Forest 4.8 backport ships
+## 2026-11-02 — Twilight Forest 4.8 backport ships (pack 3.1.0)
 The TF fork (`ports/twilightforest`, `4.3.2508-skytekx.1`) carries all 133 planned TF 4.8 features. Waves
 1-11 end with the Lich Tower revamp, the Lich rework, drying racks, camps, Jade/TOP/EMI support and
 Traveller's Gear. The fork also folds in Mystic Crown Compat, merges the 4.8 translations, and ships the
@@ -150,8 +150,8 @@ the stock 4.3 jar (SHA-1 `9417577d`). The bundled 1.21.1 backports (Twilight Mob
 Alternative Twilight (Remastered)) need it to load, and the Twilight Crossbow backport is bundled with
 them. `modrinth-permissions/` describes the modified TF build, including the 8 structure templates that
 carry replayed 4.8 edits, and adds the crossbow. Its list now matches `local-mods/`: Ruins and
-skytekx-worldgen are gone, skytekx-compat is in, and the counts are 40 bundled jars, 34 fine and
-6 blockers. Pack glue: the TF berries are in `forge:berries`, `twilightforest-common.toml` has the
+skytekx-worldgen are gone, skytekx-compat is in, and the counts are 40 bundled jars, 34 fine,
+5 blockers and 1 manual check (Deadly World). Pack glue: the TF berries are in `forge:berries`, `twilightforest-common.toml` has the
 fork's keys, and the Twilight Tweaks uncrafting overrides ship through `kubejs/data`. The TF network
 protocol is `2-skytekx.18`, so the server and every client need the same jar. Before deploying, run the
 seed check; then delete the old TF jar from the server's `mods/`, copy the new `local-mods/` jars and the

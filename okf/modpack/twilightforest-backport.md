@@ -67,11 +67,12 @@ Still open before the release is deployed and published:
 
 ## Changelog for players
 
-For the pack release that ships `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`.
+For pack release **3.1.0**, which ships `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`.
 
 New in the Twilight Forest (TF 4.8 content on 1.20.1):
 - The rebuilt Lich Tower (graveyard yard, wings, gallery, new boss room) and a reworked Lich fight with
-  phases, clones, minions and candles.
+  phases, clones, minions and candles. Alternative Twilight (Remastered), below, makes the Lich and the
+  Naga harder still.
 - Drying racks, jerky and other dried foods, Stale Bread, Moss Soup and leather tanning.
 - Traveller's Gear: six armor pieces that take modifiers (double jump, sidestep, water walk, zoom, swap
   hotbar, auto repair and more), with an item display in the goggles.
@@ -79,7 +80,31 @@ New in the Twilight Forest (TF 4.8 content on 1.20.1):
   Underground, and reworked Aurora Palaces and Naga Courtyards.
 - Sinister Spawners, Mason Jars and jars with log lids, the Chiseled Canopy Bookshelf, Ominous Candles
   and candelabras, and the finished Ore Meter, potion flasks and magic paintings.
-- The Twilight Crossbow addon: crossbow versions of the TF bows.
+
+New Twilight Forest addons in this release:
+- Alternative Twilight (Remastered): harder bosses. The Lich's shield break summons a minion and puts the
+  Blood Lust Curse on the player who broke it, phase 2 caps the damage it takes, and phase 3 powers it up
+  and adds magic orbs. The Naga has 210 health, fires venom volleys, dazes players it hits from the front
+  and chains its charges. It also adds nine spears and a Knight Phantom aurora.
+- Spiced Twilight: the Maze Slime Beetle in the Labyrinth, Helmet Crabs that hide, kobold armor and
+  babies, Fire Beetle Powder, Hydra Hide and the Cinder Pouch.
+- Twilight Crossbow: Triple, Seeker, Ice and Ender Crossbows that fire TF arrows, plus ice and seeker
+  fireworks.
+- Twilight Mobs Loots: trophies for 48 regular TF mobs.
+- Twilight Tweaks: re-fightable bosses (use Time Powder on a boss spawner's remains).
+- The King of Twilight: the Twilight Lord, a final boss at the Final Castle.
+- Twilight's Flavors & Delight with Farmer's Cutting: Twilight Forest: Farmer's Delight foods, TF knives,
+  the Maze Stove, the Fiery Pot and cutting-board recipes for TF woods.
+- Spartan Weaponry: Twilight Forest: ironwood, steeleaf, knightmetal and fiery Spartan weapons.
+- Dungeons & Villages: villages, hedge dungeons and trading in the Twilight Forest.
+- The Lost Blocks: towerwood and thorn building sets, stairs, slabs and walls.
+- Twilight Treehouses: four treehouse dungeons in TF forests.
+- Twilight Aether: Aether gloves and a cape in TF materials.
+- Twilight Construct: eight TF materials for Tinkers' Construct.
+- Apothic Category Compat (server only): Apotheosis loot categories for TF scepters and other modded
+  weapons.
+
+Versions and details: [In the pack](#in-the-pack-2026-11-01).
 
 On an existing world:
 - Server and client must run the same Twilight Forest jar. Its network protocol is now `2-skytekx.18`

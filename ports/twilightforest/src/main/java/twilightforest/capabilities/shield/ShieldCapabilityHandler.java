@@ -6,16 +6,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
-import twilightforest.init.TFItems;
+import twilightforest.TFConfig;
 import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStats;
+import twilightforest.item.MysticCrownItem;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.UpdateShieldPacket;
@@ -53,9 +53,12 @@ public class ShieldCapabilityHandler implements IShieldCapability {
 	/**
 	 * 4.8 FortificationShieldAttachment.checkLichCrownBonus: false on every third tick while the Mystic Crown is worn,
 	 * so the temporary shield countdown skips that tick and temporary shields last 50% longer.
+	 * Mystic Crown Compat: with the scepter bonuses on it is always false while the crown is worn, so temporary shields
+	 * stop running out and only break from hits.
 	 */
 	private boolean checkLichCrownBonus() {
-		return !this.host.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || (this.host.tickCount % 3) != 0;
+		if (!MysticCrownItem.isWornBy(this.host)) return true;
+		return !TFConfig.mysticCrownScepterBonuses && (this.host.tickCount % 3) != 0;
 	}
 
 	@Override

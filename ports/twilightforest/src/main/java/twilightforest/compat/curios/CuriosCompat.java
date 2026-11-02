@@ -18,6 +18,7 @@ import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 import top.theillusivec4.curios.api.event.DropRulesEvent;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.common.capability.CurioItemCapability;
+import twilightforest.TFConfig;
 import twilightforest.client.model.TFModelLayers;
 import twilightforest.compat.curios.model.CharmOfLifeNecklaceModel;
 import twilightforest.compat.curios.renderer.CharmOfKeepingRenderer;
@@ -65,6 +66,42 @@ public class CuriosCompat {
 		});
 	}
 
+	/**
+	 * The Mystic Crown's curio, from the Mystic Crown Compat addon (MIT, by 741741): the {@code curios:head} item tag lets
+	 * it into head slots, and the {@code mysticCrownCurios} option can keep it out of every slot. It adds no armor there.
+	 */
+	public static ICapabilityProvider setupMysticCrownCapability(ItemStack stack) {
+		return CurioItemCapability.createProvider(new ICurio() {
+			@Override
+			public ItemStack getStack() {
+				return stack;
+			}
+
+			@Nonnull
+			@Override
+			public SoundInfo getEquipSound(SlotContext slotContext) {
+				return new SoundInfo(SoundEvents.ARMOR_EQUIP_GENERIC, 1.0F, 1.0F);
+			}
+
+			@Override
+			public boolean canEquip(SlotContext slotContext) {
+				return TFConfig.mysticCrownCurios;
+			}
+
+			@Override
+			public boolean canEquipFromUse(SlotContext slotContext) {
+				return this.canEquip(slotContext);
+			}
+		});
+	}
+
+	/**
+	 * Whether a Mystic Crown sits in one of the entity's Curios slots; see {@link twilightforest.item.MysticCrownItem#isWornBy}.
+	 */
+	public static boolean isMysticCrownEquipped(LivingEntity entity) {
+		return CuriosApi.getCuriosHelper().findFirstCurio(entity, stack -> stack.is(TFItems.MYSTIC_CROWN.get())).isPresent();
+	}
+
 	//if we have any curios and die with a charm of keeping on us, keep our curios instead of dropping them
 	public static void keepCurios(DropRulesEvent event) {
 		if (event.getEntity() instanceof Player player) {
@@ -102,6 +139,7 @@ public class CuriosCompat {
 			CuriosRendererRegistry.register(TFItems.ALPHA_YETI_TROPHY.get(), CurioHeadRenderer::new);
 			CuriosRendererRegistry.register(TFItems.SNOW_QUEEN_TROPHY.get(), CurioHeadRenderer::new);
 			CuriosRendererRegistry.register(TFItems.QUEST_RAM_TROPHY.get(), CurioHeadRenderer::new);
+			CuriosRendererRegistry.register(TFItems.MYSTIC_CROWN.get(), CurioHeadRenderer::new);
 
 			CuriosRendererRegistry.register(TFItems.CICADA.get(), CurioHeadRenderer::new);
 			CuriosRendererRegistry.register(TFItems.FIREFLY.get(), CurioHeadRenderer::new);

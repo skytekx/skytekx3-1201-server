@@ -14,7 +14,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -36,7 +35,6 @@ import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.enchantment.RechargeScepterEffect;
 import twilightforest.enchantment.RenewalEnchantment;
 import twilightforest.init.TFDamageTypes;
-import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.loot.TFLootTables;
 import twilightforest.network.LifedrainParticlePacket;
@@ -175,7 +173,8 @@ public class LifedrainScepterItem extends Item {
 				}
 
 				DamageSource damageSource = TFDamageTypes.getEntityDamageSource(level, TFDamageTypes.LIFEDRAIN, living);
-				if (target.hurt(damageSource, 1)) {
+				// Mystic Crown Compat: the empowering crown doubles the drain
+				if (target.hurt(damageSource, MysticCrownItem.empowersScepters(living) ? 2.0F : 1.0F)) {
 					// make it explode
 					if (!level.isClientSide()) {
 						// bosses die normally so their death sequence and loot still happen (#2122)
@@ -219,7 +218,7 @@ public class LifedrainScepterItem extends Item {
 						}
 
 						// the Mystic Crown spares the charge 5% of the time
-						if (living instanceof Player player && !player.getAbilities().instabuild && (!player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || level.getRandom().nextFloat() > 0.05F)) {
+						if (living instanceof Player player && !player.getAbilities().instabuild && (!MysticCrownItem.isWornBy(player) || level.getRandom().nextFloat() > 0.05F)) {
 							TFItemStackUtils.hurtButDontBreak(stack, 1, (ServerLevel) level, player);
 						}
 					}

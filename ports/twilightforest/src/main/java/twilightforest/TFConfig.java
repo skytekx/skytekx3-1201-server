@@ -71,6 +71,10 @@ public class TFConfig {
 	// -- Bosses --
 	public static MultiplayerFightAdjuster multiplayerFightAdjuster = MultiplayerFightAdjuster.NONE;
 
+	// -- Mystic Crown -- (read every tick while temporary Fortification shields count down)
+	public static boolean mysticCrownCurios = true;
+	public static boolean mysticCrownScepterBonuses = true;
+
 	public static class Common {
 
 		public Common(ForgeConfigSpec.Builder builder) {
@@ -177,6 +181,22 @@ public class TFConfig {
 							MORE_HEALTH: increases the health of each boss in that tag by 10 hearts on Easy, 20 on Normal and 30 on Hard for each additional player nearby when it spawns.
 							MORE_LOOT_AND_HEALTH: does both of the above functions for each boss.""").
 					defineEnum("multiplayerFightAdjuster", MultiplayerFightAdjuster.NONE);
+
+			// The two Mystic Crown options come from the Mystic Crown Compat addon (MIT, by 741741).
+			mysticCrownCurios = builder.
+					translation(config + "mystic_crown_curios").
+					comment("If true and Curios is installed, the Mystic Crown can also be worn in a Curios head slot, where it counts as worn for all of its effects.").
+					define("mysticCrownCurios", true);
+			mysticCrownScepterBonuses = builder.
+					translation(config + "mystic_crown_scepter_bonuses").
+					comment("""
+							If true, a worn Mystic Crown also empowers the scepters:
+							the Twilight Scepter has a 10% chance to fire an extra Lich bomb, and the wearer takes no damage from Lich bombs;
+							the Lifedrain Scepter drains twice as much health;
+							temporary Fortification shields no longer run out over time, they only break from hits;
+							Zombie Scepter zombies keep their strength for 3 minutes instead of 1, may wear leather armor (baby zombies get a full set and a Knockback II stick) and hit for 4 damage instead of 7.
+							If false, the crown keeps only its normal effects: a 5% chance to save a scepter charge, 50% longer temporary shields and a 10% chance to summon a baby zombie.""").
+					define("mysticCrownScepterBonuses", true);
 
 			builder.
 					comment("Settings for all things related to the uncrafting table.").
@@ -363,6 +383,8 @@ public class TFConfig {
 		public final ForgeConfigSpec.BooleanValue bossDropChests;
 		public final ForgeConfigSpec.IntValue cloudBlockPrecipitationDistanceCommon;
 		public final ForgeConfigSpec.EnumValue<MultiplayerFightAdjuster> multiplayerFightAdjuster;
+		public final ForgeConfigSpec.BooleanValue mysticCrownCurios;
+		public final ForgeConfigSpec.BooleanValue mysticCrownScepterBonuses;
 
 		public final MagicTrees MAGIC_TREES = new MagicTrees();
 
@@ -539,6 +561,9 @@ public class TFConfig {
 		sortingCoreRange = config.MAGIC_TREES.sortingRange.get();
 
 		multiplayerFightAdjuster = config.multiplayerFightAdjuster.get();
+
+		mysticCrownCurios = config.mysticCrownCurios.get();
+		mysticCrownScepterBonuses = config.mysticCrownScepterBonuses.get();
 	}
 
 	private static void rebakeClientOptions(Client config) {

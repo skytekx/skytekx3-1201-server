@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,8 +17,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.enchantment.RechargeScepterEffect;
 import twilightforest.enchantment.RenewalEnchantment;
+import twilightforest.entity.projectile.LichBomb;
 import twilightforest.entity.projectile.TwilightWandBolt;
-import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.util.TFItemStackUtils;
 
@@ -42,8 +41,14 @@ public class TwilightWandItem extends Item {
 
 			if (!level.isClientSide()) {
 				level.addFreshEntity(new TwilightWandBolt(level, player));
+				// Mystic Crown Compat: the empowering crown adds a Lich bomb to 10% of the shots (its wearer is immune to the blast, see EntityEvents)
+				if (MysticCrownItem.empowersScepters(player) && level.getRandom().nextFloat() < 0.1F) {
+					LichBomb bomb = new LichBomb(level, player);
+					bomb.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+					level.addFreshEntity(bomb);
+				}
 				// the Mystic Crown spares the charge 5% of the time
-				if (!player.getAbilities().instabuild && (!player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) || level.getRandom().nextFloat() > 0.05F)) {
+				if (!player.getAbilities().instabuild && (!MysticCrownItem.isWornBy(player) || level.getRandom().nextFloat() > 0.05F)) {
 					TFItemStackUtils.hurtButDontBreak(stack, 1, (ServerLevel) level, player);
 				}
 			}

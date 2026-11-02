@@ -82,7 +82,8 @@ public class ModdedItemTagGenerator extends ItemTagsProvider {
 				TFItems.PLAYER_SKULL_CANDLE.get(),
 				TFItems.SKELETON_SKULL_CANDLE.get(),
 				TFItems.WITHER_SKELETON_SKULL_CANDLE.get(),
-				TFItems.ZOMBIE_SKULL_CANDLE.get());
+				TFItems.ZOMBIE_SKULL_CANDLE.get(),
+				TFItems.MYSTIC_CROWN.get());
 
 		tag(CA_PLANT_FOODS).add(TFItems.TORCHBERRIES.get());
 

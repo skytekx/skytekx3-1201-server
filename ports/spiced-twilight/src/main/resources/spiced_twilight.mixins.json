@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "baguchi.spiced_twilight.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "spiced_twilight.refmap.json",
+  "mixins": [
+    "BrewingStandBlockEntityMixin",
+    "BrewingStandMenu$FuelSlotMixin",
+    "FireBeetleMixin",
+    "HelmetCrabMixin",
+    "KoboldMixin",
+    "LichAbsorbMinionsGoalMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "client.HelmetCrabModelMixin",
+    "client.KoboldModelMixin",
+    "client.NewHelmetCrabModelMixin",
+    "client.NewKoboldModelMixin"
+  ]
+}

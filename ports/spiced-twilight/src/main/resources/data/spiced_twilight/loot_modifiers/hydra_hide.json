@@ -1,0 +1,10 @@
+{
+  "type": "spiced_twilight:add_table",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "twilightforest:entities/hydra"
+    }
+  ],
+  "table": "spiced_twilight:inject/hydra_hide"
+}

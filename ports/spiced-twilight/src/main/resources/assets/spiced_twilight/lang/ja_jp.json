@@ -1,0 +1,12 @@
+{
+  "itemGroup.spiced_twilight": "Spiced Twilight",
+  "item.spiced_twilight.fire_beetle_powder": "ファイアビートルの粉",
+  "item.spiced_twilight.fire_beetle_powder.desc": "この粉は醸造台の燃料の代わりになる",
+  "item.spiced_twilight.hydra_hide": "ヒドラの革",
+  "item.spiced_twilight.cinder_pouch": "灰のポーチ",
+  "item.spiced_twilight.cinder_pouch.desc": "ファイアビートルの粉を入れて、火を放つ",
+  "item.spiced_twilight.maze_slime_beetle_spawn_egg": "迷宮スライムビートルのスポーンエッグ",
+  "entity.spiced_twilight.maze_slime_beetle": "迷宮スライムビートル",
+  "entity.spiced_twilight.maze_slime_ball": "迷宮スライムボール",
+  "spiced_twilight.configuration.title": "Spiced Twilight Configs"
+}

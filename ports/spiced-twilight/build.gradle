@@ -1,0 +1,131 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+version = project.mod_version
+group = project.group_name
+
+base {
+    archivesName = project.mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// Compiled against the SkyTekx Twilight Forest fork, a sibling project in this repository.
+// Build it first:  (cd ../twilightforest && ./gradlew build)
+def tfLibs = file('../twilightforest/build/libs')
+def tfJar = new File(tfLibs, "twilightforest-${project.minecraft_version}-${project.tf_version}-universal.jar")
+if (!tfJar.exists()) {
+    throw new GradleException("Missing ${tfJar}. Build the Twilight Forest fork first: (cd ../twilightforest && ./gradlew build)")
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    copyIdeResources = true
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            taskName "Minecraft_Client_${project.minecraft_version}"
+        }
+
+        server {
+            taskName "Minecraft_Server_${project.minecraft_version}"
+            args '--nogui'
+        }
+
+        data {
+            taskName "Minecraft_Data_${project.minecraft_version}"
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--server', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    flatDir {
+        name 'Twilight Forest fork'
+        dirs tfLibs
+    }
+}
+
+dependencies {
+    minecraft "net.neoforged:forge:${project.minecraft_version}-${project.neo_version}"
+
+    // ../twilightforest/build/libs/twilightforest-<mc>-<tf_version>-universal.jar (flatDir ignores the group)
+    implementation fg.deobf("skytekx:twilightforest-${project.minecraft_version}:${project.tf_version}:universal")
+
+    annotationProcessor "org.spongepowered:mixin:${project.mixin_version}:processor"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            mod_version: project.mod_version,
+            mod_id     : project.mod_id,
+            mod_name   : project.mod_name,
+            mod_license: project.mod_license,
+            mod_authors: project.mod_authors,
+            tf_version : project.tf_version,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    // LGPL-3.0: ship the license texts and the modification notice inside the jar
+    from('LICENSE.md') {
+        rename { "LICENSE_${project.mod_id}.md" }
+    }
+    from('COPYING') {
+        rename { "COPYING_${project.mod_id}" }
+    }
+    from('NOTICE') {
+        rename { "NOTICE_${project.mod_id}" }
+    }
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : 'baguchi',
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : 'baguchi (1.20.1 backport: SkyTekx)',
+                'MixinConfigs'            : "${mod_id}.mixins.json",
+        ])
+    }
+
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

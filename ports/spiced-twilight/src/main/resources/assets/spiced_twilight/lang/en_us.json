@@ -1,0 +1,12 @@
+{
+  "itemGroup.spiced_twilight": "Spiced Twilight",
+  "item.spiced_twilight.fire_beetle_powder": "Fire Beetle Powder",
+  "item.spiced_twilight.hydra_hide": "Hydra Hide",
+  "item.spiced_twilight.cinder_pouch": "Cinder Pouch",
+  "item.spiced_twilight.cinder_pouch.desc": "put Fire Beetle Powder and use to make flames",
+  "item.spiced_twilight.fire_beetle_powder.desc": "This powder usable with BrewStand's Fuel",
+  "item.spiced_twilight.maze_slime_beetle_spawn_egg": "Maze Slime Beetle Spawn Egg",
+  "entity.spiced_twilight.maze_slime_beetle": "Maze Slime Beetle",
+  "entity.spiced_twilight.maze_slime_ball": "Maze Slime Ball",
+  "spiced_twilight.configuration.title": "Spiced Twilight Configs"
+}

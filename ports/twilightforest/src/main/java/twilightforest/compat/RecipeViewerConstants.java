@@ -3,19 +3,25 @@ package twilightforest.compat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import twilightforest.TFConfig;
 import twilightforest.data.tags.ItemTagGenerator;
+import twilightforest.init.TFDataMaps;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFRecipes;
 import twilightforest.inventory.UncraftingMenu;
+import twilightforest.util.datamaps.EntityTransformation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -54,6 +60,32 @@ public class RecipeViewerConstants {
 		} else {
 			return new ArrayList<>(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE.get()));
 		}
+	}
+
+	/**
+	 * All recipe viewers run this once when initializing recipes. The ominous fire transformations are a data map, read from
+	 * the copy the server synced (SyncDataMapPacket), so a client on a dedicated server sees the server's data packs.
+	 */
+	public static List<OminousFireInfo> getOminousFireRecipes() {
+		Map<ResourceLocation, EntityTransformation> synced = TFDataMaps.OMINOUS_FIRE.getSyncedValues();
+		List<EntityType<?>> inputs = new ArrayList<>();
+		List<OminousFireInfo> info = new ArrayList<>();
+		for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
+			if (synced.containsKey(BuiltInRegistries.ENTITY_TYPE.getKey(type))) {
+				inputs.add(type);
+			}
+		}
+
+		for (EntityType<?> input : inputs) {
+			EntityTransformation output = synced.get(BuiltInRegistries.ENTITY_TYPE.getKey(input));
+			if (output != null) {
+				OminousFireInfo dummy = new OminousFireInfo(output.result(), input);
+				if (!info.contains(dummy)) {
+					info.add(new OminousFireInfo(input, output.result()));
+				}
+			}
+		}
+		return info;
 	}
 
 	/**
@@ -123,5 +155,8 @@ public class RecipeViewerConstants {
 			return shapedRecipe.getRecipeHeight();
 		}
 		return 0;
+	}
+
+	public record OminousFireInfo(EntityType<?> input, EntityType<?> output) {
 	}
 }

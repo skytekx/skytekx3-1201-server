@@ -101,6 +101,13 @@ repositories {
         url "https://maven.tamaized.com/releases"
     }
     maven {
+        name 'TerraformersMC' // EMI
+        url 'https://maven.terraformersmc.com/'
+        content {
+            includeGroup "dev.emi"
+        }
+    }
+    maven {
         name 'Curseforge Maven' // Jade
         url "https://www.cursemaven.com"
         content {
@@ -115,6 +122,9 @@ dependencies {
 
     // tterrag
     //runtimeOnly fg.deobf("team.chisel.ctm:CTM:${project.minecraft_version}-${project.ctm_version}")
+
+    // emi: the full jar, the native plugin uses some EMI internals like 4.8 does. Optional at runtime, found by @EmiEntrypoint
+    compileOnly fg.deobf("dev.emi:emi-forge:${project.emi_version}+${project.minecraft_version}")
 
     // theillusivec4
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${project.curios_version}+${project.minecraft_version}")

@@ -158,6 +158,13 @@ public class TFClientEvents {
 		}
 	}
 
+	// the recipe viewers' display entities are created in the client level, so drop them whenever a screen closes,
+	// otherwise they keep that level alive after a dimension change or disconnect (#2488, 4.8 c34bb8111)
+	@SubscribeEvent
+	public static void clearRecipeViewerEntities(ScreenEvent.Closing event) {
+		EntityRenderingUtil.clearEntityCache();
+	}
+
 	/**
 	 * Drops the cached foliage colour handlers when anything leaves a client level, which covers leaving a world and
 	 * switching dimensions or servers, so handlers resolved against an old biome registry are not reused (#2361).

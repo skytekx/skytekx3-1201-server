@@ -385,6 +385,7 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateNewSoundWithSubtitle(TFSounds.TWILIGHT_SCEPTER_HIT, "random/scepter/twilight_hit", 3);
 		this.generateNewSoundWithSubtitle(TFSounds.TWILIGHT_SCEPTER_USE, "random/scepter/twilight_use", 3);
 		this.generateExistingSoundWithSubtitle(TFSounds.WOOD_SHIELD_SHATTERS, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);
+		this.generateNewSoundWithSubtitle(TFSounds.PERFECT_DODGE, "random/travellers/perfect_dodge", 1);
 		this.generateNewSoundWithSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "random/scepter/zombie", 1);
 
 		this.generateNewSoundWithSubtitle(TFSounds.DOUBLE_JUMP, "random/travellers/double_jump", 1);

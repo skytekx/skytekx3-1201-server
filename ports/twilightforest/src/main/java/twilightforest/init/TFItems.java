@@ -92,7 +92,9 @@ public class TFItems {
 	public static final RegistryObject<Item> FIERY_SWORD = ITEMS.register("fiery_sword", () -> new FierySwordItem(TwilightItemTier.FIERY, new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> FIERY_PICKAXE = ITEMS.register("fiery_pickaxe", () -> new FieryPickItem(TwilightItemTier.FIERY, new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_GOGGLES = ITEMS.register("travellers_goggles", () -> new TravellersGogglesItem(new Item.Properties()));
-	public static final RegistryObject<ArmorItem> TRAVELLERS_VEST = ITEMS.register("travellers_vest", () -> new TravellersArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.CHESTPLATE)));
+	public static final RegistryObject<ArmorItem> TRAVELLERS_VEST = ITEMS.register("travellers_vest", () -> new TravellersArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.CHESTPLATE))
+		.withDefaultComponent(TravellersGearData.SWIFT_SWIM, Unit.INSTANCE)
+		.withBuiltinAttribute(TravellersModifiersManager::travellersSwiftSwim));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_GLOVES = ITEMS.register("travellers_gloves", () -> new TravellersArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1), 0, 0, Set.of(TravellersArmorItem.Part.GLOVES)));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_WINGS = ITEMS.register("travellers_wings", () -> new TravellersArmorBeltItem(ArmorItem.Type.LEGGINGS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.WINGS))
 		.withDefaultComponent(TravellersGearData.HIGH_JUMP_AMPLIFIER, 1));

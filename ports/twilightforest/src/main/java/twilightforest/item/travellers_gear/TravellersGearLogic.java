@@ -39,13 +39,14 @@ import twilightforest.network.TravellersWingsStatePacket;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
  * Logic of the Traveller's Gear and its modifiers. Backport of 4.8's TravellersGearLogic: the wing animation state
- * machine, the Traveller's Wings modifiers (High Jump, Gradual Glide, Sidestep, Double Jump) and the Traveller's Boots
- * modifiers (Step-Up, Water Walk, Straight Ahead, Unrestrained, Slimy Soles). The other pieces' modifiers come with
- * their travellers-* features.
+ * machine, the Traveller's Vest modifiers (Stealth, Haste), the Traveller's Wings modifiers (High Jump, Gradual Glide,
+ * Sidestep, Double Jump) and the Traveller's Boots modifiers (Step-Up, Water Walk, Straight Ahead, Unrestrained, Slimy
+ * Soles). The other pieces' modifiers come with their travellers-* features.
  */
 public class TravellersGearLogic {
 
@@ -69,6 +70,37 @@ public class TravellersGearLogic {
 	 * {@code travellers_gear.boots_double_jump_safe_fall_distance} modifier (+2 on 1.21's safe fall distance).
 	 */
 	public static final float DOUBLE_JUMP_SAFE_FALL_DISTANCE = 2.0F;
+
+	/**
+	 * Stealth: a player sneaking in a vest with the modifier turns invisible. The server keeps a two-tick Invisibility
+	 * effect running ({@code invisibilityHandler}), the client sets the invisible flag every frame so the player vanishes
+	 * at once. When the player stops sneaking, the flag is cleared as soon as the effect is about to run out.
+	 */
+	public static void travellersStealth(Player player, Consumer<Player> invisibilityHandler) {
+		if (!TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.STEALTH_MODIFIER))
+			return;
+
+		if (player.isCrouching()) {
+			invisibilityHandler.accept(player);
+		} else {
+			MobEffectInstance invisibilityEffect = player.getEffect(MobEffects.INVISIBILITY);
+			if (invisibilityEffect != null && invisibilityEffect.getDuration() < 2)
+				player.setInvisible(false);
+		}
+	}
+
+	/**
+	 * Haste: a vest with the modifier keeps a two-tick Haste effect (Haste II with the stock definition) on its wearer.
+	 */
+	public static void travellersVestHaste(LivingEntity livingEntity) {
+		ItemStack chestStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+		// 4.8 reads the component first; a stack NBT component is decoded on every read, so the cheap checks go first
+		if (!TravellersArmorItem.isTravellersGear(chestStack) || !TravellersModifiersManager.isModifierActive(livingEntity, chestStack, TravellersModifiersManager.HASTE_MODIFIER))
+			return;
+		Integer amplifier = TravellersGearData.HASTE_AMPLIFIER.get(chestStack);
+		if (amplifier != null)
+			livingEntity.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 2, amplifier, false, false, false));
+	}
 
 	public static boolean isWearingWings(LivingEntity livingEntity) {
 		return TravellersArmorItem.hasPart(livingEntity.getItemBySlot(EquipmentSlot.LEGS), TravellersArmorItem.Part.WINGS);

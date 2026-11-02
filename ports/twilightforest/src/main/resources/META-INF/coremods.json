@@ -14,5 +14,6 @@
   "armor": "META-INF/asm/armor.js",
   "snow": "META-INF/asm/snow.js",
   "damagesources": "META-INF/asm/damagesources.js",
-  "travellers_boots": "META-INF/asm/travellers_boots.js"
+  "travellers_boots": "META-INF/asm/travellers_boots.js",
+  "exhaustion": "META-INF/asm/exhaustion.js"
 }

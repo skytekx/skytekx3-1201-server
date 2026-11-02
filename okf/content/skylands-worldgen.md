@@ -41,7 +41,7 @@ for 2026-10-31) and are cited by local time.
   13:45, 14:04 and 14:07).
 - Hostile mobs in the Skylands are weaker than in the overworld, because everybody builds a home there
   (2026-11-02 13:39). At 13:48 the owner asked for no hostile mobs there at all, and at 13:51 said that
-  levels 1 to 5 would be fine but not level 50.
+  levels 1 to 5 would be fine but not level 50. At 14:16 the owner chose weak mobs over none.
 - Standing rule since 2026-06-30 01:20: decisions that improve speed and reliability win
   (memory `skytekx3-performance-priority.md`).
 
@@ -288,8 +288,8 @@ Nobody has checked that in game.
 
 ## Sleep and hostile mobs
 
-Two KubeJS server scripts set the rules for living in the Skylands. Both run on the Mac mini since
-2026-11-02 and need no restart, because `/kubejs reload server_scripts` loads them.
+A KubeJS server script and two config entries set the rules for living in the Skylands. All of them went
+live on the Mac mini on 2026-11-02 without a restart.
 
 Sleep comes from `kubejs/server_scripts/skylands_sleep.js`. With its fixed time the dimension never
 counts as day, so beds work there at any hour. When everybody sleeps, vanilla sets the time of the
@@ -301,15 +301,25 @@ The rule `playersSleepingPercentage` is 0 since 14:10, so one sleeping player is
 dimension. With the default of 100, a second player who was awake in the Skylands kept the night going,
 which is why sleeping there still failed at 14:03.
 
-The hostile mobs go through `kubejs/server_scripts/skylands_no_mobs.js`. Since the Skylands stay at noon
-without counting as day, zombies and skeletons no longer burned there, and mobs from the caves gathered
-around the homes. L2Hostility also gave them levels near 50, because mod dimensions start at a base level
-of 20 with a variation of 16 and a scale of 1.5, plus 10 for each dimension a player has visited
-(`config/l2_configs/l2hostility-common.toml`). The script refuses every entity with the vanilla `Enemy`
-interface that joins the Skylands, whether it comes from a natural spawn, a spawner, a portal or a chunk
-loaded from disk, and it removes those already there when it loads. Its first working load at 13:51
-removed 70. Animals and other peaceful mobs stay. Whether weak mobs of levels 1 to 5 should come back
-instead is open, see [open items](../open-items.md#owner-decisions).
+Hostile mobs stay, but weak. The Skylands stay at noon without counting as day, so zombies and skeletons
+do not burn there and gather around the homes up to the mob cap. A minute after they came back, 59
+zombies, skeletons, spiders and creepers stood in the loaded part of the Skylands.
+L2Hostility sets a mob's level from the base of its dimension, a random variation, the level of the
+nearest player times a scale, and 0.003 levels per block of distance from the origin
+(`config/l2_configs/l2hostility-common.toml`). The Skylands had no entry and used the default for mod
+dimensions, base 20, variation 16 and scale 1.5. A player's level grows by 10 for each dimension the
+player has visited, so mobs there reached about level 50. Since 14:26
+`skylands-datapack-forge/data/skytekx3/l2hostility_config/difficulty/skylands.json` gives the Skylands
+base 0, variation 1, scale 0 and no traits. Mobs sampled near the homes at 14:27 had levels 0 to 3, and
+2,000 blocks out the distance alone adds 6. Since 14:28 `dimensionIDBlackList` in
+`config/infernalmobs.cfg` keeps Infernal Mobs elites out of the Skylands.
+
+L2Hostility reads its difficulty files only when the datapacks load, and Infernal Mobs reads its config
+only at startup. One-shot KubeJS scripts therefore put the same values into the running server at
+14:26:47 and 14:28:02, and the files take over at the next start. A `/reload` was avoided, because it
+makes every client rebuild its EMI index. From 13:51 to 14:26 `kubejs/server_scripts/skylands_no_mobs.js`
+refused every hostile mob in the Skylands and removed 70 on its first load. It went when the owner chose
+weak mobs over none.
 
 ## Edit workflow
 
@@ -626,8 +636,8 @@ implemented, on 2026-10-31.
   [deploy of 2026-11-01](#deploy-of-2026-11-01).
 - 2026-11-01, 02:51: skytekx-compat 2.1.2 replaced 2.1.0 on the Mac mini. It also keeps swamp hut stilts
   and the sky stone of meteorites out of the void.
-- 2026-11-02: the Skylands became dry at 13:13, lost their hostile mobs at 13:51 and got sleep that turns
-  the overworld to day at 14:10, see [biomes](#biomes) and
+- 2026-11-02: the Skylands became dry at 13:13, had no hostile mobs from 13:51, got sleep that turns the
+  overworld to day at 14:10 and weak mobs instead of none at 14:26, see [biomes](#biomes) and
   [sleep and hostile mobs](#sleep-and-hostile-mobs).
 
 Related: [Skylands travel](aether-fall.md), [world reset](../server/world-reset.md),

@@ -105,10 +105,10 @@ evidence and the page with the details. The rulings behind the first section are
   history of the build machine. See [Secrets](server/secrets.md#exposed-values-to-rotate).
 - The two local backup branches `backup-pre-reconstruct` and `backup-pre-scrub` hold the history before
   the rewrites of 2026-06-29. Keep or delete them.
-- Weak mobs or none in the Skylands. Since 2026-11-02 13:51 no hostile mob may join the Skylands, while
-  the owner said at 13:51 that levels 1 to 5 would be fine. An L2Hostility difficulty file for the
-  Skylands in a datapack (base 1, variation 2, scale 0, trait chance 0) would cap them near 1 to 5, and
-  the no mobs script would go. See
+- Weak mobs gather in the Skylands. They do not burn there, because the fixed noon never counts as day,
+  so 59 stood in the loaded part of the Skylands a minute after they came back on 2026-11-02. If that is
+  too many, a KubeJS rule could let undead burn under open sky in the Skylands or thin out spawns there.
+  See
   [Skylands worldgen](content/skylands-worldgen.md#sleep-and-hostile-mobs).
 - One sleeper for everybody. Since 2026-11-02 14:10 the rule `playersSleepingPercentage` is 0, so one
   sleeping player turns night into day for the whole server. It was set to make sleeping in the Skylands

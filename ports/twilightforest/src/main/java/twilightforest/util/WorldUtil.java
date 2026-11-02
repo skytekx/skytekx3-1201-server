@@ -156,7 +156,7 @@ public final class WorldUtil {
 	}
 
 	// Mth.lerpDiscrete() of Minecraft 1.20.5+
-	private static int lerpDiscrete(float delta, int start, int end) {
+	public static int lerpDiscrete(float delta, int start, int end) {
 		int range = end - start;
 		return start + Mth.floor(delta * (float) (range - 1)) + (delta > 0.0F ? 1 : 0);
 	}

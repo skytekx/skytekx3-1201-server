@@ -104,6 +104,7 @@ public class TFLootTables {
 	public static final ResourceLocation STINGBERRY_BUSH_DROPS = register("blocks/stingberry_bush_berries");
 	// 4.8 keeps the camp tables at the namespace root, and the camp tent templates name twilightforest:camp_tent in their chest NBT
 	public static final ResourceLocation CAMP_TENT = register("camp_tent");
+	public static final ResourceLocation CAMP_ARMOR_RACK = register("camp_armor_rack");
 	public static final ResourceLocation CAMP_DRYING_RACK = register("camp_drying_rack");
 	public static final ResourceLocation CAMP_POT = register("camp_pot");
 	public static final ResourceLocation COPPER_OREBERRY_BUSH_DROPS = register("blocks/copper_oreberry_bush_berries");

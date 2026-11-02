@@ -21,6 +21,7 @@ import twilightforest.data.custom.CrumbleHornGenerator;
 import twilightforest.data.custom.QuestGenerator;
 import twilightforest.data.custom.TransformationPowderGenerator;
 import twilightforest.data.custom.stalactites.StalactiteGenerator;
+import twilightforest.data.custom.structuredefinitions.CampStructureDefinitionGenerator;
 import twilightforest.data.custom.structuredefinitions.FinalCastleStructureDefinitionGenerator;
 import twilightforest.data.custom.structuredefinitions.NagaCourtyardStructureDefinitionGenerator;
 import twilightforest.data.tags.*;
@@ -66,6 +67,8 @@ public class DataGenerators {
 		generator.addProvider(event.includeServer(), new DamageTypeTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new StructureTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new CustomTagGenerator.DimensionTypeTagGenerator(output, lookupProvider, helper));
+		// The camp pools name twilightforest:camp_marker_handlers, so they need RegistryDataGenerator's lookup with TF's datapack registries
+		generator.addProvider(event.includeServer(), new CampStructureDefinitionGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new FinalCastleStructureDefinitionGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new NagaCourtyardStructureDefinitionGenerator(output, lookupProvider, helper));
 

@@ -398,6 +398,18 @@ public class ChestLootTables implements LootTableSubProvider {
 								.add(LootItem.lootTableItem(Items.LEATHER_BOOTS))
 								.add(LootItem.lootTableItem(Items.SHEARS))));
 
+		register.accept(TFLootTables.CAMP_ARMOR_RACK,
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								.add(LootItem.lootTableItem(Items.LEATHER_HELMET))
+								.add(LootItem.lootTableItem(Items.LEATHER_CHESTPLATE))
+								.add(LootItem.lootTableItem(Items.LEATHER_LEGGINGS))
+								.add(LootItem.lootTableItem(Items.LEATHER_BOOTS))
+								.add(LootItem.lootTableItem(Items.CHAINMAIL_HELMET))
+								.add(LootItem.lootTableItem(Items.CHAINMAIL_CHESTPLATE))
+								.add(LootItem.lootTableItem(Items.CHAINMAIL_LEGGINGS))
+								.add(LootItem.lootTableItem(Items.CHAINMAIL_BOOTS))));
+
 		// 4.8 rolls the leather armor through an inline nested table (weight 2), which 1.20.1 loot tables cannot hold.
 		// Every weight is doubled instead so each armor piece keeps its 1-in-138 chance (2/69 for the set).
 		register.accept(TFLootTables.CAMP_DRYING_RACK,

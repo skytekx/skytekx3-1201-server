@@ -1,5 +1,7 @@
 package twilightforest.init;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
@@ -37,6 +39,7 @@ public class TFStructureSets {
 
 	public static final ResourceKey<StructureSet> FALLEN_TRUNK = registerKey("fallen_trunk");
 	public static final ResourceKey<StructureSet> HOLLOW_TREE = registerKey("hollow_tree");
+	public static final ResourceKey<StructureSet> CAMP = registerKey("camp");
 
 
 	private static ResourceKey<StructureSet> registerKey(String name) {
@@ -55,6 +58,13 @@ public class TFStructureSets {
 		context.register(HOLLOW_TREE, new StructureSet(hollowTrees, new AvoidLandmarkGridPlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 0.5F, 34481210, Optional.empty(), 7, 5, RandomSpreadType.TRIANGULAR, Optional.empty())));
 		// Fallen Trunks keep one chunk away from Giant Hollow Oaks
 		context.register(FALLEN_TRUNK, new StructureSet(structures.getOrThrow(TFStructures.FALLEN_TRUNK), new AvoidLandmarkGridPlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 0.8F, 1275623845, Optional.of(new StructurePlacement.ExclusionZone(structureSets.getOrThrow(HOLLOW_TREE), 1)), 7, 5, RandomSpreadType.TRIANGULAR, Optional.empty())));
+
+		// Camps keep two chunks away from Fallen Trunks and one chunk away from Giant Hollow Oaks
+		Object2IntArrayMap<Holder<StructureSet>> treesToAvoid = new Object2IntArrayMap<>();
+		treesToAvoid.put(structureSets.getOrThrow(FALLEN_TRUNK), 2);
+		treesToAvoid.put(structureSets.getOrThrow(HOLLOW_TREE), 1);
+		Optional<AvoidLandmarkGridPlacement.AvoidAdditionalStructures> avoidTrees = Optional.of(new AvoidLandmarkGridPlacement.AvoidAdditionalStructures(treesToAvoid));
+		context.register(CAMP, new StructureSet(structures.getOrThrow(TFStructures.CAMP), new AvoidLandmarkGridPlacement(18, 14, RandomSpreadType.TRIANGULAR, 701432212, avoidTrees)));
 
 		context.register(HEDGE_MAZE, new StructureSet(structures.getOrThrow(TFStructures.HEDGE_MAZE), new BiomeForcedLandmarkPlacement(TFLandmark.HEDGE_MAZE, 256)));
 		context.register(QUEST_GROVE, new StructureSet(structures.getOrThrow(TFStructures.QUEST_GROVE), new BiomeForcedLandmarkPlacement(TFLandmark.QUEST_GROVE, 256)));

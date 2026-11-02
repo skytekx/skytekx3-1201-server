@@ -33,6 +33,7 @@ public class TFStructures {
 	public static final ResourceKey<Structure> FALLEN_TRUNK = registerKey("fallen_trunk");
 	public static final ResourceKey<Structure> HOLLOW_TREE = registerKey("hollow_tree");
 	public static final ResourceKey<Structure> SWAMP_HOLLOW_TREE = registerKey("swamp_hollow_tree");
+	public static final ResourceKey<Structure> CAMP = registerKey("camp");
 
 	public static ResourceKey<Structure> registerKey(String name) {
 		return ResourceKey.create(Registries.STRUCTURE, TwilightForestMod.prefix(name));
@@ -43,6 +44,7 @@ public class TFStructures {
 		context.register(FALLEN_TRUNK, FallenTrunkStructure.buildStructureConfig(context.lookup(Registries.BIOME).getOrThrow(BiomeTagGenerator.VALID_HOLLOW_TREE_BIOMES)));
 		context.register(HOLLOW_TREE, HollowTreeStructure.buildStructureConfig(false, context.lookup(Registries.BIOME).getOrThrow(BiomeTagGenerator.VALID_HOLLOW_TREE_BIOMES)));
 		context.register(SWAMP_HOLLOW_TREE, HollowTreeStructure.buildStructureConfig(true, HolderSet.direct(List.of(context.lookup(Registries.BIOME).getOrThrow(TFBiomes.SWAMP)))));
+		context.register(CAMP, CampStructure.buildStructureConfig(context));
 		context.register(HEDGE_MAZE, HedgeMazeStructure.buildStructureConfig(context));
 		context.register(QUEST_GROVE, QuestGroveStructure.buildStructureConfig(context));
 		context.register(MUSHROOM_TOWER, MushroomTowerStructure.buildStructureConfig(context));

@@ -35,6 +35,7 @@ public class TFStructureSets {
 	public static final ResourceKey<StructureSet> TROLL_CAVE = registerKey("troll_cave");
 	public static final ResourceKey<StructureSet> FINAL_CASTLE = registerKey("final_castle");
 
+	public static final ResourceKey<StructureSet> FALLEN_TRUNK = registerKey("fallen_trunk");
 	public static final ResourceKey<StructureSet> HOLLOW_TREE = registerKey("hollow_tree");
 
 
@@ -42,14 +43,18 @@ public class TFStructureSets {
 		return ResourceKey.create(Registries.STRUCTURE_SET, TwilightForestMod.prefix(name));
 	}
 
+	@SuppressWarnings("deprecation") // StructurePlacement.ExclusionZone is deprecated in 1.20.1 but still the vanilla exclusion_zone field
 	public static void bootstrap(BootstapContext<StructureSet> context) {
 		HolderGetter<Structure> structures = context.lookup(Registries.STRUCTURE);
+		HolderGetter<StructureSet> structureSets = context.lookup(Registries.STRUCTURE_SET);
 
 		List<StructureSet.StructureSelectionEntry> hollowTrees = List.of(
 			new StructureSet.StructureSelectionEntry(structures.getOrThrow(TFStructures.HOLLOW_TREE), 1),
 			new StructureSet.StructureSelectionEntry(structures.getOrThrow(TFStructures.SWAMP_HOLLOW_TREE), 1)
 		);
 		context.register(HOLLOW_TREE, new StructureSet(hollowTrees, new AvoidLandmarkGridPlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 0.5F, 34481210, Optional.empty(), 7, 5, RandomSpreadType.TRIANGULAR, Optional.empty())));
+		// Fallen Trunks keep one chunk away from Giant Hollow Oaks
+		context.register(FALLEN_TRUNK, new StructureSet(structures.getOrThrow(TFStructures.FALLEN_TRUNK), new AvoidLandmarkGridPlacement(Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT, 0.8F, 1275623845, Optional.of(new StructurePlacement.ExclusionZone(structureSets.getOrThrow(HOLLOW_TREE), 1)), 7, 5, RandomSpreadType.TRIANGULAR, Optional.empty())));
 
 		context.register(HEDGE_MAZE, new StructureSet(structures.getOrThrow(TFStructures.HEDGE_MAZE), new BiomeForcedLandmarkPlacement(TFLandmark.HEDGE_MAZE, 256)));
 		context.register(QUEST_GROVE, new StructureSet(structures.getOrThrow(TFStructures.QUEST_GROVE), new BiomeForcedLandmarkPlacement(TFLandmark.QUEST_GROVE, 256)));

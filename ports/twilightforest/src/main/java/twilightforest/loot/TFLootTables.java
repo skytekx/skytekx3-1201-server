@@ -48,6 +48,7 @@ public class TFLootTables {
 	public static final TFLootTables DARKTOWER_KEY = new TFLootTables("darktower_key");
 	public static final TFLootTables DARKTOWER_BOSS = new TFLootTables("darktower_boss");
 	public static final TFLootTables TREE_CACHE = new TFLootTables("tree_cache");
+	public static final TFLootTables FALLEN_TRUNK_LOOT = new TFLootTables("fallen_trunk_loot");
 	public static final TFLootTables STRONGHOLD_CACHE = new TFLootTables("stronghold_cache");
 	public static final TFLootTables STRONGHOLD_ROOM = new TFLootTables("stronghold_room");
 	// No longer placed: Knight Phantoms drop their own entity loot (entities/knight_phantom and entities/knight_phantom_defeated) since 4.8.

@@ -30,6 +30,7 @@ public class TFStructures {
 	public static final ResourceKey<Structure> TROLL_CAVE = registerKey("troll_cave");
 	public static final ResourceKey<Structure> FINAL_CASTLE = registerKey("final_castle");
 
+	public static final ResourceKey<Structure> FALLEN_TRUNK = registerKey("fallen_trunk");
 	public static final ResourceKey<Structure> HOLLOW_TREE = registerKey("hollow_tree");
 	public static final ResourceKey<Structure> SWAMP_HOLLOW_TREE = registerKey("swamp_hollow_tree");
 
@@ -39,6 +40,7 @@ public class TFStructures {
 
 	@SuppressWarnings("deprecation")
 	public static void bootstrap(BootstapContext<Structure> context) {
+		context.register(FALLEN_TRUNK, FallenTrunkStructure.buildStructureConfig(context.lookup(Registries.BIOME).getOrThrow(BiomeTagGenerator.VALID_HOLLOW_TREE_BIOMES)));
 		context.register(HOLLOW_TREE, HollowTreeStructure.buildStructureConfig(false, context.lookup(Registries.BIOME).getOrThrow(BiomeTagGenerator.VALID_HOLLOW_TREE_BIOMES)));
 		context.register(SWAMP_HOLLOW_TREE, HollowTreeStructure.buildStructureConfig(true, HolderSet.direct(List.of(context.lookup(Registries.BIOME).getOrThrow(TFBiomes.SWAMP)))));
 		context.register(HEDGE_MAZE, HedgeMazeStructure.buildStructureConfig(context));

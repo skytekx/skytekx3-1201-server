@@ -226,11 +226,12 @@ public abstract class AbstractTrophyBlock extends BaseEntityBlock {
 						break;
 					case QUEST_RAM:
 						for (int p = 0; p < 10; p++) {
+							// count 0 makes the client use the offsets times the speed as the exact velocity, so each particle gets 4.8's gaussian motion
 							server.sendParticles(ColorParticleData.create(TFParticleType.MAGIC_EFFECT.get(), rand.nextFloat(), rand.nextFloat(), rand.nextFloat()),
 									(double) pos.getX() + 0.5 + (rand.nextDouble() - 0.5),
 									(double) pos.getY() + (rand.nextDouble() - 0.5),
-									(double) pos.getZ() + 0.5 + (rand.nextDouble() - 0.5), 1,
-									0.0D, 0.0D, 0.0D, 0.0D);
+									(double) pos.getZ() + 0.5 + (rand.nextDouble() - 0.5), 0,
+									rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), 1.0D);
 						}
 						break;
 					default:

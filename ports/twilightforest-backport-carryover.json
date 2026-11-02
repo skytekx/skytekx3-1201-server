@@ -563,6 +563,19 @@
     "source": "porter report, waves 5-6 orchestrator"
    }
   ],
+  "8": [
+   {
+    "bundle": "ominous-fire-exanimate-essence+scepter-rework",
+    "ids": [
+     "ominous-fire-exanimate-essence",
+     "scepter-rework"
+    ],
+    "deferred": [
+     "emi-native-plugin: the ominous fire recipe-viewer category (4.8 compat/jei/categories/OminousFireCategory + compat/jei/util/OminousFireRecipe, and EmiOminousFireRecipe for EMI) is not ported. It lists TFDataMaps.OMINOUS_FIRE (villager -> zombie_villager, piglin -> zombified_piglin, horse -> zombie_horse), but the 1.20.1 DataMapType stand-in (util/datamaps) is filled only on the server by DataMapLoader and is not synced, so on a dedicated server a client-side category would be empty. Add a data map sync packet first (on TFPacketHandler, sent on login and after reload, bump PROTOCOL_VERSION to the next 2-skytekx.N) or build the displays from a client-side copy of data/twilightforest/data_maps/entity_type/ominous_fire.json. The scepter-repair and essence-repair JEI crafting extensions are done (ScepterRepairExtension, ExanimateEssenceRepairExtension); the 'scepter repair' and 'ominous fire' parts of the jei-plugin-upgrades note in wave 5 are settled by this entry."
+    ],
+    "source": "ominous-fire-exanimate-essence+scepter-rework review (waves 8-10 integrator)"
+   }
+  ],
   "9": [
    {
     "bundle": "drying-rack",

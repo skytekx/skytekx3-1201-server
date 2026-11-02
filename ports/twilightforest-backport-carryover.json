@@ -222,7 +222,7 @@
     "deferred": [
      "custom-density-terraforming (adds UtilityPiece): in twilightforest/world/components/placements/AvoidLandmarkModifier.placementIsBlocked, replace the TODO with `if (piece instanceof UtilityPiece utilityPiece && utilityPiece.allowFeatures) continue;` before the greatestAxalDistance check (4.8 7dac0cd13, ea5db78ed)",
      "lich-tower-revamp / vegetation-placement-misc: append AvoidLandmarkModifier.checkVegetation() to PLACED_MAYAPPLE, PLACED_MUSHGLOOM_CLUSTER, PLACED_FLOWER_PLACER and PLACED_FLOWER_PLACER_ALT, and to the new patch_grass_*, as 4.8 facc450f5 does. Regenerate their placed_feature JSONs. DONE for dense_ferns and dense_large_ferns: enchanted-forest-overhaul (ed4285f) already passes AvoidLandmarkModifier.checkVegetation() inline on PLACED_DENSE_FERNS and PLACED_DENSE_LARGE_FERNS, and their placed_feature JSONs already carry the no_structure entry with occupies_vegetation true; do not add it again. If you add 4.8's shared `AvoidLandmarkModifier avoidLichTower` local, keep exactly one declaration (both forms emit the same JSON).",
-     "lich-tower-revamp: add the tfTreeCheckArea overloads taking HolderSet<Structure> structuresAllowed and pass the Lich Tower holder to the tree placements (4.8 dc6ae022a)"
+     "lich-tower-revamp: add the tfTreeCheckArea overloads taking HolderSet<Structure> structuresAllowed and pass the Lich Tower holder to the tree placements (4.8 dc6ae022a). DONE in lich-tower-revamp part B (b25f0a3): the dead canopy, twilight oak, large twilight oak, savannah oak, canopy, dense canopy, firefly forest and vanilla TF tree placements allow twilightforest:lich_tower, and their 8 generated placed_feature JSONs match 4.8."
     ]
    },
    {
@@ -406,7 +406,7 @@
      "potion-flask-rework"
     ],
     "deferred": [
-     "lich-tower-revamp: 4.8's tower_potion loot table (guaranteed 3-5 brittle flasks plus a greater flask at weight 25) and the hut tables. 4.3's old Lich Tower has no potion room, so this port puts flasks into tower_library and tower_room instead, and lich-tower-revamp will replace those tables with the 4.8 ones. The 9278617c1 changes that are not about flasks (tower_foyer, tower_grave, the Lich's exanimate essence drop) also belong to lich-tower-revamp or a loot feature.",
+     "lich-tower-revamp: 4.8's tower_potion loot table (guaranteed 3-5 brittle flasks plus a greater flask at weight 25) and the hut tables. 4.3's old Lich Tower has no potion room, so this port puts flasks into tower_library and tower_room instead, and lich-tower-revamp will replace those tables with the 4.8 ones. The 9278617c1 changes that are not about flasks (tower_foyer, tower_grave, the Lich's exanimate essence drop) also belong to lich-tower-revamp or a loot feature. DONE in lich-tower-revamp: tower_potion, tower_foyer and the tower_grave_upper/lower tables are 4.8's (128aecb), and tower_library and tower_room take 4.8's tables (b25f0a3), so the interim flasks are gone from them and the greater flask only drops from tower_potion.",
      "4.8's loading-screen tip 'potion_flask' (createTip) is not ported because 4.3 has no tips system; it belongs to whichever feature adds the tips system.",
      "Other locales still contain the now-unused key item.twilightforest.flask.doses and lack the new flask.empty, flask.empty_description and death.attack.twilightforest.failedChallenge keys; this is left to tools/merge_upstream_lang.py."
     ],
@@ -662,7 +662,7 @@
     ],
     "deferred": [
      "rope: CANOPY_TREE_FIREFLY's DangleFromTreeDecorator should hang twilightforest:rope (weight 3) instead of canopy_fence, as in 4.8 08648b962 (TODO comment in TreeConfigurations). Update generated configured_feature/tree/firefly_canopy_tree.json to match: rope state axis x/y/z with y=true, waterlogged=false.",
-     "lich-tower-revamp: pass allowLichTower (HolderSet of TFStructures.LICH_TOWER) to the tree placements, including tree/selector/canopy_trees, dense_canopy_trees, firefly_forest_trees and dead_canopy_tree, through the tfTreeCheckArea overloads (4.8 dc6ae022a). This is already listed in the carryover.",
+     "lich-tower-revamp: pass allowLichTower (HolderSet of TFStructures.LICH_TOWER) to the tree placements, including tree/selector/canopy_trees, dense_canopy_trees, firefly_forest_trees and dead_canopy_tree, through the tfTreeCheckArea overloads (4.8 dc6ae022a). This is already listed in the carryover. DONE in lich-tower-revamp part B (b25f0a3).",
      "enchanted-forest-overhaul: checkVegetation() on dense_ferns and dense_large_ferns (the rest of the carryover item). The C05 worktree already adds it, so nothing remains unless that change is lost. The enchanted forest's own builder also belongs there; until it lands, enchanted_forest inherits the new default grass builder."
     ],
     "source": "workflow wave-7 bundle C06-dark-forest+canopy+vegetation"
@@ -674,7 +674,7 @@
     ],
     "deferred": [
      "rope: the simple_well_top.nbt chain -> twilightforest:rope swap (4.8 788aa3ee9) is not in this commit because the rope block is not on this base; the rope bundle already has it (6f7b4c9 in the B15 worktree).",
-     "lich-tower-revamp: 4.8 c1563920a moves the effect suspicious stew into a separate chests/suspicious_stew loot table, which hut_junk references as a nested table. Here hut_junk has it inline, which rolls the same. If lich-tower-revamp adds TFLootTables.SUSPICIOUS_STEW, it can switch hut_junk to the nested reference."
+     "lich-tower-revamp: 4.8 c1563920a moves the effect suspicious stew into a separate chests/suspicious_stew loot table, which hut_junk references as a nested table. Here hut_junk has it inline, which rolls the same. If lich-tower-revamp adds TFLootTables.SUSPICIOUS_STEW, it can switch hut_junk to the nested reference. CLOSED, inlined by design: lich-tower-revamp inlines the stew the same way in tower_foyer (128aecb, weight 3) and tower_room (b25f0a3, weight 75), with 4.8's effects and weights, so every drop chance matches 4.8; only 4.8's extra chests/suspicious_stew table id does not exist in the fork. If that id is ever wanted, a loot feature can add TFLootTables.SUSPICIOUS_STEW holding the stew entry and switch hut_junk (8 for the table plus 2 for a plain stew), tower_room (75) and tower_foyer (3) to LootTableReference.lootTableReference(...) with the same weights, hand-writing the generated JSONs."
     ],
     "source": "workflow wave-7 bundle C09-ruins-and-feature-templates"
    },

@@ -3,7 +3,7 @@ type: Plan
 title: Twilight Forest 4.8 backport
 description: Which TF 4.8 (1.21.1) features are backported onto TF 4.3 for 1.20.1 Forge, in which order, and which TF addons fit the pack.
 tags: [modpack, mods, twilightforest]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Twilight Forest 4.8 → 1.20.1 backport plan
@@ -349,6 +349,7 @@ Each addon below is the newest 1.20.1 Forge build. Env is client / server as wri
 | Twilight Construct | 1.0.7 | `local-mods/` (CurseForge file 6462175) | both | LGPL-2.1 | Eight TF materials for Tinkers' Construct. |
 | Twilight Tweaks | 1.2 (1.20.x) | `local-mods/` (CurseForge file 4702979) | both | LGPL-2.1 | Final-boss spawner hook and re-fightable bosses (Time Powder on spawner remnants). |
 | The King of Twilight | 1.0.1 | `local-mods/` (CurseForge file 8029727) | both | MIT | The Twilight Lord final boss, spawned through Twilight Tweaks. |
+| Twilight Mobs Loots (1.20.1 backport) | 1.1.1-1.20.1-skytekx.1 | `local-mods/`, built from `ports/twilight-mobs-loots/` | both | MIT | Trophies for 48 regular TF mobs: 10% player-kill drop (giants 50%, +5% per Looting level), floor and wall blocks with the mob's sound and particles, wearable on the head or in the Curios head slot or a new `trophy` slot. |
 
 Distribution rules: a Modrinth-hosted addon goes into the index, even when it is All Rights Reserved,
 because the file comes from the Modrinth CDN. A CurseForge-only addon is bundled in `local-mods/` only
@@ -356,6 +357,13 @@ with a license that allows redistribution. Each bundled jar must be byte-identic
 file and needs an attribution file in
 [`modrinth-permissions/`](../../modrinth-permissions/README.md). All three bundled addons were checked
 against the CurseForge `licenseType`, the source repository LICENSE and the jar's mods.toml.
+
+Twilight Mobs Loots exists only for 1.21.1 NeoForge, so it is backported from source (upstream commit
+`41e447de`, 1.1.1, MIT) in [`ports/twilight-mobs-loots/`](../../ports/twilight-mobs-loots/README.md).
+Build `ports/twilightforest` first, then `./gradlew build` in the port; the jar is byte-reproducible.
+It requires `twilightforest` `[4.3.2508-skytekx.1,)`, so `local-mods/` must carry the fork jar, not the
+older `4.3` build. Not ported: the Twilight Moonshine Moon Rabbit compat (no 1.20.1 build), and
+re-registering TF's boss trophies as curios (the fork already does it).
 
 Pack-side glue for these addons:
 - `config/twilighttweaks-common.toml` makes the final-boss spawner run
@@ -415,8 +423,8 @@ on is in the fork (details in the table below):
 - **Alternative Twilight (Remastered)**: after the 4.8 boss rework is backported. It replaces the
   1.20.1 Alternative Twilight, which conflicts with that rework.
 - **Spiced Twilight**: after the 4.8 entity and Naga changes.
-- **Twilight Mobs Loots** and **Twilight Crossbow**: optional small ports. They need data components
-  and the 1.21 crossbow code rewritten for 1.20.1.
+- **Twilight Crossbow**: optional small port. It needs data components and the 1.21 crossbow code
+  rewritten for 1.20.1. (Twilight Mobs Loots is done, see [In the pack](#in-the-pack-2026-11-01).)
 
 ### Research (2026-11-01)
 

@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """Publish SkyTekx3 modpack to Modrinth (creates draft project if needed, uploads .mrpack version).
 Usage: publish_modrinth.py <PAT> [--go]   (without --go = dry run / inspect only)
+
+Before any network call it checks the .mrpack it would upload: the file exists, its index has this
+VERSION, and every jar inside it has a modrinth-permissions/<jar>.md with Status OK
+(tools/mrpack_permissions.py). A failed check stops the dry run too; there is no override.
 """
-import json, os, sys, mimetypes, urllib.request, urllib.error, uuid
+import json, os, sys, mimetypes, urllib.request, urllib.error, uuid, zipfile
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import mrpack_permissions
 
 PAT = sys.argv[1]
 GO = "--go" in sys.argv
@@ -14,6 +21,31 @@ UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
 SLUG = "skytekx3"
 
 BODY = open(REPO+"/docs/MODPACK_DESCRIPTION.md").read() if os.path.exists(REPO+"/docs/MODPACK_DESCRIPTION.md") else "SkyTekx3 — gen-3 rebuild on 1.20.1."
+
+def preflight():
+    """Check the .mrpack itself (not local-mods/), so an old or hand-made file is caught too."""
+    if not os.path.exists(MRPACK):
+        sys.exit(f"{MRPACK} is missing; build it with tools/build_mrpack.py first")
+    try:
+        with zipfile.ZipFile(MRPACK) as z:
+            idx = json.loads(z.read("modrinth.index.json"))
+            jars = mrpack_permissions.mrpack_jars(z)
+    except (zipfile.BadZipFile, KeyError, ValueError) as e:
+        sys.exit(f"{MRPACK} is not a readable .mrpack: {e}")
+    problems = []
+    if idx.get("versionId") != VERSION:
+        problems.append(f"its modrinth.index.json has versionId {idx.get('versionId')!r}, not {VERSION!r}")
+    for jar, why in mrpack_permissions.check(REPO, jars):
+        problems.append(f"bundled {jar} -- {why}")
+    if problems:
+        print(f"refusing to upload {MRPACK}:")
+        for p in problems:
+            print("  " + p)
+        sys.exit("resolve the modrinth-permissions/ blockers (see its README) and rebuild")
+    print(f"preflight OK: {MRPACK} ({os.path.getsize(MRPACK)//1024} KiB), versionId {VERSION}, "
+          f"{len(idx.get('files', []))} index files, {len(jars)} bundled jars, all with permission")
+
+preflight()
 
 def req(method, path, headers=None, data=None):
     h = {"Authorization": PAT, "User-Agent": UA}
@@ -55,7 +87,7 @@ except urllib.error.HTTPError as e:
     print("project not found (will create):", e.code)
 
 if not GO:
-    print("\n[dry run] .mrpack:", MRPACK, os.path.getsize(MRPACK) if os.path.exists(MRPACK) else "MISSING")
+    print("\n[dry run] .mrpack:", MRPACK, os.path.getsize(MRPACK))
     print("[dry run] re-run with --go to create/upload.")
     sys.exit(0)
 

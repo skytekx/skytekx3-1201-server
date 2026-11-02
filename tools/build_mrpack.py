@@ -12,34 +12,26 @@ VERSION = "3.1.0"
 FORGE = "47.4.6"
 
 # --- permission guard: every bundled jar needs modrinth-permissions/<jar>.md with Status OK ---
-# Runs before anything is written or moved. --allow-unpermitted is for private/draft builds only.
-def unpermitted_local_mods(repo):
-    bad = []
-    lm = os.path.join(repo, "local-mods")
-    if not os.path.isdir(lm):
-        return bad
-    for fn in sorted(os.listdir(lm)):
-        if not fn.endswith(".jar"):
-            continue
-        pf = os.path.join(repo, "modrinth-permissions", fn + ".md")
-        if not os.path.exists(pf):
-            bad.append((fn, "no modrinth-permissions/%s.md" % fn))
-            continue
-        status = next((l.split("**Status:**", 1)[1].strip()
-                       for l in open(pf, encoding="utf-8") if l.startswith("**Status:**")), None)
-        if status is None or not status.startswith("OK"):
-            bad.append((fn, "Status: %s" % status))
-    return bad
+# Runs before anything is written or moved. --allow-unpermitted builds a private/draft pack under a
+# separate name (SkyTekx3-<ver>-UNPERMITTED.mrpack), which publish_modrinth.py never picks up; it also
+# re-checks the jars inside whatever .mrpack it uploads (tools/mrpack_permissions.py).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import mrpack_permissions
 
-bad = unpermitted_local_mods(REPO)
+out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
+bad = mrpack_permissions.check(REPO, mrpack_permissions.local_mod_jars(REPO))
 if bad:
     print("local-mods/ jars without distribution permission (modrinth-permissions/ Status is not OK):")
     for fn, why in bad:
         print("  %s -- %s" % (fn, why))
     if "--allow-unpermitted" not in sys.argv:
+        if os.path.exists(out):
+            os.remove(out)  # leave nothing uploadable behind from an earlier build
+            print("removed the existing", out)
         sys.exit("refusing to build a public .mrpack; resolve them first, or pass --allow-unpermitted "
                  "for a private/draft build that must not be uploaded")
-    print("--allow-unpermitted: building anyway; do NOT upload this .mrpack")
+    out = REPO+f"/SkyTekx3-{VERSION}-UNPERMITTED.mrpack"
+    print("--allow-unpermitted: building a private/draft pack as", out, "-- do NOT upload it")
 
 # --- mod file list: always the committed index ---
 # The index is the source of truth and is shipped as committed. (Until 3.1.0 a resolve_all.py scratch
@@ -71,8 +63,7 @@ for f in files:
             shutil.move(src, os.path.join(clientonly, fn)); moved.append(fn)
 print("client-only moved out of server mods/:", len(moved), moved)
 
-# --- assemble the .mrpack ---
-out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
+# --- assemble the .mrpack (out is set by the permission guard above) ---
 if os.path.exists(out): os.remove(out)
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
     z.write(REPO+"/modrinth.index.json", "modrinth.index.json")

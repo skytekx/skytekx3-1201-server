@@ -7,8 +7,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import twilightforest.block.OminousCandleBlock;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFSounds;
 
@@ -20,17 +22,27 @@ public class ExanimateEssenceItem extends Item {
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		Level level = context.getLevel();
+		BlockPos blockpos = context.getClickedPos();
 		boolean flag = false;
-		// 4.8 first turns a lit vanilla candle into its ominous candle here; that branch arrives with the ominous candles
-		BlockPos blockpos = context.getClickedPos().relative(context.getClickedFace());
 		BlockState state = level.getBlockState(blockpos);
-		BlockState fire = TFBlocks.OMINOUS_FIRE.get().defaultBlockState();
-
-		if (state.canBeReplaced() && fire.canSurvive(level, blockpos)) {
+		// Only the 17 vanilla candles have an ominous form; another mod's CandleBlock subclass falls through to the fire
+		if (state.getBlock() instanceof CandleBlock candleBlock && OminousCandleBlock.CANDLE_MAP.containsKey(candleBlock) && state.getValue(CandleBlock.LIT)) {
 			this.playSound(level, blockpos);
-			level.setBlockAndUpdate(blockpos, fire);
+			level.setBlockAndUpdate(blockpos, OminousCandleBlock.CANDLE_MAP.get(candleBlock).get().defaultBlockState().setValue(OminousCandleBlock.CANDLES, state.getValue(CandleBlock.CANDLES)));
 			level.gameEvent(context.getPlayer(), GameEvent.BLOCK_PLACE, blockpos);
+			OminousCandleBlock.eruptFlameParticles(level, blockpos, level.getBlockState(blockpos));
 			flag = true;
+		} else {
+			blockpos = blockpos.relative(context.getClickedFace());
+			state = level.getBlockState(blockpos);
+			BlockState fire = TFBlocks.OMINOUS_FIRE.get().defaultBlockState();
+
+			if (state.canBeReplaced() && fire.canSurvive(level, blockpos)) {
+				this.playSound(level, blockpos);
+				level.setBlockAndUpdate(blockpos, fire);
+				level.gameEvent(context.getPlayer(), GameEvent.BLOCK_PLACE, blockpos);
+				flag = true;
+			}
 		}
 
 		if (flag) {

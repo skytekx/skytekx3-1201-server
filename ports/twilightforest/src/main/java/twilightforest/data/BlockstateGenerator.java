@@ -540,6 +540,24 @@ public class BlockstateGenerator extends BlockModelBuilders {
 
 		this.terrorcotta();
 		ominousFire();
+
+		builtinEntity(TFBlocks.OMINOUS_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_WHITE_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_ORANGE_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_MAGENTA_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_LIGHT_BLUE_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_YELLOW_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_LIME_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_PINK_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_GRAY_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_LIGHT_GRAY_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_CYAN_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_PURPLE_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_BLUE_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_BROWN_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_GREEN_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_RED_CANDLE.get(), "minecraft:block/candle_lit");
+		builtinEntity(TFBlocks.OMINOUS_BLACK_CANDLE.get(), "minecraft:block/candle_lit");
 	}
 
 	private void registerCoronationCarpet() {

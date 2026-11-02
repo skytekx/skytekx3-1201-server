@@ -87,6 +87,7 @@ import twilightforest.init.TFMobEffects;
 import twilightforest.init.TFDimensionSettings;
 import twilightforest.init.TFStats;
 import twilightforest.item.FieryArmorItem;
+import twilightforest.item.MysticCrownItem;
 import twilightforest.item.PotionFlaskTracking;
 import twilightforest.item.YetiArmorItem;
 import twilightforest.util.EntityUtil;
@@ -138,6 +139,14 @@ public class EntityEvents {
 			float amount = event.getAmount();
 			event.setCanceled(true);
 			event.getEntity().hurt(new OminousFireDamageSource(event.getSource()), amount);
+		}
+	}
+
+	// Mystic Crown Compat: an empowering Mystic Crown protects its wearer from Lich bomb blasts, including the extra bombs of its Twilight Scepter
+	@SubscribeEvent
+	public static void mysticCrownBlocksLichBombs(LivingAttackEvent event) {
+		if (event.getSource().is(TFDamageTypes.LICH_BOMB) && MysticCrownItem.empowersScepters(event.getEntity())) {
+			event.setCanceled(true);
 		}
 	}
 

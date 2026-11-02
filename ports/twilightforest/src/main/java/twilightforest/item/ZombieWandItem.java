@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +25,6 @@ import twilightforest.enchantment.RechargeScepterEffect;
 import twilightforest.enchantment.RenewalEnchantment;
 import twilightforest.entity.monster.LoyalZombie;
 import twilightforest.init.TFEntities;
-import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.util.TFItemStackUtils;
 
@@ -60,10 +58,15 @@ public class ZombieWandItem extends Item {
 				zombie.spawnAnim();
 				zombie.setTame(true);
 				zombie.setOwnerUUID(player.getUUID());
-				zombie.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 1200, 1));
+				// Mystic Crown Compat: the empowering crown keeps the zombie strong, and so alive, for 3 minutes instead of 1
+				boolean empowered = MysticCrownItem.empowersScepters(player);
+				zombie.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, empowered ? 3600 : 1200, 1));
 				// wearing the Mystic Crown summons a baby zombie 10% of the time
-				if (player.getItemBySlot(EquipmentSlot.HEAD).is(TFItems.MYSTIC_CROWN.get()) && level.getRandom().nextFloat() <= 0.1F) {
+				if (MysticCrownItem.isWornBy(player) && level.getRandom().nextFloat() <= 0.1F) {
 					zombie.setBaby(true);
+				}
+				if (empowered) {
+					zombie.equipCrownGear(level.getRandom());
 				}
 				level.addFreshEntity(zombie);
 				level.gameEvent(player, GameEvent.ENTITY_PLACE, result.getBlockPos());

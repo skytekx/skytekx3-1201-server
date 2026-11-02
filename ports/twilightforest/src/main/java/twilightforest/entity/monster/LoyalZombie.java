@@ -8,6 +8,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,7 +32,11 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -46,6 +52,10 @@ public class LoyalZombie extends TamableAnimal {
 	// Same id as the vanilla zombie's baby speed boost (4.8 uses the matching minecraft:baby id)
 	private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
 	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
+	private static final EquipmentSlot[] ARMOR_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+
+	// Mystic Crown Compat: summoned by a Zombie Scepter under an empowering Mystic Crown
+	private boolean crownSummoned;
 
 	public LoyalZombie(EntityType<? extends LoyalZombie> type, Level world) {
 		super(type, world);
@@ -85,13 +95,52 @@ public class LoyalZombie extends TamableAnimal {
 
 	@Override
 	public boolean doHurtTarget(Entity entity) {
-		boolean success = entity.hurt(this.damageSources().mobAttack(this), 7.0F);
+		// Mystic Crown Compat: crown-summoned zombies last three times as long and may wear armor, but hit for 4 instead of 7
+		boolean success = entity.hurt(this.damageSources().mobAttack(this), this.crownSummoned ? 4.0F : 7.0F);
 
 		if (success) {
 			entity.push(0.0D, 0.2D, 0.0D);
+			// knockback from the held item (the crown's Knockback II stick), as Mob#doHurtTarget applies it
+			int knockback = EnchantmentHelper.getKnockbackBonus(this);
+			if (knockback > 0 && entity instanceof LivingEntity living) {
+				living.knockback(knockback * 0.5F, Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(this.getYRot() * Mth.DEG_TO_RAD));
+				this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+			}
 		}
 
 		return success;
+	}
+
+	/**
+	 * Mystic Crown Compat: dresses a zombie summoned under an empowering Mystic Crown. A baby gets a full set of
+	 * leather armor and a Knockback II stick, a grown zombie has a 50% chance of one random leather armor piece.
+	 * The gear never drops, so the scepter is no source of free items.
+	 */
+	public void equipCrownGear(RandomSource random) {
+		this.crownSummoned = true;
+		if (this.isBaby()) {
+			for (EquipmentSlot slot : ARMOR_SLOTS) {
+				this.setItemSlot(slot, new ItemStack(leatherArmorFor(slot)));
+			}
+			ItemStack stick = new ItemStack(Items.STICK);
+			stick.enchant(Enchantments.KNOCKBACK, 2);
+			this.setItemSlot(EquipmentSlot.MAINHAND, stick);
+		} else if (random.nextFloat() < 0.5F) {
+			EquipmentSlot slot = ARMOR_SLOTS[random.nextInt(ARMOR_SLOTS.length)];
+			this.setItemSlot(slot, new ItemStack(leatherArmorFor(slot)));
+		}
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			this.setDropChance(slot, 0.0F);
+		}
+	}
+
+	private static Item leatherArmorFor(EquipmentSlot slot) {
+		return switch (slot) {
+			case HEAD -> Items.LEATHER_HELMET;
+			case CHEST -> Items.LEATHER_CHESTPLATE;
+			case LEGS -> Items.LEATHER_LEGGINGS;
+			default -> Items.LEATHER_BOOTS;
+		};
 	}
 
 	@Override
@@ -146,12 +195,14 @@ public class LoyalZombie extends TamableAnimal {
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 		compound.putBoolean("IsBaby", this.isBaby());
+		compound.putBoolean("CrownSummoned", this.crownSummoned);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		this.setBaby(compound.getBoolean("IsBaby"));
+		this.crownSummoned = compound.getBoolean("CrownSummoned");
 	}
 
 	@Override

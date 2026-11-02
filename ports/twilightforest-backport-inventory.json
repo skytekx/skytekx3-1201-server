@@ -3833,8 +3833,8 @@
     "fits_reason": "Optional collectible content. The pack has Curios.",
     "license": "MIT (github.com/wdd1118/Twilight-Mobs-Loots).",
     "on_modrinth": true,
-    "risk_with_tf_48_features": "Port is small to medium: data components to NBT, Curios 9 to 5 API, and the 4.8 TrophyBlock/TrophyItem API if trophies are backported. Low priority.",
-    "action": "needs_backport"
+    "risk_with_tf_48_features": "Port is small to medium: data components to NBT, Curios 9 to 5 API, and the 4.8 TrophyBlock/TrophyItem API if trophies are backported. Low priority. Done: backported from source in ports/twilight-mobs-loots/ (1.1.1-1.20.1-skytekx.1, 22 classes; the 2 Twilight Moonshine compat classes were dropped, that mod has no 1.20.1 build). Requires twilightforest [4.3.2508-skytekx.1,), so local-mods/ needs the fork TF jar. Bundled as local-mods/twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar with modrinth-permissions/ attribution.",
+    "action": "backported_bundled"
    },
    {
     "name": "Twilight Crossbow (baguchi)",

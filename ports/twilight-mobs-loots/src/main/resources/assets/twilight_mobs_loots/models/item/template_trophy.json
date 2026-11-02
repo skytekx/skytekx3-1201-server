@@ -1,7 +1,7 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "particle": "twilight_mobs_loots:item/trophy_silver"
+    "particle": "twilightforest:item/trophy_minor"
   },
   "display": {
     "head": {

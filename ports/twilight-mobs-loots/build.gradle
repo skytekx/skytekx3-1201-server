@@ -78,7 +78,7 @@ def replaceProperties = [
         mod_name       : project.mod_name,
         mod_license    : project.mod_license,
         mod_version    : project.mod_version,
-        tf_version     : project.tf_version,
+        tf_min_version : project.tf_min_version,
         upstream_version: project.upstream_version,
 ]
 

@@ -1,7 +1,6 @@
 modLoader="javafml"
 loaderVersion="[47,)"
 license="${mod_license}"
-issueTrackerURL="https://github.com/wdd1118/Twilight-Mobs-Loots/issues"
 
 [[mods]]
 modId="${mod_id}"
@@ -35,7 +34,7 @@ Unofficial Minecraft 1.20.1 / Forge backport of Twilight Mobs Loots ${upstream_v
 [[dependencies.${mod_id}]]
     modId="twilightforest"
     mandatory=true
-    versionRange="[${tf_version},)"
+    versionRange="[${tf_min_version},)"
     ordering="AFTER"
     side="BOTH"
 

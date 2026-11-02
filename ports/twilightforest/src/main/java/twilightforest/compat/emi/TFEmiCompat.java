@@ -40,11 +40,12 @@ import java.util.function.Function;
 @EmiEntrypoint
 public class TFEmiCompat implements EmiPlugin {
 
-	// 4.8 also lists the six Traveller's Gear pieces, which this port does not have yet
 	private static final Function<List<EmiIngredient>, Boolean> CANT_USE_ENCHANTS = stack ->
 		stack.contains(EmiStack.of(TFItems.MOONWORM_QUEEN.get())) || stack.contains(EmiStack.of(TFItems.LAMP_OF_CINDERS.get())) || stack.contains(EmiStack.of(TFItems.ORE_MAGNET.get())) ||
 			stack.contains(EmiStack.of(TFItems.TWILIGHT_SCEPTER.get())) || stack.contains(EmiStack.of(TFItems.LIFEDRAIN_SCEPTER.get())) ||
-			stack.contains(EmiStack.of(TFItems.ZOMBIE_SCEPTER.get())) || stack.contains(EmiStack.of(TFItems.FORTIFICATION_SCEPTER.get()));
+			stack.contains(EmiStack.of(TFItems.ZOMBIE_SCEPTER.get())) || stack.contains(EmiStack.of(TFItems.FORTIFICATION_SCEPTER.get())) ||
+			stack.contains(EmiStack.of(TFItems.TRAVELLERS_GOGGLES.get())) || stack.contains(EmiStack.of(TFItems.TRAVELLERS_VEST.get())) || stack.contains(EmiStack.of(TFItems.TRAVELLERS_GLOVES.get())) ||
+			stack.contains(EmiStack.of(TFItems.TRAVELLERS_BELT.get())) || stack.contains(EmiStack.of(TFItems.TRAVELLERS_WINGS.get())) || stack.contains(EmiStack.of(TFItems.TRAVELLERS_BOOTS.get()));
 
 	private static final Function<List<EmiIngredient>, Boolean> NO_REPAIRING = stack ->
 		stack.contains(EmiStack.of(TFItems.LAMP_OF_CINDERS.get())) || stack.contains(EmiStack.of(TFItems.GLASS_SWORD.get())) || stack.contains(EmiStack.of(TFItems.MAZEBREAKER_PICKAXE.get()));

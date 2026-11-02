@@ -3,6 +3,9 @@ package twilightforest.events;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -15,7 +18,8 @@ import twilightforest.item.travellers_gear.TravellersGearLogic;
 
 /**
  * Common events of the Traveller's Gear core. Backport of the core part of 4.8's TravellersGearEvents (the wing state
- * update and the broken-state attribute switch); the modifier listeners come with the travellers-* modifier features.
+ * update, the broken-state attribute switch and the anvil combining block); the modifier listeners come with the
+ * travellers-* modifier features.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID)
 public class TravellersGearEvents {
@@ -58,5 +62,20 @@ public class TravellersGearEvents {
 	public static void deactivateBrokenTravellersGear(ItemAttributeModifierEvent event) {
 		if (TravellersArmorItem.isTravellersArmorAndBroken(event.getItemStack()))
 			event.clearModifiers();
+	}
+
+	/**
+	 * Two pieces of Traveller's Gear cannot be combined in an anvil; they repair only with Tanned Leather. isRepairable
+	 * only stops the repair crafting recipe and the grindstone, vanilla's anvil still merges two damaged copies of the
+	 * same item.
+	 */
+	@SubscribeEvent
+	public static void cancelCombiningTravellersGear(AnvilUpdateEvent event) {
+		if (TravellersArmorItem.isTravellersGear(event.getLeft()) && TravellersArmorItem.isTravellersGear(event.getRight())) {
+			event.setCanceled(true);
+			// Forge 47 returns from AnvilMenu#createResult on cancel without clearing the result slot. A stale renamed copy could otherwise be taken and would consume the right-hand piece.
+			if (event.getPlayer() != null && event.getPlayer().containerMenu instanceof AnvilMenu menu)
+				menu.getSlot(menu.getResultSlot()).set(ItemStack.EMPTY);
+		}
 	}
 }

@@ -429,9 +429,10 @@ Pack-side glue for these addons:
   `farmersdelight:sweets`, `farmersdelight:snacks` and `diet:sugars`. Neapolitan is not in the pack,
   and the unregistered ids otherwise drop those tags whole.
 - `tools/patch_mods.py` writes `minVersion` into `mixins.tf_dnv.json`.
-- The `skytekx3_fixes` datapack ports Twilight Tweaks' six uncrafting recipes to the 4.3 `input` format.
-  Bell, anvils and knightmetal ingot are converted; tipped arrow and written book are disabled because
-  TF ships its own.
+- `kubejs/data/twilighttweaks/recipes/uncrafting/` ports Twilight Tweaks' six uncrafting recipes to the
+  4.3 `input` format. Bell, anvils and knightmetal ingot are converted; tipped arrow and written book are
+  disabled because TF ships its own. They moved there from the `skytekx3_fixes` world datapack (5caaf8d),
+  which `tools/build_mrpack.py` does not put into the `.mrpack`.
 - AlmostUnified lists `twilightforest` last in `modPriorities`. See [AlmostUnified](almostunified.md).
 
 Compatibility checks against the fork (2026-11-01 build): every `twilightforest/*` class, field and

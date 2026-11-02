@@ -505,13 +505,21 @@ logs stay on the Mac and are not in the repo.
 - A fall at 13:28 and several deaths at a Skylands bed between 13:34 and 13:48 cost the owner the
   inventory. On the owner's ask it came back at 13:43 and again at 13:52 from the playerdata snapshot of
   13:32. The file was rewritten while the player was kicked, with newer items kept and the duplicates
-  picked up from the death drops left out.
+  picked up from the death drops left out. A death in lava at 14:18:45 burned it again, and at 14:20 it
+  came back the same way from the save of 14:17:31, 21 stacks and XP level 2.
 - At 13:39 the owner asked for weaker mobs in the Skylands, where everybody builds a home, and at 13:48
   for none at all. With the Skylands at noon but never at day, undead no longer burned there, and
   L2Hostility gave the mobs levels near 50. `kubejs/server_scripts/skylands_no_mobs.js` refuses every
   hostile mob that joins the Skylands and removed 70 when it first loaded at 13:51. At 13:51 the owner
-  added that levels 1 to 5 would be fine. Whether weak mobs come back is open. See
+  added that levels 1 to 5 would be fine, and at 14:16 chose weak mobs over none. Since 14:26 an
+  L2Hostility difficulty file gives the Skylands base 0, variation 1 and no share of the player level,
+  so mobs near the homes spawn at levels 0 to 3, and the no mobs script is gone. Since 14:28 Infernal
+  Mobs elites are blacklisted there, and the two that had spawned in between went into the void.
+  One-shot KubeJS scripts applied both to the running server, without a restart or `/reload`. See
   [Skylands worldgen](content/skylands-worldgen.md#sleep-and-hostile-mobs).
+- At 14:17 the owner asked why it now gets night in the Skylands too. The dimension type on the server
+  still had `fixed_time` 6000 and the overworld stood at noon, but it rained there, which greys and
+  darkens the Skylands sky as well. What the client showed was not checked.
 - At 13:31 and 13:45 the owner reported that sleeping in the Skylands does not make it day in the
   overworld. The fixed time of the dimension lets beds work there at any hour, but vanilla then sets the
   time of the Skylands only, which follows the overworld, and Arclight replaces the Forge sleeping time

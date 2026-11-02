@@ -40,6 +40,7 @@ Unofficial Minecraft 1.20.1 Forge backport of the 1.21.1 NeoForge release, built
 [[dependencies.${mod_id}]]
     modId="jei"
     mandatory=false
-    versionRange="[15.2,)"
+    # 15.20+: compat/jei uses ISmithingCategoryExtension and getSmithingCategory(), which JEI 15.2 lacks
+    versionRange="[15.20,)"
     ordering="NONE"
     side="BOTH"

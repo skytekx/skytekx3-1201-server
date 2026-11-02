@@ -8,7 +8,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import twilightforest.item.EnderBowItem;
@@ -46,14 +45,11 @@ public class EnderCrossbowItem extends TwilightCrossbowItem {
         return repairWith.is(Items.ENDER_PEARL);
     }
 
-    // 1.21 supportsEnchantment(...) && !PIERCING: no Piercing from the table or from books
+    // 1.21 supportsEnchantment(...) && !PIERCING: no Piercing from the table or from books. Forge's
+    // Enchantment#canEnchant (used by the anvil) delegates here, so a book with Piercing plus other
+    // enchantments still applies the others; isBookEnchantable is left alone so the whole book is not rejected.
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return enchantment != Enchantments.PIERCING && super.canApplyAtEnchantingTable(stack, enchantment);
-    }
-
-    @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return !EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.PIERCING) && super.isBookEnchantable(stack, book);
     }
 }

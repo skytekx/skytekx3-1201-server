@@ -423,6 +423,41 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   written permission, add the jar to `local-mods/` with a `modrinth-permissions/` file (Special
   permission, plus the permission as proof).
 
+### Backported 1.21.1-only addons
+
+- **Twilight Crossbow** (baguchi, MIT): `ports/twilight-crossbow/`, a standalone NeoGradle 6 project like
+  the fork. Build the fork first (`ports/twilightforest`, `./gradlew build`); the port compiles against
+  `../twilightforest/build/libs/twilightforest-1.20.1-<tf_version>-universal.jar` (flatDir plus
+  `fg.deobf`) and MixinGradle writes the SRG refmap. `tf_version` in its `gradle.properties` must equal
+  the fork's `mod_version`, because it names that jar. Ported from upstream `00085635b` (1.21.1-1.5.0
+  plus the Ender Crossbow); mod id `twilight_crossbow`, version `1.5.0-1.20.1-skytekx.1`, needs
+  twilightforest `[4.3.2508-skytekx.1,)`; JEI `[15.20,)` is optional (its smithing extension API is
+  newer than 15.2). The 1.21 `charged_projectiles` component becomes vanilla's
+  `Charged`/`ChargedProjectiles` NBT. A HEAD inject on the static `CrossbowItem#performShooting` hands
+  the four crossbows to their own instance shooting code, so players, Snow Guardians and other crossbow
+  mobs fire the TF arrows and the ice/seeker fireworks. Fixed on the way: the smithing template loot
+  never generated upstream, and now rolls at 25% in `twilightforest:chests/aurora_cache`. The Ice
+  Firework's freezing blast was dead code upstream; it now runs through a HEAD inject on
+  `FireworkRocketEntity#explode`. The death messages no longer override vanilla `death.attack.fireworks`.
+  Mixin targets: `CrossbowItem#performShooting`, `FireworkRocketEntity#explode`, `SnowGuardian#registerGoals`
+  and `#makeItemForSlot`, plus client-only `HumanoidModel#prepareMobModel` and
+  `ItemInHandRenderer#isChargedCrossbow`. Arclight only injects into `explode` and `shootProjectile`
+  (no overwrites), so they coexist; Arclight's core mixins have priority 500, so its cancellable HEAD
+  inject on `explode` (Bukkit's `FireworkExplodeEvent`) is applied and runs before ours. Bukkit's
+  `EntityShootBowEvent` does not fire for these four crossbows, because they skip
+  `CrossbowItem#shootProjectile`. Keep `SnowGuardian#makeItemForSlot`, `EnderBowItem.KEY`, the
+  `IceArrow(AbstractArrow)` and `SeekerArrow(AbstractArrow)` constructors, `util.TwilightItemTier`
+  (`ICE`, `STEELEAF`), `TFCreativeTabs.EQUIPMENT` and `ITEMS` and the `twilightforest:chests/aurora_cache`
+  loot id when re-syncing the fork. Not ported: the unregistered Knight Crossbow.
+  **Not bundled yet.** The crossbow jar only works with the fork jar in `local-mods/`: next to the stock
+  `twilightforest-1.20.1-4.3-universal.jar` (Forge version `4.3`), Forge refuses to load it, on the server
+  and on every client of the `.mrpack`. It goes into `local-mods/` together with the fork jar swap (the
+  pack-side glue item in [Shared infrastructure](#shared-infrastructure)): build the fork, then this port, copy
+  `build/libs/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar` to `local-mods/`, and add
+  `modrinth-permissions/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar.md` (Licensed, MIT,
+  https://github.com/baguchi/TwilightCrossbow, the upstream commit and the jar's SHA-1) plus its README
+  row. Then boot once on Arclight with the full pack and fire each crossbow once.
+
 ### Planned backports (1.21.1-only addons)
 
 These exist only for 1.21.1 NeoForge. They are ported as separate work once the 4.8 code they depend
@@ -432,8 +467,9 @@ on is in the fork (details in the table below):
 - **Alternative Twilight (Remastered)**: after the 4.8 boss rework is backported. It replaces the
   1.20.1 Alternative Twilight, which conflicts with that rework.
 - **Spiced Twilight**: after the 4.8 entity and Naga changes.
-- **Twilight Crossbow**: optional small port. It needs data components and the 1.21 crossbow code
-  rewritten for 1.20.1. (Twilight Mobs Loots is done, see [In the pack](#in-the-pack-2026-11-01).)
+- **Twilight Mobs Loots** and **Twilight Crossbow** are done: see [In the pack](#in-the-pack-2026-11-01)
+  and [Backported 1.21.1-only addons](#backported-1211-only-addons). The crossbow jar waits for the fork
+  jar in `local-mods/`.
 
 ### Research (2026-11-01)
 
@@ -455,7 +491,7 @@ on is in the fork (details in the table below):
 | [Alternative Twilight (Remastered)](https://modrinth.com/mod/alternative-twilight-remastered) | needs_backport | yes | 1.21.1 NeoForge only, 0.0.2 (2026-05-15). 34 classes, 3 mixins. Source github.com/Lvedy114/alternative-twilight. |
 | [Create: Shimmer](https://www.curseforge.com/minecraft/mc-mods/create-shimmer) | needs_backport | yes | 1.21.1 NeoForge only (1.3.1, 2026-08-13). Needs create [6.0.7,), create_dragons_plus [1.8.0,), curios 9 and twilightforest [4.7.0,). |
 | [Twilight Mobs Loots](https://modrinth.com/mod/twilight-mobs-loots) | backported_bundled | yes | 1.21.1 NeoForge 1.1.1 only. twilightforest [4.8,5.0). 24 classes, no mixins. Done: ported in `ports/twilight-mobs-loots/` (22 classes, Twilight Moonshine compat dropped) and bundled as `local-mods/twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar`. |
-| [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | needs_backport | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. |
+| [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | backported_held | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. Done: ported in `ports/twilight-crossbow/` (Knight Crossbow left out, upstream never registers it). The jar is not bundled until the fork jar replaces the 4.3 jar in `local-mods/`. |
 | [Spiced Twilight (baguchi)](https://modrinth.com/mod/spiced-twilight) | needs_backport | yes | 1.21.1 NeoForge 1.21.1-2.0.0 only. twilightforest [4.8.3287,). 32 classes, 9 mixins into 4.8 entity code. |
 | [Mystic Crown Compat](https://modrinth.com/mod/mystic-crown-compat) | skip | no | 1.21.1 NeoForge 1.1.0 only. twilightforest [4.8,). 14 classes, 5 mixins. |
 | [Twilight Forest Cave Fix](https://modrinth.com/mod/twilight-forest-cave-fix) | skip | no | 1.20.1 Forge 1.0.0 only. twilightforest [4.3.2145,). |

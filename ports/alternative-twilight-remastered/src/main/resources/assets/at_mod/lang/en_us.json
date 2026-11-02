@@ -4,12 +4,6 @@
   "at_mod.configuration.title": "Alternative Twilight Configs",
   "at_mod.configuration.section.at_mod.common.toml": "Alternative Twilight Configs",
   "at_mod.configuration.section.at_mod.common.toml.title": "Alternative Twilight Configs",
-  "at_mod.configuration.items": "Item List",
-  "at_mod.configuration.logDirtBlock": "Log Dirt Block",
-  "at_mod.configuration.magicNumberIntroduction": "Magic Number Text",
-  "at_mod.configuration.magicNumber": "Magic Number",
-
-  "item.at_mod.example_item": "Example Item",
 
   "item.at_mod.spear.wooden_spear": "Wooden Spear",
   "item.at_mod.spear.stone_spear": "Stone Spear",
@@ -30,6 +24,8 @@
 
   "effect.at_mod.blood_lust": "Blood Lust",
   "effect.at_mod.blood_lust_curse": "Blood Lust Curse",
+
+  "entity.at_mod.naga_venom": "Naga Venom",
 
   "config.at_mod.naga.maxHealth": "Naga Max Health",
   "config.at_mod.naga.nonDazedDamageMultiplier": "Non-Dazed Damage Multiplier",

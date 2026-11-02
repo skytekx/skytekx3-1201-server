@@ -50,7 +50,9 @@ modified for Minecraft 1.20.1 / Forge 47:
     on hurt would make the curse expire, and hit, again);
   * the Naga venom damage is read from the config on every hit instead of once at class load;
   * a Naga constructed before the common config is loaded keeps TF's default health instead of
-    crashing on the unloaded config value.
+    crashing on the unloaded config value;
+  * the Naga venom projectile gets an entity name (entity.at_mod.naga_venom in en_us and zh_cn), which
+    upstream lacks, so Jade and F3 do not show the raw key.
 - Not included:
   * the eight boss music tracks (assets/at_mod/sounds/music/*.ogg, about 33 MB) and their sounds.json.
     Their metadata shows they were downloaded from Bilibili videos of unknown authorship, so the GPL
@@ -59,4 +61,6 @@ modified for Minecraft 1.20.1 / Forge 47:
     alpha_yeti) as soon as a resource pack defines those sound events in assets/at_mod/sounds.json;
     without one it stays silent;
   * the NeoForge in-game config screen (Forge 47 has no generic one; edit config/at_mod_config.toml);
-  * the MDK template leftovers (at_mod:example_block and its block item, the "HELLO" log listeners).
+  * the MDK template leftovers (at_mod:example_block and its block item, the "HELLO" log listeners) and
+    their lang keys (item.at_mod.example_item, at_mod.configuration.items, logDirtBlock and
+    magicNumber*).

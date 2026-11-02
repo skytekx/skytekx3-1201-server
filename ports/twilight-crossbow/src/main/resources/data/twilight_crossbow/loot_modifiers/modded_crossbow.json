@@ -1,0 +1,14 @@
+{
+  "type": "twilight_crossbow:add_table",
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "twilightforest:chests/aurora_cache"
+    },
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.25
+    }
+  ],
+  "table": "twilight_crossbow:modded_crossbow"
+}

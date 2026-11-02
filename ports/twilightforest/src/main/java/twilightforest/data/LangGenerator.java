@@ -1245,6 +1245,10 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.ZOMBIE_SCEPTER_USE, "Loyal Zombie summoned");
 		this.addSubtitle(TFSounds.WOOD_SHIELD_SHATTERS, "Wooden Shield shatters");
 
+		this.addSubtitle(TFSounds.DOUBLE_JUMP, "Double Jump performed");
+		this.addSubtitle(TFSounds.SIDE_STEP, "Side Step performed");
+		this.addSubtitle(TFSounds.SIDE_STEP_CHARGED, "Side Step recharged");
+
 		this.addDeathMessage("ghastTear", "%1$s was scalded by fiery tears");
 		this.addDeathMessage("ghastTear.player", "%1$s was scalded by fiery tears while escaping %2$s");
 		this.addDeathMessage("hydraFire", "%1$s was roasted alive by the Hydra");

@@ -490,6 +490,10 @@ public class TFConfig {
 					translation(config + "totem_charm_animation").
 					comment("If true, Twilight Forest charm items will display similar to the totem of undying when used.").
 					define("totemCharmAnimation", false);
+			manualTravellersWingsGradualGlide = builder.
+					translation(config + "manual_travellers_wings_gradual_glide").
+					comment("When this option is off, slow falling is the default. Holding the sneak key makes you fall at normal speed. When this option is on, normal falling is the default. Holding the sneak key activates slow falling.").
+					define("travellersWingsGradualGlide", true);
 			firstPersonGloveOverlay = builder.
 					translation(config + "first_person_glove_overlay").
 					comment("Allows Traveller's Gloves to render on your hand when in 1st person view.").
@@ -511,6 +515,7 @@ public class TFConfig {
 		private final List<Holder<Biome>> validAuroraBiomes = new ArrayList<>();
 		public final ForgeConfigSpec.BooleanValue prettifyOreMeterGui;
 		public final ForgeConfigSpec.BooleanValue spawnCharmAnimationAsTotem;
+		public final ForgeConfigSpec.BooleanValue manualTravellersWingsGradualGlide;
 		public final ForgeConfigSpec.BooleanValue firstPersonGloveOverlay;
 	}
 

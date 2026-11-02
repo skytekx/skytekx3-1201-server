@@ -28,7 +28,8 @@ public class TFPacketHandler {
 	// .12: SetMasonJarItemPacket syncs the contents of a Mason Jar (4.8 9eaa6db1e).
 	// .13: SyncDataMapPacket syncs the ominous fire data map to clients for the recipe viewers (4.8 TFDataMaps synced(...)).
 	// .14: TravellersWingsStatePacket syncs the Traveller's Wings animation state (4.8 ab58315ba).
-	private static final String PROTOCOL_VERSION = "2-skytekx.14";
+	// .15: PerformDoubleJumpPacket, PerformSidestepPacket (client to server) and GradualGlidePacket (both ways) for the Traveller's Wings modifiers (4.8 485d7e0a7).
+	private static final String PROTOCOL_VERSION = "2-skytekx.15";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -67,5 +68,8 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, SetMasonJarItemPacket.class, SetMasonJarItemPacket::encode, SetMasonJarItemPacket::new, SetMasonJarItemPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, SyncDataMapPacket.class, SyncDataMapPacket::encode, SyncDataMapPacket::new, SyncDataMapPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(id++, TravellersWingsStatePacket.class, TravellersWingsStatePacket::encode, TravellersWingsStatePacket::new, TravellersWingsStatePacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, PerformDoubleJumpPacket.class, PerformDoubleJumpPacket::encode, PerformDoubleJumpPacket::new, PerformDoubleJumpPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		CHANNEL.registerMessage(id++, PerformSidestepPacket.class, PerformSidestepPacket::encode, PerformSidestepPacket::new, PerformSidestepPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		CHANNEL.registerMessage(id++, GradualGlidePacket.class, GradualGlidePacket::encode, GradualGlidePacket::new, GradualGlidePacket.Handler::onMessage);
 	}
 }

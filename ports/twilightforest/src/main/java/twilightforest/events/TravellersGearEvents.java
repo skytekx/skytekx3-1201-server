@@ -379,11 +379,16 @@ public class TravellersGearEvents {
 
 	/**
 	 * The client gets a fresh player entity in the new dimension that does not zoom yet, while the server keeps the old
-	 * one; start over from there, the client sends the zoom again if the key is still held.
+	 * one; start over from there, the client sends the zoom again if the key is still held. The players of the new
+	 * dimension already started tracking the zooming player during the teleport ({@link #syncZoomToNewTracker}), so
+	 * they are told to flip the goggles back up.
 	 */
 	@SubscribeEvent
 	public static void resetZoomAfterDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-		TravellersGogglesZoomAttachment.setUsingZoom(event.getEntity(), false);
+		if (event.getEntity() instanceof ServerPlayer player && TravellersGogglesZoomAttachment.isUsingZoom(player)) {
+			TravellersGogglesZoomAttachment.setUsingZoom(player, false);
+			TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new GogglesZoomPacket(false, player.getUUID()));
+		}
 	}
 
 	@SubscribeEvent

@@ -531,7 +531,7 @@
      "reactor-debris-visual"
     ],
     "deferred": [
-     "advancement-fixes arborist leftovers (not this bundle): the 8 *_DRYING_RACK entries belong to drying-rack; CHISELED_CANOPY_BOOKSHELF and dropping EMPTY_CANOPY_BOOKSHELF belong to the chiseled-bookshelf feature. The TODO in TFAdvancementGenerator now names only those.",
+     "advancement-fixes arborist leftovers (not this bundle): the 8 *_DRYING_RACK entries belong to drying-rack; CHISELED_CANOPY_BOOKSHELF and dropping EMPTY_CANOPY_BOOKSHELF belong to the chiseled-bookshelf feature. The TODO in TFAdvancementGenerator now names only those. UPDATE: chiseled-canopy-bookshelf registered the block but handed its Arborist entry on to lich-tower-revamp (see the wave 8 chiseled-canopy-bookshelf entry), and EMPTY_CANOPY_BOOKSHELF stays in the list.",
      "Not ported, by design: 4.8's later move of TF chests and trapped chests to the vanilla CHEST/TRAPPED_CHEST block entity types (17602f730 plus BlockEntityTypeAddBlocksEvent). That is the feature tf-chest-vanilla-blockentity, which the plan already rules out.",
      "translation-refresh: the 8 new en_us keys (block.twilightforest.<wood>_trapped_chest) need ports/twilightforest/tools/merge_upstream_lang.py re-run to pick up other locales."
     ],
@@ -574,6 +574,18 @@
      "emi-native-plugin: the ominous fire recipe-viewer category (4.8 compat/jei/categories/OminousFireCategory + compat/jei/util/OminousFireRecipe, and EmiOminousFireRecipe for EMI) is not ported. It lists TFDataMaps.OMINOUS_FIRE (villager -> zombie_villager, piglin -> zombified_piglin, horse -> zombie_horse), but the 1.20.1 DataMapType stand-in (util/datamaps) is filled only on the server by DataMapLoader and is not synced, so on a dedicated server a client-side category would be empty. Add a data map sync packet first (on TFPacketHandler, sent on login and after reload, bump PROTOCOL_VERSION to the next 2-skytekx.N) or build the displays from a client-side copy of data/twilightforest/data_maps/entity_type/ominous_fire.json. The scepter-repair and essence-repair JEI crafting extensions are done (ScepterRepairExtension, ExanimateEssenceRepairExtension); the 'scepter repair' and 'ominous fire' parts of the jei-plugin-upgrades note in wave 5 are settled by this entry."
     ],
     "source": "ominous-fire-exanimate-essence+scepter-rework review (waves 8-10 integrator)"
+   },
+   {
+    "bundle": "chiseled-canopy-bookshelf",
+    "ids": [
+     "chiseled-canopy-bookshelf"
+    ],
+    "deferred": [
+     "lich-tower-revamp: add TFBlocks.CHISELED_CANOPY_BOOKSHELF.get() to DENDROLOGIST_BLOCKS in TFAdvancementGenerator (after EMPTY_CANOPY_BOOKSHELF in the canopy row) and hand-edit src/generated/resources/data/twilightforest/advancements/arborist.json with the matching criterion and requirement, as 4.8 does (#1951, b78462d5e). Keep EMPTY_CANOPY_BOOKSHELF: 4.8 deletes it, but this port keeps it registered and craftable. Do this only together with the wing rooms that place the shelf: like 4.8 since 0713f5291 the shelf has no recipe, so adding it earlier would make Arborist impossible to earn in survival. Then drop the TODO above DENDROLOGIST_BLOCKS.",
+     "lich-tower-revamp: the generated shelf contents in LichTowerWingRoom (random books, including the enchanted book roll from d99acebb5 via WorldUtil) and turning shelves into Death Tome spawners. Use ChiseledCanopyShelfBlock.SPAWNER and the block entity's spawner (twilightforest.block.entity.bookshelf).",
+     "jade-top-providers: the Jade/TOP spawn providers for the chiseled shelf and their config string."
+    ],
+    "source": "chiseled-canopy-bookshelf review (waves 8-10 integrator)"
    }
   ],
   "9": [

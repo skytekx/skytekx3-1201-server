@@ -355,6 +355,7 @@ Each addon below is the newest 1.20.1 Forge build. Env is client / server as wri
 | Twilight Tweaks | 1.2 (1.20.x) | `local-mods/` (CurseForge file 4702979) | both | LGPL-2.1 | Final-boss spawner hook and re-fightable bosses (Time Powder on spawner remnants). |
 | The King of Twilight | 1.0.1 | `local-mods/` (CurseForge file 8029727) | both | MIT | The Twilight Lord final boss, spawned through Twilight Tweaks. |
 | Twilight Mobs Loots (1.20.1 backport) | 1.1.1-1.20.1-skytekx.1 | `local-mods/`, built from `ports/twilight-mobs-loots/` | both | MIT | Trophies for 48 regular TF mobs: 10% player-kill drop (giants 50%, +5% per Looting level), floor and wall blocks with the mob's sound and particles, wearable on the head or in the Curios head slot or a new `trophy` slot. |
+| Spiced Twilight | 2.0.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/spiced-twilight/`) | both | LGPL-3.0-or-later | Maze Slime Beetle in the Labyrinth, Helmet Crabs that hide, kobold armor and babies, Fire Beetle Powder, Hydra Hide, Cinder Pouch. 1.21.1-only upstream, backported here without the Naga jump attack. |
 
 Distribution rules: a Modrinth-hosted addon goes into the index, even when it is All Rights Reserved,
 because the file comes from the Modrinth CDN. A CurseForge-only addon is bundled in `local-mods/` only
@@ -362,6 +363,9 @@ with a license that allows redistribution. Each bundled jar must be byte-identic
 file and needs an attribution file in
 [`modrinth-permissions/`](../../modrinth-permissions/README.md). All three bundled addons were checked
 against the CurseForge `licenseType`, the source repository LICENSE and the jar's mods.toml.
+Backports built from `ports/` (see [Backported 1.21.1-only addons](#backported-1211-only-addons)) are
+modified builds, so they cannot be byte-identical; they need a license that allows modified
+redistribution, and the attribution file records the upstream commit and the built jar's SHA-1.
 
 Twilight Mobs Loots exists only for 1.21.1 NeoForge, so it is backported from source (upstream commit
 `41e447de`, 1.1.1, MIT) in [`ports/twilight-mobs-loots/`](../../ports/twilight-mobs-loots/README.md).
@@ -457,6 +461,38 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   `modrinth-permissions/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar.md` (Licensed, MIT,
   https://github.com/baguchi/TwilightCrossbow, the upstream commit and the jar's SHA-1) plus its README
   row. Then boot once on Arclight with the full pack and fire each crossbow once.
+- **Spiced Twilight** (baguchi, LGPL-3.0-or-later): `ports/spiced-twilight/`, a standalone NeoGradle 6
+  project like the fork. Build the fork first (`ports/twilightforest`, `./gradlew build`); the port compiles
+  against `../twilightforest/build/libs/twilightforest-1.20.1-<tf_version>-universal.jar` (flatDir plus
+  `fg.deobf`) and MixinGradle writes the SRG refmap. Ported from upstream `92a6b60be` (1.21.1-2.0.0); mod id
+  `spiced_twilight`, version `2.0.0-1.20.1-skytekx.1`, needs twilightforest `[4.3.2508-skytekx.1,)`. The
+  NeoForge attachments became synced entity data (`HelmetCrab` hide flag, `Kobold` baby flag) plus NBT,
+  the Cinder Pouch keeps its powder in the 1.20.1 bundle NBT, and `neoforge:add_table` became the
+  `spiced_twilight:add_table` loot modifier (Fire Beetle Powder from fire beetles, Hydra Hide from the
+  Hydra). The Maze Slime Beetle joins the Labyrinth's monster list through `LevelEvent.PotentialSpawns`
+  (structure tag `#spiced_twilight:labyrinth_maze_slime_spawn`), because TF replaces the spawn list inside
+  landmarks; upstream's biome modifier only reached the swamp surface. Mixin targets: `FireBeetle#registerGoals`
+  (TAIL, swaps `BreathAttackGoal` for a breath with a wind-up), `HelmetCrab#registerGoals`,
+  `#defineSynchedData`, `#addAdditionalSaveData`, `#readAdditionalSaveData`, the same three on `Kobold`
+  plus new overrides of `isBaby`, `setBaby`, `finalizeSpawn`, `populateDefaultEquipmentSlots`,
+  `getStandingEyeHeight` and `onSyncedDataUpdated` (the mixin fails loudly if the fork's `Kobold` ever
+  defines one of them), `LichAbsorbMinionsGoal#tick` (HEAD), `BrewingStandBlockEntity#serverTick` and
+  `#canPlaceItem`, `BrewingStandMenu$FuelSlot#mayPlaceItem` (all HEAD, no overwrites, so Arclight's
+  brewing patches coexist), and client-only `setupAnim` on `KoboldModel`, `HelmetCrabModel` and their
+  Jappa classes `NewKoboldModel` and `NewHelmetCrabModel` (`remap = false`, the typed overloads keep their
+  names in the reobfuscated jar). Keep `LichAbsorbMinionsGoal.lich`, `Lich#getScepterTimeLeft`,
+  `#setPopCooldown`, `#makeMagicTrail`, `LichMinion.master`, `LifedrainScepterItem#animateTargetShatter`,
+  `util.EntityUtil#getDeathSound`, `IBreathAttacker`, `BreathAttackGoal`, `TFThrowable#makeTrail`, the
+  `SlimeBeetleRenderer(Context, SlimeBeetleModel, float)` constructor and `TFModelLayers.NEW_SLIME_BEETLE`
+  when re-syncing the fork. `Lich#getTeleportInvisibility` (4.8 Lich rework) is looked up at runtime and
+  used once it exists. Not ported: the Naga jump attack (`NagaMovementPattern` mixin), which conflicts
+  with Alternative Twilight Remastered's Naga rework.
+  **Bundled** as `local-mods/spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` with its `modrinth-permissions/`
+  file. Like Twilight Mobs Loots it needs the fork jar in `local-mods/`: next to the stock
+  `twilightforest-1.20.1-4.3-universal.jar` Forge refuses to load it. Land the fork jar swap before or
+  together with any release that ships this jar, then boot the full pack once on Arclight (Done, 0 FATAL,
+  no mixin errors) and refuel one brewing stand with Fire Beetle Powder; the porter's boot test ran on
+  plain Forge 47.4.18.
 
 ### Planned backports (1.21.1-only addons)
 
@@ -466,10 +502,10 @@ on is in the fork (details in the table below):
   a rework of the 1.21 recipe API, and the author's OK for its All Rights Reserved assets.
 - **Alternative Twilight (Remastered)**: after the 4.8 boss rework is backported. It replaces the
   1.20.1 Alternative Twilight, which conflicts with that rework.
-- **Spiced Twilight**: after the 4.8 entity and Naga changes.
-- **Twilight Mobs Loots** and **Twilight Crossbow** are done: see [In the pack](#in-the-pack-2026-11-01)
-  and [Backported 1.21.1-only addons](#backported-1211-only-addons). The crossbow jar waits for the fork
-  jar in `local-mods/`.
+- **Twilight Mobs Loots**, **Twilight Crossbow** and **Spiced Twilight** are done: see
+  [In the pack](#in-the-pack-2026-11-01) and
+  [Backported 1.21.1-only addons](#backported-1211-only-addons). The crossbow jar waits for the fork
+  jar in `local-mods/`; the Mobs Loots and Spiced Twilight jars are bundled but need it to load.
 
 ### Research (2026-11-01)
 

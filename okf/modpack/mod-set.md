@@ -22,8 +22,8 @@ and download URL. To add or remove a Modrinth mod, **edit the index**, not `mods
   is not `unsupported`, check `sha1`/`sha512`/`fileSize`, add `local-mods/*.jar`, then run
   `tools/patch_mods.py`.
 - `client-only-mods/` — derived, gitignored (split out of `mods/` for the server).
-- `local-mods/` — **tracked**. Mods built from source / not on Modrinth (Twilight Forest,
-  [Nyx](../content/nyx.md), …). These are part of the pack and ride into the `.mrpack` as overrides.
+- `local-mods/` — **tracked**. Mods built from source / not on Modrinth (the Twilight Forest fork from
+  `ports/twilightforest/`, [Nyx](../content/nyx.md), …). These are part of the pack and ride into the `.mrpack` as overrides.
 
 ## Bundling a non-Modrinth jar (redistribution)
 A jar in `local-mods/` is redistributed inside the `.mrpack`, so Modrinth review requires an
@@ -50,8 +50,9 @@ build reproducible, and record the upstream commit, the build command and the ja
 `modrinth-permissions/` file instead. Bundled this way: Twilight Mobs Loots (`ports/twilight-mobs-loots/`,
 MIT), Spiced Twilight (`ports/spiced-twilight/`, LGPL-3.0-or-later, so the modified source stays public
 in that directory) and Alternative Twilight (Remastered) (`ports/alternative-twilight-remastered/`,
-GPL-3.0-or-later, same rule). Twilight Crossbow (`ports/twilight-crossbow/`) is ported but held back. All
-four need the fork TF jar in `local-mods/` instead of the stock `4.3` jar; see the
+GPL-3.0-or-later, same rule) and Twilight Crossbow (`ports/twilight-crossbow/`, MIT; its jar build does not
+fix file times yet, so its file records the SHA-1 of the committed jar). All four need the fork TF jar
+(`ports/twilightforest/`), which `local-mods/` carries instead of the stock `4.3` jar; see the
 [TF backport](twilightforest-backport.md#backported-1211-only-addons).
 
 ## ⚠️ Known gap

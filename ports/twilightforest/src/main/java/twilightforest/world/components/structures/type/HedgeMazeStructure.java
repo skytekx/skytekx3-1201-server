@@ -10,12 +10,14 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.*;
 import twilightforest.data.tags.BiomeTagGenerator;
 import twilightforest.init.TFStructureTypes;
 import twilightforest.util.WorldUtil;
+import twilightforest.world.components.structures.CustomDensitySource;
 import twilightforest.world.components.structures.HedgeMazeComponent;
 import twilightforest.world.components.structures.util.DecorationClearance;
 import twilightforest.world.components.structures.util.LandmarkStructure;
@@ -24,7 +26,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HedgeMazeStructure extends LandmarkStructure {
+public class HedgeMazeStructure extends LandmarkStructure implements CustomDensitySource {
     public static final Codec<HedgeMazeStructure> CODEC = RecordCodecBuilder.create(instance -> landmarkCodec(instance).apply(instance, HedgeMazeStructure::new));
 
     public HedgeMazeStructure(DecorationConfig decorationConfig, StructureSettings structureSettings) {
@@ -56,6 +58,15 @@ public class HedgeMazeStructure extends LandmarkStructure {
 
         // The TF generator's base height skips water, so keep the maze from sinking to the bed of a lake or stream it overlaps
         return Math.max(generator.getSeaLevel() + 1, WorldUtil.adjustForTerrain(generator, heightAccessor, randomState, x, z, 24, 4));
+    }
+
+    /**
+     * Clears the terrain above the maze floor in an inverted pyramid, so that no hill overhangs or buries the maze (TF 4.8). Below the
+     * floor the terrain is left alone.
+     */
+    @Override
+    public DensityFunction getStructureTerraformer(ChunkPos chunkPosAt, StructureStart structurePieceSource) {
+        return CustomDensitySource.getInvertedPyramidTerraformer(structurePieceSource, 0, 4);
     }
 
     @Override

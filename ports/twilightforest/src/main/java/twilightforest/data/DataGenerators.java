@@ -21,6 +21,7 @@ import twilightforest.data.custom.CrumbleHornGenerator;
 import twilightforest.data.custom.QuestGenerator;
 import twilightforest.data.custom.TransformationPowderGenerator;
 import twilightforest.data.custom.stalactites.StalactiteGenerator;
+import twilightforest.data.custom.structuredefinitions.NagaCourtyardStructureDefinitionGenerator;
 import twilightforest.data.tags.*;
 
 import java.util.Arrays;
@@ -64,6 +65,7 @@ public class DataGenerators {
 		generator.addProvider(event.includeServer(), new DamageTypeTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new StructureTagGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new CustomTagGenerator.DimensionTypeTagGenerator(output, lookupProvider, helper));
+		generator.addProvider(event.includeServer(), new NagaCourtyardStructureDefinitionGenerator(output, lookupProvider, helper));
 
 		generator.addProvider(event.includeServer(), new CrumbleHornGenerator(output, helper));
 		generator.addProvider(event.includeServer(), new TransformationPowderGenerator(output, helper));

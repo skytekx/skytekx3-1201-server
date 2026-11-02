@@ -62,6 +62,9 @@ public abstract class TwilightTemplateStructurePiece extends TemplateStructurePi
         structureTag.putInt("pivot_z", pivot.getZ());
     }
 
+    // TODO Remove, shifting vertical position was originally needed for changing beardifier position.
+    //  Thanks to PieceBeardifierModifier this is no longer needed
+    @Deprecated
     // This will be required if you want to dig a piece into a noise beard
     protected void placePieceAdjusted(WorldGenLevel level, StructureManager structureFeatureManager, ChunkGenerator chunkGenerator, RandomSource random, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos pos, int dY) {
         this.templatePosition = this.templatePosition.above(dY);

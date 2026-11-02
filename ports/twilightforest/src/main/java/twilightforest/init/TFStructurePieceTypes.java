@@ -186,6 +186,7 @@ public class TFStructurePieceTypes {
     public static final RegistryObject<StructurePieceType> TFClCa = registerPieceType("TFClCa", CloudCastleComponent::new);
     public static final RegistryObject<StructurePieceType> TFClTr = registerPieceType("TFClTr", CloudTreeComponent::new);
     public static final RegistryObject<StructurePieceType> TFTCVa = registerPieceType("TFTCVa", TrollVaultComponent::new);
+    public static final RegistryObject<StructurePieceType> TFCloud = registerPieceType("TFCloud", CloudComponent::new);
 
     // Final Castle
     //public static final RegistryObject<StructurePieceType> TFFC = registerPieceType("TFFC", StructureStartFinalCastle::new);

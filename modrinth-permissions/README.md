@@ -5,11 +5,11 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across all 39 bundled mods. **Verify the blockers yourself before trusting them.**
+Researched automatically across all 40 bundled mods. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **33** mods are fine to bundle (open license or author allows modpacks).
+- **34** mods are fine to bundle (open license or author allows modpacks).
 - **0** need a quick manual check (CurseForge modpack flag unconfirmed).
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
@@ -75,6 +75,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `trumpet_skeleton-1.2-forge-1.20.1.jar` | Trumpet Skeleton: Reforged | MIT | Licensed | yes | - |
 | `Tumbleweed-forge-1.20.1-0.5.5.jar` | Tumbleweed | LGPL-3.0-only | Licensed | yes | yes |
 | `twilight_construct-1.0.7.jar` | Twilight Construct | LGPL-2.1 | Licensed | yes | - |
+| `twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar` | Twilight Crossbow (1.20.1 backport by SkyTekx) | MIT | Licensed | yes | 1.21.1 only |
 | `twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar` | Twilight Mobs Loots (1.20.1 backport by SkyTekx) | MIT | Licensed | yes | 1.21.1 only |
 | `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar` | The Twilight Forest (SkyTekx 1.20.1 fork, TF 4.8 backport) | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures), MIT (Mystic Crown Compat parts) | Special permission | yes | - |
 | `twilightforestfinalboss-1.0.1-forge-1.20.1.jar` | The King of Twilight | MIT | Licensed | yes | - |

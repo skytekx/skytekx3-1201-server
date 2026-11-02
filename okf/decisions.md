@@ -194,6 +194,7 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 | 2026-10-31 21:48 | Keep the whitelist off now that the address is public | Done. The whitelist was already off and stays off | [Server](server/index.md#facts-at-a-glance) |
 | 2026-10-31 17:47 | Use the Mac mini for computation to speed up the work | Done. The checks behind 1f8f4ef, both Skylands pregens and the region scans ran there | [Mac mini](server/macos.md) |
 | 2026-11-01 21:15 | The Skylands stay at noon all the time, with no mob griefing and no explosion damage to blocks there, done on the server only | Built. Dimension type `fixed_time` 6000 and skytekx-compat 2.1.4 on the server, clients unchanged | [Skylands worldgen](content/skylands-worldgen.md) |
+| 2026-11-02 13:11 | It never rains in the Skylands | Done at 13:13. None of the 15 Skylands biomes has precipitation (425d6113) | [Skylands worldgen](content/skylands-worldgen.md#biomes) |
 
 Related: [OKF index](index.md), [Open items](open-items.md), [Change log](log.md),
 [History](history.md).

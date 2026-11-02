@@ -19,9 +19,11 @@ Modifications
   Modified by SkyTekx (Florian Kleber), 2026-11-02: backported from NeoForge 1.21.1 to Forge 1.20.1
   (Forge 47) for the SkyTekx 3 modpack, built against the SkyTekx fork of The Twilight Forest
   (4.3.2508-skytekx.1, which carries most Twilight Forest 4.8 content). The modified source is the
-  ports/spiced-twilight directory of the skytekx3-1201-server repository; it is the Corresponding
-  Source of the jar spiced_twilight-2.0.0-1.20.1-skytekx.1.jar. The mod id (spiced_twilight), item,
-  entity and loot ids are unchanged.
+  ports/spiced-twilight directory of the skytekx3-1201-server repository:
+    https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/spiced-twilight
+  It is the Corresponding Source of the jar spiced_twilight-2.0.0-1.20.1-skytekx.1.jar; the exact
+  source of a given jar is that directory at the commit that added the jar to local-mods/. The mod id
+  (spiced_twilight), item, entity and loot ids are unchanged.
 
   Removed
   - Naga jump attack (NagaMovementPatternMixin). Its mixin into the Naga movement pattern conflicts
@@ -59,8 +61,9 @@ Modifications
     and names a structure tag, but NeoForge's add_spawns ignores the structure field, so upstream spawns
     it on the swamp surface. Twilight Forest replaces the spawn list inside its landmarks, so a biome
     modifier cannot reach the Labyrinth. The backport adds it (weight 3, group 1-2) through
-    LevelEvent.PotentialSpawns to the monster spawns inside structures tagged
-    #spiced_twilight:labyrinth_maze_slime_spawn (the Labyrinth, while it is not conquered).
+    LevelEvent.PotentialSpawns to the monster spawns inside the pieces of structures tagged
+    #spiced_twilight:labyrinth_maze_slime_spawn (the Labyrinth, while it is not conquered), except
+    in pieces where Twilight Forest spawns no monsters (vaults, the boss room).
   - Hiding Helmet Crabs still take damage that bypasses invulnerability (/kill, the void).
 
   Fixed upstream bugs

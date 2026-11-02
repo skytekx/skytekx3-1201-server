@@ -18,4 +18,7 @@ Java 17. Build the Twilight Forest fork first, it is the compile dependency:
 ./gradlew build
 ```
 
-The jar lands in `build/libs/spiced_twilight-<version>.jar`. The pack ships it from `local-mods/`.
+The jar lands in `build/libs/spiced_twilight-<version>.jar`. The pack ships it from `local-mods/`. The build is
+byte-reproducible, so after a source change rebuild, copy the jar to `local-mods/` and update the SHA-1 and size in
+`modrinth-permissions/spiced_twilight-<version>.jar.md`; the shipped jar must always match this source.
+`tf_version` in `gradle.properties` must equal the fork's `mod_version`, because it names the fork jar.

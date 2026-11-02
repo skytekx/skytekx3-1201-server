@@ -502,6 +502,23 @@ logs stay on the Mac and are not in the repo.
   in the 11 Skylands biomes that still had it, so none of the 15 has rain or snow. The server restarted
   with it at 13:13 and reached `Done` at 13:13:48. See
   [Skylands worldgen](content/skylands-worldgen.md#biomes).
+- A fall at 13:28 and several deaths at a Skylands bed between 13:34 and 13:48 cost the owner the
+  inventory. On the owner's ask it came back at 13:43 and again at 13:52 from the playerdata snapshot of
+  13:32. The file was rewritten while the player was kicked, with newer items kept and the duplicates
+  picked up from the death drops left out.
+- At 13:39 the owner asked for weaker mobs in the Skylands, where everybody builds a home, and at 13:48
+  for none at all. With the Skylands at noon but never at day, undead no longer burned there, and
+  L2Hostility gave the mobs levels near 50. `kubejs/server_scripts/skylands_no_mobs.js` refuses every
+  hostile mob that joins the Skylands and removed 70 when it first loaded at 13:51. At 13:51 the owner
+  added that levels 1 to 5 would be fine. Whether weak mobs come back is open. See
+  [Skylands worldgen](content/skylands-worldgen.md#sleep-and-hostile-mobs).
+- At 13:31 and 13:45 the owner reported that sleeping in the Skylands does not make it day in the
+  overworld. The fixed time of the dimension lets beds work there at any hour, but vanilla then sets the
+  time of the Skylands only, which follows the overworld, and Arclight replaces the Forge sleeping time
+  check when a player lies down. `kubejs/server_scripts/skylands_sleep.js` moves the overworld to the
+  next morning once enough players in the Skylands sleep. At 14:03 sleeping still failed, because a
+  second player was awake in the Skylands and `playersSleepingPercentage` stood at the default of 100.
+  At 14:10 the rule went to 0, so one sleeping player is enough on the whole server.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

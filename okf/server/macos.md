@@ -234,7 +234,7 @@ hours at the measured rate, which the free disk does not allow. Load with player
 ## Public access
 
 No port can be forwarded to the Mac mini. Its uplink is a mobile connection behind carrier grade NAT:
-on 2026-10-31 tracepath showed the private hops 172.20.136.193, 192.168.242.31 and 172.16.25.16 at
+on 2026-10-31 tracepath showed three private hops at
 about 40 ms before the first public one, and there is no IPv6. So the earlier plan of a router forward
 plus a DNS record without the Cloudflare proxy cannot work.
 

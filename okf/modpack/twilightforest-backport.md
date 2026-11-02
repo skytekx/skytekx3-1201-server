@@ -132,7 +132,9 @@ For the server operator, in this order:
 3. Pull the release into the server checkout.
 4. Update the server's `mods/`. Forge loads only `mods/`; nothing reads `local-mods/` at runtime. First
    delete the old Twilight Forest jar (on a 3.0.x server `rm mods/twilightforest-1.20.1-4.3-universal.jar`; two TF jars are a
-   duplicate mod id and Forge stops). Then copy the new bundled jars:
+   duplicate mod id and Forge stops). The old jar may have another file name, so check with
+   `ls mods/twilightforest-*.jar`: after the copy below, only the `4.3.2508-skytekx.1` jar may be left.
+   Then copy the new bundled jars:
 
    ```bash
    cp local-mods/twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar \
@@ -149,11 +151,16 @@ For the server operator, in this order:
    farmers-cutting-twilight-forest, spartantoolkit, spartantwilight, tf_dnv, twilightaether,
    twilightdelight) with the sha1-checked fetch in the [README](../../README.md#4--clone-the-pack), which
    downloads every server-side index file `mods/` lacks; `tools/resolve_all.py` does not pick them up.
+   The fetch skips a file only by its name, so it must print exactly these 9 `fetched` lines. Any other
+   `fetched` line means the server's `mods/` has drifted from the index (another version of that mod is
+   installed under a different name); delete the version that is not in the index before step 5, or
+   Forge stops on a duplicate mod id.
    Finally run `python3 tools/patch_mods.py` (it adds the `minVersion` that `tf_dnv` lacks).
 5. Start the server and check that it reaches `Done` with 0 FATAL, crash or watchdog lines.
 6. Check the Arclight cache: `ls .arclight/mod_file` shows only the `safeiter2` jar
    ([Arclight](../server/arclight.md)).
-7. Recommended: reset the TF dimension once and pregen it. Without a reset, new chunks next to explored
+7. Recommended, and required if the seed check in step 1 showed different values: reset the TF
+   dimension once and pregen it. Without a reset, new chunks next to explored
    ones show seams; for example, the Dark Forest canopy steps by about 5 blocks. The reset deletes
    everything built or stored in the Twilight Forest, so announce it and ask players to move their things
    out and leave the dimension first. The overworld and the Skylands stay as they are. Steps:

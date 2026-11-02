@@ -16,6 +16,11 @@ public class TFModelLayers {
 	public static final ModelLayerLocation PHANTOM_ARMOR_OUTER = register("phantom_armor", "outer");
 	public static final ModelLayerLocation YETI_ARMOR_INNER = register("yeti_armor", "inner");
 	public static final ModelLayerLocation YETI_ARMOR_OUTER = register("yeti_armor", "outer");
+	public static final ModelLayerLocation TRAVELLERS_ARMOR_HELMET = register("travellers_armor", "helmet");
+	public static final ModelLayerLocation TRAVELLERS_ARMOR_CHEST_GLOVES = register("travellers_armor", "chest_gloves");
+	public static final ModelLayerLocation TRAVELLERS_ARMOR_CHEST_GLOVES_SLIM = register("travellers_armor", "chest_gloves_slim");
+	public static final ModelLayerLocation TRAVELLERS_ARMOR_LEGGINGS = register("travellers_armor", "leggings");
+	public static final ModelLayerLocation TRAVELLERS_ARMOR_BOOTS = register("travellers_armor", "boots");
 
 	public static final ModelLayerLocation ALPHA_YETI_TROPHY = register("alpha_yeti_trophy");
 	public static final ModelLayerLocation HYDRA_TROPHY = register("hydra_trophy");

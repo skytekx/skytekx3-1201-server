@@ -60,7 +60,15 @@ public enum TwilightArmorMaterial implements ArmorMaterial {
 		map.put(ArmorItem.Type.LEGGINGS, 5);
 		map.put(ArmorItem.Type.CHESTPLATE, 7);
 		map.put(ArmorItem.Type.HELMET, 2);
-	}), 8, SoundEvents.ARMOR_EQUIP_GENERIC, 2F, () -> Ingredient.of(TFItems.ARCTIC_FUR.get()));
+	}), 8, SoundEvents.ARMOR_EQUIP_GENERIC, 2F, () -> Ingredient.of(TFItems.ARCTIC_FUR.get())),
+	// 4.8's TFArmorMaterials.TRAVELLERS. The base durability is 0 so the belt and gloves stay undamageable; the goggles,
+	// vest, wings and boots set their own durability (ArmorItem.Type health factor * 12) in their item properties.
+	ARMOR_TRAVELLERS("travellers", 0, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+		map.put(ArmorItem.Type.BOOTS, 2);
+		map.put(ArmorItem.Type.LEGGINGS, 3);
+		map.put(ArmorItem.Type.CHESTPLATE, 4);
+		map.put(ArmorItem.Type.HELMET, 2);
+	}), 0, SoundEvents.ARMOR_EQUIP_GENERIC, 0F, () -> Ingredient.of(TFItems.TANNED_LEATHER.get()));
 
 	private static final EnumMap<ArmorItem.Type, Integer> HEALTH_FUNCTION_FOR_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
 		map.put(ArmorItem.Type.BOOTS, 13);

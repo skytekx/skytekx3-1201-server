@@ -18,6 +18,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
+import twilightforest.data.custom.TravellersGearItemModelBuilder;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFItemDisplayContexts;
@@ -567,6 +568,14 @@ public class ItemModelGenerator extends ItemModelProvider {
 		trimmedFullbrightArmor(TFItems.FIERY_BOOTS);
 		singleTexFullbrightTool(TFItems.FIERY_SWORD);
 		singleTexFullbrightTool(TFItems.FIERY_PICKAXE);
+		travellersTex(
+				TFItems.TRAVELLERS_GOGGLES,
+				TFItems.TRAVELLERS_VEST,
+				TFItems.TRAVELLERS_WINGS,
+				TFItems.TRAVELLERS_BOOTS
+		);
+		singleTex(TFItems.TRAVELLERS_BELT);
+		singleTex(TFItems.TRAVELLERS_GLOVES);
 		singleTex(TFItems.STEELEAF_INGOT);
 		trimmedArmor(TFItems.STEELEAF_HELMET);
 		trimmedArmor(TFItems.STEELEAF_CHESTPLATE);
@@ -821,6 +830,17 @@ public class ItemModelGenerator extends ItemModelProvider {
 
 	private ItemModelBuilder singleTexFullbright(RegistryObject<? extends Item> item) {
 		return fullbright(item.getId().getPath(), prefix("item/" + item.getId().getPath()));
+	}
+
+	@SafeVarargs
+	private void travellersTex(RegistryObject<? extends Item>... items) {
+		for (RegistryObject<? extends Item> item : items) {
+			String id = item.getId().getPath();
+			String modifierID = id.replace("travellers_", "");
+			// unchecked: forge:item/default lives in the Forge jar, not in the resources runData is pointed at
+			getBuilder(id).parent(new ModelFile.UncheckedModelFile("forge:item/default")).texture("base", prefix("item/" + id)).texture("broken", prefix("item/" + id + "_broken"))
+					.customLoader((parent, helper) -> TravellersGearItemModelBuilder.begin(parent, "travellers_modifiers/" + modifierID + "/", "travellers_modifiers/" + modifierID + "/broken/", helper)).end();
+		}
 	}
 
 	private ItemModelBuilder singleTexFullbrightTool(RegistryObject<? extends Item> item) {

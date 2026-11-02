@@ -310,6 +310,29 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 				.addCriterion("uncraft_table", UncraftItemTrigger.TriggerInstance.uncraftedItem(TFBlocks.UNCRAFTING_TABLE.get()))
 				.save(consumer, "twilightforest:uncraft_uncrafting_table");
 
+		Advancement gear = Advancement.Builder.advancement().parent(root).display(
+						TFItems.TRAVELLERS_BOOTS.get(),
+						Component.translatable("advancement.twilightforest.craft_travellers_gear"),
+						Component.translatable("advancement.twilightforest.craft_travellers_gear.desc"),
+						null, FrameType.TASK, true, true, false)
+				.addCriterion("craft_goggles", RecipeCraftedTrigger.TriggerInstance.craftedItem(TwilightForestMod.prefix("equipment/travellers_goggles")))
+				// 4.8 names a nonexistent equipment/travellers_chest recipe here, so crafting the vest never counted
+				.addCriterion("craft_vest", RecipeCraftedTrigger.TriggerInstance.craftedItem(TwilightForestMod.prefix("equipment/travellers_vest")))
+				.addCriterion("craft_wings", RecipeCraftedTrigger.TriggerInstance.craftedItem(TwilightForestMod.prefix("equipment/travellers_wings")))
+				.addCriterion("craft_boots", RecipeCraftedTrigger.TriggerInstance.craftedItem(TwilightForestMod.prefix("equipment/travellers_boots")))
+				.addCriterion("craft_belt", RecipeCraftedTrigger.TriggerInstance.craftedItem(TwilightForestMod.prefix("equipment/travellers_belt")))
+				.addCriterion("craft_gloves", RecipeCraftedTrigger.TriggerInstance.craftedItem(TwilightForestMod.prefix("equipment/travellers_gloves")))
+				.requirements(RequirementsStrategy.OR)
+				.save(consumer, "twilightforest:craft_travellers_gear");
+
+		Advancement.Builder.advancement().parent(gear).display(
+						TFItems.TRAVELLERS_BOOTS.get(),
+						Component.translatable("advancement.twilightforest.modify_travellers_gear"),
+						Component.translatable("advancement.twilightforest.modify_travellers_gear.desc"),
+						null, FrameType.TASK, true, true, false)
+				.addCriterion("add_any_modifier", AddModifierTrigger.TriggerInstance.addedAnyModifier())
+				.save(consumer, "twilightforest:modify_travellers_gear");
+
 		Advancement focus = Advancement.Builder.advancement().parent(silence).display(
 						TFItems.MAGIC_MAP_FOCUS.get(),
 						Component.translatable("advancement.twilightforest.magic_map_focus"),

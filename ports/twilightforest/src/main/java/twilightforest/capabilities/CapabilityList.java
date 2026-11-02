@@ -23,6 +23,7 @@ import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapability;
 import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapabilityHandler;
 import twilightforest.capabilities.thrown.YetiThrowCapability;
 import twilightforest.capabilities.thrown.YetiThrowCapabilityHandler;
+import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.data.tags.EntityTagGenerator;
 
 import javax.annotation.Nonnull;
@@ -36,6 +37,7 @@ public class CapabilityList {
 	public static final Capability<GiantPickMineCapability> GIANT_PICK_MINE = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<MultiplayerInclusivityCapability> MULTIPLAYER_FIGHT = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<TFPortalCapability> TF_PORTAL = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final Capability<TravellersWingsAttachment> TRAVELLERS_WINGS = CapabilityManager.get(new CapabilityToken<>() {});
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.register(TeleporterCacheCapability.class);
@@ -45,6 +47,7 @@ public class CapabilityList {
 		event.register(GiantPickMineCapability.class);
 		event.register(MultiplayerInclusivityCapability.class);
 		event.register(TFPortalCapability.class);
+		event.register(TravellersWingsAttachment.class);
 	}
 
 	public static void attachLevelCapability(AttachCapabilitiesEvent<Level> e) {
@@ -177,6 +180,17 @@ public class CapabilityList {
 				@Override
 				public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 					return GIANT_PICK_MINE.orEmpty(cap, inst.cast());
+				}
+			});
+
+			// not serializable: like 4.8's unsaved travellers_wings attachment, the wing animation state starts over after a reload
+			e.addCapability(TravellersWingsAttachment.ID, new ICapabilityProvider() {
+
+				private final LazyOptional<TravellersWingsAttachment> inst = LazyOptional.of(TravellersWingsAttachment::new);
+
+				@Override
+				public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+					return TRAVELLERS_WINGS.orEmpty(cap, inst.cast());
 				}
 			});
 

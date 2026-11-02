@@ -490,6 +490,10 @@ public class TFConfig {
 					translation(config + "totem_charm_animation").
 					comment("If true, Twilight Forest charm items will display similar to the totem of undying when used.").
 					define("totemCharmAnimation", false);
+			firstPersonGloveOverlay = builder.
+					translation(config + "first_person_glove_overlay").
+					comment("Allows Traveller's Gloves to render on your hand when in 1st person view.").
+					define("firstPersonGloveOverlay", true);
 		}
 
 		public final ForgeConfigSpec.BooleanValue silentCicadas;
@@ -507,6 +511,7 @@ public class TFConfig {
 		private final List<Holder<Biome>> validAuroraBiomes = new ArrayList<>();
 		public final ForgeConfigSpec.BooleanValue prettifyOreMeterGui;
 		public final ForgeConfigSpec.BooleanValue spawnCharmAnimationAsTotem;
+		public final ForgeConfigSpec.BooleanValue firstPersonGloveOverlay;
 	}
 
 	private static final String config = "config." + TwilightForestMod.ID;

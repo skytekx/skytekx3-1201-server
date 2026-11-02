@@ -8,6 +8,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import twilightforest.TwilightForestMod;
 import twilightforest.item.recipe.*;
+import twilightforest.item.recipe.travellers.TravellersVestGlovesMergeRecipe;
 
 public class TFRecipes {
 	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, TwilightForestMod.ID);
@@ -25,6 +26,7 @@ public class TFRecipes {
 	public static final RegistryObject<RecipeSerializer<DryingRecipe>> DRYING_SERIALIZER = RECIPE_SERIALIZERS.register("drying", DryingRecipe.Serializer::new);
 	public static final RegistryObject<RecipeSerializer<EssenceRepairRecipe>> ESSENCE_REPAIR_RECIPE = RECIPE_SERIALIZERS.register("essence_repair_recipe", () -> new SimpleCraftingRecipeSerializer<>(EssenceRepairRecipe::new));
 	public static final RegistryObject<RecipeSerializer<ScepterRepairRecipe>> SCEPTER_REPAIR_RECIPE = RECIPE_SERIALIZERS.register("scepter_repair", ScepterRepairRecipe.Serializer::new);
+	public static final RegistryObject<RecipeSerializer<TravellersVestGlovesMergeRecipe>> TRAVELLERS_VEST_GLOVES_MERGE_RECIPE = RECIPE_SERIALIZERS.register("travellers_vest_gloves_merge_recipe", () -> new SimpleCraftingRecipeSerializer<>(TravellersVestGlovesMergeRecipe::new));
 
 	public static final RegistryObject<RecipeType<UncraftingRecipe>> UNCRAFTING_RECIPE = RECIPE_TYPES.register("uncrafting", () -> RecipeType.simple(TwilightForestMod.prefix("uncrafting")));
 	public static final RegistryObject<RecipeType<CrumbleRecipe>> CRUMBLE_RECIPE = RECIPE_TYPES.register("crumble_horn", () -> RecipeType.simple(TwilightForestMod.prefix("crumble_horn")));

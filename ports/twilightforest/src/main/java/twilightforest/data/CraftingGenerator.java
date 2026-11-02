@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.data.custom.DryingRecipeBuilder;
@@ -51,6 +52,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 		woodRecipes(consumer);
 		fieryConversions(consumer);
 		dryingRecipes(consumer);
+		travellersGearRecipes(consumer);
 
 		nagastoneRecipes(consumer);
 		darkTowerRecipes(consumer);
@@ -528,6 +530,66 @@ public class CraftingGenerator extends CraftingDataHelper {
 
 	}
 
+	private void travellersGearRecipes(Consumer<FinishedRecipe> consumer) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_GOGGLES.get())
+				.pattern("l l")
+				.pattern("plp")
+				.pattern("g g")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('p', Tags.Items.GLASS_PANES_COLORLESS)
+				.define('g', Tags.Items.INGOTS_GOLD)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_GOGGLES.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_VEST.get())
+				.pattern("l l")
+				.pattern("lwl")
+				.pattern("lwl")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('w', ItemTags.WOOL)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_VEST.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_WINGS.get())
+				.pattern("g g")
+				.pattern("ili")
+				.pattern("ici")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('g', Tags.Items.INGOTS_GOLD)
+				.define('i', Tags.Items.INGOTS_COPPER)
+				.define('c', ItemTagGenerator.CARMINITE_GEMS)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_WINGS.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_BOOTS.get())
+				.pattern("s s")
+				.pattern("l l")
+				.pattern("l l")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('s', Tags.Items.STRING)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_BOOTS.getId().getPath()));
+
+		// 4.8 d4d90e268: trapped chests are also in the wooden chest tag, keep them out of the belt
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_BELT.get())
+				.pattern("lll")
+				.pattern("ixi")
+				.pattern("lll")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('x', DifferenceIngredient.of(Ingredient.of(Tags.Items.CHESTS_WOODEN), Ingredient.of(Tags.Items.CHESTS_TRAPPED)))
+				.define('i', Tags.Items.NUGGETS_IRON)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_BELT.getId().getPath()));
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, TFItems.TRAVELLERS_GLOVES.get())
+				.pattern("s s")
+				.pattern("l l")
+				.define('l', TFItems.TANNED_LEATHER.get())
+				.define('s', Tags.Items.STRING)
+				.unlockedBy("has_leather", has(TFItems.TANNED_LEATHER.get()))
+				.save(consumer, locEquip(TFItems.TRAVELLERS_GLOVES.getId().getPath()));
+	}
+
 	private void equipmentRecipes(Consumer<FinishedRecipe> consumer) {
 		bootsItem(consumer, "arctic_boots", TFItems.ARCTIC_BOOTS, ItemTagGenerator.ARCTIC_FUR);
 		chestplateItem(consumer, "arctic_chestplate", TFItems.ARCTIC_CHESTPLATE, ItemTagGenerator.ARCTIC_FUR);
@@ -625,6 +687,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 		SpecialRecipeBuilder.special(TFRecipes.MAZE_MAP_CLONING_RECIPE.get()).save(consumer, TwilightForestMod.prefix("maze_map_cloning_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.EMPERORS_CLOTH_RECIPE.get()).save(consumer, TwilightForestMod.prefix("emperors_cloth_recipe").toString());
 		SpecialRecipeBuilder.special(TFRecipes.ESSENCE_REPAIR_RECIPE.get()).save(consumer, TwilightForestMod.prefix("essence_repair_recipe").toString());
+		SpecialRecipeBuilder.special(TFRecipes.TRAVELLERS_VEST_GLOVES_MERGE_RECIPE.get()).save(consumer, TwilightForestMod.prefix("travellers_vest_gloves_merge_recipe").toString());
 
 		NoSmithingTemplateRecipeBuilder
 				.noTemplate(Ingredient.of(ItemTagGenerator.EMPERORS_CLOTH_APPLICABLE), Ingredient.of(TFItems.EMPERORS_CLOTH.get()), RecipeCategory.MISC)

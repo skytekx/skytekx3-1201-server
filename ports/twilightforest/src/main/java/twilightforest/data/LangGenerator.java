@@ -103,6 +103,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addAdvancement("root", "Twilight Forest", "Enter the mysterious, magical woodlands: the Twilight Forest");
 		this.addAdvancement("kill_cicada", "Shut", "Kill a Cicada");
 		this.addAdvancement("uncraft_uncrafting_table", "A Step too Far", "Uncraft an Uncrafting Table");
+		this.addAdvancement("craft_travellers_gear", "Around the Forest in 80 Days", "Craft a piece of traveller's gear");
+		this.addAdvancement("modify_travellers_gear", "Apparel Oft Proclaims the Man", "Add a modifier to a piece of traveller's gear");
 		this.addAdvancement("hedge", "Bug Stomper", "Defeat a spider in a Hedge Maze");
 		this.addAdvancement("hill1", "The Boots Are Mine!", "Defeat a %s in a Small Hollow Hill");
 		this.addAdvancement("hill2", "What Was That Noise?", "Defeat a %s in a Medium Hollow Hill");
@@ -609,6 +611,17 @@ public class LangGenerator extends TFLangProvider {
 		this.add("item.twilightforest.fiery_sword.desc", "Burns targets");
 		this.addItem(TFItems.FIERY_PICKAXE, "Fiery Pickaxe");
 		this.add("item.twilightforest.fiery_pickaxe.desc", "Auto-smelting");
+
+		this.addItem(TFItems.TRAVELLERS_GOGGLES, "Traveller's Goggles");
+		this.addItem(TFItems.TRAVELLERS_VEST, "Traveller's Vest");
+		this.addItem(TFItems.TRAVELLERS_GLOVES, "Traveller's Gloves");
+		this.add("item.twilightforest.travellers_gloves.desc", "Cosmetic");
+		this.addItem(TFItems.TRAVELLERS_BELT, "Traveller's Belt");
+		this.addItem(TFItems.TRAVELLERS_WINGS, "Traveller's Wings");
+		this.addItem(TFItems.TRAVELLERS_BOOTS, "Traveller's Boots");
+		this.add("travellers_gear.broken", " (Broken)");
+		this.add("travellers_gear.modifier.empty", "Empty");
+		this.add("key.twilightforest.categories.travellers_gear", "Twilight Forest (Traveller's Gear)");
 
 		this.addItem(TFItems.ARCTIC_FUR, "Arctic Fur");
 		this.addItem(TFItems.ARCTIC_HELMET, "Arctic Hood");

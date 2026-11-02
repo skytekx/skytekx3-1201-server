@@ -17,6 +17,8 @@ Researched automatically across all 40 bundled mods. **Verify the blockers yours
 
 ## BLOCKERS (resolve before publishing)
 
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds (the TF fork, Spiced Twilight and Alternative Twilight (Remastered): their permission files, the NOTICEs and mods.toml credits baked into the jars) point at `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...`, which does not resolve until then. Do not change those URLs: they are inside the SHA-pinned jars.
+
 These cannot legally be bundled in a public modpack as-is:
 
 - **The Aether: Genesis** (`aether_genesis-1.20.1-0.0.1-neoforge.jar`) — LGPL-3.0 (code) / All Rights Reserved (assets). Version 0.0.1 is a bleeding-edge CircleCI build from the 1.20.1-develop branch — there are no official GitHub releases. The mod is not on Modrinth or CurseForge, so CDN-linking is not an option. The Aether Team must be contacted via Discord (Oz#1986 on the Aether Community Discord) for modpack redistribution permission.

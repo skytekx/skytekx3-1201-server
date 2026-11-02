@@ -54,7 +54,7 @@ public class MasonJarBlockEntity extends JarBlockEntity {
 	private static final Map<Level, Long2IntMap> CONTENT_LIGHT = new WeakHashMap<>();
 
 	protected final MasonJarItemStackHandler item;
-	private final LazyOptional<IItemHandler> itemCapability;
+	private LazyOptional<IItemHandler> itemCapability;
 	protected int itemRotation = 0;
 
 	public MasonJarBlockEntity(BlockPos pos, BlockState state) {
@@ -207,6 +207,12 @@ public class MasonJarBlockEntity extends JarBlockEntity {
 	public void invalidateCaps() {
 		super.invalidateCaps();
 		this.itemCapability.invalidate();
+	}
+
+	@Override
+	public void reviveCaps() {
+		super.reviveCaps();
+		this.itemCapability = LazyOptional.of(() -> this.item);
 	}
 
 	/**

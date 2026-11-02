@@ -3,7 +3,7 @@ type: Reference
 title: Mod set
 description: How the mod list is composed — Modrinth index (source of truth) + local-mods overrides.
 tags: [modpack, mods, modrinth]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Mod set
@@ -41,6 +41,11 @@ attribution for each one. [`modrinth-permissions/`](../../modrinth-permissions/R
 
 The TF addons Twilight Construct, Twilight Tweaks and The King of Twilight are bundled this way. The
 other TF addons are index entries; see the [TF backport](twilightforest-backport.md#in-the-pack-2026-11-01).
+
+A backport built from source (a 1.21.1-only mod ported to 1.20.1) cannot be byte-identical to an upstream
+file. Keep its source in `ports/<mod>/` with the upstream LICENSE and a NOTICE (upstream URL, commit,
+changes), make the jar build reproducible, and record the build command and SHA-1 in its
+`modrinth-permissions/` file instead. Example: Twilight Mobs Loots (`ports/twilight-mobs-loots/`).
 
 ## ⚠️ Known gap
 A few non-Modrinth jars are referenced but not yet bundled in `local-mods/` nor given a manual index

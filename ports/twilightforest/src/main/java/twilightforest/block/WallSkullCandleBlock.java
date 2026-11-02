@@ -93,8 +93,10 @@ public class WallSkullCandleBlock extends AbstractSkullCandleBlock {
 	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
 		Direction dir = state.getValue(FACING);
 		if (state.getValue(LIGHTING) != Lighting.NONE) {
-			this.getParticleOffsets(state, level, pos).forEach((offset) ->
-					addParticlesAndSound(level, offset.add(pos.getX() - (float) dir.getStepX() * 0.25F, pos.getY(), pos.getZ() - (float) dir.getStepZ() * 0.25F), rand, state.getValue(LIGHTING) == Lighting.OMINOUS));
+			this.getParticleOffsets(state, level, pos).forEach(offset -> {
+				Vec3 trueOffset = offset.add(pos.getX() - (float) dir.getStepX() * 0.25F, pos.getY(), pos.getZ() - (float) dir.getStepZ() * 0.25F);
+				this.addParticlesAndSound(level, trueOffset.x(), trueOffset.y(), trueOffset.z(), rand, state.getValue(LIGHTING));
+			});
 		}
 	}
 

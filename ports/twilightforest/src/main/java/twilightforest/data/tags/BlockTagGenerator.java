@@ -816,6 +816,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.CRACKED_NAGASTONE_STAIRS_LEFT.get(),
 				TFBlocks.CRACKED_NAGASTONE_STAIRS_RIGHT.get(),
 				TFBlocks.IRON_LADDER.get(),
+				TFBlocks.CANDELABRA.get(),
 				TFBlocks.TWISTED_STONE.get(),
 				TFBlocks.TWISTED_STONE_PILLAR.get(),
 				TFBlocks.SKULL_CHEST.get(),

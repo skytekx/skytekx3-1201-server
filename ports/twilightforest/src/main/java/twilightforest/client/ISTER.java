@@ -43,12 +43,14 @@ import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.AbstractSkullCandleBlock;
 import twilightforest.block.AbstractTrophyBlock;
+import twilightforest.block.CandelabraBlock;
 import twilightforest.block.JarBlock;
 import twilightforest.block.KeepsakeCasketBlock;
 import twilightforest.block.MasonJarBlock;
 import twilightforest.block.SkullChestBlock;
 import twilightforest.block.TFChestBlock;
 import twilightforest.block.TFTrappedChestBlock;
+import twilightforest.block.entity.CandelabraBlockEntity;
 import twilightforest.block.entity.JarBlockEntity;
 import twilightforest.block.entity.KeepsakeCasketBlockEntity;
 import twilightforest.block.entity.MasonJarBlockEntity;
@@ -62,6 +64,7 @@ import twilightforest.client.renderer.tileentity.JarRenderer;
 import twilightforest.client.renderer.tileentity.SkullCandleTileEntityRenderer;
 import twilightforest.client.renderer.tileentity.SkullChestRenderer;
 import twilightforest.client.renderer.tileentity.TrophyTileEntityRenderer;
+import twilightforest.components.item.CandelabraData;
 import twilightforest.enums.BossVariant;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItemDisplayContexts;
@@ -84,6 +87,7 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 
 	private final SkullChestBlockEntity skullChest = new SkullChestBlockEntity(BlockPos.ZERO, TFBlocks.SKULL_CHEST.get().defaultBlockState());
 	private final KeepsakeCasketBlockEntity keepsakeCasket = new KeepsakeCasketBlockEntity(BlockPos.ZERO, TFBlocks.KEEPSAKE_CASKET.get().defaultBlockState());
+	private final CandelabraBlockEntity candelabra = new CandelabraBlockEntity(BlockPos.ZERO, TFBlocks.CANDELABRA.get().defaultBlockState());
 	private final Map<Block, TwilightChestEntity> chestEntities = Util.make(new HashMap<>(), map -> {
 		makeInstance(map, TFBlocks.TWILIGHT_OAK_CHEST);
 		makeInstance(map, TFBlocks.CANOPY_CHEST);
@@ -210,6 +214,14 @@ public class ISTER extends BlockEntityWithoutLevelRenderer {
 							AbstractSkullCandleBlock.candleColorToCandle(AbstractSkullCandleBlock.CandleColors.colorFromInt(tag.getInt("CandleColor")))
 									.defaultBlockState().setValue(CandleBlock.CANDLES, tag.getInt("CandleAmount")), ms, buffers, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());
 				}
+			} else if (block instanceof CandelabraBlock) {
+				//we need to render the candelabra block here since we have to use builtin/entity on the item.
+				//This doesnt allow us to set the item parent to the candelabra block, and without it, only the candles render, if any
+				Minecraft minecraft = Minecraft.getInstance();
+				minecraft.getBlockRenderer().renderSingleBlock(TFBlocks.CANDELABRA.get().defaultBlockState(), ms, buffers, light, overlay);
+				CandelabraBlockEntity copy = this.candelabra;
+				copy.setData(CandelabraData.fromItem(stack));
+				minecraft.getBlockEntityRenderDispatcher().renderItem(copy, ms, buffers, light, overlay);
 			} else if (block instanceof JarBlock jarBlock) {
 				Minecraft minecraft = Minecraft.getInstance();
 				JarRenderer.renderJarModel(block.defaultBlockState(), minecraft.getBlockRenderer(), ms, buffers, light, overlay);

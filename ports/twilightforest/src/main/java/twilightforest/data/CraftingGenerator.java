@@ -140,6 +140,13 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_wrought_iron", has(ItemTagGenerator.WROUGHT_IRON_INGOTS))
 				.save(consumer);
 
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFBlocks.CANDELABRA.get(), 2)
+				.pattern("###")
+				.pattern(" # ")
+				.define('#', ItemTagGenerator.WROUGHT_IRON_INGOTS)
+				.unlockedBy("has_wrought_iron", has(ItemTagGenerator.WROUGHT_IRON_INGOTS))
+				.save(consumer);
+
 		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TFItems.MASON_JAR.get(), 4)
 				.pattern("GLG")
 				.pattern("G G")

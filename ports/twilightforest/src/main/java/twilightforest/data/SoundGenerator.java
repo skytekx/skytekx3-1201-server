@@ -310,6 +310,8 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateExistingSoundWithSubtitle(TFSounds.BUILDER_OFF, SoundEvents.COMPARATOR_CLICK);
 		this.generateExistingSoundWithSubtitle(TFSounds.BUILDER_ON, SoundEvents.COMPARATOR_CLICK);
 		this.generateExistingSoundWithSubtitle(TFSounds.BUILDER_REPLACE, SoundEvents.ITEM_PICKUP);
+		this.generateNewSoundWithSubtitle(TFSounds.CANDELABRA_LIGHT, "random/candelabra/light", 1);
+		this.generateNewSoundWithSubtitle(TFSounds.CANDELABRA_OMINOUS, "random/candelabra/ominous", 1);
 		this.generateNewSoundWithSubtitle(TFSounds.CASKET_CLOSE, "random/casket/close", 1);
 		this.generateExistingSoundWithSubtitle(TFSounds.CASKET_LOCKED, SoundEvents.CHEST_LOCKED);
 		this.generateNewSoundWithSubtitle(TFSounds.CASKET_OPEN, "random/casket/open", 1);

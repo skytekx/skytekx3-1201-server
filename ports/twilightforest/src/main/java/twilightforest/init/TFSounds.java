@@ -47,6 +47,8 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> BUILDER_OFF = createEvent("block.twilightforest.builder.off");
 	public static final RegistryObject<SoundEvent> BUILDER_ON = createEvent("block.twilightforest.builder.on");
 	public static final RegistryObject<SoundEvent> BUILDER_REPLACE = createEvent("block.twilightforest.builder.replace");
+	public static final RegistryObject<SoundEvent> CANDELABRA_LIGHT = createEvent("block.twilightforest.candelabra.light");
+	public static final RegistryObject<SoundEvent> CANDELABRA_OMINOUS = createEvent("block.twilightforest.candelabra.ominous");
 	public static final RegistryObject<SoundEvent> CARMINITE_BROODLING_AMBIENT = createEvent("entity.twilightforest.carminite_broodling.ambient");
 	public static final RegistryObject<SoundEvent> CARMINITE_BROODLING_DEATH = createEvent("entity.twilightforest.carminite_broodling.death");
 	public static final RegistryObject<SoundEvent> CARMINITE_BROODLING_HURT = createEvent("entity.twilightforest.carminite_broodling.hurt");

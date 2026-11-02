@@ -6,6 +6,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.PaintingVariants;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -173,6 +175,89 @@ public class CustomTagGenerator {
 		@Override
 		public String getName() {
 			return "Twilight Forest DimensionType Tags";
+		}
+	}
+
+	// TF 4.8's Lich Tower paintings. 4.8 also lists the paintings that Minecraft 1.21 added (baroque, meditative, prairie_ride, unpacked,
+	// backyard, bouquet, cavebird, changing, cotan, endboss, fern, finding, lowmist, orb, owlemons, passage, pond, sunflowers and tides),
+	// which do not exist on 1.20.1 and would fail the tag
+	public static class PaintingVariantTagGenerator extends TagsProvider<PaintingVariant> {
+		public static final TagKey<PaintingVariant> LICH_TOWER_PAINTINGS = TagKey.create(Registries.PAINTING_VARIANT, TwilightForestMod.prefix("tower_paintings"));
+		public static final TagKey<PaintingVariant> LICH_BOSS_PAINTINGS = TagKey.create(Registries.PAINTING_VARIANT, TwilightForestMod.prefix("tower_boss_paintings"));
+
+		public PaintingVariantTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper helper) {
+			super(output, Registries.PAINTING_VARIANT, provider, TwilightForestMod.ID, helper);
+		}
+
+		@Override
+		protected void addTags(HolderLookup.Provider provider) {
+			// Every single painting except for Humble
+			tag(LICH_TOWER_PAINTINGS).add(
+				PaintingVariants.KEBAB,
+				PaintingVariants.AZTEC,
+				PaintingVariants.ALBAN,
+				PaintingVariants.AZTEC2,
+				PaintingVariants.BOMB,
+				PaintingVariants.PLANT,
+				PaintingVariants.WASTELAND,
+				PaintingVariants.POOL,
+				PaintingVariants.COURBET,
+				PaintingVariants.SEA,
+				PaintingVariants.SUNSET,
+				PaintingVariants.CREEBET,
+				PaintingVariants.WANDERER,
+				PaintingVariants.GRAHAM,
+				PaintingVariants.MATCH,
+				PaintingVariants.BUST,
+				PaintingVariants.STAGE,
+				PaintingVariants.VOID,
+				PaintingVariants.SKULL_AND_ROSES,
+				PaintingVariants.WITHER,
+				PaintingVariants.FIGHTERS,
+				PaintingVariants.POINTER,
+				PaintingVariants.PIGSCENE,
+				PaintingVariants.BURNING_SKULL,
+				PaintingVariants.SKELETON,
+				PaintingVariants.DONKEY_KONG,
+				PaintingVariants.EARTH,
+				PaintingVariants.WIND,
+				PaintingVariants.WATER,
+				PaintingVariants.FIRE
+			);
+			// Every single painting except for Humble, Unpacked, and the 4 elements
+			tag(LICH_BOSS_PAINTINGS).add(
+				PaintingVariants.KEBAB,
+				PaintingVariants.AZTEC,
+				PaintingVariants.ALBAN,
+				PaintingVariants.AZTEC2,
+				PaintingVariants.BOMB,
+				PaintingVariants.PLANT,
+				PaintingVariants.WASTELAND,
+				PaintingVariants.POOL,
+				PaintingVariants.COURBET,
+				PaintingVariants.SEA,
+				PaintingVariants.SUNSET,
+				PaintingVariants.CREEBET,
+				PaintingVariants.WANDERER,
+				PaintingVariants.GRAHAM,
+				PaintingVariants.MATCH,
+				PaintingVariants.BUST,
+				PaintingVariants.STAGE,
+				PaintingVariants.VOID,
+				PaintingVariants.SKULL_AND_ROSES,
+				PaintingVariants.WITHER,
+				PaintingVariants.FIGHTERS,
+				PaintingVariants.POINTER,
+				PaintingVariants.PIGSCENE,
+				PaintingVariants.BURNING_SKULL,
+				PaintingVariants.SKELETON,
+				PaintingVariants.DONKEY_KONG
+			);
+		}
+
+		@Override
+		public String getName() {
+			return "Twilight Forest PaintingVariant Tags";
 		}
 	}
 }

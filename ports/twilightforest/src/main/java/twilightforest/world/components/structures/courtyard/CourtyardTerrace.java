@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Rotation;
@@ -63,14 +62,10 @@ public class CourtyardTerrace extends TwilightTemplateStructurePiece implements 
 	@Override
 	public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator chunkGen, RandomSource random, BoundingBox chunkBounds, ChunkPos chunkPos, BlockPos structureBottomCenter) {
 		if (this.legacyDugIn) {
-			this.placePieceAdjusted(level, structureManager, chunkGen, random, chunkBounds, chunkPos, structureBottomCenter, LEGACY_DIG_IN);
+			this.placePieceAdjusted(level, chunkGen, random, chunkBounds, structureBottomCenter, LEGACY_DIG_IN);
 		} else {
 			super.postProcess(level, structureManager, chunkGen, random, chunkBounds, chunkPos, structureBottomCenter);
 		}
-	}
-
-	@Override
-	protected void handleDataMarker(String label, BlockPos pos, ServerLevelAccessor levelAccessor, RandomSource random, BoundingBox boundingBox) {
 	}
 
 	@Override

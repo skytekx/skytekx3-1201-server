@@ -48,6 +48,7 @@ import twilightforest.util.Vec2i;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
 import twilightforest.world.components.chunkgenerators.warp.*;
 import twilightforest.world.components.structures.HedgeMazeComponent;
+import twilightforest.world.components.structures.SpawnIndexProvider;
 import twilightforest.world.components.structures.TFStructureComponent;
 import twilightforest.world.components.structures.UtilityPiece;
 import twilightforest.world.components.structures.courtyard.CourtyardMain;
@@ -56,6 +57,7 @@ import twilightforest.world.components.structures.start.TFStructureStart;
 import twilightforest.world.components.structures.trollcave.CloudComponent;
 import twilightforest.world.components.structures.type.HedgeMazeStructure;
 import twilightforest.world.components.structures.type.HollowHillStructure;
+import twilightforest.world.components.structures.type.LichTowerStructure;
 import twilightforest.world.components.structures.type.NagaCourtyardStructure;
 import twilightforest.world.components.structures.util.ControlledSpawns;
 
@@ -780,6 +782,8 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	}
 
 	private static int getSpawnListIndexAt(StructureStart start, BlockPos pos) {
+		// The 4.8 Lich Tower picks its spawn lists like TF 4.8 does for every structure: only SpawnIndexProvider pieces count
+		boolean lichTower = start.getStructure() instanceof LichTowerStructure;
 		int highestFoundIndex = -1;
 		for (StructurePiece component : start.getPieces()) {
 			// Utility pieces build nothing (for example the one under an Aurora Palace wing base) and the troll cave's cloud only
@@ -787,10 +791,15 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 			if (component instanceof UtilityPiece || component instanceof CloudComponent)
 				continue;
 			if (component.getBoundingBox().isInside(pos)) {
-				if (component instanceof TFStructureComponent tfComponent) {
-					if (tfComponent.spawnListIndex > highestFoundIndex)
-						highestFoundIndex = tfComponent.spawnListIndex;
-				} else
+				if (component instanceof SpawnIndexProvider indexProvider) {
+					if (indexProvider.getSpawnIndex() > highestFoundIndex)
+						highestFoundIndex = indexProvider.getSpawnIndex();
+				} else if (component instanceof TFStructureComponent tfComponent) {
+					// A Lich Tower that TF 4.3 generated is made of these; its monster list moved to another label
+					int spawnListIndex = lichTower ? LichTowerStructure.remapLegacySpawnIndex(tfComponent.spawnListIndex) : tfComponent.spawnListIndex;
+					if (spawnListIndex > highestFoundIndex)
+						highestFoundIndex = spawnListIndex;
+				} else if (!lichTower)
 					return 0;
 			}
 		}

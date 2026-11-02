@@ -93,12 +93,29 @@ public class TFStructurePieceTypes {
     public static final RegistryObject<StructurePieceType> TFLTRStO = registerPieceType("TFLTRStO", TowerRoofStairsOverhangComponent::new);
     public static final RegistryObject<StructurePieceType> TFLTWin = registerPieceType("TFLTWin", TowerWingComponent::new);
 
-    // New Lich Tower
-    public static final RegistryObject<StructurePieceType> TOWER_FOYER = registerPieceType("TFLT" + "TFoy", TowerFoyer::new);
-    public static final RegistryObject<StructurePieceType> TOWER_BOSS_ROOM = registerPieceType("TFLT" + "TBoss", BossRoom::new);
-    public static final RegistryObject<StructurePieceType> CENTRAL_TOWER = registerPieceType("TFLT" + "CTSeg", CentralTowerSegment::new);
-    public static final RegistryObject<StructurePieceType> CENTRAL_TO_SIDE_TOWER = registerPieceType("TFLT" + "C2ST", CentralTowerAttachment::new);
-    public static final RegistryObject<StructurePieceType> SIDE_TOWER_ROOM = registerPieceType("TFLT" + "STRm", SideTowerRoom::new);
+    // Lich Tower (TF 4.8). TFLTTFoy, TFLTTBoss and TFLTCTSeg were the ids of TF 4.3's unfinished revamp stubs, which 4.3 never generated
+    public static final RegistryObject<StructurePieceType> LICH_TOWER_FOYER = registerPieceType("TFLT" + "TFoy", LichTowerFoyer::new);
+    public static final RegistryObject<StructurePieceType> LICH_TOWER_BASE = registerPieceType("TFLT" + "CTBase", LichTowerBase::new);
+    public static final RegistryObject<StructurePieceType> LICH_TOWER_BASE_TRIM = registerPieceType("TFLT" + "CTTrim", LichTowerBaseTrim::new);
+    public static final RegistryObject<StructurePieceType> LICH_TOWER_SEGMENT = registerPieceType("TFLT" + "CTSeg", LichTowerSegment::new);
+    public static final RegistryObject<StructurePieceType> LICH_SPAWNER_BRIDGE = registerPieceType("TFLT" + "MobBridge", LichTowerSpawnerBridge::new);
+    public static final RegistryObject<StructurePieceType> LICH_WING_BRIDGE = registerPieceType("TFLT" + "Bridge", LichTowerWingBridge::new);
+    public static final RegistryObject<StructurePieceType> LICH_WING_ROOF = registerPieceType("TFLT" + "TRoof", LichTowerWingRoof::new);
+    public static final RegistryObject<StructurePieceType> LICH_WING_BEARD = registerPieceType("TFLT" + "TBeard", LichTowerWingBeard::new);
+    public static final RegistryObject<StructurePieceType> LICH_WING_ROOM = registerPieceType("TFLT" + "TRoom", LichTowerWingRoom::new);
+    public static final RegistryObject<StructurePieceType> LICH_TOWER_DECOR = registerPieceType("TFLT" + "TDecor", LichTowerRoomDecor::new);
+    public static final RegistryObject<StructurePieceType> LICH_MAGIC_GALLERY = registerPieceType("TFLT" + "TGallery", LichTowerMagicGallery::new);
+    public static final RegistryObject<StructurePieceType> LICH_FOYER_DECORATION = registerPieceType("TFLT" + "TFoyD", LichTowerFoyerDecor::new);
+    public static final RegistryObject<StructurePieceType> LICH_BOSS_ROOM = registerPieceType("TFLT" + "TBoss", LichBossRoom::new);
+    public static final RegistryObject<StructurePieceType> LICH_BOSS_ROOF = registerPieceType("TFLT" + "TBossRoof", LichBossRoof::new);
+    public static final RegistryObject<StructurePieceType> LICH_PERIMETER_FENCE = registerPieceType("TFLT" + "Fence", LichPerimeterFence::new);
+    public static final RegistryObject<StructurePieceType> LICH_YARD_PATH = registerPieceType("TFLT" + "Path", LichYardBox::new);
+    public static final RegistryObject<StructurePieceType> LICH_YARD_GRAVE = registerPieceType("TFLT" + "Grave", LichYardGrave::new);
+    public static final RegistryObject<StructurePieceType> LICH_YARD_LIGHTS = registerPieceType("TFLT" + "Light", LichYardLights::new);
+    // The other two ids of TF 4.3's revamp stubs. 4.8 dropped them; they stay registered so a structure start that names them still
+    // loads, as a piece that places nothing
+    public static final RegistryObject<StructurePieceType> LEGACY_CENTRAL_TO_SIDE_TOWER = registerPieceType("TFLT" + "C2ST", UtilityPiece::new);
+    public static final RegistryObject<StructurePieceType> LEGACY_SIDE_TOWER_ROOM = registerPieceType("TFLT" + "STRm", UtilityPiece::new);
 
     // Labyrinth
     //public static final RegistryObject<StructurePieceType> TFLr = registerPieceType("TFLr", StructureStartLabyrinth::new);

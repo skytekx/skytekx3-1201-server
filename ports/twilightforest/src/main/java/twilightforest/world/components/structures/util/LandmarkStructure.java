@@ -7,9 +7,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.world.components.structures.TFStructureComponentTemplate;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 // Landmark structure without progression lock; Hollow Hills/Hedge Maze/Naga Courtyard/Quest Grove
@@ -28,16 +30,24 @@ public abstract class LandmarkStructure extends Structure implements DecorationC
         this.decorationConfig = decorationConfig;
     }
 
-    private static Structure.GenerationStub getStructurePieceGenerationStubFunction(StructurePiece startingPiece, GenerationContext context, int x, int y, int z) {
+    private Structure.GenerationStub getStructurePieceGenerationStubFunction(StructurePiece startingPiece, GenerationContext context, int x, int y, int z) {
         return new GenerationStub(new BlockPos(x, y, z), structurePiecesBuilder -> {
-            structurePiecesBuilder.addPiece(startingPiece);
-            startingPiece.addChildren(startingPiece, structurePiecesBuilder, context.random());
+            this.generateFromStartingPiece(startingPiece, context, structurePiecesBuilder);
+
+            // Pieces place in list order, so later pieces overwrite the blocks of earlier ones (TF 4.8 Lich Tower).
+            // List.sort is stable: pieces that are not SortablePiece keep their order, so the other structures generate as before
+            structurePiecesBuilder.pieces.sort(Comparator.comparing(piece -> piece instanceof SortablePiece sortable ? sortable.getSortKey() : 0));
 
             structurePiecesBuilder.pieces.stream()
                     .filter(TFStructureComponentTemplate.class::isInstance)
                     .map(TFStructureComponentTemplate.class::cast)
                     .forEach(t -> t.LAZY_TEMPLATE_LOADER.run());
         });
+    }
+
+    protected void generateFromStartingPiece(StructurePiece startingPiece, GenerationContext context, StructurePiecesBuilder structurePiecesBuilder) {
+        structurePiecesBuilder.addPiece(startingPiece);
+        startingPiece.addChildren(startingPiece, structurePiecesBuilder, context.random());
     }
 
     @Override

@@ -8,10 +8,8 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -83,8 +81,6 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 
 	public TwilightJigsawPiece(StructurePieceType structurePieceType, CompoundTag compoundTag, StructurePieceSerializationContext ctx, StructurePlaceSettings placeSettings) {
 		super(structurePieceType, compoundTag, ctx, placeSettings);
-		// Keeps template block states as saved (TF 4.8 "Fix ladder generation", 8fe9054bf, which sets this on every template piece)
-		this.placeSettings.setKnownShape(true);
 
 		this.sourceJigsaw = readSourceFromNBT(compoundTag);
 		this.spareJigsaws = readConnectionsFromNBT(compoundTag);
@@ -108,7 +104,6 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 
 	public TwilightJigsawPiece(StructurePieceType type, int genDepth, StructureTemplateManager structureManager, ResourceLocation templateLocation, JigsawPlaceContext jigsawContext) {
 		super(type, genDepth, structureManager, templateLocation, jigsawContext.placementSettings(), jigsawContext.templatePos());
-		this.placeSettings.setKnownShape(true);
 
 		this.sourceJigsaw = jigsawContext.seedJigsaw();
 		this.spareJigsaws = Collections.unmodifiableList(jigsawContext.spareJigsaws());
@@ -123,7 +118,6 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 
 	public TwilightJigsawPiece(StructurePieceType type, int genDepth, StructureTemplateManager structureManager, ResourceLocation templateLocation, JigsawPlaceContext jigsawContext, TemplatePoolInstance templatePoolInstance, StructureProcessorList serializedProcessors, Map<String, String> poolAliases) {
 		super(type, genDepth, structureManager, templateLocation, jigsawContext.placementSettings(), jigsawContext.templatePos());
-		this.placeSettings.setKnownShape(true);
 
 		this.sourceJigsaw = jigsawContext.seedJigsaw();
 		this.spareJigsaws = Collections.unmodifiableList(jigsawContext.spareJigsaws());
@@ -238,7 +232,7 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 	@Override
 	public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator chunkGen, RandomSource random, BoundingBox chunkBounds, ChunkPos chunkPos, BlockPos structureCenterPos) {
 		// JigsawReplacementProcessor already turns the jigsaws into their final states, inside the chunk bounds
-		this.placeTemplateWithoutJigsaws(level, chunkGen, random, chunkBounds, structureCenterPos, Block.UPDATE_CLIENTS);
+		super.postProcess(level, structureManager, chunkGen, random, chunkBounds, chunkPos, structureCenterPos);
 
 		ChunkAccess chunkAt = level.getChunk(chunkPos.getWorldPosition());
 		for (StructureTemplate.StructureBlockInfo blockInfo : this.template.filterBlocks(this.templatePosition, this.placeSettings, Blocks.JIGSAW)) {
@@ -247,11 +241,6 @@ public class TwilightJigsawPiece extends TwilightTemplateStructurePiece implemen
 				chunkAt.markPosForPostprocessing(infoPos);
 			}
 		}
-	}
-
-	// Data markers of jigsaw pieces arrive through the extended handleDataMarker(), as in TF 4.8 where this signature is final and empty
-	@Override
-	protected final void handleDataMarker(String label, BlockPos pos, ServerLevelAccessor level, RandomSource random, BoundingBox chunkBounds) {
 	}
 
 	// Runs the template pool entry's marker handlers in order, until one of them handles the marker

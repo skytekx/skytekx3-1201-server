@@ -39,6 +39,14 @@ public class TFLootTables {
 	public static final TFLootTables LABYRINTH_DEAD_END = new TFLootTables("labyrinth_dead_end");
 	public static final TFLootTables TOWER_ROOM = new TFLootTables("tower_room");
 	public static final TFLootTables TOWER_LIBRARY = new TFLootTables("tower_library");
+	// TF 4.8 Lich Tower tables; the templates also name the potion, enchanting, grave and casket tables directly in their chest NBT
+	public static final TFLootTables TOWER_POTION = new TFLootTables("tower_potion");
+	public static final TFLootTables TOWER_GRAVE_LOWER = new TFLootTables("tower_grave_lower");
+	public static final TFLootTables TOWER_GRAVE_UPPER = new TFLootTables("tower_grave_upper");
+	public static final TFLootTables TOWER_ENCHANTING = new TFLootTables("tower_enchanting");
+	public static final TFLootTables TOWER_JARS = new TFLootTables("tower_jars");
+	public static final TFLootTables TOWER_FOYER = new TFLootTables("tower_foyer");
+	public static final TFLootTables CASKET_LOOT = new TFLootTables("casket_loot");
 	public static final TFLootTables BASEMENT = new TFLootTables("basement");
 	public static final TFLootTables HUT_JUNK = new TFLootTables("hut_junk");
 	public static final TFLootTables FOUNDATION_BASEMENT = new TFLootTables("foundation_basement");

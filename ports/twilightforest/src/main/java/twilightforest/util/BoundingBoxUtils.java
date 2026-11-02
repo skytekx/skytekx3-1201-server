@@ -1,6 +1,7 @@
 package twilightforest.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -98,5 +99,88 @@ public class BoundingBoxUtils {
 	// Whether offset lies within a cube of the given radius (Chebyshev distance) around origin
 	public static boolean isPosWithinBox(BlockPos origin, BlockPos.MutableBlockPos offset, int range) {
 		return range >= Math.max(Math.abs(offset.getY() - origin.getY()), Math.max(Math.abs(offset.getX() - origin.getX()), Math.abs(offset.getZ() - origin.getZ())));
+	}
+
+	// The slab of the given length directly outside the box's face in that direction (TF 4.8 Lich Tower)
+	public static BoundingBox extrusionFrom(BoundingBox box, Direction direction, int length) {
+		return extrusionFrom(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ(), direction, length);
+	}
+
+	public static BoundingBox extrusionFrom(int minX, int minY, int minZ, int maxX, int maxY, int maxZ, Direction direction, int length) {
+		return switch (direction) {
+			case WEST -> new BoundingBox(minX - length, minY, minZ, minX - 1, maxY, maxZ);
+			case EAST -> new BoundingBox(maxX + 1, minY, minZ, maxX + length, maxY, maxZ);
+			case DOWN -> new BoundingBox(minX, minY - length, minZ, maxX, minY - 1, maxZ);
+			case UP -> new BoundingBox(minX, maxY + 1, minZ, maxX, maxY + length, maxZ);
+			case NORTH -> new BoundingBox(minX, minY, minZ - length, maxX, maxY, minZ - 1);
+			case SOUTH -> new BoundingBox(minX, minY, maxZ + 1, maxX, maxY, maxZ + length);
+		};
+	}
+
+	public static int getSpan(BoundingBox box, Direction.Axis axis) {
+		return switch (axis) {
+			case X -> box.getXSpan();
+			case Y -> box.getYSpan();
+			case Z -> box.getZSpan();
+		};
+	}
+
+	// Pulls the box's face in that direction inwards by length, unless the box is not longer than that along the axis
+	public static BoundingBox safeRetract(BoundingBox box, Direction direction, int length) {
+		int span = getSpan(box, direction.getAxis());
+
+		if (span <= length) return box;
+
+		return switch (direction) {
+			case WEST -> cloneWithAdjustments(box, length, 0, 0, 0, 0, 0);
+			case EAST -> cloneWithAdjustments(box, 0, 0, 0, -length, 0, 0);
+			case DOWN -> cloneWithAdjustments(box, 0, length, 0, 0, 0, 0);
+			case UP -> cloneWithAdjustments(box, 0, 0, 0, 0, -length, 0);
+			case NORTH -> cloneWithAdjustments(box, 0, 0, length, 0, 0, 0);
+			case SOUTH -> cloneWithAdjustments(box, 0, 0, 0, 0, 0, -length);
+		};
+	}
+
+	public static BlockPos bottomCenterOf(BoundingBox box) {
+		return new BlockPos(
+			box.minX() + (box.maxX() - box.minX() + 1) / 2, box.minY(), box.minZ() + (box.maxZ() - box.minZ() + 1) / 2
+		);
+	}
+
+	public static int horizontalManhattanDistance(BoundingBox box, BlockPos pos) {
+		int xClamped = Mth.clamp(pos.getX(), box.minX(), box.maxX());
+		int zClamped = Mth.clamp(pos.getZ(), box.minZ(), box.maxZ());
+		return Math.abs(xClamped - pos.getX()) + Math.abs(zClamped - pos.getZ());
+	}
+
+	public static BoundingBox wrappedCoordinates(int padding, BlockPos pos1, BlockPos pos2) {
+		int minX = Math.min(pos1.getX(), pos2.getX()) - padding;
+		int minY = Math.min(pos1.getY(), pos2.getY()) - padding;
+		int minZ = Math.min(pos1.getZ(), pos2.getZ()) - padding;
+		int maxX = Math.max(pos1.getX(), pos2.getX()) + padding;
+		int maxY = Math.max(pos1.getY(), pos2.getY()) + padding;
+		int maxZ = Math.max(pos1.getZ(), pos2.getZ()) + padding;
+
+		return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
+	public static BlockPos lerpPosInside(BoundingBox box, Direction.Axis axis, float delta) {
+		BlockPos center = box.getCenter();
+
+		return switch (axis) {
+			case X -> new BlockPos(lerpDiscrete(delta, box.minX(), box.maxX()), center.getY(), center.getZ());
+			case Y -> new BlockPos(center.getX(), lerpDiscrete(delta, box.minY(), box.maxY()), center.getZ());
+			case Z -> new BlockPos(center.getX(), center.getY(), lerpDiscrete(delta, box.minZ(), box.maxZ()));
+		};
+	}
+
+	public static BoundingBox setY(BoundingBox box, int minY, int maxY) {
+		return new BoundingBox(box.minX(), minY, box.minZ(), box.maxX(), maxY, box.maxZ());
+	}
+
+	// Mth.lerpDiscrete() of Minecraft 1.20.5+
+	public static int lerpDiscrete(float delta, int start, int end) {
+		int range = end - start;
+		return start + Mth.floor(delta * (float) (range - 1)) + (delta > 0.0F ? 1 : 0);
 	}
 }

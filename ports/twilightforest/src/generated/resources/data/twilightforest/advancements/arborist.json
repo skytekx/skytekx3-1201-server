@@ -277,6 +277,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "chiseled_canopy_bookshelf": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "twilightforest:chiseled_canopy_bookshelf"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "cracked_towerwood": {
       "conditions": {
         "items": [
@@ -2729,6 +2741,9 @@
     ],
     [
       "empty_canopy_bookshelf"
+    ],
+    [
+      "chiseled_canopy_bookshelf"
     ],
     [
       "canopy_boat"

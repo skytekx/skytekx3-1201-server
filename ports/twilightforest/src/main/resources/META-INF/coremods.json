@@ -10,6 +10,7 @@
   "shroom": "META-INF/asm/shroom.js",
   "cloud": "META-INF/asm/cloud.js",
   "lead": "META-INF/asm/lead.js",
+  "leashpathing": "META-INF/asm/leashpathing.js",
   "armor": "META-INF/asm/armor.js",
   "snow": "META-INF/asm/snow.js",
   "damagesources": "META-INF/asm/damagesources.js"

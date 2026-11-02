@@ -48,9 +48,10 @@ file. Its license must allow redistributing a modified build. Keep its source in
 upstream license file and a NOTICE (upstream URL, commit, changes), ship both in the jar, make the jar
 build reproducible, and record the upstream commit, the build command and the jar SHA-1 in its
 `modrinth-permissions/` file instead. Bundled this way: Twilight Mobs Loots (`ports/twilight-mobs-loots/`,
-MIT) and Spiced Twilight (`ports/spiced-twilight/`, LGPL-3.0-or-later, so the modified source stays public
-in that directory). Twilight Crossbow (`ports/twilight-crossbow/`) is ported but held back. All three
-need the fork TF jar in `local-mods/` instead of the stock `4.3` jar; see the
+MIT), Spiced Twilight (`ports/spiced-twilight/`, LGPL-3.0-or-later, so the modified source stays public
+in that directory) and Alternative Twilight (Remastered) (`ports/alternative-twilight-remastered/`,
+GPL-3.0-or-later, same rule). Twilight Crossbow (`ports/twilight-crossbow/`) is ported but held back. All
+four need the fork TF jar in `local-mods/` instead of the stock `4.3` jar; see the
 [TF backport](twilightforest-backport.md#backported-1211-only-addons).
 
 ## ⚠️ Known gap

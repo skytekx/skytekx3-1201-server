@@ -15,6 +15,10 @@ import twilightforest.capabilities.CapabilityList;
  * a non-serialized capability ({@link CapabilityList#TRAVELLERS_WINGS}) on every living entity, matching the unsaved
  * attachment. The client-only render bookkeeping (4.8's {@code travellers_wings_anim} attachment) hangs off the same
  * object and is only created when the client first draws the wings.
+ * <p>
+ * The same object also holds the state of the Traveller's Wings modifiers, which 4.8 keeps in a dozen separate
+ * attachments ({@code has_double_jump}, {@code double_jump_validator}, {@code is_gradually_gliding},
+ * {@code last_horizontal_impulse} and so on). None of it has to survive a reload, so none of it is saved.
  */
 public class TravellersWingsAttachment {
 	public static final ResourceLocation ID = TwilightForestMod.prefix("travellers_wings");
@@ -29,6 +33,39 @@ public class TravellersWingsAttachment {
 	public boolean shouldPlaySideStepCooldownSound;
 	@Nullable
 	private TravellersWingsAnimAttachment anim;
+
+	/**
+	 * 4.8 {@code has_double_jump}: whether the entity may still jump in mid-air, refilled on the ground, in liquids and
+	 * on climbable blocks.
+	 */
+	public boolean hasDoubleJump;
+	/**
+	 * Set by a double jump and cleared once the Double Jump refills; while set, falls count
+	 * {@link twilightforest.item.travellers_gear.TravellersGearLogic#DOUBLE_JUMP_SAFE_FALL_DISTANCE} blocks shorter.
+	 * Stands in for 4.8's {@code travellers_gear.boots_double_jump_safe_fall_distance} modifier on 1.21's safe fall
+	 * distance attribute.
+	 */
+	public boolean hasDoubleJumpSafeFallDistance;
+	/**
+	 * 4.8 {@code is_gradually_gliding}: the local player decides it from the sneak key, the server and the other clients
+	 * learn it from {@link twilightforest.network.GradualGlidePacket}.
+	 */
+	public boolean isGraduallyGliding;
+	/**
+	 * 4.8 {@code double_jump_validator} and {@code double_jump_validator_last_check}.
+	 */
+	public final MovementValidator doubleJumpValidator = new MovementValidator();
+	/**
+	 * 4.8 {@code sidestep_validator} and {@code sidestep_validator_last_check}.
+	 */
+	public final MovementValidator sidestepValidator = new MovementValidator();
+
+	// Input bookkeeping of the local player: 4.8 last_jump_key_press_time, last_horizontal_impulse,
+	// last_non_horizontal_impulse and last_horizontal_walking_time (in ticks of the player)
+	public int lastJumpKeyPressTime;
+	public float lastHorizontalImpulse;
+	public float lastNonZeroHorizontalImpulse;
+	public int lastHorizontalWalkingTime;
 
 	public TravellersWingsAnimAttachment getAnim() {
 		if (this.anim == null) this.anim = new TravellersWingsAnimAttachment();
@@ -50,5 +87,14 @@ public class TravellersWingsAttachment {
 		RIDE,
 		DOUBLE_JUMP,
 		SIDESTEP
+	}
+
+	/**
+	 * Counts the rejected double jump or sidestep requests of a player, so the server can pull back and finally kick a
+	 * client that keeps sending them (see {@link twilightforest.item.travellers_gear.TravellersGearLogic#handleDoubleJumpAbuse}).
+	 */
+	public static final class MovementValidator {
+		public int count;
+		public int lastCheck;
 	}
 }

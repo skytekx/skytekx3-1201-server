@@ -61,6 +61,7 @@ public class TFParticleType {
 	});
 	public static final RegistryObject<SimpleParticleType> TWILIGHT_ORB = PARTICLE_TYPES.register("twilight_orb", () -> new SimpleParticleType(false));
 	public static final RegistryObject<SimpleParticleType> ANGRY_LICH = PARTICLE_TYPES.register("angry_lich", () -> new SimpleParticleType(false));
+	public static final RegistryObject<SimpleParticleType> DOUBLE_JUMP = PARTICLE_TYPES.register("double_jump", () -> new SimpleParticleType(true));
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
@@ -92,6 +93,7 @@ public class TFParticleType {
 		event.registerSpriteSet(TFParticleType.MAGIC_EFFECT.get(), MagicEffectParticle.Factory::new);
 		event.registerSpriteSet(TFParticleType.TWILIGHT_ORB.get(), TFParticleType::twilightOrb);
 		event.registerSpriteSet(TFParticleType.ANGRY_LICH.get(), AngryLichParticle.Factory::new);
+		event.registerSpriteSet(TFParticleType.DOUBLE_JUMP.get(), DoubleJumpParticle.Provider::new);
 	}
 
 	// a method reference instead of a lambda: a lambda body would stay in this class on a dedicated server, which has no particle classes

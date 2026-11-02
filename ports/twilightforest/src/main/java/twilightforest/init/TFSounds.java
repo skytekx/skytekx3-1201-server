@@ -84,6 +84,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> DOOR_ACTIVATED = createEvent("block.twilightforest.door.activate");
 	public static final RegistryObject<SoundEvent> DOOR_REAPPEAR = createEvent("block.twilightforest.door.reappear");
 	public static final RegistryObject<SoundEvent> DOOR_VANISH = createEvent("block.twilightforest.door.vanish");
+	public static final RegistryObject<SoundEvent> DOUBLE_JUMP = createEvent("item.twilightforest.travellers_gear.double_jump");
 	public static final RegistryObject<SoundEvent> DRYING_RACK_ADD_ITEM = createEvent("block.twilightforest.drying_rack.add_item");
 	public static final RegistryObject<SoundEvent> DRYING_RACK_REMOVE_ITEM = createEvent("block.twilightforest.drying_rack.remove_item");
 	public static final RegistryObject<SoundEvent> DWARF_RABBIT_AMBIENT = createEvent("entity.twilightforest.dwarf_rabbit.ambient");
@@ -241,6 +242,8 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> SHIELD_BLOCK = createEvent("entity.twilightforest.fortification_shield.block");
 	public static final RegistryObject<SoundEvent> SHIELD_BREAK = createEvent("entity.twilightforest.shield.break");
 	public static final RegistryObject<SoundEvent> SHIELD_EXPIRE = createEvent("entity.twilightforest.fortification_shield.expire");
+	public static final RegistryObject<SoundEvent> SIDE_STEP = createEvent("item.twilightforest.travellers_gear.side_step");
+	public static final RegistryObject<SoundEvent> SIDE_STEP_CHARGED = createEvent("item.twilightforest.travellers_gear.side_step_ready");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_AMBIENT = createEvent("entity.twilightforest.skeleton_druid.ambient");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_DEATH = createEvent("entity.twilightforest.skeleton_druid.death");
 	public static final RegistryObject<SoundEvent> SKELETON_DRUID_HURT = createEvent("entity.twilightforest.skeleton_druid.hurt");

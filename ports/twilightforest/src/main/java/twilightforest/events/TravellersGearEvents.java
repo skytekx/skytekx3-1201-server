@@ -6,33 +6,44 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.TFAdvancements;
+import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
 import twilightforest.item.travellers_gear.modifiers.InsertableTravellersModifier;
 import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
+import twilightforest.network.GradualGlidePacket;
+import twilightforest.network.TFPacketHandler;
 
 import java.util.List;
 
 /**
- * Common events of the Traveller's Gear core and its modifier framework. Backport of the core part of 4.8's
+ * Common events of the Traveller's Gear core, its modifier framework and the modifiers ported so far. Backport of 4.8's
  * TravellersGearEvents (the wing state update, the broken-state attribute switch, the anvil combining block, stripping
- * modifiers at the grindstone, the add_modifier criterion and the modifier cache reload); the listeners that make the
- * single modifiers work come with the travellers-* modifier features.
+ * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Wings
+ * modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
+ * <p>
+ * 1.20.1 has no entity tick post event: 4.8's EntityTickEvent.Post work runs at the start of the next tick instead
+ * (LivingTickEvent), its PlayerTickEvent.Pre work in the START phase of Forge's PlayerTickEvent.
  */
 @Mod.EventBusSubscriber(modid = TwilightForestMod.ID)
 public class TravellersGearEvents {
@@ -44,6 +55,68 @@ public class TravellersGearEvents {
 		// resetWingStateWhenTakenOff keeps the state of the others idle
 		if (!livingEntity.level().isClientSide() && TravellersGearLogic.isWearingWings(livingEntity))
 			TravellersGearLogic.determineWingState(livingEntity);
+	}
+
+	/**
+	 * Refills the Double Jump on the ground, in liquids and on climbable blocks, ends a Gradual Glide whose modifier
+	 * stopped working and plays the Sidestep recharge sound. Backport of 4.8 TravellersGearEvents#tickMovementModifiers.
+	 */
+	@SubscribeEvent
+	public static void tickMovementModifiers(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.START)
+			return;
+		Player player = event.player;
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(player);
+		if (attachment == null)
+			return;
+
+		Boolean hasDoubleJump = null;
+		if (!TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.DOUBLE_JUMP_MODIFIER))
+			hasDoubleJump = false;
+		else if (player.onGround() || TravellersGearLogic.isInLiquid(player) || player.onClimbable())
+			hasDoubleJump = true;
+
+		if (hasDoubleJump != null && hasDoubleJump != attachment.hasDoubleJump) {
+			attachment.hasDoubleJump = hasDoubleJump;
+			attachment.doubleJumpValidator.count = 0;
+			attachment.hasDoubleJumpSafeFallDistance = false;
+		}
+
+		if (!player.level().isClientSide()) {
+			boolean modifierActive = TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.GRADUAL_GLIDE_MODIFIER);
+			if (!modifierActive && attachment.isGraduallyGliding) {
+				attachment.isGraduallyGliding = false;
+				TFPacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new GradualGlidePacket(false, player.getUUID()));
+			}
+		}
+
+		TravellersGearLogic.travellersWingsSidestepCooldownSound(player);
+	}
+
+	/**
+	 * The per-tick modifiers of every living entity wearing Traveller's Gear. Backport of 4.8
+	 * TravellersGearEvents#updateOtherModifiers, which runs after the entity tick; here it runs before the next one.
+	 */
+	@SubscribeEvent
+	public static void updateOtherModifiers(LivingEvent.LivingTickEvent event) {
+		LivingEntity livingEntity = event.getEntity();
+		TravellersGearLogic.travellersWingsGradualGlide(livingEntity);
+
+		if (livingEntity.level().isClientSide())
+			return;
+		TravellersGearLogic.travellersWingsHighJump(livingEntity);
+	}
+
+	/**
+	 * After a double jump the entity may fall {@link TravellersGearLogic#DOUBLE_JUMP_SAFE_FALL_DISTANCE} blocks further
+	 * without damage until it lands. 4.8 adds a modifier to 1.21's safe fall distance attribute; 1.20.1 has none, so the
+	 * fall distance shrinks instead, before the other fall listeners (Slimy Soles) see it.
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public static void applyDoubleJumpSafeFallDistance(LivingFallEvent event) {
+		TravellersWingsAttachment attachment = TravellersWingsAttachment.get(event.getEntity());
+		if (attachment != null && attachment.hasDoubleJumpSafeFallDistance)
+			event.setDistance(Math.max(0.0F, event.getDistance() - TravellersGearLogic.DOUBLE_JUMP_SAFE_FALL_DISTANCE));
 	}
 
 	@SubscribeEvent

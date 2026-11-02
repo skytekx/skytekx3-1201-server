@@ -26,6 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.components.item.TravellersGearData;
 import twilightforest.data.tags.CustomTagGenerator;
 import twilightforest.entity.TwilightBoat;
 import twilightforest.enums.TwilightArmorMaterial;
@@ -91,7 +92,8 @@ public class TFItems {
 	public static final RegistryObject<ArmorItem> TRAVELLERS_GOGGLES = ITEMS.register("travellers_goggles", () -> new TravellersGogglesItem(new Item.Properties()));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_VEST = ITEMS.register("travellers_vest", () -> new TravellersArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.CHESTPLATE)));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_GLOVES = ITEMS.register("travellers_gloves", () -> new TravellersArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1), 0, 0, Set.of(TravellersArmorItem.Part.GLOVES)));
-	public static final RegistryObject<ArmorItem> TRAVELLERS_WINGS = ITEMS.register("travellers_wings", () -> new TravellersArmorBeltItem(ArmorItem.Type.LEGGINGS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.WINGS)));
+	public static final RegistryObject<ArmorItem> TRAVELLERS_WINGS = ITEMS.register("travellers_wings", () -> new TravellersArmorBeltItem(ArmorItem.Type.LEGGINGS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.WINGS))
+		.withDefaultComponent(TravellersGearData.HIGH_JUMP_AMPLIFIER, 1));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_BELT = ITEMS.register("travellers_belt", () -> new TravellersArmorBeltItem(ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1), 0, 0, Set.of(TravellersArmorItem.Part.BELT)));
 	public static final RegistryObject<ArmorItem> TRAVELLERS_BOOTS = ITEMS.register("travellers_boots", () -> new TravellersArmorItem(ArmorItem.Type.BOOTS, new Item.Properties(), 3, 12, Set.of(TravellersArmorItem.Part.BOOTS)));
 	public static final RegistryObject<Item> STEELEAF_INGOT = ITEMS.register("steeleaf_ingot", () -> new Item(new Item.Properties()));

@@ -100,6 +100,9 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> TROPHIES = create("trophies");
 	public static final TagKey<Item> EMPERORS_CLOTH_APPLICABLE = create("emperors_cloth_applicable");
 
+	public static final TagKey<Item> TRAVELLERS_AGILE_RANGER_WHITELISTED = create("travellers_agile_ranger_whitelisted");
+	public static final TagKey<Item> TRAVELLERS_AGILE_RANGER_BLACKLISTED = create("travellers_agile_ranger_blacklisted");
+
 	public ItemTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> future, CompletableFuture<TagLookup<Block>> provider, ExistingFileHelper helper) {
 		super(output, future, provider, helper);
 	}
@@ -426,6 +429,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 		tag(ItemTags.TRIM_MATERIALS).add(TFItems.IRONWOOD_INGOT.get(), TFItems.STEELEAF_INGOT.get(), TFItems.KNIGHTMETAL_INGOT.get(), TFItems.NAGA_SCALE.get(), TFItems.CARMINITE.get(), TFItems.FIERY_INGOT.get());
 
 		tag(EMPERORS_CLOTH_APPLICABLE).addTag(Tags.Items.ARMORS).add(Items.ELYTRA);
+
+		tag(TRAVELLERS_AGILE_RANGER_WHITELISTED).add(TFItems.MOONWORM_QUEEN.get());
 	}
 
 	@Override

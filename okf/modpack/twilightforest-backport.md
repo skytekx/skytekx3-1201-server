@@ -49,7 +49,50 @@ between features, are recorded in `ports/twilightforest-backport-carryover.json`
 differences are under [Local divergences](#local-divergences-from-upstream-keep-on-re-sync). Open deploy
 steps: the `remove-seed-coremod` seed check (see [Critic corrections](#critic-corrections-applied-during-porting)),
 one full-pack boot with the final jar on the production Arclight, and the TF dimension reset under
-[Savegame impact](#savegame-impact).
+[Savegame impact](#savegame-impact). Player-facing notes: [Changelog for players](#changelog-for-players).
+
+## Changelog for players
+
+For the pack release that ships `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`.
+
+New in the Twilight Forest (TF 4.8 content on 1.20.1):
+- The rebuilt Lich Tower (graveyard yard, wings, gallery, new boss room) and a reworked Lich fight with
+  phases, clones, minions and candles.
+- Drying racks, jerky and other dried foods, Stale Bread, Moss Soup and leather tanning.
+- Traveller's Gear: six armor pieces that take modifiers (double jump, sidestep, water walk, zoom, swap
+  hotbar, auto repair and more), with an item display in the goggles.
+- Traveller camps, hollow oaks, fallen trunks, berry and oreberry bushes, small lakes, Highlands
+  Underground, and reworked Aurora Palaces and Naga Courtyards.
+- Sinister Spawners, Mason Jars and jars with log lids, the Chiseled Canopy Bookshelf, Ominous Candles
+  and candelabras, and the finished Ore Meter, potion flasks and magic paintings.
+- The Twilight Crossbow addon: crossbow versions of the TF bows.
+
+On an existing world:
+- Server and client must run the same Twilight Forest jar. Its network protocol is now `2-skytekx.18`
+  (the stock 4.3 jar uses `2`), and Forge refuses the connection when they differ. Update the client
+  with the pack and do not add another TF jar.
+- Structures that generated before the update keep their 4.3 layout, so an old Lich Tower stays the old
+  tower. New structures and terrain appear only in chunks generated after the update.
+- The "We Dine At Eternal Sundown" advancement (`twilightforest:twilight_dinner`) reopens if you
+  already completed it. It now has 14 criteria (berries, berry medley, jerky, slime drop, moss soup),
+  and completing it again gives its 75 XP and the challenge announcement a second time.
+- Mason Jars in Twilight Treehouses chalets are empty. The addon's template stores the jar's item in
+  the 1.21 format, which 1.20.1 does not read. This is cosmetic.
+
+For the server operator:
+- Delete any older twilightforest jar from the server's `mods/` before the first boot. Two TF jars are
+  a duplicate mod id and Forge stops.
+- Run the seed check (`remove-seed-coremod` under
+  [Critic corrections](#critic-corrections-applied-during-porting)) while the server still runs the old
+  jar.
+- Recommended: reset the TF dimension once and pregen it. Without a reset, new chunks next to explored
+  ones show seams; for example, the Dark Forest canopy steps by about 5 blocks. The reset deletes
+  everything built or stored in the Twilight Forest, so announce it and ask players to move their things
+  out and leave the dimension first. The overworld and the Skylands stay as they are. Steps:
+  `save-all flush` and `stop`, back up and delete `world/dimensions/twilightforest`, start the server, then
+  `chunky world twilightforest:twilight_forest`, `chunky radius 1000`, `chunky start`
+  ([world reset](../server/world-reset.md)). To keep the dimension instead, see the canopy height
+  override in the wave 7 live-server notes.
 
 ## Savegame impact
 

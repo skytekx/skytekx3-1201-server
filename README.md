@@ -75,16 +75,16 @@ git clone https://github.com/Tiiffi/mcrcon.git code && cd code
 gcc mcrcon.c -o mcrcon && mv mcrcon /usr/local/bin/
 ```
 
-### 4 — Clone the pack and provide the Arclight jar
+### 4 — Clone the pack
 
 ```bash
 git clone https://github.com/skytekx/skytekx3-1201-server.git \
   /opt/minecraft-server/server/skytekx3-1201-server
 cd /opt/minecraft-server/server/skytekx3-1201-server
 
-# Download an Arclight forge-1.20.1 build and symlink it (the versioned jar is gitignored):
-#   https://github.com/IzzelAliz/Arclight/releases
-ln -sf arclight-forge-1.20.1-<ver>.jar arclight.jar
+# arclight.jar is a tracked symlink to the patched Arclight build in the repo; nothing to download.
+# Do not replace it with an upstream jar (see okf/server/arclight.md).
+readlink arclight.jar   # arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar
 ```
 
 Fetch the Modrinth-resolvable mods into `mods/` from the manifest (needs a Modrinth token, see

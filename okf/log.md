@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological history of major SkyTekx 3 milestones.
 tags: [log, history]
-timestamp: 2026-11-01
+timestamp: 2026-11-02
 ---
 
 # Change log
@@ -132,3 +132,11 @@ Final Castle. Twilight Spellbooks waits for the author's permission. A full-pack
 reached `Done` with no FATAL and no addon ERROR. Three addon boot errors were fixed: TF&D's
 Neapolitan-only tag entries (KubeJS), the D&V mixin minVersion (patch_mods) and the Tweaks uncrafting
 format (fixes datapack). Details: [TF backport](modpack/twilightforest-backport.md#twilight-forest-addons).
+
+## 2026-11-02 — Arclight safeIter fix actually live (safeiter2)
+The patched Arclight jar from 2026-06-29 never ran its fix: its `common.jar` was not reobfuscated (a
+fresh install crashes), and production only booted because Arclight reused the cached upstream
+`common.jar` under the same version string. Replaced by `safeiter2`: the upstream 6de9fec snapshot with
+only `DistanceManagerMixin.arclight$safeIter` swapped at bytecode level and a new Implementation-Version
+that forces re-extraction. Full-pack boot (272 mods) and an upgrade over the stale cache both pass.
+Reproducible rebuild: `tools/arclight/rebuild_safeiter.sh`. Details: [Arclight](server/arclight.md).

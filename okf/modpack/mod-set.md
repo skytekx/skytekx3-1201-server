@@ -50,7 +50,8 @@ build reproducible, and record the upstream commit, the build command and the ja
 `modrinth-permissions/` file instead. Bundled this way: Twilight Mobs Loots (`ports/twilight-mobs-loots/`,
 MIT), Spiced Twilight (`ports/spiced-twilight/`, LGPL-3.0-or-later, so the modified source stays public
 in that directory) and Alternative Twilight (Remastered) (`ports/alternative-twilight-remastered/`,
-GPL-3.0-or-later, same rule) and Twilight Crossbow (`ports/twilight-crossbow/`, MIT; its jar build does not
+GPL-3.0-or-later, same rule) and Twilight Crossbow (`ports/twilight-crossbow/`, MIT code with CC BY-NC-SA 4.0 item textures adapted from
+Twilight Forest's bows, credited in its NOTICE; its jar build does not
 fix file times yet, so its file records the SHA-1 of the committed jar). All four need the fork TF jar
 (`ports/twilightforest/`), which `local-mods/` carries instead of the stock `4.3` jar; see the
 [TF backport](twilightforest-backport.md#backported-1211-only-addons).

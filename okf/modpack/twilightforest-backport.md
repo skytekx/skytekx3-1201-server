@@ -441,7 +441,7 @@ Each addon below is the newest 1.20.1 Forge build. Env is client / server as wri
 | The King of Twilight | 1.0.1 | `local-mods/` (CurseForge file 8029727) | both | MIT | The Twilight Lord final boss, spawned through Twilight Tweaks. |
 | Twilight Mobs Loots (1.20.1 backport) | 1.1.1-1.20.1-skytekx.1 | `local-mods/`, built from `ports/twilight-mobs-loots/` | both | MIT | Trophies for 48 regular TF mobs: 10% player-kill drop (giants 50%, +5% per Looting level), floor and wall blocks with the mob's sound and particles, wearable on the head or in the Curios head slot or a new `trophy` slot. |
 | Spiced Twilight | 2.0.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/spiced-twilight/`) | both | LGPL-3.0-or-later | Maze Slime Beetle in the Labyrinth, Helmet Crabs that hide, kobold armor and babies, Fire Beetle Powder, Hydra Hide, Cinder Pouch. 1.21.1-only upstream, backported here without the Naga jump attack. |
-| Twilight Crossbow (1.20.1 backport) | 1.5.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/twilight-crossbow/`) | both | MIT | Triple, Seeker, Ice and Ender Crossbows that fire TF arrows, plus ice and seeker fireworks; the upgrade smithing template drops in Aurora Palace caches. 1.21.1-only upstream. |
+| Twilight Crossbow (1.20.1 backport) | 1.5.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/twilight-crossbow/`) | both | MIT (code); CC BY-NC-SA 4.0 (textures adapted from TF's bows) | Triple, Seeker, Ice and Ender Crossbows that fire TF arrows, plus ice and seeker fireworks; the upgrade smithing template drops in Aurora Palace caches. 1.21.1-only upstream. |
 | Alternative Twilight (Remastered) | 0.0.2-1.20.1-skytekx.1 | `local-mods/` (built from `ports/alternative-twilight-remastered/`) | both | GPL-3.0-or-later | Boss rework: three-phase Lich (shield-break minions and Blood Lust Curse, phase-2 damage cap, phase-3 power-up and magic orbs), a harder Naga (venom volleys, daze on frontal hits, chained charges), nine spears, Blood Lust effects, Knight Phantom aurora. 1.21.1-only upstream, backported here without its boss music files. |
 
 Distribution rules: a Modrinth-hosted addon goes into the index, even when it is All Rights Reserved,
@@ -523,7 +523,7 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
 
 ### Backported 1.21.1-only addons
 
-- **Twilight Crossbow** (baguchi, MIT): `ports/twilight-crossbow/`, a standalone NeoGradle 6 project like
+- **Twilight Crossbow** (baguchi; MIT code, CC BY-NC-SA 4.0 textures adapted from TF's bows): `ports/twilight-crossbow/`, a standalone NeoGradle 6 project like
   the fork. Build the fork first (`ports/twilightforest`, `./gradlew build`); the port compiles against
   `../twilightforest/build/libs/twilightforest-1.20.1-<tf_version>-universal.jar` (flatDir plus
   `fg.deobf`) and MixinGradle writes the SRG refmap. `tf_version` in its `gradle.properties` must equal
@@ -548,7 +548,10 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   (`ICE`, `STEELEAF`), `TFCreativeTabs.EQUIPMENT` and `ITEMS` and the `twilightforest:chests/aurora_cache`
   loot id when re-syncing the fork. Not ported: the unregistered Knight Crossbow.
   **Bundled** as `local-mods/twilight_crossbow-1.5.0-1.20.1-skytekx.1.jar` (fffbe6d) with its
-  `modrinth-permissions/` file (Licensed, MIT, upstream commit, SHA-1 `7b9ba212`, 92109 bytes). Like the
+  `modrinth-permissions/` file (Licensed, MIT code plus CC BY-NC-SA 4.0 textures, upstream commit, SHA-1
+  `ee22819b`, 99296 bytes). Its 24 crossbow item textures reuse the limbs of TF's bow textures, so they are
+  CC BY-NC-SA 4.0 adaptations (non-commercial, ShareAlike): the port's NOTICE credits TeamTwilight, the
+  jar ships the CC text as `ASSET_LICENSE_twilight_crossbow`, and mods.toml declares both licences (4f82c56). Like the
   other ports it needs the fork jar, which `local-mods/` carries since c825572 (next to the stock `4.3` jar
   Forge refused to load it). Unlike them, this jar build is not byte-reproducible (the jar keeps file
   times), so record the new SHA-1 whenever the jar is rebuilt. Pending: boot the full pack once on Arclight

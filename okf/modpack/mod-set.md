@@ -14,13 +14,12 @@ timestamp: 2026-11-02
 and download URL. To add or remove a Modrinth mod, **edit the index**, not `mods/`.
 
 ## Derived vs tracked
-- `mods/` — **derived**, gitignored. Rebuilt from the index by `tools/resolve_all.py` (needs the
-  Modrinth PAT, see [secrets](../server/secrets.md)). Caveat: `resolve_all.py` resolves its own
-  hard-coded `SLUGS` list and writes to the original build host's paths. It does not read
+- `mods/` — **derived**, gitignored. Assembled from the index plus `local-mods/` as in
+  [README step 4](../../README.md#4--clone-the-pack), with no token: copy `local-mods/*.jar`, download
+  every `files[].downloads[0]` whose `env.server` is not `unsupported` and check its `sha1`, then run
+  `tools/patch_mods.py`. `tools/resolve_all.py` is legacy: it needs the Modrinth PAT, resolves its own
+  hard-coded `SLUGS` list into the original build host's paths and does not read
   `modrinth.index.json`, so entries added only to the index (such as the TF addons) are not picked up.
-  To rebuild `mods/` exactly from the index, download every `files[].downloads[0]` whose `env.server`
-  is not `unsupported`, check `sha1`/`sha512`/`fileSize`, add `local-mods/*.jar`, then run
-  `tools/patch_mods.py`.
 - `client-only-mods/` — derived, gitignored (split out of `mods/` for the server).
 - `local-mods/` — **tracked**. Mods built from source / not on Modrinth (the Twilight Forest fork from
   `ports/twilightforest/`, [Nyx](../content/nyx.md), …). These are part of the pack and ride into the `.mrpack` as overrides.

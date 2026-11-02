@@ -14,7 +14,7 @@
     "hidden": false,
     "icon": {
       "item": "twilightforest:travellers_boots",
-      "nbt": "{\"twilightforest:water_walk\":{}}"
+      "nbt": "{Damage:0,\"twilightforest:water_walk\":{}}"
     },
     "show_toast": true,
     "title": {

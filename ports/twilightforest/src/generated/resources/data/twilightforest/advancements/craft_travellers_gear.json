@@ -46,7 +46,8 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "twilightforest:travellers_boots"
+      "item": "twilightforest:travellers_boots",
+      "nbt": "{Damage:0}"
     },
     "show_toast": true,
     "title": {

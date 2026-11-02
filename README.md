@@ -30,15 +30,15 @@ Public server: **`skytekx.com`** · Site: <https://skytekx.com> · Modpack: <htt
 
 | Path | What |
 |---|---|
-| `modrinth.index.json` | The pack manifest — every Modrinth-resolvable mod (213 files). `mods/` is rebuilt from this, so `mods/` is **gitignored**. |
-| `local-mods/` | Mods built from source / not on Modrinth (Twilight Forest, Nyx, …). **Tracked** — these are part of the pack. |
+| `modrinth.index.json` | The pack manifest — every Modrinth-resolvable mod (225 files). The server's `mods/` is assembled from this plus `local-mods/`, so `mods/` is **gitignored**. |
+| `local-mods/` | Mods built from source / not on Modrinth (Twilight Forest, Nyx, …). **Tracked** — these are part of the pack; the server loads the copies in `mods/`. |
 | `config/` | All mod configuration, incl. `config/almostunified/` (material unification). |
 | `kubejs/server_scripts/` | Gameplay scripts: `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js`, `combat_1_7.js`, `skylands_fall.js`. |
 | `skylands-datapack/` | **Source** datapack for the Skylands worldgen (vanilla safe, runs on unmodded Spigot too). |
 | `skylands-datapack-forge/` | Forge-only Skylands content (Dungeons Arise sets, mod-pool floaters, botania features). |
 | `world/datapacks/` | The deployed copy of the datapack (built into the `.mrpack`; `world/` itself is gitignored except this). |
 | `scripts-legacy-reference/` | Original 1.12.2 CraftTweaker `.zs` — read-only reference for the KubeJS port. |
-| `tools/` | `resolve_all.py` (fetch mods from the index), `build_mrpack.py` (build + publish the modpack). |
+| `tools/` | `build_mrpack.py` (build the modpack), `publish_modrinth.py` (upload it), `patch_mods.py` (jar-level boot fixes in `mods/`), `resolve_all.py` (legacy fetch from a hard-coded slug list). |
 | `docs/` | `RECIPE_PORT.md`, `MODPACK_DESCRIPTION.md`. |
 | `okf/` | Open Knowledge Format wiki for AI agents working on the pack — start at `okf/index.md`. |
 | `AGENTS.md` | Conventions and gotchas for anyone (human or agent) editing this repo. |
@@ -87,12 +87,33 @@ cd /opt/minecraft-server/server/skytekx3-1201-server
 readlink arclight.jar   # arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar
 ```
 
-Fetch the Modrinth-resolvable mods into `mods/` from the manifest (needs a Modrinth token, see
-[Secrets](#secrets)). `local-mods/` is already in the repo and is loaded too:
+Assemble the server's `mods/` (gitignored). Forge loads only `mods/`; nothing points it at
+`local-mods/`, so the tracked jars are copied in. Then fetch every index file the server needs
+(`env.server` not `unsupported`) and re-apply the jar patches:
 
 ```bash
-python3 tools/resolve_all.py            # downloads mods/ from modrinth.index.json
+mkdir -p mods
+cp local-mods/*.jar mods/
+python3 - <<'EOF'   # fetch each server-side index file that mods/ lacks, sha1-checked
+import hashlib, json, os, urllib.request
+for f in json.load(open("modrinth.index.json"))["files"]:
+    dst = os.path.join("mods", os.path.basename(f["path"]))
+    if f["env"]["server"] == "unsupported" or os.path.exists(dst):
+        continue
+    req = urllib.request.Request(f["downloads"][0], headers={"User-Agent": "skytekx3-deploy"})
+    data = urllib.request.urlopen(req, timeout=120).read()
+    if hashlib.sha1(data).hexdigest() != f["hashes"]["sha1"]:
+        raise SystemExit("sha1 mismatch: " + dst)
+    open(dst, "wb").write(data)
+    print("fetched", dst)
+EOF
+python3 tools/patch_mods.py             # jar-level boot fixes; run it after every change to mods/
 ```
+
+Rerun the same steps after a `git pull` that changes `local-mods/` or the index, and delete the old
+file from `mods/` when a jar is replaced by a new version. `tools/resolve_all.py` is not a substitute:
+it resolves its own hard-coded slug list into the original build host's path and does not read the
+index (see [mod set](okf/modpack/mod-set.md)).
 
 ### 5 — EULA, RCON, firewall
 

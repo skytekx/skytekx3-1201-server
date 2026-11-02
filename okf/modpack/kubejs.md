@@ -1,9 +1,9 @@
 ---
 type: Reference
 title: KubeJS
-description: The four KubeJS server scripts of SkyTekx 3, what each one really does on 1.20.1, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
+description: The seven KubeJS server scripts of SkyTekx 3, what each one really does on 1.20.1, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
 tags: [modpack, kubejs, recipes, scripting]
-timestamp: 2026-10-31
+timestamp: 2026-11-02
 ---
 
 # KubeJS
@@ -22,19 +22,27 @@ tracked in [docs/RECIPE_PORT.md](../../docs/RECIPE_PORT.md).
 ## Scripts
 
 All scripts live in [kubejs/server_scripts/](../../kubejs/server_scripts). There are no startup or
-client scripts, and the folders `startup_scripts/`, `assets/` and `data/` are empty. The last boot on
-the build machine loaded 4 of 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`).
+client scripts, and the folders `startup_scripts/` and `assets/` are empty. The folder `data/` holds the
+six uncrafting recipes of Twilight Tweaks, see
+[Twilight Forest backport](twilightforest-backport.md). The last boot on the build machine loaded 4 of
+4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
+2026-11-02 at 17:33 loaded 7 of 7, again with 0 errors and 0 warnings.
 
 | Script | What it does |
 |---|---|
 | Recipe fixes, `recipe_fixes.js` | Adds two recipes, the rest is commented out |
-| Tag fixes, `tag_fixes.js` | Fills one tag that Ad Astra uses but never fills |
+| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, and keeps yellorium out of the uranium tags |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
+| Skylands sleep, `skylands_sleep.js` | Turns the overworld to day when players sleep in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#sleep-and-hostile-mobs) |
+| Skylands portals, `skylands_portals.js` | Lets nether portals work in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#nether-portals) |
+| Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, see [AlmostUnified](almostunified.md#inventory-converter) |
 
 The recipe summary of that boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes,
 with 17 failed recipes" (`logs/kubejs/server.log:54`, 23:25:52). The 17 failures are third-party
-recipes that name items which do not exist in this pack. They are not caused by these scripts.
+recipes that name items which do not exist in this pack. They are not caused by these scripts. The
+boot of the Mac mini on 2026-11-02 at 17:33 logged "Added 2 recipes, removed 0 recipes, modified 9
+recipes, with 13 failed recipes". Those 13 failures were not examined.
 
 ### Recipe fixes
 
@@ -61,6 +69,13 @@ The file [tag_fixes.js](../../kubejs/server_scripts/tag_fixes.js) adds `ad_astra
 the item and block tag `forge:sandstone/venus_sandstone`. Ad Astra's own compat recipes for Mekanism,
 Create, Immersive Engineering and Thermal use that tag but never fill it, so the crushing of Venus
 sandstone failed without it. The log shows one object added to each tag type at boot.
+
+The same file strips the ice creams, milkshakes and cake slices of Twilight's Flavors & Delight out of
+`farmersdelight:sweets`, `farmersdelight:snacks` and `diet:sugars` while Neapolitan is missing. Those
+items exist only with Neapolitan, and their ids made the tag loader drop the three tags whole. It adds
+the nine edible berries of the Twilight Forest backport to `forge:berries`, which Farmer's Delight and
+Medieval Embroidery read. Since 2026-11-02 it also takes yellorium out of the uranium tags, see
+[AlmostUnified](almostunified.md#yellorium).
 
 ### Gameplay
 

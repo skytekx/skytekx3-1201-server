@@ -88,9 +88,11 @@ public class CuriosCompat {
 				return TFConfig.mysticCrownCurios;
 			}
 
+			// Right-click fills an empty helmet slot first (with the crown's armor, as in 4.8) and only goes to a Curios
+			// head slot while a helmet is worn; the addon always took the Curios slot, which gives no armor.
 			@Override
 			public boolean canEquipFromUse(SlotContext slotContext) {
-				return this.canEquip(slotContext);
+				return this.canEquip(slotContext) && !slotContext.entity().getItemBySlot(EquipmentSlot.HEAD).isEmpty();
 			}
 		});
 	}

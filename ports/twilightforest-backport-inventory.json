@@ -3865,12 +3865,12 @@
     "url": "https://modrinth.com/mod/mystic-crown-compat",
     "what": "Makes the 4.8 Mystic Crown wearable in Curios and buffs TF staffs while it is worn.",
     "versions_available": "1.21.1 NeoForge 1.1.0 only. twilightforest [4.8,). 14 classes, 5 mixins.",
-    "fits_pack": false,
-    "fits_reason": "twilightforest:mystic_crown exists only in 4.8. If it is backported, add the Curios hook straight into our TF fork (4.3 already ships a Curios compat package) rather than port the addon.",
-    "license": "MIT.",
+    "fits_pack": true,
+    "fits_reason": "The fork has the 4.8 Mystic Crown and scepter code since wave 6, and 4.3 already ships a Curios compat package, so the Curios hook and the scepter bonuses went straight into the fork instead of porting the addon.",
+    "license": "MIT (github.com/741741-741/mystic-crown-compat, Copyright (c) 2026 741741).",
     "on_modrinth": true,
-    "risk_with_tf_48_features": "Only works if the 4.8 Mystic Crown and staff code are backported.",
-    "action": "skip"
+    "risk_with_tf_48_features": "Only works if the 4.8 Mystic Crown and staff code are backported. Done: folded into the TF fork in 7e94232 (from upstream 1.1.0 commit 10ce4a4f; no mixins, no new ids). The crown fits a Curios head slot, MysticCrownItem.isWornBy covers every crown check, and the scepter bonuses sit behind the common option mysticCrownScepterBonuses (default true). The jar carries the MIT licence and a notice as META-INF/LICENSE-mystic-crown-compat.txt and META-INF/NOTICE-mystic-crown-compat.txt. No separate jar: it ships with the fork TF jar that replaces the 4.3 jar in local-mods/, whose modrinth-permissions/ file must list this MIT code.",
+    "action": "folded_into_fork"
    },
    {
     "name": "Twilight Forest Cave Fix",

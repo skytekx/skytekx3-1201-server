@@ -142,7 +142,7 @@ public class EntityEvents {
 		}
 	}
 
-	// Mystic Crown Compat: an empowering Mystic Crown protects its wearer from Lich bomb blasts, including the extra bombs of its Twilight Scepter
+	// Mystic Crown Compat: an empowering Mystic Crown protects its wearer from every Lich bomb blast: the extra bombs of its Twilight Scepter and the Lich boss's own
 	@SubscribeEvent
 	public static void mysticCrownBlocksLichBombs(LivingAttackEvent event) {
 		if (event.getSource().is(TFDamageTypes.LICH_BOMB) && MysticCrownItem.empowersScepters(event.getEntity())) {

@@ -327,6 +327,7 @@ public class TFCreativeTabs {
 				output.accept(TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get());
 				output.accept(TFBlocks.SNOW_QUEEN_BOSS_SPAWNER.get());
 				output.accept(TFBlocks.FINAL_BOSS_BOSS_SPAWNER.get());
+				output.accept(TFBlocks.SINISTER_SPAWNER.get());
 				output.accept(TFBlocks.TWILIGHT_PORTAL_MINIATURE_STRUCTURE.get());
 				output.accept(TFBlocks.NAGA_COURTYARD_MINIATURE_STRUCTURE.get());
 				output.accept(TFBlocks.LICH_TOWER_MINIATURE_STRUCTURE.get());

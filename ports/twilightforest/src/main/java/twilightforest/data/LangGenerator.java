@@ -501,6 +501,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addBlock(TFBlocks.ALPHA_YETI_BOSS_SPAWNER, "Alpha Yeti Boss Spawner");
 		this.addBlock(TFBlocks.SNOW_QUEEN_BOSS_SPAWNER, "Snow Queen Boss Spawner");
 		this.addBlock(TFBlocks.FINAL_BOSS_BOSS_SPAWNER, "Final Boss Boss Spawner");
+		this.addBlock(TFBlocks.SINISTER_SPAWNER, "Sinister Spawner");
 
 		this.addBannerPattern("naga", "Naga Scales");
 		this.addBannerPattern("lich", "Lich Crown");

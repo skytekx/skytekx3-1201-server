@@ -647,7 +647,7 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 
 		tag(BlockTags.SMALL_DRIPLEAF_PLACEABLE).add(TFBlocks.UBEROUS_SOIL.get());
 
-		tag(BlockTags.FEATURES_CANNOT_REPLACE).addTag(COMMON_PROTECTIONS).add(TFBlocks.LIVEROOT_BLOCK.get(), TFBlocks.MANGROVE_ROOT.get());
+		tag(BlockTags.FEATURES_CANNOT_REPLACE).addTag(COMMON_PROTECTIONS).add(TFBlocks.LIVEROOT_BLOCK.get(), TFBlocks.MANGROVE_ROOT.get(), TFBlocks.SINISTER_SPAWNER.get());
 		// For anything that permits replacement during Worldgen
 		tag(WORLDGEN_REPLACEABLES).addTags(BlockTags.LUSH_GROUND_REPLACEABLE, BlockTags.REPLACEABLE_BY_TREES);
 
@@ -843,7 +843,8 @@ public class BlockTagGenerator extends ModdedBlockTagGenerator {
 				TFBlocks.BOLD_STONE_PILLAR.get(),
 				TFBlocks.TERRORCOTTA_CURVES.get(),
 				TFBlocks.TERRORCOTTA_LINES.get(),
-				TFBlocks.TERRORCOTTA_ARCS.get()
+				TFBlocks.TERRORCOTTA_ARCS.get(),
+				TFBlocks.SINISTER_SPAWNER.get()
 		).addTags(MAZESTONE, CASTLE_BLOCKS);
 
 		tag(BlockTags.MINEABLE_WITH_SHOVEL).add(

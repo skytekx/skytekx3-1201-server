@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -14,7 +15,7 @@ import net.minecraft.network.chat.Component;
 public class TFCommand {
     public static final SimpleCommandExceptionType NOT_IN_TF = new SimpleCommandExceptionType(Component.translatable("commands.tffeature.not_in_twilight_forest").withStyle(ChatFormatting.RED));
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         LiteralArgumentBuilder<CommandSourceStack> structureBranch = Commands.literal("structure_util")
                 .then(DisplayPiecesCommand.register())
                 .then(ClearDisplayCommand.register())
@@ -32,6 +33,7 @@ public class TFCommand {
                 .then(InfoCommand.register())
                 .then(MapBiomesCommand.register())
                 .then(ShieldCommand.register())
+                .then(SinisterSpawnerCommand.register(buildContext))
                 .then(structureBranch);
         LiteralCommandNode<CommandSourceStack> node = dispatcher.register(builder);
         dispatcher.register(Commands.literal("tf").executes(TFCommand::run).redirect(node));

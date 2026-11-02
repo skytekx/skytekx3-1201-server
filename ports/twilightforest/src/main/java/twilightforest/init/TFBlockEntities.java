@@ -161,6 +161,9 @@ public class TFBlockEntities {
 					TFBlocks.OMINOUS_GREEN_CANDLE.get(), TFBlocks.OMINOUS_RED_CANDLE.get(),
 					TFBlocks.OMINOUS_BLACK_CANDLE.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<SinisterSpawnerBlockEntity>> SINISTER_SPAWNER = BLOCK_ENTITIES.register("sinister_spawner", () ->
+			BlockEntityType.Builder.of(SinisterSpawnerBlockEntity::new, TFBlocks.SINISTER_SPAWNER.get()).build(null));
+
 	@OnlyIn(Dist.CLIENT)
 	public static void registerTileEntityRenders() {
 		// tile entities
@@ -182,5 +185,6 @@ public class TFBlockEntities {
 		BlockEntityRenderers.register(MASON_JAR.get(), JarRenderer.MasonJarRenderer::new);
 		BlockEntityRenderers.register(CANDELABRA.get(), CandelabraRenderer::new);
 		BlockEntityRenderers.register(OMINOUS_CANDLE.get(), OminousCandleRenderer::new);
+		BlockEntityRenderers.register(SINISTER_SPAWNER.get(), SinisterSpawnerRenderer::new);
 	}
 }

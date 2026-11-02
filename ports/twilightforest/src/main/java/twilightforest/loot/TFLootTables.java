@@ -87,6 +87,8 @@ public class TFLootTables {
 	public static final ResourceLocation KNIGHT_PHANTOM_DEFEATED = register("entities/knight_phantom_defeated");
 	public static final ResourceLocation LIFEDRAIN_SCEPTER_KILL_BONUS = register("items/lifedrain_scepter_kill_bonus");
 
+	public static final ResourceLocation OMINOUS_SPAWNER_DROPS = register("blocks/ominous_spawner_drops");
+
 	public static final ResourceLocation CICADA_SQUISH_DROPS = register("blocks/cicada_squish");
 	public static final ResourceLocation FIREFLY_SQUISH_DROPS = register("blocks/firefly_squish");
 	public static final ResourceLocation MOONWORM_FAILED_TO_PLACE_DROPS = register("blocks/moonworm_failed_to_place");

@@ -12,6 +12,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import twilightforest.client.model.TFModelLayers;
 import twilightforest.client.model.armor.TFArmorModel;
 import twilightforest.client.model.armor.TravellersWingsModel;
+import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersArmorItem;
 
 /**
@@ -44,9 +45,9 @@ public final class TravellersArmorRenderer extends TFArmorRenderer {
 			case LEGS -> {
 				ModelPart leggingsLayer = this.getModelPart(TFModelLayers.TRAVELLERS_ARMOR_LEGGINGS);
 				leggingsLayer.getAllParts().forEach(part -> part.skipDraw = true);
-				// 4.8 also draws the belt on wings that carry the Swap Hotbar modifier (travellers-belt-swap-hotbar)
 				boolean hasWings = TravellersArmorItem.hasPart(stack, TravellersArmorItem.Part.WINGS);
-				boolean hasBelt = TravellersArmorItem.hasPart(stack, TravellersArmorItem.Part.BELT);
+				// wings with the Swap Hotbar modifier carry a belt as well
+				boolean hasBelt = TravellersArmorItem.hasPart(stack, TravellersArmorItem.Part.BELT) || TravellersModifiersManager.hasTravellersModifier(living.level().registryAccess(), stack, TravellersModifiersManager.SWAP_HOTBAR_MODIFIER);
 
 				TravellersWingsModel.skipBelt(leggingsLayer, !hasBelt);
 				TravellersWingsModel.skipWings(leggingsLayer, !hasWings);

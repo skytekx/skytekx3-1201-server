@@ -273,6 +273,7 @@ public final class TFSounds {
 	public static final RegistryObject<SoundEvent> SQUIRREL_AMBIENT = createEvent("entity.twilightforest.squirrel.ambient");
 	public static final RegistryObject<SoundEvent> SQUIRREL_DEATH = createEvent("entity.twilightforest.squirrel.death");
 	public static final RegistryObject<SoundEvent> SQUIRREL_HURT = createEvent("entity.twilightforest.squirrel.hurt");
+	public static final RegistryObject<SoundEvent> SWAP_HOTBAR = createEvent("item.twilightforest.travellers_gear.swap_hotbar");
 	public static final RegistryObject<SoundEvent> SWARM_SPIDER_AMBIENT = createEvent("entity.twilightforest.swarm_spider.ambient");
 	public static final RegistryObject<SoundEvent> SWARM_SPIDER_DEATH = createEvent("entity.twilightforest.swarm_spider.death");
 	public static final RegistryObject<SoundEvent> SWARM_SPIDER_HURT = createEvent("entity.twilightforest.swarm_spider.hurt");

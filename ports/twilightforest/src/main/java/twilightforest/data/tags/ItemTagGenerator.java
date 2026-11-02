@@ -99,6 +99,8 @@ public class ItemTagGenerator extends ModdedItemTagGenerator {
 	public static final TagKey<Item> RENDER_LOWER_ON_DRYING_RACK = create("lower_on_drying_rack");
 	public static final TagKey<Item> TROPHIES = create("trophies");
 	public static final TagKey<Item> EMPERORS_CLOTH_APPLICABLE = create("emperors_cloth_applicable");
+	// Swap Hotbar leaves these in the hotbar; 4.8 defines the tag but adds nothing to it, so no file is generated
+	public static final TagKey<Item> TRAVELLERS_BELT_BLACKLISTED = create("travellers_belt_blacklisted");
 
 	public static final TagKey<Item> TRAVELLERS_AGILE_RANGER_WHITELISTED = create("travellers_agile_ranger_whitelisted");
 	public static final TagKey<Item> TRAVELLERS_AGILE_RANGER_BLACKLISTED = create("travellers_agile_ranger_blacklisted");

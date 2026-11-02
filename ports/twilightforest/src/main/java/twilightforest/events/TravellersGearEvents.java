@@ -3,6 +3,7 @@ package twilightforest.events;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -45,11 +47,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.TFAdvancements;
 import twilightforest.components.entity.SlimySolesAttachment;
 import twilightforest.components.entity.TravellersGogglesZoomAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
+import twilightforest.components.item.TravellersContainerContents;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
@@ -64,12 +68,16 @@ import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Common events of the Traveller's Gear core, its modifier framework and the modifiers ported so far. Backport of 4.8's
  * TravellersGearEvents (the wing state update, the broken-state attribute switch, the anvil combining block, stripping
  * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Goggles, Vest,
- * Wings and Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
+ * Belt, Wings and Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
  * <p>
  * 1.20.1 has no entity tick post event: 4.8's EntityTickEvent.Post work runs at the start of the next tick instead
  * (LivingTickEvent), its PlayerTickEvent.Pre work in the START phase of Forge's PlayerTickEvent.
@@ -439,6 +447,60 @@ public class TravellersGearEvents {
 		ItemStack unmodifiedStack = inputStack.copy();
 		modifiers.forEach(modifier -> ((InsertableTravellersModifier) modifier.value()).removeModifier(unmodifiedStack));
 		event.setOutput(unmodifiedStack);
+	}
+
+	/**
+	 * Gives the player the hotbar a piece of gear stored with Swap Hotbar when they take it out of the grindstone without
+	 * the modifier, so the stacks are not destroyed with it. Backport of 4.8
+	 * TravellersGearEvents#extractItemsFromSwapHotbarModifier (20fc691f5, 75cad471f); after the other listeners, so a
+	 * cancelled take returns nothing.
+	 */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void extractItemsFromSwapHotbarModifier(GrindstoneEvent.OnTakeItem event) {
+		returnModifierItems(event,
+			TravellersModifiersManager.SWAP_HOTBAR_MODIFIER,
+			stack -> {
+				TravellersContainerContents contents = TravellersGearData.CONTAINER.get(stack);
+				return contents == null ? Stream.empty() : contents.nonEmptyStream();
+			}
+		);
+	}
+
+	private static void returnModifierItems(GrindstoneEvent.OnTakeItem event, ResourceKey<TravellersModifier> modifierKey, Function<ItemStack, Stream<ItemStack>> itemStreamExtractor) {
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if (server == null)
+			return;
+
+		getUniqueTravellersGear(event.getTopItem(), event.getBottomItem(), stack ->
+			TravellersModifiersManager.hasTravellersModifier(server.registryAccess(), stack, modifierKey)
+		).ifPresent(stack -> {
+			ServerPlayer player = findGrindstoneUser(server, stack);
+			if (player != null)
+				itemStreamExtractor.apply(stack).forEach(itemStack -> ItemHandlerHelper.giveItemToPlayer(player, itemStack));
+		});
+	}
+
+	private static Optional<ItemStack> getUniqueTravellersGear(ItemStack top, ItemStack bottom, Predicate<ItemStack> predicate) {
+		List<ItemStack> travellersItemStacks = Stream.of(top, bottom)
+			.filter(TravellersArmorItem::isTravellersGear)
+			.filter(predicate)
+			.toList();
+		return travellersItemStacks.size() == 1 ? Optional.of(travellersItemStacks.get(0)) : Optional.empty();
+	}
+
+	/**
+	 * The player taking the result out of the grindstone {@code input} sits in. 4.8's OnTakeItem event names the player;
+	 * Forge 47's does not, but it hands over the very stacks of the grindstone's input slots, and only the menu that
+	 * player has open holds that stack.
+	 */
+	@Nullable
+	private static ServerPlayer findGrindstoneUser(MinecraftServer server, ItemStack input) {
+		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+			if (player.containerMenu instanceof GrindstoneMenu menu
+				&& (menu.getSlot(GrindstoneMenu.INPUT_SLOT).getItem() == input || menu.getSlot(GrindstoneMenu.ADDITIONAL_SLOT).getItem() == input))
+				return player;
+		}
+		return null;
 	}
 
 	/**

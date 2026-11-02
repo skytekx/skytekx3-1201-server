@@ -57,10 +57,10 @@ public final class TravellersGearData {
 	public static final TravellersComponentType<Unit> SWAP_HOTBAR_ABILITY = register("swap_hotbar_ability", TravellersComponentType.UNIT_CODEC);
 	public static final TravellersComponentType<Unit> SWAP_HOTBAR_MODIFIER = register("swap_hotbar_modifier", TravellersComponentType.UNIT_CODEC);
 	/**
-	 * 4.8's vanilla {@code minecraft:container} component, the hotbar the belt (or Swap Hotbar wings) stores. Kept as raw
-	 * NBT until travellers-belt-swap-hotbar defines it.
+	 * 4.8's vanilla {@code minecraft:container} component, the hotbar the belt (or Swap Hotbar wings) stores; see
+	 * {@link twilightforest.item.travellers_gear.TravellersArmorBeltItem#travellersTrySwapHotbar}.
 	 */
-	public static final TravellersComponentType<Tag> CONTAINER = TravellersComponentType.register(new ResourceLocation("container"), TravellersComponentType.RAW_NBT_CODEC);
+	public static final TravellersComponentType<TravellersContainerContents> CONTAINER = TravellersComponentType.register(new ResourceLocation("container"), TravellersContainerContents.CODEC);
 	public static final TravellersComponentType<Integer> HIGH_JUMP_AMPLIFIER = register("high_jump_amplifier", Codec.intRange(0, 255));
 	public static final TravellersComponentType<Float> GRADUALLY_GLIDING_MULTIPLIER = register("gradually_gliding_multiplier", ExtraCodecs.POSITIVE_FLOAT);
 	public static final TravellersComponentType<Float> AGILE_RANGER_MODIFIER = register("agile_ranger_modifier", ExtraCodecs.POSITIVE_FLOAT);

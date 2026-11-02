@@ -3809,8 +3809,8 @@
     "fits_reason": "Only relevant if the 4.8 boss rework gets backported; then this, not the 1.20.1 build, matches the boss classes.",
     "license": "GPL-3.0-or-later, so a port can be bundled.",
     "on_modrinth": true,
-    "risk_with_tf_48_features": "Depends on the 4.8 boss classes, which is the reason it would be the port target. Porting means converting 1.21 payloads/attachments to SimpleChannel and capabilities. Low priority.",
-    "action": "needs_backport"
+    "risk_with_tf_48_features": "Depends on the 4.8 boss classes, which is the reason it would be the port target. Porting means converting 1.21 payloads/attachments to SimpleChannel and capabilities. Low priority. Done: backported from source in ports/alternative-twilight-remastered/ (0.0.2-1.20.1-skytekx.1, from upstream branch old commit 99f43e08a, the 0.0.2 release plus the aurora and LICENSE; it has no payloads or attachments). Mixins into the fork's Lich (hurt, customServerAiStep), Naga (hurt, <init>) and NagaMovementPattern (tick, transitionState). The boss music files (Bilibili downloads of unknown authorship) and the NeoForge config screen are left out. Requires twilightforest [4.3.2508-skytekx.1,), so local-mods/ needs the fork TF jar. Bundled as local-mods/at_mod-0.0.2-1.20.1-skytekx.1.jar with modrinth-permissions/ attribution.",
+    "action": "backported_bundled"
    },
    {
     "name": "Create: Shimmer",

@@ -358,6 +358,7 @@ Each addon below is the newest 1.20.1 Forge build. Env is client / server as wri
 | The King of Twilight | 1.0.1 | `local-mods/` (CurseForge file 8029727) | both | MIT | The Twilight Lord final boss, spawned through Twilight Tweaks. |
 | Twilight Mobs Loots (1.20.1 backport) | 1.1.1-1.20.1-skytekx.1 | `local-mods/`, built from `ports/twilight-mobs-loots/` | both | MIT | Trophies for 48 regular TF mobs: 10% player-kill drop (giants 50%, +5% per Looting level), floor and wall blocks with the mob's sound and particles, wearable on the head or in the Curios head slot or a new `trophy` slot. |
 | Spiced Twilight | 2.0.0-1.20.1-skytekx.1 | `local-mods/` (built from `ports/spiced-twilight/`) | both | LGPL-3.0-or-later | Maze Slime Beetle in the Labyrinth, Helmet Crabs that hide, kobold armor and babies, Fire Beetle Powder, Hydra Hide, Cinder Pouch. 1.21.1-only upstream, backported here without the Naga jump attack. |
+| Alternative Twilight (Remastered) | 0.0.2-1.20.1-skytekx.1 | `local-mods/` (built from `ports/alternative-twilight-remastered/`) | both | GPL-3.0-or-later | Boss rework: three-phase Lich (shield-break minions and Blood Lust Curse, phase-2 damage cap, phase-3 power-up and magic orbs), a harder Naga (venom volleys, daze on frontal hits, chained charges), nine spears, Blood Lust effects, Knight Phantom aurora. 1.21.1-only upstream, backported here without its boss music files. |
 
 Distribution rules: a Modrinth-hosted addon goes into the index, even when it is All Rights Reserved,
 because the file comes from the Modrinth CDN. A CurseForge-only addon is bundled in `local-mods/` only
@@ -502,6 +503,42 @@ Re-check these when the matching 4.8 code is backported, because the addons hook
   together with any release that ships this jar, then boot the full pack once on Arclight (Done, 0 FATAL,
   no mixin errors) and refuel one brewing stand with Fire Beetle Powder; the porter's boot test ran on
   plain Forge 47.4.18.
+- **Alternative Twilight (Remastered)** (lvedy, GPL-3.0-or-later): `ports/alternative-twilight-remastered/`,
+  a standalone NeoGradle 6 project like the fork. Build the fork first (`ports/twilightforest`,
+  `./gradlew build`); the port compiles against
+  `../twilightforest/build/libs/twilightforest-1.20.1-<tf_version>-universal.jar` (flatDir plus `fg.deobf`)
+  and MixinGradle writes the SRG refmap. Ported from upstream `99f43e08a` (branch `old`: the Modrinth 0.0.2
+  release plus the Knight Phantom aurora, the expanded config and the LICENSE; `master` is an unfinished
+  rewrite with TODO stubs); mod id `at_mod`, version `0.0.2-1.20.1-skytekx.1`, needs twilightforest
+  `[4.3.2508-skytekx.1,)`. Config `config/at_mod_config.toml` (COMMON, upstream keys and defaults).
+  Mixin targets: `Lich#hurt` (HEAD: phase-2 damage cap and the phase-2 to 3 transition at three or more
+  minions; INVOKE after the single `setShieldStrength(I)V` call: minion plus Blood Lust Curse on the shield
+  breaker), `Lich#customServerAiStep` (TAIL: phase-3 attributes, health cut, magic orbs), `Naga#hurt` (HEAD
+  daze check and a damage multiplier through `@ModifyVariable`), `Naga#<init>` (TAIL, max health 210),
+  `NagaMovementPattern#tick` (HEAD, venom on each charge, forced stunless charge below 2/3 health) and
+  `#transitionState` (HEAD, chained charges below 1/3). All are injects into TF classes, which Arclight
+  does not patch; every target was checked with javap against the reobfuscated fork jar. Keep
+  `Lich#getPhase`, `#setMinionsToSummon`, the one `setShieldStrength` call in `Lich#hurt`,
+  `LichMinion.master` and its `(Level, Lich)` constructor, the `LichBolt`/`LichBomb` `(Level, LivingEntity)`
+  constructors, `Naga#isStunlessCharging`, `#setStunlessCharging`, `#isDazed`, `#getMovementAI`,
+  `NagaMovementPattern.naga`/`state`/`stateCounter`, `#doDaze`, `#transitionState` and its `MovementState`
+  values, and `util.TwilightItemTier` (`IRONWOOD`, `KNIGHTMETAL`) when re-syncing the fork. Renaming `getMovementAI`
+  to 4.8's `getMovementPattern` would break the Naga mixin; Spiced Twilight's Naga jump attack stays out
+  because both would drive `NagaMovementPattern`. A `/summon`ed Lich reads `ShieldStrength` and
+  `MinionsToSummon` as 0 from its NBT and starts in phase 3 (TF behaviour); test with
+  `{ShieldStrength:6,MinionsToSummon:3}`. Not shipped: the eight boss music `.ogg` files (Bilibili
+  downloads of unknown authorship); the tracker only plays `at_mod:music.<boss>` when a resource pack
+  defines it, otherwise it stays silent. Also not ported: NeoForge's config screen and the MDK example
+  block. Fixed on the way: Blood Lust Curse expiry damage lands on the next entity tick instead of inside
+  `MobEffectEvent.Expired` (mid-iteration of the effect map), and the venom damage is read per hit.
+  **Bundled** as `local-mods/at_mod-0.0.2-1.20.1-skytekx.1.jar` with its `modrinth-permissions/` file; the
+  jar build is byte-reproducible and its NOTICE and mods.toml credits link the source
+  (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/alternative-twilight-remastered), as
+  the GPL asks. Like the other ports it needs the fork jar in `local-mods/`: next to the stock
+  `twilightforest-1.20.1-4.3-universal.jar` Forge refuses to load it. After the fork jar swap, boot the
+  full pack once on Arclight (Done, 0 FATAL, no mixin errors) and fight a Lich and a Naga once; the
+  porter's boot test ran on plain Forge 47.4.18 (with and without Spiced Twilight). The client-only parts
+  (spear arm pose and models, aurora post shader, boss music) were compiled but not run in a client.
 
 ### Planned backports (1.21.1-only addons)
 
@@ -509,12 +546,13 @@ These exist only for 1.21.1 NeoForge. They are ported as separate work once the 
 on is in the fork (details in the table below):
 - **Create: Shimmer**: the only maintained Create x TF bridge. It needs Create: Dragons Plus for 1.20.1,
   a rework of the 1.21 recipe API, and the author's OK for its All Rights Reserved assets.
-- **Alternative Twilight (Remastered)**: after the 4.8 boss rework is backported. It replaces the
-  1.20.1 Alternative Twilight, which conflicts with that rework.
-- **Twilight Mobs Loots**, **Twilight Crossbow** and **Spiced Twilight** are done: see
+- **Twilight Mobs Loots**, **Twilight Crossbow**, **Spiced Twilight** and **Alternative Twilight
+  (Remastered)** are done: see
   [In the pack](#in-the-pack-2026-11-01) and
   [Backported 1.21.1-only addons](#backported-1211-only-addons). The crossbow jar waits for the fork
-  jar in `local-mods/`; the Mobs Loots and Spiced Twilight jars are bundled but need it to load.
+  jar in `local-mods/`; the Mobs Loots, Spiced Twilight and Alternative Twilight jars are bundled but
+  need it to load. Alternative Twilight (Remastered) replaces the 1.20.1 Alternative Twilight, which
+  conflicts with the 4.8 boss rework.
 - **Mystic Crown Compat** is done too, folded into the fork itself (Curios head slot and scepter
   bonuses, no separate jar): see the `mystic-crown` entry in
   [Local divergences from upstream](#local-divergences-from-upstream-keep-on-re-sync). It ships with the fork jar swap.
@@ -536,7 +574,7 @@ on is in the fork (details in the table below):
 | [Twilight Tweaks (jodlodi)](https://www.curseforge.com/minecraft/mc-mods/twilight-tweaks) | add_existing_1201_build | yes | 1.20.x Forge 1.2 (2023-08-13), 1.21.1 NeoForge 1.3 (2025-05-18). Its TF versionRange is the malformed ',)', which Forge treats as 'any'. |
 | [The King of Twilight](https://www.curseforge.com/minecraft/mc-mods/the-king-of-twilight) | add_existing_1201_build | yes | 1.20.1 Forge 1.0.1 (2026-05-03). No 1.21.1. Needs ISS and GeckoLib, both already in the pack. |
 | [Alternative Twilight (1.20.1)](https://modrinth.com/mod/alternative_twilight) | skip | no | 1.20.1 Forge 1.20.1-1.1.0 (2025-06-06). The 1.21.1 line is a separate remake. Its TF range is the soft '4.3.2145', which accepts any version |
-| [Alternative Twilight (Remastered)](https://modrinth.com/mod/alternative-twilight-remastered) | needs_backport | yes | 1.21.1 NeoForge only, 0.0.2 (2026-05-15). 34 classes, 3 mixins. Source github.com/Lvedy114/alternative-twilight. |
+| [Alternative Twilight (Remastered)](https://modrinth.com/mod/alternative-twilight-remastered) | backported_bundled | yes | 1.21.1 NeoForge only, 0.0.2 (2026-05-15). 34 classes, 3 mixins. Source github.com/Lvedy114/alternative-twilight. Done: ported in `ports/alternative-twilight-remastered/` (from `old` 99f43e08a; boss music files and the config screen left out) and bundled as `local-mods/at_mod-0.0.2-1.20.1-skytekx.1.jar`. |
 | [Create: Shimmer](https://www.curseforge.com/minecraft/mc-mods/create-shimmer) | needs_backport | yes | 1.21.1 NeoForge only (1.3.1, 2026-08-13). Needs create [6.0.7,), create_dragons_plus [1.8.0,), curios 9 and twilightforest [4.7.0,). |
 | [Twilight Mobs Loots](https://modrinth.com/mod/twilight-mobs-loots) | backported_bundled | yes | 1.21.1 NeoForge 1.1.1 only. twilightforest [4.8,5.0). 24 classes, no mixins. Done: ported in `ports/twilight-mobs-loots/` (22 classes, Twilight Moonshine compat dropped) and bundled as `local-mods/twilight_mobs_loots-1.1.1-1.20.1-skytekx.1.jar`. |
 | [Twilight Crossbow (baguchi)](https://modrinth.com/mod/twilight-crossbow) | backported_held | yes | 1.21.1 NeoForge 1.21.1-1.5.0 only. TF [0,). 23 classes, 4 mixins. Done: ported in `ports/twilight-crossbow/` (Knight Crossbow left out, upstream never registers it). The jar is not bundled until the fork jar replaces the 4.3 jar in `local-mods/`. |

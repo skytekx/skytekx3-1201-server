@@ -5,11 +5,11 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across all 39 bundled mods. **Verify the blockers yourself before trusting them.**
+Researched automatically across all 40 bundled mods. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **33** mods are fine to bundle (open license or author allows modpacks).
+- **34** mods are fine to bundle (open license or author allows modpacks).
 - **0** need a quick manual check (CurseForge modpack flag unconfirmed).
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
@@ -46,6 +46,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `deadlyworld-1.20.1-1.2.3.jar` | Deadly World | All Rights Reserved | Unknown | **NO** | - |
 | `fireflies-1.0.0-forge-1.20.1.jar` | 🟨⬛!!Fireflies!!🟨⬛ | All Rights Reserved | No permission | **NO** | - |
 | `hexxit_additions-1.0.2-forge-1.20.1.jar` | Hexxit Additions | All Rights Reserved | No permission | **NO** | - |
+| `at_mod-0.0.2-1.20.1-skytekx.1.jar` | Alternative Twilight (Remastered) (1.20.1 backport by SkyTekx) | GPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `bibliocraft-1.20.1-1.3.1.jar` | BiblioCraft Legacy (Expanded) | MIT | Licensed | yes | - |
 | `birdsnests-1.20.1-2.1.5.jar` | Birds Nests | LGPL-3.0 | Licensed | yes | - |
 | `ChunkOpt-1.0.2.jar` | Chunk Optimization (ChunkOpt) | MIT | Licensed | yes | - |

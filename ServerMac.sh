@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 # Java 17 is the only version with a successful boot on record (okf/server/arclight.md).
 # -F makes java_home fail when Java 17 is missing instead of falling back to another installed Java.
 JAVA="${JAVA:-$(/usr/libexec/java_home -F -v 17)/bin/java}"
-JAR="${JAR:-arclight.jar}"   # Symlink to the hardened arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar
+JAR="${JAR:-arclight.jar}"   # Symlink to the hardened arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar
 # Heap for the 16 GB M4 Mac mini. macOS with nobody logged in uses about 3 GB, and the JVM needs
 # roughly 2 to 2.5 GB on top of the heap for metaspace, code cache and threads of ~270 mods.
 MEM="${MEM:-9G}"

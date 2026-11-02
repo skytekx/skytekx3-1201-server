@@ -1,0 +1,16 @@
+{
+  "type": "twilight_crossbow:rebuild_template_smithing",
+  "template": {
+    "item": "twilight_crossbow:crossbow_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "twilightforest:seeker_bow"
+  },
+  "addition": {
+    "item": "twilightforest:steeleaf_ingot"
+  },
+  "result": {
+    "item": "twilight_crossbow:seeker_crossbow",
+    "count": 1
+  }
+}

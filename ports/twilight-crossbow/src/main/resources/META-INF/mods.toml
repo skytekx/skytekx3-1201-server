@@ -1,0 +1,45 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="${mod_license}"
+issueTrackerURL="https://github.com/baguchi/TwilightCrossbow/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://github.com/baguchi/TwilightCrossbow"
+authors="${mod_authors}"
+credits="Original mod by baguchi (MIT). Minecraft 1.20.1 / Forge 47 backport for SkyTekx 3."
+description='''
+This mod add Twilight Forest Mod Bow's Crossbow version.
+
+Unofficial Minecraft 1.20.1 Forge backport of the 1.21.1 NeoForge release, built for the SkyTekx Twilight Forest fork.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="twilightforest"
+    mandatory=true
+    versionRange="[${tf_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="jei"
+    mandatory=false
+    versionRange="[15.2,)"
+    ordering="NONE"
+    side="BOTH"

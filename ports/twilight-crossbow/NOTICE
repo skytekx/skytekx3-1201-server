@@ -1,0 +1,33 @@
+Twilight CrossBow - Minecraft 1.20.1 / Forge 47 backport (SkyTekx)
+==================================================================
+
+This is a MODIFIED version of "Twilight CrossBow" by baguchi.
+
+  Upstream:         https://github.com/baguchi/TwilightCrossbow
+  Upstream commit:  00085635b09c2b3072dec3de7feb917685d1f9a9 ("ender crossbow", 2026-08-28),
+                    the 1.21.1-1.5.0 release plus the Ender Crossbow
+  Upstream license: MIT, Copyright (c) 2025 baguchi (see LICENSE, kept unchanged)
+
+Changes in this backport (version 1.5.0-1.20.1-skytekx.1):
+
+- Rewritten from Minecraft 1.21.1 / NeoForge 21.1 to Minecraft 1.20.1 / Forge 47, against the
+  SkyTekx Twilight Forest fork (twilightforest 4.3.2508-skytekx.1, ports/twilightforest).
+- Crossbow loading/shooting: 1.21 stores loaded ammo in the charged_projectiles data component and
+  shoots through overridable CrossbowItem methods. 1.20.1 keeps it in "Charged"/"ChargedProjectiles"
+  NBT and shoots through private static methods, so the items share a base class with an instance
+  copy of the vanilla pipeline, and a mixin on CrossbowItem#performShooting routes them to it.
+- Data: NeoForge add_table loot modifier -> a Forge global loot modifier with the same JSON shape;
+  1.20.1 folder names (recipes/, loot_tables/); recipe results use {"item": ...}; 1.21-only
+  enchantable item tags are dropped (1.20.1 enchantability follows `instanceof CrossbowItem`) and
+  the crossbows are tagged forge:tools/crossbows instead.
+- Fixes to upstream behaviour:
+  * the Crossbow Upgrade Smithing Template loot never generated upstream (wrong loot table id,
+    wrong table name, invalid item id); it now has a 25% chance in Aurora Palace cache chests
+    (twilightforest:chests/aurora_cache), as intended;
+  * the Ice Firework's freezing blast was dead code upstream (a private explode() cannot override
+    the private vanilla one); a mixin on FireworkRocketEntity#explode now runs it;
+  * the death messages overrode the vanilla "death.attack.fireworks" keys for every firework;
+    they now use the ice_firework damage type's own message id;
+  * the Ender Crossbow also gets the loaded-crossbow first-person pose.
+- Not ported: the unreleased Knight Crossbow (registration commented out upstream) and its
+  getChargeDuration mixin; the empty config-screen client entry point.

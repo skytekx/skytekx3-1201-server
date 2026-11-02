@@ -1,0 +1,16 @@
+{
+  "type": "twilight_crossbow:rebuild_template_smithing",
+  "template": {
+    "item": "twilight_crossbow:crossbow_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "twilightforest:ice_bow"
+  },
+  "addition": {
+    "item": "minecraft:ice"
+  },
+  "result": {
+    "item": "twilight_crossbow:ice_crossbow",
+    "count": 1
+  }
+}

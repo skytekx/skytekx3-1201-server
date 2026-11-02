@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "twilight_crossbow:triple_crossbow",
+    "twilight_crossbow:ice_crossbow",
+    "twilight_crossbow:seeker_crossbow",
+    "twilight_crossbow:ender_crossbow"
+  ]
+}

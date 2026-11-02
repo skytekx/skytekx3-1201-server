@@ -3,7 +3,7 @@ type: Mod
 title: Nyx
 description: Ellpeck's moon mod, forked and ported to Forge 1.20.1 for SkyTekx 3, with lunar events, meteors, lunar water and meteor gear.
 tags: [content, mod, nyx]
-timestamp: 2026-10-31
+timestamp: 2026-11-02
 ---
 
 # Nyx
@@ -34,16 +34,17 @@ enchantments and a darker, tinted night sky that follows the moon phase.
   ingot and shard, meteor finder, scythe and unrefined crystal.
 - Blocks (13): the star block family, meteor rock and gleaning meteor rock, meteor block and glass,
   crystal, lunar water and its cauldron, and star air.
-- Data in the jar: 24 recipes, 11 loot tables and 2 block tags in the `minecraft` namespace
-  (`mineable/pickaxe` and `needs_diamond_tool`).
+- Data in the jar: 24 recipes, 11 loot tables, 2 block tags in the `minecraft` namespace
+  (`mineable/pickaxe` and `needs_diamond_tool`) and, since 1.0.1, the empty block tag
+  `nyx:needs_meteor_tool`.
 
 ## The jar
 
 | Property | Value |
 |---|---|
-| File | Tracked in git as [local-mods/nyx-1.20.1-1.0.0.jar](../../local-mods/nyx-1.20.1-1.0.0.jar) |
-| Size and SHA-1 | 418,839 bytes, `6424939d6484ea17b5762ebdc7d178e34c23f2f6` |
-| Built | 2026-06-29 15:50:11 +02:00 (`Implementation-Timestamp` in the manifest), version 1.20.1-1.0.0 |
+| File | Tracked in git as [local-mods/nyx-1.20.1-1.0.1.jar](../../local-mods/nyx-1.20.1-1.0.1.jar) |
+| Size and SHA-1 | 419,414 bytes, `29c71ca3c906139949942d26c0b270dd9a9a7124` |
+| Built | 2026-11-02 13:16:12 +01:00 (`Implementation-Timestamp` in the manifest), version 1.20.1-1.0.1 from fork commit e3c8285 |
 | Mod id | Id `nyx`, package `de.ellpeck.nyx`, side BOTH, mixin config `nyx.mixins.json` |
 | Needs | Forge 47 or later and Minecraft 1.20.1 |
 | Source | Fork [skytekx/nyx](https://github.com/skytekx/nyx), branch `1.20.1`, local checkout `~/git/nyx` |
@@ -90,9 +91,6 @@ Skylands, and about every second full moon becomes a blood moon.
 - Two notes still say Nyx is gone: the comment at `kubejs/server_scripts/recipe_fixes.js:28` and the
   Nyx rows in `docs/RECIPE_PORT.md` (lines 52 and 55). The fallen star exists again as `nyx:fallen_star`,
   so the SkyTekx 2 hexical diamond recipe could use it (see [KubeJS](../modpack/kubejs.md)).
-- The `authors` line in the jar's `mods.toml` and the file
-  `modrinth-permissions/nyx-1.20.1-1.0.0.jar.md` (lines 13 and 19) name the owner in person. The owner
-  ruled on 2026-06-29 10:24 that the credits carry no real names.
 
 ## Boot log
 
@@ -109,5 +107,14 @@ The first port commit (7e5714f) only brought the client side night sky. The full
 
 On 2026-10-31 commit a00ecce let lunar events into the Skylands and raised the blood moon chance to 0.5,
 see [configuration](#configuration).
+
+On 2026-11-02 version 1.0.1 (fork commits 4014464, 6eb9e3f and e3c8285) fixed diamond tools. The meteor
+tool tier sits between diamond and netherite, and 1.0.0 gave it the tag `minecraft:needs_diamond_tool`.
+Forge's tier sorting treats a block in the tag of any tier above diamond as too hard for diamond, so
+diamond pickaxes stopped dropping obsidian, ancient debris and every other block that needs diamond. The
+owner ruled at 13:12 that whatever diamond mines in vanilla stays mineable with it, and that new blocks
+may ask for a higher tier. The tier now carries its own empty tag `nyx:needs_meteor_tool`, so diamond
+mines everything it mines in vanilla, and a new block can still ask for the meteor tier through that
+tag. The same build credits the port to SkyTekx alone, as the owner ruled on 2026-06-29 10:24.
 
 Related: [mod set](../modpack/mod-set.md), [compat mod](compat-mod.md), [content](index.md).

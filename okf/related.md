@@ -73,8 +73,8 @@ fork has a release or a tag.
   upstream's code of 2021. Up to 74faf22 the pack index downloaded Nyx from a release `v1.20.1-1.0.0`
   of this fork, which does not exist (HTTP 404). The pack bundles the jar instead, see
   [Nyx](content/nyx.md). The fork shows the upstream description
-  "Commission for Drakallen", and the permission file `modrinth-permissions/nyx-1.20.1-1.0.0.jar.md`
-  wrongly reads it as a commission for this pack.
+  "Commission for Drakallen". Up to 1.0.0 the permission file wrongly read it as a commission for this
+  pack. The file for 1.0.1, `modrinth-permissions/nyx-1.20.1-1.0.1.jar.md`, says it is unrelated.
 - The fork [skytekx/Cataclysm_Spellbooks](https://github.com/skytekx/Cataclysm_Spellbooks) of the
   archived AceTheEldritchKing/Cataclysm_Spellbooks was created on 2026-06-29 at 06:26, right after the
   owner ruled at 06:25 to patch Spellbooks instead of Cataclysm. Branch `1.20.1` holds one commit,

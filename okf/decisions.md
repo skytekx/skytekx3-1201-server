@@ -67,7 +67,7 @@ These rules apply to every later change.
 |---|---|---|---|
 | 2026-06-27 15:09 | The project contact address is `skytekx@erebos.xyz`, not office@netsnek.com | Done. It is the contact in the user agent of `tools/resolve_all.py:9` and `tools/publish_modrinth.py:13` | [History](history.md#from-ts3party-to-ts4party) |
 | 2026-06-29 10:00 and 10:10 | Credit SkyTekx as "a modpack by ts4.party, the TeamSpeak for party, formerly known as ts3.party", with netsnek.com as supporter (worded "Supported by" at 14:46) | Partial. The website footer and credits, the README and since 2026-10-31 21:25 the Modrinth texts follow it. Two lead texts on the website still name the ts3.party community | [Related repos and services](related.md#claims-on-the-site-that-are-wrong-on-2026-10-31) |
-| 2026-06-29 10:24 | No real names in the credits | Partial. The `authors` line of the Nyx jar and two lines of `modrinth-permissions/nyx-1.20.1-1.0.0.jar.md` carry a real name | [Nyx](content/nyx.md#open-points) |
+| 2026-06-29 10:24 | No real names in the credits | Done on 2026-11-02. Nyx 1.0.1 credits the port to SkyTekx, and `modrinth-permissions/nyx-1.20.1-1.0.1.jar.md` names no person | [Nyx](content/nyx.md#open-points) |
 | 2026-06-29 18:46 and 18:47 | AGENTS.md and the wiki must not name the owner as commit author | Done | [AGENTS.md](../AGENTS.md) |
 | 2026-06-30 04:54 | The website subtitle reads "Hexxit × Tekkit × SkyFactory" | Done. The README title follows it since 2026-10-31 | [History](history.md#names) |
 

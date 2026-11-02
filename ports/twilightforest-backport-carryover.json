@@ -221,7 +221,7 @@
     ],
     "deferred": [
      "custom-density-terraforming (adds UtilityPiece): in twilightforest/world/components/placements/AvoidLandmarkModifier.placementIsBlocked, replace the TODO with `if (piece instanceof UtilityPiece utilityPiece && utilityPiece.allowFeatures) continue;` before the greatestAxalDistance check (4.8 7dac0cd13, ea5db78ed)",
-     "lich-tower-revamp / vegetation-placement-misc: append AvoidLandmarkModifier.checkVegetation() to PLACED_MAYAPPLE, PLACED_MUSHGLOOM_CLUSTER, PLACED_FLOWER_PLACER and PLACED_FLOWER_PLACER_ALT, and to the new patch_grass_*, dense_ferns and dense_large_ferns, as 4.8 facc450f5 does. Regenerate their placed_feature JSONs.",
+     "lich-tower-revamp / vegetation-placement-misc: append AvoidLandmarkModifier.checkVegetation() to PLACED_MAYAPPLE, PLACED_MUSHGLOOM_CLUSTER, PLACED_FLOWER_PLACER and PLACED_FLOWER_PLACER_ALT, and to the new patch_grass_*, as 4.8 facc450f5 does. Regenerate their placed_feature JSONs. DONE for dense_ferns and dense_large_ferns: enchanted-forest-overhaul (b053426) already passes AvoidLandmarkModifier.checkVegetation() inline on PLACED_DENSE_FERNS and PLACED_DENSE_LARGE_FERNS, and their placed_feature JSONs already carry the no_structure entry with occupies_vegetation true; do not add it again. If you add 4.8's shared `AvoidLandmarkModifier avoidLichTower` local, keep exactly one declaration (both forms emit the same JSON).",
      "lich-tower-revamp: add the tfTreeCheckArea overloads taking HolderSet<Structure> structuresAllowed and pass the Lich Tower holder to the tree placements (4.8 dc6ae022a)"
     ]
    },

@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-02T02:55:05.311230384	TwilightForest blockstates and block models
+// 1.20.1	2026-11-02T05:01:19.908059254	TwilightForest blockstates and block models
 cab88029518a1647ec691d136328ed93c18108be assets/twilightforest/blockstates/acacia_banister.json
 3ab3506a1572b5e71aea74770f585606be18ae0f assets/twilightforest/blockstates/acacia_drying_rack.json
 9472090eea384d675fee73a90ed033b799c88820 assets/twilightforest/blockstates/alpha_yeti_boss_spawner.json
@@ -359,6 +359,7 @@ c3d60011dd0cdefa0cc3f0b45672794fe5a9f305 assets/twilightforest/blockstates/react
 bb7819736d9dd523bd69ca88e344478c4c2e4a45 assets/twilightforest/blockstates/root.json
 c7e8c3ec3d2c159a84327ac576f92eae60eb200e assets/twilightforest/blockstates/root_strand.json
 e347a4db67dc3202cc0eed97364e00349a0f85f0 assets/twilightforest/blockstates/rope.json
+67d8d3f2e07c7c01c16deda3eb25824a1de0920a assets/twilightforest/blockstates/sinister_spawner.json
 94ee00eebd82061338b6db439a84b3fdf98f3942 assets/twilightforest/blockstates/skeleton_skull_candle.json
 94ee00eebd82061338b6db439a84b3fdf98f3942 assets/twilightforest/blockstates/skeleton_wall_skull_candle.json
 588f938c63a562f986f845117abf8fae9ef759df assets/twilightforest/blockstates/skull_chest.json
@@ -1458,6 +1459,7 @@ b9682bf600de52ae145e28f7b44a16f314bfabfb assets/twilightforest/models/block/reap
 ba4e66b2089efd6c96c225058f7df6b9fa3ff9e5 assets/twilightforest/models/block/reappearing_block_vanished_active.json
 a3845a67b51e91efd49a2893dcaf9a11e64b939d assets/twilightforest/models/block/red_thread.json
 1cf498908e2faa0c9f648013b26c477d382b25c1 assets/twilightforest/models/block/root.json
+5b414ba9a399caf67ec23f40a563b08cad158696 assets/twilightforest/models/block/sinister_spawner.json
 da0bccb2705fa0306e7c0f57221137f2e721975a assets/twilightforest/models/block/skull_chest.json
 663f3524e07f2375d5bbd48fc70276535b74b5e6 assets/twilightforest/models/block/skyberry_bush_0.json
 b25a99b7c93b74dca5e3a284b2d1174866c9eb5b assets/twilightforest/models/block/skyberry_bush_1.json

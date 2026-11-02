@@ -3,6 +3,8 @@
     "#forge:tools/shields"
   ],
   "values": [
+    "twilightforest:gelatinous_slime_drop",
+    "twilightforest:gelatinous_maze_slime_drop",
     "twilightforest:zombie_skull_candle",
     "twilightforest:skeleton_skull_candle",
     "twilightforest:wither_skeleton_skull_candle",

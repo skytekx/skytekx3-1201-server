@@ -21,6 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.*;
 import twilightforest.block.Experiment115Block;
+import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.*;
 import twilightforest.item.BrittleFlaskItem;
 import twilightforest.item.PotionFlaskContents;
@@ -401,9 +402,28 @@ public class TFAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 				.addCriterion("torchberries", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.TORCHBERRIES.get()))
 				.addCriterion("berry", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RASPBERRY.get(), TFItems.BLACKBERRY.get(), TFItems.BLUEBERRY.get(), TFItems.MALOBERRY.get()).build()))
 				.addCriterion("berry_medley", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.BERRY_MEDLEY.get()))
-				.requirements(new CountRequirementsStrategy(2, 2, 1, 1, 1, 1, 1, 1, 1))
+				// 4.8 dried foods; the 4.3 criteria above keep their names so existing progress survives
+				.addCriterion("jerky", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(ItemTagGenerator.FOODS_JERKY).build()))
+				.addCriterion("slime_drop", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get()).build()))
+				.addCriterion("moss_soup", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MOSS_SOUP.get()))
+				.requirements(new CountRequirementsStrategy(2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
 				.rewards(AdvancementRewards.Builder.experience(75))
 				.save(consumer, "twilightforest:twilight_dinner");
+
+		Advancement.Builder.advancement().parent(root).display(
+						TFItems.CHICKEN_JERKY.get(),
+						Component.translatable("advancement.twilightforest.chicken_jerky"),
+						Component.empty(),
+						null, FrameType.CHALLENGE, true, true, true)
+				.addCriterion("jerky", KilledTrigger.TriggerInstance.playerKilledEntity(
+						EntityPredicate.Builder.entity()
+								.of(EntityType.ZOMBIE)
+								.flags(EntityFlagsPredicate.Builder.flags().setIsBaby(true).build())
+								.vehicle(EntityPredicate.Builder.entity().of(EntityType.CHICKEN).build()),
+						DamageSourcePredicate.Builder.damageType().direct(EntityPredicate.Builder.entity()
+								.equipment(EntityEquipmentPredicate.Builder.equipment()
+										.mainhand(ItemPredicate.Builder.item().of(TFItems.CHICKEN_JERKY.get()).build()).build()))))
+				.save(consumer, "twilightforest:chicken_jerky");
 
 		Advancement.Builder.advancement().parent(naga).display(
 						TFItems.NAGA_CHESTPLATE.get(),

@@ -1,0 +1,10 @@
+{
+  "type": "twilightforest:drying",
+  "filter_time": 6000,
+  "input": {
+    "item": "twilightforest:treated_leather"
+  },
+  "result": {
+    "item": "twilightforest:tanned_leather"
+  }
+}

@@ -304,6 +304,70 @@ public class ChestLootTables implements LootTableSubProvider {
 								.add(LootItem.lootTableItem(TFBlocks.UNCRAFTING_TABLE.get().asItem()).when(UncraftingTableEnabledCondition.uncraftingTableEnabled()))
 								.add(LootItem.lootTableItem(Items.GOLDEN_APPLE))));
 
+		register.accept(TFLootTables.CAMP_TENT,
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool().add(LootItem.lootTableItem(TFItems.TANNIN.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))) // Guaranteed Tannin
+						.withPool(LootPool.lootPool()
+								.setRolls(ConstantValue.exactly(1))
+								//one of the jerkys
+								.add(LootItem.lootTableItem(TFItems.VENISON_JERKY.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))
+								.add(LootItem.lootTableItem(TFItems.MUTTON_JERKY.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))
+								.add(LootItem.lootTableItem(TFItems.PORK_JERKY.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4)))))
+						.withPool(LootPool.lootPool()
+								.setRolls(UniformGenerator.between(1, 2))
+								//uncommon loot
+								.add(LootItem.lootTableItem(Items.LEATHER).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+								.add(LootItem.lootTableItem(TFBlocks.BIRCH_DRYING_RACK.get()).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))))
+								.add(LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+								.add(LootItem.lootTableItem(Items.APPLE).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)))))
+						.withPool(LootPool.lootPool()
+								//rare loot
+								.add(LootItem.lootTableItem(Items.LEATHER_HELMET))
+								.add(LootItem.lootTableItem(Items.LEATHER_CHESTPLATE))
+								.add(LootItem.lootTableItem(Items.LEATHER_LEGGINGS))
+								.add(LootItem.lootTableItem(Items.LEATHER_BOOTS))
+								.add(LootItem.lootTableItem(Items.SHEARS))));
+
+		// 4.8 rolls the leather armor through an inline nested table (weight 2), which 1.20.1 loot tables cannot hold.
+		// Every weight is doubled instead so each armor piece keeps its 1-in-138 chance (2/69 for the set).
+		register.accept(TFLootTables.CAMP_DRYING_RACK,
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								//empty
+								.add(EmptyLootItem.emptyItem().setWeight(40))
+								//common
+								.add(LootItem.lootTableItem(TFItems.CHICKEN_JERKY.get()).setWeight(16))
+								.add(LootItem.lootTableItem(TFItems.MUTTON_JERKY.get()).setWeight(16))
+								.add(LootItem.lootTableItem(TFItems.PORK_JERKY.get()).setWeight(16))
+								.add(LootItem.lootTableItem(TFItems.VENISON_JERKY.get()).setWeight(16))
+								//uncommon
+								.add(LootItem.lootTableItem(TFItems.BEEF_JERKY.get()).setWeight(8))
+								.add(LootItem.lootTableItem(TFItems.TANNED_LEATHER.get()).setWeight(8))
+								.add(LootItem.lootTableItem(TFItems.RABBIT_JERKY.get()).setWeight(8))
+								//rare
+								.add(LootItem.lootTableItem(Items.LEATHER).setWeight(4))
+								.add(LootItem.lootTableItem(Items.LEATHER_HELMET))
+								.add(LootItem.lootTableItem(Items.LEATHER_CHESTPLATE))
+								.add(LootItem.lootTableItem(Items.LEATHER_LEGGINGS))
+								.add(LootItem.lootTableItem(Items.LEATHER_BOOTS))
+								//very rare
+								.add(LootItem.lootTableItem(TFItems.GELATINOUS_SLIME_DROP.get()).setWeight(2))));
+
+		register.accept(TFLootTables.CAMP_POT,
+				LootTable.lootTable()
+						.withPool(LootPool.lootPool()
+								//common
+								.add(LootItem.lootTableItem(TFItems.CHICKEN_JERKY.get()).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))
+								.add(LootItem.lootTableItem(TFItems.MUTTON_JERKY.get()).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))
+								.add(LootItem.lootTableItem(TFItems.PORK_JERKY.get()).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))
+								.add(LootItem.lootTableItem(TFItems.VENISON_JERKY.get()).setWeight(8).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))
+								//uncommon
+								.add(LootItem.lootTableItem(TFItems.BEEF_JERKY.get()).setWeight(4).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
+								.add(LootItem.lootTableItem(TFItems.TANNED_LEATHER.get()).setWeight(4).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
+								.add(LootItem.lootTableItem(TFItems.RABBIT_JERKY.get()).setWeight(4).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))
+								//very rare
+								.add(LootItem.lootTableItem(TFItems.GELATINOUS_SLIME_DROP.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))));
+
 		register.accept(TFLootTables.SMALL_HOLLOW_HILL.lootTable,
 				LootTable.lootTable()
 						.withPool(LootPool.lootPool()

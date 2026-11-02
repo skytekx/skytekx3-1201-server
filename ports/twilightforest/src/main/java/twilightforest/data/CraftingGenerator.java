@@ -216,6 +216,14 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.generateAdvancement(TwilightForestMod.prefix("recipes/decorations/uncrafting_table"))
 				.build(consumer, TwilightForestMod.prefix("uncrafting_table"));
 
+		// 4.8 passes a water bottle stack to Ingredient.of, which keeps only the item; the water check is what it intends
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TFItems.MOSS_SOUP.get())
+				.requires(TFBlocks.MOSS_PATCH.get())
+				.requires(Items.BOWL)
+				.requires(potion(Potions.WATER))
+				.unlockedBy("has_moss", has(TFBlocks.MOSS_PATCH.get()))
+				.save(consumer);
+
 		cookingRecipes(consumer, "smelted", RecipeSerializer.SMELTING_RECIPE, 200);
 		cookingRecipes(consumer, "smoked", RecipeSerializer.SMOKING_RECIPE, 100);
 		cookingRecipes(consumer, "campfired", RecipeSerializer.CAMPFIRE_COOKING_RECIPE, 600);
@@ -347,7 +355,70 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_kelp", has(Items.KELP))
 				.save(consumer, TwilightForestMod.prefix("drying/kelp"));
 
+		DryingRecipeBuilder.drying(Items.ROTTEN_FLESH, TFItems.MONSTER_JERKY.get())
+				.unlockedBy("has_meat", has(Items.ROTTEN_FLESH))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.BEEF, TFItems.BEEF_JERKY.get())
+				.unlockedBy("has_meat", has(Items.BEEF))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.CHICKEN, TFItems.CHICKEN_JERKY.get())
+				.unlockedBy("has_meat", has(Items.CHICKEN))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.PORKCHOP, TFItems.PORK_JERKY.get())
+				.unlockedBy("has_meat", has(Items.PORKCHOP))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.MUTTON, TFItems.MUTTON_JERKY.get())
+				.unlockedBy("has_meat", has(Items.MUTTON))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.RABBIT, TFItems.RABBIT_JERKY.get())
+				.unlockedBy("has_meat", has(Items.RABBIT))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.COD, TFItems.COD_JERKY.get())
+				.unlockedBy("has_meat", has(Items.COD))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.SALMON, TFItems.SALMON_JERKY.get())
+				.unlockedBy("has_meat", has(Items.SALMON))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.TROPICAL_FISH, TFItems.TROPICAL_FISH_JERKY.get())
+				.unlockedBy("has_meat", has(Items.TROPICAL_FISH))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.PUFFERFISH, TFItems.FUGU_JERKY.get())
+				.unlockedBy("has_meat", has(Items.PUFFERFISH))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.RAW_VENISON.get(), TFItems.VENISON_JERKY.get())
+				.unlockedBy("has_meat", has(TFItems.RAW_VENISON.get()))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.RAW_MEEF.get(), TFItems.MEEF_JERKY.get())
+				.unlockedBy("has_meat", has(TFItems.RAW_MEEF.get()))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(Items.SLIME_BALL, TFItems.GELATINOUS_SLIME_DROP.get())
+				.unlockedBy("has_slime_ball", has(Items.SLIME_BALL))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.MAZE_SLIME_BALL.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get())
+				.unlockedBy("has_maze_slime_ball", has(TFItems.MAZE_SLIME_BALL.get()))
+				.save(consumer);
+
+		DryingRecipeBuilder.drying(TFItems.TREATED_LEATHER.get(), TFItems.TANNED_LEATHER.get())
+				.unlockedBy("has_treated", has(TFItems.TREATED_LEATHER.get()))
+				.save(consumer);
+
 		dryingRackCoralRecipes(consumer);
+
+		// no unlock criterion on purpose: Stale Bread is a hidden joke recipe (DryingRecipeBuilder exempts its id)
+		DryingRecipeBuilder.drying(Items.BREAD, TFItems.STALE_BREAD.get()).save(consumer);
 	}
 
 	private void dryingRackCoralRecipes(Consumer<FinishedRecipe> consumer) {
@@ -569,6 +640,22 @@ public class CraftingGenerator extends CraftingDataHelper {
 				.unlockedBy("has_ingot", has(ItemTagGenerator.KNIGHTMETAL_INGOTS))
 				.unlockedBy("has_ring", has(TFItems.KNIGHTMETAL_RING.get()))
 				.save(consumer, locEquip(TFItems.BLOCK_AND_CHAIN.getId().getPath()));
+
+		// 4.8 registers has_block three times (sapling, root strand, leaves) and the last one wins;
+		// 1.20.1's Advancement.Builder rejects duplicate criteria, so only the leaves criterion is kept
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.TANNIN.get())
+				.requires(potion(Potions.WATER))
+				.requires(TFBlocks.TWILIGHT_OAK_SAPLING.get())
+				.requires(TFBlocks.ROOT_STRAND.get())
+				.requires(TFBlocks.TWILIGHT_OAK_LEAVES.get())
+				.unlockedBy("has_block", has(TFBlocks.TWILIGHT_OAK_LEAVES.get()))
+				.save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TFItems.TREATED_LEATHER.get())
+				.requires(TFItems.TANNIN.get())
+				.requires(Tags.Items.LEATHER)
+				.unlockedBy("has_tannin", has(TFItems.TANNIN.get()))
+				.save(consumer);
 
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TFItems.KNIGHTMETAL_RING.get())
 				.pattern(" - ")

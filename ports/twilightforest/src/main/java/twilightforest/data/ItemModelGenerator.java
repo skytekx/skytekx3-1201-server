@@ -533,9 +533,27 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTexTool(TFItems.IRONWOOD_SHOVEL);
 		singleTexTool(TFItems.IRONWOOD_HOE);
 		singleTexFullbright(TFItems.TORCHBERRIES);
+		withExistingParent(TFItems.MOSS_SOUP.getId().getPath(), "item/generated")
+				.texture("particle", prefix("block/patch/moss"))
+				.texture("layer0", new ResourceLocation("item/bowl"))
+				.texture("layer1", prefix("item/moss_soup"));
+		singleTex(TFItems.MONSTER_JERKY);
+		singleTex(TFItems.BEEF_JERKY);
+		singleTex(TFItems.CHICKEN_JERKY);
+		singleTex(TFItems.PORK_JERKY);
+		singleTex(TFItems.MUTTON_JERKY);
+		singleTex(TFItems.RABBIT_JERKY);
+		singleTex(TFItems.COD_JERKY);
+		singleTex(TFItems.SALMON_JERKY);
+		singleTex(TFItems.TROPICAL_FISH_JERKY);
+		singleTex(TFItems.FUGU_JERKY);
 		singleTex(TFItems.RAW_VENISON);
 		singleTex(TFItems.COOKED_VENISON);
+		singleTex(TFItems.VENISON_JERKY);
+		singleTex(TFItems.TREATED_LEATHER);
+		singleTex(TFItems.TANNED_LEATHER);
 		singleTex(TFItems.HYDRA_CHOP);
+		singleTex(TFItems.TANNIN);
 		singleTex(TFItems.FIERY_BLOOD);
 		singleTex(TFItems.FIERY_TEARS);
 		singleTexFullbright(TFItems.FIERY_INGOT);
@@ -561,6 +579,9 @@ public class ItemModelGenerator extends ItemModelProvider {
 		singleTex(TFItems.TRANSFORMATION_POWDER);
 		singleTex(TFItems.RAW_MEEF);
 		singleTex(TFItems.COOKED_MEEF);
+		singleTex(TFItems.MEEF_JERKY);
+		singleTex(TFItems.GELATINOUS_SLIME_DROP);
+		singleTex(TFItems.GELATINOUS_MAZE_SLIME_DROP);
 		singleTex(TFItems.MEEF_STROGANOFF);
 		singleTex(TFItems.MAZE_WAFER);
 		singleTex(TFItems.SHIKA_SENBEI);
@@ -743,6 +764,8 @@ public class ItemModelGenerator extends ItemModelProvider {
 		generated("trophy_minor", prefix("item/trophy_minor"));
 		generated("trophy_quest", prefix("item/trophy_quest"));
 		generated("shield", prefix("item/lich_shield_frame"), prefix("item/lich_shield_fill"));
+
+		tool(TFItems.STALE_BREAD.getId().getPath(), new ResourceLocation("item/bread"));
 	}
 
 	private ItemModelBuilder fullbright(String name, ResourceLocation... layers) {

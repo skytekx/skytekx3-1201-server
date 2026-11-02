@@ -141,8 +141,9 @@ public class LangGenerator extends TFLangProvider {
 		this.addAdvancement("progression_end", "End of Progression", "Anything past this point in the Highlands is a work in progress. It will be finished in the future");
 		//this.addAdvancement("progress_thorns", "Past the Thorns [NYI]", "Make it past the Thornlands, and unlock the door of the castle");
 		//this.addAdvancement("progress_castle", "So Castle Very Wow [NYI]", "What could even be in that castle?!?");
-		this.addAdvancement("twilight_dining", "We Dine At Eternal Sundown", "Eat every edible item exclusive to Twilight Forest");
+		this.addAdvancement("twilight_dining", "We Dine At Eternal Sundown", "Eat every edible item type exclusive to Twilight Forest");
 		this.addAdvancement("arborist", "Maniacal Dendrologist", "Get your axes and shears ready. Search every nook and cranny and get anything and everything that comes from trees! Craft, loot, obtain every slab... sapling... leaves... more... everything. ALL OF IT!");
+		this.add("advancement.twilightforest.chicken_jerky", "CHICKEN JERKEY!");
 
 		this.addMessage("advancement_hidden", "<Hidden Advancement>");
 		this.addMessage("advancement_required", "Advancement Required:");
@@ -575,6 +576,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.PHANTOM_CHESTPLATE, "Phantom Chestplate");
 		this.add("item.twilightforest.phantom_armor.desc", "Is never lost on death");
 
+		this.addItem(TFItems.TANNIN, "Tannin");
 		this.addItem(TFItems.FIERY_BLOOD, "Fiery Blood");
 		this.addItem(TFItems.FIERY_TEARS, "Fiery Tears");
 		this.addItem(TFItems.FIERY_INGOT, "Fiery Ingot");
@@ -669,6 +671,27 @@ public class LangGenerator extends TFLangProvider {
 		this.addItem(TFItems.COOKED_MEEF, "Meef Steak");
 		this.addItem(TFItems.MEEF_STROGANOFF, "Meef Stroganoff");
 		this.addItem(TFItems.HYDRA_CHOP, "Hydra Chop");
+		this.addItem(TFItems.MOSS_SOUP, "Moss Soup");
+
+		this.addItem(TFItems.MONSTER_JERKY, "Monster Jerky");
+		this.addItem(TFItems.BEEF_JERKY, "Beef Jerky");
+		this.addItem(TFItems.CHICKEN_JERKY, "Chicken Jerky");
+		this.addItem(TFItems.PORK_JERKY, "Pork Jerky");
+		this.addItem(TFItems.MUTTON_JERKY, "Mutton Jerky");
+		this.addItem(TFItems.RABBIT_JERKY, "Rabbit Jerky");
+		this.addItem(TFItems.COD_JERKY, "Cod Jerky");
+		this.addItem(TFItems.SALMON_JERKY, "Salmon Jerky");
+		this.addItem(TFItems.TROPICAL_FISH_JERKY, "Tropical Fish Jerky");
+		this.addItem(TFItems.FUGU_JERKY, "Fugu Jerky");
+		this.addItem(TFItems.VENISON_JERKY, "Venison Jerky");
+		this.addItem(TFItems.MEEF_JERKY, "Meef Jerky");
+
+		this.addItem(TFItems.GELATINOUS_SLIME_DROP, "Gelatinous Slime Drop");
+		this.addItem(TFItems.GELATINOUS_MAZE_SLIME_DROP, "Gelatinous Maze Slime Drop");
+
+		this.addItem(TFItems.TREATED_LEATHER, "Treated Leather");
+		this.addItem(TFItems.TANNED_LEATHER, "Tanned Leather");
+		this.addItem(TFItems.STALE_BREAD, "Stale Bread");
 
 		this.addItem(TFItems.CHARM_OF_LIFE_1, "Charm of Life I");
 		this.addItem(TFItems.CHARM_OF_LIFE_2, "Charm of Life II");
@@ -1177,6 +1200,7 @@ public class LangGenerator extends TFLangProvider {
 		this.addDeathMessage("failedChallenge", "%1$s failed to show their mettle and drank themselves to death");
 		this.addDeathMessage("failedChallenge.player", "%1$s failed to show their mettle and drank themselves to death while fighting %2$s");
 		this.addDeathMessage("ominous", "%1$s was subsumed by ominous fire");
+		this.addDeathMessage("stale_sandwich", "%1$s was turned into a stale sandwich by %2$s");
 
 		this.addStat("blocks_crumbled", "Blocks Crumbled");
 		this.addStat("bugs_squished", "Bugs Squashed");

@@ -161,7 +161,7 @@ public final class FeaturePlacers {
         return (x * x + z * z) <= radius * radius;
     }
 
-    public static void placeSpheroid(LevelSimulatedReader world, FoliagePlacer.FoliageSetter setter,BiFunction<LevelSimulatedReader, BlockPos, Boolean> predicate, RandomSource random, BlockPos centerPos, float xzRadius, float yRadius, float verticalBias, BlockStateProvider config) {
+    public static void placeSpheroid(LevelSimulatedReader world, FoliagePlacer.FoliageSetter setter, BiFunction<LevelSimulatedReader, BlockPos, Boolean> predicate, RandomSource random, BlockPos centerPos, float xzRadius, float yRadius, float verticalBias, BlockStateProvider config) {
         float xzRadiusSquared = xzRadius * xzRadius;
         float yRadiusSquared = yRadius * yRadius;
         float superRadiusSquared = xzRadiusSquared * yRadiusSquared;

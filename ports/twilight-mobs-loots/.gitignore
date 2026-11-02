@@ -1,0 +1,20 @@
+# gradle
+build
+.gradle
+
+# runs / IDE
+run
+run-data
+out
+bin
+logs
+classes
+*.iml
+*.ipr
+*.iws
+.idea
+.settings
+.classpath
+.project
+.metadata
+*.launch

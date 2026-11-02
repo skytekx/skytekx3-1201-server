@@ -72,7 +72,8 @@ would need remapping), swaps that class and the version string (`tools/arclight/
 unzip and an ASM 9.x install (any Arclight/Forge 47 server `libraries/` folder has one).
 
 ## Mods vs plugins
-- Forge mods load from `mods/` (rebuilt from the [index](../modpack/mod-set.md)) + `local-mods/` (tracked).
+- Forge mods load only from `mods/` (gitignored). It is assembled from the [index](../modpack/mod-set.md)
+  downloads plus a copy of the tracked `local-mods/*.jar`; nothing points Forge at `local-mods/` directly.
 - Bukkit plugins load from `plugins/` (gitignored; EssentialsX et al.).
 
 Related: [deploy](deploy.md), [mod set](../modpack/mod-set.md), [world reset](world-reset.md).

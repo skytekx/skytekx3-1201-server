@@ -154,6 +154,8 @@ skytekx-worldgen are gone, skytekx-compat is in, and the counts are 40 bundled j
 6 blockers. Pack glue: the TF berries are in `forge:berries`, `twilightforest-common.toml` has the
 fork's keys, and the Twilight Tweaks uncrafting overrides ship through `kubejs/data`. The TF network
 protocol is `2-skytekx.18`, so the server and every client need the same jar. Before deploying, run the
-seed check, delete the old TF jar from the server's `mods/`, and boot the full pack once on Arclight. A
+seed check; then delete the old TF jar from the server's `mods/`, copy the new `local-mods/` jars and the
+9 new index files into it (Forge does not read `local-mods/`; steps in the operator checklist), and boot
+the full pack once on Arclight. A
 TF dimension reset with pregen is recommended. Details: [TF backport status](modpack/twilightforest-backport.md#status-2026-11-02),
 [changelog for players](modpack/twilightforest-backport.md#changelog-for-players).

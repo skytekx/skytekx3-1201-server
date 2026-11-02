@@ -46,8 +46,7 @@ public class LichMinion extends Zombie {
 	}
 
 	/**
-	 * Only goes after players and whoever hurt it, never a Lich, villagers or turtle eggs, and does not break doors
-	 * (4.8 09754b3f2).
+	 * Only targets players and whoever hurt it, never a Lich or villagers (4.8 09754b3f2).
 	 */
 	@Override
 	protected void addBehaviourGoals() {

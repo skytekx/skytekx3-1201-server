@@ -6,6 +6,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -30,10 +32,13 @@ import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,6 +48,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import twilightforest.TwilightForestMod;
 import twilightforest.advancements.TFAdvancements;
 import twilightforest.components.entity.SlimySolesAttachment;
+import twilightforest.components.entity.TravellersGogglesZoomAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.components.item.TravellersGearData;
 import twilightforest.init.TFParticleType;
@@ -52,6 +58,7 @@ import twilightforest.item.travellers_gear.TravellersArmorItem;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
 import twilightforest.item.travellers_gear.modifiers.InsertableTravellersModifier;
 import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
+import twilightforest.network.GogglesZoomPacket;
 import twilightforest.network.GradualGlidePacket;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.TFPacketHandler;
@@ -61,8 +68,8 @@ import java.util.List;
 /**
  * Common events of the Traveller's Gear core, its modifier framework and the modifiers ported so far. Backport of 4.8's
  * TravellersGearEvents (the wing state update, the broken-state attribute switch, the anvil combining block, stripping
- * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Vest, Wings and
- * Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
+ * modifiers at the grindstone, the add_modifier criterion, the modifier cache reload and the Traveller's Goggles, Vest,
+ * Wings and Boots modifiers); the listeners of the other pieces' modifiers come with their travellers-* features.
  * <p>
  * 1.20.1 has no entity tick post event: 4.8's EntityTickEvent.Post work runs at the start of the next tick instead
  * (LivingTickEvent), its PlayerTickEvent.Pre work in the START phase of Forge's PlayerTickEvent.
@@ -304,6 +311,63 @@ public class TravellersGearEvents {
 		LivingEntity livingEntity = event.getEntity();
 		if (!livingEntity.level().isClientSide())
 			TravellersGearLogic.travellersVestHaste(livingEntity);
+	}
+
+	/**
+	 * Aquatic Agility, the mining half: no mining slowdown with the eyes under water, like Aqua Affinity. 4.8 multiplies
+	 * 1.21's submerged mining speed attribute (0.2) by 5; 1.20.1 has no such attribute and divides the speed by 5 instead.
+	 */
+	@SubscribeEvent
+	public static void applyAquaticAgilityMiningSpeed(PlayerEvent.BreakSpeed event) {
+		Player player = event.getEntity();
+		if (player.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(player) && TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER))
+			event.setNewSpeed(event.getNewSpeed() * 5.0F);
+	}
+
+	/**
+	 * Aquatic Agility, the breathing half: 4.8 adds 3 to 1.21's oxygen bonus attribute, which keeps the air of a breath
+	 * with a chance of 1 - 1 / (bonus + 1); Respiration adds its level to the same bonus. 1.20.1 has no such attribute,
+	 * and the air a breath takes here has already been through Respiration's own roll, so a breath that still costs air
+	 * is kept with the chance that brings the total to 1.21's: 3 / (Respiration level + 4).
+	 */
+	@SubscribeEvent
+	public static void applyAquaticAgilityBreathing(LivingBreatheEvent event) {
+		if (event.canBreathe() || event.getConsumeAirAmount() <= 0)
+			return;
+		LivingEntity livingEntity = event.getEntity();
+		ItemStack headStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
+		if (!TravellersArmorItem.isTravellersGear(headStack) || !TravellersModifiersManager.isModifierActive(livingEntity, headStack, TravellersModifiersManager.AQUATIC_AGILITY_MODIFIER))
+			return;
+		double oxygenBonus = 3.0D;
+		if (livingEntity.getRandom().nextDouble() < oxygenBonus / (EnchantmentHelper.getRespiration(livingEntity) + oxygenBonus + 1.0D))
+			event.setConsumeAirAmount(0);
+	}
+
+	/**
+	 * All-Night Goggles: no phantoms come for the wearer, however long they have not slept.
+	 */
+	@SubscribeEvent
+	public static void cancelPhantomSpawns(PlayerSpawnPhantomsEvent event) {
+		if (TravellersModifiersManager.isModifierActive(event.getEntity(), TravellersModifiersManager.ALL_NIGHT_GOGGLES_MODIFIER))
+			event.setResult(Event.Result.DENY);
+	}
+
+	/**
+	 * Tells a player that starts tracking a zooming player to flip their goggles down; 4.8 syncs the zoom attachment.
+	 */
+	@SubscribeEvent
+	public static void syncZoomToNewTracker(PlayerEvent.StartTracking event) {
+		if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Player target && TravellersGogglesZoomAttachment.isUsingZoom(target))
+			TFPacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new GogglesZoomPacket(true, target.getUUID()));
+	}
+
+	/**
+	 * The client gets a fresh player entity in the new dimension that does not zoom yet, while the server keeps the old
+	 * one; start over from there, the client sends the zoom again if the key is still held.
+	 */
+	@SubscribeEvent
+	public static void resetZoomAfterDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+		TravellersGogglesZoomAttachment.setUsingZoom(event.getEntity(), false);
 	}
 
 	@SubscribeEvent

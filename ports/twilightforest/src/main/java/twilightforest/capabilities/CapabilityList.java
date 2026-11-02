@@ -23,6 +23,7 @@ import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapability;
 import twilightforest.capabilities.teleporter_cache.TeleporterCacheCapabilityHandler;
 import twilightforest.capabilities.thrown.YetiThrowCapability;
 import twilightforest.capabilities.thrown.YetiThrowCapabilityHandler;
+import twilightforest.components.entity.TravellersGogglesZoomAttachment;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.data.tags.EntityTagGenerator;
 
@@ -38,6 +39,7 @@ public class CapabilityList {
 	public static final Capability<MultiplayerInclusivityCapability> MULTIPLAYER_FIGHT = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<TFPortalCapability> TF_PORTAL = CapabilityManager.get(new CapabilityToken<>() {});
 	public static final Capability<TravellersWingsAttachment> TRAVELLERS_WINGS = CapabilityManager.get(new CapabilityToken<>() {});
+	public static final Capability<TravellersGogglesZoomAttachment> TRAVELLERS_GOGGLES_ZOOM = CapabilityManager.get(new CapabilityToken<>() {});
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.register(TeleporterCacheCapability.class);
@@ -48,6 +50,7 @@ public class CapabilityList {
 		event.register(MultiplayerInclusivityCapability.class);
 		event.register(TFPortalCapability.class);
 		event.register(TravellersWingsAttachment.class);
+		event.register(TravellersGogglesZoomAttachment.class);
 	}
 
 	public static void attachLevelCapability(AttachCapabilitiesEvent<Level> e) {
@@ -135,6 +138,17 @@ public class CapabilityList {
 					@Override
 					public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 						return TF_PORTAL.orEmpty(cap, inst.cast());
+					}
+				});
+
+				// not serializable: the zoom only lasts while the key is held, so a relog starts without it
+				e.addCapability(TravellersGogglesZoomAttachment.ID, new ICapabilityProvider() {
+
+					private final LazyOptional<TravellersGogglesZoomAttachment> inst = LazyOptional.of(TravellersGogglesZoomAttachment::new);
+
+					@Override
+					public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+						return TRAVELLERS_GOGGLES_ZOOM.orEmpty(cap, inst.cast());
 					}
 				});
 			}

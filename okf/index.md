@@ -25,4 +25,5 @@ plus the [change log](log.md).
 - MC 1.20.1 · Forge 47.x · Arclight · **Java 17 only** (crashes on 21).
 - Recipe engine: AlmostUnified + Polymorph + KubeJS. Viewer: EMI.
 - Source of truth for mods: `modrinth.index.json` (+ `local-mods/` for non-Modrinth jars).
-- Published: Modrinth `skytekx3` v3.0.4.
+- Published: Modrinth `skytekx3` v3.0.4 (last recorded upload); next release 3.1.0 (TF 4.8 backport), see
+  [publish](modpack/publish.md).

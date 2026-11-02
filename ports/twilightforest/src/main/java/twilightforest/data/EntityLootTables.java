@@ -547,6 +547,11 @@ public class EntityLootTables extends EntityLootSubProvider {
 								.add(LootItem.lootTableItem(TFItems.PHANTOM_HELMET.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(30))))
 								.add(LootItem.lootTableItem(TFItems.PHANTOM_CHESTPLATE.get()).apply(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(30))))));
 
+		// Rolled by KnightPhantom with LootContextParamSets.ENTITY, so it is generated as an entity table: loot-modifier mods that inject
+		// killer/this_entity pools (e.g. Botania's head drops) then validate cleanly instead of logging one warning per pool.
+		add(TFEntities.KNIGHT_PHANTOM.get(), TFLootTables.KNIGHT_PHANTOM_DEFEATED,
+				LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(TFBlocks.KNIGHT_PHANTOM_TROPHY.get().asItem()))));
+
 		add(TFEntities.UR_GHAST.get(),
 				LootTable.lootTable()
 						.withPool(LootPool.lootPool()

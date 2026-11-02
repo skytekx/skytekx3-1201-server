@@ -542,7 +542,8 @@ logs stay on the Mac and are not in the repo.
   frame was complete, but vanilla and Arclight light portals only in the overworld and the nether, and a
   portal in the nether always leads to the overworld. On the owner's ask of 14:59
   `kubejs/server_scripts/skylands_portals.js` went live at 15:05 (11daa901). It opens frames in the
-  Skylands and sends a player who came from the Skylands back there from the nether. See
+  Skylands and sends a player who came from the Skylands back there from the nether. A portal opened in
+  the Skylands at 15:06:26, and at 15:07:55 the owner went back from the nether to the Skylands. See
   [Skylands worldgen](content/skylands-worldgen.md#nether-portals).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),

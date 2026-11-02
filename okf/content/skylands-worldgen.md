@@ -337,8 +337,9 @@ player stood in outside the nether in the player data, under `skytekx3PortalOrig
 from the Skylands goes back there after 60 ticks in a nether portal, before vanilla would send the player
 to the overworld after 80. The player lands at eight times the coordinates, in the closest portal within
 128 blocks or in a new one that vanilla builds there. Everybody else still goes to the overworld. Players
-in creative mode cross after one tick, before the script can act, so they land in the overworld. No
-player has used it yet.
+in creative mode cross after one tick, before the script can act, so they land in the overworld. On
+2026-11-02 a portal opened in the Skylands at 15:06:26, and at 15:07:55 the owner went back from the
+nether to the Skylands.
 
 ## Edit workflow
 

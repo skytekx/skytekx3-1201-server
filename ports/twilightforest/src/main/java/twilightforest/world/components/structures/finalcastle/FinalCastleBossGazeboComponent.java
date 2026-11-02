@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.ModList;
 import twilightforest.TwilightForestMod;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFStructurePieceTypes;
@@ -41,7 +42,8 @@ public class FinalCastleBossGazeboComponent extends TFStructureComponentOld {
 	// Tag of the Interaction entity that removes the gazebo's WIP text when punched (EntityEvents#onAttackEvent)
 	public static final String INTERACTION_TAG = "final_castle_wip";
 
-	// False for gazebos saved before the gazebo came from the template pool: they keep building their force field and text themselves
+	// False for gazebos saved before the gazebo came from the template pool, and for gazebos generated with Twilight Tweaks loaded:
+	// they keep building their force field and text themselves (unless Twilight Tweaks' coremod replaces that with its boss spawner)
 	private final boolean templateHooks;
 
 	@SuppressWarnings("unused")
@@ -56,7 +58,8 @@ public class FinalCastleBossGazeboComponent extends TFStructureComponentOld {
 
 		this.setOrientation(keep.getOrientation());
 		this.boundingBox = new BoundingBox(keep.getBoundingBox().minX() + 14, keep.getBoundingBox().maxY() + 2, keep.getBoundingBox().minZ() + 14, keep.getBoundingBox().maxX() - 14, keep.getBoundingBox().maxY() + 13, keep.getBoundingBox().maxZ() - 14);
-		this.templateHooks = true;
+		// Twilight Tweaks replaces the gazebo with its final boss spawner (coremod on postProcess); the 4.8 template would cage that spawner in violet force field
+		this.templateHooks = !ModList.get().isLoaded("twilighttweaks");
 	}
 
 	@Override
@@ -72,9 +75,11 @@ public class FinalCastleBossGazeboComponent extends TFStructureComponentOld {
 
 		this.deco.fenceState = TFBlocks.VIOLET_FORCE_FIELD.get().defaultBlockState();
 
-		TwilightJigsawPiece templatePiece = FinalCastleTemplateHooks.initializeTemplateFromPool(GAZEBO_TEMP_POOL, this.getWorldPos(10, -1, 10), this.rotation.rotation().rotate(FrontAndTop.UP_SOUTH), "twilightforest:final_castle/final_boss", rand, this.genDepth + 1);
-		if (templatePiece != null) {
-			list.addPiece(templatePiece);
+		if (this.templateHooks) {
+			TwilightJigsawPiece templatePiece = FinalCastleTemplateHooks.initializeTemplateFromPool(GAZEBO_TEMP_POOL, this.getWorldPos(10, -1, 10), this.rotation.rotation().rotate(FrontAndTop.UP_SOUTH), "twilightforest:final_castle/final_boss", rand, this.genDepth + 1);
+			if (templatePiece != null) {
+				list.addPiece(templatePiece);
+			}
 		}
 	}
 

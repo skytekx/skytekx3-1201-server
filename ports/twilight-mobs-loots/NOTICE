@@ -1,0 +1,23 @@
+Twilight Mobs Loots - Minecraft 1.20.1 / Forge backport
+=======================================================
+
+This is a MODIFIED version of Twilight Mobs Loots by wdd1118, released under the MIT License
+(see LICENSE, copied unchanged from upstream).
+
+Upstream:        https://github.com/wdd1118/Twilight-Mobs-Loots
+Upstream commit: 41e447dea8f1815815a5fdf066ec8fe9bb91eecd ("Update 1.1.1", mod version 1.1.1,
+                 Minecraft 1.21.1 / NeoForge, Twilight Forest [4.8,5.0), Curios 9)
+Modrinth:        https://modrinth.com/mod/twilight-mobs-loots
+
+Changes in this backport (SkyTekx, 2026):
+- Ported from 1.21.1 NeoForge to 1.20.1 Forge 47: DeferredRegister/RegistryObject, Forge events,
+  Item#initializeClient instead of RegisterClientExtensionsEvent, Block#use instead of useWithoutItem,
+  no block codecs, 1.20.1 data folder names (loot_tables/, tags/items/).
+- Targets the SkyTekx 1.20.1 Twilight Forest fork (4.3.2508-skytekx.1): entity textures from
+  textures/model/, the fork's classic/Jappa model layer split, TFSounds as registry suppliers.
+- Curios 9 -> Curios 5.x (1.20.1) API.
+- The Twilight Moonshine Moon Rabbit trophy compat was dropped (that mod has no 1.20.1 build).
+- Twilight Forest's own boss trophies are no longer re-registered as curios or given a second Curios
+  renderer: the 1.20.1 fork already does both.
+- Small fixes: removed UTF-8 byte order marks from 11 item model files, added the missing English
+  name of the Curios "trophy" slot, the giant trophies fall back to the default player skin.

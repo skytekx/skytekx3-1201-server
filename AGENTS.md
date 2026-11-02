@@ -37,6 +37,11 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   book, the AllTheLeaks reflection into Citadel and the Essentials warning about the hybrid server. See
   [Logs and crashes](okf/server/logs-and-crashes.md#boot-error-baseline).
 - Stop the server over RCON and wait until the java process has exited. Never stop it with a signal.
+- Change server configs only while the java process is gone, because Forge writes them back from memory
+  at every stop. They are `world/serverconfig/` and the ones some mods keep in `config/`: `Mekanism/`,
+  `MekanismExtras/`, `ars_nouveau/`, `ars_nouveau-server.toml`, `colytra-server.toml`,
+  `comforts-server.toml` and the two `veinmining-*.toml`. See
+  [Logs and crashes](okf/server/logs-and-crashes.md#mekanisms-ore-switch-lost-at-a-stop-2026-11-02-172012).
 
 ## Where things live
 

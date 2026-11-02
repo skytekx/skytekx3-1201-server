@@ -7,7 +7,7 @@ import json, os, sys, mimetypes, urllib.request, urllib.error, uuid
 PAT = sys.argv[1]
 GO = "--go" in sys.argv
 REPO = "/home/snekmin/git/skytekx3-1201-server"
-VERSION = "3.0.5"
+VERSION = "3.1.0"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"

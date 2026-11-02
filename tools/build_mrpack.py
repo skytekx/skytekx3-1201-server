@@ -8,7 +8,7 @@ import json, os, shutil, zipfile, sys
 
 REPO = "/home/snekmin/git/skytekx3-1201-server"
 SC = "/tmp/claude-1000/-home-snekmin/5bd3e1de-030d-4270-9929-e638c4c6f4a6/scratchpad"
-VERSION = "3.0.5"
+VERSION = "3.1.0"
 FORGE = "47.4.6"
 
 # mod file list: session scratch from resolve_all.py when present, else the committed index

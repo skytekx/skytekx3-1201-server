@@ -1,0 +1,39 @@
+Mystic Crown Compat - folded into the SkyTekx Twilight Forest 1.20.1 fork
+========================================================================
+
+Parts of this Twilight Forest build are derived from Mystic Crown Compat by 741741, released under
+the MIT License (see LICENSE-mystic-crown-compat.txt next to this file, copied unchanged from upstream).
+The MIT License covers only that derived code. The rest of this jar keeps the Twilight Forest licenses
+(LGPL-2.1 code, CC BY-NC-SA 4.0 assets, All Rights Reserved sounds and structures).
+
+Upstream:        https://github.com/741741-741/mystic-crown-compat
+Upstream commit: 10ce4a4f14bdae2d455f6b76a150174cde2ac5b3 ("Bump version to 1.1.0", mod version 1.1.0,
+                 Minecraft 1.21.1 / NeoForge, Twilight Forest [4.8,), Curios 9)
+Modrinth:        https://modrinth.com/mod/mystic-crown-compat
+
+The addon is not shipped as its own jar. Its behaviour is re-implemented in the fork's own classes
+instead of its five mixins (SkyTekx, 2026), ported from 1.21.1 NeoForge to 1.20.1 Forge 47 and Curios
+5.x. Files that hold code derived from it (paths under src/main/java/twilightforest/):
+- item/MysticCrownItem.java: initCapabilities, isWornBy, empowersScepters
+- compat/curios/CuriosCompat.java: setupMysticCrownCapability, isMysticCrownEquipped
+- item/TwilightWandItem.java: the extra Lich bomb and the Curios-aware crown check
+- item/LifedrainScepterItem.java: the doubled drain and the Curios-aware crown check
+- item/ZombieWandItem.java: the longer Strength, the crown gear and the Curios-aware crown check
+- entity/monster/LoyalZombie.java: equipCrownGear, the CrownSummoned flag and its attack damage
+- capabilities/shield/ShieldCapabilityHandler.java: checkLichCrownBonus
+- events/EntityEvents.java: mysticCrownBlocksLichBombs
+- TFConfig.java: the mysticCrownCurios and mysticCrownScepterBonuses options
+- data/tags/compat/ModdedItemTagGenerator.java and data/curios/tags/items/head.json: the crown in the
+  curios:head item tag
+
+Changes against the addon:
+- Curios 9 -> Curios 5.x (1.20.1) API; the curio comes from the crown's initCapabilities instead of
+  NeoForge's RegisterCapabilitiesEvent, the curios:head item tag limits it to head slots, and the
+  fork's CurioHeadRenderer draws it on the head.
+- Right-click puts the crown into the vanilla helmet slot while that slot is empty, and into a Curios
+  head slot only when a helmet is worn (the addon always uses the Curios slot).
+- Lich bomb immunity cancels LivingAttackEvent instead of LivingDamageEvent.Pre.
+- Crown-summoned loyal zombies are flagged in their own NBT (CrownSummoned) instead of persistent data,
+  their gear never drops, and their held Knockback II stick applies its knockback.
+- The addon's enableCuriosIntegration option became mysticCrownCurios; mysticCrownScepterBonuses is new
+  and turns the scepter bonuses off for Twilight Forest 4.8 parity.

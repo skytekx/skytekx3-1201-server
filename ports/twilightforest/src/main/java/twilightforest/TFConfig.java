@@ -185,13 +185,15 @@ public class TFConfig {
 			// The two Mystic Crown options come from the Mystic Crown Compat addon (MIT, by 741741).
 			mysticCrownCurios = builder.
 					translation(config + "mystic_crown_curios").
-					comment("If true and Curios is installed, the Mystic Crown can also be worn in a Curios head slot, where it counts as worn for all of its effects.").
+					comment("""
+							If true and Curios is installed, the Mystic Crown can also be worn in a Curios head slot, where it counts as worn for all of its effects.
+							This common option is not synced: keep the same value on the server and on every client, or the crown can ghost in the slot until the inventory resyncs.""").
 					define("mysticCrownCurios", true);
 			mysticCrownScepterBonuses = builder.
 					translation(config + "mystic_crown_scepter_bonuses").
 					comment("""
 							If true, a worn Mystic Crown also empowers the scepters:
-							the Twilight Scepter has a 10% chance to fire an extra Lich bomb, and the wearer takes no damage from Lich bombs;
+							the Twilight Scepter has a 10% chance to fire an extra Lich bomb, and the wearer takes no damage from any Lich bomb, including the Lich boss's own;
 							the Lifedrain Scepter drains twice as much health;
 							temporary Fortification shields no longer run out over time, they only break from hits;
 							Zombie Scepter zombies keep their strength for 3 minutes instead of 1, may wear leather armor (baby zombies get a full set and a Knockback II stick) and hit for 4 damage instead of 7.

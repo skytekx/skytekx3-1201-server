@@ -532,7 +532,9 @@ logs stay on the Mac and are not in the repo.
   check when a player lies down. `kubejs/server_scripts/skylands_sleep.js` moves the overworld to the
   next morning once enough players in the Skylands sleep. At 14:03 sleeping still failed, because a
   second player was awake in the Skylands and `playersSleepingPercentage` stood at the default of 100.
-  At 14:10 the rule went to 0, so one sleeping player is enough on the whole server.
+  At 14:10 the rule went to 0, so one sleeping player is enough on the whole server. Nobody slept in the
+  next two nights. At 15:11:03 one of two players in the Skylands slept, and six seconds later the
+  overworld stood at time 126, early morning.
 - At 14:54 the owner asked why a nether portal in the Skylands does not open with flint and steel. The
   frame was complete, but vanilla and Arclight light portals only in the overworld and the nether, and a
   portal in the nether always leads to the overworld. On the owner's ask of 14:59

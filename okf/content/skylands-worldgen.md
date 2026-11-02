@@ -300,7 +300,8 @@ tick before vanilla wakes them. At day in the overworld the sleepers get the van
 runs in a level tick, because Arclight replaces the Forge sleeping time check when a player lies down.
 The rule `playersSleepingPercentage` is 0 since 14:10, so one sleeping player is enough in every
 dimension. With the default of 100, a second player who was awake in the Skylands kept the night going,
-which is why sleeping there still failed at 14:03.
+which is why sleeping there still failed at 14:03. At 15:11:03 one of two players in the Skylands slept,
+and the overworld stood at time 126, early morning, six seconds later.
 
 Hostile mobs stay, but weak. The Skylands stay at noon without counting as day, so zombies and skeletons
 do not burn there and gather around the homes up to the mob cap. A minute after they came back, 59

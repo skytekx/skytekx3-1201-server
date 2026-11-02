@@ -29,6 +29,7 @@ import twilightforest.TFConfig;
 import twilightforest.TwilightForestMod;
 import twilightforest.capabilities.CapabilityList;
 import twilightforest.capabilities.shield.IShieldCapability;
+import twilightforest.client.overlay.ItemDisplayOverlay;
 import twilightforest.components.item.OreScannerData;
 import twilightforest.entity.passive.QuestRam;
 import twilightforest.entity.passive.quest.ram.QuestingRamCurrentContext;
@@ -95,6 +96,12 @@ public class TFOverlays {
 			if (player != null && !minecraft.options.hideGui && !minecraft.options.renderDebug && minecraft.screen == null) {
 				renderOreMeterStats(graphics, player);
 			}
+		});
+
+		// the Traveller's Goggles' Item Display, for the player the camera follows (4.8 OverlayHandler#getCameraPlayer)
+		event.registerAboveAll("item_display_overlay", (gui, graphics, partialTick, screenWidth, screenHeight) -> {
+			Minecraft minecraft = Minecraft.getInstance();
+			ItemDisplayOverlay.render(graphics, minecraft, gui, minecraft.getCameraEntity() instanceof Player player ? player : null);
 		});
 	}
 

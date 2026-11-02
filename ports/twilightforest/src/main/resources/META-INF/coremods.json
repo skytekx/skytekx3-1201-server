@@ -16,5 +16,6 @@
   "damagesources": "META-INF/asm/damagesources.js",
   "travellers_boots": "META-INF/asm/travellers_boots.js",
   "exhaustion": "META-INF/asm/exhaustion.js",
-  "zoom": "META-INF/asm/zoom.js"
+  "zoom": "META-INF/asm/zoom.js",
+  "goggles_maps": "META-INF/asm/goggles_maps.js"
 }

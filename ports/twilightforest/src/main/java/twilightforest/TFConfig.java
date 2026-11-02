@@ -35,8 +35,12 @@ import twilightforest.util.PlayerHelper;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -498,6 +502,30 @@ public class TFConfig {
 					translation(config + "first_person_glove_overlay").
 					comment("Allows Traveller's Gloves to render on your hand when in 1st person view.").
 					define("firstPersonGloveOverlay", true);
+
+			builder.
+					comment("Controls where various elements render when using the Item Display Modifier on Traveller's Gear.").
+					translation(config + "item_display").
+					push("Item Display Modifier Settings");
+			{
+				itemDisplayScreenOffsetX = builder.
+						translation(config + "screen_offset_x").
+						comment("Defines the starting X offset for all display modifiers on the screen.").
+						defineInRange("screenOffsetX", 4, Integer.MIN_VALUE, Integer.MAX_VALUE);
+				itemDisplayScreenOffsetY = builder.
+						translation(config + "screen_offset_y").
+						comment("Defines the starting Y offset for all display modifiers on the screen.").
+						defineInRange("screenOffsetY", 4, Integer.MIN_VALUE, Integer.MAX_VALUE);
+				itemDisplayScreenScale = builder.
+						translation(config + "screen_scale").
+						comment("Defines the scale of all display modifiers on the screen.").
+						defineInRange("screenScale", 1.0D, 0.1D, 10.0D);
+				itemDisplayTwentyFourHourFormat = builder.
+						translation(config + "twenty_four_hour_format").
+						comment("If ON, the clock upgrade displays time in 24-hour format instead of 12-hour format.").
+						define("twentyFourHourFormat", use24HourTimeDefault());
+			}
+			builder.pop();
 		}
 
 		public final ForgeConfigSpec.BooleanValue silentCicadas;
@@ -517,6 +545,10 @@ public class TFConfig {
 		public final ForgeConfigSpec.BooleanValue spawnCharmAnimationAsTotem;
 		public final ForgeConfigSpec.BooleanValue manualTravellersWingsGradualGlide;
 		public final ForgeConfigSpec.BooleanValue firstPersonGloveOverlay;
+		public final ForgeConfigSpec.IntValue itemDisplayScreenOffsetX;
+		public final ForgeConfigSpec.IntValue itemDisplayScreenOffsetY;
+		public final ForgeConfigSpec.DoubleValue itemDisplayScreenScale;
+		public final ForgeConfigSpec.BooleanValue itemDisplayTwentyFourHourFormat;
 	}
 
 	private static final String config = "config." + TwilightForestMod.ID;
@@ -553,6 +585,18 @@ public class TFConfig {
 	 */
 	public static boolean isMagicTreeCoreEnabled(boolean disabled, int range) {
 		return !disabled && range > 0;
+	}
+
+	/**
+	 * The default of the Item Display clock's 24-hour format: whether the system locale writes the time without AM/PM.
+	 */
+	public static boolean use24HourTimeDefault() {
+		try {
+			String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.SHORT, FormatStyle.SHORT, IsoChronology.INSTANCE, Locale.getDefault());
+			return !pattern.contains("a");  // "a" is used to display AM / PM.
+		} catch (Throwable throwable) {
+			return true;
+		}
 	}
 
 	public static int getClientCloudBlockPrecipitationDistance() {

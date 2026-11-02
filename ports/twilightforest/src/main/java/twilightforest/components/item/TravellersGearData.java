@@ -2,7 +2,6 @@ package twilightforest.components.item;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Unit;
@@ -42,10 +41,9 @@ public final class TravellersGearData {
 	public static final TravellersComponentType<Unit> RED_THREAD_VISION = register("red_thread_vision", TravellersComponentType.UNIT_CODEC);
 	public static final TravellersComponentType<Unit> ALL_NIGHT_GOGGLES = register("all_night_goggles", TravellersComponentType.UNIT_CODEC);
 	/**
-	 * 4.8 ItemDisplayContents ({@code chosen_map_slot} and {@code slots}); kept as raw NBT until
-	 * travellers-goggles-item-display defines it.
+	 * What the goggles' Item Display holds, see {@link ItemDisplayContents}.
 	 */
-	public static final TravellersComponentType<Tag> ITEM_DISPLAY = register("item_display", TravellersComponentType.RAW_NBT_CODEC);
+	public static final TravellersComponentType<ItemDisplayContents> ITEM_DISPLAY = register("item_display", ItemDisplayContents.CODEC);
 	// vest
 	public static final TravellersComponentType<Unit> SWIFT_SWIM = register("swift_swim", TravellersComponentType.UNIT_CODEC);
 	public static final TravellersComponentType<Unit> STEALTH_CROUCHING = register("stealth_crouching", TravellersComponentType.UNIT_CODEC);

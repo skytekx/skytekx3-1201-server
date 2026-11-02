@@ -637,6 +637,7 @@ public class LangGenerator extends TFLangProvider {
 		this.add("travellers_gear.broken", " (Broken)");
 		this.add("travellers_gear.modifier.empty", "Empty");
 		this.add("key.twilightforest.categories.travellers_gear", "Twilight Forest (Traveller's Gear)");
+		this.add("key.twilightforest.item_display_map_cycle", "Cycle Item Display's Stored Maps");
 		this.add("key.twilightforest.red_thread_vision", "See Red Thread with Goggles");
 		this.add("key.twilightforest.swap_hotbar", "Swap Hotbar");
 		this.add("key.twilightforest.zoom", "Zoom With Goggles");
@@ -660,6 +661,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addTravellersDescription(TravellersModifiersManager.ALL_NIGHT_GOGGLES_MODIFIER, "Prevents Insomnia and Enderman aggression");
 		this.addTravellersModifier(TravellersModifiersManager.ITEM_DISPLAY_MODIFIER, "Item Display (keybind: ${tfkeybinds/key.twilightforest.item_display_map_cycle})");
 		this.addTravellersDescription(TravellersModifiersManager.ITEM_DISPLAY_MODIFIER, "Right-click items on the Goggles to add displays");
+		this.add("travellers_gear.modifier.twilightforest.item_display.clock.unknown", "Time Unknown");
+		this.add("travellers_gear.modifier.twilightforest.item_display.compass.lodestone", "%s (%s blocks away)");
 
 		this.addTravellersModifier(TravellersModifiersManager.STEALTH_MODIFIER, "Stealth (sneak to activate)");
 		this.addTravellersDescription(TravellersModifiersManager.STEALTH_MODIFIER, "Sneak to turn invisible");
@@ -1251,6 +1254,8 @@ public class LangGenerator extends TFLangProvider {
 		this.addSubtitle(TFSounds.GOGGLES_ZOOM_IN, "Traveller's Goggles zoom in");
 		this.addSubtitle(TFSounds.GOGGLES_ZOOM_OUT, "Traveller's Goggles zoom out");
 		this.addSubtitle(TFSounds.SWAP_HOTBAR, "Belt rustles");
+		this.addSubtitle(TFSounds.CYCLE_MAPS, "Map swaps");
+		this.addSubtitle(TFSounds.CYCLE_MAPS_EMPTY, "Map swaps");
 
 		this.addSubtitle(TFSounds.DOUBLE_JUMP, "Double Jump performed");
 		this.addSubtitle(TFSounds.SIDE_STEP, "Side Step performed");

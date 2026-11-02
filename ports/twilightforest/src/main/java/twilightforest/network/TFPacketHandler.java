@@ -31,7 +31,8 @@ public class TFPacketHandler {
 	// .15: PerformDoubleJumpPacket, PerformSidestepPacket (client to server) and GradualGlidePacket (both ways) for the Traveller's Wings modifiers (4.8 485d7e0a7).
 	// .16: GogglesZoomPacket (both ways) syncs the Traveller's Goggles zoom (4.8 98ad4b10b).
 	// .17: SwapHotbarPacket (client to server) for the Traveller's Belt Swap Hotbar.
-	private static final String PROTOCOL_VERSION = "2-skytekx.17";
+	// .18: CycleMapSlotPacket (client to server) for the Traveller's Goggles Item Display (4.8 031090fd4).
+	private static final String PROTOCOL_VERSION = "2-skytekx.18";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 			TwilightForestMod.prefix("channel"),
 			() -> PROTOCOL_VERSION,
@@ -75,5 +76,6 @@ public class TFPacketHandler {
 		CHANNEL.registerMessage(id++, GradualGlidePacket.class, GradualGlidePacket::encode, GradualGlidePacket::new, GradualGlidePacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, GogglesZoomPacket.class, GogglesZoomPacket::encode, GogglesZoomPacket::new, GogglesZoomPacket.Handler::onMessage);
 		CHANNEL.registerMessage(id++, SwapHotbarPacket.class, SwapHotbarPacket::encode, SwapHotbarPacket::decode, SwapHotbarPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		CHANNEL.registerMessage(id++, CycleMapSlotPacket.class, CycleMapSlotPacket::encode, CycleMapSlotPacket::decode, CycleMapSlotPacket.Handler::onMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 	}
 }

@@ -66,6 +66,7 @@ import twilightforest.client.renderer.TFSkyRenderer;
 import twilightforest.client.renderer.entity.MagicPaintingRenderer;
 import twilightforest.client.renderer.entity.ShieldLayer;
 import twilightforest.client.renderer.tileentity.JarRenderer;
+import twilightforest.client.renderer.tooltip.ItemDisplayTooltipComponent;
 import twilightforest.client.renderer.tooltip.PotionFlaskTooltipComponent;
 import twilightforest.client.renderer.tooltip.TravellersBeltTooltipComponent;
 import twilightforest.compat.curios.CuriosCompat;
@@ -76,6 +77,7 @@ import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.item.*;
 import twilightforest.item.travellers_gear.TravellersArmorBeltItem;
+import twilightforest.item.travellers_gear.TravellersGogglesItem;
 import twilightforest.network.TFPacketHandler;
 import twilightforest.network.WipeOreMeterPacket;
 import twilightforest.util.ArmorUtil;
@@ -154,6 +156,7 @@ public class TFClientEvents {
 		public static void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
 			event.register(BrittleFlaskItem.Tooltip.class, PotionFlaskTooltipComponent::new);
 			event.register(TravellersArmorBeltItem.Tooltip.class, TravellersBeltTooltipComponent::new);
+			event.register(TravellersGogglesItem.Tooltip.class, ItemDisplayTooltipComponent::new);
 		}
 
 		@SubscribeEvent

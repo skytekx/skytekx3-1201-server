@@ -10,12 +10,14 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.*;
 import twilightforest.data.tags.BiomeTagGenerator;
 import twilightforest.init.TFStructureTypes;
 import twilightforest.util.WorldUtil;
+import twilightforest.world.components.structures.CustomDensitySource;
 import twilightforest.world.components.structures.courtyard.CourtyardMain;
 import twilightforest.world.components.structures.util.ConquerableStructure;
 
@@ -23,7 +25,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class NagaCourtyardStructure extends ConquerableStructure {
+public class NagaCourtyardStructure extends ConquerableStructure implements CustomDensitySource {
     public static final Codec<NagaCourtyardStructure> CODEC = RecordCodecBuilder.create(instance -> landmarkCodec(instance).apply(instance, NagaCourtyardStructure::new));
 
     public NagaCourtyardStructure(DecorationConfig decorationConfig, StructureSettings structureSettings) {
@@ -51,6 +53,15 @@ public class NagaCourtyardStructure extends ConquerableStructure {
         // TF 4.8 samples 4x4 points over the courtyard and 40 blocks around its centre chunk, which is the area ChunkGeneratorTwilight levels, and lifts it by 2.
         // The TF generator's base height skips water, so keep the courtyard from sinking to the bed of a lake or stream it overlaps.
         return Math.max(generator.getSeaLevel() + 1, WorldUtil.adjustForTerrain(generator, heightAccessor, randomState, x, z, 40, 4)) + 2;
+    }
+
+    /**
+     * Clears the terrain above the courtyard in an inverted pyramid, starting 3 blocks above its lowest piece (the dug-in terraces), so
+     * that no hill overhangs or buries the courtyard (TF 4.8). Below that height the terrain is left alone.
+     */
+    @Override
+    public DensityFunction getStructureTerraformer(ChunkPos chunkPosAt, StructureStart structurePieceSource) {
+        return CustomDensitySource.getInvertedPyramidTerraformer(structurePieceSource, 3, 4);
     }
 
     @Override

@@ -59,9 +59,13 @@ public class TFStructurePieceTypes {
     public static final RegistryObject<StructurePieceType> TFNCT = registerPieceType("TFNCT", NagaCourtyardHedgeTJunctionComponent::new);
     public static final RegistryObject<StructurePieceType> TFNCIs = registerPieceType("TFNCIs", NagaCourtyardHedgeIntersectionComponent::new);
     public static final RegistryObject<StructurePieceType> TFNCPd = registerPieceType("TFNCPd", NagaCourtyardHedgePadderComponent::new);
-    public static final RegistryObject<StructurePieceType> TFNCTr = registerPieceType("TFNCTr", CourtyardTerraceBrazier::new);
-    public static final RegistryObject<StructurePieceType> TFNCDu = registerPieceType("TFNCDu", CourtyardTerraceDuct::new);
-    public static final RegistryObject<StructurePieceType> TFNCSt = registerPieceType("TFNCSt", CourtyardTerraceStatue::new);
+    public static final RegistryObject<StructurePieceType> TFNCTe = registerPieceType("TFNCTe", CourtyardTerrace::new);
+    public static final RegistryObject<StructurePieceType> TFNCHe = registerPieceType("TFNCHe", CourtyardTerraceHedge::new);
+    // The TF 4.3 terraces (brazier, duct, statue), which TF 4.8 aliases to TFNCTe. Forge 47 has no aliases or missing mappings for piece types,
+    // so they stay registered and load as CourtyardTerrace, which keeps their old placement. New courtyards no longer create them
+    public static final RegistryObject<StructurePieceType> TFNCTr = registerPieceType("TFNCTr", (ctx, nbt) -> CourtyardTerrace.loadLegacy(TFStructurePieceTypes.TFNCTr.get(), ctx, nbt));
+    public static final RegistryObject<StructurePieceType> TFNCDu = registerPieceType("TFNCDu", (ctx, nbt) -> CourtyardTerrace.loadLegacy(TFStructurePieceTypes.TFNCDu.get(), ctx, nbt));
+    public static final RegistryObject<StructurePieceType> TFNCSt = registerPieceType("TFNCSt", (ctx, nbt) -> CourtyardTerrace.loadLegacy(TFStructurePieceTypes.TFNCSt.get(), ctx, nbt));
     public static final RegistryObject<StructurePieceType> TFNCPa = registerPieceType("TFNCPa", CourtyardPathPiece::new);
     public static final RegistryObject<StructurePieceType> TFNCWl = registerPieceType("TFNCWl", CourtyardWall::new);
     public static final RegistryObject<StructurePieceType> TFNCWP = registerPieceType("TFNCWP", CourtyardWallPadder::new);

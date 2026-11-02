@@ -193,7 +193,7 @@ public class EntityUtil {
 
 	// [VanillaCopy] with modifications: StructureTemplate.createEntityIgnoreException
 	@Nullable
-	private static <T extends Entity> T createEntityIgnoreException(EntityType<T> type, ServerLevelAccessor levelAccessor) {
+	public static <T extends Entity> T createEntityIgnoreException(EntityType<T> type, ServerLevelAccessor levelAccessor) {
 		try {
 			return type.create(levelAccessor.getLevel());
 		} catch (Exception exception) {

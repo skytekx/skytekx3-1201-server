@@ -18,6 +18,7 @@ import net.minecraft.sounds.Musics;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -60,6 +61,7 @@ import twilightforest.network.TFPacketHandler;
 import twilightforest.network.UpdateTFMultipartPacket;
 import twilightforest.world.components.structures.util.CustomStructureData;
 import twilightforest.world.registration.TFGenerationSettings;
+import twilightforest.world.components.structures.lichtowerrevamp.LichTowerPieces;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -327,6 +329,18 @@ public class ASMHooks {
 	public static boolean lead(boolean o, LeashFenceKnotEntity entity) {
 		BlockState fenceState = entity.level().getBlockState(entity.getPos());
 		return o || (fenceState.is(TFBlocks.WROUGHT_IRON_FENCE.get()) && fenceState.getValue(WroughtIronFenceBlock.POST) != WroughtIronFenceBlock.PostState.NONE);
+	}
+
+	/**
+	 * Injection Point:<br>
+	 * {@link net.minecraft.world.entity.PathfinderMob#shouldStayCloseToLeashHolder()}<br>
+	 * [BEFORE IRETURN]
+	 * <p>
+	 * TF 4.8 EntityHooks.overrideStayCloseToHolder: mobs the Lich Tower leashed do not walk back to their knot. 4.8 marks them with the
+	 * LEASH_PATHFINDER_OVERRIDE data attachment, this fork with a persistent data flag.
+	 */
+	public static boolean overrideStayCloseToHolder(boolean prior, PathfinderMob mob) {
+		return prior && !mob.getPersistentData().getBoolean(LichTowerPieces.LEASH_PATHFINDER_OVERRIDE);
 	}
 
 	/**

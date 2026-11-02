@@ -23,6 +23,7 @@ import twilightforest.data.custom.TransformationPowderGenerator;
 import twilightforest.data.custom.stalactites.StalactiteGenerator;
 import twilightforest.data.custom.structuredefinitions.CampStructureDefinitionGenerator;
 import twilightforest.data.custom.structuredefinitions.FinalCastleStructureDefinitionGenerator;
+import twilightforest.data.custom.structuredefinitions.LichTowerStructureDefinitionGenerator;
 import twilightforest.data.custom.structuredefinitions.NagaCourtyardStructureDefinitionGenerator;
 import twilightforest.data.tags.*;
 
@@ -55,6 +56,7 @@ public class DataGenerators {
 		generator.addProvider(event.includeServer(), new ItemTagGenerator(output, provider, blocktags.contentsGetter(), helper));
 		generator.addProvider(event.includeServer(), new EntityTagGenerator(output, provider, helper));
 		generator.addProvider(event.includeServer(), new CustomTagGenerator.EnchantmentTagGenerator(output, provider, helper));
+		generator.addProvider(event.includeServer(), new CustomTagGenerator.PaintingVariantTagGenerator(output, provider, helper));
 		generator.addProvider(event.includeServer(), new LootGenerator(output));
 		generator.addProvider(event.includeServer(), new CraftingGenerator(output));
 		generator.addProvider(event.includeServer(), new LootModifierGenerator(output));
@@ -71,6 +73,7 @@ public class DataGenerators {
 		generator.addProvider(event.includeServer(), new CampStructureDefinitionGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new FinalCastleStructureDefinitionGenerator(output, lookupProvider, helper));
 		generator.addProvider(event.includeServer(), new NagaCourtyardStructureDefinitionGenerator(output, lookupProvider, helper));
+		generator.addProvider(event.includeServer(), new LichTowerStructureDefinitionGenerator(output, lookupProvider, helper));
 
 		generator.addProvider(event.includeServer(), new CrumbleHornGenerator(output, helper));
 		generator.addProvider(event.includeServer(), new TransformationPowderGenerator(output, helper));

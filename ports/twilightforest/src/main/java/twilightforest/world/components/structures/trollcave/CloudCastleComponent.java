@@ -25,13 +25,8 @@ import twilightforest.init.TFStructurePieceTypes;
 
 public class CloudCastleComponent extends TFStructureComponentOld {
 
-	private boolean minerPlaced = false;
-	private boolean warriorPlaced = false;
-
 	public CloudCastleComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		super(TFStructurePieceTypes.TFClCa.get(), nbt);
-		this.minerPlaced = nbt.getBoolean("minerPlaced");
-		this.warriorPlaced = nbt.getBoolean("warriorPlaced");
 	}
 
 	public CloudCastleComponent(int index, int x, int y, int z) {
@@ -52,12 +47,15 @@ public class CloudCastleComponent extends TFStructureComponentOld {
 	@Override
 	protected void addAdditionalSaveData(StructurePieceSerializationContext ctx, CompoundTag tagCompound) {
 		super.addAdditionalSaveData(ctx, tagCompound);
-		tagCompound.putBoolean("minerPlaced", this.minerPlaced);
-		tagCompound.putBoolean("warriorPlaced", this.warriorPlaced);
 	}
 
 	@Override
 	public void addChildren(StructurePiece parent, StructurePieceAccessor list, RandomSource rand) {
+		// The literal cloud
+		CloudComponent cloudComponent = new CloudComponent(this.getGenDepth() + 1, this.boundingBox.minX(), this.boundingBox.minY() + 3, this.boundingBox.minZ());
+		list.addPiece(cloudComponent);
+		cloudComponent.addChildren(this, list, rand);
+
 		// up to two trees
 		// tree in x direction
 		boolean plus = rand.nextBoolean();
@@ -72,7 +70,6 @@ public class CloudCastleComponent extends TFStructureComponentOld {
 		CloudTreeComponent treeZ = new CloudTreeComponent(this.getGenDepth() + 1, boundingBox.minX() + (offset * 4), 168, boundingBox.minZ() + 8 + (plus ? 32 : -16));
 		list.addPiece(treeZ);
 		treeZ.addChildren(this, list, rand);
-
 	}
 
 	@Override
@@ -90,39 +87,44 @@ public class CloudCastleComponent extends TFStructureComponentOld {
 		this.generateAirBox(world, sbb, 8, 4, 12, 12, 11, 15);
 
 		// add giants
-		if (!this.minerPlaced) {
-			int bx = this.getWorldX(14, 14);
-			int by = this.getWorldY(4);
-			int bz = this.getWorldZ(14, 14);
+		this.placeGiantMiner(world, sbb);
+		this.placeWarrior(world, sbb);
+	}
+
+	// Each chunk is decorated once, so the chunk that holds the spawn position places the giant exactly once. TF 4.3 also kept
+	// minerPlaced/warriorPlaced flags, mutable state on a piece shared by every chunk of the start; 4.8 dropped them (348c00b19).
+	// Old saves still carry the two tags, they are simply ignored.
+	private void placeGiantMiner(WorldGenLevel world, BoundingBox chunkGenerating) {
+		int bx = this.getWorldX(14, 14);
+		int by = this.getWorldY(4);
+		int bz = this.getWorldZ(14, 14);
+
+		if (chunkGenerating.isInside(bx, by, bz)) {
 			BlockPos pos = new BlockPos(bx, by, bz);
 
-			if (sbb.isInside(pos)) {
-				this.minerPlaced = true;
+			GiantMiner miner = TFEntities.GIANT_MINER.get().create(world.getLevel());
+			miner.setPos(bx, by, bz);
+			miner.setPersistenceRequired();
+			ForgeEventFactory.onFinalizeSpawn(miner, world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
 
-				GiantMiner miner = TFEntities.GIANT_MINER.get().create(world.getLevel());
-				miner.setPos(bx, by, bz);
-				miner.setPersistenceRequired();
-				ForgeEventFactory.onFinalizeSpawn(miner, world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
-
-				world.addFreshEntity(miner);
-			}
+			world.addFreshEntity(miner);
 		}
-		if (!this.warriorPlaced) {
-			int bx = this.getWorldX(17, 17);
-			int by = this.getWorldY(4);
-			int bz = this.getWorldZ(17, 17);
+	}
+
+	private void placeWarrior(WorldGenLevel world, BoundingBox chunkGenerating) {
+		int bx = this.getWorldX(17, 17);
+		int by = this.getWorldY(4);
+		int bz = this.getWorldZ(17, 17);
+
+		if (chunkGenerating.isInside(bx, by, bz)) {
 			BlockPos pos = new BlockPos(bx, by, bz);
 
-			if (sbb.isInside(pos)) {
-				this.warriorPlaced = true;
+			ArmoredGiant warrior = TFEntities.ARMORED_GIANT.get().create(world.getLevel());
+			warrior.setPos(bx, by, bz);
+			warrior.setPersistenceRequired();
+			ForgeEventFactory.onFinalizeSpawn(warrior, world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
 
-				ArmoredGiant warrior = TFEntities.ARMORED_GIANT.get().create(world.getLevel());
-				warrior.setPos(bx, by, bz);
-				warrior.setPersistenceRequired();
-				ForgeEventFactory.onFinalizeSpawn(warrior, world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
-
-				world.addFreshEntity(warrior);
-			}
+			world.addFreshEntity(warrior);
 		}
 	}
 }

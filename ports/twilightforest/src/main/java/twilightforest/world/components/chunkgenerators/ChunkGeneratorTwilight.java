@@ -52,6 +52,7 @@ import twilightforest.world.components.structures.UtilityPiece;
 import twilightforest.world.components.structures.courtyard.CourtyardMain;
 import twilightforest.world.components.structures.placements.BiomeForcedLandmarkPlacement;
 import twilightforest.world.components.structures.start.TFStructureStart;
+import twilightforest.world.components.structures.trollcave.CloudComponent;
 import twilightforest.world.components.structures.type.HedgeMazeStructure;
 import twilightforest.world.components.structures.type.HollowHillStructure;
 import twilightforest.world.components.structures.type.NagaCourtyardStructure;
@@ -470,8 +471,9 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 				}
 			}
 		} else if (nearFeature == TFLandmark.TROLL_CAVE) {
-			// troll cloud, more like
-			deformTerrainForTrollCloud2(primer, chunk, relativeFeatureX, relativeFeatureZ, 166);
+			// troll cloud, more like. Troll caves created since the TF 4.8 cloud backport place it as a CloudComponent piece instead.
+			if (!hasCloudPiece(primer, primer.getCenter().getMinBlockX() + relativeFeatureX, primer.getCenter().getMinBlockZ() + relativeFeatureZ))
+				deformTerrainForTrollCloud2(primer, chunk, relativeFeatureX, relativeFeatureZ, 166);
 		}
 
 		// done!
@@ -581,6 +583,23 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Whether the troll cave centred at (centerX, centerZ) generates its cloud as a {@link CloudComponent} (TF 4.8). Starts saved by
+	 * TF 4.3 have no such piece, so their chunks generated after the update keep the stamped cloud and complete the cloud the others
+	 * already have; a chunk without any troll cave start keeps it too, as in 4.3.
+	 */
+	private static boolean hasCloudPiece(WorldGenRegion primer, int centerX, int centerZ) {
+		Structure structure = primer.registryAccess().registryOrThrow(Registries.STRUCTURE).get(TFStructures.TROLL_CAVE);
+		if (structure == null)
+			return false;
+
+		// The start sits in the landmark's centre chunk. SURFACE has a range of 8 chunks and the cloud reaches 4 chunks from the
+		// centre, so the centre chunk is in the region and past STRUCTURE_STARTS.
+		ChunkAccess centerChunk = primer.getChunk(SectionPos.blockToSectionCoord(centerX), SectionPos.blockToSectionCoord(centerZ), ChunkStatus.STRUCTURE_STARTS, false);
+		StructureStart start = centerChunk == null ? null : centerChunk.getStartForStructure(structure);
+		return start != null && start.isValid() && start.getPieces().stream().anyMatch(CloudComponent.class::isInstance);
 	}
 
 	private static void deformTerrainForTrollCloud2(WorldGenRegion primer, ChunkAccess chunkAccess, int hx, int hz, int cloudHeight) {
@@ -891,9 +910,9 @@ public class ChunkGeneratorTwilight extends ChunkGeneratorWrapper {
 	private static int getSpawnListIndexAt(StructureStart start, BlockPos pos) {
 		int highestFoundIndex = -1;
 		for (StructurePiece component : start.getPieces()) {
-			// Utility pieces build nothing (for example the one under an Aurora Palace wing base), so like in TF 4.8 they do not
-			// pick a spawn list; the position stays as it was without them.
-			if (component instanceof UtilityPiece)
+			// Utility pieces build nothing (for example the one under an Aurora Palace wing base) and the troll cave's cloud only
+			// shapes the sky, so like in TF 4.8 they do not pick a spawn list; the position stays as it was without them.
+			if (component instanceof UtilityPiece || component instanceof CloudComponent)
 				continue;
 			if (component.getBoundingBox().isInside(pos)) {
 				if (component instanceof TFStructureComponent tfComponent) {

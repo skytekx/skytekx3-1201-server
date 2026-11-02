@@ -2,6 +2,7 @@ package twilightforest.world.components.structures.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.util.RandomSource;
@@ -15,26 +16,35 @@ import twilightforest.TwilightForestMod;
 import twilightforest.data.tags.BiomeTagGenerator;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFStructureTypes;
+import twilightforest.init.custom.StructureSpeleothemConfigs;
 import twilightforest.world.components.structures.HydraLairComponent;
+import twilightforest.world.components.structures.StructureSpeleothemConfig;
 import twilightforest.world.components.structures.util.ProgressionStructure;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HydraLairStructure extends ProgressionStructure {
     public static final Codec<HydraLairStructure> CODEC = RecordCodecBuilder.create(instance ->
-            progressionCodec(instance).apply(instance, HydraLairStructure::new)
+            progressionCodec(instance)
+                    // Optional so structure JSONs written for 4.3 still load; they fall back to the stock hydra_lair config
+                    .and(StructureSpeleothemConfigs.CODEC.optionalFieldOf("speleothem_config").forGetter(s -> s.speleothemConfig))
+                    .apply(instance, HydraLairStructure::new)
     );
 
-    public HydraLairStructure(AdvancementLockConfig advancementLockConfig, HintConfig hintConfig, DecorationConfig decorationConfig, StructureSettings structureSettings) {
+    private final Optional<Holder<StructureSpeleothemConfig>> speleothemConfig;
+
+    public HydraLairStructure(AdvancementLockConfig advancementLockConfig, HintConfig hintConfig, DecorationConfig decorationConfig, StructureSettings structureSettings, Optional<Holder<StructureSpeleothemConfig>> speleothemConfig) {
         super(advancementLockConfig, hintConfig, decorationConfig, structureSettings);
+        this.speleothemConfig = speleothemConfig;
     }
 
     @Override
     protected @Nullable StructurePiece getFirstPiece(GenerationContext context, RandomSource random, ChunkPos chunkPos, int x, int y, int z) {
-        return new HydraLairComponent(0, x - 7, y, z - 7);
+        return new HydraLairComponent(0, x - 7, y, z - 7, StructureSpeleothemConfigs.keyOf(this.speleothemConfig, StructureSpeleothemConfigs.HYDRA_LAIR));
     }
 
     @Override
@@ -52,7 +62,8 @@ public class HydraLairStructure extends ProgressionStructure {
                         Arrays.stream(MobCategory.values()).collect(Collectors.toMap(category -> category, category -> new StructureSpawnOverride(StructureSpawnOverride.BoundingBoxType.STRUCTURE, WeightedRandomList.create()))), // Landmarks have Controlled Mob spawning
                         GenerationStep.Decoration.SURFACE_STRUCTURES,
                         TerrainAdjustment.NONE
-                )
+                ),
+                Optional.of(context.lookup(StructureSpeleothemConfigs.REGISTRY_KEY).getOrThrow(StructureSpeleothemConfigs.HYDRA_LAIR))
         );
     }
 }

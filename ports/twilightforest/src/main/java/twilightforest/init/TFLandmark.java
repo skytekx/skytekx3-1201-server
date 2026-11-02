@@ -13,6 +13,7 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.init.custom.StructureSpeleothemConfigs;
 import twilightforest.world.components.structures.*;
 import twilightforest.world.components.structures.courtyard.CourtyardMain;
 import twilightforest.world.components.structures.darktower.DarkTowerMainComponent;
@@ -29,19 +30,19 @@ public class TFLandmark {
 	public static final TFLandmark SMALL_HILL = new TFLandmark( 1, "small_hollow_hill", true, true) {
 		@Override
 		public StructurePiece provideFirstPiece(StructureTemplateManager structureManager, ChunkGenerator chunkGenerator, RandomSource rand, int x, int y, int z) {
-			return new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, size, x - 3, y - 2, z - 3);
+			return new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, size, x - 3, y - 2, z - 3, StructureSpeleothemConfigs.SMALL_HILL);
 		}
 	};
 	public static final TFLandmark MEDIUM_HILL = new TFLandmark( 2, "medium_hollow_hill", true, true) {
 		@Override
 		public StructurePiece provideFirstPiece(StructureTemplateManager structureManager, ChunkGenerator chunkGenerator, RandomSource rand, int x, int y, int z) {
-			return new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, size, x - 7, y - 5, z - 7);
+			return new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, size, x - 7, y - 5, z - 7, StructureSpeleothemConfigs.MEDIUM_HILL);
 		}
 	};
 	public static final TFLandmark LARGE_HILL = new TFLandmark( 3, "large_hollow_hill", true, true) {
 		@Override
 		public StructurePiece provideFirstPiece(StructureTemplateManager structureManager, ChunkGenerator chunkGenerator, RandomSource rand, int x, int y, int z) {
-			return new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, size, x - 11, y - 5, z - 11);
+			return new HollowHillComponent(TFStructurePieceTypes.TFHill.get(), 0, size, x - 11, y - 5, z - 11, StructureSpeleothemConfigs.LARGE_HILL);
 		}
 	};
 	public static final TFLandmark HEDGE_MAZE = new TFLandmark( 2, "hedge_maze", true, true) {
@@ -71,7 +72,7 @@ public class TFLandmark {
 	public static final TFLandmark HYDRA_LAIR = new TFLandmark( 2, "hydra_lair", true, true) {
 		@Override
 		public StructurePiece provideFirstPiece(StructureTemplateManager structureManager, ChunkGenerator chunkGenerator, RandomSource rand, int x, int y, int z) {
-			return new HydraLairComponent(0, x - 7, y, z - 7);
+			return new HydraLairComponent(0, x - 7, y, z - 7, StructureSpeleothemConfigs.HYDRA_LAIR);
 		}
 	};
 	public static final TFLandmark LABYRINTH = new TFLandmark( 3, "labyrinth" ) {
@@ -97,7 +98,7 @@ public class TFLandmark {
 	public static final TFLandmark YETI_CAVE = new TFLandmark( 2, "yeti_lairs", true, true) {
 		@Override
 		public StructurePiece provideFirstPiece(StructureTemplateManager structureManager, ChunkGenerator chunkGenerator, RandomSource rand, int x, int y, int z) {
-			return new YetiCaveComponent(0, x, y, z);
+			return new YetiCaveComponent(0, x, y, z, StructureSpeleothemConfigs.YETI_CAVE);
 		}
 	};
 	public static final TFLandmark ICE_TOWER = new TFLandmark( 2, "ice_tower" ) {
@@ -110,7 +111,7 @@ public class TFLandmark {
 	public static final TFLandmark TROLL_CAVE = new TFLandmark( 4, "troll_lairs", true, true) {
 		@Override
 		public StructurePiece provideFirstPiece(StructureTemplateManager structureManager, ChunkGenerator chunkGenerator, RandomSource rand, int x, int y, int z) {
-			return new TrollCaveMainComponent(TFStructurePieceTypes.TFTCMai.get(), 0, x, y, z);
+			return new TrollCaveMainComponent(TFStructurePieceTypes.TFTCMai.get(), 0, x, y, z, StructureSpeleothemConfigs.TROLL_CAVE);
 		}
 	};
 	public static final TFLandmark FINAL_CASTLE = new TFLandmark( 4, "final_castle") {

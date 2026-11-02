@@ -2,94 +2,64 @@ package twilightforest.world.components.structures;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
-import twilightforest.data.custom.stalactites.entry.Stalactite;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFStructurePieceTypes;
-import twilightforest.world.components.feature.BlockSpikeFeature;
-
-import java.util.Map;
+import twilightforest.init.custom.StructureSpeleothemConfigs;
 
 public class YetiCaveComponent extends HollowHillComponent {
-	private static final Stalactite BLUE_ICE_SPIKE = new Stalactite(Map.of(Blocks.BLUE_ICE, 1), 1.0F, 8, 1);
-	private static final Stalactite PACKED_ICE_SPIKE = new Stalactite(Map.of(Blocks.PACKED_ICE, 1), 0.5F, 9, 1);
-	private static final Stalactite ICE_SPIKE = new Stalactite(Map.of(Blocks.ICE, 1), 0.6F, 10, 1);
 
 	public YetiCaveComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
-		super(TFStructurePieceTypes.TFYeti.get(), nbt);
+		super(ctx, TFStructurePieceTypes.TFYeti.get(), nbt);
 	}
 
-	public YetiCaveComponent(int i, int x, int y, int z) {
-		super(TFStructurePieceTypes.TFYeti.get(), i, 2, x, y, z);
+	public YetiCaveComponent(int i, int x, int y, int z, ResourceKey<StructureSpeleothemConfig> speleothemConfig) {
+		super(TFStructurePieceTypes.TFYeti.get(), i, 2, x, y, z, speleothemConfig);
+	}
+
+	@Override
+	protected ResourceKey<StructureSpeleothemConfig> getDefaultSpeleothemConfig() {
+		return StructureSpeleothemConfigs.YETI_CAVE;
 	}
 
 	/**
 	 * Add in all the blocks we're adding.
 	 */
 	@Override
-	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox sbb, ChunkPos chunkPosIn, BlockPos blockPos) {
-		int sn = 64;
+	public void postProcess(WorldGenLevel world, StructureManager manager, ChunkGenerator generator, RandomSource rand, BoundingBox writeableBounds, ChunkPos chunkPosIn, BlockPos blockPos) {
+		StructureSpeleothemConfig speleothemConfig = this.getSpeleothemConfig(world);
 
-		// fill in features
+		int maxRadius = 24;
 
-//		// ore or glowing stalactites! (smaller, less plentiful)
-//		for (int i = 0; i < sn; i++)
-//		{
-//			int[] dest = getCoordsInHill2D(rand);
-//			generateOreStalactite(world, dest[0], 1, dest[1], sbb);
-//		}
-		// blue ice stalactites!
-		for (int i = 0; i < sn; i++) {
-			BlockPos.MutableBlockPos dest = this.randomCeilingCoordinates(rand, 24);
-			this.generateBlockSpike(world, BLUE_ICE_SPIKE, dest.getX(), dest.getY(), dest.getZ(), sbb, true);
-		}
-		// packed ice stalactites!
-		for (int i = 0; i < sn; i++) {
-			BlockPos.MutableBlockPos dest = this.randomCeilingCoordinates(rand, 24);
-			this.generateBlockSpike(world, PACKED_ICE_SPIKE, dest.getX(), dest.getY(), dest.getZ(), sbb, true);
-		}
-		// ice stalactites!
-		for (int i = 0; i < sn; i++) {
-			BlockPos.MutableBlockPos dest = this.randomCeilingCoordinates(rand, 24);
-			this.generateBlockSpike(world, ICE_SPIKE, dest.getX(), dest.getY(), dest.getZ(), sbb, true);
-		}
-		// stone stalactites!
-		for (int i = 0; i < sn; i++) {
-			BlockPos.MutableBlockPos dest = this.randomCeilingCoordinates(rand, 24);
-			this.generateBlockSpike(world, BlockSpikeFeature.STONE_STALACTITE, dest.getX(), dest.getY(), dest.getZ(), sbb, true);
+		// Lattice placement from TF 4.8 (4c99eec1c, cfadbd358). The heights are world heights matching the 4.3 cave carved by
+		// ChunkGeneratorTwilight.deformTerrainForYetiLair: the ceiling slopes down from y 16 and the ice floor up from y -4, by offset / 6
+		BlockPos center = this.getLocatorPosition();
+		for (BlockPos.MutableBlockPos dest : speleothemConfig.latticeIterator(writeableBounds, 0)) {
+			int xDist = Math.abs(dest.getX() - center.getX());
+			int zDist = Math.abs(dest.getZ() - center.getZ());
+			int minDelta = Math.min(xDist, zDist);
+
+			if (xDist <= maxRadius && zDist <= maxRadius) {
+				if (speleothemConfig.shouldDoAStalactite(rand))
+					this.generateSpeleothem(world, speleothemConfig, dest.above(15 - minDelta / 6), writeableBounds, true);
+
+				// The stock yeti_cave config has no stalagmites; a datapack can add some
+				if (speleothemConfig.shouldDoAStalagmite(rand))
+					this.generateSpeleothem(world, speleothemConfig, dest.above(-4 + minDelta / 6), writeableBounds, false);
+			}
 		}
 
 		// spawn alpha yeti
 		final BlockState yetiSpawner = TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get().defaultBlockState();
-		this.setBlockStateRotated(world, yetiSpawner, this.radius, 1, this.radius, Rotation.NONE, sbb);
-	}
-
-	/**
-	 * @return true if the coordinates would be inside the hill on the "floor" of the hill
-	 */
-	@Override
-	boolean isInHill(int cx, int cz) {
-		// yeti cave is square
-		return cx < this.radius * 2 && cx > 0 && cz < this.radius * 2 && cz > 0;
-	}
-
-	@Override
-	BlockPos.MutableBlockPos randomCeilingCoordinates(RandomSource rand, float maximumRadius) {
-		int rad = (int) maximumRadius;
-		int x = rand.nextInt(rad * 2) - rad;
-		int z = rand.nextInt(rad * 2) - rad;
-
-		int dist = Math.min(Math.abs(x), Math.abs(z));
-
-		return new BlockPos.MutableBlockPos(this.radius + x, 17 - dist / 6, this.radius + z);
+		this.setBlockStateRotated(world, yetiSpawner, this.radius, 1, this.radius, Rotation.NONE, writeableBounds);
 	}
 }

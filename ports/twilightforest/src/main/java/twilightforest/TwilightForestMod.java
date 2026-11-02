@@ -47,7 +47,7 @@ import twilightforest.item.recipe.UncraftingTableCondition;
 import twilightforest.loot.modifiers.GiantToolGroupingModifier;
 import twilightforest.util.MagicPaintingVariant;
 import twilightforest.util.Restriction;
-import twilightforest.data.custom.stalactites.entry.Stalactite;
+import twilightforest.data.custom.stalactites.entry.StalactiteReloadListener;
 import twilightforest.dispenser.TFDispenserBehaviors;
 import twilightforest.init.*;
 import twilightforest.init.custom.*;
@@ -57,6 +57,7 @@ import twilightforest.world.components.BiomeGrassColors;
 import twilightforest.world.components.biomesources.LandmarkBiomeSource;
 import twilightforest.world.components.biomesources.TFBiomeProvider;
 import twilightforest.world.components.chunkgenerators.ChunkGeneratorTwilight;
+import twilightforest.world.components.structures.StructureSpeleothemConfig;
 import twilightforest.world.components.structures.util.StructureTemplateDefinitions;
 import twilightforest.world.components.structures.util.TemplateMarkerHandlerList;
 
@@ -94,7 +95,7 @@ public class TwilightForestMod {
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
 		MinecraftForge.EVENT_BUS.addGenericListener(Level.class, CapabilityList::attachLevelCapability);
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, CapabilityList::attachEntityCapability);
-		MinecraftForge.EVENT_BUS.addListener(Stalactite::reloadStalactites);
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddReloadListenerEvent.class, StalactiteReloadListener.INSTANCE::registerListener);
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AddReloadListenerEvent.class, StructureTemplateDefinitions.INSTANCE::registerListener);
 
 		IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -171,6 +172,7 @@ public class TwilightForestMod {
 		// Server-side only: worldgen reads them, clients never do
 		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_KEY, TemplateMarkerHandlers.DISPATCH_CODEC);
 		event.dataPackRegistry(TemplateMarkerHandlers.TEMPLATE_MARKER_HANDLER_LIST_KEY, TemplateMarkerHandlerList.CODEC);
+		event.dataPackRegistry(StructureSpeleothemConfigs.REGISTRY_KEY, StructureSpeleothemConfig.CODEC);
 	}
 
 	public void registerExtraStuff(RegisterEvent evt) {

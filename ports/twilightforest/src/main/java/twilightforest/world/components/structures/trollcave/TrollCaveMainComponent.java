@@ -2,7 +2,6 @@ package twilightforest.world.components.structures.trollcave;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -22,16 +21,18 @@ import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.data.custom.stalactites.entry.Stalactite;
 import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFConfiguredFeatures;
 import twilightforest.init.TFLandmark;
 import twilightforest.init.TFStructurePieceTypes;
+import twilightforest.init.custom.StructureSpeleothemConfigs;
 import twilightforest.loot.TFLootTables;
+import twilightforest.util.BoundingBoxUtils;
 import twilightforest.util.RotationUtil;
 import twilightforest.util.WorldUtil;
 import twilightforest.world.components.feature.BlockSpikeFeature;
+import twilightforest.world.components.structures.StructureSpeleothemConfig;
 import twilightforest.world.components.structures.TFStructureComponentOld;
 
 import java.util.Objects;
@@ -41,6 +42,9 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 	protected int size;
 	protected int height;
 
+	// Only the id is kept, the entry is looked up in the world's registries when a chunk is decorated
+	protected final ResourceKey<StructureSpeleothemConfig> speleothemConfigKey;
+
 	public TrollCaveMainComponent(StructurePieceSerializationContext ctx, CompoundTag nbt) {
 		this(TFStructurePieceTypes.TFTCMai.get(), nbt);
 	}
@@ -49,9 +53,11 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		super(piece, nbt);
 		this.size = nbt.getInt("size");
 		this.height = nbt.getInt("height");
+		// Pieces saved before the speleothem configs existed have no config_id
+		this.speleothemConfigKey = StructureSpeleothemConfigs.readKey(nbt, StructureSpeleothemConfigs.TROLL_CAVE);
 	}
 
-	public TrollCaveMainComponent(StructurePieceType type, int i, int x, int y, int z) {
+	public TrollCaveMainComponent(StructurePieceType type, int i, int x, int y, int z, ResourceKey<StructureSpeleothemConfig> speleothemConfigKey) {
 		super(type, i, x, y, z);
 		this.setOrientation(Direction.SOUTH); // DEPTH_AVERAGE
 
@@ -63,6 +69,8 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 
 		int radius = this.size / 2;
 		this.boundingBox = TFLandmark.getComponentToAddBoundingBox(x, y, z, -radius, -this.height, -radius, this.size, this.height, this.size, Direction.SOUTH, false);
+
+		this.speleothemConfigKey = speleothemConfigKey;
 	}
 
 	@Override
@@ -70,6 +78,8 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		super.addAdditionalSaveData(ctx, tagCompound);
 		tagCompound.putInt("size", this.size);
 		tagCompound.putInt("height", this.height);
+		// Saved so partially generated caves keep their config after a reload (TF 4.8 c346014ab)
+		StructureSpeleothemConfigs.writeKey(tagCompound, this.speleothemConfigKey);
 	}
 
 	@Override
@@ -95,7 +105,7 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		Direction direction = getStructureRelativeRotation(rotation);
 		BlockPos dest = offsetTowerCCoords(x, y, z, caveSize, direction);
 
-		TrollCaveConnectComponent cave = new TrollCaveConnectComponent(index, dest.getX(), dest.getY(), dest.getZ(), caveSize, caveHeight, direction);
+		TrollCaveConnectComponent cave = new TrollCaveConnectComponent(index, dest.getX(), dest.getY(), dest.getZ(), caveSize, caveHeight, direction, this.speleothemConfigKey);
 		// check to see if it intersects something already there
 		StructurePiece intersect = list.findCollisionPiece(cave.getBoundingBox());
 		if (intersect == null || intersect == this) {
@@ -114,21 +124,35 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 		// clear inside
 		hollowCaveMiddle(world, sbb, rand, 0, 0, 0, this.size - 1, this.height - 1, this.size - 1);
 
-		// stone stalactites!
-		for (int i = 0; i < 128; i++) {
-			BlockPos dest = getCoordsInCave(decoRNG);
-			generateBlockSpike(world, BlockSpikeFeature.STONE_STALACTITE, dest.atY(this.height), sbb, true);
-		}
-		// stone stalagmites!
-		for (int i = 0; i < 32; i++) {
-			BlockPos dest = getCoordsInCave(decoRNG);
-			generateBlockSpike(world, BlockSpikeFeature.STONE_STALACTITE, dest.atY(0), sbb, false);
-		}
+		this.placeSpeleothems(world, rand, sbb, decoRNG);
 
 		// uberous!
 		for (int i = 0; i < 32; i++) {
 			BlockPos dest = getCoordsInCave(decoRNG);
 			generateAtSurface(world, generator, TFConfiguredFeatures.UBEROUS_SOIL_PATCH_BIG, decoRNG, dest.getX(), dest.getZ(), sbb);
+		}
+	}
+
+	/**
+	 * Speleothems on the lattice of the cave's speleothem config, from TF 4.8 (d1c8fa971, b755d91b1). Replaces 4.3's fixed counts of
+	 * stone spikes at random spots (128 stalactites and 32 stalagmites in the main cave).
+	 */
+	protected void placeSpeleothems(WorldGenLevel world, RandomSource rand, BoundingBox sbb, RandomSource decoRNG) {
+		StructureSpeleothemConfig speleothemConfig = StructureSpeleothemConfigs.resolve(world.registryAccess(), this.speleothemConfigKey);
+
+		decoRNG.setSeed(world.getSeed() + (this.boundingBox.minX() * 321534781L) ^ (this.boundingBox.minZ() * 756839L));
+
+		int ceilingY = this.getWorldY(this.height);
+		int floorY = this.getWorldY(0);
+
+		for (BlockPos pos : speleothemConfig.latticeIterator(BoundingBoxUtils.getIntersectionOfSBBs(sbb, this.boundingBox), ceilingY)) {
+			// stone stalactites!
+			if (speleothemConfig.shouldDoAStalactite(rand))
+				BlockSpikeFeature.startSpike(world, pos, speleothemConfig.getStalactite(decoRNG), decoRNG, true);
+
+			// stone stalagmites!
+			if (speleothemConfig.shouldDoAStalagmite(rand))
+				BlockSpikeFeature.startSpike(world, pos.atY(floorY), speleothemConfig.getStalagmite(decoRNG), decoRNG, false);
 		}
 	}
 
@@ -215,25 +239,6 @@ public class TrollCaveMainComponent extends TFStructureComponentOld {
 
 		// ugh?
 		return new BlockPos(x, y, z);
-	}
-
-	protected void generateBlockSpike(WorldGenLevel world, Stalactite config, Vec3i pos, BoundingBox sbb, boolean hanging) {
-		generateBlockSpike(world, config, pos.getX(), pos.getY(), pos.getZ(), sbb, hanging);
-	}
-
-	protected void generateBlockSpike(WorldGenLevel world, Stalactite config, int x, int y, int z, BoundingBox sbb, boolean hanging) {
-		// are the coordinates in our bounding box?
-		int dx = getWorldX(x, z);
-		int dy = getWorldY(y);
-		int dz = getWorldZ(x, z);
-		BlockPos pos = new BlockPos(dx, dy, dz);
-		if (sbb.isInside(pos)) {
-			// generate an RNG for this stalactite
-			RandomSource stalRNG = RandomSource.create(world.getSeed() + (long) dx * dz);
-
-			// make the actual stalactite
-			BlockSpikeFeature.startSpike(world, pos, config, stalRNG, hanging);
-		}
 	}
 
 	/**

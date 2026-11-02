@@ -572,6 +572,14 @@ logs stay on the Mac and are not in the repo.
   17:20 dropped those values. Since 18:28 the file sits under `data/_skytekx3/`, a datapack reload
   loaded it, and 37 hostile mobs of level 6 to 59 left the Skylands. See
   [Skylands worldgen](content/skylands-worldgen.md#the-namespace-trap-of-l2hostility).
+- At 19:14 the owner asked for the grave mod that every SkyTekx had so far. SkyTekx 2 made its graves
+  with OpenBlocks, which has no 1.20.1 build, and had tried the GraveStone Mod of Max Henkel in January
+  2023. Commit 1ce3dfc2 put its Forge 1.20.1 build 1.0.35 from Modrinth into the index, required on
+  both sides. The jar went to the Mac mini and to both MacBooks at 19:33. After a warning in the game
+  the server restarted at 19:35:00 and reached `Done` at 19:35:42 with the three known errors and a
+  default `gravestone-server.toml`. A join at 19:37:37 from a game started before the jar arrived was
+  refused for the missing grave registry entries, so each player restarts the game once. See
+  [graves](content/graves.md).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

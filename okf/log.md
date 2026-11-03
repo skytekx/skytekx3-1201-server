@@ -622,5 +622,20 @@ logs stay on the Mac and are not in the repo.
   found all 12 recipes with the expected planks. Both MacBooks rebuilt EMI in about 38 s with 289,201
   recipes and no errors.
 
+## 2026-11-03: The Hexbiscus generates like in SkyTekx 2
+
+- At 16:18 the owner said that the Hexxit flowers spawn too often. The ruling of 2026-06-27 21:46 had
+  already asked for no three Hexxit flowers next to each other.
+- Hexxit Gear 1.0.1 tries a patch of 4 Hexbiscus within 2 blocks in 1 of 16 chunks. SkyTekx 2 ran
+  Hexxit Gear 2.8.2 with `Hexbiscus Chance=55`, which places one single flower in about 1 of 55
+  chunks. At 16:20 the 441 chunks loaded around the owner in the overworld held 11 Hexbiscus in 8
+  chunks.
+- Commit 3f5eb2f2 overrides the configured and the placed feature of the Hexbiscus in the fixes pack:
+  one flower in 1 of 55 chunks, also on the forest floor under leaves, and it may replace short grass
+  or fern like the old generator. Both files parsed with the live server's codecs. They take effect at
+  the next restart and only in new chunks, see
+  [boot fixes](content/boot-fixes.md#gameplay-overrides).
+- The flowers of Hexxit Additions are not changed.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

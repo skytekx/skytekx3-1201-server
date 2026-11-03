@@ -15,9 +15,10 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Rulings not yet built
 
-- Loot chances roughly like SkyTekx 2 and not three Hexxit flowers side by side (2026-06-27 21:46).
-  Nothing overrides the Hexbiscus placement, and the loot part of `kubejs/server_scripts/gameplay.js`
-  points at a script that was never written. See [KubeJS](modpack/kubejs.md#open-rulings).
+- Loot chances roughly like SkyTekx 2 (2026-06-27 21:46). The Hexxit flowers of the same ruling are
+  done since 3f5eb2f2, see [boot fixes](content/boot-fixes.md#gameplay-overrides). The loot part of
+  `kubejs/server_scripts/gameplay.js` points at a script that was never written. See
+  [KubeJS](modpack/kubejs.md#open-rulings).
 - Chocobos only in the Skylands (2026-06-30 04:01). In the current world the shared Skylands pack loads
   at position 119, before the ChocoCraft mod pack, so its four overrides lose. A fresh world loads the
   file packs last (commit 1f8f4ef), which should fix it, but nobody checked in game. See

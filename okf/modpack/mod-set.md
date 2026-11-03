@@ -220,6 +220,11 @@ Mods removed for good:
   `ruins-1.20.1.2.jar`.
 - Re:Avaritia was installed on 2026-06-30 06:21 and removed at 08:11 on the owner's word (commit b6a1e20).
 - Skytekx-worldgen was replaced by SkyTekx Compat on 2026-07-12 (commit 7670df4).
+- Elenai Dodge 2 (`elenaidodge2-1.1.jar`, in the index since 2026-06-29) left the index on 2026-11-03
+  on the owner's word at 20:16 (pack 3.1.2). Every dodge calls `FeathersHelper.spendFeathers`, the mod
+  does not declare Feathers, and Feathers was never installed, so Left Alt crashed the client. Dodging
+  never worked in this pack. Its network channel accepts a missing peer on both sides, so clients
+  with and without it can join either server. The server keeps the jar until its next restart.
 - Chocolate Quest Repoured was only tested. The index has Chocolate Quest Golden Apple Edition (1.1.0
   at commit 4c5e331, 1.3.1 since the update), whose `mods.toml` license field says "Not specified".
 

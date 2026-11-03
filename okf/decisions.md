@@ -92,6 +92,7 @@ These rules apply to every later change.
 | 2026-10-31 16:58 | Check the installed mods for updates | Done. 55 Modrinth updates, one new dependency and three bundled jars landed in 0a20b8c and 1ba93f7. The updated set boots on the Mac mini with the baseline of 3 ERRORs, and 12 of the new builds are betas. The JEI build 15.74.0.233 breaks EMI's JEI bridge, and a client with it ran out of an 8 GB heap in the install test | [Mod set](modpack/mod-set.md#update-of-2026-10-31) |
 | 2026-10-31 21:48 | Keep BrassAmber BattleTowers on the server and let players add the jar by hand | Done. The Modrinth body says so since about 21:56. At about 21:50 the owner asked for the jar to send it to players over Telegram, and it was copied for them | [Mod set](modpack/mod-set.md#jars-outside-the-index) |
 | 2026-11-03 09:54 and 11:05 | Fork EMI, fix all of its errors, push it to the skytekx org, make the fix the default branch and install it with restarts | Done. github.com/skytekx/emi, branch `1.20.1-jei-bridge` up to e4ae7350, the default branch since about 11:08. The jar ships from `local-mods/` since eadc7a6d and runs on the Mac mini and both MacBooks since 11:13 | [Mod set](modpack/mod-set.md#bundled-jars) |
+| 2026-11-03 20:16 | Remove Elenai Dodge 2 | Done in the pack. The index drops it with 3.1.2, the laptop client has it disabled, the server keeps the jar until its next restart. It crashed clients on Left Alt because Feathers is missing | [Mod set](modpack/mod-set.md#parked-and-removed-mods) |
 
 ## Skylands worldgen and travel
 

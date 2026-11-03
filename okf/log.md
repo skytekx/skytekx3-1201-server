@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-11-02
+timestamp: 2026-11-03
 ---
 
 # Change log
@@ -580,6 +580,16 @@ logs stay on the Mac and are not in the repo.
   default `gravestone-server.toml`. A join at 19:37:37 from a game started before the jar arrived was
   refused for the missing grave registry entries, so each player restarts the game once. See
   [graves](content/graves.md).
+
+## 2026-11-03: Items stay pickable and EMI bridges JEI 15.74
+
+- At 10:54 the owner reported dropped items that showed on the ground but could not be picked up. On
+  the server the item hung in the air where the block under it had been, because Arclight's activation
+  range skips exactly the tick in which about one item in four checks its footing. See
+  [Floating items](server/arclight.md#floating-items).
+- At 11:05 the owner asked for the fix. Commit 00a97cfd sets `entity-activation-range.misc: 0` in
+  `spigot.yml`. After a warning in the game at 11:12:04 the server restarted at 11:13:06 and reached
+  `Done` at 11:13:48, with `Mi 0` in its activation range line.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

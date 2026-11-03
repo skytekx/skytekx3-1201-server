@@ -3,7 +3,7 @@ type: Runtime
 title: Arclight runtime
 description: The hardened Arclight 1.20.1 jar built from patches/, the arclight.jar symlink, the Java 17 rule, how mods and plugins load and why the server must stop over RCON.
 tags: [server, arclight, java, forge, bukkit]
-timestamp: 2026-11-01
+timestamp: 2026-11-03
 ---
 
 # Arclight runtime
@@ -219,7 +219,9 @@ repo root. All four were committed once in `bc9a935`, so they are close to gener
 - The file `bukkit.yml` sets the spawn limits (monsters 70, animals 10, water animals 5, water ambient
   20, ambient 15), an autosave every 6000 ticks and chunk garbage collection every 600 ticks.
 - The file `spigot.yml` sets entity activation ranges of 32 for animals and monsters, 48 for raiders
-  and 16 for the rest, a tracking range of 48 for players, animals and monsters, and 4 Netty threads.
+  and, since 2026-11-03, 0 for the rest, which keeps items and the other misc entities always active
+  (see [Floating items](#floating-items)). It also sets a tracking range of 48 for players, animals and
+  monsters, and 4 Netty threads.
   It also sets `restart-on-crash: true` with `restart-script: ./start.sh`, a script that does not
   exist. Restarts come from the service manager instead. Since 2026-11-01 06:10 it sets
   `merge-radius.item` to 0.5 instead of 2.5 (2af8bb0). Arclight inflates the merge box of a dropped
@@ -232,6 +234,26 @@ repo root. All four were committed once in `bc9a935`, so they are close to gener
 The Forge installer also left `run.sh`, `run.bat` and `user_jvm_args.txt` behind. These stock launchers
 start plain Forge 47.4.18 without Arclight, so they skip the Bukkit layer and the hardened jar. Do not
 use them.
+
+## Floating items
+
+Up to 2026-11-03 some dropped items hung in the air on the server while the game showed them lying on
+the ground below, where nobody could pick them up. Arclight runs Spigot's activation range
+(`use-activation-and-tracking-range=true`). An active entity that is not immune skips every tick in
+which its tick count is a multiple of 4, and an item that lies on the ground is not immune. Vanilla
+lets such an item check whether it still lies on something only in the tick where tick count plus
+entity id is a multiple of 4. For an id that is 3 modulo 4 that is always the skipped tick, so about
+one item in four never noticed when the block under it went, by mining downwards or by decaying leaves.
+Clients run vanilla physics and let the item fall, but the server decides the pickup. The stuck item
+kept piling up gravity in its motion and despawned after five minutes. The first case looked into was
+a Raw Yellorium six blocks above a player in a shaft of air, with `OnGround` 1 and `Motion[1]` at
+-146.6. At about 11:00 on 2026-11-03, 17 of the 33 loaded items showed that sign. More than a quarter,
+because the items that fall get picked up and the stuck ones stay behind.
+
+Since the restart at 11:13 on 2026-11-03, `spigot.yml` sets `entity-activation-range.misc: 0`
+(00a97cfd). Spigot then gives every misc entity, items among them, the default active state, so they
+tick like in plain Forge. Animals, monsters and raiders keep their ranges. The server confirms the
+setting at boot with `Entity Activation Range: An 32 / Mo 32 / Ra 48 / Mi 0`.
 
 ## History
 

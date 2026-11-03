@@ -167,6 +167,8 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.0.5 | 2026-07-12 23:40 | 65,487,506 B | 216 | 33 | Vanilla Skylands rework with the Forge pack split, skytekx-compat, Aether Genesis, Medieval Embroidery, SlashBlade Resharped, The One Probe, Ruins removed |
 | 3.0.6 | 2026-10-31 20:19 | 67,245,989 B | 216 | 35 | The mod update of 2026-10-31, Skylands fixes (no Battle Towers, strongholds, illager campsites, floating petrified roots or windmill fields under the islands), Halloween pumpkins and blood moons, the fixes datapack, Forge 47.4.18. Uploaded at 20:27 as `Gi0aBofN`. Freezes after the join with an 8 GB heap, see [test](#test-of-2026-10-31) |
 | 3.0.7 | 2026-10-31 21:54 | 67,246,343 B | 217 | 35 | Modflared 1.2.0+release.61 as a client only index entry and the server list `client-overrides/servers.dat` with `hex.skytekx.com`, for the Cloudflare Tunnel. Every other file as in 3.0.6. Uploaded at 21:55 as `LRkF99Pz` |
+| 3.1.1 | 2026-11-03 17:37 | 73,371,625 B | 225 | 44 | Private build with `--allow-unpermitted`, sent straight to players and never uploaded, because five bundled jars lack permission. It carries everything since 3.0.7, among it the Twilight Forest backport, Nyx 1.0.1, the minimap at the top right (`config/xaerohud.txt`) and the single Hexbiscus |
+| 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

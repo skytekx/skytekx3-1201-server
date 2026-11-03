@@ -640,5 +640,21 @@ logs stay on the Mac and are not in the repo.
   single flower. The file parsed with the live server's codecs and is on the Mac mini for the next
   restart.
 
+## 2026-11-03: Enchanting works by day again
+
+- At 20:17 the owner reported that the enchanting table only answers "It's too light out to enchant
+  right now". The message comes from Nyx. Its key `disallowDayEnchanting` kept the default `true`, while
+  SkyTekx 2 had `false` (`~/git/skytekx2-1122-server/config/nyx.cfg:38`).
+- The server's `config/nyx-common.toml` holds `false` since 20:20. Forge does not reload changed configs
+  on this server or on the laptop client, so a one-off KubeJS script set the live field at 20:22:46
+  (KubeJS log: "before true", then "after false") and was deleted right after. The repo copy now matches.
+- The check runs on both sides and the server decides, so the table opens for everyone. A client that
+  still has `true` shows the message until its next start. See [Nyx](content/nyx.md#configuration).
+- Two crash logs of a player with pack 3.1.1 (18:15 and 19:46) were the known Elenai Dodge 2 crash:
+  Left Alt calls `FeathersHelper.spendFeathers`, and Feathers is not installed.
+- Between 20:13 and 20:27 the server turned down four logins of two players with "Failed to verify
+  username!" ("tried to join with an invalid session"). Mojang's session server had no record of those
+  logins. The next attempt worked twice within 13 seconds. `prevent-proxy-connections` is `false`.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

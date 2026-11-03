@@ -121,7 +121,7 @@ world-settings:
       animals: 32
       monsters: 32
       raiders: 48
-      misc: 16
+      misc: 0
       tick-inactive-villagers: true
       ignore-spectators: false
     entity-tracking-range:

@@ -640,7 +640,7 @@ logs stay on the Mac and are not in the repo.
   single flower. The file parsed with the live server's codecs and is on the Mac mini for the next
   restart.
 
-## 2026-11-03: Enchanting works by day again
+## 2026-11-03: Enchanting works by day again and Elenai Dodge 2 leaves
 
 - At 20:17 the owner reported that the enchanting table only answers "It's too light out to enchant
   right now". The message comes from Nyx. Its key `disallowDayEnchanting` kept the default `true`, while
@@ -652,6 +652,10 @@ logs stay on the Mac and are not in the repo.
   still has `true` shows the message until its next start. See [Nyx](content/nyx.md#configuration).
 - Two crash logs of a player with pack 3.1.1 (18:15 and 19:46) were the known Elenai Dodge 2 crash:
   Left Alt calls `FeathersHelper.spendFeathers`, and Feathers is not installed.
+- At 20:16 the owner chose to remove Elenai Dodge 2. Pack 3.1.2 drops it from the index together with
+  `config/Elenai-Dodge-2-Common.toml`. The laptop client has the jar disabled for its next start. The
+  server keeps it until the next restart, which is harmless, because the crash happens in the client
+  and the mod's channel accepts a missing peer.
 - Between 20:13 and 20:27 the server turned down four logins of two players with "Failed to verify
   username!" ("tried to join with an invalid session"). Mojang's session server had no record of those
   logins. The next attempt worked twice within 13 seconds. `prevent-proxy-connections` is `false`.

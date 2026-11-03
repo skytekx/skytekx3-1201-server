@@ -590,6 +590,21 @@ logs stay on the Mac and are not in the repo.
 - At 11:05 the owner asked for the fix. Commit 3a671f08 sets `entity-activation-range.misc: 0` in
   `spigot.yml`. After a warning in the game at 11:12:04 the server restarted at 11:13:06 and reached
   `Done` at 11:13:48, with `Mi 0` in its activation range line.
+- At 09:54 the owner asked to fork EMI, fix all of its errors and push the fork to the skytekx org.
+  EMI 1.1.24 builds its JEI bridge against JEI 15.20. Against JEI 15.74 the methods it lacks threw
+  `AbstractMethodError`, 21,934 times in one client session of that morning: the Chipped recipes did
+  not load, the Tinkers' Construct pages showed "Error rendering" and the recipe fill failed for several
+  mods. The fork github.com/skytekx/emi, branch `1.20.1-jei-bridge`, builds the bridge against JEI 15.74
+  in eight commits up to e4ae7350 and draws the recipe extras these mods add. A static scan of all pack
+  jars found no remaining call into a missing JEI method. Since about 11:08 the branch is the fork's
+  default branch.
+- At 11:05 the owner also asked to install it. Commit 1ea5bb29 moves EMI from the index to
+  `local-mods/`. The jar went into the Mac mini's `mods/` right before the restart of 11:13, into the
+  build machine's `mods/` that `sync-to-mac.sh` mirrors, and into both MacBooks while their games were
+  closed at 11:13. Both games started again at 11:14. In the owner's game the JEI bridge loaded in 6.6 s
+  without a single `AbstractMethodError`. Three entity melting recipes of Tinkers' Construct still
+  failed, because the bridge passed the null entries that JEI allows in an ingredient list on to EMI.
+  The fork fixes that in 1.1.24-skytekx.2 (3fd75e08), which is not deployed yet.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

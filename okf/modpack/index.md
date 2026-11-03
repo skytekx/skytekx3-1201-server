@@ -3,7 +3,7 @@ type: Index
 title: Modpack
 description: What the SkyTekx 3 pack is made of and how it is kept up, from the mod set and the recipe layers to the scripts, the plugin layer, the owner's client and the Modrinth release.
 tags: [modpack, index]
-timestamp: 2026-10-31
+timestamp: 2026-11-03
 ---
 
 # Modpack
@@ -36,7 +36,7 @@ Each layer has a modern counterpart:
 | One item per material | UniDict 3.0.10 | [AlmostUnified](almostunified.md) 0.11.0 |
 | Choice when two recipes match the same grid | NoMoreRecipeConflict 0.13 | Polymorph 0.49.11 |
 | Recipe and tag changes by script | CraftTweaker 4.1.20 | [KubeJS](kubejs.md) 2001.6.5 |
-| Recipe viewer | JEI 4.16.1 | EMI 1.1.24 and JEI 15.74.0.233 |
+| Recipe viewer | JEI 4.16.1 | EMI 1.1.24-skytekx.1 (fork with a JEI 15.74 bridge) and JEI 15.74.0.233 |
 
 The SkyTekx 2 versions are those of the jars in `~/git/skytekx2-1122-server/mods/`. Polymorph and JEI
 show the builds since the update of 2026-10-31 (see [mod set](mod-set.md#update-of-2026-10-31)).

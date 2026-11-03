@@ -12,7 +12,7 @@
 import io, json, os, shutil, struct, subprocess, sys, tarfile, zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.1.0"
+VERSION = "3.1.1"
 FORGE = "47.4.18"   # The Forge build that the server (inside Arclight) and the owner's client run
 
 def git(*args):

@@ -146,8 +146,10 @@ Hexxit World arrow drop nerf) were deferred to a `loot_tiers.js` that was never 
 ## Open rulings
 
 On 2026-06-27 21:46 the owner asked for loot chances roughly like SkyTekx 2 and not three Hexxit
-flowers next to each other (`~/.claude/history.jsonl`, session 5bd3e1de). No script, LootJS rule or
-config does this yet. See [open items](../open-items.md).
+flowers next to each other (`~/.claude/history.jsonl`, session 5bd3e1de). The flowers are done since
+9a784372 with a worldgen override in the fixes pack, see
+[boot fixes](../content/boot-fixes.md#gameplay-overrides). No script, LootJS rule or config changes the
+loot chances yet. See [open items](../open-items.md).
 
 ## Working with Rhino
 

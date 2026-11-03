@@ -3,7 +3,7 @@ type: Reference
 title: Boot fixes
 description: How the server boot went from 152 errors to 3, with the skytekx3_fixes override datapack, the jar patches of tools/patch_mods.py, two config fixes and a hand edited jar.
 tags: [content, server, datapack, mods, boot]
-timestamp: 2026-10-31
+timestamp: 2026-11-03
 ---
 
 # Boot fixes
@@ -36,7 +36,8 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 126 files, 125 data files plus `pack.mcmeta` (pack format 15).
+is tracked: 144 files, 143 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
+fixes. The other 18 files are [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -70,6 +71,31 @@ Since the mod update of 2026-10-31 (see [mod set](../modpack/mod-set.md#update-o
 overridden mods run newer builds: DragNs Livestock Overhaul 3.9.4, Iron's Spellbooks 3.16.3 and
 Naturalist 2.0.9. An override with empty pools also empties a table that a new build has repaired. The
 next boot test should show whether their 6 loot tables and 3 advancements still need the overrides.
+
+### Gameplay overrides
+
+Two groups of files in the pack change the game on purpose:
+
+- 16 biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
+  ores that duplicate the preferred ores of AlmostUnified, see
+  [AlmostUnified](../modpack/almostunified.md#one-ore-per-metal).
+- 2 worldgen files under `data/hexxit_gear/worldgen/` make the Hexbiscus generate like in SkyTekx 2
+  (9a784372). On 2026-06-27 21:46 the owner asked for no three Hexxit flowers next to each other, and
+  on 2026-11-03 16:18 said that they spawn too often.
+
+| | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
+|---|---|---|---|
+| Chance per chunk | 1 in 16 | 1 in 55 on average (`Hexbiscus Chance=55`) | 1 in 55 |
+| Flowers per hit | A patch of 4 tries within 2 blocks | 1 | 1 |
+| Ground | Heightmap `MOTION_BLOCKING`, so the tree tops in a forest | The top solid block below the leaves | Heightmap `MOTION_BLOCKING_NO_LEAVES` |
+| May replace | Air | Any replaceable block, like grass | Air, short grass and fern |
+
+The configured feature `hexbiscus` keeps the type `minecraft:flower` with 1 try and no spread, and the
+placed feature `hexbiscus_placed` keeps the biome modifier of the mod. Both files parsed with the
+codecs of the live server before they went in. Worldgen files load only at a server start, and only
+new chunks change. Chunks generated before keep their Hexbiscus. At 16:20 the 441 chunks loaded around
+the owner in the overworld held 11 Hexbiscus in 8 chunks. The flowers of Hexxit Additions are not
+changed.
 
 ### Pack order
 

@@ -1206,21 +1206,6 @@
       "fileSize": 1320675
     },
     {
-      "path": "mods/emi-1.1.24+1.20.1+forge.jar",
-      "hashes": {
-        "sha1": "ea320200878e4a49196760234a22da763671520a",
-        "sha512": "02743be3476b7dc5668cedbcc5a6d384e9806981833926a83fed76a2800c44da33576e86308c058250718c128d58076f1b62bc53d200464326ace70a43229c8b"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/fRiHVvU7/versions/Axuu9I9R/emi-1.1.24%2B1.20.1%2Bforge.jar"
-      ],
-      "fileSize": 1121750
-    },
-    {
       "path": "mods/EnchantmentDescriptions-Forge-1.20.1-17.1.21.jar",
       "hashes": {
         "sha1": "0328a8350cf0a6d1c44265367a077649088b354b",

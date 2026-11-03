@@ -656,9 +656,15 @@ logs stay on the Mac and are not in the repo.
   `config/Elenai-Dodge-2-Common.toml`. The laptop client has the jar disabled for its next start. The
   server keeps it until the next restart, which is harmless, because the crash happens in the client
   and the mod's channel accepts a missing peer.
-- Between 20:13 and 20:27 the server turned down four logins of two players with "Failed to verify
-  username!" ("tried to join with an invalid session"). Mojang's session server had no record of those
-  logins. The next attempt worked twice within 13 seconds. `prevent-proxy-connections` is `false`.
+- From 20:13 to at least 20:37 the server turned down 7 of 11 logins of the two players who joined in
+  that time, with "Failed to verify username!" ("tried to join with an invalid session"). Every login
+  before 20:13 had worked on the first try. Players who stayed connected were not affected, because
+  the check only runs at login. `prevent-proxy-connections` is `false`.
+- The cause is an outage at Mojang. Probes from the Mac mini between 20:39 and 20:41 got HTTP 503 with
+  a body of only `{"path": ...}` from both `/session/minecraft/join` and `/session/minecraft/hasJoined`,
+  over IPv4 and IPv6, alternating with the normal answers (403 for a fake token, 204 for an unknown
+  server id). Minecraft 1.20.1 logs such a failure as an invalid session and not as "servers down".
+  Retrying is the only fix on the player's side.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -79,13 +79,14 @@ Two groups of files in the pack change the game on purpose:
 - 16 biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
   [AlmostUnified](../modpack/almostunified.md#one-ore-per-metal).
-- 2 worldgen files under `data/hexxit_gear/worldgen/` make the Hexbiscus generate like in SkyTekx 2
-  (3f5eb2f2). On 2026-06-27 21:46 the owner asked for no three Hexxit flowers next to each other, and
-  on 2026-11-03 16:18 said that they spawn too often.
+- 2 worldgen files under `data/hexxit_gear/worldgen/` make the Hexbiscus generate as single flowers
+  like in SkyTekx 2 (3f5eb2f2), in 1 of 32 chunks since d334e80b. On 2026-06-27 21:46 the owner asked
+  for no three Hexxit flowers next to each other, on 2026-11-03 16:18 said that they spawn too often
+  and at 17:13 chose 1 in every 32 chunks.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|
-| Chance per chunk | 1 in 16 | 1 in 55 on average (`Hexbiscus Chance=55`) | 1 in 55 |
+| Chance per chunk | 1 in 16 | 1 in 55 on average (`Hexbiscus Chance=55`) | 1 in 32, the owner's choice |
 | Flowers per hit | A patch of 4 tries within 2 blocks | 1 | 1 |
 | Ground | Heightmap `MOTION_BLOCKING`, so the tree tops in a forest | The top solid block below the leaves | Heightmap `MOTION_BLOCKING_NO_LEAVES` |
 | May replace | Air | Any replaceable block, like grass | Air, short grass and fern |

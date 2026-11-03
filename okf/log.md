@@ -636,6 +636,9 @@ logs stay on the Mac and are not in the repo.
   the next restart and only in new chunks, see
   [boot fixes](content/boot-fixes.md#gameplay-overrides).
 - The flowers of Hexxit Additions are not changed.
+- At 17:13 the owner chose 1 in every 32 chunks. Commit 68c55501 sets the rarity to 32 and keeps the
+  single flower. The file parsed with the live server's codecs and is on the Mac mini for the next
+  restart.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

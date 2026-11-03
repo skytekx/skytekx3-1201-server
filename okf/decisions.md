@@ -3,7 +3,7 @@ type: Decisions
 title: Decisions
 description: Every owner ruling on SkyTekx 3 from 2026-06-26 to 2026-10-31, grouped by area, with its status on 2026-10-31 and the page or file where it lives.
 tags: [decisions, rulings, owner]
-timestamp: 2026-11-02
+timestamp: 2026-11-03
 ---
 
 # Decisions
@@ -202,6 +202,7 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 | 2026-11-02 14:54 and 14:59 | Nether portals work in the Skylands | Live at 15:05 and used right away: a portal opened in the Skylands at 15:06, and at 15:07 the owner went back from the nether to the Skylands. `kubejs/server_scripts/skylands_portals.js` opens frames there, and a player who came from the Skylands goes back there from the nether | [Skylands worldgen](content/skylands-worldgen.md#nether-portals) |
 | 2026-11-02 16:17 and 17:09 | One item per material, one that builds everything. At 17:09 the owner approved an inventory converter, the yellorium fix and one ore per metal in new chunks | Done. `kubejs/server_scripts/unify_inventory.js` swaps other variants for the preferred item since 17:16, yellorium is its own material again since 17:23, the duplicate ores of Railcraft and Immersive Engineering are off since 17:20 and those of Mekanism since 17:33. Chunks generated before keep their ores, and four limits remain | [AlmostUnified](modpack/almostunified.md#one-item-per-material) |
 | 2026-11-02 19:14 | Install or port the grave mod that every SkyTekx had so far | Done at 19:35 with the GraveStone Mod 1.0.35 from Modrinth, required on server and clients, on the Mac mini and both MacBooks. SkyTekx 2 had made its graves with OpenBlocks, which has no 1.20.1 build | [Graves](content/graves.md) |
+| 2026-11-03 11:05 | Fix the dropped items that show on the ground but cannot be picked up | Done. `spigot.yml` sets `entity-activation-range.misc: 0` since 3a671f08, live since the restart at 11:13 | [Arclight](server/arclight.md#floating-items) |
 
 Related: [OKF index](index.md), [Open items](open-items.md), [Change log](log.md),
 [History](history.md).

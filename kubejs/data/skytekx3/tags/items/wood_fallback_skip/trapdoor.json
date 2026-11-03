@@ -1,0 +1,245 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "ad_astra:aeronos_planks",
+      "required": false
+    },
+    {
+      "id": "ad_astra:glacian_planks",
+      "required": false
+    },
+    {
+      "id": "ad_astra:strophar_planks",
+      "required": false
+    },
+    {
+      "id": "ars_nouveau:archwood_planks",
+      "required": false
+    },
+    {
+      "id": "arsmagicalegacy:witchwood_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:dead_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:empyreal_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:fir_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:hellbark_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:jacaranda_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:magic_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:mahogany_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:maple_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:palm_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:pine_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:redwood_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:umbran_planks",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:willow_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:bluebright_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:comet_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:dusk_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:frostbright_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:lunar_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:maple_planks",
+      "required": false
+    },
+    {
+      "id": "blue_skies:starlit_planks",
+      "required": false
+    },
+    {
+      "id": "cataclysm:chorus_planks",
+      "required": false
+    },
+    {
+      "id": "forbidden_arcanus:arcane_edelwood_planks",
+      "required": false
+    },
+    {
+      "id": "forbidden_arcanus:aurum_planks",
+      "required": false
+    },
+    {
+      "id": "forbidden_arcanus:edelwood_planks",
+      "required": false
+    },
+    {
+      "id": "forbidden_arcanus:fungyss_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:acacia_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:bamboo_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:birch_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:cherry_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:crimson_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:dark_oak_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:jungle_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:mangrove_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:oak_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:spruce_planks",
+      "required": false
+    },
+    {
+      "id": "minecraft:warped_planks",
+      "required": false
+    },
+    {
+      "id": "quark:ancient_planks",
+      "required": false
+    },
+    {
+      "id": "quark:azalea_planks",
+      "required": false
+    },
+    {
+      "id": "quark:blossom_planks",
+      "required": false
+    },
+    {
+      "id": "tconstruct:bloodshroom_planks",
+      "required": false
+    },
+    {
+      "id": "tconstruct:enderbark_planks",
+      "required": false
+    },
+    {
+      "id": "tconstruct:greenheart_planks",
+      "required": false
+    },
+    {
+      "id": "tconstruct:skyroot_planks",
+      "required": false
+    },
+    {
+      "id": "tflostblocks:thorn_planks",
+      "required": false
+    },
+    {
+      "id": "thermal:rubberwood_planks",
+      "required": false
+    },
+    {
+      "id": "traverse:fir_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:canopy_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:dark_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:mangrove_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:mining_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:sorting_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:time_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:towerwood",
+      "required": false
+    },
+    {
+      "id": "twilightforest:transformation_planks",
+      "required": false
+    },
+    {
+      "id": "twilightforest:twilight_oak_planks",
+      "required": false
+    }
+  ]
+}

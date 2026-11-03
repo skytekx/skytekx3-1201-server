@@ -3,7 +3,7 @@ type: Reference
 title: Mod set
 description: What SkyTekx 3 is made of, how the Modrinth index, the bundled jars and the server's mods folder relate, which jars sit outside the pack, and how to change the set.
 tags: [modpack, mods, modrinth]
-timestamp: 2026-11-02
+timestamp: 2026-11-03
 ---
 
 # Mod set
@@ -18,9 +18,9 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since c70f699, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 226 since 1ce3dfc2, which added the GraveStone Mod, 223 of them from `cdn.modrinth.com` and 3 from GitHub. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 1,009,232,248 bytes since 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
-| Bundled jars | 35 in `local-mods/` since 782126f, 33 before | Tracked in git |
+| Index entries | 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,008,110,498 bytes since eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
+| Bundled jars | 44 in `local-mods/` since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
@@ -123,6 +123,9 @@ The 35 jars in `local-mods/` (origins from each jar's manifest and from `modrint
   Twilight Forest (2026-06-27).
 - 2 joined on 2026-10-31 (782126f): AllTheLeaks, whose build is not on Modrinth, and the Cataclysm
   Spellbooks build from the fork skytekx/Cataclysm_Spellbooks, see below.
+- EMI 1.1.24-skytekx.1 joined on 2026-11-03 (eadc7a6d), built from the fork skytekx/emi, branch
+  `1.20.1-jei-bridge`. It replaces the Modrinth download of EMI 1.1.24, whose JEI bridge predates
+  JEI 15.74 and failed on the recipes of Tinkers' Construct and Chipped. It needs JEI 15.74 or newer.
 
 Six of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies and Hexxit Additions (`modrinth-permissions/README.md`). They block a
@@ -243,7 +246,7 @@ hard coded list and would bring back Radium, Rubidium, memoryleakfix and Better 
 
 The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with `rsync --delete`. The
 folder already holds the patched jars and BattleTowers, since 2026-10-31 also the new builds of the
-update above, since 2026-11-01 Falling Meteors Reimagined and the Backpack port. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
+update above, since 2026-11-01 Falling Meteors Reimagined and the Backpack port, since 2026-11-03 the EMI fork. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
 [macOS host](../server/macos.md).
 
 ## History

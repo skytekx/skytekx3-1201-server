@@ -3,7 +3,7 @@ type: Runbook
 title: Publish
 description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
-timestamp: 2026-10-31
+timestamp: 2026-11-03
 ---
 
 # Publish
@@ -78,7 +78,8 @@ builds.
    the first join, and EMI drops the Chipped recipes. A 12 GB heap avoids the freeze. JEI 15.20.0.132
    cannot come back, because three mods need newer builds. The dropped recipes need a Chipped build
    that does not call the new JEI method, or an EMI build that implements it, then an owner decision
-   and a new test.
+   and a new test. Since 2026-11-03 git ships such an EMI build, the fork 1.1.24-skytekx.1 from
+   github.com/skytekx/emi (eadc7a6d). The new test is still open.
 
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so

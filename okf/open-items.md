@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-11-02
+timestamp: 2026-11-03
 ---
 
 # Open items
@@ -26,8 +26,9 @@ evidence and the page with the details. The rulings behind the first section are
   the fixes pack too, under `overrides/world/datapacks/`, which a singleplayer save never reads. See
   [Skylands travel](content/aether-fall.md#open-points).
 - A public Modrinth project (2026-06-29 10:11). The draft holds versions up to 3.0.7, but six bundled
-  jars are All Rights Reserved without a grant, and EMI drops the Chipped recipes against the JEI build
-  of the pack. See [Publish](modpack/publish.md#what-blocks-a-release).
+  jars are All Rights Reserved without a grant, and the EMI of those versions drops the Chipped recipes
+  against their JEI build. The EMI fork in git since 2026-11-03 fixes that. See
+  [Publish](modpack/publish.md#what-blocks-a-release).
 - A public server on skytekx.com (2026-06-29 09:54). Since 2026-10-31 21:13 the game is reachable as
   `hex.skytekx.com` through a Cloudflare Tunnel, but only with the client mod Modflared, which pack
   3.0.7 brings since 21:55 and which has no cloudflared for Linux on ARM. Voice chat does not pass the
@@ -69,12 +70,12 @@ evidence and the page with the details. The rulings behind the first section are
 - AsgardShieldReloaded 0.2 crashed the server twice when a creeper exploded next to a player
   (2026-06-27 20:43 and 21:16). Remove it, patch it or accept the risk. See
   [Combat](content/combat.md#known-crash-asgard-shield-reloaded).
-- Packs 3.0.6 and 3.0.7 ship JEI 15.74.0.233 from the update of 0a20b8c. EMI 1.1.24 cannot bridge it
-  and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its 8 GB heap
-  after the join and froze, and with 12 GB it played. JEI 15.20.0.132 cannot come back, because
-  Tinkers' Construct, Tinkers' Reforged and Polymorph need newer builds. The recipes need a Chipped
-  build that does not call the new JEI method or an EMI build that implements it, then a decision and a
-  new test. See [Publish](modpack/publish.md#test-of-2026-10-31).
+- Packs 3.0.6 and 3.0.7 ship JEI 15.74.0.233 from the update of 0a20b8c with EMI 1.1.24, which cannot
+  bridge it and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its 8 GB
+  heap after the join and froze, and with 12 GB it played. Since 2026-11-03 git ships the EMI fork
+  1.1.24-skytekx.1 instead (eadc7a6d), which implements the JEI 15.74 API, and the server and both
+  MacBooks run it. A pack built from git still needs an install test, the heap included. See
+  [Mod set](modpack/mod-set.md#bundled-jars) and [Publish](modpack/publish.md#test-of-2026-10-31).
 - Six bundled jars are All Rights Reserved without a grant: Aether Genesis, Connectivity, Cupboard,
   Deadly World, Fireflies and Hexxit Additions. Ask for permission, replace or remove them before a
   public release. See [Publish](modpack/publish.md#what-blocks-a-release).

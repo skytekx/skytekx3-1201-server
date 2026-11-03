@@ -606,5 +606,21 @@ logs stay on the Mac and are not in the repo.
   failed, because the bridge passed the null entries that JEI allows in an ingredient list on to EMI.
   The fork fixes that in 1.1.24-skytekx.2 (3fd75e08), which is not deployed yet.
 
+## 2026-11-03: Every kind of planks makes chests, ladders and the other wooden items
+
+- At 13:15 the owner asked why maple planks make no chest and ruled that all wood should make chests,
+  doors and so on, with the default item where a wood has no own one.
+- Quark's Variant Chests and Variant Ladders switch off the vanilla chest, trapped chest and ladder
+  recipes, and Quark's mixed chest recipe only takes planks of at least two kinds. Eight planks of a
+  wood without a Quark variant, like every Biomes O' Plenty wood, matched nothing, and only 17 kinds of
+  planks could make ladders.
+- Commit 02dd53bd adds 12 fallback recipes and 12 skip tags under `kubejs/data/skytekx3/`, see
+  [KubeJS](modpack/kubejs.md#wood-fallbacks). Each recipe takes `#minecraft:planks` minus the planks
+  that already make their own version and gives the default item: chest, ladder and the oak door,
+  trapdoor, fence, fence gate, sign, slab, stairs, pressure plate, button and boat.
+- Live since a datapack reload at 13:32 with both players online, without a restart. A live check
+  found all 12 recipes with the expected planks. Both MacBooks rebuilt EMI in about 38 s with 289,201
+  recipes and no errors.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

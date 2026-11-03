@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "boat",
+  "pattern": [
+    "P P",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:planks"
+      },
+      "subtracted": {
+        "tag": "skytekx3:wood_fallback_skip/boat"
+      }
+    }
+  },
+  "result": {
+    "item": "minecraft:oak_boat"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wooden_stairs",
+  "pattern": [
+    "P  ",
+    "PP ",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:planks"
+      },
+      "subtracted": {
+        "tag": "skytekx3:wood_fallback_skip/stairs"
+      }
+    }
+  },
+  "result": {
+    "item": "minecraft:oak_stairs",
+    "count": 4
+  }
+}

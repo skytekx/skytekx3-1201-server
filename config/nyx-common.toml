@@ -33,7 +33,7 @@
 	#If a weapon enchanted with lunar edge should increase experience drops
 	lunarEdgeXp = true
 	#If enchanting should be disallowed during the day
-	disallowDayEnchanting = true
+	disallowDayEnchanting = false
 	#Dimensions where enchanting is always allowed, not just at night
 	enchantingWhitelistDimensions = ["minecraft:the_nether", "minecraft:the_end"]
 

@@ -83,6 +83,20 @@ the same minutes as the Halloween commits for the Skylands (see
 lists `skytekx3:skylands`, and `bloodMoonChance` went from 0.05 to 0.5. So lunar events reach the
 Skylands, and about every second full moon becomes a blood moon.
 
+Until 2026-11-03 the key `disallowDayEnchanting` kept the Nyx default `true`. Nyx then denies the
+enchanting table outside ticks 13000 to 23000 of each day in every dimension except the Nether and the
+End, and shows "It's too light out to enchant right now" (`Events.onInteract` in the jar). SkyTekx 2
+had `disallowDayEnchanting=false` (`~/git/skytekx2-1122-server/config/nyx.cfg:38`). At 20:17 the owner
+reported that the enchanting table could not be used, and the key is `false` since then. The check runs
+on both sides. The server decides whether the table opens, and a client that still has `true` only
+shows the message.
+
+Forge does not reload changed config files while the game runs, neither on the Mac mini nor on the
+laptop client. No debug log holds a line "changed, sending notifies", although each file is marked as
+watched at boot. So a one-off KubeJS script set the live field `de.ellpeck.nyx.Config.disallowDayEnchanting`
+on the server at 20:22:46 (KubeJS log: "before true", then "after false") and was deleted right after.
+The file on the server holds the new value since 20:20, and clients read it at their next start.
+
 ## Open points
 
 - Whether lunar events should also run in the Skylands was never ruled. Commit 44fdf98 turned

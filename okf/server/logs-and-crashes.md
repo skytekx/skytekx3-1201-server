@@ -303,8 +303,11 @@ The last complete boot on the build machine started on 2026-07-12 at 23:25:09 an
 
 The three accepted errors are these.
 
-- Patchouli cannot load the `simplyjetpacks:guidebook` book, because the book uses a format that was
-  removed in 1.20 (line 1450). Only the mod author can fix it.
+- Patchouli cannot load the `simplyjetpacks:guidebook` book (line 1450). Its `book.json` in the jar of
+  Simply Jetpacks 2 lacks `use_resource_pack: true`, which Patchouli 1.20.1 requires for every book in a
+  mod jar. Patchouli reads book definitions only from mod jars, never from datapacks, so the override in
+  the fixes pack cannot help. A patch of the jar could, because the mod is MIT licensed, but every client
+  would need the patched jar too. That is an owner decision, see [Open items](../open-items.md).
 - AllTheLeaks fails to instantiate a constructor after it cannot get a VarHandle for Citadel's
   `CitadelServerData.dataMap` (line 1599). Only its reflection into Citadel fails. Nyx has nothing to do
   with it.

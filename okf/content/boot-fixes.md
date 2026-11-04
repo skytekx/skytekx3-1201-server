@@ -62,8 +62,10 @@ The 8 tags are different. That same boot logged a "Couldn't load tag" error for 
 tag with a missing required entry does not load at all. With the overrides they load and hold the
 entries that exist. So these tags now work where they were empty before.
 
-The Patchouli override does not work. The boot of 2026-07-12 still logs "Failed to load book
-simplyjetpacks:guidebook" (23:25:43). Only the mod author can fix it, see
+The Patchouli override cannot work. The boot of 2026-07-12 still logs "Failed to load book
+simplyjetpacks:guidebook" (23:25:43), and so does every later boot. Patchouli reads book definitions
+only from mod jars, never from datapacks, so the file in the fixes pack is never read. A patch of the MIT
+licensed jar could fix the book, but clients would need it too, see
 [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline).
 
 The last boot on the build machine (`logs/2026-07-12-1.log.gz`, up to Done) has no "Couldn't parse

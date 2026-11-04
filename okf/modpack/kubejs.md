@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: KubeJS
-description: The eight KubeJS server scripts and the data files of SkyTekx 3, what each one really does on 1.20.1, the recipe failures of the boot log, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
+description: The nine KubeJS server scripts and the data files of SkyTekx 3, what each one really does on 1.20.1, the recipe failures of the boot log, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
 tags: [modpack, kubejs, recipes, scripting]
 timestamp: 2026-11-04
 ---

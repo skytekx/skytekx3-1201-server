@@ -129,9 +129,12 @@ evidence and the page with the details. The rulings behind the first section are
 - One sleeper for everybody. Since 2026-11-02 14:10 the rule `playersSleepingPercentage` is 0, so one
   sleeping player turns night into day for the whole server. It was set to make sleeping in the Skylands
   work. The value 50 would ask for half of the players in a dimension instead.
-- Saltpeter, niter and rods. Railcraft's saltpeter and Thermal's niter stay two items, and the rod tags
-  that only Create Crafts & Additions and Thermal Extra fill have no preferred mod. Joining them needs a
-  choice of the item that wins. See [AlmostUnified](modpack/almostunified.md#limits).
+- Same-named items of two mods. 29 pairs of crafting recipes share a grid and give items of the same
+  name from two mods, such as the emerald tools and armor of Cyclic and Medieval Embroidery, the steel
+  armor of Mekanism Tools and Railcraft, the gold bars of Cyclic, Quark and Tinkers' Construct and the
+  crop crates of Farmer's Delight and Quark. Polymorph lets the player choose. Each item has stats or
+  looks of its own, so keeping both or removing one recipe is the owner's choice. See
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list).
 
 - Big pregens with players online. The out of memory crash of 2026-10-31 23:17 came from a Skylands
   pregen at radius 3000 with three players online, and every big pregen pushed the 9 GB heap above 90
@@ -296,10 +299,15 @@ evidence and the page with the details. The rulings behind the first section are
 - The SkyTekx logo's origin before 2026-06-28 18:12 is not recorded.
 - Why Better Combat, Memory Leak Fix, Geophilic Backported, Platform and VanillaBackport were parked is
   not recorded, nor why the Forge pack overrides Botania's placed features (commit 0f78e9d).
-- About 7,000 machine recipes hide their ingredients from the recipe probe of 2026-11-02, so whether
-  they take every variant of a material was not checked. No chunk generated since 17:33 that day was
-  checked for Mekanism tin and lead either, only the loaded config. See
-  [AlmostUnified](modpack/almostunified.md#one-item-per-material).
+- 245 of the 7,116 recipes that hide their ingredients have no file to read, mostly AlmostUnified's
+  own trackers, Ars Nouveau enchantments and smithing recipes, so whether they take the preferred items
+  was not checked. No chunk generated since 17:33 on 2026-11-02 was checked for Mekanism tin and lead
+  either, only the loaded config. See [AlmostUnified](modpack/almostunified.md#emi-hide-list).
+- The EMI hide list in a client. A test server loaded the tag, and the EMI 1.1.24 build in the pack
+  reads it in `EmiTags` and `EmiStackList`, but no client has looked at the item list with it yet. The list,
+  the config of AlmostUnified and the recipe fixes of 2026-11-04 reach the Mac mini with its next
+  restart or `/reload`, the two trims with a restart. See
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list).
 
 ## Docs and housekeeping
 

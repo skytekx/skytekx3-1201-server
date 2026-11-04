@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter and the ore overrides carry that into the world, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
-timestamp: 2026-11-02
+timestamp: 2026-11-04
 ---
 
 # AlmostUnified
@@ -74,7 +74,8 @@ one item per material. At 17:09 they approved the three steps below.
 
 A probe at 16:20 checked all 36,990 recipes on the server against the 138 groups of AlmostUnified that
 hold two items or more. Every recipe it could read, about 29,800, takes every variant of a material,
-apart from the yellow dye recipes and yellorium, see [Limits](#limits) and [Yellorium](#yellorium).
+apart from the yellow dye recipes, fixed since 2026-11-04, and yellorium, see [Limits](#limits) and
+[Yellorium](#yellorium).
 About 7,000 machine recipes, from Mekanism and the Thermal press among others, do not show their
 ingredients to such a probe and were not checked. The preferred items are Thermal's for bronze, tin and
 the copper nuggets, plates and gears, Create's for brass and zinc and Mekanism's for uranium.
@@ -137,8 +138,11 @@ asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/y
 
 ### Limits
 
-- The yellow dye recipes take only Mekanism's sulfur dust, and the converter turns that dust into
-  Thermal's.
+- The yellow dye recipes took only Mekanism's sulfur dust, and the converter turns that dust into
+  Thermal's. Mekanism lists its dust in `forge:dyes/yellow`, Thermal does not. Since 2026-11-04
+  `kubejs/server_scripts/tag_fixes.js` adds `#forge:dusts/sulfur` to that tag, and a scan on the test
+  server found 0 recipes that take one sulfur dust and not the other, see
+  [KubeJS](kubejs.md#tag-fixes).
 - Epic Knights' bronze ingot `magistuarmory:bronze_ingot` is in no tag. It counts in no recipe of
   another mod, and the converter leaves it alone.
 - Railcraft's saltpeter and Thermal's niter sit in different tags and stay two items.
@@ -160,7 +164,7 @@ tested.
 - The planned priority list in `docs/RECIPE_PORT.md:17` (minecraft, thermal, mekanism, create,
   immersiveengineering) differs from the live one, which puts Immersive Engineering before Create and
   adds seven more mods. The live file is the one that counts.
-- The four [limits](#limits) above and the 7,000 unread machine recipes are also on
+- The [limits](#limits) above that are still open and the 7,000 unread machine recipes are also on
   [Open items](../open-items.md).
 
 Related: [KubeJS](kubejs.md), [mod set](mod-set.md), [boot fixes](../content/boot-fixes.md).

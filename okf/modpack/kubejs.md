@@ -35,7 +35,7 @@ other mods, see [Recipe failures](#recipe-failures). The last boot on the build 
 | Script | What it does |
 |---|---|
 | Recipe fixes, `recipe_fixes.js` | Adds two recipes, the rest is commented out |
-| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, and keeps yellorium out of the uranium tags |
+| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags and lets every sulfur dust count as yellow dye |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
 | Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts and adds the wither cloud of the Withering Archer to the level, see [Apotheosis riders](#apotheosis-riders) |
@@ -141,6 +141,18 @@ items exist only with Neapolitan, and their ids made the tag loader drop the thr
 the nine edible berries of the Twilight Forest backport to `forge:berries`, which Farmer's Delight and
 Medieval Embroidery read. Since 2026-11-02 it also takes yellorium out of the uranium tags, see
 [AlmostUnified](almostunified.md#yellorium).
+
+Since 2026-11-04 it adds the tag `forge:dusts/sulfur` to `forge:dyes/yellow`. Mekanism lists its own
+sulfur dust as a yellow dye, so the yellow dye recipes of other mods took that dust. AlmostUnified
+prefers the sulfur dust of Thermal, and the [inventory converter](almostunified.md#inventory-converter)
+turns the Mekanism dust into it, but Thermal does not list its dust as a dye. A recipe scan on the test
+server on 2026-11-04 found 160 recipes that took the Mekanism dust and not the Thermal dust, all of them
+through this tag and all of them next to yellow dye itself. A `replaceInput` would have swapped that
+whole ingredient, so those recipes would have lost yellow dye, and it does not reach every machine
+recipe. After the change and a `/reload` the tag held yellow dye and the sulfur dusts of Thermal,
+Mekanism, Immersive Engineering, Railcraft and Blood Magic, and the same scan of 37,011 recipes found
+0 recipes that take one dust and not the other, against 165 that take both. The recipe summary stayed at
+"Added 2 recipes, removed 0 recipes, modified 9 recipes, with 10 failed recipes".
 
 ### Apotheosis riders
 

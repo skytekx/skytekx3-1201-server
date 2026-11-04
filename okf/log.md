@@ -767,6 +767,10 @@ logs stay on the Mac and are not in the repo.
   reported that it still did not. Three melting recipes for it, the Obsidian Ingot and the Processed
   Obsidian Block went live at 17:39:10 through `/reload`, and KubeJS counted 37,023 recipes, see
   [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- At 18:29 a player's client crashed when it opened the guide of Applied Energistics 2 with the G key,
+  because Starlight 1.1.2 calls a method that the fake world of the guide lacks. The index now keeps
+  Starlight off the clients from the next pack on, and the server keeps it, see
+  [Client](modpack/client.md#crash-history) and [Mod set](modpack/mod-set.md#sides).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

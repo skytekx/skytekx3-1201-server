@@ -3,7 +3,7 @@ type: Reference
 title: Client
 description: The owner's Prism Launcher instance for SkyTekx 3 on Asahi Linux, with Java 17, the 16K page allocator flag, the mods only clients have, the custom main menu, the client crash history and how a player joins from outside the LAN.
 tags: [modpack, client, prism, asahi]
-timestamp: 2026-11-01
+timestamp: 2026-11-04
 ---
 
 # Client
@@ -117,8 +117,9 @@ resources and Moonlight's dynamic assets. The `.mrpack` has no resource packs.
 | 2026-06-27 21:24 | File `crash-2026-06-27_21.24.45-client.txt` | Asgard Shield Reloaded: "Registry Object not present: asr:diamond_giant_sword" | Not recorded, no repeat |
 | 2026-06-29 05:09, 05:20 and 06:16 | Three client reports | Upstream Cataclysm Spellbooks against Cataclysm 3.31 (missing renderer class and method) | The fork build, see [mod set](mod-set.md#jars-outside-the-index) |
 | 2026-06-29 15:22 | File `crash-2026-06-29_15.22.56-fml.txt` | FancyMenu refuses WATERMeDIA 2.1.36 | WATERMeDIA disabled |
+| 2026-11-04 18:29 | File `crash-2026-11-04_18.29.09-client.txt` of a player on Windows, sent as Crash Assistant links | Starlight 1.1.2 against the guide of Applied Energistics 2. The guide builds its scenes in the fake world `guideme.scene.level.GuidebookLevel` of GuideME 20.1.15, which lacks Starlight's method `getAnyChunkImmediately`, so a crop in a scene ended in an `AbstractMethodError` in `StarLightInterface.getAnyChunkNow` | From the next pack on Starlight runs only on the server, see [mod set](mod-set.md#sides). Until then the player disables the jar |
 
-There is no client crash report after 2026-06-29.
+The owner's instance has no crash report after 2026-06-29.
 
 ## Test instance
 

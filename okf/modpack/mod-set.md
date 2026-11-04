@@ -93,22 +93,27 @@ No tool does that today, see [tools](tools.md).
 
 ## Sides
 
-Each index entry says whether the client and the server need it (checked on 2026-10-31 in the index
-of 3.0.7).
+Each index entry says whether the client and the server need it (counted on 2026-11-04 in the index
+for the next pack).
 
 | Client | Server | Count | Examples |
 |---|---|---:|---|
-| Required | Required | 153 | Content mods |
-| Optional | Optional | 25 | Nostalgic Tweaks, JEI, mezz_config and other tweaks and libraries |
+| Required | Required | 194 | Content mods and libraries, Create and GeckoLib among them |
 | Required | Unsupported | 16 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
-| Unsupported | Required | 11 | AI Improvements, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures |
-| Required | Optional | 6 | CreativeCore, EMI, Enchantment Descriptions, GeckoLib, Xaero's Minimap and World Map |
-| Optional | Required | 5 | AlmostUnified, Create, FallingTree, Kleeslabs, Special Mobs |
+| Unsupported | Required | 13 | AI Improvements, Apothic Category Compat, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures, Starlight |
 
-Two flags look wrong. Create is optional on the client, although it adds blocks and items that a
-client needs to join. GeckoLib is optional on the server, although 10 other jars in `mods/` name it as a
-dependency, among them Ars Nouveau and Iron's Lib. A launcher
-that offers optional files can leave them out. JEI and EMI are both in the index.
+No entry is optional. Commit 264f511d made every mod required, after the index of 3.0.7 (checked on
+2026-10-31) had 25 entries optional on both sides, 6 only on the server and 5 only on the client.
+Among them were Create, optional on the client although a client needs its blocks and items to join,
+and GeckoLib, optional on the server although 10 other jars in `mods/` need it. JEI is in the index,
+and EMI rides in `local-mods/` since 1ea5bb29.
+
+Starlight runs only on the server since 2026-11-04. On a client it crashes the guide of Applied
+Energistics 2, see [client](client.md#crash-history). Its 35 classes reference no `SimpleChannel`,
+`NetworkRegistry` or `DeferredRegister`, so it opens no network channel and registers no content, and
+a client without it passes the Forge handshake. Starlight 1.1.2 is the newest Forge build for 1.20.1
+on Modrinth. The next build, 1.1.3, is for 1.20.2 only. The server keeps it for its light engine, see
+[performance](../server/performance.md#levers).
 
 ## Bundled jars
 

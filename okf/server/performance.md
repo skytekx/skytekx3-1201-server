@@ -3,7 +3,7 @@ type: Runbook
 title: Performance and worldgen profiling
 description: Spark profiles of live chunk generation, measured heap and tick data, the open performance levers and the Skylands structure density history. Lag comes from vanilla terrain noise and garbage collection, not from a single mod.
 tags: [performance, worldgen, profiling, spark, memory, server]
-timestamp: 2026-10-31
+timestamp: 2026-11-04
 ---
 
 # Performance and worldgen profiling
@@ -134,7 +134,9 @@ subtractive.
 
 The worldgen accelerators are already installed, which is why generation is as fast as it is. Noisium
 2.3.0, Saturn 0.1.3 and ChunkOpt 1.0.2 speed up the noise and feature generation that dominates.
-FerriteCore 6.0.1, ModernFix 5.27.51 and Starlight 1.1.2 cover memory and lighting. Keep all of them.
+FerriteCore 6.0.1, ModernFix 5.27.51 and Starlight 1.1.2 cover memory and lighting. Keep all of them
+on the server. Since 2026-11-04 the pack keeps Starlight off the clients, because there it crashes the
+guide of Applied Energistics 2, see [mod set](../modpack/mod-set.md#sides).
 No server-side port of Lithium is installed. Radium crashed Arclight on 2026-06-27 (see
 [Logs and crashes](logs-and-crashes.md)), and neither Canary nor ServerCore is in the pack.
 

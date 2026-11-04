@@ -6,11 +6,11 @@ file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
 Researched automatically across the 40 bundled mods of that time. The table below lists all 45 jars of
-`local-mods/` since 2026-11-04, and the counts at the top were not recounted. **Verify the blockers yourself before trusting them.**
+`local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **34** mods are fine to bundle (open license or author allows modpacks).
+- **39** mods are fine to bundle (open license or author allows modpacks).
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
 - **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
@@ -59,6 +59,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `hexxit_additions-1.0.2-forge-1.20.1.jar` | Hexxit Additions | All Rights Reserved | No permission | **NO** | - |
 | `alltheleaks-1.1.1+1.20.1-forge.jar` | All The Leaks | MIT | Licensed | yes | - |
 | `at_mod-0.0.2-1.20.1-skytekx.1.jar` | Alternative Twilight (Remastered) (1.20.1 backport by SkyTekx) | GPL-3.0-or-later | Licensed | yes | 1.21.1 only |
+| `backpack-1.20.1-2.0.1.1.jar` | Backpack (1.20.1 port by SkyTekx) | LGPL-2.1 | Licensed | yes | - |
 | `bibliocraft-1.20.1-1.3.1.jar` | BiblioCraft Legacy (Expanded) | MIT | Licensed | yes | - |
 | `birdsnests-1.20.1-2.1.5.jar` | Birds Nests | LGPL-3.0 | Licensed | yes | - |
 | `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm: Spellbooks (SkyTekx build) | MIT | Licensed | yes | - |
@@ -85,7 +86,6 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar` | Simply Jetpacks 2 (guide book patched by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
 | `skytekx-compat-2.1.3.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
-| `skytekx-compat-2.0.0.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
 | `spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` | Spiced Twilight (1.20.1 backport by SkyTekx) | LGPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `traverse-forge-7.0.12.jar` | Traverse Reforged | LGPL-3.0-only | Licensed | yes | - |
 | `trumpet_skeleton-1.2-forge-1.20.1.jar` | Trumpet Skeleton: Reforged | MIT | Licensed | yes | - |

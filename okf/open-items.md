@@ -19,9 +19,11 @@ evidence and the page with the details. The rulings behind the first section are
   done since 9a784372, see [boot fixes](content/boot-fixes.md#gameplay-overrides). The loot part of
   `kubejs/server_scripts/gameplay.js` points at a script that was never written. See
   [KubeJS](modpack/kubejs.md#open-rulings).
-- Chocobos only in the Skylands (2026-06-30 04:01). In the current world the shared Skylands pack loads
-  at position 119, before the ChocoCraft mod pack, so its four overrides lose. A fresh world loads the
-  file packs last (commit 1c6f8d4), which should fix it, but nobody checked in game. See
+- Chocobos only in the Skylands (2026-06-30 04:01). In the old world the shared Skylands pack loaded
+  at position 119, before the ChocoCraft mod pack, so its four overrides lost. A fresh world loads the
+  file packs last (commit 1c6f8d4). The `level.dat` of the Halloween world of 2026-10-31 lists
+  `mod:chococraft` at 214 and `file/skytekx3_skylands` at 274, so the overrides should win there, but
+  nobody checked in game. See
   [Skylands worldgen](content/skylands-worldgen.md#known-defect-the-chococraft-overrides-lose).
 - Skylands travel in singleplayer (2026-06-29 19:33). The `.mrpack` puts the datapacks, since 3c2662e
   the fixes pack too, under `overrides/world/datapacks/`, which a singleplayer save never reads. See
@@ -88,7 +90,10 @@ evidence and the page with the details. The rulings behind the first section are
   the owner had the address of the first commit changed. Settle the address before the push. See
   [Related repos and services](related.md#this-repo-on-github).
 - Plugin telemetry and update checks. The bStats switch is on, PluginMetrics is not opted out, the
-  Essentials update check is on, and Iron's Lib fetches Patreon data at runtime. Turning them off fits
+  Essentials update check is on, and Iron's Lib fetches Patreon data at runtime. The log audit of
+  2026-11-04 found that Iron's Lib 2.3.0 also sends a server id, the player count and its version to
+  code.redspace.io every 5 minutes, with no config switch, so only a jar patch or a firewall rule stops
+  it. Turning them off fits
   the owner's rule against telemetry. See [Plugins](modpack/plugins.md#metrics-and-update-checks).
 - The Overworld also gets the Skylands structure sets. Villages at spacing 24 double the vanilla density
   there, and ten Dungeons Arise ground structures place on the island grid instead of their own spacing.
@@ -115,6 +120,42 @@ evidence and the page with the details. The rulings behind the first section are
 - Saltpeter, niter and rods. Railcraft's saltpeter and Thermal's niter stay two items, and the rod tags
   that only Create Crafts & Additions and Thermal Extra fill have no preferred mod. Joining them needs a
   choice of the item that wins. See [AlmostUnified](modpack/almostunified.md#limits).
+
+- Forge's `removeErroringEntities = true` runs in the live world since 2026-10-31 21:36 and in
+  `defaultconfigs/forge-server.toml` since 2026-11-04, without an owner ruling. A broken entity then
+  vanishes instead of crashing the server for everybody. That kept players online on 2026-10-31 at
+  22:01:56, but it cost the land Battle Tower at 392 408 its obelisk, which came back on 2026-11-04. Keep
+  it and look at every "Ticking entity" error in `latest.log`, or turn it off. See
+  [Logs and crashes](server/logs-and-crashes.md).
+- Big pregens with players online. The out of memory crash of 2026-10-31 23:17 came from a Skylands
+  pregen at radius 3000 with three players online, and every big pregen pushed the 9 GB heap above 90
+  percent. Run pregens only with nobody online and in steps with a restart in between. The JVM flag
+  `-XX:+ExitOnOutOfMemoryError` in `ServerMac.sh` would end a later out of memory at once, so players
+  and chunks roll back together to the last autosave instead of only the players being saved.
+- The Simply Jetpacks guide book never loads, see
+  [Logs and crashes](server/logs-and-crashes.md#boot-error-baseline). Either patch the MIT licensed jar
+  (`use_resource_pack: true` and the book copied under `assets/`) and ship the patched jar to every
+  client, or remove the recipe that crafts a book that does not open.
+- BiblioCraft cannot clone enchanted books in the printing table, because the XP cost of
+  `bibliocraft:enchanted_book_cloning_in_printing_table` uses a codec that refers to itself and can never
+  decode. Switch the recipe off with `forge:false`, or patch the MIT licensed jar so that the cloning
+  costs XP as designed. An override without the cost would make it free.
+- Aether Redux's golden swet ball modifier for Aether Genesis never loads
+  (`aether_redux:genesis_golden_swet_ball_increase` has the type `add_drops` with the fields of
+  `replace`). An override with the type `replace` would make golden swets drop more balls, scaled by
+  their size and by Looting, as Redux intends.
+- Hexxit Additions' hollow oak logs never generate, because their feature filters on the missing tag
+  `#minecraft:oak_log` and runs before any tree exists. An override could place about one per ten
+  forest chunks in new chunks, or a smaller fix could just end the boot warning and keep the world as it
+  is.
+- A starter house capsule given on 2026-11-01 at 20:39 placed nothing and now holds an empty template
+  (`world/capsules/`, 105 bytes). Decide whether the player gets a new one.
+- Drops on the Cloudflare tunnel. Players on the tunnel lost the connection 7 times between 2026-11-01
+  22:25 and 2026-11-03 21:37, players in the LAN never. The connector log on the Mac mini has no error at
+  those minutes, so the stall starts on the client side. A client `latest.log` after the next drop would
+  show whether Modflared or a frozen game is the cause. A relay on a VPS or playit.gg is the other way.
+- Shipping skytekx-compat 2.1.5 in the pack, see
+  [SkyTekx Compat](content/compat-mod.md#open-points).
 
 ## Defects to fix
 
@@ -170,6 +211,20 @@ evidence and the page with the details. The rulings behind the first section are
 - Epic Knights' bronze ingot `magistuarmory:bronze_ingot` is in no tag, so it counts in no recipe of
   another mod. In `forge:ingots/bronze` AlmostUnified and the converter would take it in. See
   [AlmostUnified](modpack/almostunified.md#limits).
+- Withering Archer minibosses of Apotheosis spawn without their wither cloud. Apotheosis mounts the
+  cloud while the archer joins the level, after the game has taken the list of passengers to add, so
+  the cloud never ticks until the chunk is saved and loaded again. A KubeJS handler that adds unknown
+  passengers one tick later could fix it, but that path is untested. See
+  [KubeJS](modpack/kubejs.md#apotheosis-riders).
+- The `SummonedSwordMixin` of TiCEX fails at every boot. It targets `onHitEntity` without remapping,
+  and SlashBlade Resharped only has `m_5790_` at runtime, so Tinkers hit modifiers skip SlashBlade's
+  summoned swords. A rule in `tools/patch_mods.py` could rename the target, with a boot test.
+- The Sundering effect of Apothic Attributes adds no damage on this server. Arclight redirects the same
+  resistance check in `LivingEntity.getDamageAfterMagicAbsorb`, so Mixin skips the redirect of Apothic
+  Attributes. A small handler in skytekx-compat could add the bonus of 20 percent per level.
+- Four broken entities with an invalid position were dropped on 2026-11-03 while chunks near the
+  origins of the overworld and the nether loaded ("Exception loading entity"). The log does not name
+  their type. A logging mixin in skytekx-compat would name the next one.
 
 ## Not verified
 

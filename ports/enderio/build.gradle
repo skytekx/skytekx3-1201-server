@@ -7,30 +7,33 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.spongepowered:mixingradle:0.7.+'
-        classpath 'org.moddingx:ModGradle:4.0.+'
+        // SkyTekx: pinned to the versions that 0.7.+ and 4.0.+ resolved to on 2026-11-04 (reproducible builds)
+        classpath 'org.spongepowered:mixingradle:0.7.38'
+        classpath 'org.moddingx:ModGradle:4.0.6'
     }
 }
 
 plugins {
     id 'eclipse'
     id 'maven-publish'
-    id "com.modrinth.minotaur" version "2.+"
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    // SkyTekx: the Modrinth/CurseForge release plugins (com.modrinth.minotaur, modpublisher) are
+    // removed, an unofficial build must never be published to the official Ender IO projects.
+    // ForgeGradle is pinned to the version that [6.0,6.2) resolved to on 2026-11-04.
+    id 'net.minecraftforge.gradle' version '6.0.54'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id "me.hypherionmc.modutils.modpublisher" version "1.+"
     id 'java-library'
 }
 
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.moddingx.modgradle.mapping'
 
-version = getVersionString()
+// SkyTekx: a fixed version from gradle.properties instead of the CI/git derived getVersionString(),
+// so every build of a commit gets the same version (the -skytekx.N suffix marks the unofficial build)
+version = mod_version
 group = 'com.enderio'
 archivesBaseName = "EnderIO-${minecraft_version}"
 
 println("Building Ender IO version ${version}")
-println("Release type: ${getReleaseType()}")
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -229,11 +232,17 @@ dependencies {
     //runtimeOnly fg.deobf("blank:Xycraft+World:0.5.2")
     // Registrate
     api fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
-    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "${registrate_version_range}")
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "${registrate_version_range}") {
+        // SkyTekx: pin the bundled jar (the range alone picks whatever is newest at build time)
+        jarJar.pin(it, "${registrate_jarjar_version}")
+    }
 
     // GraphLib
     api implementation(fg.deobf("dev.gigaherz.graph:GraphLib3:${graphlib_version}"))
-    jarJar(group: 'dev.gigaherz.graph', name: 'GraphLib3', version: "${graphlib_version_range}")
+    jarJar(group: 'dev.gigaherz.graph', name: 'GraphLib3', version: "${graphlib_version_range}") {
+        // SkyTekx: pin the bundled jar (the range alone picks whatever is newest at build time)
+        jarJar.pin(it, "${graphlib_jarjar_version}")
+    }
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     machinesAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
@@ -322,8 +331,8 @@ jar {
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "SleepyTrousers",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Implementation-Vendor"   : "SleepyTrousers (unofficial modified build: SkyTekx)",
+                // SkyTekx: no Implementation-Timestamp, it made every build differ
                 "MixinConfigs"            : "mixins.enderio.json,mixins.enderio-machines.json"
         ])
     }
@@ -372,36 +381,12 @@ tasks.jarJar.configure {
 }
 build.dependsOn tasks.jarJar
 
-if (getReleaseType() != null) {
-    if (System.getenv("CHANGELOG") != null) {
-        publisher {
-            apiKeys {
-                curseforge = System.getenv("CURSEFORGE_TOKEN")
-                modrinth = System.getenv("MODRINTH_TOKEN")
-            }
-
-            debug = System.getenv("PUBLISH") != "true"
-            curseID = curseforge_projectId
-            modrinthID = modrinth_projectId
-            versionType = getReleaseType()
-            version = "${getVersionString()}"
-            displayName = "Ender IO - ${getVersionString()}"
-            changelog = System.getenv("CHANGELOG")
-            gameVersions = [minecraft_version]
-            loaders = ["forge"]
-            artifact = tasks.jarJar
-
-            curseDepends {
-                optional = ["jei", /*"patchouli",*/ "athena", "applied-energistics-2", "mekanism", "cc-tweaked"]
-            }
-
-            modrinthDepends {
-                optional = [/*modrinth_dep_patchouli, */ modrinth_dep_jei, modrinth_dep_athena, modrinth_dep_ae2, modrinth_dep_mekanism, modrinth_dep_cct]
-            }
-        }
-    } else {
-        println("Release disabled, no changelog found in environment");
-    }
+// SkyTekx: byte-reproducible jars (no file timestamps, fixed entry order; the manifest has no
+// timestamp either), so a rebuild of a commit can be checked against the SHA-1 that
+// modrinth-permissions/ records for the shipped jar
+tasks.withType(Jar).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
 
 publishing {

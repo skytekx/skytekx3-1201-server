@@ -32,3 +32,13 @@ run-server
 forge*changelog.txt
 
 .vscode/
+
+# SkyTekx: build and run outputs of this port, never commit them
+/build/
+/.gradle/
+/run/
+/run-server/
+/run-data/
+/logs/
+/crash-reports/
+*.log

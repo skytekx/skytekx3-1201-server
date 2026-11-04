@@ -161,7 +161,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The old Prism instance `SkyTekx3` is behind the server. It still has the old builds of Polymorph,
   Balm, Waystones and Simple Voice Chat among others. The owner plays in `SkyTekx3-test` since
   2026-10-31, so this matters only if the old instance is used again. See [Client](modpack/client.md#mods).
-- Spigot's crash restart points at `./start.sh` (`spigot.yml:20-21`), which does not exist.
 - The ansible setup is a stub. The config `ansible/ansible.cfg` expects `.vault_pass.txt`, there is no
   inventory and `ansible/playbooks/` is empty, although `systemd/unit.conf.example` and
   `server.properties.example` say that ansible renders the RCON password. See

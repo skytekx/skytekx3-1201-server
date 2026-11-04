@@ -1,7 +1,7 @@
 ---
 type: Mod
 title: SkyTekx Compat
-description: The pack's own small Forge mod. The pack bundles skytekx-compat 2.1.3, the Mac mini runs 2.1.5, and 2.1.6 is built and tested for the server. It guards Bird's Nests against short loot table paths, keeps Skylands structures out of the void since 2026-10-31, answers Infernal Mobs queries on the server thread, keeps Falling Meteors in the overworld and protects Skylands blocks since 2026-11-01, and retries Mojang session checks since 2026-11-04. Version 2.1.6 adds the Sundering damage on Arclight, copies chunk tags that wait for their write and names entities that fail to load. It began as the skytekx-worldgen mod.
+description: The pack's own small Forge mod. The pack bundles skytekx-compat 2.1.3, and the Mac mini runs 2.1.6 since 2026-11-04 16:06. It guards Bird's Nests against short loot table paths, keeps Skylands structures out of the void since 2026-10-31, answers Infernal Mobs queries on the server thread, keeps Falling Meteors in the overworld and protects Skylands blocks since 2026-11-01, and retries Mojang session checks since 2026-11-04. Version 2.1.6 adds the Sundering damage on Arclight, copies chunk tags that wait for their write and names entities that fail to load. It began as the skytekx-worldgen mod.
 tags: [content, mod, compat, mixin]
 timestamp: 2026-11-04
 ---
@@ -26,15 +26,16 @@ three server bugs, see [Sundering on Arclight](#sundering-on-arclight),
 
 | Property | Value |
 |---|---|
-| Jar | Bundled for the pack as [local-mods/skytekx-compat-2.1.3.jar](../../local-mods/skytekx-compat-2.1.3.jar), 17,325 bytes, SHA-256 `0059f9b31d295b86...`. The Mac mini runs 2.1.5, 32,137 bytes, SHA-256 `59c92a13ccd7fc22...`. Version 2.1.6 is `build/libs/skytekx-compat-2.1.6.jar` in the source repo, 43,442 bytes, SHA-256 `3f71a2f174e64be4...`, and is not live yet |
+| Jar | Bundled for the pack as [local-mods/skytekx-compat-2.1.3.jar](../../local-mods/skytekx-compat-2.1.3.jar), 17,325 bytes, SHA-256 `0059f9b31d295b86...`. The Mac mini runs 2.1.6, which is `build/libs/skytekx-compat-2.1.6.jar` in the source repo, 43,442 bytes, SHA-256 `3f71a2f174e64be4...` |
 | Mod id | Still `skytekx`, display name "SkyTekx Compat", MIT, author "SkyTekx" |
 | Needs | Forge 47 or later and Minecraft 1.20.1 up to 1.21. No declared dependency on Bird's Nests, Infernal Mobs or Falling Meteors |
-| Source | Private GitHub repo `skytekx/skytekx-compat` as `origin`, cloned at `~/git/skytekx-worldgen`, branch `master`. Head 62e5616 is 2.1.6. Its four commits are not pushed yet, `origin/master` is 88b3759 |
+| Source | Private GitHub repo `skytekx/skytekx-compat` as `origin`, cloned at `~/git/skytekx-worldgen`, branch `master`. Head 62e5616 is 2.1.6. It is pushed to `origin/master` since 2026-11-04 |
 | Build | Gradle 8.8, ForgeGradle 6.0, Parchment `2023.09.03-1.20.1`, MixinGradle 0.7, Mixin annotation processor 0.8.5, Java 17 (`~/jdk17/jdk-17.0.19+10`), Forge `1.20.1-47.4.6` |
 
 The jar in `local-mods/` is byte identical to `build/libs/skytekx-compat-2.1.3.jar` in the source repo.
-The Mac mini ran it from 2026-11-01 06:10 and 2.1.4 (18,383 bytes) from about 21:19 that day. It runs
-2.1.5 since 2026-11-04 10:33. Before 06:10, from 02:51 it ran 2.1.2 (14,260 bytes, SHA-256
+The Mac mini ran it from 2026-11-01 06:10 and 2.1.4 (18,383 bytes) from about 21:19 that day. It ran
+2.1.5 (32,137 bytes, SHA-256 `59c92a13ccd7fc22...`) from 2026-11-04 10:33 and runs
+2.1.6 since 16:06. Before 06:10, from 02:51 it ran 2.1.2 (14,260 bytes, SHA-256
 `c424dda546c40151...`), from 00:58 2.1.0 (12,330 bytes, SHA-256 `7eb835067e332cf1...`). Both now lie in
 `~/skytekx3-backups/jars-orig/` there. Version 2.1.1 (12,818 bytes, SHA-256 `c1633905c56903ec...`) only ran on a test server. Packs 3.0.5 to 3.0.7 and the owner's Prism instance carry 2.0.0 (3,728 bytes, SHA-256
 `16805d83d52c7c5f...`), which stays fine on the client, see [server list](#server-list). At boot
@@ -459,7 +460,9 @@ processor), which the repo tracks.
   and commit messages the jar was built again. Its classes are byte identical to the tested ones, and it
   booted once more from 13:54 to 13:56 with the same golem health values, server list and probe result. A
   run from 15:16 to 15:17 without Arclight's mute showed that the Sundering share counts once where the
-  redirect of Apothic Attributes applies. It waits for its deploy.
+  redirect of Apothic Attributes applies. It went live on the Mac mini at 16:06 after a warning in chat,
+  and 2.1.5 went to `~/skytekx3-backups/jars-orig/` there. That boot mixed in the same 11 classes from
+  `skytekx.mixins.json` as the test server and logged the one `@Redirect conflict` line of Arclight.
 
 Related: [boot fixes](boot-fixes.md), [mod set](../modpack/mod-set.md),
 [Skylands worldgen](skylands-worldgen.md), [content](index.md).

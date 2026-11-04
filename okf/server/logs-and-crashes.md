@@ -288,9 +288,10 @@ The hardened jar only catches the iterator exceptions. So the rules are these.
 
 ## Boot error baseline
 
-A clean boot reaches `Done` with 0 FATAL lines and the 3 accepted ERROR lines listed below. That is
-the baseline. WARN lines are not part of it, because their number moves with the mod set and jumps at
-the first boot of a new world or of new mods, so each boot below has its own WARN count.
+A clean boot reaches `Done` with 0 FATAL lines and the 2 accepted ERROR lines listed below, 3 before
+the jar patches of 2026-11-04. That is the baseline. WARN lines are not part of it, because their
+number moves with the mod set and jumps at the first boot of a new world or of new mods, so each boot
+below has its own WARN count.
 
 The last complete boot on the build machine started on 2026-07-12 at 23:25:09 and reached `Done` at
 23:26:00 (`logs/2026-07-12-1.log.gz`). Counted up to the `Done` line it shows this.
@@ -301,18 +302,25 @@ The last complete boot on the build machine started on 2026-07-12 at 23:25:09 an
 | ERROR | 3 | All three are accepted, see below |
 | WARN | 304 | Mostly third-party data and mixin noise |
 
-The three accepted errors are these.
+The three accepted errors of that boot are these. The first one is gone since 2026-11-04.
 
-- Patchouli cannot load the `simplyjetpacks:guidebook` book (line 1450). Its `book.json` in the jar of
-  Simply Jetpacks 2 lacks `use_resource_pack: true`, which Patchouli 1.20.1 requires for every book in a
-  mod jar. Patchouli reads book definitions only from mod jars, never from datapacks, so the override in
-  the fixes pack cannot help. A patch of the jar could, because the mod is MIT licensed, but every client
-  would need the patched jar too. That is an owner decision, see [Open items](../open-items.md).
+- Patchouli could not load the `simplyjetpacks:guidebook` book (line 1450). Its `book.json` in the jar
+  of Simply Jetpacks 2 lacked `use_resource_pack: true`, which Patchouli 1.20.1 requires for every book
+  in a mod jar, and Patchouli reads book definitions only from mod jars, never from datapacks. Since
+  2026-11-04 `tools/patch_mods.py` patches the jar in `mods/`, and the pack ships the same bytes as
+  `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, see [Boot fixes](../content/boot-fixes.md#jar-patches).
+  The test boots of 2026-11-04 logged neither this error nor the warning of its recipe.
 - AllTheLeaks fails to instantiate a constructor after it cannot get a VarHandle for Citadel's
   `CitadelServerData.dataMap` (line 1599). Only its reflection into Citadel fails. Nyx has nothing to do
   with it.
 - Essentials warns that it runs on a hybrid server ("You are running a server that does not properly
   support Bukkit plugins", line 3185). This is accepted, since EssentialsX is the plugin layer.
+
+A test copy without `plugins/EssentialsX-2.22.0.jar` logs only the AllTheLeaks line. The two test
+boots of 2026-11-04 with the jar patches did so. The live boot on the Mac mini that day, started at
+16:05:52 and `Done` at 16:06:29, was the first with the jar patches, skytekx-compat 2.1.6 and a KubeJS
+startup script. Up to `Done` it logged 0 FATAL lines and exactly the AllTheLeaks and Essentials
+errors, and KubeJS counted 9 failed recipes.
 
 The 304 WARNs of that boot come mostly from LootDataManager (109, of them 108 loot table validation
 problems in `cataclysm_spellbooks` entity tables and 1 in `deadlyworld`), Mantle (36, a deprecated JSON
@@ -322,7 +330,9 @@ a tail of smaller loggers.
 
 KubeJS loaded 4 of 4 server scripts with 0 errors. Its summary line reads "Added 2 recipes, removed 0
 recipes, modified 14 recipes, with 17 failed recipes" (`logs/kubejs/server.log`, 23:25:52). The 17
-failures are third-party recipes whose items are missing. There are no startup scripts.
+failures are third-party recipes whose items are missing. There were no startup scripts then. Since
+2026-11-04 the startup script `apotheosis_passengers.js` loads as well, and the boots of that day
+logged "Loaded 1/1 KubeJS startup scripts" with 0 errors.
 
 The baseline has been stable since 2026-06-30. Boot ERRORs stood at 152 from 2026-06-29 15:22 to
 2026-06-30 04:11, after the owner asked at 04:15 for every boot error and warning to be resolved. The
@@ -388,23 +398,42 @@ Arclight's own mixin names (`RegionFileCacheMixin`, `CompoundTagMixin`), but the
   itself, not a copy.
 - The loader, `ChunkMap.readChunk`, runs `ChunkStorage.upgradeChunkTag` on a background worker. That
   method puts a `__context` key into the top level tag and removes it again.
-- If the IO worker writes the tag in that moment, its key iteration fails, and the queued write is
-  dropped.
+- If the IO worker writes the tag in that moment, its key iteration fails. The stream of
+  `RegionFileStorage.write` still closes, so the region file keeps a truncated entry for the chunk.
 
 A pregen saves and reloads chunks at their intermediate generation steps all the time, so it hits the
 race far more often than play does. Chunk [-14, -52] is in the Skylands region file with status
 `full`, saved at 18:58:00, four seconds after the failure, so nothing was lost there. Chunk
 [195, -171] lies just outside the radius 3000 square and only ever reaches an early generation step.
 Its first run copy went with the wipe before the second run. The chunk that was read back holds the
-full data in memory, and its next save writes it. A loss needs a chunk with changes that is saved,
-read back during the write and then unloaded again without another change. The disk then keeps the
-state before the dropped write. The build machine's logs never show the error, but its three logged
+full data in memory, and its next save writes over the truncated entry. A loss needs a chunk that is
+saved, read back during the write and then unloaded again without another change. Until its next save
+every load of it logs "Failed to read chunk" with an `EOFException` under "Loading NBT data", and the
+game generates the chunk again from scratch, so all its changes are gone, not only the last ones. The
+test server showed this with skytekx-compat 2.1.5 on 2026-11-04, see
+[SkyTekx Compat](../content/compat-mod.md#chunk-tags-waiting-for-their-write). The build machine's logs
+never show the error, but its three logged
 full pregens covered 48,387 chunks, about a seventh of the 319,979 that the Mac mini generated.
 
 Steam 'n' Rails also mixes into `IOWorker.store`, where it adds its `Railways_DataVersion` key. That
-happens before the tag is queued and is not part of the race. A fix would hand out a copy of the
-queued tag in `IOWorker.loadAsync`, in the hardened Arclight jar or in the compat mod. Nothing is
-built yet, see [Open items](../open-items.md#defects-to-fix).
+happens before the tag is queued and is not part of the race. Since skytekx-compat 2.1.6, live
+since 2026-11-04 16:06, `IOWorker.loadAsync` hands out a copy of the queued tag, so the write never
+meets a change. A probe on the test server failed 31 of 32 such writes with 2.1.5 and none with 2.1.6,
+see [SkyTekx Compat](../content/compat-mod.md#chunk-tags-waiting-for-their-write).
+
+### Entities with an invalid position
+
+On 2026-11-03 the Mac mini logged four "Exception loading entity" warnings with "Entity has invalid
+position" while chunks near the origins of the overworld and the nether loaded. Vanilla throws this
+in `Entity.load` when a coordinate of `Pos` is NaN. An infinite coordinate is clamped to the world
+limit and loads. The entity is dropped, and the warning never says which one it was. An entity whose
+x and z became NaN is saved in chunk [0, 0], because `Mth.floor` turns NaN into 0.
+
+Since skytekx-compat 2.1.6 the logger `SkytekxCompat` adds a line right after each such warning, at
+most 10 a minute, for example "Dropped entity minecraft:pig (IllegalStateException: Entity has
+invalid position) while loading chunk [240, 240] in minecraft:overworld: Pos [NaN, 70.0, NaN],
+Motion [0.0, 0.0, 0.0]". Search new logs for "Dropped entity" to find the mod behind the next one,
+see [SkyTekx Compat](../content/compat-mod.md#entities-that-fail-to-load).
 
 ## Tick lag and the watchdog
 
@@ -430,8 +459,8 @@ fired twice, on 2026-06-29 at 19:41:18 and on 2026-07-03 at 21:09:57. A server h
 - Bulk `/locate` sweeps trip the watchdog. Keep them off the live server.
 - The script `tools/resolve_all.py` would bring Radium back. Do not use it.
 - Only one player account ever joined in the logs, so load with 20 players is untested.
-- A vanilla race drops a queued chunk write when the chunk is read back during it. It showed up once
-  per Skylands pregen on the Mac mini and lost nothing so far, see
+- A "Failed to store chunk" with `ConcurrentModificationException` in a log after 2026-11-04 16:06
+  means that the copy of skytekx-compat 2.1.6 missed a path, see
   [Chunk save race during pregen](#chunk-save-race-during-pregen).
 
 Related: [Arclight runtime](arclight.md), [Deploy](deploy.md), [Performance](performance.md),

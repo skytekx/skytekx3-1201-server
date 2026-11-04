@@ -3,7 +3,7 @@ type: Reference
 title: Plugins
 description: The Bukkit plugin layer that Arclight actually runs, which is EssentialsX 2.22.0 with its spawn module and, on the Mac mini since 2026-10-31, LuckPerms 5.5.71, their untracked files, the permissions, /spawn, and the metrics and update checks they bring.
 tags: [modpack, server, plugins, essentialsx, arclight]
-timestamp: 2026-11-01
+timestamp: 2026-11-04
 ---
 
 # Plugins
@@ -45,8 +45,9 @@ commit it as is (see [secrets](../server/secrets.md)).
 ## Hybrid warning
 
 At every boot Essentials logs one ERROR that begins "You are running a server that does not properly
-support Bukkit plugins" (for example `logs/2026-07-12-1.log.gz:3185`). It is one of the three accepted
-boot errors, see [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline). Essentials still
+support Bukkit plugins" (for example `logs/2026-07-12-1.log.gz:3185`). It is one of the two accepted
+boot errors, three before 2026-11-04, see
+[logs and crashes](../server/logs-and-crashes.md#boot-error-baseline). Essentials still
 enables and works.
 
 ## Permissions

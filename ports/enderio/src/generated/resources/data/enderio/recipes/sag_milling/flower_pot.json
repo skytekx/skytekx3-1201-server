@@ -1,0 +1,37 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:flower_pot"
+  },
+  "outputs": [
+    {
+      "chance": 0.9,
+      "item": {
+        "item": "minecraft:brick"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.3,
+      "item": {
+        "item": "minecraft:brick"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.1,
+      "item": {
+        "item": "minecraft:brick"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.05,
+      "item": {
+        "item": "enderio:powdered_coal"
+      },
+      "optional": false
+    }
+  ]
+}

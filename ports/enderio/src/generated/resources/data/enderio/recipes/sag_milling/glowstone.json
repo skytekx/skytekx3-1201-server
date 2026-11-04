@@ -1,0 +1,25 @@
+{
+  "type": "enderio:sag_milling",
+  "bonus": "chance_only",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:glowstone"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "count": 3,
+        "item": "minecraft:glowstone_dust"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.8,
+      "item": {
+        "item": "minecraft:glowstone_dust"
+      },
+      "optional": false
+    }
+  ]
+}

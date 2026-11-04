@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "tag": "forge:gems/ender_crystal"
+    },
+    "P": {
+      "tag": "forge:gems/pulsating_crystal"
+    },
+    "V": {
+      "tag": "forge:gems/vibrant_crystal"
+    }
+  },
+  "pattern": [
+    " P ",
+    "VEV",
+    " P "
+  ],
+  "result": {
+    "item": "enderio:weather_crystal"
+  },
+  "show_notification": true
+}

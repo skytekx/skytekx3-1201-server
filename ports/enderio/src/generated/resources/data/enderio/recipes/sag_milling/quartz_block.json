@@ -1,0 +1,26 @@
+{
+  "type": "enderio:sag_milling",
+  "bonus": "chance_only",
+  "energy": 2400,
+  "input": {
+    "tag": "forge:storage_blocks/quartz"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "count": 2,
+        "item": "minecraft:quartz"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.25,
+      "item": {
+        "count": 2,
+        "item": "minecraft:quartz"
+      },
+      "optional": false
+    }
+  ]
+}

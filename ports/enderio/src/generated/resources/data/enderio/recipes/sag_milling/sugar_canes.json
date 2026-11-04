@@ -1,0 +1,38 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:sugar_cane"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "item": "minecraft:sugar"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.5,
+      "item": {
+        "item": "minecraft:sugar"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.5,
+      "item": {
+        "count": 2,
+        "item": "minecraft:sugar"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.2,
+      "item": {
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    }
+  ]
+}

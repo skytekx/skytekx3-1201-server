@@ -1,0 +1,23 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:vine"
+  },
+  "outputs": [
+    {
+      "chance": 0.15,
+      "item": {
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.1,
+      "item": {
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    }
+  ]
+}

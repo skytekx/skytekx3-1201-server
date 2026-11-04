@@ -1,0 +1,18 @@
+{
+  "type": "enderio:sag_milling",
+  "bonus": "none",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:bone_block"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "count": 9,
+        "item": "minecraft:bone_meal"
+      },
+      "optional": false
+    }
+  ]
+}

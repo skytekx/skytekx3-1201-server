@@ -1,0 +1,41 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:cactus"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "count": 3,
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.75,
+      "item": {
+        "count": 3,
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.5,
+      "item": {
+        "count": 3,
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.25,
+      "item": {
+        "count": 3,
+        "item": "enderio:plant_matter_brown"
+      },
+      "optional": false
+    }
+  ]
+}

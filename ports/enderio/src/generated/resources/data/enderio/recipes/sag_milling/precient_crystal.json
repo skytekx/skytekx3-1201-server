@@ -1,0 +1,17 @@
+{
+  "type": "enderio:sag_milling",
+  "bonus": "none",
+  "energy": 2400,
+  "input": {
+    "tag": "forge:gems/prescient_crystal"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "item": "enderio:prescient_powder"
+      },
+      "optional": false
+    }
+  ]
+}

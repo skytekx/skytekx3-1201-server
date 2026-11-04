@@ -1,0 +1,27 @@
+{
+  "type": "enderio:slicing",
+  "energy": 20000,
+  "inputs": [
+    {
+      "tag": "forge:ingots/energetic_alloy"
+    },
+    {
+      "tag": "forge:dusts/prismarine"
+    },
+    {
+      "tag": "forge:ingots/energetic_alloy"
+    },
+    {
+      "tag": "forge:gems/prismarine"
+    },
+    {
+      "item": "enderio:basic_capacitor"
+    },
+    {
+      "tag": "forge:gems/prismarine"
+    }
+  ],
+  "output": {
+    "item": "enderio:guardian_diode"
+  }
+}

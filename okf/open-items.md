@@ -121,12 +121,6 @@ evidence and the page with the details. The rulings behind the first section are
   that only Create Crafts & Additions and Thermal Extra fill have no preferred mod. Joining them needs a
   choice of the item that wins. See [AlmostUnified](modpack/almostunified.md#limits).
 
-- Forge's `removeErroringEntities = true` runs in the live world since 2026-10-31 21:36 and in
-  `defaultconfigs/forge-server.toml` since 2026-11-04, without an owner ruling. A broken entity then
-  vanishes instead of crashing the server for everybody. That kept players online on 2026-10-31 at
-  22:01:56, but it cost the land Battle Tower at 392 408 its obelisk, which came back on 2026-11-04. Keep
-  it and look at every "Ticking entity" error in `latest.log`, or turn it off. See
-  [Logs and crashes](server/logs-and-crashes.md).
 - Big pregens with players online. The out of memory crash of 2026-10-31 23:17 came from a Skylands
   pregen at radius 3000 with three players online, and every big pregen pushed the 9 GB heap above 90
   percent. Run pregens only with nobody online and in steps with a restart in between. The JVM flag
@@ -148,14 +142,10 @@ evidence and the page with the details. The rulings behind the first section are
   `#minecraft:oak_log` and runs before any tree exists. An override could place about one per ten
   forest chunks in new chunks, or a smaller fix could just end the boot warning and keep the world as it
   is.
-- A starter house capsule given on 2026-11-01 at 20:39 placed nothing and now holds an empty template
-  (`world/capsules/`, 105 bytes). Decide whether the player gets a new one.
 - Drops on the Cloudflare tunnel. Players on the tunnel lost the connection 7 times between 2026-11-01
   22:25 and 2026-11-03 21:37, players in the LAN never. The connector log on the Mac mini has no error at
   those minutes, so the stall starts on the client side. A client `latest.log` after the next drop would
   show whether Modflared or a frozen game is the cause. A relay on a VPS or playit.gg is the other way.
-- Shipping skytekx-compat 2.1.5 in the pack, see
-  [SkyTekx Compat](content/compat-mod.md#open-points).
 
 ## Defects to fix
 

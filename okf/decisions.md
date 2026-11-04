@@ -140,6 +140,7 @@ These rules apply to every later change.
 | 2026-11-03 13:15 | All wood makes chests, doors and so on, with the default item where a wood has no own one | Done. 12 fallback recipes with skip tags in `kubejs/data/skytekx3/` since 02dd53bd, live since the datapack reload at 13:32 | [KubeJS](modpack/kubejs.md#wood-fallbacks) |
 | 2026-11-03 16:18 | The Hexxit flowers spawn too often | Done, live since the restart at 17:33. The fixes pack overrides the Hexbiscus worldgen since 3f5eb2f2: one single flower instead of a patch of 4 tries in 1 of 16 chunks, as in SkyTekx 2. At 17:13 the owner chose 1 in every 32 chunks (d334e80b, SkyTekx 2 had 1 in 55). Only new chunks change | [Boot fixes](content/boot-fixes.md#gameplay-overrides) |
 | 2026-11-03 20:17 | The enchanting table must work by day ("we cat use the enchanter") | Done. Nyx `disallowDayEnchanting = false` as in SkyTekx 2, in the server file since 20:20 and live since 20:22:46 through a one-off KubeJS script. Clients drop the message at their next start | [Nyx](content/nyx.md#configuration) |
+| 2026-11-04 11:53 | The player whose starter house capsule of 2026-11-01 20:39 placed nothing gets a new one | Armed at 12:25. A one-off KubeJS script that lives only on the Mac mini gives the capsule at that player's next login. The script and the template copy in `config/capsule/rewards/` go once it fired | [Change log](log.md) |
 
 ## Client and main menu
 
@@ -161,6 +162,7 @@ These rules apply to every later change.
 | 2026-06-29 17:04 | Commit everything and publish again | Done. Pack 3.0.4 went up on 2026-06-29 at 17:33 | [Publish](modpack/publish.md#version-history) |
 | 2026-06-30 18:20 | A folder with the files the Modrinth permissions page asks for | Done in 62ada38, brought up to date in f4c2093. Six blockers remain | [Publish](modpack/publish.md#what-blocks-a-release) |
 | 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join. With 12 GB it plays, and the Modrinth texts ask for that since 21:25. Version 3.0.7 of 21:55 only adds Modflared and the server list | [Publish](modpack/publish.md#test-of-2026-10-31) |
+| 2026-11-04 11:53 | No pack with skytekx-compat 2.1.5 ("nein"). The pack keeps 2.1.3, so the Skylands protection stays on the server only, and clients get no join retry during Mojang outages | Done. Pack 3.1.2 ships 2.1.3, and newer compat builds run on the server only | [SkyTekx Compat](content/compat-mod.md#open-points) |
 
 ## Git and docs
 
@@ -212,6 +214,7 @@ The website has its own repo, see [Related repos and services](related.md#the-we
 | 2026-11-03 11:05 | Fix the dropped items that show on the ground but cannot be picked up | Done. `spigot.yml` sets `entity-activation-range.misc: 0` since 3a671f08, live since the restart at 11:13 | [Arclight](server/arclight.md#floating-items) |
 | 2026-11-04 08:33 | Players must not get kicked because of Mojang outages. The owner asked whether the session check can be cached | Done on the server. skytekx-compat 2.1.5 asks Mojang again for up to 12 s and is live since 10:33. A cache was turned down, because every tunnel player arrives from `[::1]` and a cached name would let cracked clients in. The join retry of the client needs a pack with 2.1.5 | [SkyTekx Compat](content/compat-mod.md#mojang-session-retries) |
 | 2026-11-04 08:33 | Read all server logs, find the errors and bugs of the last days and fix them | Done for everything that needed no ruling. 15 fixes live since the restarts of 10:32 and 10:37, the land tower's obelisk back since 10:42. The rest waits for owner decisions | [Change log](log.md#2026-11-04-log-audit-mojang-login-retries-and-the-land-towers-obelisk), [Open items](open-items.md#owner-decisions) |
+| 2026-11-04 11:53 | Forge's `removeErroringEntities` stays on ("passt"), so a broken entity is deleted instead of crashing the server for everybody | Done. It runs in the live world since 2026-10-31 21:36 and comes into new worlds through `defaultconfigs/forge-server.toml` since 2026-11-04 | [Logs and crashes](server/logs-and-crashes.md) |
 
 Related: [OKF index](index.md), [Open items](open-items.md), [Change log](log.md),
 [History](history.md).

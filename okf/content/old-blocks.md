@@ -3,7 +3,7 @@ type: Feature
 title: Old blocks of Chocolate Quest
 description: The five old decoration blocks of the Chocolate Quest Builder Village become the normal blocks everywhere, through a template pool and five loot tables in the fixes pack, the unify script for items and the offline tool replace_blocks.py for the existing world.
 tags: [content, worldgen, datapacks, tools, kubejs]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Old blocks of Chocolate Quest
@@ -169,7 +169,7 @@ on a copy of the seven region files of the old world on the build machine that h
 with synthetic player and data files and four chunks in other storage forms. Both gave the same output
 and the same content in all 6,490 chunks, and 6,470 unchanged chunks kept their bytes, place and
 timestamp. The refusal under a held lock works under 3.9 too. The Python 3.9.6 of macOS on the Mac mini
-was not tested itself.
+ran the deploy of 2026-11-05, see [Deploy](#deploy).
 
 ### Run time
 
@@ -186,6 +186,24 @@ script and the six datapack files, then run the dry run, the real run and a seco
 pack order in `level.dat`, start the server and check the boot log for chunk errors. To undo the run,
 stop the server and put the clone back. The service commands of the Mac mini are on
 [Mac mini](../server/macos.md).
+
+The deploy of 3.1.3 did this on the Mac mini on 2026-11-05. The server stopped at 00:44:13 with nobody
+online, and the clone of the world went to `~/skytekx3-backups/before-313-2026-11-05/` with the dry
+runs and the run as `dry1.txt`, `run.txt` and `dry2.txt`. The system Python 3.9.6 of macOS ran the tool.
+
+| Check | Result |
+|---|---|
+| Dry run | 595 files and 135,369 chunks, 1,125.9 MB in 6.2 s, 13 chunks in 14 files to change, 0 errors |
+| Run | The same counts in 5.6 s: 144 cobblestone, 63 iron blocks, 20 diamond ores, 15 glass and 9 obsidian, 9 strings with 58 old diamond ores, 5 village starts, 3 chunks to relight, 7 merged palette entries |
+| Second dry run | 0 to change, 5 starts already patched, no temporary file left |
+| Passed over | 81 files with other names, no NBT file that does not read |
+| Pack order | `mod:chocolate_quest` at 110, the fixes pack at 272, so the overrides win |
+| Boot | Done at 00:46:19, 0 FATAL, no chunk or entity error, no line about Chocolate Quest |
+
+Three villages held their old blocks, and one had lost its ten diamond ores already. The 58 old
+diamond ores were eight in the inventory of one player, counted in the player file and in its
+`.dat_old`, the same eight in five grave records of that player, and two items on the ground. They are
+normal diamond ore now.
 
 Related: [Boot fixes](boot-fixes.md), [AlmostUnified](../modpack/almostunified.md),
 [Tools](../modpack/tools.md), [World reset and pregen](../server/world-reset.md).

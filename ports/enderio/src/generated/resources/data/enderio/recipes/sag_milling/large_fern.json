@@ -1,0 +1,39 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:large_fern"
+  },
+  "outputs": [
+    {
+      "chance": 0.6,
+      "item": {
+        "count": 2,
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.3,
+      "item": {
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.1,
+      "item": {
+        "count": 2,
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.15,
+      "item": {
+        "item": "enderio:plant_matter_brown"
+      },
+      "optional": false
+    }
+  ]
+}

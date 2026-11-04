@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/soularium"
+    }
+  },
+  "pattern": [
+    " I ",
+    "III",
+    " I "
+  ],
+  "result": {
+    "count": 24,
+    "item": "enderio:soularium_grinding_ball"
+  },
+  "show_notification": true
+}

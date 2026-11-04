@@ -1,0 +1,25 @@
+{
+  "type": "enderio:sag_milling",
+  "bonus": "chance_only",
+  "energy": 2400,
+  "input": {
+    "tag": "minecraft:wool"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "count": 2,
+        "item": "minecraft:string"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.1,
+      "item": {
+        "item": "minecraft:string"
+      },
+      "optional": false
+    }
+  ]
+}

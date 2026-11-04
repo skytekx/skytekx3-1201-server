@@ -1,0 +1,24 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:wither_skeleton_skull"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "count": 2,
+        "item": "enderio:withering_powder"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.2,
+      "item": {
+        "item": "enderio:withering_powder"
+      },
+      "optional": false
+    }
+  ]
+}

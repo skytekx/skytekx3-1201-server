@@ -1,0 +1,14 @@
+{
+  "type": "enderio:tank",
+  "fluid": {
+    "amount": 250,
+    "fluid": "enderio:xp_juice"
+  },
+  "input": {
+    "item": "minecraft:glass_bottle"
+  },
+  "is_emptying": false,
+  "output": {
+    "item": "minecraft:experience_bottle"
+  }
+}

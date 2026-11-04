@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/soularium"
+    },
+    "N": {
+      "tag": "forge:nuggets/soularium"
+    },
+    "Q": {
+      "tag": "forge:dusts/quartz"
+    }
+  },
+  "pattern": [
+    " N ",
+    "QIQ",
+    " N "
+  ],
+  "result": {
+    "count": 2,
+    "item": "enderio:soul_chain"
+  },
+  "show_notification": true
+}

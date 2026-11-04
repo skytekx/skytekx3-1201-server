@@ -1,0 +1,542 @@
+import java.util.function.Consumer
+
+buildscript {
+    repositories {
+        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
+        maven { url = 'https://maven.moddingx.org' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.moddingx:ModGradle:4.0.+'
+    }
+}
+
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id "com.modrinth.minotaur" version "2.+"
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id "me.hypherionmc.modutils.modpublisher" version "1.+"
+    id 'java-library'
+}
+
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.moddingx.modgradle.mapping'
+
+version = getVersionString()
+group = 'com.enderio'
+archivesBaseName = "EnderIO-${minecraft_version}"
+
+println("Building Ender IO version ${version}")
+println("Release type: ${getReleaseType()}")
+
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// List of all subsets. This is used for dividing the mod into logical components.
+// TODO: 1.19: Tidy the divisions and what goes where.
+def subsets = [
+        'conduits',
+        'machines',
+        'armory'
+]
+
+sourceSets {
+    api
+    core {
+        compileClasspath += sourceSets.api.output
+    }
+    main {
+        compileClasspath += sourceSets.api.output
+        compileClasspath += sourceSets.core.output
+        ext.refMap = "mixins.enderio.refmap.json"
+        resources { srcDir 'src/generated/resources' }
+    }
+}
+
+// Configure the API source set.
+configurations {
+    apiImplementation.extendsFrom(implementation)
+    apiCompileOnly.extendsFrom(compileOnly)
+    apiRuntimeOnly.extendsFrom(runtimeOnly)
+    coreImplementation.extendsFrom(implementation)
+    coreCompileOnly.extendsFrom(compileOnly)
+    coreRuntimeOnly.extendsFrom(runtimeOnly)
+}
+
+// Add all subset source sets.
+for (String set : subsets) {
+    setupSourceSet(set)
+}
+
+minecraft {
+    if (mappings_channel == "sugarcane") {
+        mappings channel: 'sugarcane', version: "${mappings_version}-${minecraft_version}"
+    } else if (mappings_channel == "parchment") {
+        mappings channel: 'parchment', version: "${mappings_version}-${minecraft_version}"
+    } else if (mappings_channel == "parchment_previous") {
+        mappings channel: 'parchment', version: "${previous_minecraft_version}-${mappings_version}-${minecraft_version}"
+    } else if (mappings_channel == "official") {
+        mappings channel: 'official', version: "${minecraft_version}"
+    }
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', 'enderio'
+
+            mods {
+                enderio {
+                    source sourceSets.api
+                    source sourceSets.core
+                    source sourceSets.main
+
+                    for (String set : subsets) {
+                        source sourceSets.getByName(set)
+                    }
+                }
+            }
+        }
+        clientRandom {
+            parent runs.client
+            args '--username', 'Dev####'
+        }
+
+        server {
+            workingDirectory project.file('run-server')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            property 'forge.enabledGameTestNamespaces', 'enderio'
+
+            mods {
+                enderio {
+                    source sourceSets.api
+                    source sourceSets.core
+                    source sourceSets.main
+
+                    for (String set : subsets) {
+                        source sourceSets.getByName(set)
+                    }
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            args '--mod', 'enderio', '--server', '--client', '--output', file('src/generated/resources/'),
+                    '--existing', file('src/main/resources/'),
+                    '--existing', file('src/machines/resources/'),
+                    '--existing', file('src/conduits/resources/'),
+                    '--existing', file('src/armory/resources/')
+
+            mods {
+                enderio {
+                    source sourceSets.api
+                    source sourceSets.core
+                    source sourceSets.main
+
+                    for (String set : subsets) {
+                        source sourceSets.getByName(set)
+                    }
+                }
+            }
+        }
+
+        dataProd {
+            parent runs.data
+
+            args '--all'
+        }
+    }
+}
+
+def replaceProperties = [
+        version       : version, mcversion: minecraft_version_range,
+        forge_version : forge_version_range,
+        loader_version: loader_version_range]
+
+processResources {
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
+
+    filesMatching('META-INF/mods.toml') {
+        expand replaceProperties
+    }
+}
+
+// pupnewfster helpers for exclusive repos
+void exclusiveRepo(RepositoryHandler handler, String url, String... groups) {
+    exclusiveRepo(handler, url, filter -> {
+        for (def group : groups) {
+            filter.includeGroup(group)
+        }
+    })
+}
+
+//Note: This cannot be static so that fg.repository can be properly accessed
+@SuppressWarnings('GrMethodMayBeStatic')
+void exclusiveRepo(RepositoryHandler handler, String url, Consumer<InclusiveRepositoryContentDescriptor> filterSetup) {
+    handler.exclusiveContent {
+        it.forRepositories(handler.maven {
+            setUrl(url)
+        }, fg.repository)//Add FG's repo so we make sure we are able to then find the mapped deps
+        it.filter { f -> filterSetup.accept(f) }
+    }
+}
+
+repositories { RepositoryHandler handler ->
+    exclusiveRepo(handler, 'https://maven.tterrag.com/', 'com.tterrag.registrate')
+    exclusiveRepo(handler, 'https://maven.createmod.net/', 'dev.engine-room.flywheel')
+    exclusiveRepo(handler, "https://modmaven.dev/", "mezz.jei", "mcjty.theoneprobe", "appeng", "mekanism")
+    exclusiveRepo(handler, 'https://cursemaven.com', 'curse.maven')
+    exclusiveRepo(handler, 'https://maven.blamejared.com', 'vazkii.patchouli', 'net.darkhax.bookshelf', 'net.darkhax.enchdesc', 'com.almostreliable.mods')
+    exclusiveRepo(handler, 'https://api.modrinth.com/maven', 'maven.modrinth')
+    exclusiveRepo(handler, "https://squiddev.cc/maven/", "cc.tweaked")
+    exclusiveRepo(handler, 'https://maven.creeperhost.net/', 'com.refinedmods')
+    exclusiveRepo(handler, 'https://maven.rover656.dev/releases/', 'dev.gigaherz.graph')
+
+    mavenLocal()
+}
+
+jarJar.enable()
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    // Forge
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    //implementation fg.deobf("blank:Xycraft+Core:0.5.2")
+    //runtimeOnly fg.deobf("blank:Xycraft+Override:0.5.2")
+    //runtimeOnly fg.deobf("blank:Xycraft+World:0.5.2")
+    // Registrate
+    api fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "${registrate_version_range}")
+
+    // GraphLib
+    api implementation(fg.deobf("dev.gigaherz.graph:GraphLib3:${graphlib_version}"))
+    jarJar(group: 'dev.gigaherz.graph', name: 'GraphLib3', version: "${graphlib_version_range}")
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    machinesAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    // JEI
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    localRuntime fg.deobf("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
+    localRuntime fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+
+    //RFTOOLS
+    localRuntime fg.deobf("maven.modrinth:rftools-power:f430rHkA")
+    localRuntime fg.deobf("maven.modrinth:mcjtylib:3LlgyvSh")
+    localRuntime fg.deobf("maven.modrinth:rftools-base:Uu1IkVMH")
+    localRuntime fg.deobf("maven.modrinth:spark:Yp6s4wsw")
+
+    // Athena ctm
+    localRuntime fg.deobf("maven.modrinth:athena-ctm:X6GdUrpW")
+
+    // AE2
+    compileOnly "appeng:appliedenergistics2-forge:${ae2_version}:api"
+    localRuntime fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}")
+
+    //RS
+    compileOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}") {
+        transitive = false
+    }
+    localRuntime fg.deobf("com.refinedmods:refinedstorage:${rs_version}"){
+        transitive = false
+    }
+
+    // Enchantment descriptions
+    localRuntime fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}")
+    localRuntime fg.deobf("net.darkhax.enchdesc:EnchantmentDescriptions-Forge-${minecraft_version}:${ench_desc_version}")
+
+    // The One Probe https://github.com/McJtyMods/TheOneProbe/issues/548
+//    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api") {
+//        transitive = false
+//    }
+//    runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
+//        transitive = false
+//    }
+
+    // Jade
+    localRuntime fg.deobf("curse.maven:jade-324717:${jade_cf_id}")
+
+    //fluxnetworks
+    localRuntime fg.deobf("curse.maven:fluxnetworks-248020:4651164")
+
+    // Flywheel -- REMOVE When crash is fixed
+    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:1.0.1")
+
+    // Almost Unified
+    compileOnly fg.deobf("com.almostreliable.mods:almostunified-forge:${minecraft_version}-${almostunified_version}")
+
+    // Patchouli
+//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+
+    compileOnly fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api")
+    localRuntime fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}")
+
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cctVersion")
+    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cctVersion")
+    localRuntime(fg.deobf("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cctVersion"))
+
+    // Jetbrains annotations
+    compileOnly 'org.jetbrains:annotations:23.0.0'
+}
+
+// MixinGradle Settings
+mixin {
+    add sourceSets.main, "mixins.enderio.refmap.json"
+    add sourceSets.machines, "mixins.enderio-machines.refmap.json"
+    config "mixins.enderio.json"
+    config "mixins.enderio-machines.json"
+}
+
+reobf.create('jarJar')
+
+// Example for how to get properties into the manifest for reading at runtime.
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "EnderIO",
+                "Specification-Vendor"    : "SleepyTrousers",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "SleepyTrousers",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs"            : "mixins.enderio.json,mixins.enderio-machines.json"
+        ])
+    }
+
+    // Add all other source sets
+    from sourceSets.api.output
+    from sourceSets.core.output
+    for (String set : subsets) {
+        from sourceSets.getByName(set).output
+    }
+
+    // TODO: Do we need to bother reobfuscating it?
+    //       The real question is does maven need it to be obfuscated? If so then this stays
+    finalizedBy('reobfJar')
+}
+
+tasks.register('apiJar', Jar) {
+    archiveClassifier = 'api'
+    from sourceSets.api.output
+}
+build.dependsOn apiJar
+
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
+    archiveClassifier = 'sources'
+
+    from sourceSets.api.allJava
+    from sourceSets.main.allJava
+    from sourceSets.core.allJava
+
+    for (String set : subsets) {
+        from sourceSets.getByName(set).allJava
+    }
+}
+build.dependsOn sourcesJar
+
+// Add other source sets to jarJar
+tasks.jarJar.configure {
+    from sourceSets.api.output
+    from sourceSets.core.output
+    for (String set : subsets) {
+        from sourceSets.getByName(set).output
+    }
+
+    finalizedBy('reobfJarJar')
+}
+build.dependsOn tasks.jarJar
+
+if (getReleaseType() != null) {
+    if (System.getenv("CHANGELOG") != null) {
+        publisher {
+            apiKeys {
+                curseforge = System.getenv("CURSEFORGE_TOKEN")
+                modrinth = System.getenv("MODRINTH_TOKEN")
+            }
+
+            debug = System.getenv("PUBLISH") != "true"
+            curseID = curseforge_projectId
+            modrinthID = modrinth_projectId
+            versionType = getReleaseType()
+            version = "${getVersionString()}"
+            displayName = "Ender IO - ${getVersionString()}"
+            changelog = System.getenv("CHANGELOG")
+            gameVersions = [minecraft_version]
+            loaders = ["forge"]
+            artifact = tasks.jarJar
+
+            curseDepends {
+                optional = ["jei", /*"patchouli",*/ "athena", "applied-energistics-2", "mekanism", "cc-tweaked"]
+            }
+
+            modrinthDepends {
+                optional = [/*modrinth_dep_patchouli, */ modrinth_dep_jei, modrinth_dep_athena, modrinth_dep_ae2, modrinth_dep_mekanism, modrinth_dep_cct]
+            }
+        }
+    } else {
+        println("Release disabled, no changelog found in environment");
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.enderio'
+            artifactId = 'EnderIO'
+            version = "${minecraft_version}-${version}"
+
+            artifact jar
+            artifact sourcesJar
+            artifact apiJar
+
+            pom {
+                name = 'Ender IO'
+                description = 'Ender IO is a full-featured tech mod. It has armor, tools, weapons, machines, conduits, inventory management, mobs, etc.'
+                url = 'https://github.com/Team-EnderIO/EnderIO'
+
+                licenses {
+                    license {
+                        name = 'Unlicense'
+                        url = 'https://github.com/Team-EnderIO/EnderIO/blob/lts/1.20.1/LICENSE.txt'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/Team-EnderIO/EnderIO.git'
+                }
+            }
+        }
+    }
+
+    repositories {
+        if (System.getenv("RVR_MAVEN_USER") != null) {
+            maven {
+                name = "Rover656"
+                url = "https://maven.rover656.dev/releases"
+                credentials {
+                    username = System.getenv("RVR_MAVEN_USER")
+                    password = System.getenv("RVR_MAVEN_PASSWORD")
+                }
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// ============
+// Utilities
+// ============
+
+//   * enderio-1.19.1-6.0.1-alpha.jar :: release version 6.0.1-alpha for mc 1.19.1
+//   * enderio-1.19.1-nightly-4       :: nightly build no. 4 for mc 1.19.1
+//   * enderio-1.19.1-dev-c91c8ee6e   :: dev (local) build for commit c91c8ee6e
+String getVersionString() {
+    def build_server = System.getenv('CI') != null || System.getenv('BUILD_NUMBER') != null
+
+    if (System.getenv('BUILD_VERSION') != null) {
+        def version_number = System.getenv('BUILD_VERSION')
+        if (version_number.startsWith("v")) {
+            version_number = version_number.substring(1)
+        }
+
+        return "${version_number}"
+    }
+
+    if (System.getenv('NIGHTLY') != null) {
+        def version_patch_lc = '0'
+        if (System.getenv('BUILD_NUMBER') != null) {
+            version_patch_lc = System.getenv('BUILD_NUMBER')
+        }
+
+        return "${mod_version_series}-nightly-${version_patch_lc}"
+    }
+
+    def version_hash = ''
+    def branch_name = ''
+    if (!build_server) {
+        try {
+            version_hash = "-" + "git rev-parse --short HEAD".execute().text.trim()
+        } catch (ignored) {
+        }
+
+        try {
+            branch_name = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
+            branch_name = "-" + branch_name.substring(branch_name.lastIndexOf('/') + 1)
+        } catch (ignored) {
+        }
+    }
+
+    return "${mod_version_series}-dev${branch_name}${version_hash}"
+}
+
+String getReleaseType() {
+    // If we're doing a proper build
+    if (System.getenv('BUILD_VERSION') != null) {
+        def version_string = System.getenv('BUILD_VERSION')
+
+        if (version_string.toLowerCase(Locale.ROOT).contains("alpha")) {
+            return 'alpha'
+        } else if (version_string.toLowerCase(Locale.ROOT).contains("beta")) {
+            return 'beta'
+        }
+
+        return 'release'
+    }
+
+    return null
+}
+
+// Thanks to Mekanism for the base implementations here.
+
+// Create and configure a new module source set.
+def setupSourceSet(String name) {
+    def sourceSet = sourceSets.create(name)
+    // Add api and main modules.
+    sourceSet.compileClasspath += sourceSets.api.output
+    sourceSet.compileClasspath += sourceSets.main.output
+    sourceSet.compileClasspath += sourceSets.core.output
+
+    // Extend configurations
+    setupExtraSourceSets(sourceSet)
+}
+
+// Thanks again to Mekanism for this stuff.
+def setupExtraSourceSets(SourceSet base) {
+    // Setup and extend configurations for alternate modules. First by making the implementation, compileOnly, runtimeOnly equivalents
+    //  for those modules extend the main ones
+    def baseImplementation = project.configurations.maybeCreate(base.getTaskName(null, "implementation"))
+    def baseCompileOnly = project.configurations.maybeCreate(base.getTaskName(null, "compileOnly"))
+    def baseRuntimeOnly = project.configurations.maybeCreate(base.getTaskName(null, "runtimeOnly"))
+    baseImplementation.extendsFrom(project.configurations.getByName("implementation"))
+    baseCompileOnly.extendsFrom(project.configurations.getByName("compileOnly"))
+    baseRuntimeOnly.extendsFrom(project.configurations.getByName("runtimeOnly"))
+}

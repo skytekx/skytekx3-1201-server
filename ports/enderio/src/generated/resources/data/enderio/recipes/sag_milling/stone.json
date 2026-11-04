@@ -1,0 +1,17 @@
+{
+  "type": "enderio:sag_milling",
+  "bonus": "none",
+  "energy": 2400,
+  "input": {
+    "tag": "forge:stone"
+  },
+  "outputs": [
+    {
+      "chance": 1.0,
+      "item": {
+        "item": "minecraft:cobblestone"
+      },
+      "optional": false
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "type": "enderio:sag_milling",
+  "energy": 2400,
+  "input": {
+    "item": "minecraft:rose_bush"
+  },
+  "outputs": [
+    {
+      "chance": 0.8,
+      "item": {
+        "count": 2,
+        "item": "minecraft:red_dye"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.6,
+      "item": {
+        "item": "minecraft:red_dye"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.3,
+      "item": {
+        "count": 2,
+        "item": "minecraft:red_dye"
+      },
+      "optional": false
+    },
+    {
+      "chance": 0.2,
+      "item": {
+        "item": "enderio:plant_matter_green"
+      },
+      "optional": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "forge:gears/wood"
+    },
+    "I": {
+      "tag": "forge:cobblestone"
+    }
+  },
+  "pattern": [
+    " I ",
+    "IGI",
+    " I "
+  ],
+  "result": {
+    "item": "enderio:stone_gear"
+  },
+  "show_notification": true
+}

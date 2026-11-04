@@ -1,9 +1,9 @@
 ---
 type: Mod
 title: SkyTekx Compat
-description: The pack's own small Forge mod, skytekx-compat 2.1.3. It guards Bird's Nests against short loot table paths, keeps Skylands structures out of the void since 2026-10-31, and since 2026-11-01 answers Infernal Mobs queries on the server thread and keeps Falling Meteors in the overworld. It began as the skytekx-worldgen mod.
+description: The pack's own small Forge mod. The Mac mini runs skytekx-compat 2.1.5 and the pack bundles 2.1.3. It guards Bird's Nests against short loot table paths, keeps Skylands structures out of the void since 2026-10-31, answers Infernal Mobs queries on the server thread, keeps Falling Meteors in the overworld and protects Skylands blocks since 2026-11-01, and retries Mojang session checks since 2026-11-04. It began as the skytekx-worldgen mod.
 tags: [content, mod, compat, mixin]
-timestamp: 2026-11-01
+timestamp: 2026-11-04
 ---
 
 # SkyTekx Compat
@@ -16,18 +16,22 @@ the Skylands structure placement and the Skylands travel handler. Since the vani
 check after two reviews, and 2.1.2 added a fourth worldgen mixin for the columns that pieces fill
 downward. Version 2.1.3 of 2026-11-01 added two mixins for other mods, see
 [Infernal Mobs queries](#infernal-mobs-queries) and
-[Falling Meteors only in the overworld](#falling-meteors-only-in-the-overworld).
+[Falling Meteors only in the overworld](#falling-meteors-only-in-the-overworld). Version 2.1.4 of
+2026-11-01 keeps Skylands blocks safe from mob griefing and explosions, on the server only, see
+[Skylands worldgen](skylands-worldgen.md). Version 2.1.5 of 2026-11-04 asks Mojang again when a session
+check fails, see [Mojang session retries](#mojang-session-retries).
 
 | Property | Value |
 |---|---|
-| Jar | Bundled as [local-mods/skytekx-compat-2.1.3.jar](../../local-mods/skytekx-compat-2.1.3.jar), 17,325 bytes, SHA-256 `0059f9b31d295b86...` |
+| Jar | Bundled for the pack as [local-mods/skytekx-compat-2.1.3.jar](../../local-mods/skytekx-compat-2.1.3.jar), 17,325 bytes, SHA-256 `0059f9b31d295b86...`. The Mac mini runs 2.1.5, 32,137 bytes, SHA-256 `59c92a13ccd7fc22...` |
 | Mod id | Still `skytekx`, display name "SkyTekx Compat", MIT, author "SkyTekx" |
 | Needs | Forge 47 or later and Minecraft 1.20.1 up to 1.21. No declared dependency on Bird's Nests, Infernal Mobs or Falling Meteors |
-| Source | Local git repo `~/git/skytekx-worldgen` (no remote), branch `master`, head c6d170b |
+| Source | Local git repo `~/git/skytekx-worldgen` (no remote), branch `master`, head 88b3759 |
 | Build | Gradle 8.8, ForgeGradle 6.0, Parchment `2023.09.03-1.20.1`, MixinGradle 0.7, Mixin annotation processor 0.8.5, Java 17 (`~/jdk17/jdk-17.0.19+10`), Forge `1.20.1-47.4.6` |
 
 The jar in `local-mods/` is byte identical to `build/libs/skytekx-compat-2.1.3.jar` in the source repo.
-The Mac mini runs it since 2026-11-01 06:10. From 02:51 it ran 2.1.2 (14,260 bytes, SHA-256
+The Mac mini ran it from 2026-11-01 06:10 and 2.1.4 (18,383 bytes) from about 21:19 that day. It runs
+2.1.5 since 2026-11-04 10:33. Before 06:10, from 02:51 it ran 2.1.2 (14,260 bytes, SHA-256
 `c424dda546c40151...`), from 00:58 2.1.0 (12,330 bytes, SHA-256 `7eb835067e332cf1...`). Both now lie in
 `~/skytekx3-backups/jars-orig/` there. Version 2.1.1 (12,818 bytes, SHA-256 `c1633905c56903ec...`) only ran on a test server. Packs 3.0.5 to 3.0.7 and the owner's Prism instance carry 2.0.0 (3,728 bytes, SHA-256
 `16805d83d52c7c5f...`), which stays fine on the client, see [server list](#server-list). At boot
@@ -153,8 +157,44 @@ owner's client and left 166 meteor and 8 rare meteor blocks, with no error in th
 Forge compares the version of each mod in the server list ping. Packs 3.0.5 to 3.0.7 carry 2.0.0 with
 the default display test `MATCH_VERSION`, which marks a server as incompatible unless the server reports
 exactly "2.0.0" for the mod id `skytekx`. Versions 2.1.0 to 2.1.2 therefore report "2.0.0" in the
-ping and accept any server version on the client (`SkytekxWorldgen.SERVER_LIST_VERSION`), and so does
-2.1.3. Every fix in the mod acts on the server, so a client never needs 2.1.0 or later.
+ping and accept any server version on the client (`SkytekxWorldgen.SERVER_LIST_VERSION`), and so do
+2.1.3 to 2.1.5. Every fix up to 2.1.4 acts on the server, so a client never needs them. Only the join
+retry of 2.1.5 runs in the client.
+
+## Mojang session retries
+
+On 2026-11-03 from 20:13 to at least 20:41 Mojang's session server answered about half of all requests
+with HTTP 503. The server turned away 7 of 11 logins in that time with "Failed to verify username!", and
+clients stopped with "Failed to log in: null" before they reached the server, see the
+[log](../log.md). A second request a moment later would usually have worked. Version 2.1.5 asks again.
+
+| Side | Mixin | What it does |
+|---|---|---|
+| Server | `MinecraftServerSessionRetryMixin`, at the return of `MinecraftServer.getSessionService` | Wraps the session service for "User Authenticator" threads only. When `hasJoinedServer` answers null or throws `AuthenticationUnavailableException`, it asks up to four more times after pauses of 0.5, 1, 2 and 3 s, and it starts no new try 12 s after the first one |
+| Client | `ClientHandshakeJoinRetryMixin`, at the return of `ClientHandshakePacketListenerImpl.getMinecraftSessionService` | Wraps the service off the render thread only. When `joinServer` throws `AuthenticationUnavailableException`, or a plain `AuthenticationException` without a message or with a 5xx status, it posts again up to three times within 6 s. Invalid credentials, bans and missing privileges are never retried |
+
+Nothing is cached and there is no offline fallback, so a player only gets in with a profile that Mojang
+returned for this very login. The owner asked on 2026-11-04 whether the check could be cached, so that
+outages no longer keep players out. A cache was turned down on purpose: every player who comes through
+the Cloudflare tunnel arrives from `[::1]`, so the server cannot tell those players apart by address,
+and a cached name would let anyone with a cracked client join under it during an outage. A login that
+Mojang really refuses ends as before, about 7 s later. When Mojang is down completely, no retry helps,
+but players who are already online never notice, because the server only asks Mojang at login.
+
+The server mixin sits in the "server" list of `skytekx.mixins.json` and the client mixin in the
+"client" list, so a dedicated server never loads the client one. Anything unexpected inside a wrapper
+keeps the first answer. During an outage the server logs "Mojang did not confirm the session of
+'<name>' (...), retry N of 4 in M ms" and "Mojang confirmed the session of '<name>' on retry N, X ms
+after the first try".
+
+The server part runs on the Mac mini since 2026-11-04 10:33, and its boot log shows "Mixing
+MinecraftServerSessionRetryMixin from skytekx.mixins.json into net.minecraft.server.MinecraftServer".
+The client part only reaches players whose pack carries 2.1.5, see [open points](#open-points).
+
+`./gradlew build --offline` runs `SessionRetryTest` (24 cases, 103 checks) as part of `check`. An end to
+end test on a scratch Arclight 1.0.6 server with a fake session host accepted logins after one or two
+503 answers and turned away a cracked client after five tries, 6.5 s after the first. The client mixin
+was only checked in the bytecode and the refmap and has not run in a real client yet.
 
 ## Rebuild
 
@@ -163,6 +203,9 @@ cd ~/git/skytekx-worldgen
 JAVA_HOME=~/jdk17/jdk-17.0.19+10 ./gradlew build -Djava.net.preferIPv4Stack=true
 cp build/libs/skytekx-compat-2.1.3.jar ~/git/skytekx3-1201-server/local-mods/
 ```
+
+Copy a jar into `local-mods/` only when it should ship in the pack. Versions 2.1.4 and 2.1.5 so far
+only run on the server.
 
 Up to 2.1.2 the Gradle cache lacked MixinGradle 0.7.38 and two of its dependencies, so `--offline`
 failed. The build of 2.1.3 on 2026-11-01 ran with `--offline`.
@@ -178,13 +221,17 @@ processor), which the repo tracks.
   and the jar's `pack.mcmeta` says "SkyTekx Worldgen".
 - The old `build/libs/skytekx-worldgen-1.0.0.jar` (12,955 bytes, 2026-06-30 05:42) still lies next to
   the new jar.
+- The pack still bundles 2.1.3. Shipping 2.1.5 would give players the join retry, but it would also
+  bring the Skylands protection of 2.1.4 into singleplayer worlds, while the ruling of 2026-11-01 21:15
+  asked for it on the server. The owner decides before the next pack build.
 - The repo has no remote, so the only copy of the source is on this machine. The Mac mini only needs the
   jar.
 - The folder `modrinth-permissions/` still has `skytekx-worldgen-1.0.0.jar.md` next to
   `skytekx-compat-2.1.3.jar.md` (see [publish](../modpack/publish.md)).
 - `/locate` and explorer maps use `Structure.findValidGenerationPoint`, not `generate`. Beyond the
   pregenerated radius they can point at a swamp hut or a meteorite that the start check then cancels.
-- The mod has no tests. The void floor was tested on throwaway copies of the server (tests 1 to 6),
+- Only the session retries of 2.1.5 have a headless test. The void floor was tested on throwaway
+  copies of the server (tests 1 to 6),
   see [Skylands worldgen](skylands-worldgen.md#the-void-floor).
 - Five jigsaw placers of other mods never reach the redirected `tryPlacingChildren`, so their children
   over the void would still land at Y 0. Today only two of their structures can start on an island,
@@ -242,6 +289,11 @@ processor), which the repo tracks.
   Get It Together Drops and with the Spigot item merge radius at 0.5. Nobody was online, and 2.1.2
   went to `~/skytekx3-backups/jars-orig/` there. The server was up at 06:11:04 with the 3 accepted boot
   errors.
+- 2026-11-01 21:19: version 2.1.4 (commit 1735f0f, version 423c054) went live on the Mac mini together
+  with the noon-only Skylands. It keeps Skylands blocks safe from mob griefing and explosions.
+- 2026-11-04: version 2.1.5 (commits c7b89ac and 88b3759) added the
+  [Mojang session retries](#mojang-session-retries). It went live on the Mac mini at 10:33 with nobody
+  online, and 2.1.4 went to `~/skytekx3-backups/jars-orig/` there.
 
 Related: [boot fixes](boot-fixes.md), [mod set](../modpack/mod-set.md),
 [Skylands worldgen](skylands-worldgen.md), [content](index.md).

@@ -71,11 +71,12 @@ evidence and the page with the details. The rulings behind the first section are
   or override the modifier in a datapack so they spawn only in the main dimension. See
   [SkyTekx Compat](content/compat-mod.md#falling-meteors-only-in-the-overworld).
 - Packs 3.0.6 and 3.0.7 ship JEI 15.74.0.233 from the update of 092140d with EMI 1.1.24, which cannot
-  bridge it and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its 8 GB
-  heap after the join and froze, and with 12 GB it played. Since 2026-11-03 git ships the EMI fork
-  1.1.24-skytekx.1 instead (1ea5bb29), which implements the JEI 15.74 API, and the server and both
-  MacBooks run it. A pack built from git still needs an install test, the heap included. See
-  [Mod set](modpack/mod-set.md#bundled-jars) and [Publish](modpack/publish.md#test-of-2026-10-31).
+  bridge it and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its
+  8 GB heap after the join and froze, and with 12 GB it played. Since 2026-11-03 git ships the EMI fork
+  instead (1ea5bb29, as 1.1.24-skytekx.2 since 2026-11-04), which implements the JEI 15.74 API, and
+  the server and both MacBooks run it. A pack built from git still needs an install test, the heap
+  included. See [Mod set](modpack/mod-set.md#bundled-jars) and
+  [Publish](modpack/publish.md#test-of-2026-10-31).
 - Six bundled jars are All Rights Reserved without a grant: Aether Genesis, Connectivity, Cupboard,
   Deadly World, Fireflies and Hexxit Additions. Ask for permission, replace or remove them before a
   public release. See [Publish](modpack/publish.md#what-blocks-a-release).

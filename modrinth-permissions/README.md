@@ -64,7 +64,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `cleanswing-1.20-1.8.jar` | Clean Swing Through Grass | LGPL-3.0 | Licensed | yes | - |
 | `cosmeticarmorreworked-1.20.1-v1a.jar` | Cosmetic Armor Reworked | MMPL-1.0.1 | Licensed | yes | - |
 | `elevatorid-1.20.1-1.9.1-forge.jar` | ElevatorMod (OpenBlocks Elevator) | MIT | Licensed | yes | yes |
-| `emi-1.1.24-skytekx.1+1.20.1+forge.jar` | EMI (JEI bridge fork by SkyTekx) | MIT | Licensed | yes | upstream only |
+| `emi-1.1.24-skytekx.2+1.20.1+forge.jar` | EMI (JEI bridge fork by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `EnchantingPlus-1.20.1-1.3.0.jar` | Enchanting Plus (Classic) | All Rights Reserved | Special permission | yes | - |
 | `EnderIO-1.20.1-6.2.18-beta-all.jar` | Ender IO | Unlicense | Licensed | yes | yes |
 | `Exchangers-1.20.1-3.5.1.jar` | Exchangers | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |

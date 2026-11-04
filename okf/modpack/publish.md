@@ -78,8 +78,8 @@ builds.
    the first join, and EMI drops the Chipped recipes. A 12 GB heap avoids the freeze. JEI 15.20.0.132
    cannot come back, because three mods need newer builds. The dropped recipes need a Chipped build
    that does not call the new JEI method, or an EMI build that implements it, then an owner decision
-   and a new test. Since 2026-11-03 git ships such an EMI build, the fork 1.1.24-skytekx.1 from
-   github.com/skytekx/emi (1ea5bb29). The new test is still open.
+   and a new test. Since 2026-11-03 git ships such an EMI build, the fork from github.com/skytekx/emi
+   (1ea5bb29, as 1.1.24-skytekx.2 since 2026-11-04). The new test is still open.
 
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so

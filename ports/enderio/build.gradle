@@ -389,6 +389,23 @@ tasks.withType(Jar).configureEach {
     reproducibleFileOrder = true
 }
 
+// SkyTekx: this is a modified build that the pack redistributes, so the Unlicense text, the change
+// notice and the licenses of the third-party code and bundled libraries travel inside both mod jars
+// (the plain jar and the -all jarJar one that the pack ships)
+for (String jarTask : ['jar', 'jarJar']) {
+    tasks.named(jarTask, Jar).configure {
+        from('LICENSE.txt') {
+            rename { 'LICENSE_enderio' }
+        }
+        from('NOTICE') {
+            rename { 'NOTICE_enderio' }
+        }
+        from('licenses') {
+            into 'META-INF/licenses/enderio'
+        }
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {

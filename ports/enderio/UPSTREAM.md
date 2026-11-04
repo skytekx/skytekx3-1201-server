@@ -94,6 +94,8 @@ Everything that SkyTekx changed in the build files is marked `SkyTekx:` in a com
 - **Reproducible jars:** every `Jar` task sets `preserveFileTimestamps = false` and
   `reproducibleFileOrder = true`, and the manifest has no `Implementation-Timestamp` any more, like
   `ports/twilightforest`. `Implementation-Vendor` says that this is an unofficial modified build.
+- **License files in the jars:** `jar` and `jarJar` add `LICENSE.txt` as `LICENSE_enderio`,
+  `NOTICE` as `NOTICE_enderio`, and `licenses/` as `META-INF/licenses/enderio/`.
 - **`.gitignore`:** a SkyTekx block for the build and run outputs of this port.
 
 Not changed: the Gradle wrapper (8.8), the repositories of the mod dependencies, the foojay toolchain
@@ -103,3 +105,8 @@ turned off), and the committed datagen output.
 ## Files added by SkyTekx
 
 - `UPSTREAM.md` (this file)
+- `NOTICE`: the change notice, shipped as `NOTICE_enderio`
+- `licenses/`: the license texts of the third-party code and the bundled libraries
+- in `src/main/resources/META-INF/mods.toml`, the `license` field names all licenses (upstream said
+  `CC0`), `issueTrackerURL` points to the SkyTekx repository, and the description says that the
+  build is unofficial

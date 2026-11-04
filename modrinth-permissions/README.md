@@ -5,12 +5,12 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 47 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 48 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **40** mods are fine to bundle (open license or author allows modpacks).
+- **41** mods are fine to bundle (open license or author allows modpacks).
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
@@ -77,6 +77,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `EyesInTheDarkness-1.20.1-1.3.10.jar` | Eyes in the Darkness | BSD-3-Clause | Licensed | yes | - |
 | `fairylights-7.0.0-1.20.1.jar` | Fairy Lights | MIT | Licensed | yes | - |
 | `FastLeafDecay-32.jar` | Fast Leaf Decay | All Rights Reserved | Special permission | yes | - |
+| `FluxNetworks-1.20.1-7.2.1.15.jar` | Flux Networks | MIT | Licensed | yes | - |
 | `framework-forge-1.20.1-0.8.0-signed.jar` | Framework | LGPL-2.1 | Licensed | yes | - |
 | `GunpowderLib-1.20-2.2.jar` | GunpowderLib | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |
 | `infernalmobs-1.20.1.11.jar` | AtomicStryker's Infernal Mobs | Custom License (All Rights Reserved with stated modpack exception) | Special permission | yes | - |

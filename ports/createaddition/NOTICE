@@ -1,0 +1,81 @@
+Create Crafts & Additions - modified, unofficial SkyTekx build for Forge 1.20.1
+=============================================================================
+
+This is a MODIFIED, UNOFFICIAL version of Create Crafts & Additions. It is not made, supported or
+endorsed by MRH0. Please report problems with this build to SkyTekx
+(https://github.com/skytekx/skytekx3-1201-server/issues), not to the upstream project.
+
+Original work
+-------------
+  Create Crafts & Additions by MRH0 and contributors
+  Source:   https://github.com/mrh0/createaddition
+  Base:     branch 1.20.1 @ 42b6f2d06f0412a7cee787d767449d5b1b3b81b8 (2026-11-02; mod_version 1.3.3
+            plus the merged, unreleased upstream changes after the 1.3.3 release; Forge 47)
+  Backport: content taken from branch 1.21.1 @ 658a390b8ff4daa17013e9447b29949330c8a42a
+            (2026-11-02; mod_version 1.7.3, NeoForge 1.21.1)
+
+Modifications
+-------------
+  Modified by SkyTekx (Florian Kleber), 2026, for the SkyTekx 3 modpack. The result still runs on
+  Minecraft 1.20.1 with Forge 47, keeps the mod id createaddition and is versioned
+  1.7.3-1.20.1-skytekx.1.
+
+  Summary of the changes:
+  - Build: reproducible jar (no file timestamps, fixed entry order, no build timestamp in the
+    manifest); this NOTICE and the upstream LICENSE ship inside the jar; mods.toml marks the build
+    as a modified, unofficial one and sends bug reports to SkyTekx.
+  - Content backported from the 1.21.1 line is listed here as it is added.
+
+  The complete change history is the git history of the ports/createaddition directory of
+  https://github.com/skytekx/skytekx3-1201-server
+  That directory is the source code of this jar: the exact source of a given jar is that directory
+  at the commit that added the jar to local-mods/. ports/createaddition/UPSTREAM.md lists every
+  change to the upstream build.
+
+Licenses
+--------
+  - Create Crafts & Additions: MIT License, Copyright (c) 2024 MRH. The upstream LICENSE ships in
+    this jar, unchanged, as LICENSE_createaddition.
+  - Sounds: from pixabay.com (Pixabay Content License, https://pixabay.com/service/license-summary/)
+    and freesound.org (CC0 1.0). The Pixabay sounds are distributed only as part of this mod; do
+    not extract them and redistribute them on their own.
+  - Parts adapted from Create (https://github.com/Creators-of-Create/Create). Create Crafts &
+    Additions took them between 2021 and 2023, while Create was licensed under the MIT License as
+    a whole, under the notice below:
+      * code: the output ejection in
+        com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlockEntity (adapted from Create's
+        SawTileEntity) and the shape builder in com.mrh0.createaddition.shapes.CAShapes (from
+        Create's AllShapes);
+      * textures that are edited copies of Create textures, in assets/createaddition/textures/:
+        block/rolling_mill/andesite_casing_short.png, block/digital_adapter/block.png,
+        block/portable_energy_interface/block.png, block/copper_wire_casing/block.png,
+        block/modular_accumulator/block.png, block/redstone_relay/redstone_relay_stone.png,
+        block/redstone_relay/redstone_relay_stone_on.png, item/seed_oil_bucket.png and
+        item/bioethanol_bucket.png.
+    This build adds no Create asset that Create published on or after 2025-09-21 (Create's assets
+    are All Rights Reserved from then on). Models that use create: textures only refer to them;
+    those textures are not part of this jar.
+
+    Create's notice:
+
+    MIT License
+
+    Copyright (c) 2019 simibubi
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.

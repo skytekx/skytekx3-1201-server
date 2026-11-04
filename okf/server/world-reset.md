@@ -131,8 +131,10 @@ pregen shows up as a config change. Chunky's `continueOnRestart` is false
   chococraft overrides in the shared pack lose to the chococraft mod pack there, see
   [Skylands worldgen](../content/skylands-worldgen.md).
 - In the Halloween world on the Mac mini the fixes pack, the shared Skylands pack and the Forge
-  Skylands pack hold the last three of 280 places (read from its `level.dat` on 2026-10-31), so all
-  their overrides win.
+  Skylands pack held the last three of 280 places on 2026-10-31. By 2026-11-04 the 20 mods added since
+  then sat after them, at places 276 to 295 of 295 (read from its `level.dat`). No override touches those
+  mods, so all overrides still win. A new mod that an override touches needs the fixes pack moved to
+  the end again, see [Boot fixes](../content/boot-fixes.md#load-order).
 - The command `/datapack list enabled` shows the order in game.
 
 ## Fresh world
@@ -144,8 +146,10 @@ A new `world/level.dat` changes three things.
   and put it into `level-seed`.
 - The pack order is rebuilt. The fixes pack and the Forge Skylands pack must load after the mod packs.
   The Halloween world of 2026-10-31 put all three file packs at the end by itself. If a world ever has
-  them earlier, the vanilla commands below move a pack to the end. They have not been tested on this
-  server, so check the result with `/datapack list enabled`.
+  them earlier, the vanilla commands below move a pack to the end. The first two moved the fixes pack
+  on a test world on 2026-11-04, the other two have not run yet, so check the result with
+  `/datapack list enabled`. Through `tools/rcon.py` its answer ends after the first 4 KB, about 210
+  packs, so for a longer list run `tools/datapack_order.py world/level.dat` after a save.
 - The new world has no fixes pack. The script `tools/sync_skylands_datapack.sh` writes only the two
   Skylands packs. On the Mac mini, run `macos/sync-to-mac.sh` before the first boot, which mirrors
   `world/datapacks/skytekx3_fixes/` into the new world since 29927ae. On other hosts, copy that folder

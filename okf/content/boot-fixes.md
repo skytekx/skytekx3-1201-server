@@ -37,16 +37,16 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 183 files, 182 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
+is tracked: 189 files, 188 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
 fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 53 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
 |---|---:|---|
-| Loot tables | 99 | Tables that name items or types missing on 1.20.1, replaced with valid tables with empty pools: mekanism_extras 60, decocraft 28, dragnlivestock 3, irons_spellbooks 2, and one each for aether_villages, ancient_aether, galosphere, lost_aether_content, mocreatures and naturalist |
+| Loot tables | 101 | Tables that name items or types missing on 1.20.1, replaced with valid tables with empty pools: mekanism_extras 60, decocraft 28, dragnlivestock 3, irons_spellbooks 2, and one each for aether_villages, ancient_aether, expatternprovider, galosphere, lost_aether_content, megacells, mocreatures and naturalist |
 | Advancements | 14 | Malformed advancements, replaced with one `minecraft:impossible` criterion: galosphere 9, dragnlivestock 3, aether_redux 1, industrialforegoing 1 |
 | Tags | 8 | Tags with a missing required entry, rewritten with `replace: true` and every entry `required: false`: five `forge` tags (`ungrown_ender_lilly_states`, `pink_items`, `generator_eur`, `frosty_gen_tag`, `rabbit_hutches`), `galosphere:experimental_blocks`, `bibliocraft:potion_shelf_potions` and `aether_villages:collections/ancient_aether_biomes` |
-| Recipes | 2 | The Create recipes `silver_ingot_compat_galosphere` for smelting and blasting, switched off with a `forge:false` condition |
+| Recipes | 6 | The Create recipes `silver_ingot_compat_galosphere` for smelting and blasting, and the four melter recipes `cyclic:compat/melter_blood_*` of Cyclic, which take the blood slime that Tinkers' Construct 3.12 no longer has, switched off with a `forge:false` condition |
 | Farming for Blockheads compat | 1 | The Thermal Cultivation seeds entry, made silent |
 | Biome modifier | 1 | The Mo' Creatures modifier `wyvern_nests`, which names the tag `mocreatures:worldgen/biome/is_wyvern_lair` that does not exist, set to `forge:none` |
 
@@ -79,10 +79,40 @@ present in data pack: mocreatures:worldgen/biome/is_wyvern_lair", 35 times from 
 nests still generate. Correcting the tag instead would add the feature a second time, which can stop
 the server with a feature order cycle. Biome modifiers load only at a server start.
 
+The two loot tables of ExtendedAE and MEGA Cells and the four recipes of Cyclic came in on 2026-11-04
+with those mods (see [mod set](../modpack/mod-set.md#additions-of-2026-11-04)) and only remove log
+noise too. The loot tables belong to the EMC interface blocks, which both mods register only next to
+ProjectE, and the pack has no ProjectE. They need the fixes pack after the new mods, see
+[load order](#load-order).
+
 Since the mod update of 2026-10-31 (see [mod set](../modpack/mod-set.md#update-of-2026-10-31)) three
 overridden mods run newer builds: DragNs Livestock Overhaul 3.9.4, Iron's Spellbooks 3.16.3 and
 Naturalist 2.0.9. An override with empty pools also empties a table that a new build has repaired. The
 next boot test should show whether their 6 loot tables and 3 advancements still need the overrides.
+
+### Load order
+
+An override replaces the file of a mod only while the fixes pack loads after the pack of that mod. A
+world keeps its pack order in `level.dat`, and the server appends the pack of every mod it sees for the
+first time to the end of the list, after the fixes pack (see
+[world reset](../server/world-reset.md#datapacks-and-pack-order)). On a test world on 2026-11-04 the
+packs of ExtendedAE, MEGA Cells and Cyclic landed after the fixes pack, and their two loot tables and
+four recipes still failed. These two commands moved the fixes pack to the end. The reload after them
+logged no "Couldn't parse element" and no Cyclic recipe error, and neither did the next boot.
+
+```text
+/datapack disable "file/skytekx3_fixes"
+/datapack enable "file/skytekx3_fixes" last
+```
+
+Each command reloads the data, and between the two the fixes pack is off, so run them with nobody
+online. On the Mac mini's world the fixes pack is pack 273 of 295 (read from its `level.dat` on
+2026-11-04). The 20 mod packs after it, from Elementary Staffs to GraveStone, belong to mods that no
+override touches, and its boot of 16:05 that day logged no "Couldn't parse element". The deploy of
+3.1.3 puts the new mods after it too, so that deploy has to run both commands once after the first
+start. The fixes pack and the Skylands packs share no file except `pack.mcmeta`, so the fixes pack may
+load after them. After a save, `tools/datapack_order.py world/level.dat` prints the file packs and
+every mod pack that loads after the fixes pack, which should be none.
 
 ### Gameplay overrides
 

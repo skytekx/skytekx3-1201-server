@@ -37,8 +37,8 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 242 files, 241 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 106 are
+is tracked: 244 files, 243 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 108 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -116,7 +116,7 @@ every mod pack that loads after the fixes pack, which should be none.
 
 ### Gameplay overrides
 
-Six groups of files in the pack change the game on purpose:
+Seven groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -196,6 +196,15 @@ Six groups of files in the pack change the game on purpose:
   `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
   (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
   Mac mini at 21:54 and load with its next `/reload` or start.
+- Two trim materials, `data/tconstruct/trim_material/steel.json` and
+  `data/tinkers_reforged/trim_material/graphite.json`, let the steel trim of Tinkers' Construct take the
+  steel of Mekanism and the graphite trim of Tinkers' Reforged the graphite of Extreme Reactors since
+  2026-11-04. AlmostUnified prefers those items, and the inventory converter swaps the steel and
+  graphite of the two Tinkers mods for them, so no steel or graphite that a player holds made a trim.
+  Each file is the one of the jar with only the ingredient changed, so trims made before keep their id.
+  A trim material is read at boot only, not on `/reload`. On a test server the two items then mapped to
+  `tconstruct:steel` and `tinkers_reforged:graphite`, see
+  [AlmostUnified](../modpack/almostunified.md#emi-hide-list).
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

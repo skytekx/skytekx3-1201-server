@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:minimal_netherite_horse_armor"
+  },
+  "result": {
+    "tag": "forge:molten_netherite",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 1250,
+  "time": 74
+}

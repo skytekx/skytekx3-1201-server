@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: AlmostUnified
-description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter and the ore overrides carry that into the world, and why yellorium stays apart.
+description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter, the ore overrides and an EMI hide list carry that into the world, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
 timestamp: 2026-11-04
 ---
@@ -15,7 +15,9 @@ become duplicates. It plays the role that UniDict played in SkyTekx 2.
 On 2026-06-27 10:34 the owner asked that recipes never conflict, as in the old SkyTekx, and on
 2026-06-29 13:59 they asked for one copper for everything (`~/.claude/history.jsonl`, session 5bd3e1de).
 On 2026-11-02 16:17 they asked for only one item of each material, one that builds everything (session
-c0e872d8), see [One item per material](#one-item-per-material).
+c0e872d8), see [One item per material](#one-item-per-material). On 2026-11-04 at 22:34 they asked again
+for one plate per material, with the variants that cannot be built out of sight, see
+[EMI hide list](#emi-hide-list).
 
 ## How the recipe layers fit together
 
@@ -23,6 +25,7 @@ c0e872d8), see [One item per material](#one-item-per-material).
 |---|---|---|
 | Unification | AlmostUnified 0.11.0 | One canonical item per material, duplicate recipes removed |
 | Inventories | KubeJS script `unify_inventory.js` | Swaps the other variants a player carries for the canonical item |
+| Recipe viewer | Tag `c:hidden_from_recipe_viewers` in `kubejs/data/` | Leaves the other variants out of the item list of EMI |
 | Grid conflicts | Polymorph 0.49.11 (0.49.10 before the update of 2026-10-31) | Lets the player choose when two crafting recipes match the same grid |
 | Explicit changes | KubeJS 2001.6.5 | Recipe and tag fixes by script, see [KubeJS](kubejs.md) |
 
@@ -33,27 +36,45 @@ EMI and JEI are both in the index as recipe viewers.
 The config lives in [config/almostunified/](../../config/almostunified) (commit cb58258). The file
 `unify.json` holds the rules.
 
-- The list `modPriorities` decides whose item wins: minecraft, kubejs, crafttweaker, thermal, mekanism,
-  immersiveengineering, create, enderio, industrialforegoing, railcraft, tconstruct and twilightforest
-  (lines 2 to 15). Twilight Forest went last in 50fb5f0f. All of them are installed except CraftTweaker,
-  whose entry does nothing.
+- The list `modPriorities` decides whose item wins: minecraft, kubejs, crafttweaker, thermal,
+  mekanism, immersiveengineering, create, enderio, industrialforegoing, railcraft, tconstruct,
+  twilightforest, createaddition, thermal_extra and bigreactors (lines 2 to 18). Twilight Forest went
+  last in 50fb5f0f. The last three joined on 2026-11-04: Create Crafts & Additions and Thermal Extra are
+  the only mods with copper, electrum and gold rods, and Extreme Reactors brings its graphite. All of
+  them are installed except CraftTweaker, whose entry does nothing.
 - The list `stoneStrata` covers ores in stone, andesite, deepslate, diorite, granite, nether and end.
 - The list `tags` names 12 tag patterns, all in the `forge` namespace: nuggets, dusts, gears, gems,
   ingots, raw materials, ores, plates, rods, wires, storage blocks and raw storage blocks, each as
-  `forge:<kind>/{material}`.
-- The list `materials` names 47 materials: aeternium, aluminum, amber, apatite, bitumen, brass, bronze,
-  charcoal, chrome, cinnabar, coal, coal coke, cobalt, constantan, copper, diamond, electrum,
-  elementium, emerald, enderium, fluorite, gold, graphite, invar, iridium, iron, lapis, lead, lumium,
-  mithril, netherite, nickel, obsidian, osmium, peridot, platinum, potassium nitrate, ruby, sapphire,
-  signalum, silver, steel, sulfur, tin, tungsten, uranium and zinc.
-- The list `ignoredItems` holds `bigreactors:.*` since 2026-11-02 (6a73d7be), so no Extreme Reactors
-  item takes part, see [Yellorium](#yellorium).
-- Recipes of the type `cucumber:shaped_tag` are left alone, and the setting `itemsHidingJeiRei` hides the
-  items that lost to the priority list in the recipe viewer.
+  `forge:<kind>/{material}`. Since 2026-11-04 it also names `forge:coal_coke`, `forge:silicon` and
+  `forge:slag`, tags without a kind that the patterns never reach. Thermal, Immersive Engineering and
+  Railcraft each make their own coal coke and slag, and AE2 and Ender IO their own silicon.
+- The list `materials` names 52 materials: aeternium, aluminum, amber, apatite, bitumen, brass,
+  bronze, charcoal, chrome, cinnabar, coal, coal coke, cobalt, constantan, copper, diamond, electrum,
+  elementium, emerald, ender pearl, enderium, fluorite, gold, graphite, invar, iridium, iron,
+  knightmetal, lapis, lead, lumium, mithril, netherite, nickel, obsidian, osmium, peridot, platinum,
+  potassium nitrate, quartz, ruby, saltpeter, sapphire, signalum, silver, steel, sulfur, tin, tungsten,
+  uranium, wood and zinc. Ender pearl, knightmetal, quartz, saltpeter and wood joined on 2026-11-04 for
+  the dusts of ender pearl, quartz, saltpeter and wood and the knightmetal ingots and blocks, which two
+  or three mods made each.
+- The map `priorityOverrides` gives the knightmetal ingots and blocks to Twilight Forest, which would
+  lose them to Tinkers' Construct, and silicon to AE2, whose recipes use it most.
+- The map `itemTagInheritance` lets a preferred item take five tags that only its variants had and
+  that recipes or the game ask for: `forge:plates` for every plate, `minecraft:coals` for coal coke,
+  `minecraft:beacon_payment_items` for the ingots, `minecraft:piglin_loved` for gold dust and plates and
+  `minecraft:trim_materials` for steel, see [EMI hide list](#emi-hide-list).
+- The list `ignoredTags` holds `forge:storage_blocks/quartz`, which also holds seven quartz blocks of
+  Botania that would otherwise turn into the quartz block of Minecraft.
+- The list `ignoredItems` holds `bigreactors:(?!graphite_).*` since 2026-11-04, every Extreme Reactors
+  item but its graphite ingot, dust and block. From 2026-11-02 (6a73d7be) it held all of them, see
+  [Yellorium](#yellorium).
+- Recipes of the type `cucumber:shaped_tag` are left alone, and the setting `itemsHidingJeiRei` hides
+  the items that lost to the priority list in JEI and REI. EMI has its own list, see
+  [EMI hide list](#emi-hide-list).
 - The file `duplicates.json` keeps the default rules: when two recipes only differ in cooking time,
   energy or experience, the higher value wins. The file `startup.json` sets `serverOnly` to false.
 
-The priority overrides, custom tags and ignored tags are empty.
+The custom tags and tag ownerships are empty. AlmostUnified reads `unify.json` again at every `/reload`,
+and a test server picked up a change of the inherited tags that way on 2026-11-04.
 
 ## What it does at boot
 
@@ -62,8 +83,9 @@ The last boot on the build machine logged "Recipe count: 40492" and "Recipe coun
 duplicate recipes. It also logs one WARN that lists tag and material pairs that no mod defines, such
 as `forge:gems/aluminum`. The pattern list creates them on purpose, and the WARN is harmless.
 
-On the Mac mini the boot of 2026-11-02 13:22 went from 41844 to 41338 recipes. Since Extreme Reactors
-is ignored, the boots and reloads from 17:20 on go from 41844 to 41344.
+On the Mac mini the boot of 2026-11-02 13:22 went from 41844 to 41338 recipes. Since Extreme Reactors is
+ignored, the boots and reloads from 17:20 on go from 41844 to 41344. A test server with the mods of
+3.1.3 and the config of 2026-11-04 went from 42986 to 42477 recipes.
 
 ## One item per material
 
@@ -99,6 +121,58 @@ The script went live at 17:16:53 without a restart. Its first swaps turned a pla
 Mekanism raw tin into Thermal raw tin. Between 17:22 and 17:28 the chests the owner opened gave up raw
 lead, nickel, silver, tin and zinc and the sulfur dust of Railcraft, the raw silver of Immersive
 Engineering and the raw tin and lead of Mekanism.
+
+### EMI hide list
+
+At 22:12 on 2026-11-04 the owner asked why two iron ingots on top of each other offer 2 or 4 iron rods,
+at 22:27 why they could not make zinc sheets, and at 22:34 for one plate per material, with the other
+variants out of sight. A dump of a test server with the mods of 3.1.3 by
+[tools/unify_audit_dump.js](../../tools/unify_audit_dump.js), read by
+[tools/unify_audit.py](../../tools/unify_audit.py), found this in its 38,071 recipes:
+
+- The rods were the only crafting grid with one item in two counts. Immersive Engineering makes 4 rods
+  and Thermal Extra 2, and AlmostUnified turns both into the rod of Immersive Engineering. Since then
+  `recipe_fixes.js` removes the Thermal Extra recipe, see [KubeJS](kubejs.md#recipe-fixes).
+- The zinc sheet of Create Crafts & Additions is a variant of the zinc plate of Railcraft. Every
+  recipe that made a sheet makes the plate, so the sheet has no recipe left, and every recipe that takes
+  a sheet takes the plate too, except the plate casts of Tinkers' Construct and a banner blueprint of
+  Immersive Engineering. They ask for `forge:plates`, which only the sheet had.
+- Five recipes gave a variant, because they pick their result from a tag while they run: the smelting
+  and blasting of the copper and steel weapons of Spartan Weaponry and the steel of the Alkahestry Tome
+  of Reliquary. `recipe_fixes.js` makes them again with the preferred item.
+- The dusts of ender pearl, quartz, saltpeter and wood, knightmetal, the copper, electrum and gold
+  rods, coal coke, silicon, slag and graphite still came from two or three mods each, see
+  [Configuration](#configuration).
+- The steel trim of Tinkers' Construct took only Tinkers' steel and the graphite trim of Tinkers'
+  Reforged only its own graphite, both variants. The fixes pack names the preferred items, see
+  [Boot fixes](../content/boot-fixes.md#gameplay-overrides). The knightmetal trim of Tinkers' Construct
+  still takes its own ingot, but Twilight Forest has a knightmetal trim of its own.
+
+After the changes the check found 282 variants, no crafting grid with one item in two counts, no result
+that is a variant and one ingredient without its preferred item. That is the melting recipe of Tinkers'
+Construct for copper ores of one ore rate, which takes the copper ores of Ad Astra and Basic Nether Ores
+and not that of Minecraft, which has a melting recipe for dense ores. Of the 7,116 recipes in the first
+dump that do not show their ingredients, 6,871 have a file in a mod or datapack, and the other 245 are
+mostly AlmostUnified's own trackers, Ars Nouveau enchantments and smithing recipes. Two of the files
+name a variant, the cutting fluids of Blood Magic with its own saltpeter. On the test server both take
+all three saltpeters, because AlmostUnified swaps the item for its tag while it loads.
+
+EMI does not use the hiding of AlmostUnified, which works in JEI and REI only. It leaves the items of
+the tag `c:hidden_from_recipe_viewers` out of its item list, and tags come from the server, so the list
+reaches every client without a new pack. The file
+[kubejs/data/c/tags/items/hidden_from_recipe_viewers.json](../../kubejs/data/c/tags/items/hidden_from_recipe_viewers.json)
+names the 282 variants, each one optional, so the mod set of 3.1.2 on the Mac mini loads it too. Other
+mods put 15 items of their own into the same tag. The audit writes the file, nobody edits it by hand.
+After a change to the mods or to `unify.json`, run the dump on a test server and then
+`python3 -I tools/unify_audit.py <dump> --server <test server> --hidden kubejs/data/c/tags/items/hidden_from_recipe_viewers.json`.
+
+The check also lists 1,206 pairs of crafting recipes that share a grid and give two different items,
+where Polymorph lets the player choose. In 29 of them the two items have the same name: the emerald
+tools and armor of Cyclic and Medieval Embroidery, the steel armor of Mekanism Tools and Railcraft, the
+gold bars of Cyclic, Quark and Tinkers' Construct, the gold chains and lanterns of BiblioCraft and
+Cyclic, the crop crates of Farmer's Delight and Quark and a few blocks. Each is an item of its own with
+its own stats or looks, so they stay until the owner decides, see
+[Open items](../open-items.md#owner-decisions).
 
 ### One ore per metal
 
@@ -136,6 +210,9 @@ Foregoing recipe take yellorium, and none of them turns it into uranium.
 Extreme Reactors keeps working. Each of its six recipes that ask for the uranium tag has a twin that
 asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/yellorium` as well.
 
+Since 2026-11-04 the pattern is `bigreactors:(?!graphite_).*`. The graphite ingot, dust and block of
+Extreme Reactors take part again and win over those of Tinkers' Reforged, and yellorium stays out.
+
 ### Limits
 
 - The yellow dye recipes took only Mekanism's sulfur dust, and the converter turns that dust into
@@ -148,9 +225,14 @@ asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/y
   probe on the test server on 2026-11-04 found no item `magistuarmory:bronze_ingot`. Its 27 recipe files
   that need bronze take `#forge:ingots/bronze`, which holds the bronze ingots of Thermal, Mekanism and
   Railcraft, so they already take the preferred ingot. Nothing needs to go into the tag.
-- Railcraft's saltpeter and Thermal's niter sit in different tags and stay two items.
-- Some rod tags, `forge:rods/*`, hold only items of Create Crafts & Additions and Thermal Extra.
-  Neither mod is in `modPriorities`, so those rods stay apart.
+- Since 2026-11-04 the saltpeters of Railcraft and Blood Magic turn into that of Immersive
+  Engineering. Thermal's niter sits in its own tag, `forge:dusts/niter`, and stays apart.
+- The copper, electrum and gold rods came only from Create Crafts & Additions and Thermal Extra, and
+  neither mod was in `modPriorities`, so those rods stayed apart until both joined the list on
+  2026-11-04. The rods of Create Crafts & Additions win.
+- Tags that only variants carry and that no recipe asks for stay as they are, such as seven `c:` tags
+  of Ad Astra like `c:steel_ingots`, the ore rate and stone tags of some ores and
+  `apotheosis:boon_drops`. The audit lists them in its fourth check.
 
 ## Sides
 
@@ -160,14 +242,14 @@ and the client reads its own copy of `config/almostunified/`. The owner's client
 of `unify.json` was behind since 50fb5f0f and got the file of 6a73d7be on 2026-11-02 at 17:38.
 AlmostUnified reads that copy again whenever the client receives the tags of the server, at each join
 and after a `/reload`. Other clients get the file with the next pack. A client without the mod was not
-tested.
+tested. The EMI hide list is a tag of the server, so it needs no AlmostUnified on the client.
 
 ## Open points
 
 - The planned priority list in `docs/RECIPE_PORT.md:17` (minecraft, thermal, mekanism, create,
   immersiveengineering) differs from the live one, which puts Immersive Engineering before Create and
   adds seven more mods. The live file is the one that counts.
-- The [limits](#limits) above that are still open and the 7,000 unread machine recipes are also on
-  [Open items](../open-items.md).
+- The [limits](#limits) above that are still open, the 245 recipes without a file to read and the 29
+  pairs of same-named items are also on [Open items](../open-items.md).
 
 Related: [KubeJS](kubejs.md), [mod set](mod-set.md), [boot fixes](../content/boot-fixes.md).

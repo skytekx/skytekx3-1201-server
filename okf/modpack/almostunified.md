@@ -143,8 +143,11 @@ asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/y
   `kubejs/server_scripts/tag_fixes.js` adds `#forge:dusts/sulfur` to that tag, and a scan on the test
   server found 0 recipes that take one sulfur dust and not the other, see
   [KubeJS](kubejs.md#tag-fixes).
-- Epic Knights' bronze ingot `magistuarmory:bronze_ingot` is in no tag. It counts in no recipe of
-  another mod, and the converter leaves it alone.
+- Epic Knights 10.15 registers its bronze, tin and silver ingots only on Fabric. The class `ModItems`
+  checks `Platform.isFabric()` before it registers `bronze_ingot`, `tin_ingot` and `silver_ingot`, and a
+  probe on the test server on 2026-11-04 found no item `magistuarmory:bronze_ingot`. Its 27 recipe files
+  that need bronze take `#forge:ingots/bronze`, which holds the bronze ingots of Thermal, Mekanism and
+  Railcraft, so they already take the preferred ingot. Nothing needs to go into the tag.
 - Railcraft's saltpeter and Thermal's niter sit in different tags and stay two items.
 - Some rod tags, `forge:rods/*`, hold only items of Create Crafts & Additions and Thermal Extra.
   Neither mod is in `modPriorities`, so those rods stay apart.

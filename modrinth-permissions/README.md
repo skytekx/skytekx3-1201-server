@@ -5,14 +5,14 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 46 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 47 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
 - **40** mods are fine to bundle (open license or author allows modpacks).
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
-- **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
+- **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
 - A jar that `PACK_RULES` in `tools/patch_mods.py` patches for the pack keeps its upstream name in `local-mods/`, but ships, and has its file here, under the name with the suffix of its rule. For Simply Jetpacks 2 that is `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. Both checks use that shipped name.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
@@ -29,6 +29,7 @@ These cannot legally be bundled in a public modpack as-is:
 - **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
 - **🟨⬛!!Fireflies!!🟨⬛** (`fireflies-1.0.0-forge-1.20.1.jar`) — All Rights Reserved. The mod has only one file (version 1.0.0 for Forge 1.20.1, released 2024-10-15). It is exclusively on CurseForge and is not available on Modrinth, so CDN-linking is not an option. The CurseForge modpack permission flag could not be confirmed via web scraping (JavaScript-rendered); if supermj767 has enabled "Allow modpack use" on the CurseForge project settings, the reason would upgrade to "Special permission" and redistribution would be OK — verify manually on the CurseForge mod page or by contacting the author.
 - **Hexxit Additions** (`hexxit_additions-1.0.2-forge-1.20.1.jar`) — All Rights Reserved. The CurseForge "Allow 3rd party / modpack distribution" flag is set to disabled by the author for all file versions. This mod does not appear on Modrinth under any matching slug. Contact starboiluke directly (CurseForge profile) to request explicit modpack inclusion permission before distributing this jar.
+- Mob Grinding Utils (`mob_grinding_utils-1.20.1-1.1.0.jar`) is All Rights Reserved by vadis365 and Flanks255. The GitHub repository vadis365/Mob-Grinding-Utils has no LICENSE file and no releases, and the mod is only on CurseForge, so CDN-linking is not an option. Ask the authors for modpack permission before a public build.
 
 ## Manual check (resolve before publishing)
 
@@ -57,6 +58,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `deadlyworld-1.20.1-1.2.3.jar` | Deadly World | All Rights Reserved | Unknown | **NO** | - |
 | `fireflies-1.0.0-forge-1.20.1.jar` | 🟨⬛!!Fireflies!!🟨⬛ | All Rights Reserved | No permission | **NO** | - |
 | `hexxit_additions-1.0.2-forge-1.20.1.jar` | Hexxit Additions | All Rights Reserved | No permission | **NO** | - |
+| `mob_grinding_utils-1.20.1-1.1.0.jar` | Mob Grinding Utils | All Rights Reserved | No permission | **NO** | - |
 | `alltheleaks-1.1.1+1.20.1-forge.jar` | All The Leaks | MIT | Licensed | yes | - |
 | `at_mod-0.0.2-1.20.1-skytekx.1.jar` | Alternative Twilight (Remastered) (1.20.1 backport by SkyTekx) | GPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `backpack-1.20.1-2.0.1.1.jar` | Backpack (1.20.1 port by SkyTekx) | LGPL-2.1 | Licensed | yes | - |

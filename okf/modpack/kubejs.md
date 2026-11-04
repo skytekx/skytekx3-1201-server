@@ -248,9 +248,11 @@ game. The log audit of 2026-11-04 traced every one of them:
 | `ancient_aether:ancient_rune`, `lost_aether_content:gravitite_shield` and three `aether_treasure_reforging:*_upgrade_smithing_template` | The built in `gravitite_ingot` pack of Aether Redux holds recipes for these three mods, which are not installed | Harmless, nothing to fix |
 | `pamhc2foodcore:caramelcupcakeitem_x4`, `melonpieitem` and `honeymuffinitem` | Pam's HarvestCraft 2 Food Core 1.0.5 ships recipes for items it does not register | Harmless, nothing to fix |
 | `galosphere:block_comparator` | Galosphere 1.5.2 ships the recipe but does not register the block | Harmless, nothing to fix |
-| `bibliocraft:enchanted_book_cloning_in_printing_table` | The XP cost of BiblioCraft 1.3.1 uses a codec that refers to itself and can never decode ("Failed to decode from JSON") | Open. An override without the cost would make the cloning free, a real fix needs a patched jar |
+| `bibliocraft:enchanted_book_cloning_in_printing_table` | The XP cost of BiblioCraft 1.3.1 uses a codec that refers to itself and can never decode ("Failed to decode from JSON") | Fixed by a class patch in `tools/patch_mods.py` since 2026-11-04, see [Boot fixes](../content/boot-fixes.md#bibliocraft-cloning-cost) |
 
-With these fixes a boot logs "with 10 failed recipes", never 11.
+With these fixes a boot logs "with 9 failed recipes", never 10. The test boots of 2026-11-04 at 13:15
+and 15:18 logged "Added 2 recipes, removed 0 recipes, modified 9 recipes, with 9 failed recipes", and
+so did the live boot of 16:06 that day.
 
 Three more broken files of other mods do not count as failed recipes, and `kubejs/data/` overrides them
 too:

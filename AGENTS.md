@@ -26,15 +26,17 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   `ansible/.vault_pass.txt`), `mods/`, `client-only-mods/`, `logs/`, `modernfix/` and `.arclight/`. The
   folder `plugins/` is not ignored, and it holds player data in `plugins/Essentials/userdata/`, so read
   `git status` before every commit. Real secrets live in the ansible vault.
-- Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, nine of them patched in
-  place, the bundled jars from `local-mods/` (one of them patched too), BrassAmber BattleTowers and
+- Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, eleven of them patched
+  in place, the bundled jars from `local-mods/` (three of them patched too, and the pack ships Simply
+  Jetpacks 2 patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`), BrassAmber BattleTowers and
   Falling Meteors Reimagined, which are in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change
   into `mods/` by hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
   [Mod set](okf/modpack/mod-set.md).
 - Unify materials through `config/almostunified/` and tags, not by editing recipes mod by mod.
 - Test every change against a real boot. A clean boot reaches `Done` with 0 FATAL lines, no crash
-  report and no watchdog, and keeps the baseline of 3 accepted ERROR lines: the Simply Jetpacks guide
-  book, the AllTheLeaks reflection into Citadel and the Essentials warning about the hybrid server. See
+  report and no watchdog, and keeps the baseline of 2 accepted ERROR lines: the AllTheLeaks reflection
+  into Citadel and the Essentials warning about the hybrid server. A test copy without EssentialsX shows
+  the AllTheLeaks line alone. See
   [Logs and crashes](okf/server/logs-and-crashes.md#boot-error-baseline).
 - Stop the server over RCON and wait until the java process has exited. Never stop it with a signal.
 - Change server configs only while the java process is gone, because Forge writes them back from memory
@@ -54,7 +56,7 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
 | Recipe and tag tweaks | Scripts `kubejs/server_scripts/recipe_fixes.js`, `tag_fixes.js` and `gameplay.js`. No loot code exists yet |
 | Combat feel (no attack cooldown) | Script `kubejs/server_scripts/combat_1_7.js` |
 | Broken or unwanted data of other mods, such as duplicate ores | The override datapack `world/datapacks/skytekx3_fixes/`, which has no other source. Git ignores `world/`, so add its files with `git add -f` |
-| Fixes inside mod jars | Script `tools/patch_mods.py` |
+| Fixes inside mod jars | Script `tools/patch_mods.py`. Its `PACK_RULES` reach the `.mrpack` too, see [Boot fixes](okf/content/boot-fixes.md#jar-patches) |
 | Skylands travel | Functions in `skylands-datapack/data/skytekx3/functions/travel/` |
 | Skylands terrain and structures | Sources `skylands-datapack/` (shared, vanilla safe) and `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |
 | Deploy on Linux | Unit `systemd/skytekx3.service` and `ServerLinux.sh`, see [Deploy on Debian](okf/server/deploy.md) |

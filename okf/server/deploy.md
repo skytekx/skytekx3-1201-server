@@ -3,7 +3,7 @@ type: Runbook
 title: Deploy on Debian (systemd)
 description: The Linux deployment path for a Debian or Ubuntu host with the systemd unit, ServerLinux.sh, mcrcon, ports, firewall and DNS, plus the files that git does not hold.
 tags: [server, deploy, systemd, rcon, linux, debian]
-timestamp: 2026-11-01
+timestamp: 2026-11-04
 ---
 
 # Deploy on Debian (systemd)
@@ -45,9 +45,9 @@ not 21 is on [Arclight runtime](arclight.md#java-17-only).
 
 A clone alone does not run the server. Copy these from the reference install on the build machine.
 
-- The mod folder `mods/`. It holds the 235 jars the server really runs, including ten jars patched in
-  place and BrassAmber BattleTowers, which exists nowhere else in the repo (see
-  [Arclight runtime](arclight.md#mods-and-plugins)). Copy it as it is.
+- The mod folder `mods/`. It holds the 252 jars the server really runs (counted 2026-11-04), including
+  fourteen jars patched in place and BrassAmber BattleTowers, which exists nowhere else in the repo
+  (see [Arclight runtime](arclight.md#mods-and-plugins)). Copy it as it is.
 - The plugin jar `plugins/EssentialsX-2.22.0.jar` and the folder `plugins/Essentials/`. Its user data
   (`userdata/`, `usermap.bin`, `uuids.bin`) only belongs on the new host if the world moves along. See
   [Plugins](../modpack/plugins.md).

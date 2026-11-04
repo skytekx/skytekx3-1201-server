@@ -3,7 +3,7 @@ type: Runtime
 title: Arclight runtime
 description: The hardened Arclight 1.20.1 jar built from patches/, the arclight.jar symlink, the Java 17 rule, how mods and plugins load and why the server must stop over RCON.
 tags: [server, arclight, java, forge, bukkit]
-timestamp: 2026-11-03
+timestamp: 2026-11-04
 ---
 
 # Arclight runtime
@@ -132,7 +132,9 @@ test harness's synchronous 145-chunk `forceload` tripped the watchdog after `Don
 the same watchdog on plain Forge on this host; details in the [TF backport](../modpack/twilightforest-backport.md#in-the-pack-2026-11-01)).
 One known mod conflict, present before as well: Arclight's `arclight$mutePotion` redirect
 wins over Apothic Attributes' `apoth_sunderingHasEffect`, so Apothic's Sundering bonus damage does not
-apply on Arclight (it does on plain Forge).
+apply on Arclight (it does on plain Forge). Since skytekx-compat 2.1.6 a server mixin adds that bonus
+itself whenever the Resistance step did not run, see
+[SkyTekx Compat](../content/compat-mod.md#sundering-on-arclight).
 
 ### Rebuilding it
 Do not rebuild Arclight from source for this (that is what broke `safeiter`). Run:
@@ -185,7 +187,7 @@ matches the Mac mini's jar for jar:
   `cataclysm_spellbooks-1.2.9-1.20.1.jar` were in that position too. Since 507a8f2 they are in
   `local-mods/`.
 
-Ten of these jars are patched in place by `tools/patch_mods.py`, so they differ from the published
+Fourteen of these jars are patched in place by `tools/patch_mods.py`, so they differ from the published
 files. Copy this folder as it is to a new host. Details are on [Mod set](../modpack/mod-set.md) and
 [Boot fixes](../content/boot-fixes.md).
 

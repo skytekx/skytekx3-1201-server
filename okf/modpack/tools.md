@@ -23,6 +23,7 @@ region scans that checked the Halloween world on the Mac mini the same evening. 
 | 4 | Build, `build_mrpack.py` | 170 | Zips the `.mrpack` from git HEAD with the committed index, patches and renames the `PACK_RULES` jars and adds the server list of the clients | A git checkout | The folder `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
 | 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
+| After a mod joins | Order, `datapack_order.py` | 78 | Prints the datapack order of a saved `level.dat` and the mod packs that load after the fixes pack | Python 3 | Nothing |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
 | After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 160 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |

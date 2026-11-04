@@ -5,12 +5,12 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 48 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **41** mods are fine to bundle (open license or author allows modpacks).
+- **42** mods are fine to bundle (open license or author allows modpacks).
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
@@ -90,6 +90,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar` | Simply Jetpacks 2 (guide book patched by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
 | `skytekx-compat-2.1.3.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
+| `skytekx-molten-1.0.0.jar` | SkyTekx Molten | MIT | Licensed | yes | - |
 | `spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` | Spiced Twilight (1.20.1 backport by SkyTekx) | LGPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `traverse-forge-7.0.12.jar` | Traverse Reforged | LGPL-3.0-only | Licensed | yes | - |
 | `trumpet_skeleton-1.2-forge-1.20.1.jar` | Trumpet Skeleton: Reforged | MIT | Licensed | yes | - |

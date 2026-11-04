@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:griffith_inspired_horse_armor"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 400
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 1450,
+  "time": 166
+}

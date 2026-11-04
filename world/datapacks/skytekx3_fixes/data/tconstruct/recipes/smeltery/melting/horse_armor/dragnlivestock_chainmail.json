@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:chainmail_horse_armor"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 440
+  },
+  "temperature": 800,
+  "time": 133
+}

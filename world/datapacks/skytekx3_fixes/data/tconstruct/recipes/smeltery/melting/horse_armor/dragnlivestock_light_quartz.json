@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:minimal_quartz_horse_armor"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 500
+  },
+  "temperature": 637,
+  "time": 123
+}

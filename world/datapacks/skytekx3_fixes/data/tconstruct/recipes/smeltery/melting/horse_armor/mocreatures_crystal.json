@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mocreatures"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mocreatures:horsearmorcrystal"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 400
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 300
+    }
+  ],
+  "temperature": 1450,
+  "time": 166
+}

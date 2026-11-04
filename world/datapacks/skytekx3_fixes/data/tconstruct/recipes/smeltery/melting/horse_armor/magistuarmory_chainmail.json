@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "magistuarmory:chainmail_horse_armor"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 440
+  },
+  "temperature": 800,
+  "time": 133
+}

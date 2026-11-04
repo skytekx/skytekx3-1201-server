@@ -99,7 +99,7 @@ OVERRIDES = [
     ("world/datapacks/skytekx3_fixes", "world/datapacks/skytekx3_fixes"),
     ("local-mods", "mods"),
     # What bundled jars must travel with: the sources of LGPL ports and the license text of MIT jars
-    # that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux Networks).
+    # that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux Networks, SkyTekx Molten).
     ("licenses", "licenses"),
 ]
 # The Chunky task records are tracked by mistake and only hold the build machine's pregen state.

@@ -792,6 +792,9 @@ logs stay on the Mac and are not in the repo.
   Enough Resources cannot read that loot on a dedicated server, so Advanced Loot Info 2.5.0 with its
   library Advanced Core Info 1.5.0 took its place for 3.1.3 after a boot of a test server, see
   [Mod set](modpack/mod-set.md#advanced-loot-info).
+- At 21:09 the owner reported that a dropped item spins and vanishes for half of every turn. Nostalgic
+  Tweaks draws dropped items as flat sprites with only a front face by default, and the pack ships its
+  config with that off from 3.1.3 on, see [Client](modpack/client.md#dropped-items).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

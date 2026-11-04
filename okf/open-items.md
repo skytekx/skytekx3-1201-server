@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Open items
@@ -51,11 +51,6 @@ evidence and the page with the details. The rulings behind the first section are
 - No dashes in commit messages (2026-06-29 22:14). Spaced hyphens used as dashes remain in the bodies of
   5ae7f82 and 573cc25. A fix means another history rewrite and force push.
 
-- Our own mod for molten metals (2026-11-04 14:33). The owner asked for a fluid for every material
-  that makes an ingot and has none in Tinkers' Construct, such as palladium and yellorium. The mod
-  SkyTekx Molten is being built. Clients need its fluids, so it goes live together with a pack update.
-  The melting recipe of the Galosphere sterling horse armor waits for it, see
-  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 
 ## Owner decisions
 
@@ -212,23 +207,34 @@ evidence and the page with the details. The rulings behind the first section are
 - Most tools and armor of other mods do not melt in the smeltery, because Tinkers' Construct ships
   melting recipes only for vanilla items and its own compat metals. Since 2026-11-04 the fixes pack
   melts horse armor and gloves, see [Boot fixes](content/boot-fixes.md#gameplay-overrides). A
-  generator over all crafting and smithing recipes would cover the rest, with each piece giving back
-  what its cheapest recipe takes, and it would also check the recipes of Tinkers for more dupes like
-  the one of the vanilla horse armor.
+  generator over all crafting and smithing recipes, built on 2026-11-04 with about 9,500 recipes and 16
+  overrides of Tinkers dupes, did not go live with 3.1.3. Its recheck found three dupes in its output:
+  the Thermal ender pearl dust melted into nine times its share, two Railways tracks into 32 and 6
+  times theirs, and the salmon and tropical fish buckets into totemic gold, which a water bucket
+  catches for free. They are fixed before the recipes go live. Server side recipes need no new pack.
+- With SkyTekx Molten the Obsidian Ingot of Forbidden & Arcanus melts without its iron. Since
+  2026-11-05 the fixes pack leaves the ingot and the Processed Obsidian Block to the recipes of Molten,
+  which give the molten obsidian but not the 40 mB of iron per ingot that the overrides gave as a
+  byproduct, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 
 ## Not verified
 
+- Pack 3.1.3 in a client. No client loaded it before it went to the players on 2026-11-05. A static
+  check of its 268 client jars found every mandatory dependency present in a matching version, and the
+  server runs the same mods, but no fresh install, no update of a 3.1.2 instance and no join was
+  tested, see [publish](modpack/publish.md#version-history).
+
 - The nine mods of 2026-11-04 in play. A test server ran their blocks for half a minute, but nobody
   has opened their screens, built an ME network with the AE addons or used a Cyclic machine in a
-  client. The deploy of 3.1.3 has to move the fixes pack to the end of the pack order once after the
-  first start, see [Boot fixes](content/boot-fixes.md#load-order). See
+  client. They run on the server since the deploy of 3.1.3 on 2026-11-05, which moved the fixes pack to
+  the end of the pack order, see [Boot fixes](content/boot-fixes.md#pack-order). See
   [Mod set](modpack/mod-set.md#additions-of-2026-11-04).
-- Flux Networks in play. A test server ran its devices, but nobody has opened their screens, made Flux
-  Dust or sent energy from a plug to a point in a client, see
+- Flux Networks in play. It runs on the server since 2026-11-05. A test server ran its devices, but
+  nobody has opened their screens, made Flux Dust or sent energy from a plug to a point in a client, see
   [Mod set](modpack/mod-set.md#flux-networks).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
-  opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
-  chest in EMI on the server and note how much longer the join takes with the loot that the server
+  opened its tabs yet. It runs on the server and in pack 3.1.3 since 2026-11-05. The first client
+  should open the loot tabs of a block, a mob and a chest in EMI on the server and note how much longer the join takes with the loot that the server
   sends, see [Mod set](modpack/mod-set.md#advanced-loot-info).
 - The essence recipes of Mystical Agriculture in EMI. On 2026-11-04 EMI showed the three Certus Quartz
   Essence of the Certus Quartz Dust recipe in the middle row, while the recipe matched only in the top

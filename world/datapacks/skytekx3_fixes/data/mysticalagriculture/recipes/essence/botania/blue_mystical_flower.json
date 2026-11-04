@@ -1,0 +1,26 @@
+{
+  "type": "cucumber:shaped_no_mirror",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    },
+    {
+      "type": "mysticalagriculture:crop_enabled",
+      "crop": "mysticalagriculture:mystical_flower"
+    }
+  ],
+  "pattern": [
+    "EE ",
+    "  E"
+  ],
+  "key": {
+    "E": {
+      "item": "mysticalagriculture:mystical_flower_essence"
+    }
+  },
+  "result": {
+    "item": "botania:blue_mystical_flower",
+    "count": 6
+  }
+}

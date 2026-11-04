@@ -763,6 +763,10 @@ logs stay on the Mac and are not in the repo.
   failed recipes, the 11 mixins of skytekx-compat and the TiCEX mixin, and the player who was online
   before was back at 16:06:41. The replaced files are in `~/skytekx3-backups/before-fixes-2026-11-04/`
   on the Mac mini.
+- At 16:43 the owner asked why Obsidian With Iron of Forbidden & Arcanus does not melt, and at 17:35
+  reported that it still did not. Three melting recipes for it, the Obsidian Ingot and the Processed
+  Obsidian Block went live at 17:39:10 through `/reload`, and KubeJS counted 37,023 recipes, see
+  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

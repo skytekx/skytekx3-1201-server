@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-11-03
+timestamp: 2026-11-04
 ---
 
 # Change log
@@ -665,6 +665,63 @@ logs stay on the Mac and are not in the repo.
   over IPv4 and IPv6, alternating with the normal answers (403 for a fake token, 204 for an unknown
   server id). Minecraft 1.20.1 logs such a failure as an invalid session and not as "servers down".
   Retrying is the only fix on the player's side.
+
+## 2026-11-04: Log audit, Mojang login retries and the land tower's obelisk
+
+- At 08:20 the owner asked why players get kicked so often. From 2026-10-31 to 2026-11-03 the server
+  kicked nobody on its own. Most disconnects were restarts, admin kicks and the Elenai Dodge 2 client
+  crash. Real connection drops hit only the players who join through the Cloudflare tunnel, and the
+  connector log on the Mac mini shows no error at those minutes.
+- At 08:33 the owner asked whether the Mojang check could be cached, so that an outage no longer keeps
+  players out, and asked to read all server logs of the last days and fix the errors and bugs.
+- A cache was turned down. Every player on the tunnel arrives from `[::1]`, so a cached name would let
+  anyone with a cracked client join under it while Mojang is down. skytekx-compat 2.1.5 (source
+  c7b89ac and 88b3759) asks Mojang again instead, for up to 12 s on the server and up to 6 s in the
+  client, see [SkyTekx Compat](content/compat-mod.md#mojang-session-retries).
+- The log audit read 45 server logs and 2 crash reports from 2026-10-31 to 2026-11-03, grouped their
+  lines into 3,071 kinds and checked each kind in six areas. It found 17 bugs, 12 owner decisions, 8
+  problems that were already fixed and 54 kinds of harmless noise. Each fix got its own branch and
+  commit, and one review approved all 17 commits.
+- Fixed and live since the restart at 10:32, with nobody online:
+  - Apotheosis boss Strays were added at 0 0 0 and never reached their spider, so players met a spider
+    that did not move. `kubejs/server_scripts/apotheosis_riders.js` puts each rider on its mount
+    (abf73f02).
+  - On 3 boots KubeJS dropped one Tinkers embellishment recipe, because two worker threads filled
+    a HashMap of Tinkers' Construct at once. Those recipes are now built on the main thread (b8f42822).
+  - The Forbidden Arcanus chest boats, the Soul Shards recipe of the Ender IO Enchanter, a blank
+    Cataclysm stonecutter entry and the barrel loot of Dungeons & Villages, all fixed by overrides in
+    `kubejs/data/` (99f5c074 to a7806410).
+  - Four misspelled structure pools of When Dungeons Arise and Repurposed Structures, so Mechanical
+    Nest towers got gray carpet where a library belongs. They apply to new structure starts only
+    (4ae64eb8 to 62233f03). The Mo' Creatures wyvern modifier stopped its boot warning (db076afa).
+  - TiCEX made Tinkers log a warning for every armor slot on every melee hit, 424 to 3,512 lines a day.
+    `config/tconstruct-common.toml` sets `logInvalidToolStack = "IGNORED"` (dcd411ad).
+  - `defaultconfigs/forge-server.toml` gives new worlds `removeErroringEntities = true` (d340e0c9), and
+    git now tracks the meteor rates of the live server (730ba296).
+  - skytekx-compat 2.1.5 replaced 2.1.4, and Elenai Dodge 2 left the server together with its config.
+- The boot at 10:33 counted 11 failed recipes instead of 10. The extra one was
+  `reliquary:alkahestry/crafting/netherrack`, the same kind of thread race in an ArrayList of Reliquary.
+  4406e02a builds the alkahestry recipes on the main thread too, and the boot at 10:37 counted 10. The
+  ten left are recipes for mods that are not installed and the BiblioCraft cloning recipe.
+- At 10:42 the land Battle Tower at 392 408 got its obelisk back. `removeErroringEntities` had removed
+  it on 2026-10-31 at 22:01:56 after a BattleTowers error, and its floor chests stayed locked since.
+  `/summon` refuses this entity, so the monolith's flag `Obelisk` went to false, and the monolith
+  placed a new obelisk at Y 68 on its next tick, invulnerable and with `GenerationState` 4 (finished).
+  In this version of the mod the generation steps change no blocks. The golem was never called (the
+  monolith holds 0 keys).
+- Already fixed before, as the logs confirm: the BattleTowers crash of 2026-10-31 21:12 (misc
+  activation range 0 since 00a97cfd), the Asgard Shield Reloaded error (8286e93) and the flood of
+  async entity lookups by Infernal Mobs (skytekx-compat 2.1.3).
+- The out of memory crash of 2026-10-31 23:17 came from a Skylands pregen at radius 3000 with three
+  players online. Run big pregens only with nobody online, see [Open items](open-items.md).
+- The disk of the Mac mini was 98 percent full (4.7 GB free) at 10:31. The world backups take 3.3 GB of
+  it.
+- Two events of 2026-11-01 were missing from this log. At 20:21 the owner reported that meteors had
+  destroyed everything and asked for the backup. At 20:24 and 20:25 `config/meteors-common.toml` got
+  rarer, smaller and weaker meteors (`meteorFallDeterrence` 25 to 5000 after the owner's "noch seltener",
+  `cometFallChance` 20 to 5, `maximumMeteorSize` 3 to 2, explosion multiplier 5.0 to 1.0), and the boot
+  of 20:25 ran the world of the 05:00 backup. At 20:40 the owner asked for the backup again with the
+  player data of two players swapped, and the boot of 20:42 ran that world.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

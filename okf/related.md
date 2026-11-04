@@ -3,7 +3,7 @@ type: Reference
 title: Related repos and services
 description: The sibling repos, the skytekx GitHub organisation, the skytekx.com website and the Modrinth project around SkyTekx 3, with their state on 2026-10-31.
 tags: [related, github, website, modrinth, repos]
-timestamp: 2026-10-31
+timestamp: 2026-11-04
 ---
 
 # Related repos and services
@@ -84,9 +84,9 @@ fork has a release or a tag.
 
 ## The compat mod source
 
-The repo `~/git/skytekx-worldgen` builds `skytekx-compat-2.0.0.jar`, the pack's own Forge mod. It has no
-git remote and is not in the GitHub organisation, so the only copy of the source is on the build
-machine. Its history and build steps are on [SkyTekx Compat](content/compat-mod.md).
+The repo `~/git/skytekx-worldgen` builds the jars `skytekx-compat-<version>.jar` of the pack's own
+Forge mod. It has no git remote and is not in the GitHub organisation, so the only copy of the source
+is on the build machine. Its history and build steps are on [SkyTekx Compat](content/compat-mod.md).
 
 ## The website skytekx.com
 

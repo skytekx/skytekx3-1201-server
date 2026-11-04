@@ -25,7 +25,7 @@ The fixes come in five kinds:
 | Override datapack `skytekx3_fixes` | Folder `world/datapacks/skytekx3_fixes/`, tracked in git | Yes, as long as the paths stay the same |
 | Jar patches | Script `tools/patch_mods.py`, applied to jars in `mods/`, and by `tools/build_mrpack.py` to the one bundled jar that the pack ships patched | No, run the script again after any new download |
 | Config fixes | Files `config/apotheosis/enchantments.cfg` and `config/collective.json5` | Yes |
-| Bird's Nests crash guard | The [compat mod](compat-mod.md), `local-mods/skytekx-compat-2.0.0.jar` | Yes |
+| Bird's Nests crash guard | The [compat mod](compat-mod.md), `local-mods/skytekx-compat-2.1.3.jar` | Yes |
 | Hand edited Aether Genesis jar | Jar `local-mods/aether_genesis-1.20.1-0.0.1-neoforge.jar` | No, a rebuild from source loses it |
 
 Installing missing dependencies did the rest. SlashBlade Resharped, Re:Avaritia (removed again later)

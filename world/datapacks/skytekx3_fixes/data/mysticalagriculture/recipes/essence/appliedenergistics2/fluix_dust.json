@@ -1,0 +1,25 @@
+{
+  "type": "cucumber:shaped_no_mirror",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    },
+    {
+      "type": "mysticalagriculture:crop_enabled",
+      "crop": "mysticalagriculture:fluix"
+    }
+  ],
+  "pattern": [
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "item": "mysticalagriculture:fluix_essence"
+    }
+  },
+  "result": {
+    "item": "ae2:fluix_dust",
+    "count": 3
+  }
+}

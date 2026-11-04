@@ -20,6 +20,33 @@ ServerEvents.recipes(event => {
   // results into the same rod, so the Thermal Extra recipe goes and the grid gives 4.
   event.remove({ id: 'thermal_extra:crafting/iron_rod' })
 
+  // Spartan Weaponry smelts copper and steel weapons into the first nugget of a tag, which is a
+  // variant that Almost Unified swaps away. The same recipes give the preferred nugget instead.
+  var spartanWeapons = ['dagger', 'parrying_dagger', 'longsword', 'katana', 'saber', 'rapier', 'greatsword',
+    'battle_hammer', 'warhammer', 'spear', 'halberd', 'pike', 'lance', 'longbow', 'heavy_crossbow',
+    'throwing_knife', 'tomahawk', 'javelin', 'boomerang', 'battleaxe', 'flanged_mace', 'glaive',
+    'quarterstaff', 'scythe']
+  var spartanNuggets = { copper: 'thermal:copper_nugget', steel: 'mekanism:nugget_steel' }
+  Object.keys(spartanNuggets).forEach(metal => {
+    var weapons = spartanWeapons.map(w => 'spartanweaponry:' + metal + '_' + w)
+    var smelt = metal + '_nugget_from_smelting_' + metal + '_weapons'
+    var blast = metal + '_nugget_from_blasting_' + metal + '_weapons'
+    event.remove({ id: 'spartanweaponry:' + smelt })
+    event.remove({ id: 'spartanweaponry:' + blast })
+    event.smelting(spartanNuggets[metal], weapons).xp(0.1).cookingTime(200).id('skytekx3:' + smelt)
+    event.blasting(spartanNuggets[metal], weapons).xp(0.1).cookingTime(100).id('skytekx3:' + blast)
+  })
+
+  // Reliquary's Alkahestry Tome doubles steel into the first ingot of the tag. With the preferred
+  // ingot as its input it gives that ingot back.
+  event.remove({ id: 'reliquary:alkahestry/crafting/steel_ingot' })
+  event.custom({
+    type: 'reliquary:alkahestry_crafting',
+    charge: 32,
+    ingredient: { item: 'mekanism:ingot_steel' },
+    result_count: 2
+  }).id('skytekx3:alkahestry/crafting/steel_ingot')
+
   // ---------------------------------------------------------------------------
   // The following ported the SkyTekx2 intent but reference mods whose ids change
   // on 1.20.1. They are left commented until the mods are in `mods/`; confirm the

@@ -126,6 +126,8 @@ The 35 jars in `local-mods/` (origins from each jar's manifest and from `modrint
 - EMI 1.1.24-skytekx.1 joined on 2026-11-03 (eadc7a6d), built from the fork skytekx/emi, branch
   `1.20.1-jei-bridge`. It replaces the Modrinth download of EMI 1.1.24, whose JEI bridge predates
   JEI 15.74 and failed on the recipes of Tinkers' Construct and Chipped. It needs JEI 15.74 or newer.
+  Since 2026-11-04 git ships 1.1.24-skytekx.2 (3fd75e08), which treats the null entries that JEI allows
+  in an ingredient list as empty, so the three entity melting recipes of Tinkers' Construct load too.
 
 Six of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies and Hexxit Additions (`modrinth-permissions/README.md`). They block a

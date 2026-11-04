@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-11-03
+timestamp: 2026-11-04
 ---
 
 # Open items
@@ -68,9 +68,6 @@ evidence and the page with the details. The rulings behind the first section are
   `#minecraft:is_overworld`, and that tag holds the 14 island biomes of the Skylands. Keep them there,
   or override the modifier in a datapack so they spawn only in the main dimension. See
   [SkyTekx Compat](content/compat-mod.md#falling-meteors-only-in-the-overworld).
-- AsgardShieldReloaded 0.2 crashed the server twice when a creeper exploded next to a player
-  (2026-06-27 20:43 and 21:16). Remove it, patch it or accept the risk. See
-  [Combat](content/combat.md#known-crash-asgard-shield-reloaded).
 - Packs 3.0.6 and 3.0.7 ship JEI 15.74.0.233 from the update of 092140d with EMI 1.1.24, which cannot
   bridge it and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its 8 GB
   heap after the join and froze, and with 12 GB it played. Since 2026-11-03 git ships the EMI fork

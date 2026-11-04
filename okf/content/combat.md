@@ -3,7 +3,7 @@ type: Feature
 title: Combat
 description: The 1.7 style melee of SkyTekx 3, a server side KubeJS script that removes the attack cooldown, plus the client and mod pieces around it.
 tags: [content, combat, kubejs, gameplay]
-timestamp: 2026-10-31
+timestamp: 2026-11-04
 ---
 
 # Combat
@@ -78,16 +78,17 @@ was not checked.
 - Spartan Weaponry 3.2.1 and Spartan Shields 3.1.1 come from the index. Their slow weapons lose their
   cooldown like every other weapon.
 
-## Known crash: Asgard Shield Reloaded
+## Asgard Shield Reloaded crash, fixed
 
 Asgard Shield Reloaded 0.2 (`mods/AsgardShieldReloaded-1.20.1-0.2.jar`, env required on both sides)
-crashes the whole server when a creeper explodes next to a player. Its `LivingAttackEvent` handler asks
-for the item in a hand that its own helper returns as null, which ends in "Invalid hand null". It
-crashed the server twice on 2026-06-27, at 20:43:25 and at 21:16:11
-(`crash-reports/crash-2026-06-27_20.43.25-server.txt` and `crash-2026-06-27_21.16.11-server.txt`). No
-fix was ever made, and the mod still loads at every boot. "Invalid hand" appears in no later log, most
-likely because no explosion has hit a player since. On a public server this is a live crash bug. The
-full analysis is in [logs and crashes](../server/logs-and-crashes.md).
+crashed the whole server twice on 2026-06-27, at 20:43:25 and at 21:16:11, when a creeper exploded next
+to a player (`crash-reports/crash-2026-06-27_20.43.25-server.txt` and
+`crash-2026-06-27_21.16.11-server.txt`). Its attack handlers read `Player.swingingArm`, which stays null
+until a player swings after a login or a respawn, and that ended in "Invalid hand null". On 2026-10-31
+the same error made every hit on such a player fail. Since aa4eec0, `tools/patch_mods.py` makes the
+handlers read `getUsedItemHand()`, which is never null, and the patched jar runs on the Mac mini since
+2026-10-31 22:49:28. The error appears in no log after that. Run `tools/patch_mods.py` again after every
+update of the jar. The full analysis is in [logs and crashes](../server/logs-and-crashes.md).
 
 ## History
 

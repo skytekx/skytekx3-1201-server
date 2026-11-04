@@ -3394,6 +3394,21 @@
         "https://cdn.modrinth.com/data/jjuIRIVr/versions/SH2D1n3s/megacells-forge-2.4.6-1.20.1.jar"
       ],
       "fileSize": 387196
+    },
+    {
+      "path": "mods/aeinfinitybooster-forge-2.1.0+mc1.20.1.jar",
+      "hashes": {
+        "sha1": "8d073b0c045aa359ca6fa6c2a0f4cc8213e81bd0",
+        "sha512": "5ec0f1347f661497387c2d328d1529bda32c25c3dfc70f820e7396f6df7fd4e1ef65c00a54f49aa38f6bb7945e458033a9e461b1eb5d37494f586ffc38051033"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/VQhDBNs8/versions/Jvy26GOV/aeinfinitybooster-forge-2.1.0%2Bmc1.20.1.jar"
+      ],
+      "fileSize": 41898
     }
   ],
   "dependencies": {

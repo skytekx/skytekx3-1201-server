@@ -1,4 +1,4 @@
-// SkyTekx3: the riders of Apotheosis bosses sit on their mounts.
+// SkyTekx3: Apotheosis bosses keep their riders and minibosses keep their passengers.
 //
 // Apotheosis 7.4.8 creates the rider of a mounted boss from NBT without a position, so the rider starts
 // at x 0, y 0, z 0. ApothBoss.createBoss then moves only the mount to the spawn point, and the spawn adds
@@ -17,10 +17,28 @@
 // it on itself. Forge fires the join event before the game puts the entity into a chunk section, so the
 // rider lands in the section of its mount and ticks from then on. Riders that already sit on their
 // vehicle are left alone.
+//
+// The Withering Archer miniboss (2 percent of the skeletons and wither skeletons that spawn naturally in
+// the nether) carries an area effect cloud of wither with a radius of 2.5 blocks as a passenger in its
+// miniboss NBT. Apotheosis turns the mob into the miniboss in its own join event and mounts the cloud
+// there. The spawn adds the mob with addFreshEntityWithPassengers, which reads the passenger list of the
+// mob before that join event runs, so the cloud never joins the level. It rides the archer only in
+// memory, never ticks and never gives wither. On the test server on 2026-11-04 such a cloud kept Age 0,
+// its own position stayed at x 0, y 0, z 0, and a zombie standing in it got no effect.
+//
+// One tick after a skeleton or wither skeleton joins a level, every passenger of it that is not part of
+// the level joins the level on the seat of its vehicle. The check waits a tick because the KubeJS spawn
+// event runs before Apotheosis turns the mob into the miniboss. It cannot test the miniboss marker either,
+// because persistentData in KubeJS is the KubeJS data of the entity and not its ForgeData. A chunk that
+// loads from disk brings the saved passengers into the level together with the mob, so they are found in
+// the level and get no copy. When the archer dies, Apotheosis discards its cloud. When it despawns, the
+// startup script kubejs/startup_scripts/apotheosis_passengers.js does.
 
 var ApothRidersMaxDistanceSqr = 64
 var apothRidersPlaced = 0
 var apothRidersErrors = 0
+var apothPassengersAdded = 0
+var apothPassengersErrors = 0
 
 function apothRidersCall(object, name) {
   // KubeJS turns some getters into properties with the same name as the vanilla method.
@@ -51,6 +69,47 @@ function apothRidersPlace(event) {
   }
 }
 
+function apothPassengersError(e) {
+  if (apothPassengersErrors++ < 5) console.error('Apotheosis riders: adding a passenger failed: ' + e)
+}
+
+function apothPassengersAdd(level, mob) {
+  if (apothPassengersErrors >= 5) return
+  try {
+    if (mob.isRemoved()) return
+    var passengers = mob.getPassengers()
+    for (var i = 0; i < passengers.size(); i++) {
+      var passenger = passengers.get(i)
+      if (passenger.isRemoved() || level.getEntity(passenger.getUuid()) != null) continue
+      mob.positionRider(passenger)
+      if (!level.addFreshEntity(passenger)) continue
+      apothPassengersAdded++
+      if (apothPassengersAdded <= 100) {
+        console.info('Apotheosis riders: added the ' + passenger.getEncodeId() + ' of ' + mob.getEncodeId() + ' at ' +
+          Math.floor(mob.getX()) + ' ' + Math.floor(mob.getY()) + ' ' + Math.floor(mob.getZ()) + ' in ' +
+          String(apothRidersCall(level, 'dimension')))
+      }
+    }
+  } catch (e) {
+    apothPassengersError(e)
+  }
+}
+
+function apothPassengersCheck(event) {
+  if (apothPassengersErrors >= 5) return
+  try {
+    var server = Utils.server
+    if (server == null) return
+    var mob = event.getEntity()
+    var level = event.getLevel()
+    server.scheduleInTicks(1, () => apothPassengersAdd(level, mob))
+  } catch (e) {
+    apothPassengersError(e)
+  }
+}
+
 EntityEvents.spawned('minecraft:stray', apothRidersPlace)
+EntityEvents.spawned('minecraft:wither_skeleton', apothPassengersCheck)
+EntityEvents.spawned('minecraft:skeleton', apothPassengersCheck)
 
 console.info('Apotheosis riders: active')

@@ -3,7 +3,7 @@ type: Runbook
 title: Publish
 description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Publish
@@ -97,9 +97,10 @@ boots had rewritten on disk (ce31f6f, the builder reads git HEAD).
 - Every index entry with its client env, from the Modrinth CDN, unpatched. The server runs eleven of
   them patched, which only matters on the server. Since 3.0.7 this includes Modflared, which opens the
   Cloudflare Tunnel to `hex.skytekx.com`, see [client](client.md#mac-mini).
-- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 47,
-  Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, and
-  EnderIO Legacy Machines and Mob Grinding Utils, with their license texts under `overrides/licenses/`.
+- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2 and 49 in 3.1.3. Since 3.1.3 they
+  include Simply Jetpacks 2, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO Legacy
+  Machines, Mob Grinding Utils, Flux Networks and SkyTekx Molten, with the license texts under
+  `overrides/licenses/`.
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
   KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
   FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
@@ -172,18 +173,21 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.0.7 | 2026-10-31 21:54 | 67,246,343 B | 217 | 35 | Modflared 1.2.0+release.61 as a client only index entry and the server list `client-overrides/servers.dat` with `hex.skytekx.com`, for the Cloudflare Tunnel. Every other file as in 3.0.6. Uploaded at 21:55 as `LRkF99Pz` |
 | 3.1.1 | 2026-11-03 17:37 | 73,371,625 B | 225 | 44 | Private build with `--allow-unpermitted`, sent straight to players and never uploaded, because five bundled jars lack permission. It carries everything since 3.0.7, among it the Twilight Forest backport, Nyx 1.0.1, the minimap at the top right (`config/xaerohud.txt`) and the single Hexbiscus |
 | 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
+| 3.1.3 | 2026-11-05 00:41 | 75,915,546 B | 232 | 49 | Private build like 3.1.2, sent straight to players. The nine mods of 2026-11-04 with FLib, Advanced Loot Info in the place of Just Enough Resources, Flux Networks, SkyTekx Molten, EMI 1.1.24-skytekx.2, the patched Simply Jetpacks 2, Starlight off the clients, 3D dropped items and no Read Me note of The One Probe |
 
-The next pack is the first with Simply Jetpacks 2 bundled, the first that ships a patched jar (see
-[boot fixes](../content/boot-fixes.md#jar-patches)), the first that keeps Starlight off the clients, the
-first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
-[client](client.md#dropped-items)), and the first with Advanced Loot Info (see
-[mod set](mod-set.md#advanced-loot-info)), with Flux Networks (see [mod set](mod-set.md#flux-networks))
-and with the nine mods of 2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
-[mod set](mod-set.md#additions-of-2026-11-04)). Its row should record whether a fresh install and the
-update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
-Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server and
-whether the machines of the new mods work there. Its deploy has to move the fixes pack to the end of the
-pack order, see [boot fixes](../content/boot-fixes.md#load-order).
+Pack 3.1.3 is the first with Simply Jetpacks 2 bundled and the first that ships a patched jar (see
+[boot fixes](../content/boot-fixes.md#jar-patches)). It is also the first that keeps Starlight off the
+clients, that ships the config of Nostalgic Tweaks with 3D dropped items (see
+[client](client.md#dropped-items)) and the common config of The One Probe with `spawnNote = false`. It
+brings Advanced Loot Info (see [mod set](mod-set.md#advanced-loot-info)), Flux Networks (see
+[mod set](mod-set.md#flux-networks)), SkyTekx Molten and the nine mods of 2026-11-04, five addons of
+Applied Energistics 2 and Cyclic among them (see [mod set](mod-set.md#additions-of-2026-11-04)). No
+client loaded it before it went to the players on 2026-11-05. A static check of its 268 client jars
+found every mandatory dependency of the sides BOTH and CLIENT present in a matching version, apart from
+a nested old copy of L2 Library whose newer standalone jar Forge picks. A fresh install, the update of a
+3.1.2 instance in Prism Launcher and the Modrinth App, a join without Starlight, the loot tabs of
+Advanced Loot Info in EMI and the machines of the new mods are not tested yet. Its deploy moved the
+fixes pack to the end of the pack order, see [boot fixes](../content/boot-fixes.md#pack-order).
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

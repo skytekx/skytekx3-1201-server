@@ -1,9 +1,9 @@
 ---
 type: Reference
 title: KubeJS
-description: The seven KubeJS server scripts and the data recipes of SkyTekx 3, what each one really does on 1.20.1, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
+description: The eight KubeJS server scripts and the data files of SkyTekx 3, what each one really does on 1.20.1, the recipe failures of the boot log, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
 tags: [modpack, kubejs, recipes, scripting]
-timestamp: 2026-11-03
+timestamp: 2026-11-04
 ---
 
 # KubeJS
@@ -24,8 +24,9 @@ tracked in [docs/RECIPE_PORT.md](../../docs/RECIPE_PORT.md).
 All scripts live in [kubejs/server_scripts/](../../kubejs/server_scripts). There are no startup or
 client scripts, and the folders `startup_scripts/` and `assets/` are empty. The folder `data/` holds the
 six uncrafting recipes of Twilight Tweaks, see
-[Twilight Forest backport](twilightforest-backport.md), and the wood fallbacks, see
-[Wood fallbacks](#wood-fallbacks). The last boot on the build machine loaded 4 of
+[Twilight Forest backport](twilightforest-backport.md), the wood fallbacks, see
+[Wood fallbacks](#wood-fallbacks), and overrides for broken recipes and loot tables of other mods, see
+[Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
 2026-11-02 at 17:33 loaded 7 of 7, again with 0 errors and 0 warnings.
 
@@ -39,12 +40,13 @@ six uncrafting recipes of Twilight Tweaks, see
 | Skylands sleep, `skylands_sleep.js` | Turns the overworld to day when players sleep in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#sleep-and-hostile-mobs) |
 | Skylands portals, `skylands_portals.js` | Lets nether portals work in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#nether-portals) |
 | Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, see [AlmostUnified](almostunified.md#inventory-converter) |
+| Tinkers recipe race, `tinkers_recipe_race.js` | Builds the swappable modifier recipes of Tinkers' Construct on the main thread, see [Recipe failures](#recipe-failures) |
 
 The recipe summary of that boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes,
 with 17 failed recipes" (`logs/kubejs/server.log:54`, 23:25:52). The 17 failures are third-party
 recipes that name items which do not exist in this pack. They are not caused by these scripts. The
 boot of the Mac mini on 2026-11-02 at 17:33 logged "Added 2 recipes, removed 0 recipes, modified 9
-recipes, with 13 failed recipes". Those 13 failures were not examined.
+recipes, with 13 failed recipes". Those 13 failures are listed under [Recipe failures](#recipe-failures).
 
 ### Recipe fixes
 
@@ -171,6 +173,40 @@ The file [gameplay.js](../../kubejs/server_scripts/gameplay.js) only holds comme
 nerf and Asgard Shield giant sword recipes with ore tags. The comment uses the namespace
 `asgardshieldreloaded`, but the mod id is `asr`. The loot tweaks of SkyTekx 2 (two rolls for cows and the
 Hexxit World arrow drop nerf) were deferred to a `loot_tiers.js` that was never written.
+
+### Recipe failures
+
+From 2026-10-31 to 2026-11-03 every recipe load on the Mac mini ended with "with 13 failed recipes", and
+three boots counted 14. KubeJS logs a failed recipe as "Error parsing recipe" and leaves it out of the
+game. The log audit of 2026-11-04 traced every one of them:
+
+| Recipe | Cause | State |
+|---|---|---|
+| `soulshards:soulsteeler` | Soul Shards 1.3.6 writes its Ender IO enchanter recipe in an old format, with the input item and an `amount`. Ender IO 6.2.18 reads `ingredient` and `count` ("Item cannot be null") | Fixed by an override, the Enchanter applies Soul Stealer for one corrupted ingot per level |
+| `forbidden_arcanus:aurum_chest_boat` and `edelwood_chest_boat` | The chest is an object with `fabric_value` and `forge_value`, which Forge cannot read ("An ingredient entry needs either a tag or an item") | Fixed by overrides that take the tag `forge:chests/wooden` |
+| One `tconstruct:tools/modifiers/slotless/embellishment/...` recipe, on 3 boots | The type `tconstruct:swappable_modifier` fills a static HashMap of Tinkers' Construct while KubeJS builds the recipes on several threads. The log shows only "null", the empty message of the ConcurrentModificationException that HashMap throws then | Fixed by [tinkers_recipe_race.js](../../kubejs/server_scripts/tinkers_recipe_race.js), which builds them on the main thread during the recipe event |
+| `ancient_aether:ancient_rune`, `lost_aether_content:gravitite_shield` and three `aether_treasure_reforging:*_upgrade_smithing_template` | The built in `gravitite_ingot` pack of Aether Redux holds recipes for these three mods, which are not installed | Harmless, nothing to fix |
+| `pamhc2foodcore:caramelcupcakeitem_x4`, `melonpieitem` and `honeymuffinitem` | Pam's HarvestCraft 2 Food Core 1.0.5 ships recipes for items it does not register | Harmless, nothing to fix |
+| `galosphere:block_comparator` | Galosphere 1.5.2 ships the recipe but does not register the block | Harmless, nothing to fix |
+| `bibliocraft:enchanted_book_cloning_in_printing_table` | The XP cost of BiblioCraft 1.3.1 uses a codec that refers to itself and can never decode ("Failed to decode from JSON") | Open. An override without the cost would make the cloning free, a real fix needs a patched jar |
+
+With these fixes a boot logs "with 10 failed recipes", never 11.
+
+Two more broken files of other mods load without counting as failed, and `kubejs/data/` overrides them
+too:
+
+- The stonecutter recipe `cataclysm:stonecutting/azure_seastone_brick_stair_from_stonecutting` of
+  L_Ender's Cataclysm 3.31 gives `cataclysm:azure_seastone_brick_stair`, an item that does not exist.
+  KubeJS warned "ItemStack 'result' can't be empty", and the vanilla reader turned the recipe into an
+  empty button in the stonecutter. A `forge:false` condition switches it off. The correct recipe
+  `azure_seastone_brick_stairs_from_stonecutting` stays.
+- The barrel loot table `tf_dnv:chests/dungeon_shroom_barrel` of Dungeons & Villages nests a table that
+  does not exist, see [Twilight Forest backport](twilightforest-backport.md).
+
+An override has the id of the mod's file. KubeJS adds `kubejs/data/` after the mods and the world
+datapacks, so the override always wins. The recipe overrides for Forbidden Arcanus and Soul Shards carry
+`forge:mod_loaded` conditions, so a removed mod leaves no broken recipe behind. When a mod update fixes
+its own file, delete the override.
 
 ## Open rulings
 

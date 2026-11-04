@@ -9,12 +9,13 @@ Fixes third-party boot WARN/ERROR spam that can only be addressed inside the mod
 - mixin configs missing the required "minVersion" property (logged as ERROR by Mixin),
 - orphan compat mixins that @Mixin-target classes from mods that are NOT installed (logged as
   "Error loading class" WARN),
-- a stray 4-char-path loot table in ad_astra that crashes Bird's Nests' unguarded substring.
+- a stray 4-char-path loot table in ad_astra that crashes Bird's Nests' unguarded substring,
+- a class file fix: a mixin whose target name is not the runtime name (TiCEX).
 
 The Bird's Nests crash itself is fixed durably by a mixin in the skytekx worldgen mod (local-mods/),
 not here. Bukkit/EssentialsX hybrid warning is intentionally left as-is.
 """
-import zipfile, json, glob, io, os, struct
+import zipfile, json, glob, io, os, re, struct
 
 MODS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "mods"))
 
@@ -198,19 +199,43 @@ def _insn_len(code, pc):
     return _OPLEN.get(op, 1)
 
 
-def _constant_pool(data):
-    """Parse the constant pool of a class file. Returns the entries and the offset after them."""
+def _insns(code):
+    """Yield (pc, length) of every instruction of a method's bytecode."""
+    pc = 0
+    while pc < len(code):
+        n = _insn_len(code, pc)
+        yield pc, n
+        pc += n
+
+
+def _u2(b, p):
+    return struct.unpack(">H", b[p:p + 2])[0]
+
+
+def _p2(i):
+    return struct.pack(">H", i)
+
+
+def _find_insns(code, pattern):
+    """Offsets of the instructions at which pattern (bytes, or a compiled bytes regex) matches."""
+    rx = pattern if hasattr(pattern, "match") else re.compile(re.escape(pattern), re.S)
+    return [pc for pc, _ in _insns(code) if rx.match(code, pc)]
+
+
+def _constant_pool(data, spans=None):
+    """Parse the constant pool of a class file. Returns the entries and the offset after them.
+    spans, when given, gets index -> (start, end) of the bytes of every entry."""
     count = struct.unpack(">H", data[8:10])[0]
     cp, p, i = [None] * count, 10, 1
     while i < count:
-        tag = data[p]
+        tag, start = data[p], p
         if tag == 1:
             n = struct.unpack(">H", data[p + 1:p + 3])[0]
             cp[i], p = (1, data[p + 3:p + 3 + n].decode("utf-8", "replace")), p + 3 + n
         elif tag in (3, 4):
             cp[i], p = (tag,), p + 5
         elif tag in (5, 6):
-            cp[i], p, i = (tag,), p + 9, i + 1
+            cp[i], p = (tag,), p + 9
         elif tag in (7, 8, 16, 19, 20):
             cp[i], p = (tag, struct.unpack(">H", data[p + 1:p + 3])[0]), p + 3
         elif tag in (9, 10, 11, 12, 17, 18):
@@ -219,7 +244,9 @@ def _constant_pool(data):
             cp[i], p = (tag,), p + 4
         else:
             raise ValueError(f"unknown constant pool tag {tag}")
-        i += 1
+        if spans is not None:
+            spans[i] = (start, p)
+        i += 2 if tag in (5, 6) else 1
     return cp, p
 
 
@@ -236,6 +263,159 @@ def _code_ranges(data, p, cp):
                 if members == "methods" and cp[name][1] == "Code":
                     yield p + 14, struct.unpack(">I", data[p + 10:p + 14])[0]
                 p += 6 + size
+
+
+class _ClassFile:
+    """Just enough of a class file to add constants and methods and to edit the code of a method.
+
+    New constants go to the end of the pool, so every index the class uses keeps its meaning. A field
+    or method is [access flags, name index, descriptor index, [[attribute name index, bytes], ...]]."""
+
+    def __init__(self, data):
+        spans = {}
+        self.cp, end = _constant_pool(data, spans)
+        self.raw = {i: bytes(data[s:e]) for i, (s, e) in spans.items()}
+        self.head = bytes(data[:8])
+        n = _u2(data, end + 6)
+        self.body, p = bytes(data[end:end + 8 + 2 * n]), end + 8 + 2 * n
+        self.fields, p = self._members(data, p)
+        self.methods, p = self._members(data, p)
+        self.attrs = bytes(data[p:])
+
+    @staticmethod
+    def _members(data, p):
+        out, n, p = [], _u2(data, p), p + 2
+        for _ in range(n):
+            flags, name, desc, count = struct.unpack(">HHHH", data[p:p + 8])
+            p, attrs = p + 8, []
+            for _ in range(count):
+                an, size = struct.unpack(">HI", data[p:p + 6])
+                attrs.append([an, bytes(data[p + 6:p + 6 + size])])
+                p += 6 + size
+            out.append([flags, name, desc, attrs])
+        return out, p
+
+    def dump(self):
+        out = bytearray(self.head) + _p2(len(self.cp))
+        for i in sorted(self.raw):
+            out += self.raw[i]
+        out += self.body
+        for members in (self.fields, self.methods):
+            out += _p2(len(members))
+            for flags, name, desc, attrs in members:
+                out += struct.pack(">HHHH", flags, name, desc, len(attrs))
+                for an, body in attrs:
+                    out += struct.pack(">HI", an, len(body)) + body
+        return bytes(out + self.attrs)
+
+    def text(self, i):
+        return self.cp[i][1]
+
+    def this_name(self):
+        return self.text(self.cp[_u2(self.body, 2)][1])
+
+    def _find(self, match):
+        hits = [i for i, e in enumerate(self.cp) if e is not None and match(e)]
+        return hits[0] if hits else None
+
+    def _add(self, entry, raw):
+        self.cp.append(entry)
+        self.raw[len(self.cp) - 1] = raw
+        return len(self.cp) - 1
+
+    def utf8(self, s):
+        i = self._find(lambda e: e[0] == 1 and e[1] == s)
+        if i is None:
+            b = s.encode("utf-8")
+            i = self._add((1, s), b"\x01" + _p2(len(b)) + b)
+        return i
+
+    def set_utf8(self, i, s):
+        b = s.encode("utf-8")
+        self.cp[i], self.raw[i] = (1, s), b"\x01" + _p2(len(b)) + b
+
+    def find_string(self, s):
+        return self._find(lambda e: e[0] == 8 and self.text(e[1]) == s)
+
+    def find_class(self, name):
+        return self._find(lambda e: e[0] == 7 and self.text(e[1]) == name)
+
+    def klass(self, name):
+        i = self.find_class(name)
+        if i is None:
+            u = self.utf8(name)
+            i = self._add((7, u), b"\x07" + _p2(u))
+        return i
+
+    def find_ref(self, tag, owner, name, desc):
+        """Index of a Fieldref (9), Methodref (10) or InterfaceMethodref (11), or None."""
+        return self._find(lambda e: e[0] == tag and self.text(self.cp[e[1]][1]) == owner
+                          and self.text(self.cp[e[2]][1]) == name and self.text(self.cp[e[2]][2]) == desc)
+
+    def ref(self, tag, owner, name, desc):
+        i = self.find_ref(tag, owner, name, desc)
+        if i is None:
+            nat = self._find(lambda e: e[0] == 12 and self.text(e[1]) == name and self.text(e[2]) == desc)
+            if nat is None:
+                n, d = self.utf8(name), self.utf8(desc)
+                nat = self._add((12, n, d), b"\x0c" + _p2(n) + _p2(d))
+            c = self.klass(owner)
+            i = self._add((tag, c, nat), bytes([tag]) + _p2(c) + _p2(nat))
+        return i
+
+    def method(self, name, desc):
+        hits = [m for m in self.methods if self.text(m[1]) == name and self.text(m[2]) == desc]
+        return hits[0] if len(hits) == 1 else None
+
+    def _code_attr(self, m):
+        return next(a for a in m[3] if self.text(a[0]) == "Code")
+
+    def code(self, m):
+        body = self._code_attr(m)[1]
+        return bytearray(body[8:8 + struct.unpack(">I", body[4:8])[0]])
+
+    def put_code(self, m, code):
+        """Write back bytecode of the same length, so branch offsets and stack map frames stay valid."""
+        a = self._code_attr(m)
+        n = struct.unpack(">I", a[1][4:8])[0]
+        if len(code) != n:
+            raise ValueError("put_code needs code of the same length")
+        a[1] = a[1][:8] + bytes(code) + a[1][8 + n:]
+
+    def _new_code(self, max_stack, max_locals, code):
+        # No exception table and no attributes. Code without branches needs no StackMapTable.
+        return [self.utf8("Code"), struct.pack(">HHI", max_stack, max_locals, len(code)) + bytes(code) + bytes(4)]
+
+    def set_code(self, m, max_stack, max_locals, code):
+        """Replace the Code attribute of a method with straight-line code (no branches)."""
+        m[3] = [self._new_code(max_stack, max_locals, code) if self.text(a[0]) == "Code" else a for a in m[3]]
+
+    def add_method(self, flags, name, desc, max_stack, max_locals, code):
+        self.methods.append([flags, self.utf8(name), self.utf8(desc), [self._new_code(max_stack, max_locals, code)]])
+
+
+def edit_classes(jar, transforms):
+    """Apply {class entry: transform(_ClassFile)} to the classes of one jar in one rewrite.
+
+    A transform returns True when it changed the class, False when the class is patched already, or
+    a reason (str) to leave the class as it is, which is printed."""
+    seen = set()
+    def mutate(name, data):
+        t = transforms.get(name)
+        if t is None:
+            return None
+        seen.add(name)
+        cf = _ClassFile(data)
+        r = t(cf)
+        if isinstance(r, str):
+            print(f"  skip {name}: {r}")
+            return None
+        return cf.dump() if r else None
+    changed = _rewrite(jar, mutate)
+    for name in sorted(set(transforms) - seen):
+        if jar:
+            print(f"  skip {name}: not in the jar")
+    return changed
 
 
 def swap_field_for_getter(jar, inner, owner, field, getter, desc, expect):
@@ -277,6 +457,30 @@ def swap_field_for_getter(jar, inner, owner, field, getter, desc, expect):
     return _rewrite(jar, mutate)
 
 
+def rename_method(jar, inner, old, new, desc):
+    """Rename the method `old` (descriptor desc) of one class by rewriting its name constant.
+
+    Written for a mixin with remap = false whose @Inject names its target by the name in the sources.
+    javac keeps the handler name and the target in the annotation in one Utf8 constant, so the rewrite
+    renames the handler and points the injection at the runtime name. Mixin renames injector handlers
+    when it merges them, so the new handler name cannot clash. Patches only when no other constant
+    and no other member uses that Utf8 constant."""
+    def t(cf):
+        hits = [i for i, e in enumerate(cf.cp) if e and e[0] == 1 and e[1] == old]
+        if not hits:
+            return False if cf.method(new, desc) else f"no constant {old} and no method {new}"
+        if len(hits) != 1:
+            return f"{len(hits)} constants {old}"
+        i = hits[0]
+        users = [e for e in cf.cp if e and ((e[0] in (7, 8, 16, 19, 20) and e[1] == i) or (e[0] == 12 and i in e[1:]))]
+        named = [m for m in cf.fields + cf.methods if m[1] == i]
+        if users or len(named) != 1 or cf.text(named[0][2]) != desc or cf.method(new, desc):
+            return f"{old} is used by another constant or member, or has another descriptor"
+        cf.set_utf8(i, new)
+        return True
+    return edit_classes(jar, {inner: t})
+
+
 def main():
     print("patch_mods: applying jar-level boot fixes")
     add_min_version(find_jar("doomangelring*.jar"), "doomangelring.forge.mixins.json")
@@ -301,6 +505,11 @@ def main():
         edit_json(tj, f"data/ticex/tinkering/station_layouts/{tool}.json", _drop_catalyst_slot)
     # trim the reconstruction material to only catalyst stats whose mod is actually present
     edit_json(tj, "data/ticex/tinkering/materials/stats/reconstruction.json", _trim_ticex_recon)
+    # SummonedSwordMixin injects into "onHitEntity" with remap = false, but SlashBlade's
+    # EntityAbstractSummonedSword has the runtime name m_5790_, so every boot logged "Mixin apply failed"
+    # and the PROJECTILE_HIT modifiers of a Tinkers tool never fired for its summoned swords.
+    rename_method(tj, "moffy/ticex/mixin/slashblade/SummonedSwordMixin.class", "onHitEntity", "m_5790_",
+                  "(Lnet/minecraft/world/phys/EntityHitResult;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V")
     # cofhcore's MultiPlayerGameMode mixin is client-only but listed as common -> errors on a server
     edit_json(find_jar("cofh_core*.jar"), "mixins.cofhcore.json", _mixin_to_client("MultiPlayerGameModeMixin"))
 

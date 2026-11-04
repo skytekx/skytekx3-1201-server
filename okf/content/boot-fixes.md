@@ -37,8 +37,8 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 182 files, 181 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 52 are
+is tracked: 183 files, 182 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 53 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -86,7 +86,7 @@ next boot test should show whether their 6 loot tables and 3 advancements still 
 
 ### Gameplay overrides
 
-Four groups of files in the pack change the game on purpose:
+Five groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -138,6 +138,15 @@ Four groups of files in the pack change the game on purpose:
   log names one of the files. The three files of Forbidden & Arcanus went live at 17:39:10 with another
   `/reload`, after which KubeJS counted 37,023 recipes and the log had no new ERROR line. Nobody melted
   one in game yet.
+- One crafting recipe at `data/exura/recipes/auto_executor.json` makes the Auto Executor of Extra
+  Utilities Reborn Again craftable since 2026-11-04. Version 1.2.0-rc10 registers the block with its
+  item but ships no recipe for it, and the upstream source on GitHub (main of 2026-10-13) has none
+  either. The owner reported at 19:08 that it cannot be crafted. The recipe puts a diamond pickaxe
+  above an ExURA machine block and a dispenser below it, between four iron ingots and two redstone.
+  The block breaks what it faces with a fake player that holds a diamond pickaxe and places blocks
+  like a dispenser, so the recipe takes both. It went live at 19:14:12 with `/reload`, after which
+  KubeJS counted 37,024 recipes and the log had no new ERROR line. Another 17 registered names of the
+  mod have no recipe either, see [Open items](../open-items.md#owner-decisions).
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

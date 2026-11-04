@@ -144,6 +144,14 @@ evidence and the page with the details. The rulings behind the first section are
 - Fluids for the gems of other mods. Tinkers' Construct melts diamond and emerald into fluids of their
   own, but gems such as zanite and skyjade have none, so their gloves and tools cannot melt. Whether
   they get fluids too was asked on 2026-11-04 and is open.
+- Recipes for the other uncraftable items of Extra Utilities Reborn Again. Version 1.2.0-rc10 registers
+  17 more names without a recipe, among them the Resonator, which the four resonator recipes of the mod
+  need, the Stone, Iron, Reinforced Large and Demonically Gargantuan Drums and the Halitosis Generator.
+  Since 2026-11-04 only the Auto Executor has a recipe of the fixes pack, see
+  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- The Auto Executor ignores hardness. It breaks any block it faces that is not air, bedrock and End
+  portal frames included, because it calls `Level.destroyBlock` without a check. A guard in
+  skytekx-compat would stop that, and whether it should was asked on 2026-11-04 and is open.
 
 ## Defects to fix
 

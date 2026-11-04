@@ -771,6 +771,11 @@ logs stay on the Mac and are not in the repo.
   because Starlight 1.1.2 calls a method that the fake world of the guide lacks. The index now keeps
   Starlight off the clients from the next pack on, and the server keeps it, see
   [Client](modpack/client.md#crash-history) and [Mod set](modpack/mod-set.md#sides).
+- At 18:45 the owner asked whether a config turns off the Auto Executor of Extra Utilities Reborn
+  Again. Version 1.2.0-rc10 has no config. With a redstone signal the block breaks what it faces into a
+  container next to it, without one it places blocks from such a container. At 19:08 the owner
+  reported that it cannot be crafted. The mod ships no recipe for it, and one of the fixes pack went
+  live at 19:14:12 through `/reload`, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

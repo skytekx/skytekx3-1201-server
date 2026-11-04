@@ -1,0 +1,67 @@
+
+[enchantments]
+	#Legacy 1.7.10 compatibility placeholder; ignored in 1.20.1 runtime.
+	#Range: > 0
+	magnetizationEnchantmentId = 157
+	#Legacy 1.7.10 compatibility placeholder; ignored in 1.20.1 runtime.
+	#Range: > 0
+	coldTouchEnchantmentId = 158
+
+[general]
+	#Maximum horizontal distance from a random player that natural meteors or comets may target.
+	#Range: 1 ~ 10000
+	meteorFallRadius = 350
+	#Chance from 0 to 100 that a valid natural spawn will become a kitty meteor instead of a normal meteor.
+	#Range: 0 ~ 100
+	kittyAttackChance = 1
+	#Shows a chat message when a meteor crash is detected.
+	textCrashNotification = false
+	#Legacy compatibility toggle. Built-in meteor availability is now primarily controlled in meteors-meteor-types.toml.
+	meteoriteMeteorEnabled = true
+	#Legacy compatibility toggle. Built-in meteor availability is now primarily controlled in meteors-meteor-types.toml.
+	frezariteMeteorEnabled = true
+	#Legacy compatibility toggle. Built-in meteor availability is now primarily controlled in meteors-meteor-types.toml.
+	kreknoriteMeteorEnabled = true
+	#Legacy compatibility toggle. Built-in meteor availability is now primarily controlled in meteors-meteor-types.toml.
+	unknownMeteorEnabled = true
+	#How many loaded-chunk placement passes are tried while searching for a safe meteor or comet target.
+	#Range: 0 ~ 128
+	chunkGenerationChecks = 4
+	#Size used by legacy meteor ore generation hooks.
+	#Range: 0 ~ 64
+	meteorOreGenSize = 6
+	#Enables the ambient humming sound from powered meteor shields.
+	meteorShieldHummingNoiseEnabled = true
+	#Chance from 0 to 100 to try spawning a comet when the climate timer completes.
+	#Range: 0 ~ 100
+	cometFallChance = 5
+	#Legacy dimension ids from 1.7.10 kept for migration reference.
+	whitelistedDimensions = [0, 1, 7]
+	#Global delay scale for natural meteor timing. The legacy value is multiplied by 100 ticks internally.
+	#Range: 1 ~ 100000
+	meteorFallDeterrence = 5000
+	#If true, queued natural meteors only finish falling at night.
+	meteorsOnlyFallAtNight = true
+	#If true, player-summoned meteors are allowed to damage terrain.
+	allowSummonedMeteorGrief = false
+	#Base radius of meteor shields in blocks.
+	#Range: 0 ~ 2048
+	shieldRadiusInBlocks = 64
+	#Minimum natural meteor size.
+	#Range: 1 ~ 3
+	minimumMeteorSize = 1
+	#Maximum natural meteor size.
+	#Range: 1 ~ 3
+	maximumMeteorSize = 2
+	#Minimum kreknorite meteor size required to create the built-in portal effect.
+	#Range: 1 ~ 3
+	minimumMeteorSizeToSpawnNetherPortal = 2
+	#Explosion strength multiplier used when a meteor hits the ground.
+	#Range: 0.0 ~ 20.0
+	meteorImpactExplosionMultiplier = 1.0
+	#Controls how wide meteor impact blocks scatter around the crater.
+	#Range: 0 ~ 128
+	meteorImpactSpread = 4
+	#Enables slippery block behavior and related content.
+	slipperyBlocksEnabled = true
+

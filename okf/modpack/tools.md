@@ -3,7 +3,7 @@ type: Reference
 title: Tools
 description: The scripts in tools/ in the order they are used, from datapack sync and mod updates through jar patches and the mrpack build to the Modrinth upload and RCON, with what each one really does and where it runs.
 tags: [modpack, tools, build, modrinth]
-timestamp: 2026-11-01
+timestamp: 2026-11-04
 ---
 
 # Tools
@@ -19,8 +19,8 @@ region scans that checked the Halloween world on the Mac mini the same evening. 
 | 1 | Sync, `sync_skylands_datapack.sh` | 9 | Mirrors the two Skylands datapack sources into the world | The tool rsync | The world copies in `world/datapacks/` |
 | 2 | Update, `update_mods.py` | 151 | Lists or applies newer Modrinth builds of the index entries | Public Modrinth API | The index, `mods/` and `client-only-mods/` |
 | 2 (legacy) | Resolve, `resolve_all.py` | 108 | Resolves a fixed slug list to the newest releases | Modrinth token, the old scratch folder | Jars in `mods/` and a scratch file whose folder no longer exists |
-| 3 | Patch, `patch_mods.py` | 218 | Re-applies the boot fixes inside mod jars | Python 3 | Jars in `mods/` |
-| 4 | Build, `build_mrpack.py` | 102 | Rewrites the index and zips the `.mrpack` from git HEAD, with the server list of the clients | A git checkout | The index, `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
+| 3 | Patch, `patch_mods.py` | 776 | Re-applies the boot fixes inside mod jars and holds `PACK_RULES`, the patches the pack ships too | Python 3 | Jars in `mods/` |
+| 4 | Build, `build_mrpack.py` | 170 | Zips the `.mrpack` from git HEAD with the committed index, patches and renames the `PACK_RULES` jars and adds the server list of the clients | A git checkout | The folder `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
 | 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
@@ -73,7 +73,7 @@ Points to watch with `--apply`:
 - Cataclysm must stay at 3.31, because the Cataclysm Spellbooks fork build on the server was ported to
   exactly that version (see [mod set](mod-set.md#jars-outside-the-index)).
 - Every update can bring back boot errors that the [boot fixes](../content/boot-fixes.md) silenced, and
-  the 9 patched index jars lose their patches until `patch_mods.py` runs again. An override of the
+  the 11 patched index jars lose their patches until `patch_mods.py` runs again. An override of the
   fixes pack can also empty a loot table that a new build repaired.
 - It only touches index entries, so the bundled jars and BrassAmber BattleTowers, which is in no pack,
   stay as they are.
@@ -95,7 +95,8 @@ says, it never reads `modrinth.index.json`:
 
 ## Jar patches
 
-The script [patch_mods.py](../../tools/patch_mods.py) re-applies ten jar level fixes in `mods/`. It
+The script [patch_mods.py](../../tools/patch_mods.py) re-applies the jar level fixes of 14
+jars in `mods/`. It
 finds its targets by glob relative to its own folder and is idempotent. Run it after any tool or person
 put new jars into `mods/`. The patches are listed on [boot fixes](../content/boot-fixes.md#jar-patches).
 
@@ -105,12 +106,12 @@ put new jars into `mods/`. The patches are listed on [boot fixes](../content/boo
 python3 tools/build_mrpack.py
 ```
 
-The script [build_mrpack.py](../../tools/build_mrpack.py) does four things:
+The script [build_mrpack.py](../../tools/build_mrpack.py) does five things:
 
-1. It reads the mod list from the committed index (`git show HEAD:modrinth.index.json`) and writes
-   `modrinth.index.json` back with its `VERSION`, its `FORGE` build and its summary: `versionId` 3.0.7,
-   Forge 47.4.18 and the tagline of skytekx.com. The file ends with a newline, as `update_mods.py`
-   writes it.
+1. It reads the mod list from the committed index (`git show HEAD:modrinth.index.json`) and ships it
+   as committed. It refuses to build when `versionId` or the Forge build differ from `VERSION` and
+   `FORGE`, when a path is listed twice, or when the index lists a jar that `PACK_RULES` ships from
+   `local-mods/`. It has not rewritten the index since 3.1.0.
 2. It moves every jar whose index entry has server env `unsupported` from `mods/` to
    `client-only-mods/`.
 3. It zips `SkyTekx3-<version>.mrpack` with the index and these overrides, all taken from git HEAD with
@@ -122,6 +123,11 @@ The script [build_mrpack.py](../../tools/build_mrpack.py) does four things:
    NBT reader of `void_scan.py` reads it back as that entry. The client mod Modflared, an index entry
    since ca131c3, opens the Cloudflare Tunnel behind that address. An instance that is updated to a
    pack with this file loses its own server entries.
+5. It loads `tools/patch_mods.py` from git HEAD, applies its `PACK_RULES` to the matching jars of
+   `local-mods/` and ships each result under the name with the suffix of its rule, Simply Jetpacks 2
+   as `overrides/mods/SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. It refuses a rule that changes
+   nothing and two override files at one path, its permission guard checks the shipped names, and
+   `licenses/` goes to `overrides/licenses/`.
 
 Up to 3.0.5 it packed the working tree, not git. The 3.0.5 file therefore holds 14 untracked config
 files, among them `config/avaritia-common.toml` of a removed mod, and the Spark profiler's temporary

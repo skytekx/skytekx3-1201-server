@@ -2,7 +2,8 @@
 """Distribution-permission check for the jars bundled in the .mrpack (overrides/mods/).
 
 Side-effect free, so both tools can import it:
-- build_mrpack.py checks local-mods/*.jar before it builds anything,
+- build_mrpack.py checks the jars of local-mods/ under the names they ship as (pack_jar_name of
+  patch_mods.py) before it builds anything,
 - publish_modrinth.py checks every jar inside the .mrpack it is about to upload, so an old or
   hand-made file at the public name is caught too.
 

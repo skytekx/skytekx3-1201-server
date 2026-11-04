@@ -3,7 +3,7 @@ type: Reference
 title: Mod set
 description: What SkyTekx 3 is made of, how the Modrinth index, the bundled jars and the server's mods folder relate, which jars sit outside the pack, and how to change the set.
 tags: [modpack, mods, modrinth]
-timestamp: 2026-11-03
+timestamp: 2026-11-04
 ---
 
 # Mod set
@@ -14,13 +14,13 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 
 | Item | Value | Evidence |
 |---|---|---|
-| Pack version | 3.1.0 since aaf6a5e9, not on Modrinth yet. 3.0.7 before | Field `versionId` in `modrinth.index.json`. The build wrote 3.0.7 in 15430ce and 3.0.6 in 3860591 |
+| Pack version | 3.1.2 since 551170bb, built privately and not on Modrinth, after 3.1.1 (ccc9289e), 3.1.0 (aaf6a5e9) and 3.0.7 | Field `versionId` in `modrinth.index.json`. The build wrote 3.0.7 in 15430ce and 3.0.6 in 3860591 |
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since a36207c, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 1,008,110,498 bytes since 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
-| Bundled jars | 44 in `local-mods/` since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
+| Index entries | 223 since 56912155, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 551170bb, which removed Elenai Dodge 2. Before them, 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,007,187,325 bytes since 56912155, 1,007,808,005 from 551170bb, 1,008,110,498 from 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
+| Bundled jars | 45 in `local-mods/` since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
@@ -82,8 +82,10 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 
 Forge only loads `mods/`. The `local-mods/` jars reach the server because they were copied into
 `mods/`. Up to 74faf22 Nyx was both an index entry and a bundled jar. All copies are byte identical,
-except Traverse, which `tools/patch_mods.py` patches in `mods/` only. Nine index jars are patched as
-well, so their SHA-1 no longer matches the index. Players get the unpatched jars. See
+except Traverse, BiblioCraft and Simply Jetpacks 2, which `tools/patch_mods.py` patches in `mods/`.
+Eleven index jars are patched as well, so their SHA-1 no longer matches the index (checked
+2026-11-04). Players get the unpatched jars, except Simply Jetpacks 2, which the pack ships patched as
+`SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. See
 [boot fixes](../content/boot-fixes.md).
 
 The comment at `.gitignore:32` says that `mods/` is reproducible from the index and fetched on deploy.
@@ -110,7 +112,8 @@ that offers optional files can leave them out. JEI and EMI are both in the index
 
 ## Bundled jars
 
-The 35 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`):
+The 45 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+counts in the list below are older than the last ten of them and were not recounted:
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
@@ -128,6 +131,10 @@ The 35 jars in `local-mods/` (origins from each jar's manifest and from `modrint
   JEI 15.74 and failed on the recipes of Tinkers' Construct and Chipped. It needs JEI 15.74 or newer.
   Since 2026-11-04 git ships 1.1.24-skytekx.2 (3fd75e08), which treats the null entries that JEI allows
   in an ingredient list as empty, so the three entity melting recipes of Tinkers' Construct load too.
+- Simply Jetpacks 2, version 2.11.0.1, joined on 2026-11-04 (56912155). It is the unchanged Modrinth
+  file, MIT licensed, moved out of the index so that the pack can ship it with the guide book patch of
+  `tools/patch_mods.py`, as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. Its license text
+  travels in `licenses/`.
 
 Six of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies and Hexxit Additions (`modrinth-permissions/README.md`). They block a

@@ -5,7 +5,8 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across all 40 bundled mods. **Verify the blockers yourself before trusting them.**
+Researched automatically across the 40 bundled mods of that time. The table below lists all 45 jars of
+`local-mods/` since 2026-11-04, and the counts at the top were not recounted. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 

@@ -37,8 +37,8 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 148 files, 147 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
-fixes. 4 files add [missing structure pools](#missing-structure-pools), and the other 18 are
+is tracked: 150 files, 149 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 20 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -86,15 +86,31 @@ next boot test should show whether their 6 loot tables and 3 advancements still 
 
 ### Gameplay overrides
 
-Two groups of files in the pack change the game on purpose:
+Three groups of files in the pack change the game on purpose:
 
-- 16 biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
+- Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
   [AlmostUnified](../modpack/almostunified.md#one-ore-per-metal).
-- 2 worldgen files under `data/hexxit_gear/worldgen/` make the Hexbiscus generate as single flowers
+- Two worldgen files under `data/hexxit_gear/worldgen/` make the Hexbiscus generate as single flowers
   like in SkyTekx 2 (9a784372), in 1 of 32 chunks since 68c55501. On 2026-06-27 21:46 the owner asked
   for no three Hexxit flowers next to each other, on 2026-11-03 16:18 said that they spawn too often
   and at 17:13 chose 1 in every 32 chunks.
+- Two worldgen files under `data/hexxit_additions/` place the hollow oak log of Hexxit Additions 1.0.2
+  on the forest floor since 2026-11-04. The placed feature of the mod made 44 tries per chunk between
+  Y 50 and 90 and kept only blocks in `#minecraft:oak_log`, a tag that does not exist (vanilla has
+  `minecraft:oak_logs`). So no hollow log ever generated, and every boot warned "Not all defined tags
+  for registry ResourceKey[minecraft:root / minecraft:block] are present in data pack:
+  minecraft:oak_log". On 2026-11-04 at 11:53 the owner ruled for about one hollow log per ten forest
+  chunks, in new chunks only. The override makes one try in 8 chunks (`rarity_filter` 8) at a random
+  column on the heightmap `MOTION_BLOCKING_NO_LEAVES`. It places a log only where the block is air,
+  short grass or fern and the block below is in `#minecraft:dirt`, in the four biomes of the mod
+  (forest, flower forest, swamp and wooded badlands). The step moved from `surface_structures` to
+  `top_layer_modification`, after the trees, so a log lies on the ground and never inside a tree.
+  Chunks generated before keep what they have, and the Skylands use their own biome ids and get none.
+  On the test server one try per chunk gave 124 logs in 162 forest chunks (0.76 per forest chunk),
+  all on grass blocks. The final files gave 25 logs in 278 forest chunks (0.090) in 10,082 fresh
+  chunks, all on grass or coarse dirt and none floating. The live boot of 2026-11-04 16:06 no longer
+  logs the tag warning.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

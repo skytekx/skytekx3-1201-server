@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_features",
+  "biomes": [
+    "minecraft:flower_forest",
+    "minecraft:forest",
+    "minecraft:swamp",
+    "minecraft:wooded_badlands"
+  ],
+  "features": "hexxit_additions:oak_hollow",
+  "step": "top_layer_modification"
+}

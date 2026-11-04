@@ -3439,6 +3439,21 @@
         "https://cdn.modrinth.com/data/rxYaglEe/versions/d83Wdhdn/AdvancedAE-1.3.6-1.20.1.jar"
       ],
       "fileSize": 2486306
+    },
+    {
+      "path": "mods/flib-1.20.1-0.0.16.jar",
+      "hashes": {
+        "sha1": "3f1b66947cf152c88b4f104ac2ad45865d583b97",
+        "sha512": "d4069f37c1d8c80bc32d1d6977db418f7bd7f6a14ab1d22b9a5a49050ff92d03b4c5f7334ac4d79796c703ae72d5111bfd1d10d53ae6b1c70a30188f1c99ceae"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/FAUSd09K/versions/CDihtEoy/flib-1.20.1-0.0.16.jar"
+      ],
+      "fileSize": 276850
     }
   ],
   "dependencies": {

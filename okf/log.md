@@ -788,6 +788,10 @@ logs stay on the Mac and are not in the repo.
   [Boot fixes](content/boot-fixes.md#load-order). On the way `tools/mrpack_permissions.py` learned to
   read plain `Status:` lines, which three permission files use, and the permission table got its
   missing Backpack row.
+- At 20:48 the owner asked for loot tabs with the loot of the server instead of the defaults. Just
+  Enough Resources cannot read that loot on a dedicated server, so Advanced Loot Info 2.5.0 with its
+  library Advanced Core Info 1.5.0 took its place for 3.1.3 after a boot of a test server, see
+  [Mod set](modpack/mod-set.md#advanced-loot-info).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

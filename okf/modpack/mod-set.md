@@ -18,8 +18,8 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since c70f699, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 231 since 2026-11-04 (0156111b to 3c3aa05b), which added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04). 227 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 1,018,089,782 bytes since 3c3aa05b, 1,007,463,556 from 19e712ec with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
+| Index entries | 232 since 2026-11-04 (b8cbda3e to 14fc2390), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since 3c3aa05b, after 0156111b to 3c3aa05b added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,018,751,213 bytes since 14fc2390, 1,019,027,444 from 46d4d298 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b8cbda3e, 1,018,089,782 from 3c3aa05b, 1,007,463,556 from 19e712ec with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
 | Bundled jars | 47 in `local-mods/` since 2026-11-04 (303b8077 and 96278bdb), 45 since 2d356b97, 44 since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
@@ -96,6 +96,32 @@ later for five addons of Applied Energistics 2, and at 19:41 for Cyclic from its
 - Mob Grinding Utils is All Rights Reserved, so like six other bundled jars it blocks a public pack,
   see [bundled jars](#bundled-jars) and [publish](publish.md).
 
+### Advanced Loot Info
+
+At 20:48 the owner asked for loot tabs with the loot of the server, not the defaults of the mods.
+Advanced Loot Info 2.5.0 and its library Advanced Core Info 1.5.0 took the place of Just Enough
+Resources (b8cbda3e to 14fc2390). Both are required on both sides and under the MIT license, and every
+build of them for 1.20.1 is a beta.
+
+- At the start of the server and after every `/reload` the mod reads the loot tables from the
+  server's loot manager (`AbstractServer.readLootTables`) and applies the global loot modifiers that it
+  knows. When EMI loads on a client, the client asks the server for that loot and gets it in chunks
+  over the mod's own network channel.
+- On this server the loot differs from the defaults of the mods mainly by the loot table overrides of
+  the fixes pack. Loot from other datapacks and LootJS rules would show the same way, but the Skylands
+  packs carry no loot tables, and the pack has no LootJS rules. The `loot_tiers.js` that
+  `kubejs/server_scripts/gameplay.js` plans was never written.
+- On a test boot on 2026-11-04 it read 6,623 loot tables, 16 fake loot tables and 34 trades into
+  29,403 pages in 3.7 seconds on the server thread, right after the start. Each `/reload` runs the
+  same reading again. It logged no error.
+- It has no handler for 72 kinds of global loot modifiers of other mods, among them Apotheosis, Blood
+  Magic, Farmer's Delight, the Aether mods and the Twilight Forest. Drops that only such a modifier
+  adds do not show in its tabs.
+- Its EMI plugin is native, so the JEI bridge of EMI skips its JEI categories (namespace `ali`) and
+  each tab shows once.
+- How much the loot adds to a join over the tunnel is not measured, see
+  [open items](../open-items.md#not-verified).
+
 ## Owner rulings
 
 From `~/.claude/history.jsonl`, session 5bd3e1de:
@@ -117,8 +143,8 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
 | Folder [local-mods/](../../local-mods) | Yes | 47 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (200), the `local-mods/` jars (EnderIO Legacy Machines and Mob Grinding Utils only from the deploy of 3.1.3 on), and BrassAmber BattleTowers, which exists nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
-| Folder `client-only-mods/` | No (`.gitignore:34`) | 18 jars kept off the server: the 17 index entries with server env `unsupported`, Modflared among them since 44358a8 and Just Enough Resources since 2026-11-04, and Nostalgic Tweaks, moved by hand |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04 and Advanced Loot Info with its library join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since 44358a8, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from 19e712ec to 14fc2390 |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
 Forge only loads `mods/`. The `local-mods/` jars reach the server because they were copied into
@@ -139,8 +165,8 @@ for the next pack).
 
 | Client | Server | Count | Examples |
 |---|---|---:|---|
-| Required | Required | 201 | Content mods and libraries, Create and GeckoLib among them |
-| Required | Unsupported | 17 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, JustEnoughResources, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
+| Required | Required | 203 | Content mods and libraries, Create and GeckoLib among them |
+| Required | Unsupported | 16 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
 | Unsupported | Required | 13 | AI Improvements, Apothic Category Compat, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures, Starlight |
 
 No entry is optional. Commit c5386c15 made every mod required, after the index of 3.0.7 (checked on
@@ -156,17 +182,12 @@ a client without it passes the Forge handshake. Starlight 1.1.2 is the newest Fo
 on Modrinth. The next build, 1.1.3, is for 1.20.2 only. The server keeps it for its light engine, see
 [performance](../server/performance.md#levers).
 
-Just Enough Resources 1.4.0.247 runs only on the client since 2026-11-04. It is a JEI plugin, and EMI
-shows its tabs through its JEI bridge, because the index has JEI as well. Its 143 classes reference no
-network channel and register no content. On a dedicated server it cannot read the server's loot tables,
-so it loads its own from the vanilla jar and the mod jars (`LootTableHelper.getLootDataManager`). Its
-mob drops and chest loot therefore show the defaults of the mods, without the fixes pack, the Skylands
-packs and LootJS. Its ore tab knows only the vanilla ore heights, because nobody profiled the worlds of
-SkyTekx 3. Version 1.4.0.247 of 2024-01-24 is the newest build for 1.20.1, and its tracker has three
-open reports for this setup: JER tabs missing on 1.20.1 servers (#529), JEI recipes missing from EMI
-after the first world load (#445) and log spam with EMI from villager trades (#595). The source is
-the branch `1.20.1` of `way2muchnoise/JustEnoughResources`, under the "Don't Be a Jerk" license, which
-allows modpacks and patched builds that are not sold.
+Just Enough Resources 1.4.0.247 was a client only entry from 19e712ec to 14fc2390 and never reached a
+pack. It is a JEI plugin without network code, so on a dedicated server it loads the loot tables from
+the vanilla jar and the mod jars (`LootTableHelper.getLootDataManager`). Its mob drops and chest loot
+therefore show the defaults of the mods, without the overrides of the fixes pack, and its ore tab knows
+only the vanilla ore heights, because nobody profiled the worlds of SkyTekx 3. The owner wanted the
+loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 

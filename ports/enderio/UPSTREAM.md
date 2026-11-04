@@ -45,3 +45,61 @@ and the committed datagen output in `src/generated/resources/`. Upstream's `.git
 - Libraries the build packs into `META-INF/jarjar/`: Registrate (MPL-2.0), GraphLib3 (MIT,
   gigaherz / David Quintana), and GraphLib3's dependencies Guava, failureaccess, listenablefuture,
   Error Prone annotations, JSR 305 (Apache-2.0) and checker-qual (MIT).
+
+## Building
+
+Java 17 only (the build's toolchain is 17, and the pack's Arclight server dies on Java 21), and a
+UTF-8 locale:
+
+```bash
+cd ports/enderio
+LC_ALL=C.UTF-8 JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew build \
+  -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain
+```
+
+Upstream has one file name that is not ASCII, `src/main/resources/assets/enderio/lang/no_no<U+200C>.json`
+(a stray zero-width non-joiner; the release jar has it too). Under the POSIX/C locale Java cannot
+encode that name, and `processResources` fails with "Failed to create MD5 hash for file
+.../no_no???.json as it does not exist". `compileJava` alone does not touch resources and works in
+any locale.
+
+`build/libs/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` is the jar for `local-mods/` (the jarJar jar
+with Registrate and GraphLib3 inside, like upstream's release `-all` jar). `build` also writes the
+plain jar without the bundled libraries, `-api` and `-sources`. A quick check is
+`./gradlew compileJava` with the same options.
+
+## Build changes against upstream
+
+Everything that SkyTekx changed in the build files is marked `SkyTekx:` in a comment there.
+
+- **Fixed version** `6.3.0-skytekx.1` (`mod_version` in `gradle.properties`). Upstream derives the
+  version from the `BUILD_VERSION`/`NIGHTLY` environment or, locally, from `git rev-parse` of the
+  enclosing repository, which in this repository would give `6.2-dev-<branch>-<sha>`.
+  `mod_version_series` goes from 6.2 to 6.3, like upstream's own `experiment/1.20.1-backport`
+  (`versionSeries=6.3`). The version stays in the 6.x series and above 6.2.18: EnderIO Legacy
+  Machines 0.4.9 requires `enderio` `[0,)`, Exchangers 3.5.1 takes `enderio` `[1.0,)` (optional).
+- **Release plugins removed:** `com.modrinth.minotaur` 2.+, `me.hypherionmc.modutils.modpublisher`
+  1.+ with its `publisher { }` block, and the plugin repository `maven.firstdarkdev.xyz` that only
+  served modpublisher. They publish to the official Ender IO Modrinth and CurseForge projects, which
+  an unofficial build must never do, and they only ran when `BUILD_VERSION` and `CHANGELOG` were
+  set. `maven-publish` stays (its Rover656 repository needs upstream's credentials).
+- **Pinned plugins:** ForgeGradle `[6.0,6.2)` -> `6.0.54`, MixinGradle `0.7.+` -> `0.7.38`,
+  ModGradle `4.0.+` -> `4.0.6`, which is what the ranges resolved to on 2026-11-04. The Parchment
+  librarian plugin stays at `1.+`: it only publishes snapshots, and the build does not use it
+  (the mappings channel is sugarcane, from ModGradle).
+- **Pinned jarJar libraries:** Registrate `MC1.20-1.3.11` and GraphLib3 `3.0.7`, the jars inside
+  the 6.2.18-beta release. `jarJar.pin` keeps upstream's ranges (`[MC1.20-1.3.3,)`, `[3.0.4,3.1)`)
+  in `META-INF/jarjar/metadata.json`, so Forge's jar-in-jar selection behaves as before; without the
+  pin the bundled jar would be whatever is newest on the maven at build time.
+- **Reproducible jars:** every `Jar` task sets `preserveFileTimestamps = false` and
+  `reproducibleFileOrder = true`, and the manifest has no `Implementation-Timestamp` any more, like
+  `ports/twilightforest`. `Implementation-Vendor` says that this is an unofficial modified build.
+- **`.gitignore`:** a SkyTekx block for the build and run outputs of this port.
+
+Not changed: the Gradle wrapper (8.8), the repositories of the mod dependencies, the foojay toolchain
+resolver, the source sets, the mixin and reobf setup, the compiler settings (no warnings were
+turned off), and the committed datagen output.
+
+## Files added by SkyTekx
+
+- `UPSTREAM.md` (this file)

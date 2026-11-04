@@ -219,10 +219,10 @@ evidence and the page with the details. The rulings behind the first section are
   client. The deploy of 3.1.3 has to move the fixes pack to the end of the pack order once after the
   first start, see [Boot fixes](content/boot-fixes.md#load-order). See
   [Mod set](modpack/mod-set.md#additions-of-2026-11-04).
-- Just Enough Resources joined the index on 2026-11-04 without a test in this pack. Open reports in
-  its tracker describe missing JER tabs on 1.20.1 servers and JEI recipes missing from EMI after the
-  first world load, see [Mod set](modpack/mod-set.md#sides). The test of the next pack should open a
-  JER tab in EMI on the server.
+- Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
+  opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
+  chest in EMI on the server and note how much longer the join takes with the loot that the server
+  sends, see [Mod set](modpack/mod-set.md#advanced-loot-info).
 - The jar patches of 2026-11-04 in play. Nobody has opened the Simply Jetpacks 2 guide book in a
   client of a pack that ships `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, or updated a 3.1.2
   instance to such a pack in Prism Launcher or the Modrinth App. Nobody has cloned an enchanted book

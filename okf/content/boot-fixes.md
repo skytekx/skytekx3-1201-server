@@ -195,7 +195,8 @@ Seven groups of files in the pack change the game on purpose:
   gave wheat, potatoes and carrots by row, and the scan found 59 such recipes. The pack
   `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
   (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
-  Mac mini at 21:54 and load with its next `/reload` or start.
+  Mac mini at 21:54 and went live with the restart of 23:10 ("Done" at 23:11:09), whose log has no
+  error about them.
 - Two trim materials, `data/tconstruct/trim_material/steel.json` and
   `data/tinkers_reforged/trim_material/graphite.json`, let the steel trim of Tinkers' Construct take the
   steel of Mekanism and the graphite trim of Tinkers' Reforged the graphite of Extreme Reactors since

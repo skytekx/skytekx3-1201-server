@@ -119,7 +119,9 @@ build of them for 1.20.1 is a beta.
   adds do not show in its tabs.
 - Its EMI plugin is native, so the JEI bridge of EMI skips its JEI categories (namespace `ali`) and
   each tab shows once.
-- How much the loot adds to a join over the tunnel is not measured, see
+- The loot that the server sends to each client comes to 27 chunks of together 874,514 bytes, the
+  biggest 32,768 bytes, counted on the test server on 2026-11-04 from the chunks that the mod holds.
+  How much longer that makes a join over the tunnel is not measured, see
   [open items](../open-items.md#not-verified).
 
 ## Owner rulings

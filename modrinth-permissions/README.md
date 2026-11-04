@@ -13,6 +13,7 @@ Researched automatically across all 40 bundled mods. **Verify the blockers yours
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
 - **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
+- A jar that `PACK_RULES` in `tools/patch_mods.py` patches for the pack keeps its upstream name in `local-mods/`, but ships, and has its file here, under the name with the suffix of its rule. For Simply Jetpacks 2 that is `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. Both checks use that shipped name.
 - **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
 
 ## BLOCKERS (resolve before publishing)
@@ -80,6 +81,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `offlineskins-1.20.1-v1.jar` | OfflineSkins | MIT | Licensed | yes | yes |
 | `parry-2.5.0.jar` | Shield Parry | LGPL-2.1 | Licensed | yes | - |
 | `refurbished_furniture-forge-1.20.1-1.0.20.jar` | MrCrayfish's Furniture Mod: Refurbished | Custom (MIT for source code; All Rights Reserved for assets) | Special permission | yes | - |
+| `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar` | Simply Jetpacks 2 (guide book patched by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
 | `skytekx-compat-2.1.3.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
 | `skytekx-compat-2.0.0.jar` | SkyTekx Compat | MIT | Licensed | yes | - |

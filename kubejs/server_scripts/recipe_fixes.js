@@ -15,6 +15,11 @@ ServerEvents.recipes(event => {
     B: 'minecraft:book'
   }).id('skytekx3:bookshelf_any_plank')
 
+  // One item per material (2026-11-04). Two iron ingots on top of each other made 4 Immersive
+  // Engineering rods or 2 Thermal Extra rods, and Polymorph offered both. Almost Unified turns both
+  // results into the same rod, so the Thermal Extra recipe goes and the grid gives 4.
+  event.remove({ id: 'thermal_extra:crafting/iron_rod' })
+
   // ---------------------------------------------------------------------------
   // The following ported the SkyTekx2 intent but reference mods whose ids change
   // on 1.20.1. They are left commented until the mods are in `mods/`; confirm the

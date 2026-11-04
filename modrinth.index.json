@@ -1266,21 +1266,6 @@
       "fileSize": 850686
     },
     {
-      "path": "mods/ExtremeReactors2-1.20.1-2.0.84.jar",
-      "hashes": {
-        "sha1": "5f208f4e77378971fda59a83634534333c3bed44",
-        "sha512": "90bc23690603f1704d3a0a2dc019a8e3931e398c70916c744e2ecbea9f15cc6b10b8df6221afd7cc5375f7677cabf367f3b9a700289e26a4b0b889a5b5b9969c"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/idkvShUy/versions/5A5jbWkI/ExtremeReactors2-1.20.1-2.0.84.jar"
-      ],
-      "fileSize": 2503650
-    },
-    {
       "path": "mods/FallingTree-1.20.1-4.3.4.jar",
       "hashes": {
         "sha1": "617b79628fca3968979c1cc5f42edda882a55adb",
@@ -3049,21 +3034,6 @@
         "https://cdn.modrinth.com/data/kidLKymU/versions/rwiShgsc/YungsBetterStrongholds-1.20-Forge-4.0.3.jar"
       ],
       "fileSize": 473564
-    },
-    {
-      "path": "mods/ZeroCore2-1.20.1-2.1.45.jar",
-      "hashes": {
-        "sha1": "bcb4d9d09ea69fca4e9436123e54706934732ddd",
-        "sha512": "12ea63f8b4cff7899d639b443710a34e0a655515bd2f39f7e604799ae63329edf27e3dbdf8dbebf414c33db72b209d4e69f59c0cc413b15765ed6710479eb9d1"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/rHpb85Mf/versions/OIzaNrPI/ZeroCore2-1.20.1-2.1.45.jar"
-      ],
-      "fileSize": 1338662
     },
     {
       "path": "mods/Zeta-1.0-31.jar",

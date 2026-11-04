@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter and the ore overrides carry that into the world, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # AlmostUnified
@@ -135,6 +135,11 @@ Foregoing recipe take yellorium, and none of them turns it into uranium.
 
 Extreme Reactors keeps working. Each of its six recipes that ask for the uranium tag has a twin that
 asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/yellorium` as well.
+
+Extreme Reactors 2.0.97 also lists its deepslate yellorite ore, raw yellorium, the raw yellorium block and
+the yellorium block in the item tags of uranium. Since 2026-11-05 tag_fixes.js takes them out as well.
+Its own recipes name these items directly. A Forge 47.4.18 test boot with Extreme Reactors, ZeroCore,
+Mekanism, Patchouli and KubeJS then listed only Mekanism items in the six uranium tags.
 
 ### Limits
 

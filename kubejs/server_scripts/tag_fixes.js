@@ -52,10 +52,17 @@ ServerEvents.tags('item', event => {
 // for yellorium, and its reactors take yellorium fuel through forge:ingots/yellorium as well. Almost
 // Unified ignores bigreactors items since 2026-11-02 for the same reason, and
 // kubejs/server_scripts/unify_inventory.js skips them.
+// Extreme Reactors 2.0.97 adds its deepslate ore, raw yellorium, the raw yellorium block and the
+// yellorium block to the uranium tags as well. Its own recipes name those items directly, so they stay
+// out of the uranium tags too. Otherwise the uranium recipes of Mekanism, Immersive Engineering, Create,
+// Tinkers' Construct, Thermal Extra, Blood Magic and Industrial Foregoing would turn them into uranium.
 ServerEvents.tags('item', event => {
   event.remove('forge:ingots/uranium', 'bigreactors:yellorium_ingot')
   event.remove('forge:dusts/uranium', 'bigreactors:yellorium_dust')
-  event.remove('forge:ores/uranium', 'bigreactors:yellorite_ore')
+  event.remove('forge:ores/uranium', ['bigreactors:yellorite_ore', 'bigreactors:deepslate_yellorite_ore'])
+  event.remove('forge:raw_materials/uranium', 'bigreactors:raw_yellorium')
+  event.remove('forge:storage_blocks/raw_uranium', 'bigreactors:raw_yellorium_block')
+  event.remove('forge:storage_blocks/uranium', 'bigreactors:yellorium_block')
 })
 ServerEvents.tags('block', event => {
   event.remove('forge:ores/uranium', 'bigreactors:yellorite_ore')

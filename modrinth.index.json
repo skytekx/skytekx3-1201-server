@@ -3469,6 +3469,21 @@
         "https://cdn.modrinth.com/data/UcVTWyCI/versions/wLo8i0R4/Cyclic-1.20.1-1.13.7.jar"
       ],
       "fileSize": 4275426
+    },
+    {
+      "path": "mods/AdvancedCoreInfo-forge-1.20.1-1.5.0.jar",
+      "hashes": {
+        "sha1": "e5f2fc98333fe203b06ee089f9afe351c2667dab",
+        "sha512": "bf50c225f5428dca14f989ceb242cc18bcba4fd8cafb2f43241bc01078270181f753b1b2e5e341095ef76c40c0e32373013300a045e0ef45ca8dbb7380e557ab"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/BaR4ijFC/versions/HeSOGi4n/AdvancedCoreInfo-forge-1.20.1-1.5.0.jar"
+      ],
+      "fileSize": 259912
     }
   ],
   "dependencies": {

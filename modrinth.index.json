@@ -3409,6 +3409,21 @@
         "https://cdn.modrinth.com/data/VQhDBNs8/versions/Jvy26GOV/aeinfinitybooster-forge-2.1.0%2Bmc1.20.1.jar"
       ],
       "fileSize": 41898
+    },
+    {
+      "path": "mods/Applied-Mekanistics-1.4.3.jar",
+      "hashes": {
+        "sha1": "8b37889d94b6c1ae5cd31ddde379a1c323c3c501",
+        "sha512": "20db7dca0545a86351627a11b0d6fea0b687f2cd0fac621378b84926196e363d4e42c7d90d40c6d57172dc1dcf5bb98195e25a2c0b90c648008690a759e2e1b5"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/IiATswDj/versions/9n9p68Qq/Applied-Mekanistics-1.4.3.jar"
+      ],
+      "fileSize": 185707
     }
   ],
   "dependencies": {

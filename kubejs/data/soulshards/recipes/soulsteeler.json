@@ -1,0 +1,21 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "soulshards"
+    }
+  ],
+  "type": "enderio:enchanting",
+  "cost_multiplier": 1,
+  "enchantment": "soulshards:soul_stealer",
+  "input": {
+    "count": 1,
+    "ingredient": {
+      "item": "soulshards:corrupted_ingot"
+    }
+  }
+}

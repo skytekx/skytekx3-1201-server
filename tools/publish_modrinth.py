@@ -24,7 +24,7 @@ if not PAT:
 GO = "--go" in sys.argv
 TEXTS = "--texts" in sys.argv
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.1.2"
+VERSION = "3.1.3"
 MRPACK = REPO + f"/SkyTekx3-{VERSION}.mrpack"
 CHANGELOG = REPO + f"/docs/changelog/{VERSION}.md"
 API = "https://api.modrinth.com/v2"

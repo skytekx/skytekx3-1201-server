@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:blocks/glass"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "chocolate_quest:blocks/old_glass"
+}

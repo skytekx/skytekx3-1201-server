@@ -60,3 +60,15 @@ ServerEvents.tags('item', event => {
 ServerEvents.tags('block', event => {
   event.remove('forge:ores/uranium', 'bigreactors:yellorite_ore')
 })
+
+// Mekanism lists its sulfur dust in forge:dyes/yellow, so the yellow dye recipes of other mods take it as
+// one of the yellow dyes. Almost Unified makes the sulfur dust of Thermal Foundation the one sulfur dust of
+// the pack and kubejs/server_scripts/unify_inventory.js turns the Mekanism dust into it, but Thermal does
+// not list its dust as a dye. Players never held the dust those recipes asked for. On the test server on
+// 2026-11-04, 160 recipes took the Mekanism dust and not the Thermal dust, all of them through this tag.
+// A replaceInput cannot fix them, because it swaps the whole yellow dye ingredient, so the recipes would
+// stop taking yellow dye itself, and it does not reach the machine recipes of every mod. With every
+// sulfur dust in the tag, all of them take the Thermal dust next to yellow dye.
+ServerEvents.tags('item', event => {
+  event.add('forge:dyes/yellow', '#forge:dusts/sulfur')
+})

@@ -173,9 +173,11 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.1.1 | 2026-11-03 17:37 | 73,371,625 B | 225 | 44 | Private build with `--allow-unpermitted`, sent straight to players and never uploaded, because five bundled jars lack permission. It carries everything since 3.0.7, among it the Twilight Forest backport, Nyx 1.0.1, the minimap at the top right (`config/xaerohud.txt`) and the single Hexbiscus |
 | 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
 
-The next pack is the first with Simply Jetpacks 2 bundled and the first that ships a patched jar. Its
-row should record whether a fresh install and the update of a 3.1.2 instance were tested in Prism
-Launcher and the Modrinth App, see [boot fixes](../content/boot-fixes.md#jar-patches).
+The next pack is the first with Simply Jetpacks 2 bundled, the first that ships a patched jar (see
+[boot fixes](../content/boot-fixes.md#jar-patches)) and the first that keeps Starlight off the clients
+(see [mod set](mod-set.md#sides)). Its row should record whether a fresh install and the update of a
+3.1.2 instance were tested in Prism Launcher and the Modrinth App, and whether a client without
+Starlight joined.
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

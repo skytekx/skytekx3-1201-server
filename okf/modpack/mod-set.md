@@ -124,6 +124,30 @@ build of them for 1.20.1 is a beta.
   How much longer that makes a join over the tunnel is not measured, see
   [open items](../open-items.md#not-verified).
 
+### Flux Networks
+
+At 21:45 the owner asked for Flux Networks from its GitHub repository, SonarSonic/Flux-Networks. Version
+7.2.1.15 of 2024-04-04 is the newest build for 1.20.1, and the branch `1.20` of the repository carries
+the same version. The repository has no releases, and the only Flux Networks on Modrinth is an unrelated
+Fabric port. So the pack bundles the CurseForge file (project 248020, file 5234697, uploaded by
+BloCamLimb, one of the two authors) in `local-mods/`. Its `mods.toml` declares MIT like the repository,
+and the jar has no license text, so the LICENSE of the branch `1.20` travels in `licenses/`.
+
+- It is required on both sides and needs only Forge. Modern UI and JEI are optional, and the jar has
+  no mixins. It reaches the server with the deploy of 3.1.3, like the
+  [nine mods](#additions-of-2026-11-04) above.
+- Flux Dust comes from redstone that lies on obsidian, when a player left-clicks the obsidian and the
+  block below it is bedrock or a Flux Block.
+- Its server config `world/serverconfig/fluxnetworks-server.toml` keeps the defaults. The Flux Dust
+  recipe is on, every flux device may keep its chunk loaded once a player turns that on, and Super Admin
+  needs permission level 1, which only the ops have here.
+- A test server with the other new mods of 3.1.3 booted with it on 2026-11-04 at 22:04. It logged no
+  ERROR of its own, only 19 warnings that its 7 blocks, 11 items and 1 sound did not get the registry
+  ids they asked for, which Forge prints when a world saved without the mod loads it for the first time.
+  The Flux Plug, Point and Controller, the three storages and the Flux Block, placed with `setblock`,
+  ran for half a minute without an error. Nobody made Flux Dust or sent energy through a network, which
+  needs a player.
+
 ## Owner rulings
 
 From `~/.claude/history.jsonl`, session 5bd3e1de:
@@ -144,8 +168,8 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 47 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04 and Advanced Loot Info with its library join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder [local-mods/](../../local-mods) | Yes | 48 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library and Flux Networks join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since ca131c3, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from d1cabf85 to 3b98076f |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
@@ -193,8 +217,8 @@ loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 
-The 47 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
-counts in the list below are older than the last twelve of them and were not recounted:
+The 48 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+counts in the list below are older than the last thirteen of them and were not recounted:
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
@@ -220,6 +244,9 @@ counts in the list below are older than the last twelve of them and were not rec
   2026-11-04 as CurseForge files, see [additions](#additions-of-2026-11-04). EnderIO Legacy Machines
   declares MIT and has no source repository, and the MIT text travels in `licenses/` because the jar
   has none.
+- Flux Networks 7.2.1.15 joined on 2026-11-04 as a CurseForge file, see
+  [Flux Networks](#flux-networks). It is MIT licensed, and the LICENSE of its repository travels in
+  `licenses/` because the jar has none.
 
 Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils

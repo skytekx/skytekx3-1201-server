@@ -799,6 +799,9 @@ logs stay on the Mac and are not in the repo.
   keeps the empty rows of the essence recipes of Mystical Agriculture, so they matched in one place
   only. The fixes pack cuts them in 53 recipes, and the 54 whose place decides the result stay, see
   [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- At 21:45 the owner asked for Flux Networks from its GitHub repository. Version 7.2.1.15 is on
+  CurseForge only and MIT licensed, so the pack bundles it in `local-mods/` for 3.1.3 after a boot of a
+  test server, see [Mod set](modpack/mod-set.md#flux-networks).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

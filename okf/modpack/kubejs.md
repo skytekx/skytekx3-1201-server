@@ -3,7 +3,7 @@ type: Reference
 title: KubeJS
 description: The nine KubeJS server scripts, the startup script and the data files of SkyTekx 3, what each one really does on 1.20.1, the recipe failures of the boot log, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
 tags: [modpack, kubejs, recipes, scripting]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # KubeJS
@@ -43,7 +43,7 @@ scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of 
 | Apotheosis passengers, `startup_scripts/apotheosis_passengers.js` | Discards the wither cloud of a Withering Archer that despawns, see [Apotheosis riders](#apotheosis-riders) |
 | Skylands sleep, `skylands_sleep.js` | Turns the overworld to day when players sleep in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#sleep-and-hostile-mobs) |
 | Skylands portals, `skylands_portals.js` | Lets nether portals work in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#nether-portals) |
-| Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, see [AlmostUnified](almostunified.md#inventory-converter) |
+| Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, and the five old blocks of Chocolate Quest for the normal blocks, see [AlmostUnified](almostunified.md#inventory-converter) and [Old blocks](../content/old-blocks.md) |
 | Recipe races, `recipe_races.js` | Builds three recipe types of Tinkers' Construct and Reliquary on the main thread, because they write into shared state of their mod while they are built, see [Recipe failures](#recipe-failures) |
 
 The recipe summary of that boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes, with 17

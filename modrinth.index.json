@@ -3364,6 +3364,21 @@
         "https://cdn.modrinth.com/data/uEfK2CXF/versions/jW52tbTk/JustEnoughResources-1.20.1-1.4.0.247.jar"
       ],
       "fileSize": 276231
+    },
+    {
+      "path": "mods/ExtendedAE-1.20-1.4.21-forge.jar",
+      "hashes": {
+        "sha1": "15680d4f01a31a0f8bc6323bca6fcd507ae0c6b3",
+        "sha512": "1632bfd32853c9e2668b49e55bf0772e89daf4eec9706640bce5abf24c677f884c0935dbf078720b1db35a8f8fa5acee214d9dd14cc1c08c1bc3db698a29f7d6"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://github.com/GlodBlock/ExtendedAE/releases/download/1.20-1.4.21-forge/ExtendedAE-1.20-1.4.21-forge.jar"
+      ],
+      "fileSize": 2972843
     }
   ],
   "dependencies": {

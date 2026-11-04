@@ -56,6 +56,7 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
 | Recipe and tag tweaks | Scripts `kubejs/server_scripts/recipe_fixes.js`, `tag_fixes.js` and `gameplay.js`. No loot code exists yet |
 | Combat feel (no attack cooldown) | Script `kubejs/server_scripts/combat_1_7.js` |
 | Broken or unwanted data of other mods, such as duplicate ores | The override datapack `world/datapacks/skytekx3_fixes/`, which has no other source. Git ignores `world/`, so add its files with `git add -f` |
+| Replace a block in an existing world | Script `tools/replace_blocks.py` for the old Chocolate Quest blocks, offline with the server stopped, see [Old blocks](okf/content/old-blocks.md) |
 | Fixes inside mod jars | Script `tools/patch_mods.py`. Its `PACK_RULES` reach the `.mrpack` too, see [Boot fixes](okf/content/boot-fixes.md#jar-patches) |
 | Skylands travel | Functions in `skylands-datapack/data/skytekx3/functions/travel/` |
 | Skylands terrain and structures | Sources `skylands-datapack/` (shared, vanilla safe) and `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |
@@ -157,3 +158,7 @@ These rules hold for the README, this file and the OKF wiki.
 - Retired designs stay retired: the `skytekx:surface_spread` structure placement of the old
   skytekx-worldgen mod, the KubeJS fall script and the Java fall handler. SkyTekx Compat 2.0.0 only
   guards Bird's Nests now, see [SkyTekx Compat](okf/content/compat-mod.md).
+- A structure start saves the processors of its pool elements. A changed template pool therefore
+  reaches the chunks of an existing start only after the saved start is patched too, as
+  `tools/replace_blocks.py` does. Starlight lights a chunk from scratch when its `isLightOn` flag is
+  missing.

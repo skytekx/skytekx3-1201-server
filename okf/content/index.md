@@ -1,9 +1,9 @@
 ---
 type: Index
 title: Content
-description: The content built for SkyTekx 3 itself, from the Skylands dimension and its travel to the Nyx port, the combat script, the boot fixes and the compat mod.
+description: The content built for SkyTekx 3 itself, from the Skylands dimension and its travel to the Nyx port, the combat script, the boot fixes, the old Chocolate Quest blocks and the compat mod.
 tags: [content, index]
-timestamp: 2026-10-31
+timestamp: 2026-11-05
 ---
 
 # Content
@@ -19,6 +19,7 @@ what was built or changed for the pack itself.
 | [Combat](combat.md) | The 1.7 style melee: a KubeJS script that removes the attack cooldown, plus the client side swing |
 | [Graves](graves.md) | The GraveStone Mod: a grave with the items at the place of death, and the death history behind `/restore` |
 | [Boot fixes](boot-fixes.md) | The override datapack, the jar patches and the other fixes that took the boot from 152 errors to 3 |
+| [Old blocks](old-blocks.md) | The five old decoration blocks of the Chocolate Quest Builder Village, replaced by the normal blocks in new villages, drops, inventories and the existing world |
 | [SkyTekx Compat](compat-mod.md) | The pack's own Forge mod, now only a crash guard for Bird's Nests |
 
 The Skylands pages tie in with [world reset](../server/world-reset.md), which wipes and pregenerates

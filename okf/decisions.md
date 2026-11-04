@@ -3,7 +3,7 @@ type: Decisions
 title: Decisions
 description: Every owner ruling on SkyTekx 3 from 2026-06-26 to 2026-10-31, grouped by area, with its status on 2026-10-31 and the page or file where it lives.
 tags: [decisions, rulings, owner]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Decisions
@@ -141,6 +141,7 @@ These rules apply to every later change.
 | 2026-11-03 16:18 | The Hexxit flowers spawn too often | Done, live since the restart at 17:33. The fixes pack overrides the Hexbiscus worldgen since 3f5eb2f2: one single flower instead of a patch of 4 tries in 1 of 16 chunks, as in SkyTekx 2. At 17:13 the owner chose 1 in every 32 chunks (d334e80b, SkyTekx 2 had 1 in 55). Only new chunks change | [Boot fixes](content/boot-fixes.md#gameplay-overrides) |
 | 2026-11-03 20:17 | The enchanting table must work by day ("we cat use the enchanter") | Done. Nyx `disallowDayEnchanting = false` as in SkyTekx 2, in the server file since 20:20 and live since 20:22:46 through a one-off KubeJS script. Clients drop the message at their next start | [Nyx](content/nyx.md#configuration) |
 | 2026-11-04 11:53 | The player whose starter house capsule of 2026-11-01 20:39 placed nothing gets a new one | Armed at 12:25. A one-off KubeJS script that lives only on the Mac mini gives the capsule at that player's next login. The script and the template copy in `config/capsule/rewards/` go once it fired | [Change log](log.md) |
+| 2026-11-04 17:33 | Replace the old blocks of Chocolate Quest everywhere and deploy. Every Builder Village then gives 21 iron blocks and 10 diamond ores | Done. Live since the deploy of 3.1.3 on 2026-11-05 at 00:46, which converted the world of the Mac mini offline | [Old blocks](content/old-blocks.md) |
 
 ## Client and main menu
 

@@ -3349,6 +3349,21 @@
         "https://cdn.modrinth.com/data/RYtXKJPr/versions/q9kZE5Xo/gravestone-forge-1.20.1-1.0.35.jar"
       ],
       "fileSize": 317181
+    },
+    {
+      "path": "mods/JustEnoughResources-1.20.1-1.4.0.247.jar",
+      "hashes": {
+        "sha1": "526e788a9b38afc5171fab49b64a5a54e1bb25d7",
+        "sha512": "84568db84d4486e70ddd06c280b6ec69657d53e99cdd1d974db40bf53397ce2fd371e8dd0567fd06f757f2bb6e802a5c54de73f70033f9236dad04b316d33462"
+      },
+      "env": {
+        "client": "required",
+        "server": "unsupported"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/uEfK2CXF/versions/jW52tbTk/JustEnoughResources-1.20.1-1.4.0.247.jar"
+      ],
+      "fileSize": 276231
     }
   ],
   "dependencies": {

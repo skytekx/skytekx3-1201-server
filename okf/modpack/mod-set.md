@@ -18,8 +18,8 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since a36207c, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 223 since 56912155, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 551170bb, which removed Elenai Dodge 2. Before them, 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 1,007,187,325 bytes since 56912155, 1,007,808,005 from 551170bb, 1,008,110,498 from 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
+| Index entries | 224 since 2026-11-04, which added Just Enough Resources as a client only entry. Before it, 223 since 56912155, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 551170bb, which removed Elenai Dodge 2. Before them, 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,007,463,556 bytes since 2026-11-04 with Just Enough Resources, 1,007,187,325 from 56912155, 1,007,808,005 from 551170bb, 1,008,110,498 from 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
 | Bundled jars | 45 in `local-mods/` since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
@@ -77,7 +77,7 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
 | Folder [local-mods/](../../local-mods) | Yes | 35 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (200), the 35 `local-mods/` jars, and BrassAmber BattleTowers, which exists nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
-| Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since ca131c3, and Nostalgic Tweaks, moved by hand |
+| Folder `client-only-mods/` | No (`.gitignore:34`) | 18 jars kept off the server: the 17 index entries with server env `unsupported`, Modflared among them since ca131c3 and Just Enough Resources since 2026-11-04, and Nostalgic Tweaks, moved by hand |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
 Forge only loads `mods/`. The `local-mods/` jars reach the server because they were copied into
@@ -99,7 +99,7 @@ for the next pack).
 | Client | Server | Count | Examples |
 |---|---|---:|---|
 | Required | Required | 194 | Content mods and libraries, Create and GeckoLib among them |
-| Required | Unsupported | 16 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
+| Required | Unsupported | 17 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, JustEnoughResources, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
 | Unsupported | Required | 13 | AI Improvements, Apothic Category Compat, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures, Starlight |
 
 No entry is optional. Commit 264f511d made every mod required, after the index of 3.0.7 (checked on
@@ -114,6 +114,18 @@ Energistics 2, see [client](client.md#crash-history). Its 35 classes reference n
 a client without it passes the Forge handshake. Starlight 1.1.2 is the newest Forge build for 1.20.1
 on Modrinth. The next build, 1.1.3, is for 1.20.2 only. The server keeps it for its light engine, see
 [performance](../server/performance.md#levers).
+
+Just Enough Resources 1.4.0.247 runs only on the client since 2026-11-04. It is a JEI plugin, and EMI
+shows its tabs through its JEI bridge, because the index has JEI as well. Its 143 classes reference no
+network channel and register no content. On a dedicated server it cannot read the server's loot tables,
+so it loads its own from the vanilla jar and the mod jars (`LootTableHelper.getLootDataManager`). Its
+mob drops and chest loot therefore show the defaults of the mods, without the fixes pack, the Skylands
+packs and LootJS. Its ore tab knows only the vanilla ore heights, because nobody profiled the worlds of
+SkyTekx 3. Version 1.4.0.247 of 2024-01-24 is the newest build for 1.20.1, and its tracker has three
+open reports for this setup: JER tabs missing on 1.20.1 servers (#529), JEI recipes missing from EMI
+after the first world load (#445) and log spam with EMI from villager trades (#595). The source is
+the branch `1.20.1` of `way2muchnoise/JustEnoughResources`, under the "Don't Be a Jerk" license, which
+allows modpacks and patched builds that are not sold.
 
 ## Bundled jars
 

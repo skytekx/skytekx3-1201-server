@@ -44,6 +44,8 @@ menu-assets/*.png
 # --- local dev ---
 spark/
 debug/
+# ...but not Java packages named `debug` inside vendored mod sources
+!ports/**/src/**/debug/
 
 # --- live secret-bearing (rotated; real values in ansible vault) ---
 server.properties

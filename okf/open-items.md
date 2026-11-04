@@ -189,12 +189,13 @@ evidence and the page with the details. The rulings behind the first section are
   versions and commit them, or make the sync skip configs. See
   [Mac mini](server/macos.md#deploy-and-update).
 - The owner reported on 2026-11-01 at 04:25 that dropped items often need several passes to be picked
-  up. Two suspects are gone since 06:11. Infernal Mobs' queries no longer park the network thread, and
-  dropped items merge within 0.5 blocks, no longer within the radius of 2 of Get It Together Drops. A
-  merge still hands the freshest pickup delay to the pile. Whether the reports stop is open, and the
-  time and place of a new case would narrow it down. See
-  [SkyTekx Compat](content/compat-mod.md#infernal-mobs-queries) and
-  [Arclight](server/arclight.md#configuration-files).
+  up. Two suspects went on 2026-11-01 at 06:11, the parked network thread of Infernal Mobs' queries and
+  the merge radius of 2 of Get It Together Drops. The main cause came to light on 2026-11-03: about one
+  dropped item in four hung in the air on the server while the game showed it on the ground, and the
+  fix of 00a97cfd is live since the restart at 11:13 that day. A merge still hands the freshest pickup
+  delay to the pile. Only a new case, with its time and place, would show that something is left. See
+  [Arclight](server/arclight.md#floating-items) and
+  [SkyTekx Compat](content/compat-mod.md#infernal-mobs-queries).
 - The yellow dye recipes take only Mekanism's sulfur dust, and since 2026-11-02 the inventory converter
   turns that dust into Thermal's, which those recipes refuse. A tag ingredient in them would fix it.
   See [AlmostUnified](modpack/almostunified.md#limits).

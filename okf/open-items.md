@@ -220,6 +220,9 @@ evidence and the page with the details. The rulings behind the first section are
   client. The deploy of 3.1.3 has to move the fixes pack to the end of the pack order once after the
   first start, see [Boot fixes](content/boot-fixes.md#load-order). See
   [Mod set](modpack/mod-set.md#additions-of-2026-11-04).
+- Flux Networks in play. A test server ran its devices, but nobody has opened their screens, made Flux
+  Dust or sent energy from a plug to a point in a client, see
+  [Mod set](modpack/mod-set.md#flux-networks).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
   opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
   chest in EMI on the server and note how much longer the join takes with the loot that the server

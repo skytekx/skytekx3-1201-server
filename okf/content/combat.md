@@ -56,15 +56,16 @@ relog or respawn, because it was already added to them.
 ## Swing animation
 
 The swing animation is drawn by the client, so a server script cannot change it. Nostalgic Tweaks
-2.0.0-beta.922 can bring back the old swing. It is in `modrinth.index.json` with the env optional on
-both sides, and on the server it sits in `client-only-mods/` (moved by hand, see
+2.0.0-beta.922 can bring back the old swing. It is in `modrinth.index.json`, required on both sides
+since c5386c15, and on the server it sits in `client-only-mods/` (moved by hand, see
 [mod set](../modpack/mod-set.md)).
 
 The owner's Prism instance has `oldSwing`, `oldSwingInterrupt` and `oldSwingDropping` set to true
 (`config/nostalgic_tweaks/nostalgic_tweaks.json:635-637` in the instance, see
-[client](../modpack/client.md)). The repo ships no Nostalgic Tweaks config, so other players get the
-mod's defaults, if they install the optional mod at all. Whether those defaults include the old swing
-was not checked.
+[client](../modpack/client.md)). They are the defaults of the mod: the instance `SkyTekx3`, whose
+config screen was never opened, has them on as well, and so does `AnimationTweak` in the jar. Since
+92ed09ed the repo ships that config with the three settings on, from pack 3.1.3 on (see
+[client](../modpack/client.md#dropped-items)).
 
 ## Mods around combat
 

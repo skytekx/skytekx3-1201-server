@@ -43,7 +43,8 @@ evidence and the page with the details. The rulings behind the first section are
 - Real advancement names (2026-06-28 22:55). The resource pack `resourcepacks/SkyTekxFixes/` is
   untracked, not shipped and not enabled. See [Client](modpack/client.md#resource-packs).
 - The 1.7 swing on every client (2026-06-29 12:10). The old animation needs Nostalgic Tweaks with its
-  old swing setting, and the pack ships no config for it. See [Combat](content/combat.md#swing-animation).
+  old swing setting, which is on by default and in the config that the pack ships from 3.1.3 on. No
+  player has confirmed the old swing yet. See [Combat](content/combat.md#swing-animation).
 - The recipe port from SkyTekx 2 (2026-06-27 10:34). The port notes in `docs/RECIPE_PORT.md` still have
   VERIFY rows, and most of `kubejs/server_scripts/gameplay.js` is commented out. See
   [KubeJS](modpack/kubejs.md).
@@ -280,7 +281,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The compat mod requires its Bird's Nests mixin config, but Bird's Nests is no declared dependency.
   A run without Bird's Nests was never tried. See [SkyTekx Compat](content/compat-mod.md#open-points).
 - Whether packs 3.0.4 and 3.0.5 were ever uploaded to Modrinth. Checking needs the token.
-- The Nostalgic Tweaks defaults for the old swing come from the owner's client config only.
 - The structure at Overworld x 0, y 110, z 451 that the owner wanted in the Skylands was never
   identified.
 - The SkyTekx logo's origin before 2026-06-28 18:12 is not recorded.

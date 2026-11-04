@@ -109,6 +109,25 @@ advancement name fixes"). It holds 66 lang keys for Spartan Weaponry advancement
 instance's `resourcepacks/`, but it is not enabled: `options.txt:45` lists only vanilla, the mod
 resources and Moonlight's dynamic assets. The `.mrpack` has no resource packs.
 
+## Dropped items
+
+On 2026-11-04 at 21:09 the owner reported that a dropped item spins and vanishes for half of every
+turn. Nostalgic Tweaks draws dropped items as flat sprites by default (Old 2D Item Entities,
+`old2dItems`) and draws only their front face (Old 2D Item Rendering, `old2dRendering`). Its hook in
+`ItemEntityRenderer` turns such a sprite to the camera, so a sprite that still spins shows its culled
+back for half of every turn. Both of its item hooks applied in the owner's client (`logs/debug.log` of
+the instance), and no other mod in it mixes into `ItemEntityRenderer`, so which renderer spun the item
+is not known. Both hooks fall back to vanilla when Old 2D Item Entities is off.
+
+Since 92ed09ed the repo ships `config/nostalgic_tweaks/nostalgic_tweaks.json` with both settings off,
+so the pack has 3D dropped items from 3.1.3 on. The file is the config that the mod wrote with its
+defaults in the instance `SkyTekx3`, whose config screen was never opened. Its other 509 keys match the
+current instance, apart from the order of two item lists and the two flags that note an opened config
+screen, so it also carries the defaults that the old swing needs (see
+[combat](../content/combat.md#swing-animation)). Until 3.1.3 a player turns the setting off in the
+game: the key O opens the config of Nostalgic Tweaks in both instances of the owner, and a search for
+2D finds Old 2D Item Entities.
+
 ## Crash history
 
 | Time | Report in the instance's `crash-reports/` | Cause | Fix |

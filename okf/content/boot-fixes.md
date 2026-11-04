@@ -37,8 +37,8 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 179 files, 178 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 49 are
+is tracked: 182 files, 181 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 52 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -111,8 +111,9 @@ Four groups of files in the pack change the game on purpose:
   all on grass blocks. The final files gave 25 logs in 278 forest chunks (0.090) in 10,082 fresh
   chunks, all on grass or coarse dirt and none floating. The live boot of 2026-11-04 16:06 no longer
   logs the tag warning.
-- The 29 melting recipes under `data/tconstruct/recipes/smeltery/melting/` let the smeltery and the
-  melter of Tinkers' Construct 3.12 melt the horse armor and gloves of other mods since 2026-11-04.
+- The 32 melting recipes under `data/tconstruct/recipes/smeltery/melting/` let the smeltery and the
+  melter of Tinkers' Construct 3.12 melt the horse armor, the gloves and three obsidian items of other
+  mods since 2026-11-04.
   Tinkers ships recipes only for vanilla items and its own compat metals, so the owner's horse armor
   (prompts of 15:16 and 15:26) and golden gloves (15:24) did not melt. Each piece returns the metal or
   gem that its cheapest recipe takes and never more. Leather, carpet and smithing templates come back
@@ -122,7 +123,11 @@ Four groups of files in the pack change the game on purpose:
   only with the mod `skytekx_molten`. The 9 files in `gloves/` cover the Aether (iron, golden, diamond,
   netherite and chainmail) and Twilight Aether (ironwood, fiery, knightmetal and steeleaf). They use
   `tconstruct:damagable_melting`, so a worn glove returns less, as Tinkers does for tools. Every file
-  for another mod carries a `forge:mod_loaded` condition.
+  for another mod carries a `forge:mod_loaded` condition. The 3 files in `forbidden_arcanus/` answer the
+  prompt of 16:43, which asked why Obsidian With Iron does not melt. In Forbidden & Arcanus 2.2.6 it
+  takes one obsidian and four iron nuggets, and the furnace turns it into an Obsidian Ingot. Both melt
+  into 1000 mB of molten obsidian and the Processed Obsidian Block of nine ingots into 9000 mB. The iron
+  comes back as a byproduct, 40 mB per ingot, which only the foundry gives out.
 - Three of these files replace the recipes of Tinkers for the vanilla iron, golden and diamond horse
   armor at their own ids. DragN's Livestock Overhaul makes them craftable from 4 ingots or diamonds,
   and Tinkers melted them into 7 (630 mB, 630 mB and 700 mB), a dupe. They now give 360 mB, 360 mB and
@@ -130,7 +135,9 @@ Four groups of files in the pack change the game on purpose:
   Mac mini (read 2026-11-04 16:09), before the fixes pack at 272, so the overrides win. The recipes went
   live at 15:29 and 15:36 with `/reload`. KubeJS counted 36,995 recipes at the boot of 10:37, 37,019
   after the first reload and 37,020 after the second, exactly the 24 and 1 new ids, and no line of the
-  log names one of the files. Nobody melted one in game yet.
+  log names one of the files. The three files of Forbidden & Arcanus went live at 17:39:10 with another
+  `/reload`, after which KubeJS counted 37,023 recipes and the log had no new ERROR line. Nobody melted
+  one in game yet.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

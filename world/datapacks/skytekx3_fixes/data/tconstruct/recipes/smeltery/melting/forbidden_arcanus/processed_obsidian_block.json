@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:processed_obsidian_block"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 9000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    }
+  ],
+  "temperature": 1000,
+  "time": 399
+}

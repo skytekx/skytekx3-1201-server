@@ -27,8 +27,8 @@ script, [apotheosis_passengers.js](../../kubejs/startup_scripts/apotheosis_passe
 [Apotheosis riders](#apotheosis-riders). There are no client scripts, and the folder `assets/` is
 empty. The folder `data/` holds the six uncrafting recipes of Twilight Tweaks, see
 [Twilight Forest backport](twilightforest-backport.md), the wood fallbacks, see
-[Wood fallbacks](#wood-fallbacks), and overrides for broken recipes and loot tables of other mods, see
-[Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
+[Wood fallbacks](#wood-fallbacks), and overrides for broken recipes, loot tables and loot modifiers of
+other mods, see [Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
 2026-11-02 at 17:33 loaded 7 of 7, again with 0 errors and 0 warnings.
 
@@ -240,7 +240,7 @@ game. The log audit of 2026-11-04 traced every one of them:
 
 With these fixes a boot logs "with 10 failed recipes", never 11.
 
-Two more broken files of other mods load without counting as failed, and `kubejs/data/` overrides them
+Three more broken files of other mods do not count as failed recipes, and `kubejs/data/` overrides them
 too:
 
 - The stonecutter recipe `cataclysm:stonecutting/azure_seastone_brick_stair_from_stonecutting` of
@@ -250,6 +250,21 @@ too:
   `azure_seastone_brick_stairs_from_stonecutting` stays.
 - The barrel loot table `tf_dnv:chests/dungeon_shroom_barrel` of Dungeons & Villages nests a table that
   does not exist, see [Twilight Forest backport](twilightforest-backport.md).
+- The loot modifier `aether_redux:genesis_golden_swet_ball_increase` in the built in `genesis_data`
+  pack of Aether Redux 2.0.19 has the type `aether_redux:add_drops` but the fields `added_item` and
+  `removed_item` of the type `aether_redux:replace`. Forge logged "Could not decode GlobalLootModifier
+  ... No key item in MapLike" at every boot and left it out. The owner ruled on 2026-11-04 that golden
+  swets drop more. The override keeps `add_drops` and names the ball under `item`, so a golden swet
+  drops its usual golden swet ball plus 0 or 1 more and up to 1 more per level of Looting. On the test
+  server on 2026-11-04 the log showed no decode error for it after a `/reload` and after a restart.
+  Kills with a probe gave 1.00 balls per kill without Looting before (394 balls in 394 kills) and 1.50
+  after (595 in 396), and 2.48 with Looting III before (985 in 397) and 4.39 after (1,715 in 391). The
+  same probe after the restart gave 1.53 (604 in 396) and 4.44 (1,750 in 394). The type
+  `aether_redux:replace` alone would have taken the usual ball away and given 0.50 balls per kill
+  without Looting (198 in 394). The class `AddDrops` of Redux adds the item stack of the modifier
+  itself to the drops, without a copy. Two golden swets killed within a moment could therefore change
+  the count of an extra ball that still lies apart on the ground. That follows from the code, nobody saw
+  it in game.
 
 An override has the id of the mod's file. KubeJS adds `kubejs/data/` after the mods and the world
 datapacks, so the override always wins. The recipe overrides for Forbidden Arcanus and Soul Shards carry

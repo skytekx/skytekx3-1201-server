@@ -1,0 +1,36 @@
+{
+  "type": "aether_redux:add_drops",
+  "conditions": [
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": "aether:golden_swet"
+      }
+    },
+    {
+      "condition": "aether_redux:data_loot_condition",
+      "data_loot_condition": {
+        "condition": "aether_redux:mod_loaded",
+        "mod_id": "aether_genesis"
+      }
+    }
+  ],
+  "functions": [
+    {
+      "function": "aether_redux:swet_gel_count"
+    },
+    {
+      "count": {
+        "type": "minecraft:uniform",
+        "max": 1.0,
+        "min": 0.0
+      },
+      "function": "minecraft:looting_enchant"
+    }
+  ],
+  "item": {
+    "Count": 1,
+    "id": "aether_genesis:golden_swet_ball"
+  }
+}

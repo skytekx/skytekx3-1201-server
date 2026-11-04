@@ -165,7 +165,10 @@ come before the fixes pack, so the overrides of 2026-11-04 win.
 
 The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (325
 lines). It finds each jar by a glob next to the script, so the repo path does not matter, and it is
-idempotent: a second run prints `noop` for every jar.
+idempotent: a second run prints `noop` for every jar. Three of the patches change class files. The
+script adds new constants at the end of the constant pool, so every index the class uses keeps its
+meaning, and it patches only when it finds exactly the instructions it expects. A new build of the mod
+is left alone with a `skip` line.
 
 | Mod and jar | Patch | Why |
 |---|---|---|
@@ -181,6 +184,7 @@ idempotent: a second run prints `noop` for every jar.
 | CoFH Core (`cofh_core*.jar`) | Moves `MultiPlayerGameModeMixin` from the common list to the client list | A client class does not exist on a dedicated server |
 | Medieval Embroidery (`Medieval_Embroidery*.jar`) | Rewrites 5 entity type tags with optional entries | They name a griffin entity that is never registered |
 | Asgard Shield Reloaded (`AsgardShieldReloaded*.jar`) | In `EventHandler`, turns both reads of `Player.swingingArm` (`f_20912_`) into calls of `getUsedItemHand()` (`m_7655_`), two instructions of three bytes each | Not a boot fix. The field stays null until a player swings after a login or a respawn, so a hit on such a player threw `Invalid hand null` and did no damage. All 37 hits between players on 2026-10-31 from 22:37 on failed this way |
+| BiblioCraft (`bibliocraft-*.jar`) | Three classes in `content/printingtable/`, see [BiblioCraft cloning cost](#bibliocraft-cloning-cost) | The recipe `bibliocraft:enchanted_book_cloning_in_printing_table` failed to parse ("Failed to decode from JSON"), so the printing table could not clone enchanted books |
 
 Eleven jars are patched. Ten of them come from the index, and exactly these ten no longer match their
 SHA-1 in `modrinth.index.json` (checked 2026-10-31, Asgard Shield Reloaded since 22:47). The eleventh,
@@ -196,6 +200,33 @@ python3 tools/patch_mods.py
 
 The docstring says that `tools/resolve_all.py` rebuilds `mods/` from `modrinth.index.json`. It does not:
 it resolves a hard coded list of slugs to the newest release. See [tools](../modpack/tools.md).
+
+### BiblioCraft cloning cost
+
+BiblioCraft Legacy (Expanded) 1.3.1 decodes the `experience_cost` of the recipe with
+`EnchantmentLevelsNumberProvider.NUMBER_PROVIDER_CODEC`. That codec is lazy and needs itself for the
+required field `normal_cost`, so no JSON can ever decode with it. The mod also registers its number
+provider type `bibliocraft:enchantment_levels` with a Gson serializer, the way loot tables read
+number providers. The patch uses that path.
+
+- The recipe serializer's `fromJson` decodes the cost with the Gson of loot predicates, through a new
+  static method `skytekx$experienceCost`.
+- The Gson serializer of the number provider read `normal_cost` and `treasure_cost` with
+  `GsonHelper.getAsJsonObject`, which throws for the plain numbers 1.0 and 2.0 of the recipe. It now
+  reads them with `getNonNull`, like the values of `overrides`.
+- The recipe serializer's `toNetwork` used the broken codec too. It now writes the flag for "no cost"
+  and nothing after it, which every client reads, with or without the patch. The cost is computed on
+  the server (`getExperienceLevelCost` takes a `ServerLevel`), so on clients only the experience note
+  of the recipe in JEI is missing.
+- The treasure check asked for the tag `minecraft:enchantment/treasure`, which no jar and no datapack
+  defines, so treasure enchantments cost `normal_cost`. It now asks `Enchantment.isTreasureOnly()`,
+  so treasure enchantments such as Mending and Frost Walker cost 2 levels per enchantment level, as
+  the recipe says. This goes beyond the parse fix.
+
+A KubeJS probe on a test server on 2026-11-04 got 5 levels for Sharpness V, 3 for Unbreaking III, 2
+for Mending I, 4 for Frost Walker II and 7 for Sharpness V with Mending I. Its network round trip
+wrote 15 bytes and read all of them back, into a copy with the same ingredient, result and duration
+(600) but no cost.
 
 ## Config fixes
 

@@ -10,7 +10,8 @@ Fixes third-party boot WARN/ERROR spam that can only be addressed inside the mod
 - orphan compat mixins that @Mixin-target classes from mods that are NOT installed (logged as
   "Error loading class" WARN),
 - a stray 4-char-path loot table in ad_astra that crashes Bird's Nests' unguarded substring,
-- a class file fix: a mixin whose target name is not the runtime name (TiCEX).
+- class file fixes: a recipe cost that its codec can never decode (BiblioCraft) and a mixin whose
+  target name is not the runtime name (TiCEX).
 
 The Bird's Nests crash itself is fixed durably by a mixin in the skytekx worldgen mod (local-mods/),
 not here. Bukkit/EssentialsX hybrid warning is intentionally left as-is.
@@ -481,6 +482,141 @@ def rename_method(jar, inner, old, new, desc):
     return edit_classes(jar, {inner: t})
 
 
+# BiblioCraft Legacy (Expanded) 1.3.1, recipe bibliocraft:enchanted_book_cloning_in_printing_table.
+# Its experience_cost is decoded with EnchantmentLevelsNumberProvider.NUMBER_PROVIDER_CODEC, a lazy
+# codec that refers to itself for normal_cost, so no JSON can ever decode with it and the recipe failed
+# to parse ("Failed to decode from JSON"). The provider type is registered with a Gson serializer too
+# (LootSerializer), the one loot tables use. The patch decodes the cost with the loot Gson.
+_BC = "com/github/minecraftschurlimods/bibliocraft/content/printingtable/"
+_NUMBER_PROVIDER = "net/minecraft/world/level/storage/loot/providers/number/NumberProvider"
+_GSON_HELPER = "net/minecraft/util/GsonHelper"
+_COST = ("skytekx$experienceCost", "(Lcom/mojang/serialization/Codec;Lcom/google/gson/JsonElement;)Ljava/lang/Object;")
+
+
+def _ldc_index(code, pc):
+    if code[pc] == 0x12:
+        return code[pc + 1]
+    return _u2(code, pc + 1) if code[pc] == 0x13 else None
+
+
+def _bc_loot_serializer(cf):
+    """LootSerializer.deserialize read normal_cost and treasure_cost with GsonHelper.getAsJsonObject
+    (m_13930_), which throws for the plain numbers of the recipe. getNonNull (m_289747_) passes the
+    element to the number provider adapter, which reads a number as a constant, the way the
+    values of overrides were read already. Same length, same stack, so nothing else moves."""
+    m = cf.method("deserialize", "(Lcom/google/gson/JsonObject;Lcom/google/gson/JsonDeserializationContext;)L"
+                  + _NUMBER_PROVIDER + ";")
+    keys = {cf.find_string(k) for k in ("normal_cost", "treasure_cost")}
+    desc = "(Lcom/google/gson/JsonObject;Ljava/lang/String;)Lcom/google/gson/Json%s;"
+    old = cf.find_ref(10, _GSON_HELPER, "m_13930_", desc % "Object")
+    new = cf.find_ref(10, _GSON_HELPER, "m_289747_", desc % "Element")
+    if m is None or None in keys:
+        return "deserialize or the cost keys not found"
+    code = cf.code(m)
+
+    def key_reads(ref):
+        hits, prev = [], None
+        for pc, _ in _insns(code):
+            if (ref is not None and code[pc] == 0xb8 and _u2(code, pc + 1) == ref
+                    and prev is not None and _ldc_index(code, prev) in keys):
+                hits.append(pc)
+            prev = pc
+        return hits
+    todo, done = key_reads(old), key_reads(new)
+    if not todo and len(done) == 2:
+        return False
+    if len(todo) != 2 or done:
+        return f"{len(todo)} cost reads to patch and {len(done)} patched, expected 2 and 0"
+    new = cf.ref(10, _GSON_HELPER, "m_289747_", desc % "Element")
+    for pc in todo:
+        code[pc + 1:pc + 3] = _p2(new)
+    cf.put_code(m, code)
+    return True
+
+
+def _bc_cloning_serializer(cf):
+    """Serializer.fromJson: the call of CodecUtil.decodeJson with the broken codec goes to a new
+    static method skytekx$experienceCost, which decodes with the Gson of loot predicates
+    (LootDataType.f_278407_, Deserializers.createConditionSerializer, which has the number provider
+    adapter). toNetwork wrote the cost with the same codec, so it now writes the flag false and no
+    cost. Clients without the patch read that as "no cost" too, and the cost is only charged on the
+    server (getExperienceLevelCost takes a ServerLevel). The edits in toNetwork are of the same
+    length (iconst_0 and nop), and the new method has no branches, so no stack map frame changes."""
+    if cf.method(*_COST):
+        return False
+    recipe = _BC + "PrintingTableCloningWithEnchantmentsRecipe"
+    from_json = cf.method("fromJson", "(Lnet/minecraft/resources/ResourceLocation;Lcom/google/gson/JsonObject;)L" + recipe + ";")
+    to_network = cf.method("toNetwork", "(Lnet/minecraft/network/FriendlyByteBuf;L" + recipe + ";)V")
+    decode = cf.find_ref(10, "com/github/minecraftschurlimods/bibliocraft/util/CodecUtil", "decodeJson",
+                         "(Lcom/mojang/serialization/Codec;Lcom/google/gson/JsonElement;)Ljava/lang/Object;")
+    cost = cf.find_ref(9, recipe, "experienceCost", "Ljava/util/Optional;")
+    present = cf.find_ref(10, "java/util/Optional", "isPresent", "()Z")
+    if_present = cf.find_ref(10, "java/util/Optional", "ifPresent", "(Ljava/util/function/Consumer;)V")
+    if None in (from_json, to_network, decode, cost, present, if_present):
+        return "fromJson, toNetwork or their constants not found"
+    jc, nc = cf.code(from_json), cf.code(to_network)
+    calls = [pc for pc, _ in _insns(jc) if jc[pc] == 0xb8 and _u2(jc, pc + 1) == decode]
+    # aload_2, getfield experienceCost, invokevirtual isPresent: the flag for writeBoolean
+    flag = _find_insns(nc, b"\x2c\xb4" + _p2(cost) + b"\xb6" + _p2(present))
+    # aload_2, getfield experienceCost, aload_1, invokedynamic, invokevirtual ifPresent: the cost
+    write = _find_insns(nc, re.compile(re.escape(b"\x2c\xb4" + _p2(cost) + b"\x2b\xba") + b"..\x00\x00"
+                                       + re.escape(b"\xb6" + _p2(if_present)), re.S))
+    if len(calls) != 1 or len(flag) != 1 or len(write) != 1:
+        return f"found {len(calls)} decode calls, {len(flag)} flags and {len(write)} cost writes, expected 1 each"
+    lt = "net/minecraft/world/level/storage/loot/LootDataType"
+    body = (b"\xb2" + _p2(cf.ref(9, lt, "f_278407_", "L" + lt + ";"))
+            + b"\xb6" + _p2(cf.ref(10, lt, "m_278857_", "()Lcom/google/gson/Gson;"))
+            + b"\x2b\x13" + _p2(cf.klass(_NUMBER_PROVIDER))
+            + b"\xb6" + _p2(cf.ref(10, "com/google/gson/Gson", "fromJson",
+                                   "(Lcom/google/gson/JsonElement;Ljava/lang/Class;)Ljava/lang/Object;"))
+            + b"\xb0")
+    cf.add_method(0x100a, *_COST, max_stack=3, max_locals=2, code=body)  # private static synthetic
+    jc[calls[0] + 1:calls[0] + 3] = _p2(cf.ref(10, cf.this_name(), *_COST))
+    nc[flag[0]:flag[0] + 7] = b"\x03" + bytes(6)
+    nc[write[0]:write[0] + 13] = bytes(13)
+    cf.put_code(from_json, jc)
+    cf.put_code(to_network, nc)
+    return True
+
+
+def _bc_treasure_check(cf):
+    """getFloat charges treasure_cost for enchantments in the tag minecraft:enchantment/treasure, a tag
+    that no jar and no datapack defines, so treasure enchantments cost normal_cost. The lambda that
+    tests the holder now returns Enchantment.isTreasureOnly() (m_6591_) of holder.value() (m_203334_),
+    true for the vanilla treasure enchantments and for those that mods or Apotheosis mark so."""
+    ref, ench = "net/minecraft/core/Holder$Reference", "net/minecraft/world/item/enchantment/Enchantment"
+    tag = cf.find_ref(9, cf.this_name(), "TREASURE_ENCHANTMENTS", "Lnet/minecraft/tags/TagKey;")
+    is_tag = cf.find_ref(10, ref, "m_203656_", "(Lnet/minecraft/tags/TagKey;)Z")
+    value_of = cf.find_ref(10, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;")
+    if None in (tag, is_tag, value_of, cf.find_class(ench)):
+        return "the treasure tag lambda or its constants not found"
+
+    def new_code(value, treasure):
+        return (b"\x2a\xb6" + _p2(value) + b"\xc0" + _p2(cf.klass(ench)) + b"\xb6" + _p2(treasure)
+                + b"\xb8" + _p2(value_of) + b"\xb0")
+    old = b"\x2a\xb2" + _p2(tag) + b"\xb6" + _p2(is_tag) + b"\xb8" + _p2(value_of) + b"\xb0"
+    value = cf.find_ref(10, ref, "m_203334_", "()Ljava/lang/Object;")
+    treasure = cf.find_ref(10, ench, "m_6591_", "()Z")
+    tests = [m for m in cf.methods if cf.text(m[2]) == "(L" + ref + ";)Ljava/lang/Boolean;" and m[0] & 0x0008]
+    todo = [m for m in tests if bytes(cf.code(m)) == old]
+    done = [m for m in tests if None not in (value, treasure) and bytes(cf.code(m)) == new_code(value, treasure)]
+    if not todo and len(done) == 1:
+        return False
+    if len(todo) != 1 or done:
+        return f"{len(todo)} tag tests to patch and {len(done)} patched, expected 1 and 0"
+    code = new_code(cf.ref(10, ref, "m_203334_", "()Ljava/lang/Object;"), cf.ref(10, ench, "m_6591_", "()Z"))
+    cf.set_code(todo[0], max_stack=1, max_locals=1, code=code)
+    return True
+
+
+def patch_bibliocraft(jar):
+    return edit_classes(jar, {
+        _BC + "EnchantmentLevelsNumberProvider$LootSerializer.class": _bc_loot_serializer,
+        _BC + "PrintingTableCloningWithEnchantmentsRecipe$Serializer.class": _bc_cloning_serializer,
+        _BC + "EnchantmentLevelsNumberProvider.class": _bc_treasure_check,
+    })
+
+
 def main():
     print("patch_mods: applying jar-level boot fixes")
     add_min_version(find_jar("doomangelring*.jar"), "doomangelring.forge.mixins.json")
@@ -529,6 +665,9 @@ def main():
     swap_field_for_getter(find_jar("AsgardShieldReloaded*.jar"), "me/mangregory/asr/util/handlers/EventHandler.class",
                           "net/minecraft/world/entity/player/Player", "f_20912_", "m_7655_",
                           "()Lnet/minecraft/world/InteractionHand;", expect=2)
+    # BiblioCraft: the enchanted book cloning recipe parses and charges its XP (see _BC above). Server
+    # only, the recipe reaches clients without its cost either way.
+    patch_bibliocraft(find_jar("bibliocraft-*.jar"))
     print("patch_mods: done")
 
 

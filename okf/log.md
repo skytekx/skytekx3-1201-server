@@ -723,5 +723,46 @@ logs stay on the Mac and are not in the repo.
   of 20:25 ran the world of the 05:00 backup. At 20:40 the owner asked for the backup again with the
   player data of two players swapped, and the boot of 20:42 ran that world.
 
+## 2026-11-04: Open bugs, jar patches, skytekx-compat 2.1.6 and melting recipes
+
+- At 11:53 the owner ruled on the open decisions of the log audit and asked to push everything to
+  GitHub and to analyse and fix every open bug. A workflow on the build machine fixed them on test
+  servers, and one review and a recheck approved them.
+- The TiCEX `SummonedSwordMixin` applies since `tools/patch_mods.py` renames its target to `m_5790_`
+  (9fc295f2). A probe on a test server saw Fiery, Freezing and Decay of TiCEX blades reach husks hit by
+  summoned swords, on a direct hit and after a flight.
+- The BiblioCraft printing table can clone enchanted books (fba22a54). Three class patches make its
+  recipe parse and price treasure enchantments as the recipe says. KubeJS counts 9 failed recipes
+  instead of 10.
+- The Simply Jetpacks 2 guide book loads (2d356b97). The jar moved from the index to `local-mods/`, the
+  pack ships it patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, and the override in the
+  fixes pack that never worked is gone. The boot baseline drops to 2 accepted ERROR lines.
+- Version 2.1.6 of skytekx-compat (source 2fe49db, 0224635, 872310e and 62e5616) fixed three server
+  bugs. Sundering of Apothic Attributes adds its damage on Arclight, and a chunk that is read back
+  during its queued write gets a copy, so the write no longer fails and leaves a truncated entry. Each
+  entity that fails to load gets a "Dropped entity" line with its type, chunk and raw position. The pack
+  keeps 2.1.3. The test server compared 2.1.5 with 2.1.6 from 13:11 to 13:56, and a run from 15:16 to
+  15:17 without Arclight's mute showed that the Sundering share counts once where the redirect of
+  Apothic Attributes applies, see [SkyTekx Compat](content/compat-mod.md).
+- The Withering Archer of Apotheosis gets its wither cloud, and a despawning archer takes it along
+  through the first KubeJS startup script (f882ea85). The golden swet ball modifier of Aether Redux
+  loads, so golden swets drop more, as ruled (eca96759). The hollow oak logs of Hexxit Additions
+  generate on the forest floor in about one of ten forest chunks, in new chunks only (7df7a3f0). Every
+  sulfur dust counts as yellow dye, so 160 recipes take the dust players hold (0d6ae03f). The Epic
+  Knights bronze ingot needs no tag, because it exists only on Fabric (ba266af5).
+- At 14:33 the owner asked for a fluid of our own for every material that makes an ingot and has none
+  in Tinkers' Construct, such as palladium and yellorium. The mod SkyTekx Molten is being built and
+  comes with a pack update, because clients need its fluids.
+- At 15:16, 15:24 and 15:26 the owner reported that horse armor and gloves do not melt, and at 15:27
+  asked to fix everything and deploy. The fixes pack got 29 melting recipes, live at 15:29 and 15:36
+  through `/reload` (ab8981af). They also close a dupe. Tinkers melted the vanilla iron, golden and
+  diamond horse armor into 7 units, while DragN's Livestock Overhaul crafts them from 4, see
+  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- After a warning in chat the server stopped at 16:05:21 and was `Done` at 16:06:29 with everything
+  above. Up to `Done` the boot logged 0 FATAL lines, only the AllTheLeaks and Essentials errors, 9
+  failed recipes, the 11 mixins of skytekx-compat and the TiCEX mixin, and the player who was online
+  before was back at 16:06:41. The replaced files are in `~/skytekx3-backups/before-fixes-2026-11-04/`
+  on the Mac mini.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

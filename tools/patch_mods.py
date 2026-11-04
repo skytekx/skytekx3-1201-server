@@ -10,13 +10,18 @@ Fixes third-party boot WARN/ERROR spam that can only be addressed inside the mod
 - orphan compat mixins that @Mixin-target classes from mods that are NOT installed (logged as
   "Error loading class" WARN),
 - a stray 4-char-path loot table in ad_astra that crashes Bird's Nests' unguarded substring,
+- a Patchouli book in the layout of Patchouli before 1.20 (Simply Jetpacks 2),
 - class file fixes: a recipe cost that its codec can never decode (BiblioCraft) and a mixin whose
   target name is not the runtime name (TiCEX).
+
+The rules in PACK_RULES patch jars that the pack ships too. build_mrpack.py applies them to the
+pristine copies in local-mods/ while it writes the .mrpack, so players get the same bytes as mods/,
+under a file name with a -skytekx.N suffix. All other patches stay on the server.
 
 The Bird's Nests crash itself is fixed durably by a mixin in the skytekx worldgen mod (local-mods/),
 not here. Bukkit/EssentialsX hybrid warning is intentionally left as-is.
 """
-import zipfile, json, glob, io, os, re, struct
+import zipfile, json, glob, io, os, re, struct, fnmatch
 
 MODS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "mods"))
 
@@ -26,16 +31,27 @@ def find_jar(pattern):
     return m[0] if m else None
 
 
-def _rewrite(jar, mutate):
-    """Read jar entries, let mutate(filename, data)->(newdata|None drop|data) rebuild it. Returns changed."""
-    if not jar or not os.path.exists(jar):
+class MemJar:
+    """A jar held in memory. build_mrpack.py patches the bundled jars this way, so local-mods/ keeps
+    the pristine upstream files and only the pack gets the patched bytes."""
+
+    def __init__(self, name, data):
+        self.name, self.data = name, data
+
+
+def _rewrite(jar, mutate, add=None):
+    """Read jar entries, let mutate(filename, data)->(newdata|None drop|data) rebuild it, then append
+    the (ZipInfo, data) pairs that add(entries) returns. jar is a path or a MemJar. Returns changed."""
+    mem = isinstance(jar, MemJar)
+    if not mem and (not jar or not os.path.exists(jar)):
         print(f"  skip (jar missing): {pattern_of(jar)}")
         return False
-    with zipfile.ZipFile(jar) as z:
+    with zipfile.ZipFile(io.BytesIO(jar.data) if mem else jar) as z:
         items = [(i, z.read(i.filename)) for i in z.infolist()]
     changed = False
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        extra = add(items) if add else []
         for info, data in items:
             new = mutate(info.filename, data)
             if new is _DROP:
@@ -45,10 +61,16 @@ def _rewrite(jar, mutate):
                 data = new
                 changed = True
             z.writestr(info, data)
+        for info, data in extra:
+            z.writestr(info, data)
+            changed = True
     if changed:
-        with open(jar, "wb") as f:
-            f.write(buf.getvalue())
-    print(f"  {'patched' if changed else 'noop'}: {os.path.basename(jar)}")
+        if mem:
+            jar.data = buf.getvalue()
+        else:
+            with open(jar, "wb") as f:
+                f.write(buf.getvalue())
+    print(f"  {'patched' if changed else 'noop'}: {jar.name if mem else os.path.basename(jar)}")
     return changed
 
 
@@ -113,6 +135,46 @@ def make_tag_optional(jar, inner):
             {"id": (v.get("id") if isinstance(v, dict) else v), "required": False}
             for v in obj.get("values", [])]}
     return edit_json(jar, inner, t)
+
+
+def patchouli_book_to_assets(jar, modid, book):
+    """Move a Patchouli book to the layout of Patchouli 1.20: use_resource_pack true in book.json and
+    the contents in assets/.
+
+    Patchouli 1.20 refuses a book whose book.json says use_resource_pack false ("Failed to load
+    book"), and it reads the categories, entries and templates of a book only from resource packs,
+    so on the client. book.json stays in data/, and the language folders are copied to the same
+    path under assets/. The copies in data/ stay, Patchouli no longer reads them."""
+    books = f"data/{modid}/patchouli_books/"
+    book_json = f"{books}{book}/book.json"
+
+    def mutate(name, data):
+        if name != book_json:
+            return None
+        obj = json.loads(data)
+        if obj.get("use_resource_pack") is True:
+            return None
+        obj["use_resource_pack"] = True
+        return json.dumps(obj, indent=2).encode("utf-8")
+
+    def add(items):
+        have = {info.filename for info, _ in items}
+        out = []
+        for info, data in items:
+            rest = info.filename[len(books):]
+            if not info.filename.startswith(books) or info.filename == book_json:
+                continue
+            if rest and not rest.startswith(book + "/"):
+                continue
+            target = f"assets/{modid}/patchouli_books/{rest}"
+            if target in have:
+                continue
+            new = zipfile.ZipInfo(target, info.date_time)
+            new.compress_type, new.external_attr = info.compress_type, info.external_attr
+            new.create_system = info.create_system
+            out.append((new, data))
+        return out
+    return _rewrite(jar, mutate, add)
 
 
 # ticex catalyst stats whose target mod is absent or does not satisfy the integration
@@ -617,6 +679,43 @@ def patch_bibliocraft(jar):
     })
 
 
+# Rules for jars that the pack ships patched: (glob of the jar name, suffix of the file name in the
+# pack, rule taking a path or a MemJar). main() applies them to mods/, where the jar keeps its name.
+# build_mrpack.py applies them to the pristine local-mods/ copies it bundles and ships the result as
+# <name><suffix>.jar, so the patched jar never sits at the path of the Modrinth file that an older pack
+# installed and that a launcher deletes when it updates the instance. The permission note in
+# modrinth-permissions/ goes by that shipped name.
+PACK_RULES = [
+    # Simply Jetpacks 2 2.11.0.1 ships its guide book in the layout of Patchouli before 1.20, so every
+    # boot logged "Failed to load book simplyjetpacks:guidebook" and the recipe warned that the book does
+    # not exist. Clients need the patched jar to show the book, so the pack bundles it (MIT license).
+    ("SimplyJetpacks2-*.jar", "-skytekx.1",
+     lambda jar: patchouli_book_to_assets(jar, "simplyjetpacks", "guidebook")),
+]
+
+
+def pack_jar_name(name):
+    """The file name under which the pack ships the bundled jar `name`."""
+    for pattern, suffix, _ in PACK_RULES:
+        if fnmatch.fnmatchcase(name, pattern):
+            return name[:-len(".jar")] + suffix + ".jar"
+    return name
+
+
+def patch_for_pack(name, data):
+    """(file name, bytes) that the pack ships for the bundled jar `name`: data with the matching
+    PACK_RULES rule applied, under pack_jar_name(name), or name and data as they are when no rule
+    matches. Raises ValueError when a rule matches and changes nothing, so a jar that upstream fixed
+    never ships under a name that says it is patched."""
+    jar = MemJar(name, data)
+    rules = [rule for pattern, _, rule in PACK_RULES if fnmatch.fnmatchcase(name, pattern)]
+    for rule in rules:
+        rule(jar)
+    if rules and jar.data == data:
+        raise ValueError(f"{name}: its PACK_RULES rule changed nothing, retire the rule or adjust it")
+    return pack_jar_name(name), jar.data
+
+
 def main():
     print("patch_mods: applying jar-level boot fixes")
     add_min_version(find_jar("doomangelring*.jar"), "doomangelring.forge.mixins.json")
@@ -668,6 +767,8 @@ def main():
     # BiblioCraft: the enchanted book cloning recipe parses and charges its XP (see _BC above). Server
     # only, the recipe reaches clients without its cost either way.
     patch_bibliocraft(find_jar("bibliocraft-*.jar"))
+    for pattern, _, rule in PACK_RULES:
+        rule(find_jar(pattern))
     print("patch_mods: done")
 
 

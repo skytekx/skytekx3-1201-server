@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: KubeJS
-description: The nine KubeJS server scripts and the data files of SkyTekx 3, what each one really does on 1.20.1, the recipe failures of the boot log, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
+description: The nine KubeJS server scripts, the startup script and the data files of SkyTekx 3, what each one really does on 1.20.1, the recipe failures of the boot log, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino.
 tags: [modpack, kubejs, recipes, scripting]
 timestamp: 2026-11-04
 ---
@@ -21,9 +21,11 @@ tracked in [docs/RECIPE_PORT.md](../../docs/RECIPE_PORT.md).
 
 ## Scripts
 
-All scripts live in [kubejs/server_scripts/](../../kubejs/server_scripts). There are no startup or
-client scripts, and the folders `startup_scripts/` and `assets/` are empty. The folder `data/` holds the
-six uncrafting recipes of Twilight Tweaks, see
+The server scripts live in [kubejs/server_scripts/](../../kubejs/server_scripts). The only startup
+script, [apotheosis_passengers.js](../../kubejs/startup_scripts/apotheosis_passengers.js) since
+2026-11-04, holds the one Forge event of the Apotheosis riders fix, see
+[Apotheosis riders](#apotheosis-riders). There are no client scripts, and the folder `assets/` is
+empty. The folder `data/` holds the six uncrafting recipes of Twilight Tweaks, see
 [Twilight Forest backport](twilightforest-backport.md), the wood fallbacks, see
 [Wood fallbacks](#wood-fallbacks), and overrides for broken recipes and loot tables of other mods, see
 [Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
@@ -36,7 +38,8 @@ six uncrafting recipes of Twilight Tweaks, see
 | Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, and keeps yellorium out of the uranium tags |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
-| Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts, see [Apotheosis riders](#apotheosis-riders) |
+| Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts and adds the wither cloud of the Withering Archer to the level, see [Apotheosis riders](#apotheosis-riders) |
+| Apotheosis passengers, `startup_scripts/apotheosis_passengers.js` | Discards the wither cloud of a Withering Archer that despawns, see [Apotheosis riders](#apotheosis-riders) |
 | Skylands sleep, `skylands_sleep.js` | Turns the overworld to day when players sleep in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#sleep-and-hostile-mobs) |
 | Skylands portals, `skylands_portals.js` | Lets nether portals work in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#nether-portals) |
 | Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, see [AlmostUnified](almostunified.md#inventory-converter) |
@@ -162,10 +165,54 @@ on. Each placement logs "Apotheosis riders: placed" with both positions, at most
 errors the script stops until the next reload. A Stray that already stands at the origin is no passenger
 any more and stays there.
 
-The nether miniboss Withering Archer has a related fault that the script leaves alone. Apotheosis
-attaches its wither cloud while the archer joins the level. By then the game has already taken the list
-of passengers to add, so the cloud rides the archer without being part of the level and never ticks.
-The archer only gets its aura once its chunk has been saved and loaded again.
+The nether miniboss Withering Archer had a related fault. Its definition
+`minibosses/the_nether/withering_archer.json` in Apotheosis gives a skeleton or wither skeleton that
+spawns in the nether a chance of 0.02, spawners and spawn eggs excluded. Its miniboss NBT carries an
+area effect cloud of wither with a radius of 2.5 blocks and a `Duration` of 200000 ticks as a passenger.
+Apotheosis mounts that cloud in its own join event of the archer. The spawn adds the archer with
+`addFreshEntityWithPassengers`, and `/summon` does the same, which has already read the empty
+passenger list of the mob before that event runs. So the cloud rode the archer without being part of
+the level and never ticked. A test archer on the test server on 2026-11-04 at 12:54 kept its cloud at
+`Age` 0, the cloud's own position stayed at x 0, y 0, z 0, `execute if entity` found no cloud next to
+the archer, and a zombie standing in the cloud got no effect. The archer only got its aura once its
+chunk had been saved and loaded again.
+
+Since 2026-11-04 the script also listens to the join events of `minecraft:skeleton` and
+`minecraft:wither_skeleton`. One tick later it adds every passenger of the mob that is not part of the
+level yet, placed on the seat of the mob, and logs "Apotheosis riders: added the
+minecraft:area_effect_cloud of ...", at most 100 times per boot. It waits the tick because the KubeJS
+join event fires before the one of Apotheosis. It cannot read the miniboss marker instead, because
+`persistentData` in KubeJS is not the ForgeData of the entity. Passengers that a chunk loads from disk
+are part of the level already and get no second copy.
+
+A real cloud brings a new fault along. Apotheosis discards the cloud when its archer dies, but a mob that
+despawns only drops its passengers, so the wither cloud would stay behind on its own for up to 200000
+ticks. The startup script `apotheosis_passengers.js` listens to the Forge event `EntityMountEvent`. When
+an area effect cloud stops riding a skeleton or wither skeleton, it discards the cloud, unless the
+skeleton is only being unloaded with its chunk, which saves the cloud as its passenger. Each discard
+logs "Apotheosis passengers: discarded the cloud of ...". KubeJS 6 registers Forge events only from
+startup scripts, so a change to that file takes a restart.
+
+The test on 2026-11-04 between 13:01 and 13:03 used the test server and its `logs/kubejs/server.log`.
+A new wither skeleton archer at 698 100 646 in the nether got its cloud added. The cloud was part of the
+level, rode the archer and counted `Age` 106, 127 and 534 over the next seconds. A zombie in the cloud
+had wither (amplifier 0, about 900 ticks). It lost no health in about 20 seconds inside the cloud and 3
+of its 20 health within 6 seconds after it stepped out. The cloud renews the effect every 20 ticks
+(`ReapplicationDelay` 20), and wither at amplifier 0 only hurts when its remaining duration is a
+multiple of 40 ticks, which a renewed effect never reaches. So the aura hurts once a mob leaves it. The
+same code runs for players, but no player tested it. A skeleton archer got its cloud the same way. After
+the nether chunks were unloaded, saved with `save-all flush` and loaded again, each of the two archers
+had exactly one cloud, and the old archer from before the fix had its cloud ticking now as well. Killing
+an archer removed its cloud. A Stray boss built with `ApothBoss.createBoss` was still placed from 0 0 0
+onto its spider and ticked (`Spigot.ticksLived` 31 after 2 seconds).
+
+After the restart at 13:26 the old archer still had exactly one cloud, and the startup script logged
+"Apotheosis passengers: active". At 13:27 a probe discarded a new archer and, as a control, a zombie
+that carried a plain area effect cloud, the way a despawn removes a mob. The cloud of the archer went
+with it ("Apotheosis passengers: discarded the cloud of a minecraft:wither_skeleton that left the level
+at 700 100 648"). The cloud of the zombie stayed in the level without a vehicle, which is what every
+despawned archer would have left behind. Another unload and reload of the chunks kept the cloud of the
+old archer, and the startup script discarded nothing during it.
 
 ### Gameplay
 
@@ -232,6 +279,22 @@ in game, because event handlers only fail when the event fires.
 
 Run `/reload` to reload server scripts. It does not undo effects that were already applied to players,
 such as attribute modifiers.
+
+The probes of 2026-11-04 on the test server found more names that behave differently in this setup:
+
+- The KubeJS property `persistentData` and the method `getPersistentData()` return the data that KubeJS
+  keeps for the entity, not the Forge data that mods such as Apotheosis write.
+- The UUID of an entity comes from `getUuid()`. The method `getUUID()` is not found.
+- The method `hurt` and fields such as `tickCount` are not reachable. The NBT of the entity (`entity.nbt`)
+  gives `Age` or `Spigot.ticksLived`, and the vanilla command `damage` deals damage.
+- The call `server.getLevel(key)` is ambiguous. Walk `server.getAllLevels()` instead and read the
+  dimension of each level through a helper that takes `dimension` as a property when it is one, like
+  `apothRidersCall` in `apotheosis_riders.js`.
+- Inside `execute ... run` a command needs its plain name, for example `summon` and not
+  `minecraft:summon`. At the top level of RCON, the prefix still keeps EssentialsX away from `give` and
+  `clear`.
+- The method `scheduleInTicks` of the server, `addFreshEntity`, `positionRider`, `getPassengers` and
+  `getEncodeId` work as named.
 
 ## Stale references
 

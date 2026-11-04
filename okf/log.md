@@ -807,8 +807,9 @@ logs stay on the Mac and are not in the repo.
   rod recipe goes, five recipes give the preferred item, two trims take it, AlmostUnified covers five
   more materials, coal coke, silicon, slag, three rods and graphite, and the 282 variants leave EMI
   through the tag `c:hidden_from_recipe_viewers`, see
-  [AlmostUnified](modpack/almostunified.md#emi-hide-list). All of it reaches the game on the Mac mini
-  with its next restart, or apart from the two trims with a `/reload`.
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list). The files reached the Mac mini after its
+  restart of 23:10, so all of it goes live with the next restart, or apart from the two trims with a
+  `/reload`.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -3454,6 +3454,21 @@
         "https://cdn.modrinth.com/data/FAUSd09K/versions/CDihtEoy/flib-1.20.1-0.0.16.jar"
       ],
       "fileSize": 276850
+    },
+    {
+      "path": "mods/Cyclic-1.20.1-1.13.7.jar",
+      "hashes": {
+        "sha1": "f5e2a09fea3345f0bd891b613452d6ccb64b9865",
+        "sha512": "a08f1e7ec6238a6bb7c28eb79577bbf6d02860b2dc0019449522ea6e11bb2d0d27572605e73557e6e64546f2a1fa6254e2aec8c602410301cafebda0fec00bbe"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/UcVTWyCI/versions/wLo8i0R4/Cyclic-1.20.1-1.13.7.jar"
+      ],
+      "fileSize": 4275426
     }
   ],
   "dependencies": {

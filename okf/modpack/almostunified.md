@@ -215,6 +215,10 @@ Foregoing recipe take yellorium, and none of them turns it into uranium.
 Extreme Reactors keeps working. Each of its six recipes that ask for the uranium tag has a twin that
 asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/yellorium` as well.
 
+Extreme Reactors 2.0.97 also lists its deepslate yellorite ore, raw yellorium, the raw yellorium block and
+the yellorium block in the item tags of uranium. Since 2026-11-05 tag_fixes.js takes them out as well.
+Its own recipes name these items directly. A Forge 47.4.18 test boot with Extreme Reactors, ZeroCore,
+Mekanism, Patchouli and KubeJS then listed only Mekanism items in the six uranium tags.
 Since 2026-11-04 the pattern is `bigreactors:(?!graphite_).*`. The graphite ingot, dust and block of
 Extreme Reactors take part again and win over those of Tinkers' Reforged, and yellorium stays out.
 

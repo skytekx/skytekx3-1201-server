@@ -169,8 +169,9 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 49 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder [local-mods/](../../local-mods) | Yes | 51 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx DE Fixes join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder [local-mods/](../../local-mods) | Yes | 49 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since 44358a8, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from 19e712ec to 14fc2390 |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
@@ -219,6 +220,8 @@ loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 
+The 51 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+counts in the list below are older than the last sixteen of them and were not recounted:
 The 49 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
 counts in the list below are older than the last fourteen of them and were not recounted:
 
@@ -255,6 +258,11 @@ counts in the list below are older than the last fourteen of them and were not r
   stock jars of the index, which stay as they are, and the KubeJS scripts fix two more. It needs
   exactly Draconic Evolution 3.1.2.621 and Brandon's Core 3.2.1.302 and is required on both sides, see
   [Draconic Evolution fixes](draconic-fixes.md).
+- Extreme Reactors 2.0.97 and ZeroCore 2.1.48 left the index on 2026-11-05 for the CurseForge files of
+  the same author, because Modrinth stops at 2.0.84 and 2.1.45 for 1.20.1 and Extreme Reactors 2.0.97
+  needs ZeroCore 2.1.48. Extreme Reactors declares MIT and its MIT text travels in `licenses/`. ZeroCore
+  is All Rights Reserved and rides on the modpack grant of its project description, see
+  `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`.
 - SkyTekx Molten 1.0.0 joined on 2026-11-05 (9f47d1b0). The pack's own mod, built from the public repo
   [skytekx/skytekx-molten](https://github.com/skytekx/skytekx-molten) at edec978, adds 70 molten fluids
   with their melting and casting recipes for the ingot materials that Tinkers' Construct does not handle,

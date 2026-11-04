@@ -1,0 +1,20 @@
+# ZeroCore 2
+
+Bundled file: `ZeroCore2-1.20.1-2.1.48.jar`
+Status: OK (author allows)
+
+## Paste into the Modrinth attribution form
+
+- Permission reason: Special permission
+- Link to work: https://www.curseforge.com/minecraft/mc-mods/zerocore
+- License: All Rights Reserved
+- Explanation:
+
+  ZeroCore 2 (ZeroCore2-1.20.1-2.1.48.jar) by ZeroNoRyouki is All Rights Reserved (mods.toml license="All rights reserved", Modrinth LicenseRef-All-Rights-Reserved), except its multiblock API, whose MIT text the jar carries in LICENSE.txt. The author grants modpack use in the project description on CurseForge and Modrinth: "You can add Zero Core to your mod pack or use them in your let's play / live streams to your heart content, no need to ask for my permission: you got it." The Extreme Reactors 2 description repeats it for both mods: "You can add Extreme Reactors 2 (and Zero Core 2) to your mod pack ... no need to ask for my permission: you got it." The pack bundles the unmodified CurseForge file, because build 2.1.48, which Extreme Reactors 2.0.97 requires, is not on Modrinth.
+
+## Reference
+
+- Redistribution allowed: yes, unmodified and inside the modpack, by the author's grant
+- On Modrinth: older builds only (https://modrinth.com/mod/zerocore, project rHpb85Mf, newest 1.20.1 build 2.1.45)
+- Author: ZeroNoRyouki
+- Notes: CurseForge project 247921, file 7344725, uploaded 2025-12-17 by ZeroNoRyouki together with Extreme Reactors 2.0.97, 1,341,342 bytes as the CurseForge API reports, SHA-1 d60df80acecc27e20401065a252773f86b08e9de. The file from mediafilez.forgecdn.net and the one from the CurseForge site download are byte identical. The grant covers adding the mod to a modpack. The same description section adds a repost limit: "No one is authorized to repost my mods, or any part of them, on any other website then the ones I post them to" (Modrinth text, which names CurseForge, Modrinth and the FTB launcher as those sites, while the older CurseForge text says "other then Curse Forge"). The jar ships only inside the pack's `.mrpack` on Modrinth, never as a download of its own. The CurseForge allowModDistribution flag could not be read from CurseForge itself on 2026-11-04 and 2026-11-05: the CurseForge API needs a key, and the site API and api.curse.tools answered 403 or a Cloudflare challenge. The public API proxy cfproxy.bmpm.workers.dev reports allowModDistribution true for ZeroCore 2 and Extreme Reactors on 2026-11-05, but it reports true for Cupboard, Connectivity and Hexxit Additions as well, whose flag other records here call off, and the Curse Maven test answers 200 for this file just as for Cupboard and Hexxit Additions, so neither settles the flag. The grant in the description is the permission this record rests on, as for Fast Leaf Decay and Enchanting Plus. A modified ZeroCore would need the author's permission. This jar is unmodified.

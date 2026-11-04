@@ -5,8 +5,13 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 51 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-05. **Verify the blockers yourself before trusting them.**
+
+## TL;DR
+
+- **44** mods are fine to bundle (open license or author allows modpacks).
+Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
@@ -75,6 +80,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `EnchantingPlus-1.20.1-1.3.0.jar` | Enchanting Plus (Classic) | All Rights Reserved | Special permission | yes | - |
 | `EnderIO-1.20.1-6.2.18-beta-all.jar` | Ender IO | Unlicense | Licensed | yes | yes |
 | `Exchangers-1.20.1-3.5.1.jar` | Exchangers | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |
+| `ExtremeReactors2-1.20.1-2.0.97.jar` | Extreme Reactors 2 | MIT | Licensed | yes | older builds only |
 | `EyesInTheDarkness-1.20.1-1.3.10.jar` | Eyes in the Darkness | BSD-3-Clause | Licensed | yes | - |
 | `fairylights-7.0.0-1.20.1.jar` | Fairy Lights | MIT | Licensed | yes | - |
 | `FastLeafDecay-32.jar` | Fast Leaf Decay | All Rights Reserved | Special permission | yes | - |
@@ -103,6 +109,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar` | The Twilight Forest (SkyTekx 1.20.1 fork, TF 4.8 backport) | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures), MIT (Mystic Crown Compat parts) | Special permission | yes | - |
 | `twilightforestfinalboss-1.0.1-forge-1.20.1.jar` | The King of Twilight | MIT | Licensed | yes | - |
 | `twilighttweaks-1.20.x-1.2.jar` | Twilight Tweaks | LGPL-2.1 | Licensed | yes | - |
+| `ZeroCore2-1.20.1-2.1.48.jar` | ZeroCore 2 | All Rights Reserved (MIT multiblock API) | Special permission | yes | older builds only |
 
 ## How to fill the form
 

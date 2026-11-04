@@ -5,12 +5,12 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 45 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 46 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **39** mods are fine to bundle (open license or author allows modpacks).
+- **40** mods are fine to bundle (open license or author allows modpacks).
 - **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
 - **5** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
@@ -66,6 +66,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `ChunkOpt-1.0.2.jar` | Chunk Optimization (ChunkOpt) | MIT | Licensed | yes | - |
 | `cleanswing-1.20-1.8.jar` | Clean Swing Through Grass | LGPL-3.0 | Licensed | yes | - |
 | `cosmeticarmorreworked-1.20.1-v1a.jar` | Cosmetic Armor Reworked | MMPL-1.0.1 | Licensed | yes | - |
+| `eio_legacy_machines-0.4.9.jar` | EnderIO Legacy Machines | MIT | Licensed | yes | - |
 | `elevatorid-1.20.1-1.9.1-forge.jar` | ElevatorMod (OpenBlocks Elevator) | MIT | Licensed | yes | yes |
 | `emi-1.1.24-skytekx.2+1.20.1+forge.jar` | EMI (JEI bridge fork by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `EnchantingPlus-1.20.1-1.3.0.jar` | Enchanting Plus (Classic) | All Rights Reserved | Special permission | yes | - |

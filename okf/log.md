@@ -802,6 +802,13 @@ logs stay on the Mac and are not in the repo.
 - At 21:45 the owner asked for Flux Networks from its GitHub repository. Version 7.2.1.15 is on
   CurseForge only and MIT licensed, so the pack bundles it in `local-mods/` for 3.1.3 after a boot of a
   test server, see [Mod set](modpack/mod-set.md#flux-networks).
+- At 22:12 the owner asked why two iron ingots offer 2 or 4 iron rods, at 22:27 why zinc sheets cannot
+  be made and at 22:34 for one item per material with the other variants out of sight. Thermal Extra's
+  rod recipe goes, five recipes give the preferred item, two trims take it, AlmostUnified covers five
+  more materials, coal coke, silicon, slag, three rods and graphite, and the 282 variants leave EMI
+  through the tag `c:hidden_from_recipe_viewers`, see
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list). All of it reaches the game on the Mac mini
+  with its next restart, or apart from the two trims with a `/reload`.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

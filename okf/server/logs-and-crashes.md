@@ -206,7 +206,9 @@ The first edit at 21:13 did not hold. Forge writes its in-memory server config b
 every stop, and the file's time matched the `Finished unloading server configs` line of the stop at
 21:35:48. The value was set again with the JVM gone at 21:35:54 and holds since the boot that reached
 `Done` at 21:36:32. So edit files in `world/serverconfig/` only while the server is down. The setting
-lives in the world, so a new world needs it again, and the old world on the build machine lacks it. The
+lives in the world. Since 2026-11-04 `defaultconfigs/forge-server.toml` carries it, and Forge copies that
+file into every world that has no `serverconfig/forge-server.toml` yet, singleplayer worlds of the pack
+included. The old world on the build machine still lacks it. The
 same holds for the server configs that some mods keep in `config/`, see
 [Mekanism's ore switch](#mekanisms-ore-switch-lost-at-a-stop-2026-11-02-172012).
 

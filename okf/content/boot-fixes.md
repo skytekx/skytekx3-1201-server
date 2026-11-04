@@ -37,8 +37,8 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 189 files, 188 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 53 are
+is tracked: 242 files, 241 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 106 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -116,7 +116,7 @@ every mod pack that loads after the fixes pack, which should be none.
 
 ### Gameplay overrides
 
-Five groups of files in the pack change the game on purpose:
+Six groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -177,6 +177,25 @@ Five groups of files in the pack change the game on purpose:
   like a dispenser, so the recipe takes both. It went live at 19:14:12 with `/reload`, after which
   KubeJS counted 37,024 recipes and the log had no new ERROR line. Another 17 registered names of the
   mod have no recipe either, see [Open items](../open-items.md#owner-decisions).
+- 53 crafting recipes under `data/mysticalagriculture/recipes/essence/` let the essence recipes of
+  Mystical Agriculture 7.0.24 work in any row or column of the crafting grid since 2026-11-04. Their
+  types `cucumber:shaped_no_mirror` and `cucumber:shaped_tag` come from Cucumber 7.0.16, which keeps
+  the empty rows and columns of a pattern, where vanilla cuts them off. So a row of three essences
+  above two empty rows matched only in the top row. At 21:28 the owner reported that Certus Quartz
+  Dust cannot be crafted with three Certus Quartz Essence in the middle row, where EMI showed them,
+  and that the top row works. Each file is the recipe of the jar at the same id, with the empty rows
+  and columns cut from its pattern and nothing else changed. A scan of the 19,116 crafting recipes on
+  a test server found 112 shaped recipes whose grid has an empty row or column. Five of them are the
+  traveler's armor of Tinkers' Construct, whose patterns fill the grid, so the scan only took their
+  material slots for empty. The other 107 belong to Mystical Agriculture. In 54 of them the place
+  decides the result, and they stay as they are: Nature Essence gives wheat in the top row, potatoes
+  in the middle row and carrots in the bottom row, and logs, saplings, dyes, fish, flowers and other
+  groups work the same way. None of the 53 others has the cut shape and the ingredients of another
+  recipe. On the test server Certus Quartz Dust then came out of all three rows, Nature Essence still
+  gave wheat, potatoes and carrots by row, and the scan found 59 such recipes. The pack
+  `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
+  (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
+  Mac mini at 21:54 and load with its next `/reload` or start.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

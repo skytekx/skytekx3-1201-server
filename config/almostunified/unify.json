@@ -11,7 +11,10 @@
     "industrialforegoing",
     "railcraft",
     "tconstruct",
-    "twilightforest"
+    "twilightforest",
+    "createaddition",
+    "thermal_extra",
+    "bigreactors"
   ],
   "stoneStrata": [
     "stone",
@@ -34,7 +37,10 @@
     "forge:rods/{material}",
     "forge:wires/{material}",
     "forge:storage_blocks/{material}",
-    "forge:storage_blocks/raw_{material}"
+    "forge:storage_blocks/raw_{material}",
+    "forge:coal_coke",
+    "forge:silicon",
+    "forge:slag"
   ],
   "materials": [
     "aeternium",
@@ -56,6 +62,7 @@
     "electrum",
     "elementium",
     "emerald",
+    "ender_pearl",
     "enderium",
     "fluorite",
     "gold",
@@ -63,6 +70,7 @@
     "invar",
     "iridium",
     "iron",
+    "knightmetal",
     "lapis",
     "lead",
     "lumium",
@@ -74,7 +82,9 @@
     "peridot",
     "platinum",
     "potassium_nitrate",
+    "quartz",
     "ruby",
+    "saltpeter",
     "sapphire",
     "signalum",
     "silver",
@@ -83,18 +93,41 @@
     "tin",
     "tungsten",
     "uranium",
+    "wood",
     "zinc"
   ],
-  "priorityOverrides": {},
+  "priorityOverrides": {
+    "forge:ingots/knightmetal": "twilightforest",
+    "forge:storage_blocks/knightmetal": "twilightforest",
+    "forge:silicon": "ae2"
+  },
   "customTags": {},
   "tagOwnerships": {},
   "itemTagInheritanceMode": "ALLOW",
-  "itemTagInheritance": {},
+  "itemTagInheritance": {
+    "forge:plates": [
+      "forge:plates/.*"
+    ],
+    "minecraft:beacon_payment_items": [
+      "forge:ingots/.*"
+    ],
+    "minecraft:coals": [
+      "forge:coal_coke"
+    ],
+    "minecraft:piglin_loved": [
+      "forge:(dusts|plates)/gold"
+    ],
+    "minecraft:trim_materials": [
+      "forge:ingots/steel"
+    ]
+  },
   "blockTagInheritanceMode": "ALLOW",
   "blockTagInheritance": {},
-  "ignoredTags": [],
+  "ignoredTags": [
+    "forge:storage_blocks/quartz"
+  ],
   "ignoredItems": [
-    "bigreactors:.*"
+    "bigreactors:(?!graphite_).*"
   ],
   "ignoredRecipeTypes": [
     "cucumber:shaped_tag"

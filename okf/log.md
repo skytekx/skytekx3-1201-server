@@ -795,6 +795,10 @@ logs stay on the Mac and are not in the repo.
 - At 21:09 the owner reported that a dropped item spins and vanishes for half of every turn. Nostalgic
   Tweaks draws dropped items as flat sprites with only a front face by default, and the pack ships its
   config with that off from 3.1.3 on, see [Client](modpack/client.md#dropped-items).
+- At 21:28 the owner reported that Certus Quartz Dust cannot be crafted from the middle row. Cucumber
+  keeps the empty rows of the essence recipes of Mystical Agriculture, so they matched in one place
+  only. The fixes pack cuts them in 53 recipes, and the 54 whose place decides the result stay, see
+  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

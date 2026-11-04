@@ -224,6 +224,13 @@ evidence and the page with the details. The rulings behind the first section are
   opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
   chest in EMI on the server and note how much longer the join takes with the loot that the server
   sends, see [Mod set](modpack/mod-set.md#advanced-loot-info).
+- The essence recipes of Mystical Agriculture in EMI. On 2026-11-04 EMI showed the three Certus Quartz
+  Essence of the Certus Quartz Dust recipe in the middle row, while the recipe matched only in the top
+  row. EMI draws a shaped recipe of 3 by 3 as its pattern stands (`EmiShapedRecipe.padIngredients`),
+  and the client gets the padded pattern, so why it drew the middle row is not known. The fixes pack
+  now cuts that recipe, which then works in every row. Whether EMI draws the 54 recipes whose place
+  decides the result, such as wheat, potatoes and carrots from Nature Essence, in their right rows was
+  not checked in a client, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 - The jar patches of 2026-11-04 in play. Nobody has opened the Simply Jetpacks 2 guide book in a
   client of a pack that ships `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, or updated a 3.1.2
   instance to such a pack in Prism Launcher or the Modrinth App. Nobody has cloned an enchanted book

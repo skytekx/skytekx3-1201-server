@@ -35,6 +35,7 @@ six uncrafting recipes of Twilight Tweaks, see
 | Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, and keeps yellorium out of the uranium tags |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
+| Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts, see [Apotheosis riders](#apotheosis-riders) |
 | Skylands sleep, `skylands_sleep.js` | Turns the overworld to day when players sleep in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#sleep-and-hostile-mobs) |
 | Skylands portals, `skylands_portals.js` | Lets nether portals work in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#nether-portals) |
 | Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, see [AlmostUnified](almostunified.md#inventory-converter) |
@@ -135,6 +136,34 @@ items exist only with Neapolitan, and their ids made the tag loader drop the thr
 the nine edible berries of the Twilight Forest backport to `forge:berries`, which Farmer's Delight and
 Medieval Embroidery read. Since 2026-11-02 it also takes yellorium out of the uranium tags, see
 [AlmostUnified](almostunified.md#yellorium).
+
+### Apotheosis riders
+
+The file [apotheosis_riders.js](../../kubejs/server_scripts/apotheosis_riders.js) (2026-11-04) fixes
+the mounted bosses of Apotheosis 7.4.8. `ApothBoss.createBoss` builds the rider from NBT without a
+position and moves only the mount to the spawn point, so the rider joins the world at x 0, y 0, z 0. It
+would move onto its mount in its first tick as a passenger, but it only ticks while the chunk at the
+origin is entity ticking. In this world that chunk is no spawn chunk (world spawn 308 64 392, and Ksyxis
+removes the spawn chunks), so the rider never ticked.
+
+The only mounted boss is the overworld Stray on a spider. A mob rider switches off the walking goals of
+its mount, so players met a spider that did not walk, while the Stray boss waited at the origin. When the
+spider died or despawned, the Stray dropped to x 0, z 0 at the height of the spider. The debug log shows
+3 such Strays on 2026-11-02 at 13:26 and 12 on 2026-11-03 at 21:04. Those were gone by 22:02, and since
+then a new one stands at 0 63 0. The copy of `world/entities/r.0.0.mca` read on 2026-11-04 holds it with
+`apoth.boss`, `Spigot.ticksLived` 0 and its glowing effect still at 3600 ticks, so it never ticked.
+
+The script listens to the join event of `minecraft:stray`. When the Stray rides a vehicle more than 8
+blocks away, the vehicle places it on itself with `positionRider`. Forge fires that event before the
+entity goes into a chunk section, so the rider is filed under the chunk of its mount and ticks from then
+on. Each placement logs "Apotheosis riders: placed" with both positions, at most 100 per boot. After five
+errors the script stops until the next reload. A Stray that already stands at the origin is no passenger
+any more and stays there.
+
+The nether miniboss Withering Archer has a related fault that the script leaves alone. Apotheosis
+attaches its wither cloud while the archer joins the level. By then the game has already taken the list
+of passengers to add, so the cloud rides the archer without being part of the level and never ticks.
+The archer only gets its aura once its chunk has been saved and loaded again.
 
 ### Gameplay
 

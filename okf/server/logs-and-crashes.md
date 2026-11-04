@@ -3,7 +3,7 @@ type: Runbook
 title: Logs and crashes
 description: Where the server logs live, how to read a run, the crash history with root causes and fixes, the stop path, the boot error baseline and the error counts of each recent boot.
 tags: [server, logs, crashes, debugging, arclight]
-timestamp: 2026-10-31
+timestamp: 2026-11-04
 ---
 
 # Logs and crashes
@@ -133,11 +133,12 @@ next to a player near the Skylands spawn. The explosion fired `LivingAttackEvent
 minutes. The second crash came 12 seconds after the owner joined, and the owner asked why the server
 crashed on joining (2026-06-27 21:16).
 
-This is not fixed. The jar `mods/AsgardShieldReloaded-1.20.1-0.2.jar` still loads (`logs/debug.log`,
-2026-07-12 23:25:10), and the index lists it as required on the server. No jar patch, KubeJS script or
-config works around it. The error appears in no log after 2026-06-27, most likely because no
-explosion hit a player again. With more players online it is the most likely crash. The options are to
-remove the mod from server and pack, to patch the null check, or to accept the risk. The owner decides.
+This is fixed since 2026-10-31. The handlers read `Player.swingingArm`, which stays null until a
+player swings after a login or a respawn. On that evening the same error made every hit on such a
+player fail, from 22:24:45 to 22:46:31. Since 8286e93, `tools/patch_mods.py` makes both handlers read
+`getUsedItemHand()` instead, which is never null, and the patched jar runs on the Mac mini since the
+restart of 22:49:28. No log after that restart holds "Invalid hand null" (log audit of 2026-11-04). The
+error comes back only if the jar is replaced without running `tools/patch_mods.py`.
 
 ### Client-only mods on the server (2026-06-29 12:49)
 
@@ -417,7 +418,8 @@ fired twice, on 2026-06-29 at 19:41:18 and on 2026-07-03 at 21:09:57. A server h
 
 ## Live risks for any host
 
-- AsgardShieldReloaded still crashes the server when an explosion hits a player. Not fixed.
+- Asgard Shield Reloaded needs the patch of `tools/patch_mods.py` after every update of its jar, or hits
+  on players fail and explosions can crash the server again.
 - Signal stops race inside Arclight's shutdown hook. Stop over RCON.
 - Host sleep stalls the server and ended its longest run. Keep the host awake.
 - Bulk `/locate` sweeps trip the watchdog. Keep them off the live server.

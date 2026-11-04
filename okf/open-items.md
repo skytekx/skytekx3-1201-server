@@ -50,6 +50,12 @@ evidence and the page with the details. The rulings behind the first section are
 - No dashes in commit messages (2026-06-29 22:14). Spaced hyphens used as dashes remain in the bodies of
   bc9a935 and 573b71b. A fix means another history rewrite and force push.
 
+- Our own mod for molten metals (2026-11-04 14:33). The owner asked for a fluid for every material
+  that makes an ingot and has none in Tinkers' Construct, such as palladium and yellorium. The mod
+  SkyTekx Molten is being built. Clients need its fluids, so it goes live together with a pack update.
+  The melting recipe of the Galosphere sterling horse armor waits for it, see
+  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+
 ## Owner decisions
 
 - Packs 3.0.6 and 3.0.7 still hold Placeable Items, which the server dropped on 2026-11-01 (516f90e).
@@ -127,26 +133,17 @@ evidence and the page with the details. The rulings behind the first section are
   percent. Run pregens only with nobody online and in steps with a restart in between. The JVM flag
   `-XX:+ExitOnOutOfMemoryError` in `ServerMac.sh` would end a later out of memory at once, so players
   and chunks roll back together to the last autosave instead of only the players being saved.
-- The Simply Jetpacks guide book never loads, see
-  [Logs and crashes](server/logs-and-crashes.md#boot-error-baseline). Either patch the MIT licensed jar
-  (`use_resource_pack: true` and the book copied under `assets/`) and ship the patched jar to every
-  client, or remove the recipe that crafts a book that does not open.
-- BiblioCraft cannot clone enchanted books in the printing table, because the XP cost of
-  `bibliocraft:enchanted_book_cloning_in_printing_table` uses a codec that refers to itself and can never
-  decode. Switch the recipe off with `forge:false`, or patch the MIT licensed jar so that the cloning
-  costs XP as designed. An override without the cost would make it free.
-- Aether Redux's golden swet ball modifier for Aether Genesis never loads
-  (`aether_redux:genesis_golden_swet_ball_increase` has the type `add_drops` with the fields of
-  `replace`). An override with the type `replace` would make golden swets drop more balls, scaled by
-  their size and by Looting, as Redux intends.
-- Hexxit Additions' hollow oak logs never generate, because their feature filters on the missing tag
-  `#minecraft:oak_log` and runs before any tree exists. An override could place about one per ten
-  forest chunks in new chunks, or a smaller fix could just end the boot warning and keep the world as it
-  is.
 - Drops on the Cloudflare tunnel. Players on the tunnel lost the connection 7 times between 2026-11-01
   22:25 and 2026-11-03 21:37, players in the LAN never. The connector log on the Mac mini has no error at
   those minutes, so the stall starts on the client side. A client `latest.log` after the next drop would
   show whether Modflared or a frozen game is the cause. A relay on a VPS or playit.gg is the other way.
+- Hollow logs in the Skylands. Since 2026-11-04 the hollow oak logs of Hexxit Additions generate in the
+  four overworld biomes of the mod only. The Skylands use their own biome ids, such as
+  `skytekx3:forest`, and get none. Adding those ids to the biome modifier would bring the logs to the
+  islands, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- Fluids for the gems of other mods. Tinkers' Construct melts diamond and emerald into fluids of their
+  own, but gems such as zanite and skyjade have none, so their gloves and tools cannot melt. Whether
+  they get fluids too was asked on 2026-11-04 and is open.
 
 ## Defects to fix
 
@@ -169,11 +166,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The systemd unit sets `KillMode=none` and stops through an asynchronous `mcrcon` call, so systemd
   neither waits for the save nor stops a JVM whose RCON stop failed. A synchronous stop is documented as
   an untested candidate. See [Deploy on Debian](server/deploy.md#stopping-and-restarting).
-- A vanilla 1.20.1 race drops a queued chunk write when the same chunk is read back during it
-  (`ConcurrentModificationException` in `IOWorker`, once per Skylands pregen on the Mac mini). Nothing
-  was lost so far. A fix would copy the queued tag in `IOWorker.loadAsync`, in the hardened Arclight
-  jar or in the compat mod. See
-  [Logs and crashes](server/logs-and-crashes.md#chunk-save-race-during-pregen).
 - The legacy resolver `tools/resolve_all.py` ignores the pinned index and resolves a hard-coded slug list
   against the live API, Radium and Better Combat included. Nobody should run it. Remove or rewrite it.
   See [Tools](modpack/tools.md#the-legacy-resolver).
@@ -196,29 +188,39 @@ evidence and the page with the details. The rulings behind the first section are
   delay to the pile. Only a new case, with its time and place, would show that something is left. See
   [Arclight](server/arclight.md#floating-items) and
   [SkyTekx Compat](content/compat-mod.md#infernal-mobs-queries).
-- The yellow dye recipes take only Mekanism's sulfur dust, and since 2026-11-02 the inventory converter
-  turns that dust into Thermal's, which those recipes refuse. A tag ingredient in them would fix it.
-  See [AlmostUnified](modpack/almostunified.md#limits).
-- Epic Knights' bronze ingot `magistuarmory:bronze_ingot` is in no tag, so it counts in no recipe of
-  another mod. In `forge:ingots/bronze` AlmostUnified and the converter would take it in. See
-  [AlmostUnified](modpack/almostunified.md#limits).
-- Withering Archer minibosses of Apotheosis spawn without their wither cloud. Apotheosis mounts the
-  cloud while the archer joins the level, after the game has taken the list of passengers to add, so
-  the cloud never ticks until the chunk is saved and loaded again. A KubeJS handler that adds unknown
-  passengers one tick later could fix it, but that path is untested. See
-  [KubeJS](modpack/kubejs.md#apotheosis-riders).
-- The `SummonedSwordMixin` of TiCEX fails at every boot. It targets `onHitEntity` without remapping,
-  and SlashBlade Resharped only has `m_5790_` at runtime, so Tinkers hit modifiers skip SlashBlade's
-  summoned swords. A rule in `tools/patch_mods.py` could rename the target, with a boot test.
-- The Sundering effect of Apothic Attributes adds no damage on this server. Arclight redirects the same
-  resistance check in `LivingEntity.getDamageAfterMagicAbsorb`, so Mixin skips the redirect of Apothic
-  Attributes. A small handler in skytekx-compat could add the bonus of 20 percent per level.
 - Four broken entities with an invalid position were dropped on 2026-11-03 while chunks near the
-  origins of the overworld and the nether loaded ("Exception loading entity"). The log does not name
-  their type. A logging mixin in skytekx-compat would name the next one.
+  origins of the overworld and the nether loaded ("Exception loading entity"). Vanilla throws this in
+  `Entity.load` for a NaN coordinate, and which mod writes such entities is still open. Since
+  skytekx-compat 2.1.6 a "Dropped entity" line names the next one with its type, chunk and raw
+  position, see [SkyTekx Compat](content/compat-mod.md#entities-that-fail-to-load).
+- Most tools and armor of other mods do not melt in the smeltery, because Tinkers' Construct ships
+  melting recipes only for vanilla items and its own compat metals. Since 2026-11-04 the fixes pack
+  melts horse armor and gloves, see [Boot fixes](content/boot-fixes.md#gameplay-overrides). A
+  generator over all crafting and smithing recipes would cover the rest, with each piece giving back
+  what its cheapest recipe takes, and it would also check the recipes of Tinkers for more dupes like
+  the one of the vanilla horse armor.
 
 ## Not verified
 
+- The jar patches of 2026-11-04 in play. Nobody has opened the Simply Jetpacks 2 guide book in a
+  client of a pack that ships `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, or updated a 3.1.2
+  instance to such a pack in Prism Launcher or the Modrinth App. Nobody has cloned an enchanted book
+  at a BiblioCraft printing table to see the levels it takes. The TiCEX patch was tested with the
+  summoned swords of a fake player, not of a real player, and the heal of Necrotic was not seen. See
+  [Boot fixes](content/boot-fixes.md#jar-patches).
+- The Sundering mixin of skytekx-compat 2.1.6 never ran on a plain Forge dedicated server. On the test
+  server a run with Arclight's mute redirect taken out let the redirect of Apothic Attributes apply as
+  on plain Forge, and the share counted once. Run the golem test on a plain Forge dedicated server
+  before a build with this mixin goes into the pack, see
+  [SkyTekx Compat](content/compat-mod.md#sundering-on-arclight).
+- The copy of queued chunk tags in skytekx-compat 2.1.6 passed a probe and a pregen of 441 chunks on
+  the test server. The Mac mini hit the race twice in about 320,000 chunks, so only a big pregen there
+  without "Failed to store chunk" confirms it, see
+  [SkyTekx Compat](content/compat-mod.md#chunk-tags-waiting-for-their-write).
+- The wither aura of the Withering Archer was tested on a zombie, not on a player, see
+  [KubeJS](modpack/kubejs.md#apotheosis-riders).
+- The melting recipes of 2026-11-04 in game. Nobody has melted a horse armor or a glove since they
+  went live, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 - Modflared in a running game. Nobody has joined through it yet. The second MacBook is set up for it,
   but its sign-in and first launch are left to the person at that Mac. Where Modflared runs, and that
   on Linux on ARM it only logs an error and cannot join through the tunnel, was read from its

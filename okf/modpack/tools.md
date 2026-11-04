@@ -3,16 +3,20 @@ type: Reference
 title: Tools
 description: The scripts in tools/ in the order they are used, from datapack sync and mod updates through jar patches and the mrpack build to the Modrinth upload and RCON, with what each one really does and where it runs.
 tags: [modpack, tools, build, modrinth]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Tools
 
-The folder [tools/](../../tools) holds eleven scripts. Six came from the build sessions of June and July
-2026. The seventh, `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58
-whether the installed mods have updates. It was committed at 18:14 (257d4c1). The last three are the
-region scans that checked the Halloween world on the Mac mini the same evening. The eleventh,
-`cf_tunnel.py`, sets up the Cloudflare Tunnel that made the server public at 21:13.
+The folder [tools/](../../tools) holds 16 scripts, not counting the Arclight build helpers in
+`tools/arclight/`. Six came from the build sessions of June and July 2026. The seventh,
+`update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58 whether the installed
+mods have updates. It was committed at 18:14 (257d4c1). The last three are the region scans that
+checked the Halloween world on the Mac mini the same evening. The eleventh, `cf_tunnel.py`, sets up the
+Cloudflare Tunnel that made the server public at 21:13. The other five came on 2026-11-04: the
+permission check `mrpack_permissions.py` that the build and the upload share, `datapack_order.py`, the
+unify audit `unify_audit.py` with its dump script `unify_audit_dump.js`, and `replace_blocks.py`, after
+the owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere.
 
 | Order | Tool | Lines | Job | Needs | Writes |
 |---|---|---:|---|---|---|
@@ -24,6 +28,7 @@ region scans that checked the Halloween world on the Mac mini the same evening. 
 | 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | After a mod joins | Order, `datapack_order.py` | 78 | Prints the datapack order of a saved `level.dat` and the mod packs that load after the fixes pack | Python 3 | Nothing |
+| Once per world, server stopped | Replace, `replace_blocks.py` | 926 | Replaces the five old blocks of Chocolate Quest with the normal blocks in every chunk, entity and NBT file of a world, see [Old blocks](../content/old-blocks.md) | Python 3.9 or newer, standard library only | Only the region and NBT files that hold an old block, each through a temporary file |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
 | After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 160 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
@@ -223,7 +228,10 @@ The scripts that locate the repo from their own path work on any host: the sync 
 `publish_modrinth.py`. Only `resolve_all.py` still hard-codes `/home/snekmin/git/skytekx3-1201-server`.
 The builder reads git, and the Mac mini's copy has no `.git` folder, so packs are built on the build
 machine. The Mac mini does not need them to run the server. The server
-files reach it through `macos/sync-to-mac.sh`, see [macOS host](../server/macos.md).
+files reach it through `macos/sync-to-mac.sh`, see [macOS host](../server/macos.md). The scripts
+`replace_blocks.py` and `datapack_order.py` take the world folder or its `level.dat` as their argument
+and run on the system `/usr/bin/python3` 3.9.6 of the Mac mini without a venv. Both ran there at the
+deploy of 3.1.3 on 2026-11-05.
 
 ## History
 

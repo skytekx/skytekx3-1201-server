@@ -114,8 +114,9 @@ ExecStop=/bin/sh -c '/usr/local/bin/mcrcon -H localhost -P 65535 -p "$RCON_PW" s
 ```
 
 The unit restarts the server after a crash (`Restart=always`), and also after an in-game `/stop`. A
-watchdog halt (`max-tick-time=60000`) therefore turns into a restart. The file `spigot.yml` asks for
-its own restart script `./start.sh`, which does not exist, so restarts only come from systemd.
+watchdog halt (`max-tick-time=60000`) therefore turns into a restart. Since 2026-11-04 `spigot.yml`
+sets `restart-on-crash: false`, so restarts only come from systemd. Before that it asked for a restart
+script `./start.sh` that does not exist.
 
 ## Ports and firewall
 

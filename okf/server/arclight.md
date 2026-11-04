@@ -222,8 +222,10 @@ repo root. All four were committed once in `5ae7f82`, so they are close to gener
   and, since 2026-11-03, 0 for the rest, which keeps items and the other misc entities always active
   (see [Floating items](#floating-items)). It also sets a tracking range of 48 for players, animals and
   monsters, and 4 Netty threads.
-  It also sets `restart-on-crash: true` with `restart-script: ./start.sh`, a script that does not
-  exist. Restarts come from the service manager instead. Since 2026-11-01 06:10 it sets
+  Since 2026-11-04 it sets `restart-on-crash: false`. Before that it asked for `restart-script:
+  ./start.sh`, a script that does not exist, so Spigot only stopped. Restarts come from the service
+  manager, launchd on the Mac mini or systemd, and a restart script of Spigot's own would start a
+  second server next to the one the service manager brings back. Since 2026-11-01 06:10 it sets
   `merge-radius.item` to 0.5 instead of 2.5 (a4bcaf7). Arclight inflates the merge box of a dropped
   item by that radius in every direction, vanilla by 0.5 sideways only, and each merge hands the
   longer pickup delay to the pile. Get It Together Drops had replaced this code with its own radius of

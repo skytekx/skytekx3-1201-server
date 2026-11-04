@@ -43,7 +43,9 @@ No registry id, block state, NBT key or config key changed between 1.3.3 and the
   CC&A between 2021 and 2023, when Create was MIT-licensed as a whole (`Copyright (c) 2019
   simibubi`). Create's assets are All Rights Reserved since Create commit `9dcc21950`
   (2025-09-21): the backport must not copy any Create asset dated 2025-09-21 or later.
-- Upstream jars carry no LICENSE file.
+- Upstream jars carry no LICENSE file. The SkyTekx build adds `LICENSE` and the SkyTekx `NOTICE`
+  (what changed, the upstream commits, where the source is, Create's MIT notice for the parts
+  derived from Create) to the jar; see build changes 7 and 8.
 
 ## Build changes
 
@@ -51,8 +53,8 @@ The snapshot builds unchanged on Java 17 with its own toolchain: ForgeGradle 6.0
 userdev, Parchment 2023.06.26-1.20.1, Gradle 8.1.1, Create 6.0.8-289 (slim), Ponder 1.0.91, Flywheel
 1.0.5, Registrate MC1.20-1.3.3, JEI 15.20.0.106 and CC:Tweaked (CurseMaven file 4740605). All
 repositories in `build.gradle` still resolve. The compiler settings are upstream's (javac defaults,
-no `-Werror`; the 36 compiler warnings are upstream's). The changes below make the build
-reproducible.
+no `-Werror`; the 36 compiler warnings are upstream's). The changes below only make the build
+reproducible and mark the jar as a modified build.
 
 Build check (from this directory):
 
@@ -91,3 +93,11 @@ release jar does not nest it either, and the mod's code does not use MixinExtras
    `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
    clean builds of the same commit give the same SHA-1.
 6. `.gitignore`: also ignores `run-data/`, `classes/`, `mcmodsrepo/`, `.mixin.out/` and logs.
+7. Licence files in the jar: the `jar` task adds `LICENSE` (upstream's, unchanged) and `NOTICE`
+   (SkyTekx's, in this directory) to the jar root as `LICENSE_createaddition` and
+   `NOTICE_createaddition`. MIT asks for the licence text in every copy, and upstream jars carry
+   none. The manifest's `Implementation-Vendor` reads `createaddition (modified build: SkyTekx)`.
+8. `mods.toml`: `license` keeps `MIT License, Copyright 2022 MRH0` and points to the two files;
+   `issueTrackerURL` goes to https://github.com/skytekx/skytekx3-1201-server/issues, since bugs
+   of this build are ours; `credits` adds "Modified, unofficial 1.20.1 backport by SkyTekx, not
+   supported by MRH0". `authors`, `displayURL`, `displayName` and `description` are unchanged.

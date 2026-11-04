@@ -9,9 +9,9 @@ modLoader="javafml" #mandatory
 loaderVersion="[40,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
-license="MIT License, Copyright 2022 MRH0"
+license="MIT License, Copyright 2022 MRH0 (see LICENSE_createaddition and NOTICE_createaddition in the jar)"
 # A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://github.com/mrh0/createaddition/issues" #optional
+issueTrackerURL="https://github.com/skytekx/skytekx3-1201-server/issues" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
@@ -29,7 +29,7 @@ displayURL="https://github.com/mrh0/createaddition" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="createaddition.png" #optional
 # A text field displayed in the mod UI
-credits="Special Thanks to the Forge Discord and the Create Team." #optional
+credits="Special Thanks to the Forge Discord and the Create Team. Modified, unofficial 1.20.1 backport by SkyTekx, not supported by MRH0 (see NOTICE_createaddition)." #optional
 # A text field displayed in the mod UI
 authors="MRH0" #optional
 # The description text for the mod (multi line!) (#mandatory)

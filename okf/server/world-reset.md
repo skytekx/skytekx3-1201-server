@@ -3,7 +3,7 @@ type: Runbook
 title: World reset and pregen
 description: Wiping and regenerating dimensions while keeping the seed and datapacks, Chunky pregeneration with measured rates, datapack sources and pack order, and what a fresh world needs.
 tags: [server, world, worldgen, pregen, datapacks]
-timestamp: 2026-10-31
+timestamp: 2026-11-04
 ---
 
 # World reset and pregen
@@ -150,10 +150,14 @@ A new `world/level.dat` changes three things.
   Skylands packs. On the Mac mini, run `macos/sync-to-mac.sh` before the first boot, which mirrors
   `world/datapacks/skytekx3_fixes/` into the new world since 29927ae. On other hosts, copy that folder
   from the checkout into the new world by hand, as was done for the Halloween world.
-- The new world gets Forge's default server config, with `removeErroringEntities = false`. Set it to
-  true in `world/serverconfig/forge-server.toml` with the server down, or a BattleTowers obelisk can
-  stop the server again, see
+- Forge writes the new world's `world/serverconfig/forge-server.toml` as a copy of
+  `defaultconfigs/forge-server.toml` from the checkout, which holds `removeErroringEntities = true`.
+  Without that copy the world gets Forge's default `false`, as the Halloween world did at its first
+  boot on 2026-10-31 at 18:07, and a BattleTowers obelisk can stop the server again, see
   [Logs and crashes](logs-and-crashes.md#a-battletowers-obelisk-on-the-mac-mini-2026-10-31-211233).
+  No fresh world has booted with the copy yet, so check the value after the first boot. A world that
+  already has the file keeps its own, so the old world on the build machine still holds `false`. The
+  pack ships `defaultconfigs/` too, so new singleplayer worlds get the same value.
 
 ```text
 /datapack disable "file/skytekx3_fixes"
@@ -162,9 +166,10 @@ A new `world/level.dat` changes three things.
 /datapack enable "file/skytekx3_skylands_forge" last
 ```
 
-The server configs in `world/serverconfig/` (28 `*-server.toml` files, untracked) also come back as
-mod defaults. None of them mentions SkyTekx or the Skylands. Check
-`advertiseDedicatedServerToLan` in `forge-server.toml`, which a public server does not need.
+The other server configs in `world/serverconfig/` (27 more `*-server.toml` files, untracked) come
+back as mod defaults. None of them mentions SkyTekx or the Skylands. The copy in `defaultconfigs/`
+keeps `advertiseDedicatedServerToLan = true` like the live world, which a public server does not
+need.
 
 ## Stopping safely
 

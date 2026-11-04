@@ -3,7 +3,7 @@ type: Feature
 title: Skylands worldgen
 description: The skytekx3:skylands floating islands dimension, a pure vanilla datapack generator that also runs on unmodded Spigot.
 tags: [content, worldgen, skylands, datapack]
-timestamp: 2026-11-02
+timestamp: 2026-11-04
 ---
 
 # Skylands worldgen
@@ -403,7 +403,10 @@ With the void floor of skytekx-compat 2.1.0 the pregen of 2026-11-01 ran at a me
 
 The log of the last boot on the build machine shows 33 runtime warnings "Empty or non-existent pool:
 dungeons_arise:mechanical_nest/mechanical_nest_decoration" (logs/2026-07-12-1.log.gz). They come from
-the Dungeons Arise jar and have not caused a crash.
+the Dungeons Arise jar and have not caused a crash. The pool name is a typo in one decoration jigsaw of
+the tower piece `mechanical_nest_towers_1`, and each such tower lost a library decoration. Since
+2026-11-04 the fixes pack defines that pool, see
+[boot fixes](boot-fixes.md#missing-structure-pools). Nests generated before keep the gap.
 
 ## Changes of 2026-10-31
 

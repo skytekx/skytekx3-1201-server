@@ -3,7 +3,7 @@ type: Reference
 title: Boot fixes
 description: How the server boot went from 152 errors to 3, with the skytekx3_fixes override datapack, the jar patches of tools/patch_mods.py, two config fixes and a hand edited jar.
 tags: [content, server, datapack, mods, boot]
-timestamp: 2026-11-03
+timestamp: 2026-11-04
 ---
 
 # Boot fixes
@@ -36,8 +36,9 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 144 files, 143 data files plus `pack.mcmeta` (pack format 15). The table lists the 125 boot
-fixes. The other 18 files are [gameplay overrides](#gameplay-overrides).
+is tracked: 149 files, 148 data files plus `pack.mcmeta` (pack format 15). The table lists the 126 boot
+fixes. 4 files add [missing structure pools](#missing-structure-pools), and the other 18 are
+[gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -47,6 +48,7 @@ fixes. The other 18 files are [gameplay overrides](#gameplay-overrides).
 | Recipes | 2 | The Create recipes `silver_ingot_compat_galosphere` for smelting and blasting, switched off with a `forge:false` condition |
 | Farming for Blockheads compat | 1 | The Thermal Cultivation seeds entry, made silent |
 | Patchouli book | 1 | The `simplyjetpacks` guide book, set to `use_resource_pack: true` |
+| Biome modifier | 1 | The Mo' Creatures modifier `wyvern_nests`, which names the tag `mocreatures:worldgen/biome/is_wyvern_lair` that does not exist, set to `forge:none` |
 
 ### What the overrides change in game
 
@@ -66,6 +68,14 @@ simplyjetpacks:guidebook" (23:25:43). Only the mod author can fix it, see
 
 The last boot on the build machine (`logs/2026-07-12-1.log.gz`, up to Done) has no "Couldn't parse
 element" and no "Couldn't load tag" line left.
+
+The Mo' Creatures biome modifier came in on 2026-11-04 and only removes log noise too. The tag of the
+mod is `mocreatures:is_wyvern_lair`, so the modifier matched no biome, and every boot and data reload
+warned "Not all defined tags for registry ResourceKey[minecraft:root / minecraft:worldgen/biome] are
+present in data pack: mocreatures:worldgen/biome/is_wyvern_lair", 35 times from 2026-10-31 to
+2026-11-03. The four wyvern lair biomes list `mocreatures:wyvern_nest` in their own features, so the
+nests still generate. Correcting the tag instead would add the feature a second time, which can stop
+the server with a feature order cycle. Biome modifiers load only at a server start.
 
 Since the mod update of 2026-10-31 (see [mod set](../modpack/mod-set.md#update-of-2026-10-31)) three
 overridden mods run newer builds: DragNs Livestock Overhaul 3.9.4, Iron's Spellbooks 3.16.3 and
@@ -98,6 +108,36 @@ new chunks change. Chunks generated before keep their Hexbiscus. At 16:20 the 44
 the owner in the overworld held 11 Hexbiscus in 8 chunks. The flowers of Hexxit Additions are not
 changed.
 
+### Missing structure pools
+
+Since 2026-11-04 four files under `worldgen/template_pool/` define pools that a structure piece names
+but its mod never shipped. The jigsaw code skips such a jigsaw with the warning "Empty or non-existent
+pool" (Repurposed Structures writes "nonexistent"), the jigsaw block turns into its final state and the
+piece it should have attached is missing. Each file is a copy of the pool that the sibling jigsaws of
+the same piece use. For Repurposed Structures it is the plain pool of the same village type, which is
+what the zombie wells of its overworld villages name.
+
+| File | Named by | Copy of | What comes back |
+|---|---|---|---|
+| `dungeons_arise/.../mechanical_nest/mechanical_nest_decoration.json` | One of nine decoration jigsaws in `mechanical_nest_towers_1` | `mechanical_nest_decorations` (88 elements) | One library decoration per tower, instead of a gray carpet. 1 of the 21 library pieces holds a chest with the loot table `mechanical_nest_normal` |
+| `dungeons_arise/.../underworld/foundry/foundry_corridor_gears.json` | Two of six gear jigsaws in `foundry_corridor_crossing_2` | `foundry_corridor_deco` | Two gears in the corridor crossing, instead of cut sandstone |
+| `repurposed_structures/.../villages/crimson/zombie/well_bottoms.json` and the `warped` one | The bottom jigsaw of the zombie town center `meeting_point_1` of the crimson and the warped village | `villages/crimson/well_bottoms` and `villages/warped/well_bottoms`, which no piece used before | The lava basin below the well, instead of one blackstone block. The town center has a weight of 1 in 204 |
+
+The Mechanical Nest typo logged 344 warnings from 2026-10-31 18:14 to 2026-11-01 01:05, all during
+the four Skylands pregens of those hours. The last of them (2026-11-01 00:59, radius 2000) made the
+Skylands of the live world and logged 34, so 34 tower pieces there lack their library decoration. The
+other three typos never showed in the logs, since no Foundry and no zombie nether village had
+generated. Template pools load only at a server start, and only structures in new chunks change.
+Nests generated before keep the gap.
+
+A scan of all jars on 2026-11-04 found more names of missing pools, but none of them matters. Most sit
+in pieces that no template pool places: the old Mushroom Village of When Dungeons Arise, pieces of
+Orion Structures and Hexxit Additions, the big dungeon of Quark, and the camp and Lich Tower templates
+of Twilight Forest, which the mod assembles in its own code. The spiral stairs terminator of YUNG's
+Better Strongholds is in a pool, but no piece targets its only jigsaw. The pool `minecraft:` comes
+from an empty pool field on the receiving jigsaws of five Iron's Spellbooks pieces, so nothing is
+missing there either.
+
 ### Pack order
 
 Commit d5e1449 says the pack had to be enabled last, because the Skylands pack sat in the middle of the
@@ -111,6 +151,13 @@ places (read from `level.dat` on the Mac mini. The message of 1f8f4ef counts fro
 279). The same order problem does break the ChocoCraft overrides, see
 [Skylands worldgen](skylands-worldgen.md#known-defect-the-chococraft-overrides-lose). The commands to
 move a pack to the end are on [world reset](../server/world-reset.md).
+
+On 2026-11-04 the `level.dat` on the Mac mini listed 296 packs, with the fixes pack at index 273
+(counted from 0) and the two Skylands packs right after it. The 20 packs after those are mods installed
+since the world was created, among them Falling Meteors, Elementary Staffs, the Twilight Forest add-ons
+and GraveStone. None of them ships a file at a path of the three file packs, but a new override for one
+of these mods would lose. Mo' Creatures (33), When Dungeons Arise (68) and Repurposed Structures (23)
+come before the fixes pack, so the overrides of 2026-11-04 win.
 
 ## Jar patches
 

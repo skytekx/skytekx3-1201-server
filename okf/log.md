@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Change log
@@ -767,6 +767,12 @@ logs stay on the Mac and are not in the repo.
   reported that it still did not. Three melting recipes for it, the Obsidian Ingot and the Processed
   Obsidian Block went live at 17:39:10 through `/reload`, and KubeJS counted 37,023 recipes, see
   [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- At 17:33 the owner asked to replace the old blocks of Chocolate Quest everywhere and to deploy. Each
+  Builder Village holds 48 old cobblestone, 21 old iron blocks, 10 old diamond ores, 5 old glass and 3
+  old obsidian, which drop only themselves and which no recipe, Fortune or smeltery takes. At 17:35 the
+  owner asked that every armor piece, weapon and other item with a meltable part melts, also into the
+  new fluids of SkyTekx Molten. A workflow built both on two test servers from 17:58, see the next
+  section.
 - At 18:29 a player's client crashed when it opened the guide of Applied Energistics 2 with the G key,
   because Starlight 1.1.2 calls a method that the fake world of the guide lacks. The index now keeps
   Starlight off the clients from the next pack on, and the server keeps it, see
@@ -810,6 +816,33 @@ logs stay on the Mac and are not in the repo.
   [AlmostUnified](modpack/almostunified.md#emi-hide-list). The files reached the Mac mini after its
   restart of 23:10, so all of it goes live with the next restart, or apart from the two trims with a
   `/reload`.
+
+## 2026-11-05: Pack 3.1.3 goes live with the old blocks replaced
+
+- At 00:35 the workflow of 17:58 ended. Its review and recheck approved the old blocks: the fixes pack
+  got the Builder Village pool with a rule processor and five loot tables, the unify script swaps the
+  five old items, and the new script `tools/replace_blocks.py` converts a stopped world, see
+  [Old blocks](content/old-blocks.md). The recheck held back its 9,546 generated melting recipes,
+  because three of them still gave more than their recipe takes, see
+  [Open items](open-items.md#defects-to-fix). The fixes pack took only the two Forbidden & Arcanus files
+  that leave the obsidian ingot to SkyTekx Molten, and the sterling horse armor melts at the 960 of
+  Molten's palladium (1a16cf2d).
+- Pack 3.1.3 was built at 00:41 (f34d7362, 75,915,546 bytes, 232 index entries, 49 bundled jars) with
+  the nine mods of 2026-11-04, Advanced Loot Info, Flux Networks and SkyTekx Molten (a50c6748), and
+  went to the owner as `~/Downloads/SkyTekx3-3.1.3.mrpack` to send to the players. Six bundled jars
+  without permission keep it off Modrinth, see [publish](modpack/publish.md#version-history). The
+  config of The One Probe ships with `spawnNote = false` (16d45cc8).
+- After a chat message the server stopped at 00:44:13 with nobody online. The world and `mods/` were
+  cloned to `~/skytekx3-backups/before-313-2026-11-05/` on the Mac mini. The 13 new jars and EMI
+  1.1.24-skytekx.2 went into `mods/` (264 jars), the fixes pack came from git HEAD (250 files), and
+  `unify_inventory.js`, `spigot.yml` with `restart-on-crash: false` and the One Probe config followed.
+  `tools/replace_blocks.py` converted 13 chunks in 14 files in 5.6 s with no error, and a second dry run
+  found nothing left, see [Old blocks](content/old-blocks.md#deploy).
+- The server was `Done` at 00:46:19 with 0 FATAL lines and no chunk error. At 00:47 the two datapack
+  commands moved the fixes pack to the end of 309 packs, after which the reload logged no ERROR line
+  and no parse error, see [Boot fixes](content/boot-fixes.md#pack-order). KubeJS loaded 11 scripts
+  without an error and found 38,661 recipes, and AlmostUnified turned 43,596 recipes into 43,087. The
+  unification of 2026-11-04, the two trims and the EMI hide list went live with this start.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

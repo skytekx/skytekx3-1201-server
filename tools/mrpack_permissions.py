@@ -7,13 +7,14 @@ Side-effect free, so both tools can import it:
 - publish_modrinth.py checks every jar inside the .mrpack it is about to upload, so an old or
   hand-made file at the public name is caught too.
 
-A jar passes only when modrinth-permissions/<jar>.md exists and has exactly one `**Status:**` line
-that starts with the word OK ("OK", "OK (author allows)") and does not mention BLOCKER or VERIFY.
+A jar passes only when modrinth-permissions/<jar>.md exists and has exactly one status line
+that starts with the word OK ("OK", "OK (author allows)") and does not mention BLOCKER or VERIFY. A
+status line starts with `**Status:**` or with a plain `Status:`, since the files use both.
 """
 import os
 import re
 
-STATUS = "**Status:**"
+STATUS = re.compile(r"(?:\*\*Status:\*\*|Status:)(.*)")
 _OK = re.compile(r"OK(\s|\(|$)")
 _NOT_OK = re.compile(r"BLOCKER|VERIFY")
 
@@ -24,11 +25,11 @@ def jar_problem(repo, jar):
     if not os.path.isfile(pf):
         return "no modrinth-permissions/%s.md" % jar
     with open(pf, encoding="utf-8") as fh:
-        statuses = [l.split(STATUS, 1)[1].strip() for l in fh if l.startswith(STATUS)]
+        statuses = [m.group(1).strip() for m in map(STATUS.match, fh) if m]
     if not statuses:
-        return "no %s line" % STATUS
+        return "no Status line"
     if len(statuses) > 1:
-        return "%d %s lines: %s" % (len(statuses), STATUS, " | ".join(statuses))
+        return "%d Status lines: %s" % (len(statuses), " | ".join(statuses))
     status = statuses[0]
     if not _OK.match(status) or _NOT_OK.search(status):
         return "Status: %s" % status

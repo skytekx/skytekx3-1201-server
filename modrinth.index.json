@@ -3484,6 +3484,21 @@
         "https://cdn.modrinth.com/data/BaR4ijFC/versions/HeSOGi4n/AdvancedCoreInfo-forge-1.20.1-1.5.0.jar"
       ],
       "fileSize": 259912
+    },
+    {
+      "path": "mods/AdvancedLootInfo-forge-1.20.1-2.5.0.jar",
+      "hashes": {
+        "sha1": "0d090579cfd1385e17823ddd4fac1829e9116706",
+        "sha512": "f48a2ec78ddc43a26a91d09ab40b6a90683d4e734b8cc5731a0b97ce95a800570f44c88b576ccf1c3f69da566c10427652a362d9e07c235ea15e164ac0d1a85d"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/PEPVViac/versions/HV3K5Aus/AdvancedLootInfo-forge-1.20.1-2.5.0.jar"
+      ],
+      "fileSize": 677750
     }
   ],
   "dependencies": {

@@ -780,6 +780,14 @@ logs stay on the Mac and are not in the repo.
   1.4.0.247 joins the index as a client only entry for the next pack, its source is cloned to
   `~/git/JustEnoughResources` (branch 1.20.1), and its limits on a dedicated server are on
   [Mod set](modpack/mod-set.md#sides).
+- At 19:31 the owner asked for Mob Grinding Utils and EnderIO Legacy Machines, a little later for the
+  addons ExtendedAE, MEGA Cells, AE Infinity Booster, Applied Mekanistics and AdvancedAE, and at 19:41
+  for Cyclic from GitHub. All nine, with FLib for Cyclic, joined the repo for 3.1.3 after four boots of a test server,
+  see [Mod set](modpack/mod-set.md#additions-of-2026-11-04). The boots showed that in an existing world
+  a new mod loads after the fixes pack, so its overrides need the pack moved to the end, see
+  [Boot fixes](content/boot-fixes.md#load-order). On the way `tools/mrpack_permissions.py` learned to
+  read plain `Status:` lines, which three permission files use, and the permission table got its
+  missing Backpack row.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

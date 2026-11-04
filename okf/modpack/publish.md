@@ -70,10 +70,10 @@ builds.
 
 ## What blocks a release
 
-1. Six bundled jars are All Rights Reserved without a redistribution grant: Aether Genesis,
-   Connectivity, Cupboard, Deadly World, Fireflies and Hexxit Additions
-   (`modrinth-permissions/README.md`). All six are still in 3.0.7. Modrinth review rejects them, so they
-   need written permission, a replacement or removal.
+1. Seven bundled jars are All Rights Reserved without a redistribution grant: Aether Genesis,
+   Connectivity, Cupboard, Deadly World, Fireflies, Hexxit Additions and, since 2026-11-04, Mob
+   Grinding Utils (`modrinth-permissions/README.md`). The first six are still in 3.0.7. Modrinth review
+   rejects them, so they need written permission, a replacement or removal.
 2. With JEI 15.74.0.233 and EMI 1.1.24 a client with an 8 GB heap runs out of memory and freezes after
    the first join, and EMI drops the Chipped recipes. A 12 GB heap avoids the freeze. JEI 15.20.0.132
    cannot come back, because three mods need newer builds. The dropped recipes need a Chipped build
@@ -97,9 +97,9 @@ boots had rewritten on disk (3a398b1, the builder reads git HEAD).
 - Every index entry with its client env, from the Modrinth CDN, unpatched. The server runs eleven of
   them patched, which only matters on the server. Since 3.0.7 this includes Modflared, which opens the
   Cloudflare Tunnel to `hex.skytekx.com`, see [client](client.md#mac-mini).
-- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 45,
-  Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, with their
-  license texts under `overrides/licenses/`.
+- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 47,
+  Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, and
+  EnderIO Legacy Machines and Mob Grinding Utils, with their license texts under `overrides/licenses/`.
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
   KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
   FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
@@ -175,10 +175,13 @@ the build machine, see [tools](tools.md#mac-mini).
 
 The next pack is the first with Simply Jetpacks 2 bundled, the first that ships a patched jar (see
 [boot fixes](../content/boot-fixes.md#jar-patches)), the first that keeps Starlight off the clients
-and the first with Just Enough Resources (see [mod set](mod-set.md#sides)). Its row should record
-whether a fresh install and the update of a 3.1.2 instance were tested in Prism Launcher and the
-Modrinth App, whether a client without Starlight joined and whether the tabs of Just Enough Resources
-show in EMI on the server.
+and the first with Just Enough Resources (see [mod set](mod-set.md#sides)) and with the nine mods of
+2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
+[mod set](mod-set.md#additions-of-2026-11-04)). Its row should record whether a fresh install and the
+update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
+Starlight joined, whether the tabs of Just Enough Resources show in EMI on the server and whether the
+machines of the new mods work there. Its deploy has to move the fixes pack to the end of the pack
+order, see [boot fixes](../content/boot-fixes.md#load-order).
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

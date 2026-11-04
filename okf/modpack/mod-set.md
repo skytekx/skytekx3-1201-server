@@ -18,9 +18,9 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since c70f699, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 224 since 2026-11-04, which added Just Enough Resources as a client only entry. Before it, 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 1,007,463,556 bytes since 2026-11-04 with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
-| Bundled jars | 45 in `local-mods/` since 2d356b97, 44 since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
+| Index entries | 231 since 2026-11-04 (0156111b to 3c3aa05b), which added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04). 227 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,018,089,782 bytes since 3c3aa05b, 1,007,463,556 from 19e712ec with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
+| Bundled jars | 47 in `local-mods/` since 2026-11-04 (303b8077 and 96278bdb), 45 since 2d356b97, 44 since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
@@ -55,6 +55,47 @@ of its boots that day kept the baseline of 3 ERRORs, see
 [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline). Those logs stay on the Mac. The
 owner's client still holds the old builds (see [client](client.md#mods)).
 
+## Additions of 2026-11-04
+
+At 19:31 on 2026-11-04 the owner asked for Mob Grinding Utils and EnderIO Legacy Machines, a little
+later for five addons of Applied Energistics 2, and at 19:41 for Cyclic from its GitHub repository.
+
+| Mod | Version | Source |
+|---|---|---|
+| ExtendedAE | 1.4.21 | GitHub release of GlodBlock/ExtendedAE, because the mod is not on Modrinth |
+| MEGA Cells | 2.4.6 | Modrinth |
+| AE Infinity Booster | 2.1.0 | Modrinth |
+| Applied Mekanistics | 1.4.3 | Modrinth |
+| AdvancedAE | 1.3.6 | Modrinth |
+| Cyclic | 1.13.7 | Modrinth, uploaded by Lothrazar, built from the branch `trunk/1.20.1` of Lothrazar/Cyclic |
+| FLib | 0.0.16 | Modrinth, the library that Cyclic needs in 0.0.15 or newer |
+| EnderIO Legacy Machines | 0.4.9 | CurseForge only, bundled in `local-mods/` |
+| Mob Grinding Utils | 1.1.0 | CurseForge only, bundled in `local-mods/` |
+
+- All nine are required on both sides. They reach the server with the deploy of 3.1.3, because the
+  clients need them too. Until then neither the server folder on the build machine nor the Mac mini
+  has them in `mods/`.
+- The GitHub releases of Cyclic end at 1.12.2 from 2023. The branch `trunk/1.20.1` carries 1.13.7 and
+  since then only a typo fix, so the pack takes the Modrinth file of the same author, as the owner's
+  ruling of 2026-06-27 puts Modrinth first.
+- A test server with the repo's mods and the new jars booted four times on 2026-11-04, the last two
+  with Cyclic and FLib as well. The first boot stopped in Quark, an `ArrayIndexOutOfBoundsException` in the event bus of its library Zeta
+  (`ForgeZetaEventBus.subscribeMethod`), which none of the new mods touches. The other three passed.
+  16 blocks of the AE addons, EnderIO Legacy Machines and Mob Grinding Utils and 37 machines of Cyclic
+  ran for half a minute without an error, and the items of AE Infinity Booster and Applied Mekanistics
+  exist.
+- The new mods log seven ERRORs on a boot. The ProjectE loot tables of ExtendedAE and MEGA Cells and
+  four blood slime recipes of Cyclic now have overrides in the fixes pack, which work only once that
+  pack loads after the new mods, see [boot fixes](../content/boot-fixes.md#load-order). AdvancedAE lists
+  its client mixin for `ModelBakery` for both sides, so a dedicated server logs one harmless ERROR for
+  it.
+- Cyclic puts its copper nugget into `forge:nuggets/copper`, the tag through which AlmostUnified
+  unifies copper nuggets to Thermal's.
+  Its four flowers generate in new chunks of many overworld biomes, each kind in one of two chunks of
+  its biomes (`rarity_filter` 2).
+- Mob Grinding Utils is All Rights Reserved, so like six other bundled jars it blocks a public pack,
+  see [bundled jars](#bundled-jars) and [publish](publish.md).
+
 ## Owner rulings
 
 From `~/.claude/history.jsonl`, session 5bd3e1de:
@@ -75,8 +116,8 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 35 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (200), the 35 `local-mods/` jars, and BrassAmber BattleTowers, which exists nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder [local-mods/](../../local-mods) | Yes | 47 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (200), the `local-mods/` jars (EnderIO Legacy Machines and Mob Grinding Utils only from the deploy of 3.1.3 on), and BrassAmber BattleTowers, which exists nowhere else in the repo. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 18 jars kept off the server: the 17 index entries with server env `unsupported`, Modflared among them since 44358a8 and Just Enough Resources since 2026-11-04, and Nostalgic Tweaks, moved by hand |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
@@ -98,7 +139,7 @@ for the next pack).
 
 | Client | Server | Count | Examples |
 |---|---|---:|---|
-| Required | Required | 194 | Content mods and libraries, Create and GeckoLib among them |
+| Required | Required | 201 | Content mods and libraries, Create and GeckoLib among them |
 | Required | Unsupported | 17 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, JustEnoughResources, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
 | Unsupported | Required | 13 | AI Improvements, Apothic Category Compat, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures, Starlight |
 
@@ -129,8 +170,8 @@ allows modpacks and patched builds that are not sold.
 
 ## Bundled jars
 
-The 45 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
-counts in the list below are older than the last ten of them and were not recounted:
+The 47 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+counts in the list below are older than the last twelve of them and were not recounted:
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
@@ -152,10 +193,14 @@ counts in the list below are older than the last ten of them and were not recoun
   file, MIT licensed, moved out of the index so that the pack can ship it with the guide book patch of
   `tools/patch_mods.py`, as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. Its license text
   travels in `licenses/`.
+- EnderIO Legacy Machines 0.4.9 (303b8077) and Mob Grinding Utils 1.1.0 (96278bdb) joined on
+  2026-11-04 as CurseForge files, see [additions](#additions-of-2026-11-04). EnderIO Legacy Machines
+  declares MIT and has no source repository, and the MIT text travels in `licenses/` because the jar
+  has none.
 
-Six of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
-Cupboard, Deadly World, Fireflies and Hexxit Additions (`modrinth-permissions/README.md`). They block a
-public Modrinth listing, see [publish](publish.md).
+Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
+Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils
+(`modrinth-permissions/README.md`). They block a public Modrinth listing, see [publish](publish.md).
 
 ## Jars outside the index
 

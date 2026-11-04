@@ -58,6 +58,10 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Owner decisions
 
+- Mob Grinding Utils 1.1.0 joined `local-mods/` on 2026-11-04 (96278bdb) and is All Rights Reserved,
+  with no license in its GitHub repository. It blocks a public pack like the six older blockers, so a
+  public pack needs the permission of vadis365 or Flanks255 or a pack without it. See
+  [Mod set](modpack/mod-set.md#additions-of-2026-11-04).
 - Packs 3.0.6 and 3.0.7 still hold Placeable Items, which the server dropped on 2026-11-01 (516f90e).
   A client with the mod is refused at login, so every player disables it by hand until a pack 3.0.8
   without it goes up. See [Mod set](modpack/mod-set.md#history).
@@ -210,6 +214,11 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Not verified
 
+- The nine mods of 2026-11-04 in play. A test server ran their blocks for half a minute, but nobody
+  has opened their screens, built an ME network with the AE addons or used a Cyclic machine in a
+  client. The deploy of 3.1.3 has to move the fixes pack to the end of the pack order once after the
+  first start, see [Boot fixes](content/boot-fixes.md#load-order). See
+  [Mod set](modpack/mod-set.md#additions-of-2026-11-04).
 - Just Enough Resources joined the index on 2026-11-04 without a test in this pack. Open reports in
   its tracker describe missing JER tabs on 1.20.1 servers and JEI recipes missing from EMI after the
   first world load, see [Mod set](modpack/mod-set.md#sides). The test of the next pack should open a

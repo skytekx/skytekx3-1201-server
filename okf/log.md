@@ -776,6 +776,10 @@ logs stay on the Mac and are not in the repo.
   container next to it, without one it places blocks from such a container. At 19:08 the owner
   reported that it cannot be crafted. The mod ships no recipe for it, and one of the fixes pack went
   live at 19:14:12 through `/reload`, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- At 19:24 the owner asked to add Just Enough Resources and whether it works with EMI. Version
+  1.4.0.247 joins the index as a client only entry for the next pack, its source is cloned to
+  `~/git/JustEnoughResources` (branch 1.20.1), and its limits on a dedicated server are on
+  [Mod set](modpack/mod-set.md#sides).
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

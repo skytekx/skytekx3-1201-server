@@ -174,10 +174,11 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
 
 The next pack is the first with Simply Jetpacks 2 bundled, the first that ships a patched jar (see
-[boot fixes](../content/boot-fixes.md#jar-patches)) and the first that keeps Starlight off the clients
-(see [mod set](mod-set.md#sides)). Its row should record whether a fresh install and the update of a
-3.1.2 instance were tested in Prism Launcher and the Modrinth App, and whether a client without
-Starlight joined.
+[boot fixes](../content/boot-fixes.md#jar-patches)), the first that keeps Starlight off the clients
+and the first with Just Enough Resources (see [mod set](mod-set.md#sides)). Its row should record
+whether a fresh install and the update of a 3.1.2 instance were tested in Prism Launcher and the
+Modrinth App, whether a client without Starlight joined and whether the tabs of Just Enough Resources
+show in EMI on the server.
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

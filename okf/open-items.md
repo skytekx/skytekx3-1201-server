@@ -210,6 +210,10 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Not verified
 
+- Just Enough Resources joined the index on 2026-11-04 without a test in this pack. Open reports in
+  its tracker describe missing JER tabs on 1.20.1 servers and JEI recipes missing from EMI after the
+  first world load, see [Mod set](modpack/mod-set.md#sides). The test of the next pack should open a
+  JER tab in EMI on the server.
 - The jar patches of 2026-11-04 in play. Nobody has opened the Simply Jetpacks 2 guide book in a
   client of a pack that ships `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, or updated a 3.1.2
   instance to such a pack in Prism Launcher or the Modrinth App. Nobody has cloned an enchanted book

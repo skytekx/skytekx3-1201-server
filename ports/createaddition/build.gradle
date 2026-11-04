@@ -28,7 +28,8 @@ mixin {
     debug.export = true
 }
 
-version = "${minecraft_version}-${mod_version}"
+// SkyTekx: mod_version already names the Minecraft version (1.7.3-1.20.1-skytekx.1)
+version = "${mod_version}"
 
 group = 'com.mrh0.createaddition' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'createaddition'
@@ -232,6 +233,11 @@ mixin {
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
+    // SkyTekx: byte-reproducible jar (no file timestamps, fixed entry order, no build timestamp in
+    // the manifest), so a rebuild of the same commit can be checked against the SHA-1 recorded in
+    // modrinth-permissions/
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
     manifest {
         attributes([
                 "Specification-Title"     : "createaddition",
@@ -240,7 +246,6 @@ jar {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "createaddition",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs"            : "createaddition.mixins.json"
         ])
     }

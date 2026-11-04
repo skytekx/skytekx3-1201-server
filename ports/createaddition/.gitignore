@@ -28,3 +28,11 @@ Minecraft
 changelog.txt
 CREDITS.txt
 /.apt_generated_tests/
+
+# SkyTekx: more build outputs and dev-run leftovers (build, .gradle and run are listed above)
+run-data/
+classes/
+mcmodsrepo/
+.mixin.out/
+logs/
+*.log

@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter, the ore overrides and an EMI hide list carry that into the world, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # AlmostUnified
@@ -111,6 +111,11 @@ after an item lands in a player's inventory, when a player logs in, for the inve
 chest, and when a player opens a container with the vanilla chest menu, such as a chest, a barrel or an
 ender chest. Swapped items join the stacks of the preferred item that are already there. Items with NBT
 stay as they are, and so does everything from Extreme Reactors.
+
+Since 2026-11-04 the script also swaps the five old decoration blocks of Chocolate Quest for
+cobblestone, the block of iron, diamond ore, glass and obsidian. Its own table `UnifyOldBlocks` answers
+before AlmostUnified is asked, see [Old blocks](../content/old-blocks.md). It went live with the deploy
+of 3.1.3 on 2026-11-05.
 
 KubeJS fires its chest event only for the vanilla chest menu. Iron Chests, shulker boxes, backpacks and
 machines therefore keep their items until a player takes them out. The log names the first 50 swaps

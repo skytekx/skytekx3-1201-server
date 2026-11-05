@@ -45,12 +45,20 @@ license texts and the change notice in the jar (ed6cbaa) are on the branch
 `claude/twilight-forest-port-mods-j2owbq`. The built `-all` jar has the SHA-1
 `25bfbf933d402abb0b7ecbdedd260a1a878a9a3c`. It matches the shipped 6.2.18-beta jar except for
 f9e1806c, 18ee1b17 and the metadata, and the compat scan finds 0 missing symbols for EnderIO Legacy
-Machines, Exchangers and AllTheLeaks (inventory, `plan.excluded` entry `fork-bootstrap`). No feature is
+Machines, Exchangers and AllTheLeaks (inventory, `plan.excluded` entry `fork-bootstrap`).
+
+The fork infrastructure is done in 4ed49f3 (protocol bump), 99c8d43 (JSON data maps), ea14a7e
+(optional Curios support) and 18ad520 (review fixes). The jar built from 18ad520 passes `compileJava`
+and a full build, and the compat scan still finds 0 missing symbols for EnderIO Legacy Machines,
+Exchangers and AllTheLeaks. Nothing uses the data maps or the Curios helper yet. The data map sync was
+only tested as an encode and decode round trip in one process, since no headless client was at hand,
+so a real client join that shows the values in JEI is still open for the Vat bundle. Nobody has run a
+dedicated `runServer` of the fork with and without Curios yet. No feature of the content bundles is
 ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
-| Fork infrastructure (`eio-b0-fork-bootstrap`) | Network protocol bump, JSON data maps for 1.20.1, optional Curios support | 10 | The vendored base | Planned. The vendor, version and license work of the old feature `fork-bootstrap` is done in 971a11e, 474be5c and ed6cbaa |
+| Fork infrastructure (`eio-b0-fork-bootstrap`) | Network protocol bump, JSON data maps for 1.20.1, optional Curios support | 10 | The vendored base | Done in 4ed49f3, 99c8d43, ea14a7e and 18ad520. The vendor, version and license work of the old feature `fork-bootstrap` is done in 971a11e, 474be5c and ed6cbaa |
 | Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Planned |
 | Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Planned |
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Planned |
@@ -91,20 +99,31 @@ Everything is added on the 6.x core, and no 8.x core code is ported.
 ### Fork infrastructure
 
 - The network protocol of `CoreNetwork` goes from "1.0" to "1.0-skytekx.1"
-  (`src/core/java/com/enderio/core/common/network/CoreNetwork.java:13`). Packet ids follow the order of
+  (`src/core/java/com/enderio/core/common/network/CoreNetwork.java:16`). Packet ids follow the order of
   registration across core, `EIOPackets`, `MachinePackets` and `ConduitNetwork`, so any new packet
   shifts later ids. Later bundles only append packets at the end of their module's list. The second
   channel `enderio:main` of `EIONetwork` stays at "1" (`EIONetwork.java:8`), since only light nodes
   use it.
-- A small `JsonDataMap` reload listener replaces NeoForge data maps. It reads
-  `data/<ns>/data_maps/<item|block>/<name>.json` in upstream's format with `replace` and `values`,
-  merges the packs in load order, skips unknown ids and syncs the result to clients on
-  `OnDatapackSyncEvent`. The Vat reagents and the charger antennas are its two consumers.
-- Curios becomes an optional dependency (`[5.0,)`, both sides). The pack ships
+- A small `JsonDataMap` loader replaces NeoForge data maps. It reads
+  `data/<ns>/data_maps/<item|block>/<name>.json` in upstream's format with `replace`, `values` and
+  `remove`. Its reload listener extends `SimplePreparableReloadListener` and reads every pack's copy of
+  the file through `ResourceManager.getResourceStack` in pack order, so later packs win and `replace`
+  drops the lower ones (`src/core/java/com/enderio/core/common/data/JsonDataMap.java:291` and `442`).
+  A `SimpleJsonResourceReloadListener` would only see the copy of the top pack. Ids and tags resolve
+  on the first lookup after a reload or a tag update, and unknown ids are skipped with a debug line.
+  The server sends the values to clients as `S2CDataMapSync` on `OnDatapackSyncEvent`, the last packet
+  of the core list (`CoreNetwork.java:40`), so every base, machines and conduits packet id moves up by
+  one. The Vat reagents and the charger antennas are its two consumers. Server code such as machine
+  tasks and tick code reads `getServerValue`, while screens and JEI read `get`, because on a physical
+  client an integrated server worker thread counts as the client side.
+- Curios becomes an optional dependency (`[5.2.0,)`, both sides,
+  `src/main/resources/META-INF/mods.toml:51`). Curios 5.2.0 is the first release with
+  `CuriosApi.getCuriosInventory(LivingEntity)`, and its beta builds sort below it. The pack ships
   `curios-forge-5.14.1+1.20.1` (`modrinth.index.json:1014`). Every Curios call sits in a nested class
   that loads only when Curios is present. The travel staff and the electromagnet join the `charm` slot
-  (`EIOItems.java:329` and `335`). The fork ships no slot size for `charm`, because Cyclic already
-  defines it with size 4 and Aether's override pack with size 2.
+  (`EIOItems.java:329` and `335`) through `data/curios/tags/items/charm.json`, and
+  `data/enderio/curios/entities/enderio.json` gives the player that slot. The fork ships no slot size
+  for `charm`, because Cyclic already defines it with size 4 and Aether's override pack with size 2.
 
 ### Fix pack
 
@@ -279,7 +298,7 @@ Everything is added on the 6.x core, and no 8.x core code is ported.
 | Applied Energistics 2 | 15.4.12 (`modrinth.index.json:264`) | ME conduits, and AE2 facades through `AE2Integration` | The ME conduits with the first tick guard, AE2 facades as conduit facades |
 | Mekanism | 10.4.16.80 (`modrinth.index.json:1884`) | Chemical and heat conduits of 6.1 | Unchanged |
 | Spartan Shields | 3.1.1 (`modrinth.index.json:2514`) | Optional dark steel riot shields, with models and textures in its jar | The 6.x dark steel items and the armory stay |
-| Curios | 5.14.1 (`modrinth.index.json:1014`) | None today | New optional support for the staff and the electromagnet |
+| Curios | 5.14.1 (`modrinth.index.json:1014`) | Optional `curios` `[5.2.0,)` with the charm tag and the player slot data (ea14a7e, 18ad520). Nothing calls the helper yet | New optional support for the staff and the electromagnet |
 | Athena | 3.1.2, client only (`modrinth.index.json:354`) | The CTM model of the capacitor bank | Connected glass for clear glass and fused quartz |
 | AllTheLeaks | 1.1.1, `local-mods/` | Mixins into two Ender IO methods with hash checks | Both methods stay untouched |
 | Inventory Sorter | 23.0.11, `local-mods/` | Skips the slot classes Ender IO names in its IMC | New ghost and filter slots join that list |

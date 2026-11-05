@@ -3,7 +3,6 @@ package com.enderio.core.common.network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -39,16 +38,17 @@ public interface Packet {
     }
 
     /**
-     * The square of the distance within which a player may change a block through a packet, the same as for a vanilla container.
+     * The padding added to the player's block reach, the same that MachineBlockEntity.stillValid and ConduitBlockEntity.stillValid use.
      */
-    double MAX_BLOCK_DISTANCE_SQR = 8.0 * 8.0;
+    double BLOCK_REACH_PADDING = 1.5;
 
     /**
      * Whether a client packet may act on the block at the given position.
-     * The block must be loaded, so the packet never loads a chunk, and within reach of the player, as for an open container.
+     * The block must be loaded, so the packet never loads a chunk, and within the reach that keeps the block's menu open:
+     * Forge's canReach measures from the eye and follows the forge:block_reach attribute, so reach gear and creative mode count.
      */
     static boolean canAccessBlock(ServerPlayer player, BlockPos pos) {
-        return player.level().isLoaded(pos) && player.distanceToSqr(Vec3.atCenterOf(pos)) <= MAX_BLOCK_DISTANCE_SQR;
+        return player.level().isLoaded(pos) && player.canReach(pos, BLOCK_REACH_PADDING);
     }
 
     static void logPacketError(NetworkEvent.Context context, String error, Packet packet) {

@@ -469,7 +469,8 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   that 1.3.3 had removed, until `/cca_wires rebuild`. The fork checks every saved node at load, and
   the same round trip matched the world right after the boot. The rollback rule stays as a second
   line of defence: delete that file in every dimension folder of the world, or run
-  `/cca_wires rebuild` in each dimension after the upgrade. A boot of 1.3.3 also drops the 11 new
+  `/cca_wires rebuild` in each dimension after the upgrade, over RCON with `execute in` as the
+  [Operator notes](#operator-notes) show. A boot of 1.3.3 also drops the 11 new
   config keys from `createaddition-common.toml`, and the next fork boot adds them back with their
   defaults, so changed values of those keys are lost on a round trip.
 - Version 1.3.3 deletes the local end of a wire whose far end it cannot find (`getWireNodeFrom`), and such a
@@ -490,13 +491,23 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - The verifier reads unloaded chunks through `ChunkStorage.read` and `IOWorker.loadAsync`. Arclight
   1.0.6 has no mixin on `IOWorker`, its `ChunkMapMixin` only redirects `upgradeChunkTag`, and Steam 'n'
   Rails only injects at the head of `IOWorker.store`, before the tag is queued.
-- SkyTekx Compat 2.1.3, which the pack bundles, hands out the queued tag itself while a worker can
-  still add and remove `__context` on it. Version 2.1.6 on the Mac mini hands out a copy (see
+- Vanilla 1.20.1 hands out the queued tag itself from `IOWorker.loadAsync` (javap of
+  `IOWorker.lambda$loadAsync$4`), while a worker can still add and remove `__context` on it. So does
+  SkyTekx Compat 2.1.3, which the pack bundles. Version 2.1.6 on the Mac mini adds a copy (see
   [SkyTekx Compat](../content/compat-mod.md#chunk-tags-waiting-for-their-write) and
   [Logs and crashes](../server/logs-and-crashes.md#chunk-save-race-during-pregen)). A misread tag could
   lead the verifier to mark a wire end missing and delete a real wire. The fork therefore accepts a
   saved tag only with status `minecraft:full` and a `block_entities` list, and otherwise keeps the
-  position unresolved. This is a local change.
+  position unresolved. This is a local change, and every Forge 1.20.1 setup without SkyTekx Compat
+  2.1.6 needs it, singleplayer worlds of the public pack included.
+- The verifier asks for its chunk reads to answer on the server thread through
+  `whenCompleteAsync(..., server)`. Once the server is stopped, `MinecraftServer.execute` runs a task
+  inline on the calling thread, here the IO worker, while the server thread saves the graph in
+  `DimensionDataStorage.save`. An answer there could change the vertex map during the save, and an
+  exception in `SavedData.save` would abort the level save and `stopServer`. The fork therefore drops
+  an answer that does not arrive on the server thread, and the next boot checks that position again.
+  Upstream has the same callback. The risk is highest right after `Done`, since every boot queues a
+  read for each saved node. This is a local change (review of the wire graph bundle).
 - The fire mixins chain with Arclight's own mixins on `FireBlock`, `BaseFireBlock` and `FlowingFluid`
   and with those of Supplementaries, Moonlight, NostalgicTweaks and Ad Astra (javap of the Arclight
   mixins, `critic_notes` item 4). The fire that falling fluid spreads fires no Bukkit
@@ -591,6 +602,8 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - A Capacitor charges and discharges only as a single item. Upstream charges a whole stack as one item,
   which splits into several charged capacitors and dupes energy.
 - The WireGraph verifier only trusts full saved chunks, see [Arclight notes](#arclight-notes).
+- The WireGraph verifier drops a chunk read that does not answer on the server thread, which happens
+  after the server has stopped, see [Arclight notes](#arclight-notes).
 - The WireGraph checks every saved node against the world when it loads (`WireGraph.load`), see
   [Savegame notes](#savegame-notes).
 - Shears only cut the far end's wire if that wire still leads back to the sheared connector.
@@ -634,7 +647,12 @@ The plan ports these with upstream's or the safe default, and the owner may rule
   `tools/wire_scan.py <world> --json before.json` and later `--compare before.json`. One sided wire
   ends in the first scan are the wires the upgrade cuts. Reconnect them in game after the update.
 - The command `/cca_wires stats`, `verify` or `rebuild` runs over RCON, for example
-  `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" cca_wires stats`.
+  `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" cca_wires stats`. Each action works on the graph
+  of the dimension the command runs in (`source.getLevel()` in `WireGraphCommand.java`), and RCON runs
+  in the Overworld. For every other dimension wrap it in `execute in`, for example
+  `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" execute in skytekx3:skylands run cca_wires rebuild`,
+  and the same with `minecraft:the_nether`, `minecraft:the_end`, `twilightforest:twilight_forest` and
+  any other dimension that holds wires.
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only the
   two accepted ERROR lines, and when every charging recipe parses.
 - Announce the alternator with two shafts, the new Electrum Amulet and the fire over oils to the

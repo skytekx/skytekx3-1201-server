@@ -52,16 +52,16 @@ Modifications
     The mixin config now uses the refmap createaddition.refmap.json.
   - Wires: the energy networks of connectors and redstone relays live in a graph saved per
     dimension (data/createaddition_wires.dat), so energy and relays work across unloaded chunks
-    and no wire lookup loads a chunk (upstream 126ed38, 393c51f, 9dd1b46). The graph only trusts
-    a saved chunk with the full status and a block entity list, and it checks every saved node
-    against the world when it loads (both local changes). The operator command /cca_wires stats,
-    verify and rebuild (permission level 2) shows, checks and rebuilds the graph of a dimension.
-    Wires are culled by the box of all their ends, stay visible while their connector is off
-    screen and are drawn to a far end the client has not loaded (126ed38). Shears on a connector
-    cut all its wires (3abfa39). Festive light wire counts as low current wire and no longer joins
-    two large connectors (e1cd591). A connector looks for its neighbour's energy storage again
-    while it has none, so storage that shows up without a block update is found (the Forge form
-    of d239617).
+    and no wire lookup loads a chunk (upstream 126ed38, 393c51f, 9dd1b46). The graph only trusts a
+    saved chunk with the full status and a block entity list, checks every saved node against the
+    world when it loads and drops a chunk read that answers after the server stopped (all local
+    changes). The operator command /cca_wires stats, verify and rebuild (permission level 2)
+    shows, checks and rebuilds the graph of a dimension. Wires are culled by the box of all their
+    ends, stay visible while their connector is off screen and are drawn to a far end the client
+    has not loaded (126ed38). Shears on a connector cut all its wires (3abfa39). Festive light
+    wire counts as low current wire and no longer joins two large connectors (e1cd591). A
+    connector looks for its neighbour's energy storage again while it has none, so storage that
+    shows up without a block update is found (the Forge form of d239617).
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

@@ -17,15 +17,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidUtil;
 
 import javax.annotation.Nonnull;
@@ -70,24 +67,5 @@ public class BlockFluidCollector extends FullyDirectionalBlock.Container {
         }
 
         return this.openGui(world, player, pos, TileEntityFluidCollector.class);
-    }
-
-    @Nonnull
-    @Override
-    public VoxelShape getShape(BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        switch (state.getValue(FACING)) {
-            case UP:
-                return VoxelShapes.FluidCollectorShapes.SHAPE_U;
-            case DOWN:
-                return VoxelShapes.FluidCollectorShapes.SHAPE_D;
-            case EAST:
-                return VoxelShapes.FluidCollectorShapes.SHAPE_E;
-            case SOUTH:
-                return VoxelShapes.FluidCollectorShapes.SHAPE_S;
-            case WEST:
-                return VoxelShapes.FluidCollectorShapes.SHAPE_W;
-            default:
-                return VoxelShapes.FluidCollectorShapes.SHAPE_N;
-        }
     }
 }

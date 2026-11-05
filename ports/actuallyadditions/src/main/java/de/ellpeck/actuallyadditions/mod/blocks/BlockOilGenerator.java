@@ -80,15 +80,6 @@ public class BlockOilGenerator extends DirectionalBlock.Container {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(FACING)) {
-            case EAST:
-                return VoxelShapes.OilGeneratorShapes.SHAPE_E;
-            case SOUTH:
-                return VoxelShapes.OilGeneratorShapes.SHAPE_S;
-            case WEST:
-                return VoxelShapes.OilGeneratorShapes.SHAPE_W;
-            default:
-                return VoxelShapes.OilGeneratorShapes.SHAPE_N;
-        }
+        return VoxelShapes.SIMPLE_GENERATOR_SHAPE;
     }
 }

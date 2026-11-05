@@ -16,15 +16,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
@@ -50,21 +47,5 @@ public class BlockVerticalDigger extends DirectionalBlock.Container implements I
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> entityType) {
         return level.isClientSide? TileEntityVerticalDigger::clientTick : TileEntityVerticalDigger::serverTick;
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(FACING)) {
-            case NORTH:
-                return VoxelShapes.MinerShapes.SHAPE_N;
-            case EAST:
-                return VoxelShapes.MinerShapes.SHAPE_E;
-            case SOUTH:
-                return VoxelShapes.MinerShapes.SHAPE_S;
-            case WEST:
-                return VoxelShapes.MinerShapes.SHAPE_W;
-            default:
-                return VoxelShapes.MinerShapes.SHAPE_N;
-        }
     }
 }

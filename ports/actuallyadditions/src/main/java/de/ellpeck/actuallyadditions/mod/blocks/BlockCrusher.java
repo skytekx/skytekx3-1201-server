@@ -32,8 +32,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
@@ -101,19 +99,5 @@ public class BlockCrusher extends BlockContainerBase {
         return state.getValue(LIT)
                 ? 12
                 : 0;
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(HORIZONTAL_FACING)) {
-            case EAST:
-                return VoxelShapes.GrinderShapes.SHAPE_E;
-            case SOUTH:
-                return VoxelShapes.GrinderShapes.SHAPE_S;
-            case WEST:
-                return VoxelShapes.GrinderShapes.SHAPE_W;
-            default:
-                return VoxelShapes.GrinderShapes.SHAPE_N;
-        }
     }
 }

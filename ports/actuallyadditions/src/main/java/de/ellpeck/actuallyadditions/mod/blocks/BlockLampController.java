@@ -14,13 +14,10 @@ import de.ellpeck.actuallyadditions.mod.blocks.base.FullyDirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,20 +69,6 @@ public class BlockLampController extends FullyDirectionalBlock {
                 updatedAlready.add(pos);
                 this.updateLampsAtPos(world, offset, powered, updatedAlready);
             }
-        }
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(FACING)) {
-            case EAST:
-                return VoxelShapes.LampPowererShapes.SHAPE_E;
-            case SOUTH:
-                return VoxelShapes.LampPowererShapes.SHAPE_S;
-            case WEST:
-                return VoxelShapes.LampPowererShapes.SHAPE_W;
-            default:
-                return VoxelShapes.LampPowererShapes.SHAPE_N;
         }
     }
 }

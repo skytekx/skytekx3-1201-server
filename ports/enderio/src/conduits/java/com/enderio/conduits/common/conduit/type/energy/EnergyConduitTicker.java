@@ -16,6 +16,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -35,6 +37,9 @@ public class EnergyConduitTicker extends CapabilityAwareConduitTicker<EnergyCond
 
         super.tickGraph(level, type, loadedNodes, graph, coloredRedstoneProvider);
 
+        // The insert targets are the same for every buffer, so look them up once, and only when a buffer holds energy.
+        List<IEnergyStorage> bufferInserts = null;
+
         for (ConduitNode<EnergyConduitData> node : loadedNodes) {
             EnergyConduitData energyConduitData = node.getConduitData();
             IEnergyStorage energy = energyConduitData.getSelfCap()
@@ -45,21 +50,13 @@ public class EnergyConduitTicker extends CapabilityAwareConduitTicker<EnergyCond
                 continue;
             }
 
+            if (bufferInserts == null) {
+                bufferInserts = findBufferInserts(level, loadedNodes);
+            }
+
             int previousStored = energy.getEnergyStored();
-            for (ConduitNode<?> otherNode : loadedNodes) {
-                for (Direction dir: Direction.values()) {
-                    if (otherNode.getIOState(dir).map(ConduitGraphObject.IOState::isInsert).orElse(false)) {
-                        BlockEntity be = level.getBlockEntity(otherNode.getPos().relative(dir));
-                        if (be == null) {
-                            continue;
-                        }
-                        Optional<IEnergyStorage> capability = be.getCapability(ForgeCapabilities.ENERGY, dir.getOpposite()).resolve();
-                        if (capability.isPresent()) {
-                            IEnergyStorage insert = capability.get();
-                            extractEnergy(energy, List.of(insert), 0, i -> {});
-                        }
-                    }
-                }
+            for (IEnergyStorage insert : bufferInserts) {
+                extractEnergy(energy, List.of(List.of(insert)), 0, i -> {});
             }
 
             if (energy.getEnergyStored() == 0) {
@@ -74,6 +71,29 @@ public class EnergyConduitTicker extends CapabilityAwareConduitTicker<EnergyCond
         }
     }
 
+    /**
+     * Every insert side of the loaded nodes, in node and direction order, then sorted by priority, highest first.
+     * The sort is stable, so sides of one priority keep the order of 6.x.
+     */
+    private List<IEnergyStorage> findBufferInserts(ServerLevel level, List<ConduitNode<EnergyConduitData>> loadedNodes) {
+        List<PrioritizedInsert<IEnergyStorage>> inserts = new ArrayList<>();
+        for (ConduitNode<EnergyConduitData> otherNode : loadedNodes) {
+            for (Direction dir: Direction.values()) {
+                if (otherNode.getIOState(dir).map(ConduitGraphObject.IOState::isInsert).orElse(false)) {
+                    BlockEntity be = level.getBlockEntity(otherNode.getPos().relative(dir));
+                    if (be == null) {
+                        continue;
+                    }
+                    Optional<IEnergyStorage> capability = be.getCapability(ForgeCapabilities.ENERGY, dir.getOpposite()).resolve();
+                    capability.ifPresent(insert -> inserts.add(new PrioritizedInsert<>(insert, otherNode.getConduitData().getPriority(dir))));
+                }
+            }
+        }
+
+        inserts.sort(PRIORITY_ORDER);
+        return inserts.stream().map(PrioritizedInsert::target).toList();
+    }
+
     @Override
     public void tickCapabilityGraph(
         ServerLevel level,
@@ -83,43 +103,85 @@ public class EnergyConduitTicker extends CapabilityAwareConduitTicker<EnergyCond
         ConduitGraph<EnergyConduitData> graph,
         ColoredRedstoneProvider coloredRedstoneProvider) {
 
+        List<List<IEnergyStorage>> insertGroups = groupByPriority(inserts.stream()
+            .map(con -> new PrioritizedInsert<>(con.capability, con.data.castTo(EnergyConduitData.class).getPriority(con.direction)))
+            .toList());
+
         for (CapabilityConnection extract : extracts) {
             IEnergyStorage extractHandler = extract.capability;
 
             EnergyConduitData.EnergySidedData sidedExtractData = extract.data.castTo(EnergyConduitData.class).compute(extract.direction);
-            extractEnergy(extractHandler, inserts.stream().map(
-                con -> con.capability).toList(),
+            extractEnergy(extractHandler, insertGroups,
                 sidedExtractData.rotatingIndex, i -> sidedExtractData.rotatingIndex = i);
         }
     }
 
-    private void extractEnergy(IEnergyStorage extractHandler, List<IEnergyStorage> inserts, int startingIndex, Consumer<Integer> rotationIndexSetter) {
+    /**
+     * Split the inserts into groups of one priority, highest priority first. Inside a group the inserts keep their order.
+     */
+    private static <T> List<List<T>> groupByPriority(List<PrioritizedInsert<T>> inserts) {
+        List<PrioritizedInsert<T>> sorted = new ArrayList<>(inserts);
+        sorted.sort(PRIORITY_ORDER);
+
+        List<List<T>> groups = new ArrayList<>();
+        List<T> group = null;
+        int groupPriority = 0;
+        for (PrioritizedInsert<T> insert : sorted) {
+            if (group == null || insert.priority() != groupPriority) {
+                group = new ArrayList<>();
+                groups.add(group);
+                groupPriority = insert.priority();
+            }
+            group.add(insert.target());
+        }
+        return groups;
+    }
+
+    /**
+     * Push the energy of the extract handler into the insert groups, one group after the other, highest priority first.
+     * Inside a group the round robin of 6.x applies, with its index arithmetic unchanged. The index belongs to the group in
+     * which the energy ran out, so with a single priority (all sides at 0) this does exactly what 6.x did.
+     */
+    private void extractEnergy(IEnergyStorage extractHandler, List<List<IEnergyStorage>> insertGroups, int startingIndex, Consumer<Integer> rotationIndexSetter) {
 
         int availableForExtraction = extractHandler.extractEnergy(Integer.MAX_VALUE, true);
         if (availableForExtraction <= 0) {
             return;
         }
 
-        if (inserts.size() <= startingIndex) {
-            startingIndex = 0;
-            rotationIndexSetter.accept(0);
-        }
-
-        for (int j = startingIndex; j < startingIndex + inserts.size(); j++) {
-            int insertIndex = j % inserts.size();
-            IEnergyStorage insert = inserts.get(insertIndex);
-
-            int inserted = insert.receiveEnergy(availableForExtraction, false);
-            extractHandler.extractEnergy(inserted, false);
-
-            if (inserted == availableForExtraction) {
-                rotationIndexSetter.accept(startingIndex + (insertIndex) + 1);
-                return;
+        boolean indexInAnyGroup = false;
+        for (List<IEnergyStorage> inserts : insertGroups) {
+            int groupStartingIndex = startingIndex;
+            if (inserts.size() <= groupStartingIndex) {
+                groupStartingIndex = 0;
+            } else {
+                indexInAnyGroup = true;
             }
 
-            availableForExtraction -= inserted;
+            for (int j = groupStartingIndex; j < groupStartingIndex + inserts.size(); j++) {
+                int insertIndex = j % inserts.size();
+                IEnergyStorage insert = inserts.get(insertIndex);
+
+                int inserted = insert.receiveEnergy(availableForExtraction, false);
+                extractHandler.extractEnergy(inserted, false);
+
+                if (inserted == availableForExtraction) {
+                    rotationIndexSetter.accept(groupStartingIndex + (insertIndex) + 1);
+                    return;
+                }
+
+                availableForExtraction -= inserted;
+            }
+        }
+
+        if (!indexInAnyGroup) {
+            rotationIndexSetter.accept(0);
         }
     }
+
+    private static final Comparator<PrioritizedInsert<?>> PRIORITY_ORDER = Comparator.comparingInt((PrioritizedInsert<?> insert) -> insert.priority()).reversed();
+
+    private record PrioritizedInsert<T>(T target, int priority) {}
 
     /**
      * This ensures consistent behaviour for FE/t caps and more.

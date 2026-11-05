@@ -7,6 +7,7 @@ import com.enderio.conduits.common.conduit.ConduitBundle;
 import com.enderio.conduits.common.conduit.block.ConduitBlockEntity;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
+import com.enderio.conduits.common.conduit.type.energy.EnergyConduitType;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitData.ItemSidedData;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitType;
 import com.enderio.conduits.common.init.ConduitLang;
@@ -17,6 +18,7 @@ import com.enderio.core.common.util.TooltipUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -136,6 +138,8 @@ public class ConduitProbeItem extends Item {
                     typeTag.putBoolean(ROUND_ROBIN, sidedData.isRoundRobin);
                     typeTag.putBoolean(SELF_FEED, sidedData.isSelfFeed);
                     typeTag.putInt(PRIORITY, sidedData.getPriority());
+                } else if (conduit instanceof EnergyConduitType energyConduitType) {
+                    typeTag.putInt(PRIORITY, bundle.getNodeFor(energyConduitType).getConduitData().getPriority(face));
                 }
             } else {
                 typeTag.putBoolean(IS_INSERT, false);
@@ -197,6 +201,9 @@ public class ConduitProbeItem extends Item {
                 sidedData.isRoundRobin = typeTag.getBoolean(ROUND_ROBIN);
                 sidedData.isSelfFeed = typeTag.getBoolean(SELF_FEED);
                 sidedData.setPriority(typeTag.getInt(PRIORITY));
+            } else if (conduit instanceof EnergyConduitType energyConduitType && typeTag.contains(PRIORITY, Tag.TAG_INT)) {
+                // The setter clamps the value, the probe tag is item NBT that a creative client can write.
+                bundle.getNodeFor(energyConduitType).getConduitData().compute(face).setPriority(typeTag.getInt(PRIORITY));
             }
             pastedConduits.add(conduitKeyToDisplayName(conduitKey).getString());
         });

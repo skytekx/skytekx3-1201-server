@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class EnergyConduitData implements ConduitData<EnergyConduitData> {
 
@@ -39,10 +41,33 @@ public class EnergyConduitData implements ConduitData<EnergyConduitData> {
         return tag;
     }
 
+    /**
+     * Ender IO 8.x 57fc40d61: the screen data is the insert priority of each side, and nothing else.
+     */
+    @Override
+    public CompoundTag serializeGuiNBT() {
+        CompoundTag tag = new CompoundTag();
+        for (Direction direction: Direction.values()) {
+            @Nullable EnergySidedData sidedData = energySidedData.get(direction);
+            if (sidedData != null) {
+                tag.put(direction.name(), sidedData.toGuiNbt());
+            }
+        }
+        return tag;
+    }
+
     @Override
     public void applyGuiNBT(CompoundTag nbt) {
-        // The conduit screen sends no energy conduit data. The stored energy (EnergyStored), the capacity (EnergyMaxStored)
+        // Take only the priority of each side, clamped to its range. The stored energy (EnergyStored), the capacity (EnergyMaxStored)
         // and the round robin indices are server state, and a client must never set them.
+        for (Direction direction: Direction.values()) {
+            if (nbt.contains(direction.name(), Tag.TAG_COMPOUND)) {
+                CompoundTag sidedTag = nbt.getCompound(direction.name());
+                if (sidedTag.contains(EnergySidedData.KEY_PRIORITY, Tag.TAG_INT)) {
+                    compute(direction).setPriority(sidedTag.getInt(EnergySidedData.KEY_PRIORITY));
+                }
+            }
+        }
     }
 
     @Override
@@ -87,6 +112,20 @@ public class EnergyConduitData implements ConduitData<EnergyConduitData> {
         return energySidedData.computeIfAbsent(direction, dir -> new EnergySidedData());
     }
 
+    /**
+     * @return the insert priority of a side, without creating side data for it
+     */
+    public int getPriority(Direction direction) {
+        @Nullable EnergySidedData sidedData = energySidedData.get(direction);
+        return sidedData != null ? sidedData.getPriority() : 0;
+    }
+
+    // Only the priorities, which the screen shows. The stored energy changes every tick and would sync the bundle every tick.
+    @Override
+    public int hashCode() {
+        return energySidedData.hashCode();
+    }
+
     LazyOptional<IEnergyStorage> getSelfCap() {
         if (!selfCap.isPresent()) {
             selfCap = LazyOptional.of(() -> new EnergyConduitData.ConduitEnergyStorage(this));
@@ -95,15 +134,40 @@ public class EnergyConduitData implements ConduitData<EnergyConduitData> {
     }
 
     public static class EnergySidedData {
+        public static final int MIN_PRIORITY = -9999;
+        public static final int MAX_PRIORITY = 9999;
+
         public int rotatingIndex = 0;
+        private int priority = 0;
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public void setPriority(int priority) {
+            this.priority = Mth.clamp(priority, MIN_PRIORITY, MAX_PRIORITY);
+        }
+
+        // The round robin index is left out, it changes while energy flows and the screen does not show it.
+        @Override
+        public int hashCode() {
+            return Objects.hash(priority);
+        }
 
         // region Serialization
 
         private static final String KEY_ROTATING_INDEX = "RotatingIndex";
+        private static final String KEY_PRIORITY = "Priority";
 
         private CompoundTag toNbt() {
-            CompoundTag nbt = new CompoundTag();
+            CompoundTag nbt = toGuiNbt();
             nbt.putInt(KEY_ROTATING_INDEX, rotatingIndex);
+            return nbt;
+        }
+
+        private CompoundTag toGuiNbt() {
+            CompoundTag nbt = new CompoundTag();
+            nbt.putInt(KEY_PRIORITY, priority);
             return nbt;
         }
 
@@ -111,6 +175,9 @@ public class EnergyConduitData implements ConduitData<EnergyConduitData> {
             EnergySidedData sidedData = new EnergySidedData();
             if (nbt.contains(KEY_ROTATING_INDEX, Tag.TAG_INT)) {
                 sidedData.rotatingIndex = nbt.getInt(KEY_ROTATING_INDEX);
+            }
+            if (nbt.contains(KEY_PRIORITY, Tag.TAG_INT)) {
+                sidedData.setPriority(nbt.getInt(KEY_PRIORITY));
             }
 
             return sidedData;

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class RedstoneConduitTicker implements IOAwareConduitTicker<RedstoneConduitData> {
 
@@ -48,13 +49,40 @@ public class RedstoneConduitTicker implements IOAwareConduitTicker<RedstoneCondu
         Collection<ConduitNode<RedstoneConduitData>> nodeIdentifiers = graph.getNodes();
 
         activeColors.clear();
-        tickGraph(level, type, nodeIdentifiers.stream().filter(node -> isLoaded(level, node.getPos())).toList(), graph, coloredRedstoneProvider);
+        List<ConduitNode<RedstoneConduitData>> loadedNodes = nodeIdentifiers.stream().filter(node -> isLoaded(level, node.getPos())).toList();
+        tickGraph(level, type, loadedNodes, graph, coloredRedstoneProvider);
 
         for (var nodeIdentifier : nodeIdentifiers) {
             RedstoneConduitData data = nodeIdentifier.getConduitData();
             data.clearActive();
             for (var entry : activeColors.entrySet()) {
                 data.setActiveColor(entry.getKey(), entry.getValue());
+            }
+        }
+
+        for (ConduitNode<RedstoneConduitData> node : loadedNodes) {
+            updateStrongNeighbors(level, node);
+        }
+    }
+
+    /**
+     * Ender IO 8.0 updates the neighbours of the block behind a strong output, so they see its direct signal. Here that happens
+     * when the strong output of a side changes, which includes a side that stops being strong or stops being an output. The
+     * conduit itself is left out of the update.
+     */
+    private static void updateStrongNeighbors(ServerLevel level, ConduitNode<RedstoneConduitData> node) {
+        RedstoneConduitData data = node.getConduitData();
+        for (Direction side : Direction.values()) {
+            int output = 0;
+            if (data.isStrong(side)) {
+                Optional<ColorControl> insertChannel = node.getIOState(side).flatMap(ConduitNode.IOState::insert);
+                if (insertChannel.isPresent()) {
+                    output = data.getOutputSignal(insertChannel.get(), node.getInsertFilter(side));
+                }
+            }
+
+            if (data.updateStrongOutput(side, output)) {
+                level.updateNeighborsAtExceptFromFacing(node.getPos().relative(side), ConduitBlocks.CONDUIT.get(), side.getOpposite());
             }
         }
     }

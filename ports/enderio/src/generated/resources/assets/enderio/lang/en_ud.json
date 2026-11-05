@@ -280,6 +280,8 @@
   "gui.enderio.conduit.extract": "ʇɔɐɹʇxƎ",
   "gui.enderio.conduit.insert": "ʇɹǝsuI",
   "gui.enderio.conduit.priority": "ʎʇıɹoıɹԀ",
+  "gui.enderio.conduit.redstone.strong_signal.disabled": "pǝןqɐsıᗡ ןɐubıS buoɹʇS",
+  "gui.enderio.conduit.redstone.strong_signal.enabled": "pǝןqɐuƎ ןɐubıS buoɹʇS",
   "gui.enderio.conduit_channel": "ןǝuuɐɥƆ-ʇınpuoƆ",
   "gui.enderio.conduit_probe.message.copied": "%s :ɐʇɐp pǝıdoƆ",
   "gui.enderio.conduit_probe.message.pasted": "%s :ɐʇɐp pǝʇsɐԀ",

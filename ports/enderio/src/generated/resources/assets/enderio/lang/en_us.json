@@ -280,6 +280,8 @@
   "gui.enderio.conduit.extract": "Extract",
   "gui.enderio.conduit.insert": "Insert",
   "gui.enderio.conduit.priority": "Priority",
+  "gui.enderio.conduit.redstone.strong_signal.disabled": "Strong Signal Disabled",
+  "gui.enderio.conduit.redstone.strong_signal.enabled": "Strong Signal Enabled",
   "gui.enderio.conduit_channel": "Conduit-Channel",
   "gui.enderio.conduit_probe.message.copied": "Copied data: %s",
   "gui.enderio.conduit_probe.message.pasted": "Pasted data: %s",

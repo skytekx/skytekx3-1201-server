@@ -3,7 +3,7 @@ type: Index
 title: Modpack
 description: What the SkyTekx 3 pack is made of and how it is kept up, from the mod set and the recipe layers to the scripts, the plugin layer, the owner's client and the Modrinth release.
 tags: [modpack, index]
-timestamp: 2026-11-03
+timestamp: 2026-11-05
 ---
 
 # Modpack
@@ -18,6 +18,7 @@ and the server runs them on Arclight together with one Bukkit plugin (see
 | Page | What it covers |
 |---|---|
 | [Mod set](mod-set.md) | The Modrinth index, the bundled jars, the sides, the jars outside the index, the parked mods and the mod update of 2026-10-31 |
+| [Ender IO backport](enderio-backport.md) | The plan to bring an additive subset of Ender IO 8.2.x onto the vendored 6.x fork in `ports/enderio/`, with its bundles, exclusions, license conditions and savegame rules |
 | [AlmostUnified](almostunified.md) | One item per material across the tech mods, the successor of UniDict |
 | [KubeJS](kubejs.md) | The four server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |
 | [Plugins](plugins.md) | The Bukkit layer on Arclight, which is EssentialsX alone, with its permissions and its metrics |

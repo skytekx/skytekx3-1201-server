@@ -23,12 +23,14 @@ import org.jetbrains.annotations.Nullable;
 @Mod.EventBusSubscriber(modid = EnderIO.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ObeliskManagerAttacher {
     public static final Capability<IObeliskManagerCapability<AversionObeliskBlockEntity>> AVERSION_OBELISK_MANAGER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+    public static final Capability<IInhibitorObeliskManager> INHIBITOR_OBELISK_MANAGER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Level> event) {
         if (!(event.getObject() instanceof ServerLevel)) return;
 
         attach(event, "aversion_obelisk_manager_capability", AVERSION_OBELISK_MANAGER_CAPABILITY, new AversionObeliskManager());
+        attach(event, "inhibitor_obelisk_manager_capability", INHIBITOR_OBELISK_MANAGER_CAPABILITY, new InhibitorObeliskManager());
     }
 
     private static <C> void attach(AttachCapabilitiesEvent<Level> event, String name, Capability<C> capability, C manager) {

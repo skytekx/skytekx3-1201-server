@@ -42,6 +42,8 @@ public class EnergyConfig {
     public final ForgeConfigSpec.ConfigValue<Integer> DRAIN_USAGE;
     public final ForgeConfigSpec.ConfigValue<Integer> AVERSION_CAPACITY;
     public final ForgeConfigSpec.ConfigValue<Integer> AVERSION_USAGE;
+    public final ForgeConfigSpec.ConfigValue<Integer> INHIBITOR_CAPACITY;
+    public final ForgeConfigSpec.ConfigValue<Integer> INHIBITOR_USAGE;
 
     public EnergyConfig(ForgeConfigSpec.Builder builder) {
         builder.push("energy");
@@ -138,6 +140,12 @@ public class EnergyConfig {
         builder.push("aversion");
             AVERSION_CAPACITY = builder.comment("The base energy capacity in uI.").defineInRange("capacity", 64_000, 1, Integer.MAX_VALUE);
             AVERSION_USAGE = builder.comment("The base energy consumption in uI/t.").defineInRange("usage",  10, 1, Integer.MAX_VALUE);
+        builder.pop();
+
+        // SkyTekx: the obelisk defaults of 8.x (461cf0511).
+        builder.push("inhibitor");
+            INHIBITOR_CAPACITY = builder.comment("The base energy capacity in uI.").defineInRange("capacity", 64_000, 1, Integer.MAX_VALUE);
+            INHIBITOR_USAGE = builder.comment("The base energy consumption in uI/t.").defineInRange("usage",  20, 1, Integer.MAX_VALUE);
         builder.pop();
 
         builder.pop();

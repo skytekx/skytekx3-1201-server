@@ -150,6 +150,13 @@ public class EIOLang {
     public static final Component FILTER = REGISTRATE.addLang("gui", EnderIO.loc("filter"), "Filter");
     public static final Component CONFIRM = REGISTRATE.addLang("gui", EnderIO.loc("confirm"), "Confirm");
 
+    // SkyTekx: the filter tooltips of Ender IO 8.x (824d70feb, 0c79259d9, ba8618f6f). 6.x filters open on a plain use, not while crouching.
+    public static final Component FILTER_UNCONFIGURED_HINT = REGISTRATE.addLang("tooltip", EnderIO.loc("filter.unconfigured_hint"), "Use to configure");
+    public static final Component FILTER_CONFIGURED = REGISTRATE.addLang("tooltip", EnderIO.loc("filter.configured"), "Configured");
+    public static final Component ITEM_FILTER_SLOT = REGISTRATE.addLang("tooltip", EnderIO.loc("conduit.slot.item_filter"), "Item Filter Slot");
+    public static final Component FLUID_FILTER_SLOT = REGISTRATE.addLang("tooltip", EnderIO.loc("conduit.slot.fluid_filter"), "Fluid Filter Slot");
+    public static final Component REDSTONE_FILTER_SLOT = REGISTRATE.addLang("tooltip", EnderIO.loc("conduit.slot.redstone_filter"), "Redstone Filter Slot");
+
     // endregion
 
     // region Graves

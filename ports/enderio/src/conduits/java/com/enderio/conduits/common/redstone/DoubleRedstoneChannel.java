@@ -4,7 +4,7 @@ import com.enderio.api.misc.ColorControl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
-public class DoubleRedstoneChannel {
+public class DoubleRedstoneChannel implements ConfigurableRedstoneFilter {
 
     private static final String CHANNEL1_KEY = "Channel1";
     private static final String CHANNEL2_KEY = "Channel2";
@@ -43,5 +43,10 @@ public class DoubleRedstoneChannel {
         CompoundTag tag = this.stack.getOrCreateTag();
         tag.putString(CHANNEL1_KEY, channel1.name());
         tag.putString(CHANNEL2_KEY, channel2.name());
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return getFirstChannel() != ColorControl.GREEN || getSecondChannel() != ColorControl.BROWN;
     }
 }

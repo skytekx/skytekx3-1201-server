@@ -224,6 +224,22 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
         }
     }
 
+    /**
+     * Ender IO 8.x ba8618f6f: an empty filter slot of the shown conduit names the kind of filter it takes.
+     */
+    @Override
+    protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (hoveredSlot instanceof ConduitSlot conduitSlot && !conduitSlot.hasItem()) {
+            Component tooltip = menu.getConduitType().getSlotTooltip(conduitSlot.getSlotType());
+            if (!tooltip.getString().isEmpty()) {
+                guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
+                return;
+            }
+        }
+
+        super.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
     @Override
     public ResourceLocation getBackgroundImage() {
         return TEXTURE;

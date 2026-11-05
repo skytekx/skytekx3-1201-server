@@ -3,9 +3,11 @@ package com.enderio.conduits.common.conduit.type.redstone;
 import com.enderio.api.conduit.ConduitMenuData;
 import com.enderio.api.conduit.SlotType;
 import com.enderio.api.filter.ResourceFilter;
+import com.enderio.base.common.lang.EIOLang;
 import com.enderio.conduits.common.conduit.type.SimpleConduitType;
 import com.enderio.conduits.common.redstone.RedstoneExtractFilter;
 import com.enderio.conduits.common.redstone.RedstoneInsertFilter;
+import net.minecraft.network.chat.Component;
 
 public class RedstoneConduitType extends SimpleConduitType<RedstoneConduitData> {
 
@@ -21,6 +23,14 @@ public class RedstoneConduitType extends SimpleConduitType<RedstoneConduitData> 
             case FILTER_EXTRACT -> resourceFilter instanceof RedstoneExtractFilter;
             case FILTER_INSERT -> resourceFilter instanceof RedstoneInsertFilter;
             default -> false;
+        };
+    }
+
+    @Override
+    public Component getSlotTooltip(SlotType slotType) {
+        return switch (slotType) {
+            case FILTER_EXTRACT, FILTER_INSERT -> EIOLang.REDSTONE_FILTER_SLOT;
+            default -> Component.empty();
         };
     }
 }

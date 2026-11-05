@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class RedstoneTimerFilter implements RedstoneExtractFilter {
+public class RedstoneTimerFilter implements RedstoneExtractFilter, ConfigurableRedstoneFilter {
 
     private static final String KEY_TICKS = "Ticks";
     private static final String KEY_MAX_TICKS = "MaxTicks";
@@ -50,5 +50,10 @@ public class RedstoneTimerFilter implements RedstoneExtractFilter {
     public void setMaxTicks(int maxTicks) {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putInt(KEY_MAX_TICKS, maxTicks);
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return getMaxTicks() != 20;
     }
 }

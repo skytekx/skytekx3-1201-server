@@ -6,11 +6,15 @@ import com.enderio.base.client.particle.RangeParticle;
 import com.enderio.base.client.renderer.block.EnderSkullRenderer;
 import com.enderio.base.client.renderer.glider.ActiveGliderRenderLayer;
 import com.enderio.base.client.renderer.item.GlassIconDecorator;
+import com.enderio.base.client.tooltip.ClientFilterFluidListTooltip;
+import com.enderio.base.client.tooltip.ClientFilterItemListTooltip;
 import com.enderio.base.common.block.EnderSkullBlock;
 import com.enderio.base.common.init.EIOBlockEntities;
 import com.enderio.base.common.init.EIOBlocks;
 import com.enderio.base.common.init.EIOItems;
 import com.enderio.base.common.init.EIOParticles;
+import com.enderio.base.common.item.filter.FilterFluidListTooltip;
+import com.enderio.base.common.item.filter.FilterItemListTooltip;
 import com.enderio.core.client.item.FluidBarDecorator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
@@ -21,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -53,6 +58,16 @@ public class ClientSetup {
                 HANG_GLIDER_MODEL_LOCATION.put(gliderItem.get(), modelLookupLocation);
             }
         }
+    }
+
+    /**
+     * The filter tooltip images of Ender IO 8.x (824d70feb). The filter items return common TooltipComponent records,
+     * and only this client mod bus subscriber knows the classes that draw them.
+     */
+    @SubscribeEvent
+    public static void registerClientTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(FilterItemListTooltip.class, ClientFilterItemListTooltip::new);
+        event.register(FilterFluidListTooltip.class, ClientFilterFluidListTooltip::new);
     }
 
     @SubscribeEvent

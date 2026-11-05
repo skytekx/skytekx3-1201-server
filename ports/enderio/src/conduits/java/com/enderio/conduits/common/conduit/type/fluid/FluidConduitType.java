@@ -7,6 +7,7 @@ import com.enderio.api.conduit.ticker.ConduitTicker;
 import com.enderio.api.conduit.upgrade.ConduitUpgrade;
 import com.enderio.api.filter.FluidStackFilter;
 import com.enderio.api.filter.ResourceFilter;
+import com.enderio.base.common.lang.EIOLang;
 import com.enderio.conduits.common.capability.ExtractionSpeedUpgrade;
 import com.enderio.conduits.common.init.ConduitLang;
 import com.enderio.core.common.util.TooltipUtil;
@@ -59,6 +60,14 @@ public class FluidConduitType extends TieredConduit<FluidConduitData> {
     @Override
     public boolean canApplyFilter(SlotType slotType, ResourceFilter resourceFilter) {
         return resourceFilter instanceof FluidStackFilter;
+    }
+
+    @Override
+    public Component getSlotTooltip(SlotType slotType) {
+        return switch (slotType) {
+            case FILTER_EXTRACT, FILTER_INSERT -> EIOLang.FLUID_FILTER_SLOT;
+            default -> Component.empty();
+        };
     }
 
     @Override

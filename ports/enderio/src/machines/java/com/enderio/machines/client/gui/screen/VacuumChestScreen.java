@@ -7,6 +7,8 @@ import com.enderio.core.client.gui.widgets.EnumIconWidget;
 import com.enderio.core.client.gui.widgets.MultiIconButton;
 import com.enderio.core.client.gui.widgets.ToggleImageButton;
 import com.enderio.machines.client.gui.widget.ActiveWidget;
+import com.enderio.machines.common.blockentity.VacuumChestBlockEntity;
+import com.enderio.machines.common.menu.MachineSlot;
 import com.enderio.machines.common.menu.VacuumChestMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -61,6 +63,20 @@ public class VacuumChestScreen extends MachineScreen<VacuumChestMenu> {
         guiGraphics.drawString(font, EIOLang.FILTER, 8, 74, 4210752, false);
         guiGraphics.drawString(font, EIOLang.RANGE, imageWidth - 8 - font.width(EIOLang.RANGE), 74, 4210752, false);
         super.renderLabels(guiGraphics, pMouseX, pMouseY);
+    }
+
+    /**
+     * Ender IO 8.x ba8618f6f names the empty filter slots of the conduit screen. The vacuum chest filter slot does the same.
+     */
+    @Override
+    protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (hoveredSlot instanceof MachineSlot machineSlot && !machineSlot.hasItem()
+            && VacuumChestBlockEntity.FILTER_SLOT.isSlot(machineSlot.getSlotIndex())) {
+            guiGraphics.renderTooltip(font, EIOLang.ITEM_FILTER_SLOT, mouseX, mouseY);
+            return;
+        }
+
+        super.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override

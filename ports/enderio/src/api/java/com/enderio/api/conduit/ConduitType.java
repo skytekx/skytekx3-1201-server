@@ -53,6 +53,15 @@ public abstract class ConduitType<T extends ConduitData<T>> {
         return false;
     }
 
+    /**
+     * Ender IO 8.x ba8618f6f: the tooltip of an empty filter or upgrade slot in the conduit screen.
+     *
+     * @return the name of the slot, or an empty component for no tooltip
+     */
+    public Component getSlotTooltip(SlotType slotType) {
+        return Component.empty();
+    }
+
     public <K> Optional<LazyOptional<K>> proxyCapability(Capability<K> cap, T extendedConduitData, Level level, BlockPos pos, @Nullable Direction direction,
         @Nullable ConduitNode.IOState state) {
         return Optional.empty();

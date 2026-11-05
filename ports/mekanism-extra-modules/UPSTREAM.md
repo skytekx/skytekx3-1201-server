@@ -15,7 +15,7 @@ Modules, the base of the SkyTekx port of the mod from Minecraft 1.21.1 NeoForge 
 | Later upstream commits | Commits `576425a` (config screen), `1ce73d3` (Draconic detection) and `db62401` (protection refactor, mixin loading) on `main` up to `db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6` (2026-10-27), with the same license files |
 
 Every file in the snapshot is byte identical to `git archive 1548dd6` of the upstream repository,
-with the one exclusion listed below. Changes made on top of the snapshot are separate commits in
+with the exclusions listed below. Changes made on top of the snapshot are separate commits in
 this repository's history (`git log -- ports/mekanism-extra-modules`).
 
 ## Files left out of the snapshot
@@ -23,6 +23,7 @@ this repository's history (`git log -- ports/mekanism-extra-modules`).
 | Upstream file | Why it is left out |
 |---|---|
 | File `docs/banner.png` | The README banner. It is not needed for the build or the jar. Its C2PA metadata names the OpenAI Media Service API, `gpt-image` and the digital source type `trainedAlgorithmicMedia` (checked with `strings` on 2026-11-05). The README links it by its upstream URL, so the link still works. |
+| Files `AGENTS.md` and `CLAUDE.md` | Upstream's instructions for coding agents, removed on 2026-11-05. Agents load such files when they work in this folder, and upstream's rules (work on `main`, version branches and release tags, the NeoForge `DamageContainer` rule, Mekanism's config screen) conflict with the rules of this repository in its own `AGENTS.md`. Neither file goes into the jar. |
 
 ## License
 

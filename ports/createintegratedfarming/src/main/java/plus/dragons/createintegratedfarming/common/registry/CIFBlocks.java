@@ -104,7 +104,9 @@ public class CIFBlocks {
         return ModIntegration.NETHER_DEPTHS_UPGRADE.enabled()
                 || ModIntegration.TIDE.enabled()
                 || ModIntegration.STARCATCHER.enabled()
-                || ModIntegration.CONFLUENCE.enabled();
+                || ModIntegration.CONFLUENCE.enabled()
+                // SkyTekx: the lava fishing mod of the pack
+                || ModIntegration.LAVA_FISHING.enabled();
     }
 
     private static class LavaFishingNetRegistration {

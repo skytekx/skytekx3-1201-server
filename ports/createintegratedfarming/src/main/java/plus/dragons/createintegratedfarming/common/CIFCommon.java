@@ -69,7 +69,8 @@ public class CIFCommon {
     private static final String[] INTEGRATIONS = {
             "plus.dragons.createintegratedfarming.integration.farmersdelight.FDIntegration",
             "plus.dragons.createintegratedfarming.integration.supplementaries.SupplementariesIntegration",
-            "plus.dragons.createintegratedfarming.integration.twilightdelight.TwilightDelightIntegration"
+            "plus.dragons.createintegratedfarming.integration.twilightdelight.TwilightDelightIntegration",
+            "plus.dragons.createintegratedfarming.integration.lavafishing.LavaFishingIntegration"
     };
 
     public CIFCommon() {

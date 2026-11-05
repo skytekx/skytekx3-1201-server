@@ -53,7 +53,9 @@ public enum ModIntegration {
     CONFLUENCE(Mods.CONFLUENCE),
     VANILLA_BACKPORT(Mods.VANILLA_BACKPORT),
     TWILIGHT_FOREST(Mods.TWILIGHT_FOREST),
-    TWILIGHT_DELIGHT(Mods.TWILIGHT_DELIGHT);
+    TWILIGHT_DELIGHT(Mods.TWILIGHT_DELIGHT),
+    // SkyTekx: the lava fishing mod of the pack, which provides the catches of the Lava Fishing Net
+    LAVA_FISHING(Mods.LAVA_FISHING);
 
     private final String id;
 
@@ -113,5 +115,6 @@ public enum ModIntegration {
         public static final String SIMULATED = "simulated";
         public static final String TWILIGHT_FOREST = "twilightforest";
         public static final String TWILIGHT_DELIGHT = "twilightdelight";
+        public static final String LAVA_FISHING = "lavafishing";
     }
 }

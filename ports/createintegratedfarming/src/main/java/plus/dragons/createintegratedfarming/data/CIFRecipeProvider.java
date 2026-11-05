@@ -80,11 +80,13 @@ public class CIFRecipeProvider extends RegistrateRecipeProvider {
                 .unlockedBy("has_chain", has(CHAIN))
                 .unlockedBy("has_blaze_rod", has(BLAZE_ROD))
                 .unlockedBy("has_andesite_alloy", has(ANDESITE_ALLOY))
+                // SkyTekx: Lava Fishing provides the lava catches in the pack
                 .withCondition(new OrCondition(
                         ModIntegration.NETHER_DEPTHS_UPGRADE.condition(),
                         ModIntegration.TIDE.condition(),
                         ModIntegration.STARCATCHER.condition(),
-                        ModIntegration.CONFLUENCE.condition()))
+                        ModIntegration.CONFLUENCE.condition(),
+                        ModIntegration.LAVA_FISHING.condition()))
                 .accept(output);
     }
 

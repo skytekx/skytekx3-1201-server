@@ -11,27 +11,48 @@ public class Config {
 
 	public static final String CATAGORY_GENERAL = "general";
 	public static final String CATAGORY_ELECTRIC_MOTOR = "electric_motor";
+	public static final String CATAGORY_ELECTRIC_PUMP = "electric_pump";
 	public static final String CATAGORY_ALTERNATOR = "alternator";
 	public static final String CATAGORY_ROLLING_MILL = "rolling_mill";
 	public static final String CATAGORY_WIRES = "wires";
 	public static final String CATAGORY_ACCUMULATOR = "accumulator";
 	public static final String CATAGORY_PEI = "portable_energy_interface";
 	public static final String CATAGORY_TESLA_COIL = "tesla_coil";
+	public static final String CATEGORY_LIQUID_BLAZE_BURNER = "liquid_blaze_burner";
 	public static final String CATAGORY_MISC = "misc";
 
 	private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 
 	public static ForgeConfigSpec COMMON_CONFIG;
 
+	// SkyTekx: the keys of the 1.21.1 line are added below with upstream's names, sections, defaults
+	// and ranges, except liquid_blaze_burner_max_liquid_capacity (see there). Read every value lazily,
+	// inside a method or a supplier, never in a static field initialiser or in Item.Properties. Before
+	// the common config is loaded, ForgeConfigSpec.ConfigValue.get() throws an IllegalStateException
+	// in a development run and returns the default in production, which a static field would keep.
+	// Loading an older createaddition-common.toml appends the missing keys with their defaults and
+	// keeps every existing value.
+
 	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_RPM_RANGE;
 	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_MAX_INPUT;
 	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_MINIMUM_CONSUMPTION;
 	public static ForgeConfigSpec.IntValue ELECTRIC_MOTOR_CAPACITY;
 
+	public static ForgeConfigSpec.IntValue ELECTRIC_PUMP_RPM_RANGE;
+	public static ForgeConfigSpec.IntValue ELECTRIC_PUMP_FE_RPM;
+	public static ForgeConfigSpec.IntValue ELECTRIC_PUMP_MAX_INPUT;
+	public static ForgeConfigSpec.IntValue ELECTRIC_PUMP_CAPACITY;
+
 	public static ForgeConfigSpec.IntValue FE_RPM;
 	public static ForgeConfigSpec.IntValue MAX_STRESS;
 
 	public static ForgeConfigSpec.BooleanValue AUDIO_ENABLED;
+
+	public static ForgeConfigSpec.BooleanValue AMULET_EFFECT_ENABLED;
+	public static ForgeConfigSpec.IntValue ELECTRUM_AMULET_CHARGE_RATE;
+
+	public static ForgeConfigSpec.IntValue CAPACITOR_CAPACITY;
+	public static ForgeConfigSpec.IntValue CAPACITOR_CHARGE_RATE;
 
 	public static ForgeConfigSpec.IntValue ALTERNATOR_MAX_OUTPUT;
 	public static ForgeConfigSpec.IntValue ALTERNATOR_CAPACITY;
@@ -40,6 +61,7 @@ public class Config {
 	public static ForgeConfigSpec.IntValue ROLLING_MILL_PROCESSING_DURATION;
 	public static ForgeConfigSpec.IntValue ROLLING_MILL_STRESS;
 
+	public static ForgeConfigSpec.IntValue CONNECTOR_NETWORK_INTERNAL_BUFFER;
 	public static ForgeConfigSpec.IntValue SMALL_CONNECTOR_MAX_INPUT;
 	public static ForgeConfigSpec.IntValue SMALL_CONNECTOR_MAX_OUTPUT;
 	public static ForgeConfigSpec.IntValue SMALL_CONNECTOR_MAX_LENGTH;
@@ -74,6 +96,9 @@ public class Config {
 	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_EFFECT_TIME_PLAYER;
 	public static ForgeConfigSpec.IntValue TESLA_COIL_HURT_FIRE_COOLDOWN;
 
+	public static ForgeConfigSpec.IntValue LIQUID_BLAZE_BURNER_MAX_LIQUID_CAPACITY;
+	public static ForgeConfigSpec.IntValue LIQUID_BLAZE_BURNER_MAX_HEAT_CAPACITY;
+
 	public static ForgeConfigSpec.IntValue DIAMOND_GRIT_SANDPAPER_USES;
 	public static ForgeConfigSpec.DoubleValue BARBED_WIRE_DAMAGE;
 
@@ -107,6 +132,21 @@ public class Config {
 		COMMON_BUILDER.pop();
 
 
+		COMMON_BUILDER.comment("Electric Pump").push(CATAGORY_ELECTRIC_PUMP);
+		ELECTRIC_PUMP_RPM_RANGE = COMMON_BUILDER.comment("Electric Pump min/max pump strength (equivalent to the Mechanical Pumps RPM).")
+				.defineInRange("pump_rpm_range", 256, 1, Integer.MAX_VALUE);
+
+		ELECTRIC_PUMP_FE_RPM = COMMON_BUILDER.comment("Electric Pump energy consumption in FE/t at max pump strength (256).")
+				.defineInRange("pump_fe_at_max_rpm", 120, 1, Integer.MAX_VALUE);
+
+		ELECTRIC_PUMP_MAX_INPUT = COMMON_BUILDER.comment("Electric Pump max input in FE (Energy transfer not consumption).")
+				.defineInRange("pump_max_input", 5000, 0, Integer.MAX_VALUE);
+
+		ELECTRIC_PUMP_CAPACITY = COMMON_BUILDER.comment("Electric Pump internal capacity in FE.")
+				.defineInRange("pump_capacity", 5000, 0, Integer.MAX_VALUE);
+		COMMON_BUILDER.pop();
+
+
 		COMMON_BUILDER.comment("Alternator").push(CATAGORY_ALTERNATOR);
 		ALTERNATOR_MAX_OUTPUT = COMMON_BUILDER.comment("Alternator max input in FE (Energy transfer, not generation).")
 				.defineInRange("generator_max_output", 5000, 0, Integer.MAX_VALUE);
@@ -129,6 +169,9 @@ public class Config {
 
 
 		COMMON_BUILDER.comment("Wires").push(CATAGORY_WIRES);
+		CONNECTOR_NETWORK_INTERNAL_BUFFER = COMMON_BUILDER.comment("The maximum stored amount in the connector network internal buffer.")
+				.defineInRange("connector_network_internal_buffer", 80000, 80000, Integer.MAX_VALUE);
+
 		SMALL_CONNECTOR_MAX_INPUT = COMMON_BUILDER.comment("Small Connector max input in FE/t (Energy transfer).")
 				.defineInRange("small_connector_max_input", 1000, 0, Integer.MAX_VALUE);
 
@@ -221,6 +264,17 @@ public class Config {
 				.defineInRange("tesla_coil_fire_cooldown", 20, 0, Integer.MAX_VALUE);
 		COMMON_BUILDER.pop();
 
+		// SkyTekx: the tank default stays 4000 mB, the value 5935afa introduced and the size that
+		// LiquidBlazeBurnerBlockEntity hard-codes on 1.20.1. Upstream 6cbf853 lowered the default to
+		// 1000 mB, which would shrink the tank of every existing burner that holds more.
+		COMMON_BUILDER.comment("Liquid Blaze Burner").push(CATEGORY_LIQUID_BLAZE_BURNER);
+		LIQUID_BLAZE_BURNER_MAX_LIQUID_CAPACITY = COMMON_BUILDER.comment("Liquid Blaze Burner internal liquid storage capacity (in mB). A value less than 1000 prevents players from refilling with a bucket.")
+				.defineInRange("liquid_blaze_burner_max_liquid_capacity", 4000, 100, Integer.MAX_VALUE);
+
+		LIQUID_BLAZE_BURNER_MAX_HEAT_CAPACITY = COMMON_BUILDER.comment("Liquid Blaze Burner internal heat capacity (in ticks).")
+				.defineInRange("liquid_blaze_burner_max_heat_capacity", 10000, 0, Integer.MAX_VALUE);
+		COMMON_BUILDER.pop();
+
 
 		COMMON_BUILDER.comment("Misc").push(CATAGORY_MISC);
 		DIAMOND_GRIT_SANDPAPER_USES = COMMON_BUILDER.comment("Diamond Grit Sandpaper durability (number of uses).")
@@ -228,6 +282,15 @@ public class Config {
 
 		BARBED_WIRE_DAMAGE = COMMON_BUILDER.comment("Barbed Wire Damage.")
 				.defineInRange("barbed_wire_damage", 2, 0, Float.MAX_VALUE);
+
+		AMULET_EFFECT_ENABLED = COMMON_BUILDER.comment("If the effects of the amulets should be enabled or not.")
+				.define("amulet_effect_enabled", true);
+		ELECTRUM_AMULET_CHARGE_RATE = COMMON_BUILDER.comment("Passive charge rate of the Electrum Amulet in average FE/t when held in main or offhand.")
+				.defineInRange("electrum_amulet_charge_rate", 2, 0, Integer.MAX_VALUE);
+		CAPACITOR_CAPACITY = COMMON_BUILDER.comment("Maximum energy the Capacitor item can store in FE.")
+				.defineInRange("capacitor_capacity", 5000, 1, Integer.MAX_VALUE);
+		CAPACITOR_CHARGE_RATE = COMMON_BUILDER.comment("Max FE per transfer operation for the Capacitor item.")
+				.defineInRange("capacitor_charge_rate", 500, 1, Integer.MAX_VALUE);
 
 		COMMON_BUILDER.pop();
 

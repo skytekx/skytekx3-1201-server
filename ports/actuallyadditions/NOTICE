@@ -37,6 +37,9 @@ Modifications
       upstream removed on its 1.20.4 line too.
     * Special renders: the client reads the list of upstream's main branch instead of the one on
       the 1.16 branch, as upstream does since its 1.21 line.
+    * Config: actuallyadditions-common.toml has the keys of upstream's main branch with its
+      camelCase names, and a new actuallyadditions-client.toml holds hideEnergyOverlay. Forge no
+      longer rewrites the common config at every load.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

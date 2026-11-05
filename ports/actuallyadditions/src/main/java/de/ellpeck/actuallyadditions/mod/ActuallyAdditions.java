@@ -14,6 +14,7 @@ import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
 import de.ellpeck.actuallyadditions.api.ActuallyTags;
 import de.ellpeck.actuallyadditions.api.farmer.IFarmerBehavior;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
+import de.ellpeck.actuallyadditions.mod.config.ClientConfig;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.config.conditions.BoolConfigCondition;
 import de.ellpeck.actuallyadditions.mod.crafting.ActuallyRecipes;
@@ -110,6 +111,8 @@ public class ActuallyAdditions {
         eventBus.addListener(this::setup);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            // SkyTekx: the client config of upstream 9c6859cd, on the physical client only
+            ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
             eventBus.addListener(this::clientSetup);
             eventBus.addListener(ActuallyAdditionsClient::setupSpecialRenders);
             eventBus.addListener(this::particleFactoryRegister);
@@ -146,10 +149,19 @@ public class ActuallyAdditions {
     }
 
     private void onConfigReload(ModConfigEvent event) {
-        Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(CommonConfig.Other.REDSTONECONFIGURATOR.get()));
-        Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(CommonConfig.Other.RELAYCONFIGURATOR.get()));
-        CommonConfig.Other.redstoneConfigureItem = item1 != null?item1: Items.AIR;
-        CommonConfig.Other.relayConfigureItem = item2 != null?item2: Items.AIR;
+        // SkyTekx: upstream 9c6859cd and b66af844. Only the common config holds the configurator
+        // items, and an id that does not parse falls back to air instead of throwing
+        if (event.getConfig().getType() == ModConfig.Type.COMMON) {
+            CommonConfig.Other.redstoneConfigureItem = configuredItem(CommonConfig.Other.REDSTONECONFIGURATOR.get());
+            CommonConfig.Other.relayConfigureItem = configuredItem(CommonConfig.Other.RELAYCONFIGURATOR.get());
+            CommonConfig.Other.farmerConfigureItem = configuredItem(CommonConfig.Other.FARMERCONFIG.get());
+        }
+    }
+
+    private static Item configuredItem(String id) {
+        ResourceLocation location = ResourceLocation.tryParse(id);
+        Item item = location != null ? ForgeRegistries.ITEMS.getValue(location) : null;
+        return item != null ? item : Items.AIR;
     }
 
     private void clientSetup(FMLClientSetupEvent event) {

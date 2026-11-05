@@ -14,6 +14,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.IHudDisplay;
+import de.ellpeck.actuallyadditions.mod.config.ClientConfig;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.data.WorldData;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.EnergyDisplay;
@@ -208,7 +209,8 @@ public class ClientEvents {
                     }
                 }
 
-                if (tileHit instanceof IEnergyDisplay display) {
+                // SkyTekx: upstream 12527cd1, e21713e3 and 9c6859cd, read on each frame
+                if (tileHit instanceof IEnergyDisplay display && !ClientConfig.HIDE_ENERGY_OVERLAY.get()) {
 	                if (!display.needsHoldShift() || player.isShiftKeyDown()) {
                         if (energyDisplay == null) {
                             energyDisplay = new EnergyDisplay(0, 0, null);

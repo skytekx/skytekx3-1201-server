@@ -1448,7 +1448,9 @@ def recipe_json(world, item, vec, molten):
         out = dict(fl.json_form(f))
         out['amount'] = a
         if damageable:
-            out['unit_size'] = min(fl.unit(f), a)
+            # DamageableMeltingRecipe.scaleOutput rounds even an undamaged item down to a multiple of the unit size
+            u = min(fl.unit(f), a)
+            out['unit_size'] = u if a % u == 0 else math.gcd(u, a)
         return out
     r['result'] = fluid(main, amount)
     if len(order) > 1:

@@ -408,6 +408,20 @@ public class MachineRecipeProvider extends RecipeProvider {
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(MachineBlocks.AVERSION_OBELISK.get()).build()))
             .save(finishedRecipeConsumer);
 
+        // SkyTekx: the Attractor Obelisk recipe of 8.x (461cf0511, 65fe4d639), with forge tags for the c: tags.
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.ATTRACTOR_OBELISK.get())
+            .define('M', EIOTags.Items.GEMS_ENTICING_CRYSTAL)
+            .define('E', EIOTags.Items.INGOTS_ENERGETIC_ALLOY)
+            .define('G', EIOItems.GEAR_ENERGIZED)
+            .define('I', EIOTags.Items.INGOTS_SOULARIUM)
+            .define('C', EIOBlocks.ENSOULED_CHASSIS)
+            .pattern(" M ")
+            .pattern("EGE")
+            .pattern("ICI")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(EIOItems.ENTICING_CRYSTAL).build()))
+            .save(finishedRecipeConsumer);
+
         // SkyTekx: the Vat recipe of 8.x (6bc3ec343), with forge tags for the c: tags.
         ShapedRecipeBuilder
             .shaped(RecipeCategory.MISC, MachineBlocks.VAT.get())

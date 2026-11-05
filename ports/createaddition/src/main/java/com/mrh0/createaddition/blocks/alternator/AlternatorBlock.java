@@ -22,7 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class AlternatorBlock extends DirectionalKineticBlock implements IBE<AlternatorBlockEntity>, IRotate {
 	
-	public static final VoxelShaper ALTERNATOR_SHAPE = CAShapes.shape(0, 3, 0, 16, 13, 16).add(2, 0, 2, 14, 14, 14).forDirectional();
+	public static final VoxelShaper ALTERNATOR_SHAPE = CAShapes.shape(0, 3, 0, 16, 13, 16).add(2, 2, 2, 14, 14, 14).forDirectional();
 	
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
@@ -47,9 +47,10 @@ public class AlternatorBlock extends DirectionalKineticBlock implements IBE<Alte
 		super(properties);
 	}
 	
+	// A shaft on both faces of the axis, so the alternator passes rotation through (upstream 7cb0ef9).
 	@Override
 	public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-		return face == state.getValue(FACING);
+		return face.getAxis() == state.getValue(FACING).getAxis();
 	}
 
 	@Override

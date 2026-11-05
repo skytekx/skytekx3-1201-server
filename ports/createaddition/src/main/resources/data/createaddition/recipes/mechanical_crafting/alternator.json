@@ -4,12 +4,10 @@
   	"  A  ",
   	" ISI ",
     "ISRSI",
-    " ICI "
+    " ISI ",
+    "  A  "
   ],
   "key": {
-    "C": {
-      "item": "createaddition:capacitor"
-    },
     "I": {
       "tag": "forge:plates/iron"
     },

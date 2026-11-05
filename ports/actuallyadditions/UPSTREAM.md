@@ -510,3 +510,40 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     (the block position in `openMenu`) and `82aaacf1` (`getBlockPos()` in `canPlayerUse`) are
     already in effect on the base, which opens its menus through `NetworkHooks.openScreen(player,
     tile, pos)` and reads the same field. The test mod gains the drill, filter and walk away tests.
+16. Player data: the clientbound `SYNC_PLAYER_DATA` read `context.getSender()`, which is null for a
+    clientbound packet, so the client never got its player data (the bat wings state) and logged the
+    ERROR "Tried to receive Player Data for the current player" at each login. The client handler in
+    `PacketHandlerClient` now takes the local player, as upstream's
+    `ClientPayloadHandler.handleSyncPlayer` takes the player of the clientbound flow.
+    `PlayerData.getDataFromPlayer` cast every level to `ServerLevel` and threw a
+    `ClassCastException` for client code, and now hands the client its own `PlayerSave` as upstream
+    `2a4e9666` does (a new one when another player logs in on the client). The bookmarks, the trials
+    and the tutorial flag of the 1.12 booklet are gone from `PlayerSave`, as upstream `c8e90aef`
+    removes them, and so is the booklet part of `PacketHelperClient.sendPlayerDataToServer`. The
+    world save keeps its name `actuallyadditions_worldsave` and its keys `Networks` and
+    `PlayerData`, and a player entry keeps `BookGotten`, `HasBatWings`, `BatWingsFlyTime` and, in
+    the sync packet, `ShouldDisableWings`. An old save with the keys `Bookmarks`, `Trials` and
+    `DidTutorial` loads unchanged, the keys are ignored and drop out at the next write. `WorldData`
+    itself needs no change, its `load` and `save` already have the 1.20.1 form without a
+    `HolderLookup`. The test of the source changes 13 to 16 ran the test mod against the jar of this
+    change on a dedicated Forge 47.4.18 server and on the pack's Arclight
+    (`arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`), each with JEI, Patchouli, Curios, The One
+    Probe and Mekanism. On both the client received its player data at login without the ERROR, the
+    15 crafted packets of source change 14 got one WARN each, the valid press toggled the near
+    crusher while the far one and the one in the Nether kept their state, and a button id of minus 1
+    on the XP Solidifier logged its `ArrayIndexOutOfBoundsException` as one WARN. After the slot
+    switch the drill screen and the filter screen were closed, the first drill still held the
+    upgrade that stayed in it, the second drill had no upgrades and the taken upgrade lay in the
+    inventory. Every machine screen that opened was closed by the server once the player stood 10
+    blocks away (17 on Forge, 22 on Arclight). The run placed, right clicked, wrenched and broke 122
+    of the 125 blocks and used all 107 items with no ERROR line, no exception and no crash on the
+    server. The three blocks left out crash the base: the Hopping Item Interface the server (source
+    change 14), the Ranged Collector and, by its code, the Advanced Item Laser Relay the client,
+    whose screens tick a filter GUI that the base never builds (`GuiRangedCollector`,
+    `GuiLaserRelayItemWhitelist`). The ports of the ranged collector and of the sacks and filters
+    fix those. A short savegame test built a coal generator with coal, two energy laser relays 5
+    blocks apart and a crusher with the OLD jar `237e0fc6`, wrote a network between the relays and a
+    player entry with the booklet keys into the world save in the format of the base, and loaded the
+    world with the jar of this change: the crusher held 4180 CF that only the network could have
+    brought, and the save still held the network. A player entry that the jar of this change wrote
+    holds `BookGotten`, `HasBatWings` and `BatWingsFlyTime` and no booklet keys.

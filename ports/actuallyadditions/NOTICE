@@ -70,6 +70,8 @@ Modifications
     * Menus: the drill, the Item Filter and the firework box close like the other screens, and
       the drill writes its upgrades only into the drill it was opened with (a client could
       duplicate upgrades by switching the hotbar slot while the drill screen was open).
+    * Player data: the client receives its player data again, and the unused data of the old
+      booklet (bookmarks, trials, tutorial flag) is no longer saved.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

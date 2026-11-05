@@ -291,6 +291,22 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 	}
 
+	/*
+	 * SkyTekx: the 1.20.1 form of upstream d239617 ("Connector cache logic", 1.5.11). Upstream moved
+	 * to NeoForge's BlockCapabilityCache, which finds a neighbour on its own. Here the LazyOptional
+	 * stays empty when the neighbour's chunk was not loaded or it had no block entity yet at the last
+	 * lookup, and a chunk load sends no neighbour update to try again. So while there is no external
+	 * storage, look again every lazy tick (10 ticks, only in push and pull mode), and only if the
+	 * neighbour's chunk is loaded, so this never loads a chunk. The invalidation listener stays.
+	 */
+	@Override
+	public void lazyTick() {
+		super.lazyTick();
+		if (level == null || level.isClientSide() || external.isPresent()) return;
+		if (!level.isLoaded(worldPosition.relative(getBlockState().getValue(AbstractConnectorBlock.FACING)))) return;
+		updateExternalEnergyStorage();
+	}
+
 	private final static IEnergyStorage NULL_ES = new EnergyStorage(0, 0, 0);
 	private void networkTick(EnergyNetwork network) {
 		ConnectorMode mode = getMode();

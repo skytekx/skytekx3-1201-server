@@ -5,12 +5,12 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 54 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 55 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-05. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **46** mods are fine to bundle (open license or author allows modpacks).
+- **47** mods are fine to bundle (open license or author allows modpacks).
 - **2** need a manual check, Status VERIFY: Deadly World, whose CurseForge modpack flag is unconfirmed, and ZeroCore 2, whose author allows modpacks but forbids reposts on other websites, while git tracks its jar in `local-mods/` of this public repository.
 Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
@@ -27,7 +27,7 @@ Researched automatically across the 40 bundled mods of that time. The table belo
 
 ## BLOCKERS (resolve before publishing)
 
-Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered), LittleTiles, SkyTekx DE Fixes and Mekanism: Extra Modules carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (b5972f3), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here. Mystical Automation is the same kind: its `NOTICE_mysticalautomation` and mods.toml credits name the repo root https://github.com/skytekx/skytekx3-1201-server and the path `ports/mysticalautomation`, so master must hold that directory, and its `tree/master/ports/mysticalautomation` URL is only in its permission file here.
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered), LittleTiles, SkyTekx DE Fixes, Mekanism: Extra Modules and Expanded Delight carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (b5972f3), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here. Mystical Automation is the same kind: its `NOTICE_mysticalautomation` and mods.toml credits name the repo root https://github.com/skytekx/skytekx3-1201-server and the path `ports/mysticalautomation`, so master must hold that directory, and its `tree/master/ports/mysticalautomation` URL is only in its permission file here.
 
 These cannot legally be bundled in a public modpack as-is:
 
@@ -84,6 +84,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `EnchantingPlus-1.20.1-1.3.0.jar` | Enchanting Plus (Classic) | All Rights Reserved | Special permission | yes | - |
 | `EnderIO-1.20.1-6.2.18-beta-all.jar` | Ender IO | Unlicense (core), CC BY-NC-SA 3.0 (code from Patchouli), MIT, MPL-2.0 and Apache-2.0 (adapted code and bundled libraries) | Licensed | yes, non-commercial only, with the texts in `licenses/EnderIO-1.20.1-6.2.18-beta/` | yes |
 | `Exchangers-1.20.1-3.5.1.jar` | Exchangers | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |
+| `expandeddelight-0.1.4-skytekx.1.jar` | Expanded Delight (1.20.1 Forge port by SkyTekx) | MIT (Farmer's Delight parts MIT) | Licensed | yes, once master holds its source | 1.21.1 and Fabric only |
 | `ExtremeReactors2-1.20.1-2.0.97.jar` | Extreme Reactors 2 | MIT | Licensed | yes | older builds only |
 | `EyesInTheDarkness-1.20.1-1.3.10.jar` | Eyes in the Darkness | BSD-3-Clause | Licensed | yes | - |
 | `fairylights-7.0.0-1.20.1.jar` | Fairy Lights | MIT | Licensed | yes | - |

@@ -1,0 +1,49 @@
+Ender IO 6.2.18-beta for Minecraft 1.20.1 (mods/EnderIO-1.20.1-6.2.18-beta-all.jar)
+==================================================================================
+
+The SkyTekx 3 modpack bundles this jar unmodified. It is the release file of Team Ender IO, the same
+file as version 6.2.18-beta of the Modrinth project enderio (SHA-1
+33587f98f2d96507de0e9d2f57f5ab35328ace7d), built from https://github.com/Team-EnderIO/EnderIO at the
+tag v6.2.18-beta (commit 907a9c3721730957fad6794ceed9ed0f591dabac). The jar carries no license file,
+so the texts that its parts require travel in this folder.
+
+Parts and their licenses
+------------------------
+Ender IO by Team Ender IO, its own code and assets
+  The Unlicense, see EnderIO-Unlicense.txt (LICENSE.txt of the tag). The README of the tag also
+  releases the code under CC0 1.0, and the mods.toml of the jar says license="CC0".
+
+Code from Patchouli by Vazkii (https://github.com/VazkiiMods/Patchouli)
+  The classes IOConfigWidget$GhostBuffers and IOConfigWidget$GhostRenderLayer and the method
+  IOConfigWidget.initBuffers (package com.enderio.machines.client.gui.widget.ioconfig) are taken from
+  Patchouli, and the block rendering of FireCraftingCategory (package
+  com.enderio.base.common.integrations.jei.category) is borrowed from Patchouli's PageMultiblock, as
+  the source comments and ioconfig/notice.md of the tag say. These parts are licensed under the
+  Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported license,
+  https://creativecommons.org/licenses/by-nc-sa/3.0/, see Patchouli-CC-BY-NC-SA-3.0.txt (the LICENSE
+  of Patchouli). They may only be shared for non-commercial purposes, with this credit and under the
+  same license. The SkyTekx 3 modpack is free of charge and earns no money.
+
+SoulDataReloadListener (package com.enderio.machines.common.souldata)
+  MIT, Copyright (c) 2020 Joseph Bettendorff a.k.a. "Commoble", see Commoble-MIT.txt (the header of
+  the source file).
+
+IFluidItemInteractive and the temporary file save of ConduitSavedData
+  Adapted from Mekanism ("Adapted from Mekanism's FluidUtils", "an exact copy of Mekanism
+  MekanismSavedData's system"). Mekanism is MIT, Copyright (c) Aidan C. Brady, see Mekanism-MIT.txt
+  (the LICENSE of the branch 1.20.x of https://github.com/mekanism/Mekanism).
+
+Libraries in META-INF/jarjar/, all unmodified
+  GraphLib3-3.0.7.jar: MIT, Copyright (c) 2016 David Quintana (gigaherz), see GraphLib-MIT.txt (the
+    LICENSE.txt of https://github.com/gigaherz/GraphLib).
+  Registrate-MC1.20-1.3.11.jar: Mozilla Public License 2.0, see Registrate-MPL-2.0.txt. Its Source
+    Code Form is the branch 1.20 of https://github.com/tterrag1098/Registrate and the sources jar
+    https://maven.tterrag.com/com/tterrag/registrate/Registrate/MC1.20-1.3.11/Registrate-MC1.20-1.3.11-sources.jar
+  checker-qual-3.33.0.jar: MIT, Copyright 2004-present by the Checker Framework developers, see
+    checker-qual-MIT.txt (the META-INF/LICENSE.txt of that jar).
+  guava-32.1.2-jre.jar, failureaccess-1.0.1.jar,
+  listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar, error_prone_annotations-2.18.0.jar
+    and jsr305-3.0.2.jar: Apache License 2.0, see Apache-2.0.txt. Guava carries the same text in its
+    own META-INF/LICENSE.
+
+The jar holds no sound files, so the sound credits in the README of the tag do not concern it.

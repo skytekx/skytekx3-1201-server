@@ -45,6 +45,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -142,6 +144,18 @@ public class LavaFishingNetBlock extends WrenchableDirectionalBlock
             double weight = entity instanceof LivingEntity ? 0.3 : 0.4;
             entity.setDeltaMovement(movement.x, -movement.y * weight, movement.z);
         }
+    }
+
+    // SkyTekx: upstream ships a loot table with NeoForge load conditions, since the block only exists
+    // with a lava fishing mod. Forge 1.20.1 loot tables have no load conditions, and a table that names
+    // this item fails to load with an error while the block is missing, so the block drops itself in
+    // code, under the same survives_explosion rule.
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        Float radius = params.getOptionalParameter(LootContextParams.EXPLOSION_RADIUS);
+        if (radius != null && params.getLevel().getRandom().nextFloat() > 1.0F / radius)
+            return List.of();
+        return List.of(new ItemStack(this));
     }
 
     @Override

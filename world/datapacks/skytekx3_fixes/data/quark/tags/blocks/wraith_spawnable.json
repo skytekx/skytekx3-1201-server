@@ -1,0 +1,17 @@
+{
+ "replace": true,
+ "values": [
+  {
+   "id": "minecraft:soul_sand",
+   "required": false
+  },
+  {
+   "id": "minecraft:soul_soil",
+   "required": false
+  },
+  {
+   "id": "bygonenether:soul_stone",
+   "required": false
+  }
+ ]
+}

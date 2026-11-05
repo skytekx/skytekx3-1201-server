@@ -257,3 +257,8 @@ its item here, and the NOTICE in the jar sums them up.
     the player's box in the common class `energy/HeldWireBounds`, and the client only override of
     `getRenderBoundingBox()` grows the cached box by it. The block entities never touch `LocalPlayer`
     or `Minecraft`. The Sable branch of the renderer is not ported.
+17. Shears: `3abfa39` lets shears cut every wire of a connector, with the wires dropped unless the
+    player is in creative mode and the sheep shear sound. The handler is NeoForge's `useItemOn` upstream
+    and `Block.use` in `AbstractConnectorBlock` here. A loaded far end lets go at once, an unloaded one
+    through the wire graph when it loads. One local check: the far end only drops its wire if that
+    wire still leads back to the sheared connector.

@@ -353,10 +353,7 @@ evidence and the page with the details. The rulings behind the first section are
   its badge and its text, promises a public server and a working "Play on Modrinth" link, and its guide
   has a broken symlink step. See
   [Related repos and services](related.md#claims-on-the-site-that-are-wrong-on-2026-10-31).
-- The compat mod source in `~/git/skytekx-worldgen` has no remote, and the old name skytekx-worldgen
-  survives in some places. See [SkyTekx Compat](content/compat-mod.md#open-points).
-- The commits of 2026-10-31 are not pushed (remote master 940f07e, checked on 2026-10-31 at 20:00), and the
-  tracking ref `origin/master` is stale at bd5f18b. See
-  [Related repos and services](related.md#this-repo-on-github).
+- The compat mod source keeps its old name skytekx-worldgen in its Gradle project, package, main class,
+  logger and `pack.mcmeta`. See [SkyTekx Compat](content/compat-mod.md#open-points).
 
 Related: [OKF index](index.md), [Decisions](decisions.md), [Change log](log.md).

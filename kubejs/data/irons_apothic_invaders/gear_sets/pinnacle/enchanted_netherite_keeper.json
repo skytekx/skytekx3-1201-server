@@ -1,0 +1,92 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 100,
+  "quality": 5.0,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:keeper_flamberge"
+      }
+    },
+    {
+      "weight": 1,
+      "stack": {
+        "item": "irons_spellbooks:legionnaire_flamberge"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:netherite_boots",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 6
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:netherite_leggings",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 6
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:netherite_chestplate",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 6
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:netherite_helmet",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 6
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "tags": [
+    "pinnacle_keeper"
+  ]
+}

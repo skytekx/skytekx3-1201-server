@@ -1,0 +1,59 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 100,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:graybeard_staff"
+      }
+    },
+    {
+      "weight": 2,
+      "stack": {
+        "item": "irons_spellbooks:cursed_doll_spell_book"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cultist_boots"
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cultist_leggings"
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cultist_chestplate"
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cultist_helmet"
+      }
+    }
+  ],
+  "tags": [
+    "cultist"
+  ]
+}

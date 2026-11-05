@@ -1,0 +1,53 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 100,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:magehunter"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:iron_boots"
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:iron_leggings"
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:iron_chestplate"
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:iron_helmet"
+      }
+    }
+  ],
+  "tags": [
+    "magehunter_vindicator"
+  ]
+}

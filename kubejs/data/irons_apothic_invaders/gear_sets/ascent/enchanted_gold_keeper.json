@@ -1,0 +1,85 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 100,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:keeper_flamberge"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:golden_boots",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:golden_leggings",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:golden_chestplate",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:golden_helmet",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "tags": [
+    "ascent_keeper"
+  ]
+}

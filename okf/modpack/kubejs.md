@@ -27,6 +27,10 @@ script, [apotheosis_passengers.js](../../kubejs/startup_scripts/apotheosis_passe
 [Apotheosis riders](#apotheosis-riders). There are no client scripts, and the folder `assets/` is empty.
 The folder `data/` holds the six uncrafting recipes of Twilight Tweaks, see
 [Twilight Forest backport](twilightforest-backport.md), the wood fallbacks, see
+[Wood fallbacks](#wood-fallbacks), the bosses and gear sets of
+[Iron's Apothic Invaders](#irons-apothic-invaders), and overrides for broken recipes, loot tables and
+loot modifiers of other mods, see [Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
+4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
 [Wood fallbacks](#wood-fallbacks), overrides for broken recipes, loot tables and loot modifiers of other
 mods, see [Recipe failures](#recipe-failures), and the EMI hide list, see
 [AlmostUnified](almostunified.md#emi-hide-list). The last boot on the build machine loaded 4 of 4
@@ -255,6 +259,47 @@ with it ("Apotheosis passengers: discarded the cloud of a minecraft:wither_skele
 at 700 100 648"). The cloud of the zombie stayed in the level without a vehicle, which is what every
 despawned archer would have left behind. Another unload and reload of the chunks kept the cloud of the
 old archer, and the startup script discarded nothing during it.
+
+### Iron's Apothic Invaders
+
+Iron's Apothic Invaders 1.0.0 is a data mod for Minecraft 1.21.1 that makes mobs of Iron's Spells 'n
+Spellbooks into invader bosses of Apotheosis 8. Its jar holds no classes, its Modrinth project lists
+MIT and its mods.toml says Unlicense. Since 2026-11-05 the folder
+[kubejs/data/irons_apothic_invaders/](../../kubejs/data/irons_apothic_invaders) holds its 10 bosses
+and 23 gear sets, converted to the formats of Apotheosis 7.4.8 and Placebo 8.6.3, and the MIT text of
+the jar travels in [licenses/](../../licenses/irons_apothic_invaders-1.0.0-LICENSE.txt). Every file
+carries a `forge:mod_loaded` condition on `irons_spellbooks`. The 9 gear sets under `various/` of the
+jar are byte identical copies of the top level ones and were left out.
+
+- The overworld gets the Archevoker, Cryomancer, Cultist, Magehunter Vindicator, Necromancer, Priest
+  and Pyromancer, the Nether a Citadel Keeper (upstream calls it the ancient knight) and a Necromancer,
+  and the End a Magehunter Vindicator. Each takes the rarity range of the vanilla bosses of its
+  dimension in Apotheosis 7.4.8: uncommon to rare, rare to epic and epic to mythic. Each keeps the
+  upstream weight of 100, so Iron's mobs hold 700 of 1,140 weight points in the overworld, 200 of 580
+  in the Nether and 100 of 295 in the End (`data/apotheosis/bosses/` of the Apotheosis jar).
+- Apotheosis 8 picks the gear by world tier, and 7.4.8 has no tiers. Bosses with the same gear in every
+  tier keep it. The Citadel Keeper takes the keeper sets of the tiers frontier and ascent. The keeper
+  sets of haven, summit and pinnacle ship, but no boss names them. The Citadel Keeper keeps its upstream
+  NBT `AngerTime` 99999999.
+- Minecraft 1.20.1 has no scale attribute, so the size modifiers are left out. The projectile damage
+  of Apothic Attributes 2 becomes the spell power of Iron's Spells, because these casters hurt with
+  spells, and the projectile attributes of Apothic Attributes 1.3.7 cover arrows only. The uniform ranges become step
+  functions with a step of 1 for whole numbers and 0.01 otherwise. The primary enchanting level goes to
+  the affix item and the secondary one to the other gear, capped at 30 for a world without the
+  enchanting module (`ApothBoss` reads the four values in that order).
+- The item `cursed_doll_spellbook` of the 1.21 build is `cursed_doll_spell_book` in Iron's Spells
+  3.16.3. The summit netherite keeper set lists the Legionnaire Flamberge as a helmet, and the
+  conversion moves it to the main hand. The durability bonus component of Apotheosis 8 has no
+  counterpart and is left out. The protection enchantments of the enchanted keeper sets stay as item
+  NBT.
+- A Forge 47.4.18 test server with Apotheosis 7.4.8, Apothic Attributes 1.3.7, Placebo 8.6.3, Iron's
+  Spells 3.16.3, KubeJS and their libraries registered 27 bosses and 39 gear sets on 2026-11-05. That
+  is the 17 bosses and 16 gear sets of Apotheosis that need no Twilight Forest, plus these 10 and 23. A
+  test script then spawned each of the 10 at four rarities. Every one came with its entity, a generated
+  name, raised health, its gear set and enchanted gear, and the casters with a spell power between 1.24
+  and 2.13. The log held no error of the conversion. The Magehunter Vindicator joins the world as a
+  `minecraft:vindicator` holding a Magehunter, because Iron's Spells builds it on the vanilla type.
+  Nobody met one in a natural invasion yet.
 
 ### Gameplay
 

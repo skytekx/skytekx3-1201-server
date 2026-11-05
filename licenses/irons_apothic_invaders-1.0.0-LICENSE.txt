@@ -1,0 +1,26 @@
+The boss and gear set files in kubejs/data/irons_apothic_invaders/ are converted from Iron's Apothic
+Invaders 1.0.0 by Raimu (https://modrinth.com/mod/irons-apothic-invaders, file
+irons_apothic_invaders_1.0.0.jar, SHA-1 320585bf9ef2120545fbe481655cbb09650b7e15), a data-only mod for
+Minecraft 1.21.1 and Apotheosis 8. Its mods.toml names Raimu as the author and says license="Unlicense".
+Its Modrinth project lists the MIT License, and the jar carries the MIT permission text below as LICENSE,
+unchanged and without a copyright line. SkyTekx converted the files in 2026 to the boss and gear set
+formats of Apotheosis 7.4.8 for Minecraft 1.20.1 and changed some values, see the section Iron's Apothic
+Invaders in okf/modpack/kubejs.md of the SkyTekx 3 repository.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

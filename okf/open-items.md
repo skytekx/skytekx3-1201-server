@@ -354,11 +354,12 @@ evidence and the page with the details. The rulings behind the first section are
   they take every variant of a material was not checked. No chunk generated since 17:33 that day was
   checked for Mekanism tin and lead either, only the loaded config. See
   [AlmostUnified](modpack/almostunified.md#one-item-per-material).
-- Expanded Delight on Arclight and in a client. A plain Forge test server loaded its recipes, items
-  and blocks and ran the juicer, the casks, the crops and the worldgen, but nobody has booted it with
-  the full pack on Arclight, opened the juicer screen or its recipe book, seen its JEI categories, its
-  boats and signs, or milked a goat, filled a cask, planted cranberries or stripped a cinnamon log by
-  hand. See [Expanded Delight port](modpack/expandeddelight-port.md#test-of-2026-11-05).
+- Expanded Delight with the full pack and in a client. A plain Forge test server loaded its recipes,
+  items and blocks and ran the juicer, the casks, the crops and the worldgen, and an Arclight copy
+  with the hardened jar and nine mods ran the juicer with 0 ERROR lines, but nobody has booted it with
+  the full pack, opened the juicer screen or its recipe book, seen its JEI categories, its boats,
+  signs and new names, or milked a goat, filled a cask, planted cranberries or stripped a cinnamon log
+  by hand. See [Expanded Delight port](modpack/expandeddelight-port.md#integration-test).
 
 ## Docs and housekeeping
 

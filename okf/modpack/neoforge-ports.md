@@ -1,8 +1,8 @@
 ---
 type: Reference
 title: NeoForge ports
-description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether, the Mystical Automation port and the Mekanism: Extra Modules port so far.
-tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism]
+description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether, the Mystical Automation port, the Mekanism: Extra Modules port and the Expanded Delight port so far.
+tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism, expandeddelight, farmersdelight]
 timestamp: 2026-11-05
 ---
 
@@ -23,6 +23,7 @@ worlds and configs keep working if an upstream build for Forge 1.20.1 replaces i
 | [Bygone Nether](#bygone-nether) 1.3.2 | Eternal Nether, NeoForge 1.21.1 only | Index entry, no fork | Modrinth version `RA38ax2z`, built from upstream commit cb38a20 | 61adc700, 2026-11-05 |
 | [Mystical Automation](#mystical-automation) 1.0.8-skytekx.1 | Itself, NeoForge 1.21.1 and newer only | Fork in `ports/mysticalautomation/`, jar in `local-mods/` | Branch `1.21` of the upstream repository at 4149601 ("Release 1.0.8") | Commits 3b9e2f7 and 3c92dcb, 2026-11-05 |
 | [Mekanism: Extra Modules](#mekanism-extra-modules) 0.1.0-beta.3-skytekx.1 | Itself, NeoForge 1.21.1 with Mekanism 10.7 only | Fork in `ports/mekanism-extra-modules/`, jar in `local-mods/` | Tag `v1.21.1-0.1.0-beta.3` of the upstream repository at 1548dd6 | Commits 9813e0a to fa64b7f, 2026-11-05 |
+| [Expanded Delight](#expanded-delight) 0.1.4-skytekx.1 | Itself, NeoForge 1.21.1 only, and on 1.20.1 an older Fabric line with 44 items | Fork in `ports/expandeddelight/`, jar in `local-mods/` | Branch `1.21-neo` of the upstream repository at ea82640, with branch `1.20` at 8d8fe44 as the reference for the 1.20.1 API | Commits eb734ad to 047ff2d, 2026-11-05 |
 
 ## Bygone Nether
 
@@ -360,6 +361,162 @@ without it cannot join (it registers items and Mekanism modules on both sides):
 - Before a public pack, merge and push the branch with `ports/mekanism-extra-modules/` to master and
   fetch, see [publish](publish.md).
 
+## Expanded Delight
+
+Expanded Delight is an addon for Farmer's Delight with a cinnamon tree and wood set, asparagus, sweet
+potatoes, chili peppers, peanuts and cranberries, a juicer, casks that ferment milk into cheese
+wheels, salt and many dishes. Upstream builds the full content set only for NeoForge 1.21.1, and its
+Fabric line for 1.20.1 has 44 items against 99, so the pack bundles a port to Forge 1.20.1 in
+`ports/expandeddelight/` (eb734ad to 2428130, the jar in d9eb6cc and rebuilt in 047ff2d). The full
+change list is `ports/expandeddelight/UPSTREAM.md`, and the page
+[Expanded Delight port](expandeddelight-port.md) has the content, the pack fit and the test tables.
+
+### Source and ref
+
+- The content base is the branch `1.21-neo` of https://github.com/ianm1647/expandeddelight at commit
+  ea826400654702587e86c9e94544bfd74f065083 ("fix workspace", 2026-08-25, `mod_version=0.1.4`). The
+  Modrinth release 0.1.4-neoforge (version `RTRYPIJp`, `expandeddelight-0.1.4.jar`) was built from
+  28d9561714a176eb10ae0c425fcee18ad8e6b3b1 on the same branch.
+- The branch `1.20` at 8d8fe44d9b4cba54c47f84c5836872a803388cb2 (2026-01-14, 0.4.0 for Fabric 1.20.1)
+  served as the reference for the 1.20.1 game API, and the port took the Forge forms from Farmer's
+  Delight 1.20.1-1.3.4. The branch `1.21-rework` at 5ef645b (0.2.0) is an emptied restart whose
+  commits say "complete emptiness" and "content cut", so it was not used.
+- The jar `local-mods/expandeddelight-0.1.4-skytekx.1.jar` has SHA-1
+  45b288dd96173e620db5a6d1065250a96b584949 and 486,426 bytes since 047ff2d, the same from two clean
+  builds with `./gradlew build` on Java 17 (NeoForged ForgeGradle 6.0.21, Forge 47.1.70 userdev, the
+  setup of SkyTekx DE Fixes). The first bundled build of d9eb6cc, SHA-1
+  3e156033dbf6a5a09d199960614776023e15e69a, lacks the review fixes.
+- It needs Farmer's Delight 1.20.1-1.3.4 or newer, which the index has. The build fetches that file
+  from the Modrinth CDN and checks its SHA-1 against the index, as it does for the compile only
+  KubeJS, Rhino and Architectury.
+
+### What came in and what stayed out
+
+- The whole content set of 0.1.4 came in with its mod id, registry ids, block states and NBT keys:
+  99 items and 45 blocks. The Java code moved to Forge 47 (b098e2b): item stack NBT for the juicer's
+  drink instead of data components, a new loot function `expandeddelight:copy_drink`, the item
+  handler through `getCapability`, `DeferredRegister`, a hand written recipe serializer and
+  `IExtensibleEnum` for the recipe book.
+- The data moved to the 1.20.1 folders and formats through `tools/convert_data_to_1_20_1.py` in the
+  fork (36ce58e), and the c: tags became the forge: tags of Farmer's Delight 1.20.1 and Pam's
+  HarvestCraft 2 Food Core: `forge:cheese`, `forge:milk`, `forge:vegetables`, `forge:cookies`,
+  `forge:crops/*`, `forge:dusts/salt`, `forge:ores/salt`, `forge:juices/*`, `forge:jams/*` and, since
+  2428130, `forge:nuts` with `forge:nuts/peanut`.
+- The pack glue of d8f433e gives AlmostUnified salt as its 48th material, so `forge:dusts/salt` keeps the
+  Mekanism salt by the mod priority list, and `kubejs/server_scripts/tag_fixes.js` links the salt,
+  juice and jelly tags of Expanded Delight, Pam's Food Core and Mekanism, naming items only of loaded
+  mods. No other pack mod adds asparagus, sweet potatoes, chili peppers, peanuts, cranberries or
+  cinnamon, so those need no unification.
+- Upstream's goat milk mixin into `Goat#mobInteract` is gone. The port cancels Forge's interaction
+  event when it milks, so no mixin touches a class that Bukkit patches. The port has no mixin and no
+  access transformer at all. Log stripping uses Forge's tool modification event, and cranberries plant
+  through a vanilla `PlaceOnWaterBlockItem`, which Bukkit's `BlockPlaceEvent` covers.
+- Fixes over upstream: crops that named themselves as seed, a juicer drink taken by hand that was
+  neither saved nor synced, a chest boat that lost its items at every save, the crushing mallet that
+  1.20.1 refuses (86f6702), and from the review the default state of the juicer, which was waterlogged
+  for `/setblock` and every mod that places it (3393d44), seven language keys that showed raw
+  (9306195) and the juicer's container slot, which took any item from a pipe (c99d6cf).
+- The port leaves out the datagen classes and worldgen bootstrap classes, which only build upstream's JSON on
+  NeoForge, the overrides of Farmer's Delight's dough and melon juice recipes and of a Farmer's
+  Respite recipe (the pack edits no recipes of other mods, and the 1.20.1 ids differ), the 1.20.5
+  animal food tags and the Fabric libraries of the 1.20 branch. The wild sweet potato gives Absorption
+  in suspicious stew, because Oozing needs Minecraft 1.20.5.
+- The Skylands rules hold. The biome modifiers add the cinnamon tree and wild crops to
+  `#minecraft:is_jungle`, `#forge:is_plains`, `#forge:is_desert`, `#minecraft:is_savanna` and
+  `#forge:is_swamp`, and the salt ore to `#minecraft:is_ocean`. None of these tags holds
+  `skytekx3:sky_void` or another Skylands biome, and the wild crop and cranberry patches also keep
+  the `farmersdelight:biome_tag` filter for `#minecraft:is_overworld`. The mod adds no structures and
+  names no `skytekx3` biome. Whether the islands should grow these crops is open, see
+  [open items](../open-items.md).
+
+### License
+
+Expanded Delight declares MIT (`mod_license=MIT` in `gradle.properties` of 1.21-neo, the mods.toml
+of the 0.1.4 jar, Modrinth and CurseForge), and its branch `1.20` carries a CC0 1.0 LICENSE. The
+license review of 2026-11-05 found material of Farmer's Respite, which is All Rights Reserved, in the
+1.21-neo tree, so the upstream tree copied unchanged would not pass. Its conditions, all met:
+
+- Three Farmer's Respite files never entered git and are not in the jar: the juicer GUI sheets
+  `textures/gui/juicer.png` and `textures/gui/jei/juicer.png` (one file, SHA-1 2a2bffad, built on the
+  kettle sheet) and the bottle slot icon `textures/item/empty_container_slot_bottle.png` (SHA-1
+  64863cf1). The vendoring commit eb734ad left them out. The juicer draws the author's own sheet
+  `juicer_gui.png` of the branch `1.20` (commit 50e9c10, 2022) instead.
+- Upstream's `JuicerMenu.java`, decompiled from the KettleMenu of Farmer's Respite, stayed out. The
+  port's menu is written from Farmer's Delight's CookingPotMenu (MIT) with the slots of the 1.20
+  sheet.
+- No copy of a vanilla texture ships: the unused `item/glass_bottle.png` and `item/sweet_berries.png`
+  stayed out, and so did the byte copy `block/rice_bag_bottom.png` of Farmer's Delight, whose model
+  already points at `farmersdelight:block/rice_bag_bottom`.
+- The fork and the jar carry the author's MIT text with its copyright line from branch 1.19 (commit
+  6c73c98) as `LICENSE-MIT_expandeddelight`, the CC0 LICENSE of branch 1.20 unchanged as
+  `LICENSE_expandeddelight`, Farmer's Delight's MIT text as `LICENSE_farmersdelight`, because the mod
+  derives art and code from it, and the NeoForged MDK template license. The same texts lie in
+  `licenses/expandeddelight-0.1.4-skytekx.1/`, which the pack ships as `overrides/licenses/`.
+- A `NOTICE_expandeddelight` calls the build unofficial and modified, names the upstream URL, branches
+  and full commits, the source at `ports/expandeddelight` in this repository, the left out Farmer's
+  Respite files with the reason, and the art and code taken from Farmer's Delight under MIT.
+- No translation, tag or recipe of the branch `1.20` came in, so the material of its outside
+  contributors stays out. Every commit reachable from 1.21-neo is by the author.
+- The record `modrinth-permissions/expandeddelight-0.1.4-skytekx.1.jar.md` says Status OK, permission
+  reason Licensed, license MIT, with the upstream link. It links
+  `tree/master/ports/expandeddelight`, so `tools/mrpack_permissions.py` refuses a public build until
+  `origin/master` holds the fork and the same jar. MIT and CC0 do not ask for the source, only this
+  gate does.
+- MIT, CC0 and Farmer's Delight's MIT have no clause against commercial use, so the mod adds no
+  monetization limit. Not verified: the license that GitHub detects for the repository (the API
+  answered 403), a texture comparison with Croptopia, which is not on Modrinth, and the code
+  provenance outside the juicer, which the review checked only at member level against Brewin' and
+  Chewin'. Nobody asked the Farmer's Respite authors to settle the MIT and All Rights Reserved
+  conflict of their own listings.
+
+### Tests
+
+Evidence of 2026-11-05 from test copies outside the repository, driven over RCON. The full tables
+are on [Expanded Delight port](expandeddelight-port.md#test-of-2026-11-05).
+
+- The port's tests with the jar of d9eb6cc on plain Forge 47.4.18 with Farmer's Delight, JEI and
+  KubeJS: after the crushing mallet fix 86f6702 the boot reached `Done` with 0 ERROR and 0 FATAL
+  lines. All 99 recipe files loaded, every item went into a chest, every block stood after
+  `setblock`, hoppers ran the juicer, bone meal grew the crops and the tree, the casks fermented, and
+  1,209 chunks of jungle, plains, desert, savanna, swamp and ocean held the wild crops, the trees and
+  the salt ore. The class load log listed no class of the `client` or `integration.jei` packages.
+- With Mekanism 10.4.16.80, Pam's Food Core 1.0.5, AlmostUnified 0.11.0 and the pack's glue the merged
+  tags held the items of all three mods, and AlmostUnified replaced the salt of Expanded Delight and
+  of Pam's mod with the Mekanism salt.
+- The integration test with the jar of 047ff2d on the same Forge server reached `Done` in 9.0 s with
+  0 ERROR and 0 FATAL lines and stopped over RCON with exit code 0. A juicer from `/setblock` passed
+  `execute if block ... expandeddelight:juicer[facing=north,waterlogged=false]`, a side hopper handed
+  over three glass bottles and kept four apples, and `forge:nuts` held the peanut next to Pam's
+  sunflower seeds.
+- An Arclight copy with the repo's hardened `arclight.jar` and the same mods reached `Done` with
+  0 ERROR and 0 FATAL lines and no failed mixin, ran the same juicer, hopper and tag checks with the
+  same results, pressed an apple juice into the hopper below and stopped over RCON with exit code 0.
+- Nobody tested a client (the juicer screen, its recipe book, JEI, the boats, signs and tooltips and
+  the seven new names), the hand interactions that need a player (milking a goat, filling a cask,
+  planting cranberries, stripping a log) and a boot of the full pack with the mod.
+
+### Operator steps
+
+The owner mirrors the server by hand, and the mod goes live with the next pack, because clients
+without it cannot join (it registers blocks, items, two boats, a menu and a recipe type on both
+sides):
+
+- Stop the server over RCON and wait until the java process is gone.
+- Copy `local-mods/expandeddelight-0.1.4-skytekx.1.jar` into the server's `mods/` by hand and check
+  its SHA-1 against the one above. Farmer's Delight 1.20.1-1.3.4 is there already. On the Mac mini
+  `macos/sync-to-mac.sh` mirrors `mods/` from the build machine.
+- Clients need the same jar, which the next pack brings them.
+- Start the server and check the boot against the error baseline. The first boot writes
+  `config/expandeddelight-common.toml` with the recipe book switch of the juicer. Commit it before
+  `tools/build_mrpack.py`, which takes overrides from git HEAD.
+- The salt material of AlmostUnified needs this restart. Afterwards `unify_inventory.js` swaps the
+  salt of Expanded Delight and of Pam's mod in player inventories for the Mekanism salt.
+- The cinnamon trees, wild crops, cranberries and salt ore only generate in chunks that do not exist
+  yet, so players find them beyond the explored area. A pregen with Chunky places them ahead of time.
+- Before a public pack, merge and push the branch with `ports/expandeddelight/` to master and fetch,
+  see [publish](publish.md).
+
 Related: [Mod set](mod-set.md), [Boot fixes](../content/boot-fixes.md), [Publish](publish.md),
 [Mystical Automation port](mysticalautomation-port.md),
-[Mekanism Extra Modules port](mekanism-extra-modules.md), [Open items](../open-items.md).
+[Mekanism Extra Modules port](mekanism-extra-modules.md),
+[Expanded Delight port](expandeddelight-port.md), [Open items](../open-items.md).

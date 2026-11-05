@@ -3,7 +3,7 @@ type: Reference
 title: Boot fixes
 description: How the server boot went from 152 errors to 2, with the skytekx3_fixes override datapack, the jar patches of tools/patch_mods.py, two config fixes and a hand edited jar.
 tags: [content, server, datapack, mods, boot]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Boot fixes
@@ -37,8 +37,8 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 242 files, 241 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 106 are
+is tracked: 243 files, 242 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 107 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -116,7 +116,7 @@ every mod pack that loads after the fixes pack, which should be none.
 
 ### Gameplay overrides
 
-Six groups of files in the pack change the game on purpose:
+Seven groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -196,6 +196,18 @@ Six groups of files in the pack change the game on purpose:
   `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
   (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
   Mac mini at 21:54 and load with its next `/reload` or start.
+- One block loot table at `data/bigreactors/loot_tables/blocks/energizerpowerportfe_active.json` makes
+  the Energizer Active FE Power Port of Extreme Reactors 2.0.97 drop itself since 2026-11-05. The jar
+  registers the block like the passive port but ships no loot table for it, and its loot datagen
+  (`BlockSubProvider`) lists only the passive port, so a mined port vanished with its recipe of four
+  energizer casings, two iron, two lapis and a redstone block. The file is the passive port's table
+  with the item `bigreactors:energizerpowerport_fe_active`, whose id has an underscore before `fe`
+  where the block id has none. The mod ships nothing at this id, so the pack order does not matter.
+  On a Forge 47.4.18 test server with only Extreme Reactors 2.0.97 and ZeroCore 2.1.48, `/loot spawn`
+  with a diamond pickaxe gave 0 items for the active port without the file, and 1 Energizer Active FE
+  Power Port with it, and `/setblock ... destroy` dropped the port. The passive Mekanism fluid port of
+  the reinforced reactor has no loot table either, already in 2.0.84, and stays as it is for now,
+  because the pack has not tested it with Mekanism.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

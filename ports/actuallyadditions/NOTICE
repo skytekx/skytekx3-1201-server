@@ -83,6 +83,7 @@ Modifications
       blocks for the machines whose models now fill the block.
     * Crystal clusters: they grow out of the face they are placed on, need a solid block behind
       them, and drop crystal shards unless broken with silk touch, as on upstream's main branch.
+    * Lamps: unlit lamps no longer look lit, and the Lamp Controller faces the player.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

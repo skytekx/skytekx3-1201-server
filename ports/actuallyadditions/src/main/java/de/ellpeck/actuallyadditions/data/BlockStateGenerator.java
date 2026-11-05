@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -228,15 +227,21 @@ public class BlockStateGenerator extends BlockStateProvider {
         simpleBlock(block.get(), model);
     }
 
+    // SkyTekx: upstream 248011b0, the unlit and the lit state get a model each. The base wrote one
+    // model name twice, so the lit texture won and every lamp looked lit
     private void buildLitState(Supplier<Block> block) {
         ResourceLocation name =  ForgeRegistries.BLOCKS.getKey(block.get());
         assert name != null;
+        ModelFile offModel = models().withExistingParent(name.toString(), "cube_all")
+            .texture("all", modLoc("block/" + name.getPath()));
+        ModelFile onModel = models().withExistingParent(name.toString() + "_on", "cube_all")
+            .texture("all", modLoc("block/" + name.getPath() + "_on"));
 
         getVariantBuilder(block.get())
             .partialState().with(BlockStateProperties.LIT, false)
-            .addModels(ConfiguredModel.builder().modelFile(models().cubeAll(name.toString(), modLoc("block/" + name.getPath()))).build())
+            .modelForState().modelFile(offModel).addModel()
             .partialState().with(BlockStateProperties.LIT, true)
-            .addModels(ConfiguredModel.builder().modelFile(models().cubeAll(name.toString(), modLoc("block/" + name.getPath() + "_on"))).build());
+            .modelForState().modelFile(onModel).addModel();
     }
 
     private void fullyDirectionalBlock(Supplier<Block> block) {

@@ -9,6 +9,7 @@ import com.enderio.api.integration.Integration;
 import com.enderio.base.common.init.EIOCreativeTabs;
 import com.enderio.conduits.common.init.EIOConduitTypes;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,9 +34,16 @@ public class AE2Integration implements Integration {
     public void onModConstruct() {
     }
 
+    /**
+     * An AE2 facade covers a conduit bundle as a basic conduit facade, with the semantics of AE2ConduitFacadeProvider of Ender IO 7.1
+     * (78e627263): it is a facade only while its texture item is a block item, and it looks like that block. The bundle keeps the AE2 item,
+     * so it drops back as itself. AE2 would fall back to glass for a blank facade, which is no facade here.
+     */
+    @Override
     public Optional<BlockState> getFacadeOf(ItemStack stack) {
-        if (stack.getItem() instanceof IFacadeItem facadeItem) {
-            return Optional.of(facadeItem.getTextureBlockState(stack));
+        if (stack.getItem() instanceof IFacadeItem facadeItem
+            && facadeItem.getTextureItem(stack).getItem() instanceof BlockItem blockItem) {
+            return Optional.of(blockItem.getBlock().defaultBlockState());
         }
         return Optional.empty();
     }

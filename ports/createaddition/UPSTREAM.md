@@ -7,7 +7,7 @@ Additions, the base of the SkyTekx 1.20.1 Forge backport of the mod's 1.21.1 lin
 |---|---|
 | Repository | https://github.com/mrh0/createaddition |
 | Ref | branch `1.20.1` |
-| Commit | `42b6f2d06f0412a7cee787d767449d5b1b3b81b8` ("Merge pull request #1200 from Texaliuz/patch-1") |
+| Commit | `42b6f2d06f0412a7cee787d767449d5b1b3b81b8` (the merge of PR #1200) |
 | Commit date | 2026-11-02T23:02:03+01:00 |
 | Upstream version | `mod_version = 1.3.3` (Minecraft 1.20.1, Forge 47.4.0, Create 6.0.8-289) |
 | Port source (later commits) | branch `1.21.1` @ `658a390b8ff4daa17013e9447b29949330c8a42a` (2026-11-02, `mod_version = 1.7.3`; release 1.7.2 on 2026-10-01) |
@@ -62,10 +62,13 @@ Build check (from this directory):
 JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew compileJava -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain -q
 ```
 
-The jar: `./gradlew build` (same flags) writes `build/libs/createaddition-<mod_version>.jar`, which
-`reobfJar` rewrites in place. That is the jar to ship, as upstream ships the plain jar. The
-`-all.jar` that `jarJar` makes next to it (with MixinExtras 0.4.1 nested) is not shipped: upstream's
-release jar does not nest it either, and the mod's code does not use MixinExtras.
+The jar: `./gradlew build` (same flags) writes
+`build/libs/createaddition-<minecraft_version>-<mod_version>.jar`, today
+`createaddition-1.20.1-1.7.3-skytekx.1.jar`, which `reobfJar` rewrites in place. That slim reobf jar
+is the jar to ship, as upstream ships the plain jar. The `-all.jar` that `jarJar` makes next to it
+(with MixinExtras 0.4.1 nested) is not shipped: upstream's release jar does not nest it either, the
+mod's code does not use MixinExtras, and in the pack Create 6.0.8 already nests mixinextras-forge
+0.4.1 while Forge resolves the newer 0.5.5 that another mod brings.
 
 1. Gradle wrapper: `gradlew`, `gradlew.bat` and `gradle/wrapper/gradle-wrapper.jar` are the copies
    that every other port in this repository uses (wrapper jar SHA-256 `33ad4583...`, the official
@@ -80,15 +83,20 @@ release jar does not nest it either, and the mod's code does not use MixinExtras
    but a snapshot can change under us.
 3. `settings.gradle`: `rootProject.name = 'createaddition'`, so the project name (and with it the
    manifest's `Implementation-Title`) does not depend on the name of the checkout directory.
-4. Version: `mod_version = 1.7.3-1.20.1-skytekx.1`, and `build.gradle` uses `version = mod_version`
-   instead of `"${minecraft_version}-${mod_version}"`. The jar is
-   `createaddition-1.7.3-1.20.1-skytekx.1.jar`, and Forge shows the version
-   `1.7.3-1.20.1-skytekx.1` (`mods.toml` uses `${file.jarVersion}`, the manifest's
-   `Implementation-Version`). 1.7.3 names the 1.21.1 line being backported; `-skytekx.N` marks the
-   unofficial build. Upstream's 1.20.1 jars report `1.20.1-1.3.3`. In Maven version order
-   `1.7.3-1.20.1-skytekx.1` is above `1.3.3` but below `1.20.1-1.3.3`, so a dependent range written
-   against upstream's full version string (`[1.20.1-1.3.0,)`) would reject it; no mod in the pack
-   declares a `createaddition` dependency at all.
+4. Version: `mod_version = 1.7.3-skytekx.1`, and `build.gradle` keeps upstream's
+   `version = "${minecraft_version}-${mod_version}"`. The jar is
+   `createaddition-1.20.1-1.7.3-skytekx.1.jar`, and Forge shows the version
+   `1.20.1-1.7.3-skytekx.1` (`mods.toml` uses `${file.jarVersion}`, the manifest's
+   `Implementation-Version`). The part 1.7.3 names the 1.21.1 line being backported, and
+   `-skytekx.N` marks the unofficial build. This is upstream's own form (its 1.20.1 jars report
+   `1.20.1-1.3.3`) plus the suffix, the same scheme as the pack's other forks
+   (`twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`). In Maven version order, which Forge
+   uses for dependency ranges, `1.20.1-1.7.3-skytekx.1` sorts above `1.20.1-1.3.3`, so a dependent
+   range in upstream's form such as `[1.20.1-1.2.0,)` accepts it. It also sorts above the range
+   `[1.20.1-1.0.0b,1.20.1-1.2.3]` that gates the AllTheLeaks fix `UntrackedIssue001` for
+   `EnergyNetworkManager#instances`, which therefore stays off, as it does for 1.3.3. An earlier
+   commit of this fork used `1.7.3-1.20.1-skytekx.1` with `version = mod_version`, which sorts
+   below `1.20.1-1.3.3` (7 is less than 20). No jar with that version was shipped.
 5. Reproducible jar: the `jar` task sets `preserveFileTimestamps = false` and
    `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
    clean builds of the same commit give the same SHA-1.

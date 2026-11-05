@@ -18,7 +18,7 @@ Modifications
 -------------
   Modified by SkyTekx (Florian Kleber), 2026, for the SkyTekx 3 modpack. The result still runs on
   Minecraft 1.20.1 with Forge 47, keeps the mod id createaddition and is versioned
-  1.7.3-1.20.1-skytekx.1.
+  1.20.1-1.7.3-skytekx.1.
 
   Summary of the changes:
   - Build: reproducible jar (no file timestamps, fixed entry order, no build timestamp in the

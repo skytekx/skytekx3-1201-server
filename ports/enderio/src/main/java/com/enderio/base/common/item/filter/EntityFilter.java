@@ -59,7 +59,8 @@ public class EntityFilter extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        if (pPlayer instanceof ServerPlayer serverPlayer) {
+        // The menu edits the main hand stack, so a filter used from the off hand must not open it.
+        if (pPlayer instanceof ServerPlayer serverPlayer && pUsedHand == InteractionHand.MAIN_HAND) {
             openMenu(serverPlayer);
         }
         return super.use(pLevel, pPlayer, pUsedHand);

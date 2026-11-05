@@ -78,7 +78,8 @@ What is still open, from owner rulings that were never built to unverified claim
 | [Modpack](modpack/index.md) | What the pack is made of and the recipe layers |
 | [Mod set](modpack/mod-set.md) | The index, the bundled jars, the server's mods folder, the jars outside the index and how to change the set |
 | [Draconic Evolution fixes](modpack/draconic-fixes.md) | Why Draconic Evolution is not backported and what the addon SkyTekx DE Fixes changes in the stock jar |
-| [NeoForge ports](modpack/neoforge-ports.md) | Mods that only exist for NeoForge 1.21.1 or Fabric and how each one reaches the Forge pack, Bygone Nether in place of Eternal Nether first |
+| [NeoForge ports](modpack/neoforge-ports.md) | Mods that only exist for NeoForge 1.21.1 or Fabric and how each one reaches the Forge pack, Bygone Nether in place of Eternal Nether first, then the Mystical Automation port |
+| [Mystical Automation port](modpack/mysticalautomation-port.md) | The Forge 1.20.1 port of Mystical Automation 1.0.8 in `ports/mysticalautomation/`, its fixes over upstream, its tests on Forge and Arclight and its deploy |
 | [AlmostUnified](modpack/almostunified.md) | One item per material across the tech mods |
 | [KubeJS](modpack/kubejs.md) | The four server scripts and how to work with Rhino |
 | [Plugins](modpack/plugins.md) | EssentialsX, its files, permissions, metrics and update checks |

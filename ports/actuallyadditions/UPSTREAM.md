@@ -583,3 +583,50 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     other results match source change 16: 122 of the 125 blocks and all 107 items ran with no ERROR
     line and no crash on the server, the client got its player data at login, and every machine
     screen that opened was closed by the server 10 blocks away (21 on Forge, 22 on Arclight).
+18. Textures, models and sounds: the 1.20+ retexture of upstream's texture artist replaces the
+    art of the base. That is Retexture 2.0 (`9cf9601`) and 2.1 (`6542628`) with the crops
+    (`c0dfed8`), lenses and snail (`a60d11d`, `6bd17fd`), crystals (`9d83857`), batteries
+    (`f8fa256`), drills (`d136820`) and the worm (`4721f51`). The hand written block models are
+    the ones of `main` too, which brings the texture fix of the firework box (`fbdfc2e`) and the
+    cull faces of the hopping item interface (`9b6dd7d`, #1401) and of the greenhouse glass
+    (`817797a`). Every file in `textures/block/` and `textures/item/` is now byte identical to
+    `main` at `cd9d9c6`. Seven files of `main` stay out: the four banner pattern items
+    (`659779b`, they come with the banner patterns), `item_tag.png` (`79b2084`, it comes with the
+    Item Tag filter), and `youtube.png`, `black_quartz_deepslate_ore.png` and the animation file
+    of the deleted `double_crusher_rotation_animation.png`, which nothing on `main` uses. The
+    base's `paper_cone.png` stays, since the backport keeps the item. The six crystal cluster
+    models keep the state of `6542628` until source change 20 brings the fixed models of
+    `9282dcb`, and the lamp controller model keeps it until source change 21. No model uses a
+    key that 1.20.1 does not read. A scan of all 403 model files finds only the top level keys
+    `parent`, `textures`, `elements`, `display`, `ambientocclusion`, `render_type`, `overrides`,
+    `loader`, `fluid`, `credit` and `texture_size` (the last two are Blockbench notes that every
+    version ignores), and only `from`, `to`, `rotation`, `shade` and `faces` in the elements.
+    The AIOTs show their art again: on the base all thirteen `*_aiot.png` were the same 291 byte
+    placeholder and the art sat in unused `*_paxel.png` files, which `908a57b` renames. Rice, flax
+    and coffee have four stage textures like canola, and `BlockStateGenerator` maps the eight ages
+    to them as `19afc5f` does (age 0 stage 1, ages 1 to 3 stage 2, ages 4 to 6 stage 3, age 7
+    stage 4). The base wrote the models `<crop>_2` and `<crop>_3` twice with different textures,
+    so the last write won and the stage 2 and 4 textures never rendered. The renderers follow the
+    new models: the lens in the Atomic Reconstructor sits at z 0.45 (`a60d11d`) and the worm at
+    y 0.75 (`4721f51`). The coffee machine, crusher and reconstructor sounds are the mono files of
+    `52b5765`, since Minecraft positions only mono sounds in the world. Gone are the 1.12
+    leftovers that no 1.20.1 loader reads and that shipped in the jar: `blockstates_old/` (98
+    files), `models_old/` (271), `textures/blocks_old/` (229), `textures/items_old/` (249),
+    `textures/models_old/` (20), the three loot tables in `assets/actuallyadditions/loot_tables/`
+    (loot tables only load from data packs, and the Engineer house brings the data copy of
+    `engineer_house`) and `structures/andrew_period_house.nbt` (DataVersion 819, a 1.12 palette
+    with `block_grinder` and `minecraft:log`). Of the 632 block and item textures of the base, 340
+    are gone (34 are new and 259 of the 292 kept ones changed). No model, blockstate, particle
+    file or Java string names them, and `60ec534` deleted the same files on `main` after the
+    retexture had moved them into `unused/` folders. The animation files of the six crystal items
+    go with them, since the new crystal textures have a single frame. Three hand written models
+    that no blockstate or item names and that point to textures which do not exist go too:
+    `double_powered_furnace`, `green_block` and `white_block` (`main` still carries them). The
+    texture folder shrinks from 1211 to 407 files. Nothing to port from `d49d29b`, which fixed
+    an animation file of the deleted `blocks_old/`, or from `9eec468`, which adds two logo
+    pictures to `pics/` that the jar does not carry. License: the retexture came into the MIT
+    repository after the relicensing (`9cf9601` is dated 2024-04-03, a month after `33f5541`),
+    through the pull requests #1395 and #1396, the Modrinth project lists the artist in its team
+    and declares MIT, and neither ref has a separate asset license. Nobody confirmed this with the
+    artist. The `runData` output of this change differs from the committed one only in the nine
+    crop models and the `.cache` file of the blockstate provider.

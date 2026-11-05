@@ -35,6 +35,9 @@ public class CoreNetwork {
         registerPacket(new EmitParticlesPacket.Handler(), EmitParticlesPacket.class);
         registerPacket(new S2CDataSlotUpdate.Handler(), S2CDataSlotUpdate.class);
         registerPacket(new C2SDataSlotChange.Handler(), C2SDataSlotChange.class);
+
+        // SkyTekx: backported packets, appended.
+        registerPacket(new S2CDataMapSync.Handler(), S2CDataMapSync.class);
     }
 
     public static <P extends Packet> void sendToServer(P packet) {

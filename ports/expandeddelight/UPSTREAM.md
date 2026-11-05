@@ -246,3 +246,9 @@ Assets:
   state uses the model, so the game never loads it, and it stays as upstream has it.
 - No language file other than upstream's `en_us.json` is added. The 1.20 branch has eleven
   translations with outside contributors and other item names.
+- The file `en_us.json` gains the seven keys that upstream lacks, so that players see names and not
+  raw keys: `item.expandeddelight.cranberry_jelly_sandwich` (a tab item), the title and
+  description of the root advancement `expandeddelight.advancement.root`, the entities
+  `cinnamon_boat` and `cinnamon_chest_boat`, and the blocks `cinnamon_wall_sign` and
+  `cinnamon_wall_hanging_sign`. The names follow upstream's own, and the upstream 0.1.4 jar lacks
+  the same keys.

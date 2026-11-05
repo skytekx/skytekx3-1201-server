@@ -43,12 +43,13 @@ def preflight():
         with zipfile.ZipFile(MRPACK) as z:
             idx = json.loads(z.read("modrinth.index.json"))
             jars = mrpack_permissions.mrpack_jars(z)
+            jar_data = mrpack_permissions.mrpack_jar_data(z, REPO)
     except (zipfile.BadZipFile, KeyError, ValueError) as e:
         sys.exit(f"{MRPACK} is not a readable .mrpack: {e}")
     problems = []
     if idx.get("versionId") != VERSION:
         problems.append(f"its modrinth.index.json has versionId {idx.get('versionId')!r}, not {VERSION!r}")
-    for jar, why in mrpack_permissions.check(REPO, jars):
+    for jar, why in mrpack_permissions.check(REPO, jars, jar_data):
         problems.append(f"bundled {jar} -- {why}")
     if problems:
         print(f"refusing to upload {MRPACK}:")

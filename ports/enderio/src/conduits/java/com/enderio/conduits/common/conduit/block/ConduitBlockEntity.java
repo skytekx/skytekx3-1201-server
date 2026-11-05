@@ -28,12 +28,18 @@ import com.enderio.core.common.blockentity.EnderBlockEntity;
 import dev.gigaherz.graph3.Graph;
 import dev.gigaherz.graph3.GraphObject;
 import dev.gigaherz.graph3.Mergeable;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -73,6 +79,18 @@ public class ConduitBlockEntity extends EnderBlockEntity {
 
     public static final ModelProperty<ConduitBundle> BUNDLE_MODEL_PROPERTY = new ModelProperty<>();
     public static final ModelProperty<BlockPos> POS = new ModelProperty<>();
+    public static final ModelProperty<ModelData> FACADE_MODEL_DATA = new ModelProperty<>();
+
+    /**
+     * The facades of the loaded bundles of each client level, by position (Ender IO 7.1, 78e627263, per dimension since 3a7275c78). The
+     * ghost pass draws them while the facades are hidden, and a change of visibility rebuilds the sections in {@link #CHUNK_FACADES}.
+     * Only the client main thread touches them.
+     */
+    @UseOnly(LogicalSide.CLIENT)
+    public static final Map<ResourceKey<Level>, Long2ObjectMap<BlockState>> FACADES = new HashMap<>();
+
+    @UseOnly(LogicalSide.CLIENT)
+    public static final Map<ResourceKey<Level>, Long2ObjectMap<LongSet>> CHUNK_FACADES = new HashMap<>();
 
     private final ConduitShape shape = new ConduitShape();
 
@@ -104,7 +122,68 @@ public class ConduitBlockEntity extends EnderBlockEntity {
         updateShape();
         requestModelDataUpdate();
         level.setBlocksDirty(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState());
+        if (level.isClientSide()) {
+            Optional<BlockState> facadeState = bundle.getFacadeState();
+            if (facadeState.isPresent()) {
+                addClientFacade(level.dimension(), worldPosition, facadeState.get());
+            } else {
+                removeClientFacade(level.dimension(), worldPosition);
+            }
+        }
     }
+
+    // region Client Facade Cache
+
+    @UseOnly(LogicalSide.CLIENT)
+    private static void addClientFacade(ResourceKey<Level> dimension, BlockPos pos, BlockState facade) {
+        FACADES.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>()).put(pos.asLong(), facade);
+        CHUNK_FACADES.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>())
+            .computeIfAbsent(SectionPos.asLong(pos), key -> new LongOpenHashSet())
+            .add(pos.asLong());
+    }
+
+    /**
+     * Forget one facade. The other facades of its section stay (b6c650ebf), and only an empty section entry goes.
+     */
+    @UseOnly(LogicalSide.CLIENT)
+    private static void removeClientFacade(ResourceKey<Level> dimension, BlockPos pos) {
+        @Nullable Long2ObjectMap<BlockState> facades = FACADES.get(dimension);
+        if (facades != null) {
+            facades.remove(pos.asLong());
+        }
+
+        @Nullable Long2ObjectMap<LongSet> sections = CHUNK_FACADES.get(dimension);
+        if (sections != null) {
+            long section = SectionPos.asLong(pos);
+            @Nullable LongSet positions = sections.get(section);
+            if (positions != null) {
+                positions.remove(pos.asLong());
+                if (positions.isEmpty()) {
+                    sections.remove(section);
+                }
+            }
+        }
+    }
+
+    /**
+     * Forget all facades of the client, when it leaves a world.
+     */
+    @UseOnly(LogicalSide.CLIENT)
+    public static void clearClientFacades() {
+        FACADES.clear();
+        CHUNK_FACADES.clear();
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        // ff23e13c4: a removed bundle takes its facade out of the client cache.
+        if (level != null && level.isClientSide()) {
+            removeClientFacade(level.dimension(), worldPosition);
+        }
+    }
+
+    // endregion
 
     // region Network Sync
 
@@ -190,6 +269,8 @@ public class ConduitBlockEntity extends EnderBlockEntity {
         if (level instanceof ServerLevel serverLevel) {
             ConduitSavedData savedData = ConduitSavedData.get(serverLevel);
             bundle.getTypes().forEach(type -> onChunkUnloaded(savedData, type));
+        } else if (level != null && level.isClientSide()) {
+            removeClientFacade(level.dimension(), worldPosition);
         }
     }
 

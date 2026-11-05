@@ -22,6 +22,7 @@ import com.enderio.conduits.common.redstone.RedstoneTLatchFilter;
 import com.enderio.conduits.common.redstone.RedstoneTimerFilter;
 import com.enderio.conduits.common.redstone.RedstoneXNORFilter;
 import com.enderio.conduits.common.redstone.RedstoneXORFilter;
+import com.enderio.conduits.data.model.FacadeItemModelBuilder;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.resources.ResourceLocation;
@@ -45,14 +46,13 @@ public class ConduitItems {
     public static final ItemEntry<Item> ITEM = createConduitItem(EIOConduitTypes.ITEM, "item");
 
     // Ender IO 7.1 (78e627263) conduit facades.
-    public static final ItemEntry<ConduitFacadeItem> CONDUIT_FACADE = conduitFacade("conduit_facade", "Conduit Facade", FacadeType.BASIC,
-        "item/conduit_facade");
+    public static final ItemEntry<ConduitFacadeItem> CONDUIT_FACADE = conduitFacade("conduit_facade", "Conduit Facade", FacadeType.BASIC);
     public static final ItemEntry<ConduitFacadeItem> TRANSPARENT_CONDUIT_FACADE = conduitFacade("transparent_conduit_facade",
-        "Transparent Conduit Facade", FacadeType.TRANSPARENT, "item/conduit_facade_transparent");
+        "Transparent Conduit Facade", FacadeType.TRANSPARENT);
     public static final ItemEntry<ConduitFacadeItem> HARDENED_CONDUIT_FACADE = conduitFacade("hardened_conduit_facade",
-        "Hardened Conduit Facade", FacadeType.HARDENED, "item/conduit_facade_hardened");
+        "Hardened Conduit Facade", FacadeType.HARDENED);
     public static final ItemEntry<ConduitFacadeItem> TRANSPARENT_HARDENED_CONDUIT_FACADE = conduitFacade("transparent_hardened_conduit_facade",
-        "Transparent Hardened Conduit Facade", FacadeType.TRANSPARENT_HARDENED, "item/conduit_facade_transparent_hardened");
+        "Transparent Hardened Conduit Facade", FacadeType.TRANSPARENT_HARDENED);
 
     public static final ItemEntry<SpeedUpgradeItem> EXTRACTION_SPEED_UPGRADE_1 = REGISTRATE
         .item("extraction_speed_upgrade_1", props -> new SpeedUpgradeItem(props, 1))
@@ -125,12 +125,12 @@ public class ConduitItems {
         .tag(EIOTags.Items.HIDE_FACADES)
         .register();
 
-    private static ItemEntry<ConduitFacadeItem> conduitFacade(String name, String englishName, FacadeType type, String texture) {
+    private static ItemEntry<ConduitFacadeItem> conduitFacade(String name, String englishName, FacadeType type) {
         return REGISTRATE
             .item(name, props -> new ConduitFacadeItem(props, type))
             .lang(englishName)
-            .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), new ResourceLocation("item/generated"))
-                .texture("layer0", EnderIO.loc(texture)))
+            // The block model of the same name is the unpainted look, see FacadeItemGeometry.
+            .model((ctx, prov) -> prov.getBuilder(ctx.getName()).customLoader(FacadeItemModelBuilder::begin).model(ctx.getName()).end())
             .tab(EIOCreativeTabs.CONDUITS)
             .register();
     }

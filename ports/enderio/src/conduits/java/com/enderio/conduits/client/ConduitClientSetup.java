@@ -3,7 +3,6 @@ package com.enderio.conduits.client;
 import com.enderio.EnderIO;
 import com.enderio.api.conduit.model.RegisterConduitCoreModelModifiersEvent;
 import com.enderio.api.conduit.screen.RegisterConduitScreenExtensionsEvent;
-import com.enderio.api.misc.ColorControl;
 import com.enderio.conduits.client.gui.ConduitIconTextureManager;
 import com.enderio.conduits.client.gui.conduit.ConduitScreenExtensions;
 import com.enderio.conduits.client.gui.conduit.EnergyConduitScreenExtension;
@@ -11,6 +10,7 @@ import com.enderio.conduits.client.gui.conduit.FluidConduitScreenExtension;
 import com.enderio.conduits.client.gui.conduit.ItemConduitScreenExtension;
 import com.enderio.conduits.client.gui.conduit.RedstoneConduitScreenExtension;
 import com.enderio.conduits.client.model.ConduitGeometry;
+import com.enderio.conduits.client.model.FacadeItemGeometry;
 import com.enderio.conduits.client.model.conduit.modifier.ConduitCoreModelModifiers;
 import com.enderio.conduits.client.model.conduit.modifier.FluidConduitCoreModelModifier;
 import com.enderio.conduits.client.model.conduit.modifier.RedstoneConduitCoreModelModifier;
@@ -19,14 +19,10 @@ import com.enderio.conduits.common.init.ConduitItems;
 import com.enderio.conduits.common.init.EIOConduitTypes;
 import com.enderio.conduits.common.items.ConduitProbeItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -34,7 +30,6 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +51,8 @@ public class ConduitClientSetup {
     public static final ResourceLocation CONDUIT_IO_IN_OUT = loc("block/io/in_out");
     public static final ResourceLocation CONDUIT_IO_OUT = loc("block/io/output");
     public static final ResourceLocation CONDUIT_IO_REDSTONE = loc("block/io/redstone");
+    // Ender IO 7.1 (78e627263): the frame of a painted facade item.
+    public static final ResourceLocation CONDUIT_FACADE_OVERLAY = loc("block/conduit_facade_overlay");
 
     private ConduitClientSetup() {}
 
@@ -100,6 +97,7 @@ public class ConduitClientSetup {
     @SubscribeEvent
     public static void modelLoader(ModelEvent.RegisterGeometryLoaders event) {
         event.register("conduit", new ConduitGeometry.Loader());
+        event.register("facades_item", new FacadeItemGeometry.Loader());
     }
 
     @SubscribeEvent
@@ -122,15 +120,14 @@ public class ConduitClientSetup {
 
     @SubscribeEvent
     public static void blockColors(RegisterColorHandlersEvent.Block block) {
-        block.register(new ConduitBlockColor(), ConduitBlocks.CONDUIT.get());
+        // The channel colors of the conduits and the tints of a facade's block.
+        block.register(new ConduitFacadeColor(), ConduitBlocks.CONDUIT.get());
     }
 
-    public static class ConduitBlockColor implements BlockColor {
-
-        @Override
-        public int getColor(BlockState state, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, int tintIndex) {
-            return ColorControl.values()[tintIndex].getColor();
-        }
+    @SubscribeEvent
+    public static void itemColors(RegisterColorHandlersEvent.Item event) {
+        event.register(new ConduitFacadeColor(), ConduitItems.CONDUIT_FACADE.get(), ConduitItems.TRANSPARENT_CONDUIT_FACADE.get(),
+            ConduitItems.HARDENED_CONDUIT_FACADE.get(), ConduitItems.TRANSPARENT_HARDENED_CONDUIT_FACADE.get());
     }
 
     private static ResourceLocation loc(String modelName) {

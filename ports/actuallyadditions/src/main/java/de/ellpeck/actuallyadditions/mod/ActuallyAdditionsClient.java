@@ -94,7 +94,8 @@ public class ActuallyAdditionsClient {
         MenuScreens.register(ActuallyContainers.XPSOLIDIFIER_CONTAINER.get(), GuiXPSolidifier::new);
         // From old proxy
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
-        MinecraftForge.EVENT_BUS.register(new ClientRegistryHandler());
+        // SkyTekx: upstream f9897f06 moved ClientRegistryHandler to the mod bus, and 2e394d92
+        // deleted it. Its two listeners for mod bus model events were empty
         MinecraftForge.EVENT_BUS.register(new SpecialRenderInit());
 
         event.enqueueWork(() ->

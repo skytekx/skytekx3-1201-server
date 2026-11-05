@@ -142,14 +142,28 @@ tasks.withType(AbstractArchiveTask).configureEach {
 }
 
 tasks.named('jar', Jar).configure {
+    // LGPL v3 with the GPL v3 it incorporates, Mekanism's MIT notice for the derived textures, and the
+    // NOTICE of this modified build, each under a name that cannot clash with another mod's jar
+    from('LICENSE') {
+        rename { "LICENSE_${mod_id}" }
+    }
+    from('GPL-3.0.txt') {
+        rename { "LICENSE_${mod_id}_GPL-3.0" }
+    }
+    from('Mekanism-MIT.txt') {
+        rename { "LICENSE_${mod_id}_Mekanism-MIT" }
+    }
+    from('NOTICE') {
+        rename { "NOTICE_${mod_id}" }
+    }
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
-                'Specification-Vendor'    : mod_id,
+                'Specification-Vendor'    : 'SkyTekx (unofficial build)',
                 'Specification-Version'   : '1',
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_id,
+                'Implementation-Vendor'   : 'SkyTekx (unofficial build)',
                 'MixinConfigs'            : 'mekanism_extra_modules.mixins.json'
         ])
     }

@@ -116,3 +116,19 @@ What the port leaves out of the later upstream commits, and why:
 | Commit `576425a` | The config screen and its 30 translated label sets | It uses NeoForge's `ConfigurationScreen`, which Forge 47 lacks. The server config file and its comments stay the way to tune the modules. |
 | Commit `1ce73d3` | Dropping the `strictDraconicOnly` check and option | The check only looks at the death message id. Draconic Evolution 3.1.2.621 names its laser damage type `draconicevolution.guardian_laser` (`data/draconicevolution/damage_type/guardian_laser.json`), which the check accepts, so the base behaves the same. |
 | Commit `db62401` | The `@WrapWithCondition` injections, the `[[mixins]]` entry of `neoforge.mods.toml`, Phase Guard state in memory, the body armor only lookup, the removal of the Mekanism Tools dependency and of the `debug` and `allowMixinProtection` options | The license review of this port keeps upstream's two `@Redirect` injections of the base. Forge 47 reads the `MixinConfigs` manifest entry, so the mixin already loads. The other parts are refactors without a behaviour change on 1.20.1, and the base config keys stay stable. The pack ships Mekanism Tools anyway. |
+
+## License files and notice
+
+Upstream jars carry no license file. The port adds these files on 2026-11-05, in this directory and
+in the jar.
+
+| File here | In the jar | What it is |
+|---|---|---|
+| File `LICENSE` | Entry `LICENSE_mekanism_extra_modules` | Upstream's unchanged LGPL v3 text. |
+| File `GPL-3.0.txt` | Entry `LICENSE_mekanism_extra_modules_GPL-3.0` | The GPL v3 text, which the LGPL v3 incorporates. It is byte identical to https://www.gnu.org/licenses/gpl-3.0.txt (35149 bytes, SHA-256 `3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986`, fetched on 2026-11-05). |
+| File `Mekanism-MIT.txt` | Entry `LICENSE_mekanism_extra_modules_Mekanism-MIT` | Mekanism's MIT license with its copyright notice for the derived textures, byte identical to `LICENSE` of the Mekanism branch `1.21.x` (https://raw.githubusercontent.com/mekanism/Mekanism/1.21.x/LICENSE, SHA-256 `38ec6b47166e816850c10da7962a1d80c47380cbf76a05eef9da0f103a6abb75`, fetched on 2026-11-05). The branch `1.20.x` has the same text with the years 2017 to 2023. |
+| File `NOTICE` | Entry `NOTICE_mekanism_extra_modules` | States that this is an unofficial modified build, names the upstream URL and commit, lists the changed files with the date, the license and where the Corresponding Source is, and names the Mekanism derived textures. |
+
+The file `mods.toml` keeps `license="LGPL-3.0-or-later"` and `authors="Lumysia"`, and its credits
+name the upstream commit, the license files and the source of the build. The jar manifest names the
+vendor as an unofficial SkyTekx build.

@@ -9,7 +9,7 @@ version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/mekanism-extra-modules"
 authors="Lumysia"
-credits="Unofficial Forge 1.20.1 port by SkyTekx of Mekanism: Extra Modules 0.1.0-beta.3 (https://github.com/Lumysia/mekanism-extra-modules, commit 1548dd6f2d41906e845c626895cb35769a33a61e). Released under LGPL-3.0-or-later. Source of this build: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/mekanism-extra-modules"
+credits="Unofficial Forge 1.20.1 port by SkyTekx of Mekanism: Extra Modules 0.1.0-beta.3 (https://github.com/Lumysia/mekanism-extra-modules, commit 1548dd6f2d41906e845c626895cb35769a33a61e). Released under LGPL-3.0-or-later, see LICENSE_mekanism_extra_modules and NOTICE_mekanism_extra_modules. The textures derive from Mekanism textures under the MIT license, see LICENSE_mekanism_extra_modules_Mekanism-MIT. Source of this build: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/mekanism-extra-modules"
 logoFile="mekanism_extra_modules.png"
 description='''${mod_description}
 

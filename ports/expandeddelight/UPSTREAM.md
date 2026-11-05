@@ -172,6 +172,11 @@ Fixes of upstream bugs, each small and local:
   constructor without arguments, so the default state fell back to the first of all states, a
   waterlogged juicer. Placing by hand was fine, but `/setblock`, `/fill` and every mod that places
   `defaultBlockState()` made a juicer that ticked water and left a water source when broken.
+- Hoppers and pipes on the sides of the juicer put only valid containers into its container slot:
+  items of `#expandeddelight:valid_juicer_containers` and the container of the drink inside, the
+  same rule as shift clicking in the menu. Upstream took any item there, so apples piped in from
+  the side stayed in the slot until a player took them out. Farmer's Delight's cooking pot, which
+  upstream follows here, has the same gap.
 - The wild sweet potato gives Absorption in suspicious stew, as all wild crops of the 1.20 branch do,
   because Oozing does not exist before Minecraft 1.20.5.
 

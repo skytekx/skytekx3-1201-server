@@ -30,7 +30,10 @@ public final class ProtectionService {
         if (event.phase != TickEvent.Phase.END || event.side != LogicalSide.SERVER) {
             return;
         }
-        if (!(event.player instanceof ServerPlayer player)) {
+        // SkyTekx port: a dead player keeps ticking until respawn. Without this check a suit that survives death
+        // (keepInventory, or a death that bypassed Phase Guard such as /kill) would draw energy and set the
+        // dead player's health back to minHealth.
+        if (!(event.player instanceof ServerPlayer player) || !player.isAlive()) {
             return;
         }
         updatePhaseGuard(player);

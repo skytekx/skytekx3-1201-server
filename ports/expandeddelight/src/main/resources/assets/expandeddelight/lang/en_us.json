@@ -25,6 +25,7 @@
   "item.expandeddelight.peanut_honey_soup": "Honey Peanut Soup",
   "item.expandeddelight.sweet_berry_jelly_sandwich": "Peanut Butter and Sweet Berry Jelly Sandwich",
   "item.expandeddelight.glow_berry_jelly_sandwich": "Peanut Butter and Glow Berry Jelly Sandwich",
+  "item.expandeddelight.cranberry_jelly_sandwich": "Peanut Butter and Cranberry Jelly Sandwich",
 
   "item.expandeddelight.cranberries": "Cranberries",
   "item.expandeddelight.cranberry_chicken": "Cranberry Chicken",
@@ -71,6 +72,8 @@
 
   "item.expandeddelight.cinnamon_boat": "Cinnamon Boat",
   "item.expandeddelight.cinnamon_chest_boat": "Cinnamon Boat with Chest",
+  "entity.expandeddelight.cinnamon_boat": "Cinnamon Boat",
+  "entity.expandeddelight.cinnamon_chest_boat": "Cinnamon Boat with Chest",
 
   "block.expandeddelight.cinnamon_sapling": "Cinnamon Sapling",
   "block.expandeddelight.cinnamon_leaves": "Cinnamon Leaves",
@@ -88,7 +91,9 @@
   "block.expandeddelight.cinnamon_pressure_plate": "Cinnamon Pressure Plate",
   "block.expandeddelight.cinnamon_button": "Cinnamon Button",
   "block.expandeddelight.cinnamon_sign": "Cinnamon Sign",
+  "block.expandeddelight.cinnamon_wall_sign": "Cinnamon Wall Sign",
   "block.expandeddelight.cinnamon_ceiling_hanging_sign": "Cinnamon Hanging Sign",
+  "block.expandeddelight.cinnamon_wall_hanging_sign": "Cinnamon Wall Hanging Sign",
   "block.expandeddelight.cinnamon_cabinet": "Cinnamon Cabinet",
 
   "block.expandeddelight.asparagus_crate": "Asparagus Crate",
@@ -135,6 +140,9 @@
   "expandeddelight.jei.cheese_fermenting.accelerators": "Sped up by adjacent activators (see below)",
 
   "itemGroup.expandeddelight": "Expanded Delight",
+
+  "expandeddelight.advancement.root": "Expanded Delight",
+  "expandeddelight.advancement.root.desc": "More crops, juices, cheeses and spices for your kitchen",
 
   "expandeddelight.jei.info.wild_asparagus": "Asparagus can be commonly found as a wild plant in plains biomes.",
   "expandeddelight.jei.info.wild_sweet_potato": "Sweet potatoes can be commonly found as a wild plant in jungle biomes.",

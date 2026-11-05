@@ -569,3 +569,13 @@ its item here, and the NOTICE in the jar sums them up.
     file's indentation, line endings and key order. Every file parses with Gson 2.10.1 in its strict
     mode, as Minecraft's `Language.loadFromJson` reads it, with no duplicate key. The vi_vn file of
     the base holds a line break inside one string, which Gson accepts.
+33. Observe packet guard (local change, not upstream): the server handler of `ObservePacket`
+    (`network/ObservePacket.sendUpdate`) called `getBlockEntity` at any position the client sent,
+    with no check that the chunk is loaded or near the player, and only the client kept its
+    cooldown of 10 ticks. A modified client could therefore make the server thread load or generate
+    chunks anywhere. Upstream's `ServerPayloadHandler.sendUpdate` at `658a390` has the same code.
+    The handler now answers only for a position that `Level.isLoaded` reports loaded and that lies
+    within 64 blocks of the player, and at most once every 5 ticks per player, kept in a map with
+    weak keys on the server thread. Goggles observe the block in reach or, for the Modular
+    Accumulator, its controller, which stays within a few blocks, so a normal client never hits the
+    guard. The packet, its id and the protocol stay the same.

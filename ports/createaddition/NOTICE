@@ -94,6 +94,8 @@ Modifications
     Spanish, French, Polish, Portuguese and Russian locales. The Electrum Amulet summary keeps a
     translation only in French, the one locale that describes the new effect, and shows the
     English text elsewhere.
+  - Local hardening: the server answers a goggle observation only for a loaded block within 64
+    blocks of the player, and at most every 5 ticks per player.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

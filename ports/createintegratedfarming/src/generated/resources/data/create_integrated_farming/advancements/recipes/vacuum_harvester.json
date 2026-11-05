@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create_integrated_farming:vacuum_harvester"
+        "recipe": "create_integrated_farming:crafting/vacuum_harvester"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create_integrated_farming:vacuum_harvester"
+      "create_integrated_farming:crafting/vacuum_harvester"
     ]
   },
   "sends_telemetry_event": true

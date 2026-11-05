@@ -189,6 +189,11 @@ items below are what differs from upstream, with the reason.
     1.21.1 item form `{count: 1, Slot: 0, id: "minecraft:egg"}`, which `ItemStack.of` of 1.20.1 reads
     as an empty stack, because it reads the byte `Count`. That entry is now `{Count: 1b, Slot: 0, id:
     "minecraft:egg"}`, so the scene shows the egg again. No other schematic holds an item stack.
+17. Recipe advancements (local fix): upstream's six advancements under `advancements/recipes/` name the
+    recipes without their `crafting/` path, for example `create_integrated_farming:roost` for the recipe
+    `create_integrated_farming:crafting/roost`. Their `has_the_recipe` criteria and `rewards` now name
+    the `crafting/` ids, so the recipe book unlock fires. 1.20.1 ignores unknown ids there without a
+    word, and EMI and JEI never depended on it.
 
 ## Left out
 

@@ -21,7 +21,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create_integrated_farming:roost"
+        "recipe": "create_integrated_farming:crafting/roost"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -34,7 +34,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create_integrated_farming:roost"
+      "create_integrated_farming:crafting/roost"
     ]
   },
   "sends_telemetry_event": true

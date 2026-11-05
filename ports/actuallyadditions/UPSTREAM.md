@@ -153,9 +153,27 @@ next to it are upstream's Maven artifacts and are not shipped.
    That choice belongs to the release.
 5. Reproducible jar: the `jar` task sets `preserveFileTimestamps = false` and
    `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
-   clean builds of the same commit give the same SHA-1.
+   clean builds of the same commit give the same SHA-1. With the build changes 1 to 9 and no
+   source change, three clean builds gave the jar SHA-1
+   `c37140ce60ec6da5ac33ebea66b3f9fa3951f7fd` (4560170 bytes). That jar is the OLD side of the
+   savegame test of the release.
 6. Javadoc: the task `javadoc` reads the sources as UTF-8. Upstream's `build` runs it for the
    javadoc artifact, and under a host locale that is not UTF-8 (POSIX here) it failed on the
    copyright sign in the API file headers.
 7. Ignored files: the fork's `.gitignore` also ignores `/logs/`, `*.log`, `.mixin.out/` and
    `mcmodsrepo/`.
+8. License files in the jar: the `jar` task adds `LICENSE` (upstream's, unchanged) and `NOTICE`
+   (SkyTekx's, in this directory) to the jar root as `LICENSE_actuallyadditions` and
+   `NOTICE_actuallyadditions`. MIT asks for the license text in every copy, and upstream jars
+   carry none. The manifest's `Implementation-Vendor` reads
+   `Actually Additions (modified build: SkyTekx)`.
+9. Mod metadata: in `mods.toml` the field `license` keeps `MIT` and points to the two files, the
+   new `issueTrackerURL` goes to https://github.com/skytekx/skytekx3-1201-server/issues since
+   bugs of this build are ours, and `credits` adds "Modified, unofficial 1.20.1 build by SkyTekx,
+   not supported by the Actually Additions team". The fields `authors`, `displayName` and
+   `description` are unchanged.
+
+## Source changes
+
+None yet. Each later commit that ports a fix or a feature adds its item here, and the NOTICE in
+the jar sums them up.

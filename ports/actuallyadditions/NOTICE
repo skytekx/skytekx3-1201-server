@@ -1,0 +1,43 @@
+Actually Additions, modified and unofficial SkyTekx build for Forge 1.20.1
+=========================================================================
+
+This is a MODIFIED, UNOFFICIAL version of Actually Additions. It is not made, supported or
+endorsed by the Actually Additions team. Please report problems with this build to SkyTekx
+(https://github.com/skytekx/skytekx3-1201-server/issues), not to the upstream project.
+
+Original work
+-------------
+  Actually Additions by Ellpeck and contributors
+  Source:   https://github.com/Ellpeck/ActuallyAdditions
+  Base:     branch 1.20.1 @ 226a439154a8f103424783ad7afc1e33fe59cbd7 (2024-03-04, mod_version
+            1.1.52 for Forge 47, never released by upstream)
+  Backport: content to be taken from branch main @ cd9d9c63254f471f966ee51b078afdf47af5f852
+            (2026-06-19, release 1.3.26 for NeoForge 1.21.1) and from the branches 1.20.4 and
+            1.21 in between
+
+Modifications
+-------------
+  Modified by SkyTekx (the ts4.party community), 2026, for the SkyTekx 3 modpack. The result
+  still runs on Minecraft 1.20.1 with Forge 47, keeps the mod id actuallyadditions and is
+  versioned 1.1.52-skytekx.1.
+
+  Summary of the changes:
+    * Build: reproducible jar (no file timestamps, fixed entry order, no build timestamp in the
+      manifest). This NOTICE and the upstream LICENSE ship inside the jar. mods.toml marks the
+      build as a modified, unofficial one and sends bug reports to SkyTekx.
+    * Left out of the source: the fully commented out class
+      de.ellpeck.actuallyadditions.mod.util.crafting.RecipeHandler (it compiled to nothing).
+
+  The complete source of this build, with every change as a separate commit, is in
+  https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.
+  ports/actuallyadditions/UPSTREAM.md lists every change to the upstream build.
+
+Licenses
+--------
+  * Actually Additions: MIT License. The upstream LICENSE ships in this jar, unchanged, as
+    LICENSE_actuallyadditions. Upstream moved every active branch to MIT in March 2024 (upstream
+    commit 33f554119218b40dc1047c3d5a34545e64c78fe3, issue #1391). Older per file headers that
+    point to the former "Actually Additions License" are superseded by that change.
+  * Upstream marks a few code excerpts as taken from other mods with their authors' permission:
+    the experience formulas in TileEntityXPSolidifier (Ender IO) and the banner pattern helper
+    in misc.BannerHelper (Additional Banners).

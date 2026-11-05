@@ -1,13 +1,15 @@
 
 modLoader="javafml"
 loaderVersion="[47,)"
-license="MIT"
+license="MIT (see LICENSE_actuallyadditions and NOTICE_actuallyadditions in the jar)"
+# SkyTekx: bugs of this modified build go to SkyTekx, not to upstream
+issueTrackerURL="https://github.com/skytekx/skytekx3-1201-server/issues"
 [[mods]]
 modId="actuallyadditions"
 version="${file.jarVersion}"
 displayName="Actually Additions"
 #logoFile="logo.png"
-credits="Author: Ellpeck; Textures and Models: BootyToast, GlenthorLP, canitzp"
+credits="Author: Ellpeck; Textures and Models: BootyToast, GlenthorLP, canitzp; Modified, unofficial 1.20.1 build by SkyTekx, not supported by the Actually Additions team"
 authors="Ellpeck"
 description='''
 Do you want Automation? Wireless Transport? Better Machines? A cup o' Coffee? Chests? Better Hoppers? Leaf Blowers? Faster Growth? Plants? Well, Actually Additions has all that and a lot more!

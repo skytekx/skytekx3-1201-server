@@ -27,7 +27,8 @@ script, [apotheosis_passengers.js](../../kubejs/startup_scripts/apotheosis_passe
 [Apotheosis riders](#apotheosis-riders). There are no client scripts, and the folder `assets/` is empty.
 The folder `data/` holds the six uncrafting recipes of Twilight Tweaks, see
 [Twilight Forest backport](twilightforest-backport.md), the wood fallbacks, see
-[Wood fallbacks](#wood-fallbacks), the bosses and gear sets of
+[Wood fallbacks](#wood-fallbacks), three recipes of
+[Twilight Delight 3.2](#twilight-delight-recipes), the bosses and gear sets of
 [Iron's Apothic Invaders](#irons-apothic-invaders), and overrides for broken recipes, loot tables and
 loot modifiers of other mods, see [Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
 4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
@@ -154,6 +155,29 @@ To refresh the skip lists after a mod change, run the dump again: a temporary sc
 `kubejs/server_scripts/` that walks `getAllRecipesFor(RecipeType.CRAFTING)`, loaded with RCON
 `kubejs reload server_scripts` and deleted right after. Without a refresh, a wood that later gains its
 own item still works, Polymorph then offers both results.
+
+### Twilight Delight recipes
+
+Twilight's Flavors & Delight ships 2.2.8 for 1.20.1 and 3.2.9 for 1.21.1 with the same changelog. The
+1.21.1 line also has recipes for items that the Twilight Forest only gained in 4.4 to 4.8, which the
+pack's Twilight Forest fork now has (`TFItems.java` lines 55, 126 and 322 in `ports/twilightforest/`).
+A fork of the mod is not an option, because its jar carries art of earlier All Rights Reserved mods. So
+since 2026-11-05 three recipes of the branch `1.21` (`RecipeGen.java` lines 312, 668 and 918) live in
+`kubejs/data/` as data:
+
+- The shapeless recipe `skytekx3:twilight_delight/shika_senbei` makes 4 Shika Senbei from wheat, rice
+  (`forge:crops/rice`) and liveroot. The fork ships no other recipe for Shika Senbei.
+- The cooking pot recipe `skytekx3:twilight_delight/moss_soup` cooks Moss Soup from a moss patch in a
+  bowl, in 200 ticks for 0.35 experience. The crafting recipe `twilightforest:moss_soup` with a bowl and
+  a water bottle stays.
+- The override `twilightdelight:cutting/lich_trophy` gives Exanimate Essence at 50% in place of
+  Transformation Powder, as 3.2.9 does, next to the skeleton skull and three Witchcraft Bones.
+
+The first two need the Twilight Forest and Farmer's Delight, the override needs Twilight's Flavors &
+Delight (`forge:mod_loaded`). A Forge 47.4.18 test server with the fork, Twilight's Flavors & Delight
+2.2.8, Farmer's Delight 1.3.4 and KubeJS loaded all three on 2026-11-05 with these ingredients and
+results, and logged no error about them. The two new items and the reusable flask of the chaos ink
+drink of 3.2.9 are code and stay out.
 
 ### Tag fixes
 

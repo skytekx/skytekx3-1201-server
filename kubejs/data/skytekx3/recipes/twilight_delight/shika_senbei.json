@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "tag": "forge:crops/rice"
+    },
+    {
+      "item": "twilightforest:liveroot"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "twilightforest:shika_senbei"
+  }
+}

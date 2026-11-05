@@ -1,0 +1,30 @@
+{
+  "type": "farmersdelight:cutting",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "twilightforest:lich_trophy"
+    }
+  ],
+  "result": [
+    {
+      "item": "minecraft:skeleton_skull"
+    },
+    {
+      "count": 3,
+      "item": "twilightdelight:witchcraft_bone"
+    },
+    {
+      "chance": 0.5,
+      "item": "twilightforest:exanimate_essence"
+    }
+  ],
+  "tool": {
+    "tag": "forge:tools/knives"
+  }
+}

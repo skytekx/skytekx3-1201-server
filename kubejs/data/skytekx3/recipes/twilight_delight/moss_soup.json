@@ -1,0 +1,27 @@
+{
+  "type": "farmersdelight:cooking",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "cookingtime": 200,
+  "experience": 0.35,
+  "ingredients": [
+    {
+      "item": "twilightforest:moss_patch"
+    }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "item": "twilightforest:moss_soup"
+  }
+}

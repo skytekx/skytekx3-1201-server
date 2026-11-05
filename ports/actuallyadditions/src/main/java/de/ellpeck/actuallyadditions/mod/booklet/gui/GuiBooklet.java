@@ -21,7 +21,7 @@
 //import de.ellpeck.actuallyadditions.mod.data.PlayerData;
 //import de.ellpeck.actuallyadditions.mod.data.PlayerData.PlayerSave;
 //import de.ellpeck.actuallyadditions.mod.inventory.gui.TexturedButton;
-//import de.ellpeck.actuallyadditions.mod.network.PacketHandlerHelper;
+//import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 //import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 //import de.ellpeck.actuallyadditions.mod.util.StringUtil;
 //import net.minecraft.client.gui.IGuiEventListener;
@@ -161,7 +161,7 @@
 //        }
 //
 //        if (change) {
-//            PacketHandlerHelper.sendPlayerDataToServer(true, 0);
+//            PacketHelperClient.sendPlayerDataToServer(true, 0);
 //        }
 //    }
 //

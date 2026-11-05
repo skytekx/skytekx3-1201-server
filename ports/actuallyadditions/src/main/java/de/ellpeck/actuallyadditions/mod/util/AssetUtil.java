@@ -19,8 +19,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.render.RenderTypes;
-import de.ellpeck.actuallyadditions.mod.network.PacketHandler;
-import de.ellpeck.actuallyadditions.mod.network.PacketServerToClient;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityAtomicReconstructor;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityBase;
 import net.minecraft.client.Minecraft;
@@ -35,7 +33,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +42,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 
 public final class AssetUtil {
@@ -218,24 +214,6 @@ public final class AssetUtil {
 //        GlStateManager._popMatrix();
 //    }
 
-    public static void spawnLaserWithTimeServer(Level world, double startX, double startY, double startZ, double endX, double endY, double endZ, int color, int maxAge, double rotationTime, float size, float alpha) {
-        if (!world.isClientSide) {
-            CompoundTag data = new CompoundTag();
-            data.putDouble("StartX", startX);
-            data.putDouble("StartY", startY);
-            data.putDouble("StartZ", startZ);
-            data.putDouble("EndX", endX);
-            data.putDouble("EndY", endY);
-            data.putDouble("EndZ", endZ);
-            data.putInt("Color", color);
-            data.putDouble("RotationTime", rotationTime);
-            data.putFloat("Size", size);
-            data.putInt("MaxAge", maxAge);
-            data.putFloat("Alpha", alpha);
-            PacketHandler.THE_NETWORK.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(startX, startY, startZ, 96, world.dimension())), new PacketServerToClient(data, PacketHandler.LASER_HANDLER));
-        }
-    }
-
     @OnlyIn(Dist.CLIENT)
     public static void spawnLaserWithTimeClient(double startX, double startY, double startZ, double endX, double endY, double endZ, int color, int maxAge, double rotationTime, float size, float alpha) {
         Minecraft mc = Minecraft.getInstance();
@@ -307,6 +285,9 @@ public final class AssetUtil {
         matrixStack.popPose();
     }
 
+    // SkyTekx: client only like its siblings. The base left this overload unmarked, so a dedicated
+    // server verified a method with PoseStack and MultiBufferSource whenever AssetUtil loaded
+    @OnlyIn(Dist.CLIENT)
     public static void renderLaser(PoseStack matrixStack, MultiBufferSource buffer, Vec3 startOffset, Vec3 endOffset, float rotationTime, int color, float alpha, float beamWidth) {
         Vec3 combined = endOffset.subtract(startOffset);
 

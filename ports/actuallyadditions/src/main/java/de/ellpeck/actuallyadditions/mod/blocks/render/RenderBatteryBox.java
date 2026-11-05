@@ -23,7 +23,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -56,7 +56,8 @@ public class RenderBatteryBox implements BlockEntityRenderer<TileEntityBatteryBo
             Font font = Minecraft.getInstance().font;
 
             String energyTotal = Lang.cleanEnergyValues(cap, false);
-            String energyName = I18n.get("misc.actuallyadditions.power_name_long");
+            // SkyTekx: a Component instead of an I18n string (upstream 3a767e18)
+            Component energyName = Component.translatable("misc.actuallyadditions.power_name_long");
             float backgroundOpacity = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
             int j = (int) (backgroundOpacity * 255.0F) << 24;
 
@@ -67,7 +68,7 @@ public class RenderBatteryBox implements BlockEntityRenderer<TileEntityBatteryBo
                 matrices.mulPose(Axis.YP.rotationDegrees(90));
                 Matrix4f pose = matrices.last().pose();
                 font.drawInBatch(energyTotal, -font.width(energyTotal) / 2F, 10F, 0, false, pose, buffer, Font.DisplayMode.SEE_THROUGH, j, combinedLight, true);
-                font.drawInBatch(energyName, -font.width(energyTotal) / 2F, 20F, 0, false, pose, buffer, Font.DisplayMode.SEE_THROUGH, j, combinedLight, true);
+                font.drawInBatch(energyName, -font.width(energyTotal) / 2F, 20F, 0, false, pose, buffer, Font.DisplayMode.SEE_THROUGH, j, combinedLight);
 //                font.draw(matrices, energyTotal, -font.width(energyTotal) / 2F, 10F, 0xFFFFFF);
 //                font.draw(matrices, energyName, -font.width(energyName) / 2F, 20F, 0xFFFFFF);
 

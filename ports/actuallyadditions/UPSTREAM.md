@@ -421,3 +421,31 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and a drawn background of `31e2f47` follows JEI 19. The click areas of `53414c4` need the
     coffee category and the powered furnace fixes and come with them, like the coffee, crusher
     and pressing categories, the powered furnace catalyst and the energy subtype interpreter.
+13. Dedicated server split: the look at overlays of the Atomic Reconstructor, the laser relays, the
+    Lava Factory Controller, the phantom blocks, the Player Interface and the Vertical Digger leave
+    their common block classes. Upstream `668f7ffe` moved them into client only `IBlockHud` classes
+    in `mod/blocks/blockhuds/`, which each block hands out through `IHudDisplay.getHud()`. Here
+    `IHudDisplay` is an empty marker, and `ClientEvents` registers the overlays by block class in the
+    client only `BlockHuds`, so no common class holds an instance of a client class. The tick of the
+    Engineer's Goggles moves from the item into `ClientEvents` (`844efe42`). The four clientbound
+    packet handlers call the client only `PacketHandlerClient` through
+    `DistExecutor.unsafeRunWhenOn(Dist.CLIENT)` instead of carrying `@OnlyIn` methods that a
+    dedicated server strips (`844efe42`, `8fd9afe8`). The helper `PacketHandlerHelper` splits into
+    `PacketHelperClient` and `PacketHelperServer` as in `8fd9afe8`, and the second one also sends the
+    laser packet that `AssetUtil` sent. The laser relays build their mode lines as Components
+    (`0226078a`, `d1ceffca`), and the other I18n calls of `3a767e18` and `d64b530f` go too. That also
+    gives the menus of the Item Filter, the drill and the Advanced Laser Relay their titles, where
+    the base looked up the missing keys `container.actuallyadditions.filter.name` and
+    `container.actuallyadditions.drill.name`. The common `ItemCoffee.MilkIngredient.getExtraText` no
+    longer calls I18n. A scan of the compiled classes found five more leaks, all fixed: an unmarked
+    `AssetUtil.renderLaser` overload, the `FluidDisplay` accessors of `FermentingRecipe`, the break
+    packet in `WorldUtil.breakExtraBlock`, the client listeners of the `ActuallyAdditions`
+    constructor and `TileEntityPhantomface.renderParticles`, a client only method that the common
+    `clientTick` called. The class `StringUtil` is client only as a whole. After the change an ASM
+    scan of the build (every method without `@OnlyIn(Dist.CLIENT)` in every class outside the client
+    classes) finds client references only in the lambdas that `DistExecutor` runs, and no call from
+    common code to a member that a dedicated server strips. Not part of this change: the Patchouli
+    guard of `a20c25eb`, which comes with `PatchouliPages` and the Patchouli manual, the filter
+    buttons of the whitelist screen in `3a767e18`, which need the `FilterSettingsGui` rework of the
+    sacks and filters, and the Curios rule, since the base calls no Curios API (the Crafter on a
+    Stick hotkey keeps its calls in a compat class).

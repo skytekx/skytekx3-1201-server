@@ -10,14 +10,11 @@
 
 package de.ellpeck.actuallyadditions.mod.blocks;
 
-import com.mojang.blaze3d.platform.Window;
 import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
 import de.ellpeck.actuallyadditions.api.laser.IConnectionPair;
 import de.ellpeck.actuallyadditions.api.laser.Network;
-import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.base.FullyDirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
-import de.ellpeck.actuallyadditions.mod.items.ItemEngineerGoggles;
 import de.ellpeck.actuallyadditions.mod.items.ItemLaserRelayUpgrade;
 import de.ellpeck.actuallyadditions.mod.items.ItemLaserWrench;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityLaserRelay;
@@ -29,10 +26,6 @@ import de.ellpeck.actuallyadditions.mod.tile.TileEntityLaserRelayItem;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityLaserRelayItemAdvanced;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import io.netty.util.internal.ConcurrentSet;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -46,11 +39,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -195,39 +185,6 @@ public class BlockLaserRelay extends FullyDirectionalBlock.Container implements 
                 return level.isClientSide? TileEntityLaserRelayFluids::clientTick : TileEntityLaserRelayFluids::serverTick;
             default:
                 return level.isClientSide? TileEntityLaserRelayEnergy::clientTick : TileEntityLaserRelayEnergy::serverTick;
-        }
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void displayHud(GuiGraphics guiGraphics, Minecraft minecraft, Player player, ItemStack stack, HitResult rayCast, Window resolution) {
-        if (!(rayCast instanceof BlockHitResult)) {
-            return;
-        }
-
-        BlockPos pos = ((BlockHitResult) rayCast).getBlockPos();
-        if (minecraft.level != null) {
-            boolean wearing = ItemEngineerGoggles.isWearing(player);
-            if (wearing || StackUtil.isValid(stack)) {
-                boolean compass = stack.getItem() == CommonConfig.Other.relayConfigureItem;
-                if (wearing || compass || stack.getItem() instanceof ItemLaserWrench) {
-                    BlockEntity tile = minecraft.level.getBlockEntity(pos);
-                    if (tile instanceof TileEntityLaserRelay relay) {
-
-	                    String strg = relay.getExtraDisplayString();
-                        guiGraphics.drawString(minecraft.font, strg, (int) (resolution.getGuiScaledWidth() / 2f + 5), (int) (resolution.getGuiScaledHeight() / 2f + 5), 0xFFFFFF);
-
-                        String expl;
-                        if (compass) {
-                            expl = relay.getCompassDisplayString();
-                        } else {
-                            expl = ChatFormatting.GRAY.toString() + ChatFormatting.ITALIC + I18n.get("info." + ActuallyAdditions.MODID + ".laserRelay.mode.noCompasss", I18n.get(CommonConfig.Other.relayConfigureItem.getDescriptionId()));
-                        }
-
-                        guiGraphics.drawString(minecraft.font, expl, (int) (resolution.getGuiScaledWidth() / 2f + 5), (int) (resolution.getGuiScaledHeight() / 2f + 15), 0xFFFFFF);
-                    }
-                }
-            }
         }
     }
 

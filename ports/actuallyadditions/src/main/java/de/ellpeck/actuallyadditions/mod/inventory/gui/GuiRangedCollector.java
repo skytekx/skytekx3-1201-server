@@ -71,6 +71,6 @@ public class GuiRangedCollector extends AAScreen<ContainerRangedCollector> {
 
 //    @Override
 //    public void actionPerformed(Button button) {
-//        PacketHandlerHelper.sendButtonPacket(this.collector, button.id);
+//        PacketHelperClient.sendButtonPacket(this.collector, button.id);
 //    }
 }

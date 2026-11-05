@@ -13,7 +13,6 @@ package de.ellpeck.actuallyadditions.mod.items;
 import com.mojang.blaze3d.platform.Window;
 import de.ellpeck.actuallyadditions.api.booklet.IBookletPage;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
-import de.ellpeck.actuallyadditions.mod.blocks.IHudDisplay;
 import de.ellpeck.actuallyadditions.mod.items.base.ItemBase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.Advancement;
@@ -39,7 +38,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemBooklet extends ItemBase implements IHudDisplay {
+public class ItemBooklet extends ItemBase {
 
     @OnlyIn(Dist.CLIENT)
     public static IBookletPage forcedPage;
@@ -101,7 +100,7 @@ public class ItemBooklet extends ItemBase implements IHudDisplay {
         }
     }
 
-    @Override
+    // SkyTekx: no longer an IHudDisplay (upstream 668f7ffe), the body is commented out anyway
     @OnlyIn(Dist.CLIENT)
     public void displayHud(GuiGraphics guiGraphics, Minecraft minecraft, Player player, ItemStack stack, HitResult rayCast, Window resolution) {
 //        if (rayCast != null && rayCast.getBlockPos() != null) {

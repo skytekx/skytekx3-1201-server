@@ -17,7 +17,11 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+// SkyTekx: every method here is a client text helper, and after the HUD split (upstream 668f7ffe)
+// only client classes call them. Marking the class client only makes a dedicated server fail
+// loudly if common code ever loads it again
 @Deprecated
+@OnlyIn(Dist.CLIENT)
 public final class StringUtil {
 
     /**

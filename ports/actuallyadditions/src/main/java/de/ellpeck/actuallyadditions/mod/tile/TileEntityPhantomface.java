@@ -22,8 +22,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -146,7 +144,8 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
         return false;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    // SkyTekx: common, since it names no client class and the common clientTick calls it. As a
+    // client only method a dedicated server stripped it while clientTick kept the call
     public void renderParticles() {
         if (this.level.random.nextInt(2) == 0) {
             double d1 = this.boundPosition.getY() + this.level.random.nextFloat();

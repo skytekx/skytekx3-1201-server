@@ -71,7 +71,7 @@ public class GuiPhantomPlacer extends AAScreen<ContainerPhantomPlacer> {
 //    @Override
 //    protected void actionPerformed(Button button) throws IOException {
 //        if (!this.placer.isBreaker) {
-//            PacketHandlerHelper.sendButtonPacket(this.placer, button.id);
+//            PacketHelperClient.sendButtonPacket(this.placer, button.id);
 //        }
 //    }
 

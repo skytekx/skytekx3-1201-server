@@ -15,7 +15,6 @@ import de.ellpeck.actuallyadditions.api.recipe.CoffeeIngredient;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.items.base.ItemFoodBase;
 import de.ellpeck.actuallyadditions.mod.util.ItemUtil;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -158,7 +157,9 @@ public class ItemCoffee extends ItemFoodBase {
 
         @Override
         public String getExtraText() {
-            return I18n.get("container.nei." + ActuallyAdditions.MODID + ".coffee.extra.milk");
+            // SkyTekx: a Component instead of the client only I18n, as upstream 3a767e18 does for the
+            // other strings. This method is common, and getString() resolves the key on the client
+            return Component.translatable("container.nei." + ActuallyAdditions.MODID + ".coffee.extra.milk").getString();
         }
     }
 }

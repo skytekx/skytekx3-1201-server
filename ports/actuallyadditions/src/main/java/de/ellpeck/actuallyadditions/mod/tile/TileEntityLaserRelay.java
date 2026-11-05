@@ -21,6 +21,7 @@ import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -201,11 +202,11 @@ public abstract class TileEntityLaserRelay extends TileEntityInventoryBase {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public abstract String getExtraDisplayString();
+    // SkyTekx: Components instead of I18n strings (upstream 0226078a). They name no client class,
+    // so the methods are common and LaserRelayHud reads them on the client
+    public abstract Component getExtraDisplayString();
 
-    @OnlyIn(Dist.CLIENT)
-    public abstract String getCompassDisplayString();
+    public abstract Component getCompassDisplayString();
 
     public abstract void onCompassAction(Player player);
 

@@ -10,14 +10,11 @@
 
 package de.ellpeck.actuallyadditions.mod.blocks;
 
-import com.mojang.blaze3d.platform.Window;
 import de.ellpeck.actuallyadditions.api.lens.ILensItem;
 import de.ellpeck.actuallyadditions.mod.blocks.base.FullyDirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityAtomicReconstructor;
-import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -38,7 +35,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -101,28 +97,6 @@ public class BlockAtomicReconstructor extends FullyDirectionalBlock.Container im
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> entityType) {
         return level.isClientSide? TileEntityAtomicReconstructor::clientTick : TileEntityAtomicReconstructor::serverTick;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void displayHud(GuiGraphics guiGraphics, Minecraft minecraft, Player player, ItemStack stack, HitResult rayCast, Window resolution) {
-        if (!(rayCast instanceof BlockHitResult) || minecraft.level == null) {
-            return;
-        }
-
-        BlockEntity tile = minecraft.level.getBlockEntity(((BlockHitResult) rayCast).getBlockPos());
-        if (tile instanceof TileEntityAtomicReconstructor) {
-            ItemStack slot = ((TileEntityAtomicReconstructor) tile).inv.getStackInSlot(0);
-            Component lens_name;
-            if (slot.isEmpty()) {
-                lens_name = Component.translatable("info.actuallyadditions.nolens");
-            } else {
-                lens_name = slot.getItem().getName(slot);
-
-                AssetUtil.renderStackToGui(slot, resolution.getGuiScaledWidth() / 2 + 15, resolution.getGuiScaledHeight() / 2 - 19, 1F);
-            }
-            guiGraphics.drawString(minecraft.font, lens_name.plainCopy().withStyle(ChatFormatting.YELLOW).withStyle(ChatFormatting.ITALIC).getString(), (int) (resolution.getGuiScaledWidth() / 2.0f + 35), (int) (resolution.getGuiScaledHeight() / 2.0f - 15), 0xFFFFFF);
-        }
     }
 
     public static class TheItemBlock extends AABlockItem {

@@ -65,14 +65,18 @@ public class CASoundScapes {
 	}
 
 	public static void tick() {
+		// No sound ticks while no level is loaded, for example in the menus after a disconnect (upstream f83f9fd).
+		if (Minecraft.getInstance().level == null) return;
 		activeSounds.values()
 			.forEach(CASoundScape::tick);
 
 		if (AnimationTickHolder.getTicks() % UPDATE_INTERVAL != 0) return;
 
+		// Stop the soundscapes when Create's ambient sounds are switched off. The base read the option without
+		// the negation and cut every soundscape while the sounds were on (upstream a68965a).
 		boolean disable = false;
 		try { // Catch odd "Cannot get config value before config is loaded." crashes
-			disable = AllConfigs.client().enableAmbientSounds.get();
+			disable = !AllConfigs.client().enableAmbientSounds.get();
 		} catch (Exception ignored) {}
 		for (Iterator<Map.Entry<Pair<AmbienceGroup, PitchGroup>, CASoundScape>> iterator = activeSounds.entrySet()
 			.iterator(); iterator.hasNext();) {

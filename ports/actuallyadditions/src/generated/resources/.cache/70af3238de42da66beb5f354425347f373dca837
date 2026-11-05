@@ -1,7 +1,27 @@
-// 1.20.1	2024-03-03T00:40:33.021051	Block Tags
+// 1.20.1	2026-11-05T07:43:03.274446825	Block Tags
 8665de82dd3d3a1351ce58f78108214f359104b0 data/actuallyadditions/tags/blocks/mineable/aio.json
 f7dc293929a2176bc6e428c765f6bf49fbeccdb5 data/actuallyadditions/tags/blocks/mineable/drill.json
+92861bbfc33718f65a6c66f4468675fa09ac162f data/actuallyadditions/tags/blocks/worm_drop.json
+19d96265c7adc1657153cf5faea40911854ac8ed data/forge/tags/blocks/ores.json
+2bcfae7c119b0b64170989e7d41b352a8d55ea43 data/forge/tags/blocks/ores/black_quartz.json
+2bcfae7c119b0b64170989e7d41b352a8d55ea43 data/forge/tags/blocks/ores_in_ground/stone.json
+6c9a3c952d8fad5bfd8a5ab0b76aeb0b930d1db9 data/forge/tags/blocks/storage_blocks/black_quartz.json
+02a18fabd2fe852ec9d6564242eaef8b58dd6517 data/forge/tags/blocks/storage_blocks/diamatine_crystal.json
+e38d81e8b3eef1f8a225b98891672f00942496e9 data/forge/tags/blocks/storage_blocks/emeradic_crystal.json
+bbce87d7a828d3e31abf1209cceb3c6084423678 data/forge/tags/blocks/storage_blocks/empowered_diamatine_crystal.json
+520350a8e9e7818642cc7d663396a1d3c238d9ec data/forge/tags/blocks/storage_blocks/empowered_emeradic_crystal.json
+9ad94fbd4cda9e4ad8c68078cc53b67eb4043160 data/forge/tags/blocks/storage_blocks/empowered_enori_crystal.json
+fb95ac8041521e1d2879f6fcb652266dcd9e0fb1 data/forge/tags/blocks/storage_blocks/empowered_palis_crystal.json
+4885ac9140dbf4f8af14cf61e6ec9e81b933b77b data/forge/tags/blocks/storage_blocks/empowered_restonia_crystal.json
+5a912b868ae8a193bc17f5c3f485e22818c3c06f data/forge/tags/blocks/storage_blocks/empowered_void_crystal.json
+741733f39fa70fc6a7a85f033088821af14971c6 data/forge/tags/blocks/storage_blocks/enori_crystal.json
+148cd937543fd58b196403c18839b2698bf87fdf data/forge/tags/blocks/storage_blocks/palis_crystal.json
+b9aa28a54d47054ba5653bec2f20e0a675ab5120 data/forge/tags/blocks/storage_blocks/restonia_crystal.json
+fb4f349bc6fd89f26ef2ba72a9236f05eefd8ea2 data/forge/tags/blocks/storage_blocks/void_crystal.json
+cf5b58cdf67335da2f86915674ea666c48d05faa data/minecraft/tags/blocks/crops.json
 8dbaf9b7bd6774bc7c01a47a72b8a7fdaee51f87 data/minecraft/tags/blocks/mineable/axe.json
-58c611cbaae2a0a5dd6f82f183b7d0f5dc2d09e6 data/minecraft/tags/blocks/mineable/pickaxe.json
+0f159793ba45fc4aee456d9b70fab9c0003899e8 data/minecraft/tags/blocks/mineable/pickaxe.json
 fab721a4fe7ece1d0e019ce36c4d2862f70ee53b data/minecraft/tags/blocks/needs_stone_tool.json
+51d50547b5f031f4fa6e62189af06059a407c009 data/minecraft/tags/blocks/slabs.json
+a60870f29ca48ea0d55ac32620ff5b4bb2f2f62e data/minecraft/tags/blocks/stairs.json
 f74407e86c92d0d9435d62ff0f95999f3a84c674 data/minecraft/tags/blocks/walls.json

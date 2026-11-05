@@ -6,6 +6,8 @@ import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -27,6 +29,26 @@ public class BlockTagsGenerator extends BlockTagsProvider {
             ActuallyBlocks.BLACK_QUARTZ_PILLAR_WALL.get(),
             ActuallyBlocks.CHISELED_BLACK_QUARTZ_WALL.get(),
             ActuallyBlocks.BLACK_QUARTZ_BRICK_WALL.get()
+        );
+
+        tag(BlockTags.STAIRS).add(
+            ActuallyBlocks.ETHETIC_WHITE_STAIRS.get(),
+            ActuallyBlocks.ETHETIC_GREEN_STAIRS.get(),
+            ActuallyBlocks.BLACK_QUARTZ_STAIR.get(),
+            ActuallyBlocks.SMOOTH_BLACK_QUARTZ_STAIR.get(),
+            ActuallyBlocks.BLACK_QUARTZ_PILLAR_STAIR.get(),
+            ActuallyBlocks.CHISELED_BLACK_QUARTZ_STAIR.get(),
+            ActuallyBlocks.BLACK_QUARTZ_BRICK_STAIR.get()
+        );
+
+        tag(BlockTags.SLABS).add(
+            ActuallyBlocks.ETHETIC_WHITE_SLAB.get(),
+            ActuallyBlocks.ETHETIC_GREEN_SLAB.get(),
+            ActuallyBlocks.BLACK_QUARTZ_SLAB.get(),
+            ActuallyBlocks.SMOOTH_BLACK_QUARTZ_SLAB.get(),
+            ActuallyBlocks.BLACK_QUARTZ_PILLAR_SLAB.get(),
+            ActuallyBlocks.CHISELED_BLACK_QUARTZ_SLAB.get(),
+            ActuallyBlocks.BLACK_QUARTZ_BRICK_SLAB.get()
         );
 
         tag(BlockTags.MINEABLE_WITH_AXE).add(
@@ -119,7 +141,28 @@ public class BlockTagsGenerator extends BlockTagsProvider {
                 ActuallyBlocks.LASER_RELAY_FLUIDS.get(),
                 ActuallyBlocks.LASER_RELAY_ITEM.get(),
                 ActuallyBlocks.LASER_RELAY_ITEM_ADVANCED.get(),
-                ActuallyBlocks.GREENHOUSE_GLASS.get()
+                ActuallyBlocks.GREENHOUSE_GLASS.get(),
+                ActuallyBlocks.ETHETIC_WHITE_WALL.get(),
+                ActuallyBlocks.ETHETIC_GREEN_WALL.get(),
+                ActuallyBlocks.BLACK_QUARTZ_WALL.get(),
+                ActuallyBlocks.SMOOTH_BLACK_QUARTZ_WALL.get(),
+                ActuallyBlocks.BLACK_QUARTZ_PILLAR_WALL.get(),
+                ActuallyBlocks.CHISELED_BLACK_QUARTZ_WALL.get(),
+                ActuallyBlocks.BLACK_QUARTZ_BRICK_WALL.get(),
+                ActuallyBlocks.ETHETIC_WHITE_STAIRS.get(),
+                ActuallyBlocks.ETHETIC_GREEN_STAIRS.get(),
+                ActuallyBlocks.BLACK_QUARTZ_STAIR.get(),
+                ActuallyBlocks.SMOOTH_BLACK_QUARTZ_STAIR.get(),
+                ActuallyBlocks.BLACK_QUARTZ_PILLAR_STAIR.get(),
+                ActuallyBlocks.CHISELED_BLACK_QUARTZ_STAIR.get(),
+                ActuallyBlocks.BLACK_QUARTZ_BRICK_STAIR.get(),
+                ActuallyBlocks.ETHETIC_WHITE_SLAB.get(),
+                ActuallyBlocks.ETHETIC_GREEN_SLAB.get(),
+                ActuallyBlocks.BLACK_QUARTZ_SLAB.get(),
+                ActuallyBlocks.SMOOTH_BLACK_QUARTZ_SLAB.get(),
+                ActuallyBlocks.BLACK_QUARTZ_PILLAR_SLAB.get(),
+                ActuallyBlocks.CHISELED_BLACK_QUARTZ_SLAB.get(),
+                ActuallyBlocks.BLACK_QUARTZ_BRICK_SLAB.get()
         );
 
         tag(BlockTags.NEEDS_STONE_TOOL).add(
@@ -160,15 +203,32 @@ public class BlockTagsGenerator extends BlockTagsProvider {
                 BlockTags.MINEABLE_WITH_PICKAXE,
                 BlockTags.MINEABLE_WITH_SHOVEL
         );
-    }
 
-//    /**
-//     * Resolves a Path for the location to save the given tag.
-//     */
-//    @Override
-//    protected Path getPath(ResourceLocation id) {
-//        return this.generator.getOutputFolder().resolve("data/" + id.getNamespace() + "/tags/blocks/" + id.getPath() + ".json");
-//    }
+        tag(ActuallyTags.Blocks.WORM_CAN_POP).add(Blocks.GRASS_BLOCK);
+
+        tag(BlockTags.CROPS).add(
+                ActuallyBlocks.CANOLA.get(),
+                ActuallyBlocks.FLAX.get(),
+                ActuallyBlocks.RICE.get()
+        );
+
+        this.tag(ActuallyTags.Blocks.ORES_BLACK_QUARTZ).add(ActuallyBlocks.BLACK_QUARTZ_ORE.get());
+        this.tag(Tags.Blocks.ORES).addTags(ActuallyTags.Blocks.ORES_BLACK_QUARTZ);
+        this.tag(Tags.Blocks.ORES_IN_GROUND_STONE).add(ActuallyBlocks.BLACK_QUARTZ_ORE.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_BLACK_QUARTZ).add(ActuallyBlocks.BLACK_QUARTZ.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_RESTONIA_CRYSTAL).add(ActuallyBlocks.RESTONIA_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_PALIS_CRYSTAL).add(ActuallyBlocks.PALIS_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_DIAMATINE_CRYSTAL).add(ActuallyBlocks.DIAMATINE_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_VOID_CRYSTAL).add(ActuallyBlocks.VOID_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMERADIC_CRYSTAL).add(ActuallyBlocks.EMERADIC_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_ENORI_CRYSTAL).add(ActuallyBlocks.ENORI_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMPOWERED_RESTONIA_CRYSTAL).add(ActuallyBlocks.EMPOWERED_RESTONIA_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMPOWERED_PALIS_CRYSTAL).add(ActuallyBlocks.EMPOWERED_PALIS_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMPOWERED_DIAMATINE_CRYSTAL).add(ActuallyBlocks.EMPOWERED_DIAMATINE_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMPOWERED_VOID_CRYSTAL).add(ActuallyBlocks.EMPOWERED_VOID_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMPOWERED_EMERADIC_CRYSTAL).add(ActuallyBlocks.EMPOWERED_EMERADIC_CRYSTAL.get());
+        this.tag(ActuallyTags.Blocks.STORAGE_BLOCKS_EMPOWERED_ENORI_CRYSTAL).add(ActuallyBlocks.EMPOWERED_ENORI_CRYSTAL.get());
+    }
 
     /**
      * Gets a name for this provider, to use in logging.

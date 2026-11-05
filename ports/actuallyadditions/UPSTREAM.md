@@ -319,3 +319,24 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    wraps its client listeners in `DistExecutor`, `ActuallyAdditions.java:112`). The base still
    registers the fully commented `DungeonLoot` on the Forge bus (`ActuallyAdditions.java:105`),
    which is harmless and goes away with the loot modifiers (`4a16be4`).
+9. Tags: the base shipped no `forge:` tag at all. The class `ActuallyTags` and the two tag
+   generators now hold the tags of `main` with every `c:` tag mapped to its Forge 47 name, as the
+   1.20.4 line still had them (`1d581fc`, `c952c77`, `9689b4c`, `af8f1f1`, `e37019a`, `8d56947`,
+   `e3dd329`, `4789e61`). Black quartz is `forge:gems/black_quartz`, its ore
+   `forge:ores/black_quartz` in `forge:ores` and `forge:ores_in_ground/stone`, its block and the
+   twelve crystal and empowered crystal blocks `forge:storage_blocks/<name>` (#1418). Rice, coffee,
+   canola and flax fill `forge:seeds/<crop>` and `forge:crops/<crop>` and through them `forge:seeds`
+   and `forge:crops`, the rice slimeball `forge:slimeballs`, and the canola, flax and rice crop
+   blocks `minecraft:crops` (#1471). The AIOTs join `minecraft:swords`, `axes`, `pickaxes`,
+   `shovels` and `cluster_max_harvestables` (#1450). Forge 47 has no `forge:tools/pickaxes` and the
+   like, since its `forge:tools` takes the vanilla tool tags. Stairs, slabs and walls join the
+   vanilla block and item tags and the pickaxe tag. New in the mod's namespace are `crystal_blocks`,
+   `lamps`, `stone_ore_replaceables`, `deepslate_ore_replaceables`, the block tag `worm_drop` with
+   grass blocks, and `buckets/<fluid>` for the four fluid buckets, since Forge 47 has no common
+   bucket tag for `main`'s `c:bucket/<fluid>` and `c:buckets`. The tag `forge:holds_items` keeps its
+   Forge name. Tiny coal and tiny charcoal get no `forge:nuggets` tag, because AlmostUnified would
+   unify them with coal and charcoal. AlmostUnified lists neither black quartz nor a crystal as a
+   material, so these tags unify nothing of the mod's own items. The tag `worm_drop` has no reader
+   yet (the worm change of `e37019a` comes with the worm fixes), and the Curios `charm` tag and the
+   banner pattern tags come with their features. Every `forge:` file matches the generated file of
+   the 1.20.4 line byte for byte.

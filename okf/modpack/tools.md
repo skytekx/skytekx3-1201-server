@@ -8,7 +8,7 @@ timestamp: 2026-11-05
 
 # Tools
 
-The folder [tools/](../../tools) holds 16 scripts, not counting the Arclight build helpers in
+The folder [tools/](../../tools) holds 18 scripts, not counting the Arclight build helpers in
 `tools/arclight/`. Six came from the build sessions of June and July 2026. The seventh,
 `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58 whether the installed
 mods have updates. It was committed at 18:14 (257d4c1). The last three are the region scans that
@@ -16,7 +16,9 @@ checked the Halloween world on the Mac mini the same evening. The eleventh, `cf_
 Cloudflare Tunnel that made the server public at 21:13. The other five came on 2026-11-04: the
 permission check `mrpack_permissions.py` that the build and the upload share, `datapack_order.py`, the
 unify audit `unify_audit.py` with its dump script `unify_audit_dump.js`, and `replace_blocks.py`, after
-the owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere.
+the owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere. The last two, the
+melting generator `gen_melting.py` and its dump script `melting_dump.js`, answer the request of 17:35
+the same day that everything that holds a meltable material melts, and were committed on 2026-11-05.
 
 | Order | Tool | Lines | Job | Needs | Writes |
 |---|---|---:|---|---|---|
@@ -28,6 +30,8 @@ the owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere
 | 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | After a mod joins | Order, `datapack_order.py` | 78 | Prints the datapack order of a saved `level.dat` and the mod packs that load after the fixes pack | Python 3 | Nothing |
+| After the mod set changes | Melting dump, `melting_dump.js` | 347 | Dumps every recipe, item, fluid, tag and mod of a booted test server for the generator, as `kubejs/server_scripts/zz_melting_dump.js` there and never on the live server | KubeJS on a test server | `melting_dump_*.json` in `kubejs/` of that server |
+| After the mod set changes | Melting, `gen_melting.py` | 1,661 | Writes one Tinkers melting recipe per item that holds a meltable material from the dump, audits every melting recipe of the pack for dupes and checks its own reader, see [Melting](../content/melting.md) | Python 3, standard library only | Only `world/datapacks/skytekx3_fixes/data/skytekx3/recipes/melting/`, nothing with `--check` |
 | Once per world, server stopped | Replace, `replace_blocks.py` | 926 | Replaces the five old blocks of Chocolate Quest with the normal blocks in every chunk, entity and NBT file of a world, see [Old blocks](../content/old-blocks.md) | Python 3.9 or newer, standard library only | Only the region and NBT files that hold an old block, each through a temporary file |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
 | After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |

@@ -10,17 +10,16 @@
       "item": "minecraft:totem_of_undying"
     },
     "U": {
-      "item": "mekanism:ultimate_control_circuit"
+      "tag": "forge:circuits/ultimate"
     },
     "A": {
-      "item": "mekanism:alloy_atomic"
+      "tag": "forge:alloys/ultimate"
     },
     "P": {
       "item": "mekanism_extra_modules:phase_guard_unit"
     }
   },
   "result": {
-    "count": 1,
-    "id": "mekanism_extra_modules:emergency_revival_unit"
+    "item": "mekanism_extra_modules:emergency_revival_unit"
   }
 }

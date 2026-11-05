@@ -1,5 +1,10 @@
 {
   "values": [
-    "#forge:crops"
+    "#forge:crops",
+    "minecraft:cactus",
+    "minecraft:cocoa_beans",
+    "minecraft:melon",
+    "minecraft:pumpkin",
+    "minecraft:sugar_cane"
   ]
 }

@@ -186,7 +186,8 @@ public class FermentingRecipe implements MachineRecipe<FermentingRecipe.Containe
         @Override
         public FermentingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             FluidInput input = FluidInput.fromJson(GsonHelper.getAsJsonObject(json, "input"));
-            // The upstream field names, kept for data compatibility with 8.x.
+            // The reagent field names match 8.x. The input and output objects follow the 6.x tank recipes instead, and
+            // the 8.x fluid ids differ (fluid_<name>_still), so an 8.x recipe file does not load unchanged.
             TagKey<Item> firstReagent = TagKey.create(Registries.ITEM, new ResourceLocation(GsonHelper.getAsString(json, "left_reagent")));
             TagKey<Item> secondReagent = TagKey.create(Registries.ITEM, new ResourceLocation(GsonHelper.getAsString(json, "right_reagent")));
 

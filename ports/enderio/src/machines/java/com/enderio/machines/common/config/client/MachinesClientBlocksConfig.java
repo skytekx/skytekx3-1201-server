@@ -10,6 +10,7 @@ public class MachinesClientBlocksConfig {
     public final ForgeConfigSpec.ConfigValue<String> DRAIN_RANGE_COLOR;
     public final ForgeConfigSpec.ConfigValue<String> AVERSION_RANGE_COLOR;
     public final ForgeConfigSpec.ConfigValue<String> INHIBITOR_RANGE_COLOR;
+    public final ForgeConfigSpec.ConfigValue<String> RELOCATOR_RANGE_COLOR;
 
     public MachinesClientBlocksConfig(ForgeConfigSpec.Builder builder) {
         builder.push("blocks");
@@ -20,6 +21,7 @@ public class MachinesClientBlocksConfig {
         DRAIN_RANGE_COLOR = builder.comment("The color of the range box of the Drain").define("drainRangeColor", "FFA500");
         AVERSION_RANGE_COLOR = builder.comment("The color of the range box of the Aversion Obelisk").define("aversionRangeColor", "8B0000");
         INHIBITOR_RANGE_COLOR = builder.comment("The color of the range box of the Inhibitor Obelisk").define("inhibitorRangeColor", "8B0000");
+        RELOCATOR_RANGE_COLOR = builder.comment("The color of the range box of the Relocator Obelisk").define("relocatorRangeColor", "8B0000");
         builder.pop();
     }
 }

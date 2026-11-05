@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class ObeliskManagerAttacher {
     public static final Capability<IObeliskManagerCapability<AversionObeliskBlockEntity>> AVERSION_OBELISK_MANAGER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
     public static final Capability<IInhibitorObeliskManager> INHIBITOR_OBELISK_MANAGER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+    public static final Capability<IRelocatorObeliskManager> RELOCATOR_OBELISK_MANAGER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Level> event) {
@@ -31,6 +32,7 @@ public class ObeliskManagerAttacher {
 
         attach(event, "aversion_obelisk_manager_capability", AVERSION_OBELISK_MANAGER_CAPABILITY, new AversionObeliskManager());
         attach(event, "inhibitor_obelisk_manager_capability", INHIBITOR_OBELISK_MANAGER_CAPABILITY, new InhibitorObeliskManager());
+        attach(event, "relocator_obelisk_manager_capability", RELOCATOR_OBELISK_MANAGER_CAPABILITY, new RelocatorObeliskManager());
     }
 
     private static <C> void attach(AttachCapabilitiesEvent<Level> event, String name, Capability<C> capability, C manager) {

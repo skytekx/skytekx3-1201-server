@@ -13,6 +13,7 @@ public class MachinesCommonConfig {
     public final ForgeConfigSpec.ConfigValue<SpawnerMachineTask.SpawnType> SPAWN_TYPE;
     public final ForgeConfigSpec.IntValue SPAWN_AMOUNT;
     public final ForgeConfigSpec.IntValue INHIBITOR_RANGE;
+    public final ForgeConfigSpec.IntValue RELOCATOR_RANGE;
 
     public MachinesCommonConfig(ForgeConfigSpec.Builder builder) {
         ENERGY = new EnergyConfig(builder);
@@ -33,6 +34,7 @@ public class MachinesCommonConfig {
         // SkyTekx: the obelisk ranges of 8.x (461cf0511). A capacitor multiplies the base range.
         builder.push("obelisks");
             INHIBITOR_RANGE = builder.comment("Inhibitor Obelisk base range").defineInRange("inhibitorRange", 16, 0, Integer.MAX_VALUE);
+            RELOCATOR_RANGE = builder.comment("Relocator Obelisk base range").defineInRange("relocatorRange", 16, 0, Integer.MAX_VALUE);
         builder.pop();
     }
 }

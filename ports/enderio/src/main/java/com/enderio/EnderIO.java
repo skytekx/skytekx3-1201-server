@@ -41,6 +41,7 @@ import com.enderio.base.data.tags.EIOItemTagsProvider;
 import com.enderio.core.EnderCore;
 import com.enderio.core.common.menu.FluidFilterSlot;
 import com.enderio.core.common.menu.ItemFilterSlot;
+import com.enderio.core.common.menu.LimitedItemFilterSlot;
 import com.enderio.core.common.network.CoreNetwork;
 import com.tterrag.registrate.Registrate;
 import net.minecraft.core.HolderLookup;
@@ -188,5 +189,6 @@ public class EnderIO {
         InterModComms.sendTo("inventorysorter", "slotblacklist", ItemFilterSlot.class::getName);
         InterModComms.sendTo("inventorysorter", "slotblacklist", FluidFilterSlot.class::getName);
         InterModComms.sendTo("inventorysorter", "slotblacklist", EntityFilterSlot.class::getName);
+        InterModComms.sendTo("inventorysorter", "slotblacklist", LimitedItemFilterSlot.class::getName);
     }
 }

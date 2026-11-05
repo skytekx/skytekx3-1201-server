@@ -132,3 +132,31 @@ in the jar.
 The file `mods.toml` keeps `license="LGPL-3.0-or-later"` and `authors="Lumysia"`, and its credits
 name the upstream commit, the license files and the source of the build. The jar manifest names the
 vendor as an unofficial SkyTekx build.
+
+## Build and test results
+
+The jar `mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar` has SHA-1
+`ca7f070e3f78405968a6fe93257fe235e4f3e925` and 658,607 bytes. A second build from a clean
+`git archive` of this directory in another path gave the same SHA-1 (2026-11-05).
+
+Tests on 2026-11-05, on plain Forge 47.4.18 servers with Java 17, `-Xmx3G`, Mekanism and Mekanism
+Tools 10.4.16.80 and the jar, all three from the files of the pack's `modrinth.index.json`. A scratch
+harness mod that is not part of this source drove a `ServerPlayer` without a client, ticked it as the
+server does and called the damage paths. RCON ran every check.
+
+| Check | Result |
+|---|---|
+| Boot without Draconic Evolution | `Done` with 0 ERROR and 0 FATAL lines. The mod logs `draconicevolution=false`, and the mixin plugin skips the Draconic Evolution mixin. |
+| Boot with Draconic Evolution 3.1.2.621, Brandon's Core 3.2.1.302, CodeChicken Lib 4.4.0.528 and SkyTekx DE Fixes 1.0.0 | `Done` with 0 ERROR and 0 FATAL lines. The exported `LaserBeamPhase` (`-Dmixin.debug.export=true`) has both redirects of this mod and the `@ModifyConstant` of SkyTekx DE Fixes in `serverTick`, so the two mods do not collide. |
+| Registries | Three items of the class `ItemModule` and three Mekanism modules. Each module lists `mekasuit_bodyarmor` as its only supported item, so the IMC reached Mekanism. Phase Guard and Emergency Revival render a HUD element, and all three start disabled. |
+| Items | Each item summoned as an item entity and read back with `data get`. |
+| Recipes | 3 of this mod among 2758 recipes (1198 crafting) without Draconic Evolution, 2937 with it. Each recipe, filled with the first item of each ingredient tag, matched and crafted its result. |
+| Phase Guard | Magic damage of 5 and 1000, void damage and a direct `actuallyHurt` all did nothing while the module was on. It drew 1,250,000 J per tick (500,000 FE). Without the module, magic damage of 5 took 5 health. |
+| Emergency Revival | Lethal magic damage left the player alive with 4 health, Absorption II, Regeneration II and Fire Resistance, removed Poison and Wither, kept Haste and drew 25,000,000 J (10,000,000 FE). With an empty suit the player died. |
+| Chaos Anchor | Only with Phase Guard active, `protectDirectLaserHealthWrite` and `protectChaosLaser` with the Draconic Evolution damage type `draconicevolution.guardian_laser` returned true. Without Phase Guard, or with a generic damage source, they returned false. |
+| Kill command and dead players | With Phase Guard and Emergency Revival on and keepInventory true, `kill()` killed the player, and over the next 20 ticks its health stayed 0 and the suit energy did not change. |
+| Respawn copy | The clone event copied the mod's player data with the Phase Guard flag cleared. |
+| Client classes | The class load log of the dedicated server shows 37 classes of this mod and none of a client package. |
+| Arclight | The pack's hardened Arclight 1.0.6 jar with the same mods booted with 0 ERROR lines. Phase Guard, Emergency Revival, the kill bypass and the dead player check behaved as above. Arclight's `ServerPlayer.die` calls Forge's `onLivingDeath` before Bukkit's `PlayerDeathEvent`, so a revival never fires that event, and `Player.hurt` fires `LivingAttackEvent` before Bukkit's `EntityDamageEvent`. |
+
+Not tested: a real client, the HUD icons and the module screen, and a Chaos Guardian fight.

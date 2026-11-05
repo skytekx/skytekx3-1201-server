@@ -818,7 +818,8 @@ logs stay on the Mac and are not in the repo.
   the draft is in no commit of its history. It closes the chest dupe with a mechanism of its own,
   leaves out the shift and scroll fix of the Advanced Dislocator, takes the recipe and the tool tags
   through the KubeJS scripts and has its own death message. The jar reproduces 11 of 32 statements and
-  lists them in its LICENSE.
+  lists them in its LICENSE. Since eb6c04d the build tools refuse our own builds whose source is not
+  on master yet.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

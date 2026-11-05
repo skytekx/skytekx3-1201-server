@@ -125,6 +125,10 @@ tasks.named('jar', Jar).configure {
     from('NOTICE') {
         rename { 'NOTICE_mysticalautomation' }
     }
+    // SkyTekx: the port carries code from Cucumber 8 and strings from Mystical Agriculture 8 (UPSTREAM.md), both
+    // MIT ("Copyright (c) 2018 BlakeBr0"), so their notices ship too
+    from('LICENSE-Cucumber')
+    from('LICENSE-MysticalAgriculture')
     manifest {
         attributes([
                 'Specification-Title'   : 'mysticalautomation',

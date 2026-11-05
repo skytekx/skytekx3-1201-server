@@ -80,7 +80,11 @@ place with SRG names. That jar is the one to ship.
   `reproducibleFileOrder = true`, and the manifest has no timestamp.
 - License files in the jar: the `jar` task adds `LICENSE` (upstream's, unchanged) and `NOTICE`
   (SkyTekx's) to the jar root as `LICENSE_mysticalautomation` and `NOTICE_mysticalautomation`. MIT
-  asks for the license text in every copy, and the official 1.0.8 jar carries none. The manifest's
+  asks for the license text in every copy, and the official 1.0.8 jar carries none. The port carries
+  code from Cucumber 8 and three translations from Mystical Agriculture 8, both MIT ("Copyright (c)
+  2018 BlakeBr0"), so `LICENSE-Cucumber` and `LICENSE-MysticalAgriculture` (the LICENSE files of those
+  repositories at the branches `1.2!` and `1.21`, both identical to their 1.20 branches) ship in the
+  jar root as well, and the NOTICE names them. The manifest's
   `Implementation-Vendor` reads `Mystical Automation (modified build: SkyTekx)`.
 - Mod metadata: `META-INF/neoforge.mods.toml` became `META-INF/mods.toml` for Forge 47. It keeps
   `license="MIT"`, the mod id, the display name, the authors and the description, and adds a line

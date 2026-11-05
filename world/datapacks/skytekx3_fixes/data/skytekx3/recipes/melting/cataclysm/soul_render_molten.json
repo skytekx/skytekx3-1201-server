@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm:soul_render"
+  },
+  "result": {
+    "tag": "forge:molten_cursium",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_black_steel",
+      "amount": 180
+    }
+  ],
+  "temperature": 1300,
+  "time": 130
+}

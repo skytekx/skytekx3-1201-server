@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:draco_arcanus_shovel"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 6000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 970,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 240,
+      "unit_size": 10
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100,
+      "unit_size": 25
+    }
+  ],
+  "temperature": 1000,
+  "time": 542
+}

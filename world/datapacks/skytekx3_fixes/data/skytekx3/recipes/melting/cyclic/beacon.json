@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:beacon"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 7500
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 3000
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 2700
+    }
+  ],
+  "temperature": 750,
+  "time": 534
+}

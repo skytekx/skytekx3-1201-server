@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:nickel_scythe"
+  },
+  "result": {
+    "tag": "forge:molten_nickel",
+    "amount": 270,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 112
+}

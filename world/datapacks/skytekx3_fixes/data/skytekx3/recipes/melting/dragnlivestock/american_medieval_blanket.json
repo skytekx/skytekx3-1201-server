@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:american_medieval_blanket"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 10
+  },
+  "temperature": 700,
+  "time": 19
+}

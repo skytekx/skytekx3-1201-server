@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether_redux"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aether_redux:snailshell_shield"
+  },
+  "result": {
+    "tag": "forge:molten_gravitite",
+    "amount": 360
+  },
+  "temperature": 1050,
+  "time": 136
+}

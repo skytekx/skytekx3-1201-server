@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aether:carved_slab"
+  },
+  "result": {
+    "tag": "forge:molten_sentrite",
+    "amount": 22
+  },
+  "temperature": 900,
+  "time": 31
+}

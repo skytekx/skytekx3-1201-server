@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "backpack"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "backpack:ender_backpack"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 8000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 1000,
+  "time": 625
+}

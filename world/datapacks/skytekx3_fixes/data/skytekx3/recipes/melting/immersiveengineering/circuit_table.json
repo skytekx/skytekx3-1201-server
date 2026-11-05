@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:circuit_table"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 315
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 112
+    }
+  ],
+  "temperature": 800,
+  "time": 113
+}

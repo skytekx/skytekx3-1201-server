@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:ie_exchanger_core_tier3"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 988
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 88
+    },
+    {
+      "tag": "forge:molten_electrum",
+      "amount": 44
+    }
+  ],
+  "temperature": 950,
+  "time": 215
+}

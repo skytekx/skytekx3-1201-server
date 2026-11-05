@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "refurbished_furniture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "refurbished_furniture:television_remote"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 60
+    }
+  ],
+  "temperature": 500,
+  "time": 50
+}

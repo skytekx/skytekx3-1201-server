@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:crusher"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 225
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 135
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 135
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_brass",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 45
+    }
+  ],
+  "temperature": 950,
+  "time": 102
+}

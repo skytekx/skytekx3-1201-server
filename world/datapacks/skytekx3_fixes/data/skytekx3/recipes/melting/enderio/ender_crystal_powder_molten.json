@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:ender_crystal_powder"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 100
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_vibrant_alloy",
+      "amount": 80
+    }
+  ],
+  "temperature": 934,
+  "time": 68
+}

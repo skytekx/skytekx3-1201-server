@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mocreatures"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "mocreatures:scorpbootsundead"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "temperature": 700,
+  "time": 114
+}

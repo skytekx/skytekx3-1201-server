@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:adv_pattern_provider"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 630
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 800,
+  "time": 159
+}

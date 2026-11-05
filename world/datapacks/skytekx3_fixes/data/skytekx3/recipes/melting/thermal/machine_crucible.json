@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:machine_crucible"
+  },
+  "result": {
+    "tag": "forge:molten_invar",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 900,
+  "time": 179
+}

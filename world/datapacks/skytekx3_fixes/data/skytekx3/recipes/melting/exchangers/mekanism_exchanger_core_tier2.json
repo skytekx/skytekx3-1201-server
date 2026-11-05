@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:mekanism_exchanger_core_tier2"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 400
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_refined_glowstone",
+      "amount": 180
+    }
+  ],
+  "temperature": 1450,
+  "time": 166
+}

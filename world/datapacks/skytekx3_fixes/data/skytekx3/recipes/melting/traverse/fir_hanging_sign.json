@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "traverse"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "traverse:fir_hanging_sign"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 36
+  },
+  "temperature": 800,
+  "time": 38
+}

@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "morebows"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "morebows:ender_bow"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 750,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 477,
+  "time": 142
+}

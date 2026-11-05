@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismgenerators:fusion_reactor_controller"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 5000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1530
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 650
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 450
+    }
+  ],
+  "temperature": 750,
+  "time": 436
+}

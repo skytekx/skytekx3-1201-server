@@ -1,0 +1,52 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagriculture:awakened_supremium_furnace"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 200
+  },
+  "byproducts": [
+    {
+      "fluid": "mysticalagradditions:molten_imperium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_inferium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_prudentium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_supremium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_tertium",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_awakened_supremium",
+      "amount": 180
+    }
+  ],
+  "temperature": 1450,
+  "time": 118
+}

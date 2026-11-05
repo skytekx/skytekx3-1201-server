@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:track_tieless_narrow"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 250
+  },
+  "temperature": 750,
+  "time": 98
+}

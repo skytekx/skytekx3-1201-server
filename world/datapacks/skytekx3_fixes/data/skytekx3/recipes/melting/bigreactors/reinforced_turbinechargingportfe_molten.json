@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:reinforced_turbinechargingportfe"
+  },
+  "result": {
+    "tag": "forge:molten_cyanite",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 1440
+    }
+  ],
+  "temperature": 850,
+  "time": 247
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:artificer_cane"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 100
+    }
+  ],
+  "temperature": 700,
+  "time": 80
+}

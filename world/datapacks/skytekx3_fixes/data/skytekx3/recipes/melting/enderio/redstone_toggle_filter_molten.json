@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:redstone_toggle_filter"
+  },
+  "result": {
+    "tag": "forge:molten_redstone_alloy",
+    "amount": 450
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 550,
+  "time": 116
+}

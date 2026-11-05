@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "irons_spellbooks:twilight_gale"
+  },
+  "result": {
+    "tag": "forge:molten_mithril",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 200,
+      "unit_size": 25
+    },
+    {
+      "tag": "forge:molten_arcane",
+      "amount": 180,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1200,
+  "time": 144
+}

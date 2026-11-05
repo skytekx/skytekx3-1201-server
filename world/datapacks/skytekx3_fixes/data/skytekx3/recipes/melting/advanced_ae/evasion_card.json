@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:evasion_card"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 15840
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 900
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 200
+    }
+  ],
+  "temperature": 500,
+  "time": 662
+}

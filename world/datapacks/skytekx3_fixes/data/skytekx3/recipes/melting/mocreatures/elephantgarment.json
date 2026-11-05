@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mocreatures"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mocreatures:elephantgarment"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 120
+  },
+  "temperature": 700,
+  "time": 66
+}

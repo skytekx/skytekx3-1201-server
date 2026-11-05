@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "redstone_arsenal"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "redstone_arsenal:flux_quiver"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 10
+    }
+  ],
+  "temperature": 1000,
+  "time": 313
+}

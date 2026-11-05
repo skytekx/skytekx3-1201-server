@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:holy_upgrade_orb"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 6400
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 5760
+    }
+  ],
+  "temperature": 950,
+  "time": 547
+}

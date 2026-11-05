@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "spartanweaponry:tipped_netherite_bolt"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 16
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 11
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1
+    }
+  ],
+  "temperature": 1450,
+  "time": 33
+}

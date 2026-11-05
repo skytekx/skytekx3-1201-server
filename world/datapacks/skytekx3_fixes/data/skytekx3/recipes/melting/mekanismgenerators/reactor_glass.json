@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismgenerators:reactor_glass"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_lead",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 98
+}

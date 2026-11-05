@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:thruster_te4"
+  },
+  "result": {
+    "tag": "forge:molten_enderium",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_constantan",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 1350,
+  "time": 152
+}

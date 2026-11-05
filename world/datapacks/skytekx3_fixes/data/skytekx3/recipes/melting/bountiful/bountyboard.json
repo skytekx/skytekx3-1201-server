@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bountiful"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bountiful:bountyboard"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 100
+  },
+  "temperature": 1450,
+  "time": 83
+}

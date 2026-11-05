@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:potion_amplifier_augment"
+  },
+  "result": {
+    "tag": "forge:molten_signalum",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 500
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 999,
+  "time": 188
+}

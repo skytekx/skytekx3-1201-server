@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:reinforced_turnout_track"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 46
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 25
+    }
+  ],
+  "temperature": 1000,
+  "time": 47
+}

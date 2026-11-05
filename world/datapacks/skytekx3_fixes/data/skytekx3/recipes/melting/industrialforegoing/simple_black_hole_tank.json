@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:simple_black_hole_tank"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1080
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 750
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    }
+  ],
+  "temperature": 800,
+  "time": 208
+}

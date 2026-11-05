@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:gauntlet_of_power"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_witherite",
+      "amount": 90
+    }
+  ],
+  "temperature": 700,
+  "time": 99
+}

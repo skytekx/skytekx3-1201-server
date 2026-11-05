@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:jetpack_ie2_armored"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 3330
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 1755
+    },
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 1080
+    },
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 90
+    }
+  ],
+  "temperature": 800,
+  "time": 366
+}

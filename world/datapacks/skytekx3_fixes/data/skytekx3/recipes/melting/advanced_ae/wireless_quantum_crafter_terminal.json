@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:wireless_quantum_crafter_terminal"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 660
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 360
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 800,
+  "time": 163
+}

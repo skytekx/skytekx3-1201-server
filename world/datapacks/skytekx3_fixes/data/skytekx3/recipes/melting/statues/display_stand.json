@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "statues"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "statues:display_stand"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 200
+  },
+  "temperature": 637,
+  "time": 82
+}

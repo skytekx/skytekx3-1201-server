@@ -1,0 +1,33 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "thermal_extra:twinite_sword"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 290,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_tin",
+      "amount": 220,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1000,
+  "time": 119
+}

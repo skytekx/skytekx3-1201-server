@@ -1,0 +1,12 @@
+{
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "minecraft:bamboo_hanging_sign"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 36
+  },
+  "temperature": 800,
+  "time": 38
+}

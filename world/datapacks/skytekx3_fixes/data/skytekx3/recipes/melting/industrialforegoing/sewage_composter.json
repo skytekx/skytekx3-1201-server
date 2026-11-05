@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:sewage_composter"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 900
+  },
+  "temperature": 800,
+  "time": 190
+}

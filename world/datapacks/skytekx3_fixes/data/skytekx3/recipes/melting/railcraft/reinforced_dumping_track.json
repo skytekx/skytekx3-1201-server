@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:reinforced_dumping_track"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 22
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 17
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 12
+    }
+  ],
+  "temperature": 950,
+  "time": 32
+}

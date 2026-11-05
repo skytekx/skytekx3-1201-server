@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:chemical_crystallizer"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1080
+    },
+    {
+      "tag": "forge:molten_refined_obsidian",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 270
+    }
+  ],
+  "temperature": 750,
+  "time": 390
+}

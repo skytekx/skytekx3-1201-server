@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cataclysm:black_steel_targe"
+  },
+  "result": {
+    "tag": "forge:molten_black_steel",
+    "amount": 130,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 78
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bloodmagic:lavacrystal"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    }
+  ],
+  "temperature": 1000,
+  "time": 313
+}

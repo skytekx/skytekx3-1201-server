@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:abyssal_rod"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 22
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 22
+    }
+  ],
+  "temperature": 950,
+  "time": 32
+}

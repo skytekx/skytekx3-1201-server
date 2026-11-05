@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:weather_crystal"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 300
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_vibrant_alloy",
+      "amount": 240
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 200
+    },
+    {
+      "tag": "forge:molten_pulsating_alloy",
+      "amount": 160
+    }
+  ],
+  "temperature": 934,
+  "time": 117
+}

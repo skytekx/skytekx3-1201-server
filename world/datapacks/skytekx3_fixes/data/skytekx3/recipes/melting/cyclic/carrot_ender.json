@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:carrot_ender"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 83
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 5
+    }
+  ],
+  "temperature": 477,
+  "time": 47
+}

@@ -1,0 +1,33 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "thermal_extra:shellite_knife"
+  },
+  "result": {
+    "tag": "forge:molten_lead",
+    "amount": 60,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 60,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 330,
+  "time": 35
+}

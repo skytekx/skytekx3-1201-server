@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:sprinkler"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1260
+    }
+  ],
+  "temperature": 750,
+  "time": 390
+}

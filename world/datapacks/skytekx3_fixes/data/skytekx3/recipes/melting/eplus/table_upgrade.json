@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "eplus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "eplus:table_upgrade"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 1000,
+  "time": 313
+}

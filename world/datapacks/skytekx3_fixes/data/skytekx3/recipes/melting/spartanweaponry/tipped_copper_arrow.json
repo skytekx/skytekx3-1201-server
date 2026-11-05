@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "spartanweaponry:tipped_copper_arrow"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 15
+  },
+  "temperature": 500,
+  "time": 20
+}

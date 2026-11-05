@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightforest:cicada_jar"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1750
+  },
+  "temperature": 750,
+  "time": 258
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:clibano_core"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 450
+  },
+  "temperature": 800,
+  "time": 134
+}

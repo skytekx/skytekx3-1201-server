@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:heavy_engineering"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_electrum",
+      "amount": 22
+    }
+  ],
+  "temperature": 950,
+  "time": 112
+}

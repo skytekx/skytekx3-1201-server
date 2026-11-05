@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:personal_barrel"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 195
+}

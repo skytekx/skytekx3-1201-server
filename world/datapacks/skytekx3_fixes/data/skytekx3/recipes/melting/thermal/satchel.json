@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:satchel"
+  },
+  "result": {
+    "tag": "forge:molten_tin",
+    "amount": 90
+  },
+  "temperature": 225,
+  "time": 39
+}

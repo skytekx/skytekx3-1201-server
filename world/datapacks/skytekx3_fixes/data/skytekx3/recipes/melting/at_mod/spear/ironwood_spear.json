@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "at_mod"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "at_mod:spear/ironwood_spear"
+  },
+  "result": {
+    "tag": "forge:molten_ironwood",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 900,
+  "time": 63
+}

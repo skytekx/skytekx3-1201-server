@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "storagedrawers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "storagedrawers:netherite_storage_upgrade"
+  },
+  "result": {
+    "tag": "forge:molten_netherite",
+    "amount": 180
+  },
+  "temperature": 1250,
+  "time": 104
+}

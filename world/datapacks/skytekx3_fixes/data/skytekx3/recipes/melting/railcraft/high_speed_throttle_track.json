@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:high_speed_throttle_track"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 12
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 6
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 6
+    }
+  ],
+  "temperature": 637,
+  "time": 20
+}

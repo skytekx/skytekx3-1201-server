@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "galosphere"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "galosphere:pink_salt_lamp"
+  },
+  "result": {
+    "tag": "forge:molten_palladium",
+    "amount": 90
+  },
+  "temperature": 960,
+  "time": 65
+}

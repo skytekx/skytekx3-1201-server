@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:high_speed_locking_track"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 22
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 12
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 6
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 6
+    }
+  ],
+  "temperature": 800,
+  "time": 30
+}

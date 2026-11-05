@@ -1,0 +1,76 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:end_steel_exchanger"
+  },
+  "result": {
+    "tag": "forge:molten_energetic_alloy",
+    "amount": 6340
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_vibrant_alloy",
+      "amount": 4140
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 3510
+    },
+    {
+      "tag": "forge:molten_copper_alloy",
+      "amount": 3060
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 2400
+    },
+    {
+      "tag": "forge:molten_pulsating_alloy",
+      "amount": 2280
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 1500
+    },
+    {
+      "tag": "forge:molten_soularium",
+      "amount": 1260
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 1170
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 520
+    },
+    {
+      "tag": "forge:molten_conductive_alloy",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_dark_steel",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_end_steel",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_redstone_alloy",
+      "amount": 280
+    }
+  ],
+  "temperature": 750,
+  "time": 491
+}

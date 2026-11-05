@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:railgun"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 135
+    },
+    {
+      "tag": "forge:molten_hop_graphite",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 60
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 40
+    }
+  ],
+  "temperature": 950,
+  "time": 130
+}

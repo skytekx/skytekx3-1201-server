@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "additionalbanners"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "additionalbanners:frame"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 90
+  },
+  "temperature": 500,
+  "time": 50
+}

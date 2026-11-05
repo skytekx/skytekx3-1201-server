@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:oxygen_sensor"
+  },
+  "result": {
+    "tag": "forge:molten_ostrum",
+    "amount": 630
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 405
+    }
+  ],
+  "temperature": 1100,
+  "time": 183
+}

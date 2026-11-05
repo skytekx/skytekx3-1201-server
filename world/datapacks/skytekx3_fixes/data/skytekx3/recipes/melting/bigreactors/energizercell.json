@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:energizercell"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 1620
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1620
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 500
+    }
+  ],
+  "temperature": 700,
+  "time": 241
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:firefly_jar"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 80
+  },
+  "temperature": 800,
+  "time": 57
+}

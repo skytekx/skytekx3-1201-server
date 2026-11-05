@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:oxygen_loader"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 810
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 765
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 270
+    }
+  ],
+  "temperature": 800,
+  "time": 180
+}

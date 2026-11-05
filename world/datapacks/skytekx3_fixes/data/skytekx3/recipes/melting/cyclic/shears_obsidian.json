@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:shears_obsidian"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 2000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1000,
+  "time": 313
+}

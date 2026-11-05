@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bloodmagic:reagentsuppression"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 750
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 630
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    }
+  ],
+  "temperature": 477,
+  "time": 142
+}

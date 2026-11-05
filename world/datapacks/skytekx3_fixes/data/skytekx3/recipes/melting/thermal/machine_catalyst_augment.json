@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:machine_catalyst_augment"
+  },
+  "result": {
+    "tag": "forge:molten_constantan",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 920,
+  "time": 181
+}

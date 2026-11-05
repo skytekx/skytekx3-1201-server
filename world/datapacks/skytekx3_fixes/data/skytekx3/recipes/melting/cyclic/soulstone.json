@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:soulstone"
+  },
+  "result": {
+    "tag": "forge:molten_netherite",
+    "amount": 40,
+    "unit_size": 10
+  },
+  "temperature": 1250,
+  "time": 49
+}

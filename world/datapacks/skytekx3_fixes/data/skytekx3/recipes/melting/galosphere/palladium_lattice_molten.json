@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "galosphere"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "galosphere:palladium_lattice"
+  },
+  "result": {
+    "tag": "forge:molten_palladium",
+    "amount": 33
+  },
+  "temperature": 960,
+  "time": 39
+}

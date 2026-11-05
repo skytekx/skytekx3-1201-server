@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ars_nouveau"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ars_nouveau:glyph_blink"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1000
+  },
+  "temperature": 477,
+  "time": 164
+}

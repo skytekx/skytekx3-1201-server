@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:fluid_pipe_duct"
+  },
+  "result": {
+    "tag": "forge:molten_desh",
+    "amount": 196
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 93
+    }
+  ],
+  "temperature": 1000,
+  "time": 98
+}

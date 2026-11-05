@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagriculture:mining_aoe_i_augment"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1350
+  },
+  "temperature": 800,
+  "time": 233
+}

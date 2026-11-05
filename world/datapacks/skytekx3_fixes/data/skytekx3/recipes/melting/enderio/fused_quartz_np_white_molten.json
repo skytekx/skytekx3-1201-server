@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:fused_quartz_np_white"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 400
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_dark_steel",
+      "amount": 2
+    }
+  ],
+  "temperature": 637,
+  "time": 115
+}

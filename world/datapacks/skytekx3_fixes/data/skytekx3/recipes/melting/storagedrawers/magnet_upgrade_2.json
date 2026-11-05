@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "storagedrawers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "storagedrawers:magnet_upgrade_2"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 690
+    }
+  ],
+  "temperature": 500,
+  "time": 141
+}

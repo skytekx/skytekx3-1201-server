@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:obsidian_skull"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 8000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 160
+    }
+  ],
+  "temperature": 1000,
+  "time": 625
+}

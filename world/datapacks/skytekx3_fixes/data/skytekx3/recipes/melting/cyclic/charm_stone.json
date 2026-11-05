@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:charm_stone"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 14000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 2500,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 50,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 750,
+  "time": 730
+}

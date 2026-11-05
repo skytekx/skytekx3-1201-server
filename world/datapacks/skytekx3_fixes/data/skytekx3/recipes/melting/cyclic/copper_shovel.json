@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:copper_shovel"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 500,
+  "time": 50
+}

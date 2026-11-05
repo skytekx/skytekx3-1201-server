@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:eternal_upgrade_smithing_template"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 630
+    }
+  ],
+  "temperature": 1000,
+  "time": 221
+}

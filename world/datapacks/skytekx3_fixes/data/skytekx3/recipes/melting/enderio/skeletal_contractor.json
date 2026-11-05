@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:skeletal_contractor"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 40
+    }
+  ],
+  "temperature": 500,
+  "time": 50
+}

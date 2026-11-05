@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:thermal_evaporation_valve"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 88
+    }
+  ],
+  "temperature": 950,
+  "time": 130
+}

@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:soul_powder"
+  },
+  "result": {
+    "tag": "forge:molten_soularium",
+    "amount": 90
+  },
+  "temperature": 750,
+  "time": 59
+}

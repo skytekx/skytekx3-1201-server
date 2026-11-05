@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "railcraft:whistle_tuner"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 60,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 53
+}

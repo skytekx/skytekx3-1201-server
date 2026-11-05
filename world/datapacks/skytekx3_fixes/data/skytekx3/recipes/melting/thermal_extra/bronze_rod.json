@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:bronze_rod"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 45
+  },
+  "temperature": 700,
+  "time": 40
+}

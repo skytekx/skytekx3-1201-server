@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "chunkloaders"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "chunkloaders:advanced_chunk_loader"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 3996
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 243
+    }
+  ],
+  "temperature": 1000,
+  "time": 442
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:sigil_of_withdrawal"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 125
+  },
+  "temperature": 477,
+  "time": 58
+}

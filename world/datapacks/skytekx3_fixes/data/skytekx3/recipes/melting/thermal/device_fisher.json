@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:device_fisher"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 500,
+  "time": 100
+}

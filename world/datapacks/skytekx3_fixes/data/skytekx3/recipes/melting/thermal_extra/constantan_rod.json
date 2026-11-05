@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:constantan_rod"
+  },
+  "result": {
+    "tag": "forge:molten_constantan",
+    "amount": 45
+  },
+  "temperature": 920,
+  "time": 45
+}

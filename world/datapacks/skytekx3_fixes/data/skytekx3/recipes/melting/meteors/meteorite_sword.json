@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "meteors:meteorite_sword"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 60
+}

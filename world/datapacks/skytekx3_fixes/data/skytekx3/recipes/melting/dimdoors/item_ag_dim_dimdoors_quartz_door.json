@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dimdoors"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dimdoors:item_ag_dim_dimdoors_quartz_door"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 1200
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 637,
+  "time": 200
+}

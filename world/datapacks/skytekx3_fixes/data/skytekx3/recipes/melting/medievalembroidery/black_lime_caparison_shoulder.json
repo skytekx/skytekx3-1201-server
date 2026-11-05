@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "medievalembroidery"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "medievalembroidery:black_lime_caparison_shoulder"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 10
+  },
+  "temperature": 700,
+  "time": 19
+}

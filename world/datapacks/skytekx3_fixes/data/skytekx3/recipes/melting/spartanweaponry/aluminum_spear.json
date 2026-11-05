@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:aluminum_spear"
+  },
+  "result": {
+    "tag": "forge:molten_aluminum",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 425,
+  "time": 47
+}

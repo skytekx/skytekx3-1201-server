@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:heart"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 900
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 720
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 10
+    }
+  ],
+  "temperature": 934,
+  "time": 203
+}

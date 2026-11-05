@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "createaddition"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "createaddition:electrum_amulet"
+  },
+  "result": {
+    "tag": "forge:molten_electrum",
+    "amount": 405
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 100
+    }
+  ],
+  "temperature": 760,
+  "time": 125
+}

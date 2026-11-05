@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:upgrade_stack"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

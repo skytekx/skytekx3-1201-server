@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightforest:ore_map"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 900
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 810
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 810
+    }
+  ],
+  "temperature": 1450,
+  "time": 250
+}

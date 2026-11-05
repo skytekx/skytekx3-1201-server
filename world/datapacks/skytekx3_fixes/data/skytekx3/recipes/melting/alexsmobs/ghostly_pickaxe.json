@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "alexsmobs"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "alexsmobs:ghostly_pickaxe"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 270,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 104
+}

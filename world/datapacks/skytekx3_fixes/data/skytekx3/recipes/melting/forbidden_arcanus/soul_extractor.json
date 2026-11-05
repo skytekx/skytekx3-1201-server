@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:soul_extractor"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 500,
+    "unit_size": 25
+  },
+  "temperature": 637,
+  "time": 129
+}

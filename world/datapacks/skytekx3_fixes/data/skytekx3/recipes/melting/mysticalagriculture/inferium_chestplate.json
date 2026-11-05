@@ -1,0 +1,30 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "mysticalagriculture:inferium_chestplate"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 200,
+    "unit_size": 25
+  },
+  "byproducts": [
+    {
+      "fluid": "mysticalagradditions:molten_inferium",
+      "amount": 180,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1450,
+  "time": 118
+}

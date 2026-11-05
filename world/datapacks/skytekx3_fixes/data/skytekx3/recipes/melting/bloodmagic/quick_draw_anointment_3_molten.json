@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bloodmagic:quick_draw_anointment_3"
+  },
+  "result": {
+    "tag": "forge:molten_hellforged",
+    "amount": 90
+  },
+  "temperature": 1250,
+  "time": 74
+}

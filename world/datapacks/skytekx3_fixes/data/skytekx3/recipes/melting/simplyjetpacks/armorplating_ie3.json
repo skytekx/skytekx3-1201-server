@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:armorplating_ie3"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 810
+  },
+  "temperature": 950,
+  "time": 194
+}

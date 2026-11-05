@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "blue_skies"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "blue_skies:warding_pearl"
+  },
+  "result": {
+    "tag": "forge:molten_falsite",
+    "amount": 60
+  },
+  "temperature": 900,
+  "time": 52
+}

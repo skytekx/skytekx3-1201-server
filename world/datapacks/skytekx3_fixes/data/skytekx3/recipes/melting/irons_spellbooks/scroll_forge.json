@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:scroll_forge"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 4000
+  },
+  "temperature": 1000,
+  "time": 442
+}

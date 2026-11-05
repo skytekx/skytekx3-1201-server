@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "asr"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "asr:ender_shield"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 5000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1000,
+  "time": 494
+}

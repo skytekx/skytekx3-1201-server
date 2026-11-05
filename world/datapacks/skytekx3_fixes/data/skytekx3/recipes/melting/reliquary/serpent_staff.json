@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "reliquary"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "reliquary:serpent_staff"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 250,
+    "unit_size": 10
+  },
+  "temperature": 477,
+  "time": 82
+}

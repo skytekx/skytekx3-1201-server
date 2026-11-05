@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightforest:knight_phantom_boss_spawner"
+  },
+  "result": {
+    "tag": "forge:molten_chaos",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_knightmetal",
+      "amount": 45
+    }
+  ],
+  "temperature": 1350,
+  "time": 76
+}

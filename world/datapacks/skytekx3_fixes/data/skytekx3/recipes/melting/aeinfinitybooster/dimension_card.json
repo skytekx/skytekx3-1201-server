@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aeinfinitybooster"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aeinfinitybooster:dimension_card"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 2250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1620
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 1080
+    }
+  ],
+  "temperature": 477,
+  "time": 245
+}

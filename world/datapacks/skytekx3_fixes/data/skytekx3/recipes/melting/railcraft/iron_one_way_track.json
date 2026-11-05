@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:iron_one_way_track"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 41
+  },
+  "temperature": 800,
+  "time": 41
+}

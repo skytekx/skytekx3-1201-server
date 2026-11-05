@@ -1,0 +1,48 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:shellite_dynamo_output_augment"
+  },
+  "result": {
+    "tag": "forge:molten_silver",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 500
+    },
+    {
+      "fluid": "thermal_extra:shellite",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:soul_infused",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:twinite",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_signalum",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 790,
+  "time": 169
+}

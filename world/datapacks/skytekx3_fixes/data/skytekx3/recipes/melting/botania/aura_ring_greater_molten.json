@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "botania:aura_ring_greater"
+  },
+  "result": {
+    "tag": "forge:molten_manasteel",
+    "amount": 810
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "tag": "forge:molten_terrasteel",
+      "amount": 90
+    }
+  ],
+  "temperature": 850,
+  "time": 185
+}

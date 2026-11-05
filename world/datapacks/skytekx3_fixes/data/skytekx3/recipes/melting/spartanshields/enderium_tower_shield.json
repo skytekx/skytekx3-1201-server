@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanshields"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanshields:enderium_tower_shield"
+  },
+  "result": {
+    "tag": "forge:molten_enderium",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "temperature": 1350,
+  "time": 152
+}

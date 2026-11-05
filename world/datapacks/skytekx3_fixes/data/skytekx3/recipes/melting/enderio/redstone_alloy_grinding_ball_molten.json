@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:redstone_alloy_grinding_ball"
+  },
+  "result": {
+    "tag": "forge:molten_redstone_alloy",
+    "amount": 18
+  },
+  "temperature": 550,
+  "time": 23
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightdelight:hydra_skewer"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_steeleaf",
+    "amount": 90
+  },
+  "temperature": 934,
+  "time": 64
+}

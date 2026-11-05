@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether_redux"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aether_redux:veridium_lantern"
+  },
+  "result": {
+    "tag": "forge:molten_veridium",
+    "amount": 240
+  },
+  "temperature": 800,
+  "time": 98
+}

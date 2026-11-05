@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:device_potion_diffuser"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_constantan",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_silver",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 195
+}

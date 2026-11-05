@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:mithril_weave"
+  },
+  "result": {
+    "tag": "forge:molten_mithril",
+    "amount": 450
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 440
+    }
+  ],
+  "temperature": 1200,
+  "time": 161
+}

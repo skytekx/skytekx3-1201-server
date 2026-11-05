@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "lavafishing"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "lavafishing:neptunium_bullet"
+  },
+  "result": {
+    "tag": "forge:molten_neptunium",
+    "amount": 10
+  },
+  "temperature": 415,
+  "time": 16
+}

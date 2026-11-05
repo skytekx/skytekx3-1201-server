@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:item_draconium_damage"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

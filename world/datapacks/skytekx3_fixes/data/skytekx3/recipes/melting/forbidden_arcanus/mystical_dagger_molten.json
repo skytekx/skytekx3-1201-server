@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:mystical_dagger"
+  },
+  "result": {
+    "tag": "forge:molten_deorum",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 120,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 7,
+      "unit_size": 7
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 5,
+      "unit_size": 5
+    }
+  ],
+  "temperature": 850,
+  "time": 87
+}

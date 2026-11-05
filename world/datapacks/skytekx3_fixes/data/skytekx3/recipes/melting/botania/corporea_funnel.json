@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "botania:corporea_funnel"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 62
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 2
+    }
+  ],
+  "temperature": 477,
+  "time": 41
+}

@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "megacells:mana_storage_cell_4m"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 65610
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_manasteel",
+      "amount": 270
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 88
+    }
+  ],
+  "temperature": 700,
+  "time": 1536
+}

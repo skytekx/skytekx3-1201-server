@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:white_wrapped_locometal_smokebox"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 101
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_brass",
+      "amount": 11
+    }
+  ],
+  "temperature": 800,
+  "time": 64
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:pink_slime"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 250
+  },
+  "temperature": 750,
+  "time": 98
+}

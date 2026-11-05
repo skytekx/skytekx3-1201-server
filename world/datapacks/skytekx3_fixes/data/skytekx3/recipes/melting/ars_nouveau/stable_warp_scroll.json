@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ars_nouveau"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ars_nouveau:stable_warp_scroll"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 500
+  },
+  "temperature": 477,
+  "time": 116
+}

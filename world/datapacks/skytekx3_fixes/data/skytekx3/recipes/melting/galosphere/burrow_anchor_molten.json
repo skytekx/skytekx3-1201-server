@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "galosphere"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "galosphere:burrow_anchor"
+  },
+  "result": {
+    "tag": "forge:molten_palladium",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 100
+    }
+  ],
+  "temperature": 960,
+  "time": 113
+}

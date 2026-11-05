@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm:ignitium_upgrade_smithing_template"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 500
+  },
+  "temperature": 1450,
+  "time": 186
+}

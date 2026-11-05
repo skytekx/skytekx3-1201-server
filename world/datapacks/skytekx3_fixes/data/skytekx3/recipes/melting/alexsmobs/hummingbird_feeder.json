@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "alexsmobs"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "alexsmobs:hummingbird_feeder"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 360
+    }
+  ],
+  "temperature": 750,
+  "time": 195
+}

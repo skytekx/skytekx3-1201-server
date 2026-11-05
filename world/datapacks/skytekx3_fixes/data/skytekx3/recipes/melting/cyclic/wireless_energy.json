@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:wireless_energy"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 200
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 120
+    }
+  ],
+  "temperature": 637,
+  "time": 82
+}

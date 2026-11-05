@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aether:iron_ring"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 360
+  },
+  "temperature": 800,
+  "time": 120
+}

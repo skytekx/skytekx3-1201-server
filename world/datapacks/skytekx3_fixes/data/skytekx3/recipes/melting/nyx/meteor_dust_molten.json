@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "nyx"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "nyx:meteor_dust"
+  },
+  "result": {
+    "tag": "forge:molten_meteor",
+    "amount": 90
+  },
+  "temperature": 1000,
+  "time": 66
+}

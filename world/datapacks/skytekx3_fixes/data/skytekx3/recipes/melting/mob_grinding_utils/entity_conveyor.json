@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mob_grinding_utils"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mob_grinding_utils:entity_conveyor"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 60
+  },
+  "temperature": 800,
+  "time": 49
+}

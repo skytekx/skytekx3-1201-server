@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:charge_bench"
+  },
+  "result": {
+    "tag": "forge:molten_electrum",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_lead",
+      "amount": 180
+    }
+  ],
+  "temperature": 760,
+  "time": 102
+}

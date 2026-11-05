@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:charm_home"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 270,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 700,
+  "time": 99
+}

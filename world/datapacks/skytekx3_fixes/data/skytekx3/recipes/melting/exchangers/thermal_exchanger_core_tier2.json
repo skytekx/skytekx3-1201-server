@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:thermal_exchanger_core_tier2"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_lead",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_invar",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_lumium",
+      "amount": 180
+    }
+  ],
+  "temperature": 700,
+  "time": 228
+}

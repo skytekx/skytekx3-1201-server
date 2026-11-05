@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "createaddition"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "createaddition:alternator"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 630
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 618
+    },
+    {
+      "tag": "forge:molten_zinc",
+      "amount": 90
+    }
+  ],
+  "temperature": 500,
+  "time": 132
+}

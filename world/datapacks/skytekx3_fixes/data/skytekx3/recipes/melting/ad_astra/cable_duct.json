@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:cable_duct"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 196
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 188
+    }
+  ],
+  "temperature": 950,
+  "time": 96
+}

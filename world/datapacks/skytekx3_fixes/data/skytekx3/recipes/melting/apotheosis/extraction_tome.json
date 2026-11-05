@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:extraction_tome"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 21
+  },
+  "temperature": 800,
+  "time": 29
+}

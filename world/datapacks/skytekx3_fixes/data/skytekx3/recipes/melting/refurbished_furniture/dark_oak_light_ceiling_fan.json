@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "refurbished_furniture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "refurbished_furniture:dark_oak_light_ceiling_fan"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 270
+  },
+  "temperature": 800,
+  "time": 104
+}

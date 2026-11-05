@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightdelight:twilight_spring"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_ironwood",
+      "amount": 120
+    }
+  ],
+  "temperature": 750,
+  "time": 195
+}

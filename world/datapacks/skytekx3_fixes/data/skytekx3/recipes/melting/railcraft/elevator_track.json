@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:elevator_track"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 24
+  },
+  "temperature": 700,
+  "time": 29
+}

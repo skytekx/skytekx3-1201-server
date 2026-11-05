@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartantwilight"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartantwilight:ironwood_rapier"
+  },
+  "result": {
+    "tag": "forge:molten_ironwood",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "temperature": 900,
+  "time": 127
+}

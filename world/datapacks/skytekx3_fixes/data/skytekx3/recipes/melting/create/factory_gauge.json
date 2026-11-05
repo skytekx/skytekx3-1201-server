@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "create:factory_gauge"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 500,
+  "time": 86
+}

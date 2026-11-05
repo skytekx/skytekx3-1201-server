@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:arcane_polished_darkstone_pillar"
+  },
+  "result": {
+    "tag": "forge:molten_deorum",
+    "amount": 22
+  },
+  "temperature": 850,
+  "time": 31
+}

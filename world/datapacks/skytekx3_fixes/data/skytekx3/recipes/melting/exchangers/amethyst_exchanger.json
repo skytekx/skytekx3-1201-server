@@ -1,0 +1,46 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "exchangers:amethyst_exchanger"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 9300,
+    "unit_size": 25
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 7750,
+      "unit_size": 10
+    },
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 5000,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1800,
+      "unit_size": 10
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 1300,
+      "unit_size": 25
+    },
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 500,
+      "unit_size": 25
+    }
+  ],
+  "temperature": 1450,
+  "time": 802
+}

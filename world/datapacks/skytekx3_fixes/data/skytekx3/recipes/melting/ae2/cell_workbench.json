@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ae2:cell_workbench"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 450
+  },
+  "temperature": 800,
+  "time": 134
+}

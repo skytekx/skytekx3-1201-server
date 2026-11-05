@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:chemical_conduit"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 125
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 22
+    }
+  ],
+  "temperature": 750,
+  "time": 69
+}

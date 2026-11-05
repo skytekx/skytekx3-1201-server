@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:dual_token_signal"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1500
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180
+    }
+  ],
+  "temperature": 750,
+  "time": 239
+}

@@ -1,0 +1,48 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:abyssal_area_radius_augment"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 810
+  },
+  "byproducts": [
+    {
+      "fluid": "thermal_extra:abyssal",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:dragonsteel",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:shellite",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:soul_infused",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:twinite",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 180
+}

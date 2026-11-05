@@ -1,0 +1,39 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagriculture:inferium_upgrade"
+  },
+  "result": {
+    "fluid": "mysticalagradditions:molten_inferium",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    }
+  ],
+  "temperature": 800,
+  "time": 120
+}

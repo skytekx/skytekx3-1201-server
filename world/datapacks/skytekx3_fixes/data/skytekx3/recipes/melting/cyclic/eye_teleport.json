@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:eye_teleport"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 2250
+  },
+  "temperature": 477,
+  "time": 245
+}

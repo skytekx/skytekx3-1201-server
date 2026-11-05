@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:bloom_stone_skirt"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 100
+  },
+  "temperature": 950,
+  "time": 68
+}

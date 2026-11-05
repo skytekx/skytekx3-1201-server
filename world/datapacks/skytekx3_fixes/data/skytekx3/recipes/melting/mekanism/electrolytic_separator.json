@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:electrolytic_separator"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1080
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 800,
+  "time": 208
+}

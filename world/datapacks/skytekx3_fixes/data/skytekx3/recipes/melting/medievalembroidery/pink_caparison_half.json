@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "medievalembroidery"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "medievalembroidery:pink_caparison_half"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 20
+  },
+  "temperature": 700,
+  "time": 27
+}

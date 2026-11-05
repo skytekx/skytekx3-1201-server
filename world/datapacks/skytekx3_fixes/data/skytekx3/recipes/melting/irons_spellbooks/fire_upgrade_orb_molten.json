@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:fire_upgrade_orb"
+  },
+  "result": {
+    "tag": "forge:molten_arcane",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_mithril",
+      "amount": 90
+    }
+  ],
+  "temperature": 900,
+  "time": 127
+}

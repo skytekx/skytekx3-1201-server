@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:eternal_totem_of_dream"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 33480
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 4220
+    },
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 100
+    }
+  ],
+  "temperature": 800,
+  "time": 1160
+}

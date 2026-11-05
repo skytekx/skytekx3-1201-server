@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "mysticalagriculture:soulium_dagger"
+  },
+  "result": {
+    "fluid": "mysticalagradditions:molten_soulium",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 85
+}

@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagriculture:supremium_furnace"
+  },
+  "result": {
+    "fluid": "mysticalagradditions:molten_imperium",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "fluid": "mysticalagradditions:molten_inferium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_prudentium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_supremium",
+      "amount": 180
+    },
+    {
+      "fluid": "mysticalagradditions:molten_tertium",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 85
+}

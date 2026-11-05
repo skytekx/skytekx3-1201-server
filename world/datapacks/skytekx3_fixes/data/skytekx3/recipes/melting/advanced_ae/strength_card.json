@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:strength_card"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 4320
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 270
+    }
+  ],
+  "temperature": 500,
+  "time": 346
+}

@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightdelight:fiery_cooking_pot"
+  },
+  "result": {
+    "fluid": "tconstruct:fiery_liquid",
+    "amount": 1250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_ironwood",
+      "amount": 90
+    }
+  ],
+  "temperature": 1500,
+  "time": 299
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:iron_embarking_track"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 62
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 30
+    }
+  ],
+  "temperature": 477,
+  "time": 41
+}

@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:dynamic_valve"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 134
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 45
+    }
+  ],
+  "temperature": 950,
+  "time": 92
+}

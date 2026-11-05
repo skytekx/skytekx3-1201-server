@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:tin_electrode"
+  },
+  "result": {
+    "tag": "forge:molten_tin",
+    "amount": 270
+  },
+  "temperature": 225,
+  "time": 68
+}

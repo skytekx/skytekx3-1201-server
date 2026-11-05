@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:reinforced_control_track"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 17
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 12
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 2
+    }
+  ],
+  "temperature": 1000,
+  "time": 29
+}

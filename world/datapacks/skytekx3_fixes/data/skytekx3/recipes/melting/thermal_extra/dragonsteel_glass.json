@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:dragonsteel_glass"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 500
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    },
+    {
+      "tag": "forge:molten_enderium",
+      "amount": 22
+    }
+  ],
+  "temperature": 1000,
+  "time": 156
+}

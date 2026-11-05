@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "alexsmobs"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "alexsmobs:transmutation_table"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 3000
+  },
+  "temperature": 1000,
+  "time": 383
+}

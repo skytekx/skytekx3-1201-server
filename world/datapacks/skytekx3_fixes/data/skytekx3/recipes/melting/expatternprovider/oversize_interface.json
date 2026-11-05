@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "expatternprovider"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "expatternprovider:oversize_interface"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 990
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 810
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 150
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    }
+  ],
+  "temperature": 800,
+  "time": 199
+}

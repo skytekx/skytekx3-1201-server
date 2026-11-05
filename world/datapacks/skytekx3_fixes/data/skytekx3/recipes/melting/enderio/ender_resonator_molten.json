@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:ender_resonator"
+  },
+  "result": {
+    "tag": "forge:molten_soularium",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_vibrant_alloy",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 83
+}

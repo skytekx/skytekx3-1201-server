@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:washing_factory"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 1200
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 810
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_pink_slime",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_debris",
+      "amount": 180
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

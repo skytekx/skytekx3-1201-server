@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:energy_limiter_attachment"
+  },
+  "result": {
+    "tag": "forge:molten_electrum",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 10
+    }
+  ],
+  "temperature": 760,
+  "time": 59
+}

@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "magistuarmory:tin_concavehalberd"
+  },
+  "result": {
+    "tag": "forge:molten_tin",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "temperature": 225,
+  "time": 78
+}

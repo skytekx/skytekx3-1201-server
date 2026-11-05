@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "additionalbanners"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "additionalbanners:chain"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 110
+  },
+  "temperature": 800,
+  "time": 66
+}

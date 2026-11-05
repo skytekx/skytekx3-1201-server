@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bibliocraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bibliocraft:orange_fancy_iron_lantern"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 360
+  },
+  "temperature": 800,
+  "time": 120
+}

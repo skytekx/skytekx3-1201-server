@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:energizerpowerport_fe"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 3240
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 2340
+    }
+  ],
+  "temperature": 700,
+  "time": 341
+}

@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2hostility"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2hostility:greed_of_nidhoggur"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_eternium",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_miracle",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_chaos",
+      "amount": 90
+    }
+  ],
+  "temperature": 700,
+  "time": 114
+}

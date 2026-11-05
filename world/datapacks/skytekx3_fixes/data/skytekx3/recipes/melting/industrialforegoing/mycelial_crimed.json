@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:mycelial_crimed"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 540
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "fluid": "tconstruct:molten_debris",
+      "amount": 180
+    }
+  ],
+  "temperature": 700,
+  "time": 139
+}

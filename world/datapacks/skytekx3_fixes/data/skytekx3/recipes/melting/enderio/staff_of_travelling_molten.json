@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:staff_of_travelling"
+  },
+  "result": {
+    "tag": "forge:molten_dark_steel",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_vibrant_alloy",
+      "amount": 80
+    }
+  ],
+  "temperature": 1000,
+  "time": 94
+}

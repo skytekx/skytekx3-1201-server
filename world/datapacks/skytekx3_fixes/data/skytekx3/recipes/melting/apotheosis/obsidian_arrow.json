@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:obsidian_arrow"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 166
+  },
+  "temperature": 1000,
+  "time": 90
+}

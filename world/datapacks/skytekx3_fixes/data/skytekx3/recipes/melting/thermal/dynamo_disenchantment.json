@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:dynamo_disenchantment"
+  },
+  "result": {
+    "tag": "forge:molten_silver",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 790,
+  "time": 120
+}

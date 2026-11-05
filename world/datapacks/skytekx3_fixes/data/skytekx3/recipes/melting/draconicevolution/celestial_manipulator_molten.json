@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:celestial_manipulator"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 1980
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 1800
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 1300,
+  "time": 351
+}

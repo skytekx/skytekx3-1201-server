@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ticex"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ticex:chaotic_crystal"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 28800
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 23040
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 6400
+    },
+    {
+      "tag": "forge:molten_draconium_awakened",
+      "amount": 1800
+    },
+    {
+      "fluid": "ticex:molten_reconstruction_core",
+      "amount": 500
+    }
+  ],
+  "temperature": 1300,
+  "time": 1340
+}

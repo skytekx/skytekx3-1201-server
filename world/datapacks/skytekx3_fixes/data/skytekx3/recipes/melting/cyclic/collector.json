@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:collector"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1530
+  },
+  "temperature": 800,
+  "time": 248
+}

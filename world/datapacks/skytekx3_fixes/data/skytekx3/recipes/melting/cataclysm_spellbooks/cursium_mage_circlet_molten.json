@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:cursium_mage_circlet"
+  },
+  "result": {
+    "tag": "forge:molten_cursium",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90
+    }
+  ],
+  "temperature": 1300,
+  "time": 75
+}

@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:naquadah_hohlraum"
+  },
+  "result": {
+    "tag": "forge:molten_naquadah",
+    "amount": 360
+  },
+  "temperature": 1300,
+  "time": 150
+}

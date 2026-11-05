@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:copycat_headstock_link_and_pin"
+  },
+  "result": {
+    "tag": "forge:molten_zinc",
+    "amount": 66
+  },
+  "temperature": 420,
+  "time": 40
+}

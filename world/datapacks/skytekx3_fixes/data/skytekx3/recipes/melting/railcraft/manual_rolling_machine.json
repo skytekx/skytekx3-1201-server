@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:manual_rolling_machine"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    }
+  ],
+  "temperature": 700,
+  "time": 228
+}

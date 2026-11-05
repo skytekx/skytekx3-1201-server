@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "ae2:certus_quartz_cutting_knife"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 60
+}

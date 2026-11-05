@@ -78,6 +78,9 @@ Modifications
   - Recipes from the 1.21.1 line: the Tesla Coil charges gold ingots, nuggets, blocks, rods,
     plates and wires into electrum and deoxidizes Create's copper tiles, tile slabs and tile
     stairs.
+  - Electric Pump from the 1.21.1 line: a Create pump that runs on FE at a speed set on the block,
+    stops on a redstone signal and connects to no shaft or cog. It is crafted in a Mechanical
+    Crafter from dried kelp, a mechanical pump, two copper spools and a capacitor.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of
@@ -106,6 +109,13 @@ Licenses
         block/modular_accumulator/block.png, block/redstone_relay/redstone_relay_stone.png,
         block/redstone_relay/redstone_relay_stone_on.png, item/seed_oil_bucket.png and
         item/bioethanol_bucket.png.
+    The Electric Pump, which Create Crafts & Additions added in 2026, reuses two Create files in
+    the versions that Create 6.0.3 for Minecraft 1.20.1 already shipped on 2025-03-14, while
+    Create's assets were still under the MIT License:
+      * the two flange cuboids of models/block/mechanical_pump/block.json (git blob 34cb63e) in
+        assets/createaddition/models/block/electric_pump/block.json and item.json.
+      * pixels of textures/block/pump.png (git blob 8f3d8f7) in
+        assets/createaddition/textures/block/electric_pump/block.png.
     This build adds no Create asset that Create published on or after 2025-09-21 (Create's assets
     are All Rights Reserved from then on). Models that use create: textures only refer to them;
     those textures are not part of this jar.

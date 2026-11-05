@@ -206,6 +206,14 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
   `EnchanternatorSelectLevelPayload` changed the machine at any position the client named, and
   loaded its chunk to find it. Now only the machine whose menu the player has open takes the change.
 
+- Enchanternator: upstream enchanted at the highest level that the inputs allow, took the
+  ingredients of one level only and kept the item to enchant, so every operation copied the item and
+  gave the top level for the price of level 1. When the item already had the enchantment at that
+  level, it still took the inputs and gave nothing. Now it enchants at the selected level, takes the
+  ingredient counts of that level, as Mystical Agriculture's Enchanter does, takes the item to
+  enchant, and does nothing when the recipe gives no result. The 26.1 line of upstream takes the item
+  to enchant since `b100f44` but still enchants at the highest level.
+
 ### Left out
 
 - CraftTweaker integration (`compat/crafttweaker/FarmerCrafting.java`) and the CraftTweaker test

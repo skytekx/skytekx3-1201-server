@@ -180,13 +180,18 @@ public class EnchanternatorTileEntity extends BaseMachineTileEntity implements M
         if (tile.energy.getEnergyStored() >= tile.getFuelUsage()) {
             var recipe = tile.getActiveRecipe();
             if (recipe != null && tile.selectedLevel > 0) {
-                var inputs = tile.getInputResult(recipe);
+                // SkyTekx: upstream enchants at the highest level the inputs allow but takes the ingredients of one
+                // level and keeps the item to enchant. This enchants at the selected level, takes the ingredients of
+                // that level, as Mystical Agriculture's Enchanter does, and takes the item to enchant
+                var inputs = tile.getInputResult(recipe, tile.selectedLevel);
                 var maxLevel = EnchanterRecipes.getMaxResultEnchantmentLevel(recipe, tile.toCraftingInput());
                 if (inputs.hasAll && maxLevel >= tile.selectedLevel) {
-                    var result = EnchanterRecipes.assemble(recipe, tile.toCraftingInput(), level.registryAccess(), maxLevel);
+                    var result = EnchanterRecipes.assemble(recipe, tile.toCraftingInput(), level.registryAccess(), tile.selectedLevel);
                     var output = tile.inventory.getStackInSlot(OUTPUT_SLOT);
 
-                    if (StackHelper.canCombineStacks(result, output)) {
+                    // SkyTekx: an item that already has the enchantment at this level, or an incompatible one, gives
+                    // no result. Upstream would still take the inputs
+                    if (!result.isEmpty() && StackHelper.canCombineStacks(result, output)) {
                         tile.isRunning = true;
                         tile.progress++;
                         tile.energy.extractEnergy(tile.getFuelUsage(), false);
@@ -314,7 +319,7 @@ public class EnchanternatorTileEntity extends BaseMachineTileEntity implements M
         );
     }
 
-    private InputResult getInputResult(IEnchanterRecipe recipe) {
+    private InputResult getInputResult(IEnchanterRecipe recipe, int enchantmentLevel) {
         var amounts = new int[INPUT_SLOTS.length];
         var remaining = new int[INPUT_SLOTS.length];
 
@@ -330,11 +335,12 @@ public class EnchanternatorTileEntity extends BaseMachineTileEntity implements M
             if (ingredient.isEmpty())
                 continue;
 
-            var amount = EnchanterRecipes.getCount(recipe, i);
+            var amount = EnchanterRecipes.getCount(recipe, i) * enchantmentLevel;
 
             required += amount;
 
-            for (int j = 0; j < INPUT_SLOTS.length; j++) {
+            // SkyTekx: the ingredients come from the two ingredient slots, the third holds the item to enchant
+            for (int j = 0; j < INPUT_SLOTS.length - 1; j++) {
                 var slot = INPUT_SLOTS[j];
                 var stack = this.inventory.getStackInSlot(slot);
                 if (remaining[j] >= amount && ingredient.test(stack)) {
@@ -342,6 +348,19 @@ public class EnchanternatorTileEntity extends BaseMachineTileEntity implements M
                     amounts[j] += amount;
                     break;
                 }
+            }
+        }
+
+        // SkyTekx: the item to enchant, as upstream b100f44 of the 26.1 line takes it too
+        {
+            required += 1;
+
+            var slot = INPUT_SLOTS[2];
+            var stack = this.inventory.getStackInSlot(slot);
+
+            if (remaining[slot] >= 1 && !stack.isEmpty()) {
+                remaining[slot] -= 1;
+                amounts[slot] += 1;
             }
         }
 

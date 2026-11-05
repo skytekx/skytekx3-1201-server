@@ -97,8 +97,12 @@ Everything that SkyTekx changed in the build files is marked `SkyTekx:` in a com
 - **License files in the jars:** `jar` and `jarJar` add `LICENSE.txt` as `LICENSE_enderio`,
   `NOTICE` as `NOTICE_enderio`, and `licenses/` as `META-INF/licenses/enderio/`.
 - **`.gitignore`:** a SkyTekx block for the build and run outputs of this port.
+- Curios is a new optional dependency for the charm slot support that the backport takes from 8.2.5:
+  the repository `https://maven.theillusivec4.top/` (exclusive for `top.theillusivec4.curios`) and
+  `curios-forge` `5.14.1+1.20.1` (`curios_version` in `gradle.properties`, the version that the pack
+  ships) as `compileOnly` and `localRuntime`. The jar does not bundle it.
 
-Not changed: the Gradle wrapper (8.8), the repositories of the mod dependencies, the foojay toolchain
+Not changed: the Gradle wrapper (8.8), the repositories of upstream's mod dependencies, the foojay toolchain
 resolver, the source sets, the mixin and reobf setup, the compiler settings (no warnings were
 turned off), and the committed datagen output.
 
@@ -109,4 +113,4 @@ turned off), and the committed datagen output.
 - `licenses/`: the license texts of the third-party code and the bundled libraries
 - in `src/main/resources/META-INF/mods.toml`, the `license` field names all licenses (upstream said
   `CC0`), `issueTrackerURL` points to the SkyTekx repository, and the description says that the
-  build is unofficial
+  build is unofficial. The optional dependency on `curios` `[5.0,)` came with the backport.

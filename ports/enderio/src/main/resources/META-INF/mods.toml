@@ -43,6 +43,14 @@ mandatory=false
 versionRange="[1.109,)"
 side="BOTH"
 
+# SkyTekx: the charm slot support for the Staff of Travelling and the Electromagnet (backported from 8.2.5)
+[[dependencies.enderio]]
+modId="curios"
+mandatory=false
+versionRange="[5.0,)"
+ordering="NONE"
+side="BOTH"
+
 # API breakages :)
 [[dependencies.enderio]]
 modId="kubejs_enderio"

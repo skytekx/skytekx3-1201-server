@@ -39,20 +39,21 @@ public class EIOConduitTypes {
         CONDUIT_TYPES.register("redstone_conduit", RedstoneConduitType::new);
 
     public static final RegistryObject<FluidConduitType> FLUID =
-        fluidConduit("fluid_conduit", 50, false);
+        fluidConduit("fluid_conduit", 50, false, false);
 
+    // Ender IO 8.x 6ecc1c788: the pressurized and ender fluid conduits have insert priorities.
     public static final RegistryObject<FluidConduitType> FLUID2 =
-        fluidConduit("pressurized_fluid_conduit", 100, false);
+        fluidConduit("pressurized_fluid_conduit", 100, false, true);
 
     public static final RegistryObject<FluidConduitType> FLUID3 =
-        fluidConduit("ender_fluid_conduit", 200, true);
+        fluidConduit("ender_fluid_conduit", 200, true, true);
 
     public static final RegistryObject<ItemConduitType> ITEM =
         CONDUIT_TYPES.register("item_conduit", ItemConduitType::new);
 
-    private static RegistryObject<FluidConduitType> fluidConduit(String name, int tier, boolean isMultiFluid) {
+    private static RegistryObject<FluidConduitType> fluidConduit(String name, int tier, boolean isMultiFluid, boolean supportsPriority) {
         return CONDUIT_TYPES.register(name,
-            () -> new FluidConduitType(EnderIO.loc(name), tier, isMultiFluid));
+            () -> new FluidConduitType(EnderIO.loc(name), tier, isMultiFluid, supportsPriority));
     }
 
     public static void register(IEventBus bus) {

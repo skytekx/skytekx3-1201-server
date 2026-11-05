@@ -5,6 +5,7 @@ import com.enderio.api.conduit.screen.ConduitScreenExtension;
 import com.enderio.api.misc.Vector2i;
 import com.enderio.base.common.lang.EIOLang;
 import com.enderio.conduits.common.conduit.type.fluid.FluidConduitData;
+import com.enderio.core.client.gui.widgets.MultiIconButton;
 import com.enderio.core.common.util.TooltipUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -24,32 +25,59 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 public final class FluidConduitScreenExtension implements ConduitScreenExtension<FluidConduitData> {
 
-    public static final FluidConduitScreenExtension INSTANCE = new FluidConduitScreenExtension();
+    public static final FluidConduitScreenExtension INSTANCE = new FluidConduitScreenExtension(false);
+
+    /**
+     * For the fluid conduits with insert priorities, the pressurized and ender conduits of Ender IO 8.x (6ecc1c788).
+     */
+    public static final FluidConduitScreenExtension PRIORITY_INSTANCE = new FluidConduitScreenExtension(true);
 
     private static final ResourceLocation WIDGET_TEXTURE = EnderIO.loc("textures/gui/fluidbackground.png");
 
-    private FluidConduitScreenExtension() {
+    private final boolean showPriority;
+
+    private FluidConduitScreenExtension(boolean showPriority) {
+        this.showPriority = showPriority;
     }
 
     @Override
     public List<AbstractWidget> createWidgets(Screen screen, Supplier<FluidConduitData> conduitDataSupplier, UpdateExtendedData<FluidConduitData> updateConduitData, Supplier<Direction> direction, Vector2i widgetsStart) {
-        if (conduitDataSupplier.get().isMultiFluid) {
-            return List.of();
-        }
-        return List.of(
-            new FluidWidget(widgetsStart.add(0, 20),
+        List<AbstractWidget> widgets = new ArrayList<>();
+        if (!conduitDataSupplier.get().isMultiFluid) {
+            widgets.add(new FluidWidget(widgetsStart.add(0, 20),
                 () -> conduitDataSupplier.get().lockedFluid(),
                 () -> updateConduitData.update(data -> {
                     data.setShouldReset(true);
                     return data;
                 })
-            )
-        );
+            ));
+        }
+
+        if (showPriority) {
+            // The plus and minus buttons of the item conduit priority (6.x 37890e67d). The conduit screen draws the value.
+            widgets.add(MultiIconButton.createAddButton(
+                widgetsStart.add(70, 4 + 4 + 8 + 16 + 8),
+                () -> conduitDataSupplier.get().getPriority(direction.get()),
+                priority -> updateConduitData.update(data -> {
+                    data.compute(direction.get()).setPriority(priority);
+                    return data;
+                })));
+            widgets.add(MultiIconButton.createMinusButton(
+                widgetsStart.add(70, 4 + 4 + 8 + 16 + 16),
+                () -> conduitDataSupplier.get().getPriority(direction.get()),
+                priority -> updateConduitData.update(data -> {
+                    data.compute(direction.get()).setPriority(priority);
+                    return data;
+                })));
+        }
+
+        return widgets;
     }
 
     private static class FluidWidget extends AbstractWidget {

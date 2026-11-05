@@ -8,6 +8,7 @@ import com.enderio.conduits.common.conduit.block.ConduitBlockEntity;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.type.energy.EnergyConduitType;
+import com.enderio.conduits.common.conduit.type.fluid.FluidConduitType;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitData.ItemSidedData;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitType;
 import com.enderio.conduits.common.init.ConduitLang;
@@ -140,6 +141,8 @@ public class ConduitProbeItem extends Item {
                     typeTag.putInt(PRIORITY, sidedData.getPriority());
                 } else if (conduit instanceof EnergyConduitType energyConduitType) {
                     typeTag.putInt(PRIORITY, bundle.getNodeFor(energyConduitType).getConduitData().getPriority(face));
+                } else if (conduit instanceof FluidConduitType fluidConduitType && fluidConduitType.supportsPriority()) {
+                    typeTag.putInt(PRIORITY, bundle.getNodeFor(fluidConduitType).getConduitData().getPriority(face));
                 }
             } else {
                 typeTag.putBoolean(IS_INSERT, false);
@@ -204,6 +207,9 @@ public class ConduitProbeItem extends Item {
             } else if (conduit instanceof EnergyConduitType energyConduitType && typeTag.contains(PRIORITY, Tag.TAG_INT)) {
                 // The setter clamps the value, the probe tag is item NBT that a creative client can write.
                 bundle.getNodeFor(energyConduitType).getConduitData().compute(face).setPriority(typeTag.getInt(PRIORITY));
+            } else if (conduit instanceof FluidConduitType fluidConduitType && fluidConduitType.supportsPriority()
+                && typeTag.contains(PRIORITY, Tag.TAG_INT)) {
+                bundle.getNodeFor(fluidConduitType).getConduitData().compute(face).setPriority(typeTag.getInt(PRIORITY));
             }
             pastedConduits.add(conduitKeyToDisplayName(conduitKey).getString());
         });

@@ -26,15 +26,25 @@ public class FluidConduitType extends TieredConduit<FluidConduitData> {
     public static final ConduitMenuData ADVANCED_MENU_DATA = new ConduitMenuData.Simple(true, true, true, true, true, true);
 
     private final boolean isMultiFluid;
+    private final boolean supportsPriority;
     private final int transferRatePerTick;
     private final ConduitTicker<FluidConduitData> ticker;
 
     public FluidConduitType(ResourceLocation tierName, int transferRatePerTick, boolean isMultiFluid) {
+        this(tierName, transferRatePerTick, isMultiFluid, false);
+    }
+
+    /**
+     * @param supportsPriority whether the inserts of this conduit have a priority, as the pressurized and ender fluid conduits of
+     *                         Ender IO 8.x have since 6ecc1c788
+     */
+    public FluidConduitType(ResourceLocation tierName, int transferRatePerTick, boolean isMultiFluid, boolean supportsPriority) {
         super(new ResourceLocation("forge:fluid"), tierName, /*(isMultiFluid ? 100_000 : 0) + */transferRatePerTick);
         this.isMultiFluid = isMultiFluid;
+        this.supportsPriority = supportsPriority;
         this.transferRatePerTick = transferRatePerTick;
 
-        ticker = new FluidConduitTicker(!isMultiFluid, this.transferRatePerTick);
+        ticker = new FluidConduitTicker(!isMultiFluid, this.transferRatePerTick, supportsPriority);
     }
 
     @Override
@@ -82,5 +92,9 @@ public class FluidConduitType extends TieredConduit<FluidConduitData> {
 
     public boolean isMultiFluid() {
         return isMultiFluid;
+    }
+
+    public boolean supportsPriority() {
+        return supportsPriority;
     }
 }

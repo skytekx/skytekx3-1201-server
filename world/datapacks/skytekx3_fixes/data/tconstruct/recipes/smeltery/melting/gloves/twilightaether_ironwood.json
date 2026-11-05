@@ -11,16 +11,16 @@
   },
   "result": {
     "tag": "forge:molten_iron",
-    "amount": 180,
+    "amount": 90,
     "unit_size": 10
   },
   "byproducts": [
     {
       "tag": "forge:molten_gold",
-      "amount": 20,
+      "amount": 10,
       "unit_size": 10
     }
   ],
   "temperature": 800,
-  "time": 85
+  "time": 60
 }

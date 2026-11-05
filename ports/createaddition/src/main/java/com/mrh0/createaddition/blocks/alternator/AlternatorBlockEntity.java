@@ -42,6 +42,8 @@ public class AlternatorBlockEntity extends KineticBlockEntity {
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		// Create's kinetic stats first, they show the stress impact (upstream f3091d0).
+		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing).append(Component.translatable(CreateAddition.MODID + ".tooltip.energy.production").withStyle(ChatFormatting.GRAY)));
 		tooltip.add(Component.literal(spacing).append(Component.literal(" " + Util.format(getEnergyProductionRate((int) (isSpeedRequirementFulfilled() ? getSpeed() : 0))) + "fe/t ") // fix

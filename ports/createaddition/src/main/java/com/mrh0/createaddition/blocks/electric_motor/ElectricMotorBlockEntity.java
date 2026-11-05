@@ -11,7 +11,6 @@ import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.motor.KineticScrollValueBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -84,6 +83,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 		return step;
 	}
 
+	@Override
 	public float calculateAddedStressCapacity() {
 		float capacity = Config.MAX_STRESS.get()/256f;
 		this.lastCapacityProvided = capacity;
@@ -121,9 +121,11 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 		return convertToDirection(active ? motorSpeed : 0, getBlockState().getValue(ElectricMotorBlock.FACING));
 	}
 
+	// The motor's own entry in Create's stress registries, which only carries the tooltip values (upstream
+	// f3091d0). The base named the Water Wheel here, whose impact is also 0.
 	@Override
 	protected Block getStressConfigKey() {
-		return AllBlocks.WATER_WHEEL.get();
+		return CABlocks.ELECTRIC_MOTOR.get();
 	}
 
 	public InternalEnergyStorage getEnergyStorage() {

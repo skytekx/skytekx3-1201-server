@@ -58,7 +58,9 @@ Modifications
     the graph of a dimension. Wires are culled by the box of all their ends, stay visible while
     their connector is off screen and are drawn to a far end the client has not loaded (126ed38).
     Shears on a connector cut all its wires (3abfa39). Festive light wire counts as low current
-    wire and no longer joins two large connectors (e1cd591).
+    wire and no longer joins two large connectors (e1cd591). A connector looks for its neighbour's
+    energy storage again while it has none, so a neighbour whose chunk loads later is found (the
+    Forge form of d239617).
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

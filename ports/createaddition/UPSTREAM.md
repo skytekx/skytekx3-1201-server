@@ -265,3 +265,10 @@ its item here, and the NOTICE in the jar sums them up.
 18. Festive wire: `e1cd591` treats festive light wire like copper wire, so it can no longer join two
     large connectors (`WireConnectResult.REQUIRES_HIGH_CURRENT` in `IWireNode.connect`). The check
     only runs when a wire is placed, so existing festive wires between large connectors stay.
+19. Connector capability retry: the 1.20.1 form of `d239617` ("Connector cache logic"). Upstream moved
+    the connector's neighbour lookup to NeoForge's `BlockCapabilityCache`, which has no Forge 1.20.1
+    counterpart. The fork keeps its `LazyOptional` with the invalidation listener, and
+    `AbstractConnectorBlockEntity.lazyTick` looks the neighbour up again every 10 ticks while the
+    connector has no external storage and the neighbour's chunk is loaded. Before, a connector whose
+    neighbour chunk loaded after it, or whose neighbour had no block entity yet, stayed without
+    storage until a block update.

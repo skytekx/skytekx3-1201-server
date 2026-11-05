@@ -32,7 +32,9 @@ public class ChargingRecipeSerializer extends ProcessingRecipeSerializer<Chargin
 
 	@Override
 	protected ChargingRecipe readFromJson(ResourceLocation recipeId, JsonObject json) {
-		// Create's own form, as KubeJS and the datagen of the 1.21.1 line write it.
+		// Create's 1.20.1 processing form (ingredients, results with item entries, max_charge_rate), as KubeJS
+		// and Create's 1.20.1 datagen write it. The 1.21.1 datagen writes "id" result entries, which
+		// ProcessingOutput.deserialize of Create 6.0.8 does not read.
 		if(!json.has(INGREDIENT_KEY) && !json.has(RESULT_KEY))
 			return super.readFromJson(recipeId, json);
 

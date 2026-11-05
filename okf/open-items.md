@@ -238,13 +238,6 @@ evidence and the page with the details. The rulings behind the first section are
   `Entity.load` for a NaN coordinate, and which mod writes such entities is still open. Since
   skytekx-compat 2.1.6 a "Dropped entity" line names the next one with its type, chunk and raw
   position, see [SkyTekx Compat](content/compat-mod.md#entities-that-fail-to-load).
-- Most tools and armor of other mods do not melt in the smeltery of the live server yet, because
-  Tinkers' Construct ships melting recipes only for vanilla items and its own compat metals, and with
-  SkyTekx Molten the Obsidian Ingot of Forbidden & Arcanus melts without its iron. Since 2026-11-05 the
-  fixes pack holds the 9,527 generated recipes of [Melting](content/melting.md), whose three dupes of
-  the recheck and seven faults of its review are fixed, with 16 overrides of Tinkers dupes and two
-  files that switch off the obsidian recipes of Molten. They reach the game with the next restart or
-  `/reload` of the Mac mini. Server side recipes need no new pack.
 
 ## Not verified
 
@@ -291,10 +284,11 @@ evidence and the page with the details. The rulings behind the first section are
   [KubeJS](modpack/kubejs.md#apotheosis-riders).
 - The melting recipes of 2026-11-04 in game. Nobody has melted a horse armor or a glove since they
   went live, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
-- The generated melting recipes in a client. On the test servers real melters gave the amounts of the
-  files, but no client has logged in with the 9,527 files, so the login with about 8,300 more recipes
-  in the recipe packet and the pages of the smeltery in JEI or EMI and the Tinkers book were not seen.
-  The first client should melt one generated item in a smeltery and look it up in EMI, see
+- The generated melting recipes in a client. The 9,527 files run on the Mac mini since the `/reload` of
+  05:45 on 2026-11-05, and on the test servers real melters gave the amounts of the files, but no
+  client has logged in with them yet. So the login with about 8,300 more recipes in the recipe packet
+  and the pages of the smeltery in JEI or EMI and the Tinkers book were not seen. The first client
+  should melt one generated item in a smeltery and look it up in EMI, see
   [Melting](content/melting.md#recipe-sync-to-the-clients).
 - Modflared in a running game. Nobody has joined through it yet. The second MacBook is set up for it,
   but its sign-in and first launch are left to the person at that Mac. Where Modflared runs, and that
@@ -345,8 +339,8 @@ evidence and the page with the details. The rulings behind the first section are
   either, only the loaded config. See [AlmostUnified](modpack/almostunified.md#emi-hide-list).
 - The EMI hide list in a client. A test server loaded the tag, and the EMI 1.1.24 build in the pack
   reads it in `EmiTags` and `EmiStackList`, but no client has looked at the item list with it yet. The list,
-  the config of AlmostUnified and the recipe fixes of 2026-11-04 reach the Mac mini with its next
-  restart or `/reload`, the two trims with a restart. See
+  the config of AlmostUnified, the recipe fixes of 2026-11-04 and the two trims run on the Mac mini since
+  the start of 3.1.3 at 00:46 on 2026-11-05. See
   [AlmostUnified](modpack/almostunified.md#emi-hide-list).
 
 ## Docs and housekeeping

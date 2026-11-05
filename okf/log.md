@@ -867,7 +867,11 @@ logs stay on the Mac and are not in the repo.
 - At 03:47 the 9,546 new files and the three changed overrides reached the fixes pack of the Mac mini
   after a checksum dry run and an APFS clone of the pack to
   `~/skytekx3-backups/before-melting-2026-11-05/`. The pack has 9,796 files and is still the last of
-  309 packs. The recipes go live with the next restart or `/reload`.
+  309 packs.
+- On the owner's go a `minecraft:reload` at 05:45:05, with nobody online, brought the recipes live
+  after a checksum dry run found the pack equal to git HEAD (4132ce4c). KubeJS found 46,980 recipes,
+  as on the test server, and AlmostUnified turned 53,123 recipes into 52,614. The reload logged no
+  ERROR or FATAL line and no parse error, and the server fell 2.4 s behind once while it ran.
 - The owner decisions on loot that melts into metal, the eleven trades, the known machine dupes, the
   variants of AlmostUnified and the cheap ender pearl dust are in
   [Open items](open-items.md#owner-decisions).

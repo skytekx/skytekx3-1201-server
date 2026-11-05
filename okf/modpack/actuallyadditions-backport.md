@@ -81,15 +81,27 @@ boot logged a Mixin apply failure. The fork logs one WARN that the reference map
 once a mixin exists. It goes away when the Item Tag filter brings the first mixin. The dev client
 of the fork reaches the title screen and writes `actuallyadditions-client.toml`.
 
-No bundle after the baseline has landed, and the pack does not ship the mod yet. Most new config
-keys have no reader yet, because their blocks keep reading the 1.12 enums until their features
-land (`UPSTREAM.md`, source change 6).
+The data core bundle is done. Its four commits are 2053e6a (the `forge:` tags), 71370b7 (a recipe
+for every block and item of the base), 63a8eff (the advancements) and a98f81c (the JEI categories),
+with the review fix fb2f22c (`UPSTREAM.md`, source changes 9 to 12). The review fix lets the Lens
+of the Killer take a real Sharpness V book and keeps the 3x3 slime block recipe off the slime balls
+of Tinkers' Construct and Twilight Forest (see [Local divergences](#local-divergences)). The jar of
+fb2f22c (SHA-1 `bb73c65ef81d17ef862f7231c28d66ebe67438d0`, 4605920 bytes, one build) reached `Done`
+in 62.5 s on a dedicated Forge 47.4.18 server with AlmostUnified 0.11.0 and the pack config,
+Farmer's Delight 1.3.4 and Patchouli 85, with 0 FATAL and 0 ERROR lines, a clean stop and an empty
+`uncovered_recipes.txt` of AlmostUnified. Nobody has opened the JEI or EMI categories in a client
+yet. This bundle makes the phantom placer and breaker, the Atomic Reconstructor and the Vertical
+Digger craftable before the Arclight hardening gives them a fake player that Bukkit sees, so no jar
+of this state may reach the live server.
+
+The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
+keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`aa-baseline`) | Optional dependencies and pack format 15, removal of the bundled InvTweaks annotations, Patchouli and Curios at compile time, the Mixin setup, the port script, the config of `main`, the datagen baseline and the boot smoke test | 16.5 | Nothing | Done in 4142c4b, 9788dd8 and 6bcbead (setup), 54fb6c3, dbbfe12, ef59d18, 8e0566f and 51031ce, review fix d3bd821 |
 | Server safety (`aa-server-safety`) | Client classes out of common code, packet validation, menu validity with the drill upgrade dupe, player data sync | 18.5 | Baseline | Planned |
-| Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Planned |
+| Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Done in 2053e6a, 71370b7, 63a8eff and a98f81c, review fix fb2f22c |
 | Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Planned |
 | Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Planned |
 | World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Planned |
@@ -350,8 +362,11 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 - Tiny coal and tiny charcoal get no `forge:nuggets` tag, because AlmostUnified would unify them
   with the coal and charcoal materials.
 - Farmer's Delight 1.3.4 also fills `forge:crops/rice`, so the mod's rice counts in its recipes,
-  which is wanted. Canola oil and the other three fluids have no `forge:` standard and keep the
-  mod's own bucket tags.
+  which is wanted. The flax seeds join `forge:crops/flax` as on `main`, and Supplementaries 3.1.44
+  makes its rope, sack and doormat from that tag, so the seeds craft rope without growing flax. The
+  owner can take them out of `forge:crops/flax` in `kubejs/server_scripts/tag_fixes.js` if that is
+  unwanted (review of the data core bundle, not decided). Canola oil and the other three fluids
+  have no `forge:` standard and keep the mod's own bucket tags.
 - The new worldgen uses Forge biome modifiers on `#minecraft:is_overworld` and the `forge:` climate
   tags. The Skylands biome `skytekx3:sky_void` sits only in `#skytekx3:has_structure/sky_floaters`
   and two Dungeons Arise tags of the Skylands datapack. None of the tags the modifiers use holds it,
@@ -477,6 +492,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   blocks check the chunk first, relays use an index, and the magnet ring is throttled.
 - The fork keeps the ids that `main` removed or renamed and the base's inventory format.
 - Tags use `forge:` instead of `c:`, and tiny coal gets no nugget tag.
+- The Lens of the Killer takes a `forge:partial_nbt` book with Sharpness V in `StoredEnchantments`,
+  since the strict ingredient of the base and the 1.20.4 line matched no real book. The 3x3 slime
+  block recipe takes rice slimeballs instead of every `forge:slimeballs` item, and the invisibility
+  upgrade keeps `forge:glass/black` (`UPSTREAM.md`, source change 10).
 - Patchouli stays optional, and the book is hand written without a Patchouli provider.
 - Compat mining lens recipes ship only for mods whose 1.20.1 ids were checked.
 - The Engineer house uses upstream's structure with a lowered DataVersion, without the structure

@@ -37,6 +37,9 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
+is tracked: 243 files, 242 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 107 are
+[gameplay overrides](#gameplay-overrides).
 is tracked: 9,796 files, 9,795 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
 fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,660 are
 [gameplay overrides](#gameplay-overrides), 9,527 of them the generated recipes of [melting](melting.md).
@@ -117,6 +120,7 @@ be none.
 
 ### Gameplay overrides
 
+Seven groups of files in the pack change the game on purpose:
 Nine groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
@@ -216,6 +220,19 @@ Nine groups of files in the pack change the game on purpose:
   gave wheat, potatoes and carrots by row, and the scan found 59 such recipes. The pack
   `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
   (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
+  Mac mini at 21:54 and load with its next `/reload` or start.
+- One block loot table at `data/bigreactors/loot_tables/blocks/energizerpowerportfe_active.json` makes
+  the Energizer Active FE Power Port of Extreme Reactors 2.0.97 drop itself since 2026-11-05. The jar
+  registers the block like the passive port but ships no loot table for it, and its loot datagen
+  (`BlockSubProvider`) lists only the passive port, so a mined port vanished with its recipe of four
+  energizer casings, two iron, two lapis and a redstone block. The file is the passive port's table
+  with the item `bigreactors:energizerpowerport_fe_active`, whose id has an underscore before `fe`
+  where the block id has none. The mod ships nothing at this id, so the pack order does not matter.
+  On a Forge 47.4.18 test server with only Extreme Reactors 2.0.97 and ZeroCore 2.1.48, `/loot spawn`
+  with a diamond pickaxe gave 0 items for the active port without the file, and 1 Energizer Active FE
+  Power Port with it, and `/setblock ... destroy` dropped the port. The passive Mekanism fluid port of
+  the reinforced reactor has no loot table either, already in 2.0.84, and stays as it is for now,
+  because the pack has not tested it with Mekanism.
   Mac mini at 21:54 and went live with the restart of 23:10 ("Done" at 23:11:09), whose log has no
   error about them.
 - Two trim materials, `data/tconstruct/trim_material/steel.json` and

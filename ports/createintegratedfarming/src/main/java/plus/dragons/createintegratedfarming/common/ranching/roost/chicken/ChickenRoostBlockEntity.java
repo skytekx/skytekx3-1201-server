@@ -57,8 +57,9 @@ public class ChickenRoostBlockEntity extends AnimalRoostBlockEntity {
         Direction facing = getBlockState().getValue(HorizontalDirectionalBlock.FACING);
         Vec3 feedPos = Vec3.atBottomCenterOf(worldPosition)
                 .add(facing.getStepX() * .5f, 13 / 16f, facing.getStepZ() * .5f);
+        // SkyTekx: drop a copy, since dropItemStack empties the stack it gets and the map shares one
         food.usingConvertsTo().ifPresent(remainer -> Containers.dropItemStack(
-                level, feedPos.x, feedPos.y, feedPos.z, remainer));
+                level, feedPos.x, feedPos.y, feedPos.z, remainer.copy()));
         level.addParticle(
                 new ItemParticleOption(ParticleTypes.ITEM, stack),
                 feedPos.x, feedPos.y, feedPos.z,

@@ -248,6 +248,12 @@ public class MachineBlocks {
         .build()
         .register();
 
+    // SkyTekx: backported from 8.x (1cb2e1420). A progress machine, but both power states use the one model like upstream.
+    public static final BlockEntry<ProgressMachineBlock> VAT = baseMachine(REGISTRATE.block("vat", props -> new ProgressMachineBlock(props, MachineBlockEntities.VAT)),
+        MachineModelUtil::machineBlock)
+        .lang("VAT")
+        .register();
+
     //used when single methods needs to be overridden in the block class
     private static <T extends MachineBlock> BlockBuilder<T, Registrate> baseMachine(BlockBuilder<T, Registrate> machineBlock,
         NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockstateProvider> blockStateProvider) {

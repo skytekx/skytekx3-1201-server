@@ -3,6 +3,7 @@ package com.enderio.machines.common.integrations.jei;
 import com.enderio.machines.common.init.MachineRecipes;
 import com.enderio.machines.common.integrations.jei.util.WrappedEnchanterRecipe;
 import com.enderio.machines.common.recipe.AlloySmeltingRecipe;
+import com.enderio.machines.common.recipe.FermentingRecipe;
 import com.enderio.machines.common.recipe.SagMillingRecipe;
 import com.enderio.machines.common.recipe.SlicingRecipe;
 import com.enderio.machines.common.recipe.SoulBindingRecipe;
@@ -50,6 +51,10 @@ public class MachineJEIRecipes {
                 consumer.accept(new WrappedEnchanterRecipe(recipe, i));
             }
         }).toList();
+    }
+
+    public List<FermentingRecipe> getFermentingRecipes() {
+        return recipeManager.getAllRecipesFor(MachineRecipes.VAT_FERMENTING.type().get());
     }
 
     public List<SagMillingRecipe> getSagMillingRecipes() {

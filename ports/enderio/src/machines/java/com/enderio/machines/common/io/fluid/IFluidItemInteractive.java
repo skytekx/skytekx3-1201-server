@@ -34,7 +34,8 @@ public interface IFluidItemInteractive {
                 fluidInItem = handler.drain(new FluidStack(tankAccess.getFluid(machine), Integer.MAX_VALUE), IFluidHandler.FluidAction.SIMULATE);
             }
             if (fluidInItem.isEmpty()) {
-                if (!tankAccess.isEmpty(machine)) {
+                // Only fill the item from a tank that gives fluid out (1cb2e1420).
+                if (!tankAccess.isEmpty(machine) && tankAccess.canExtract(machine)) {
                     int filled = handler.fill(tankAccess.getFluid(machine),
                         player.isCreative() ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
                     ItemStack container = handler.getContainer();
@@ -51,7 +52,8 @@ public interface IFluidItemInteractive {
                         return true;
                     }
                 }
-            } else {
+            } else if (tankAccess.canInsert(machine)) {
+                // Only empty the item into a tank that takes fluid in (1cb2e1420).
                 int filledAmount = tankAccess.fill(machine, fluidInItem, IFluidHandler.FluidAction.SIMULATE);
                 if (filledAmount > 0) {
                     boolean filled = false;

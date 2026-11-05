@@ -36,6 +36,9 @@ public class RecipeCaches {
     public static final RecipeInputCache<SoulBindingRecipe.Container, SoulBindingRecipe> SOUL_BINDING
         = new RecipeInputCache<>(MachineRecipes.SOUL_BINDING.type());
 
+    public static final RecipeInputCache<FermentingRecipe.Container, FermentingRecipe> FERMENTING
+        = new RecipeInputCache<>(MachineRecipes.VAT_FERMENTING.type());
+
     public static RecipeInputCache<AlloySmeltingRecipe.ContainerWrapper, AlloySmeltingRecipe> getAlloySmeltingCache(AlloySmelterMode mode) {
         if (mode.canSmelt() && mode.canAlloy()) {
             return ALL_ALLOY_SMELTING;
@@ -55,6 +58,7 @@ public class RecipeCaches {
         PAINTING.markCacheDirty();
         SAG_MILLING.markCacheDirty();
         SOUL_BINDING.markCacheDirty();
+        FERMENTING.markCacheDirty();
     }
 
     @SubscribeEvent
@@ -66,5 +70,6 @@ public class RecipeCaches {
         PAINTING.rebuildCache(event.getRecipeManager());
         SAG_MILLING.rebuildCache(event.getRecipeManager());
         SOUL_BINDING.rebuildCache(event.getRecipeManager());
+        FERMENTING.rebuildCache(event.getRecipeManager());
     }
 }

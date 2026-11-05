@@ -16,19 +16,45 @@ Modifications
 -------------
   Modified by SkyTekx (the ts4.party community), 2026, for the SkyTekx 3 modpack. This build runs
   on Minecraft 1.20.1 with Forge 47, Cucumber 7.0.16 and Mystical Agriculture 7.0.24, keeps the mod
-  id mysticalautomation and is versioned 1.0.8-skytekx.1.
+  id mysticalautomation, its registry ids and NBT keys, and is versioned 1.0.8-skytekx.1.
 
   Summary of the changes:
+    * Port: the Java sources target Forge 47 (DeferredRegister, block entity capabilities, a
+      SimpleChannel with protocol version 1, menu screens in client setup, a COMMON config) and
+      the APIs of Cucumber 7 and Mystical Agriculture 7 (its Machine Upgrades, altar and enchanter
+      recipes). Container data travels as 16 bit halves and slot counts above 127 travel in an
+      extra message, since 1.20.1 sends them as shorts and bytes. The fuel and progress widgets draw
+      their lit part from the vanilla furnace texture at runtime.
+    * Data: recipes, loot tables and tags in the 1.20.1 folders and fields, forge: tags in place of
+      the c: tags, a pack.mcmeta.
+    * Fixes: ghost slot and machine mode messages from clients only act on the open menu and its
+      ghost slots, the Enchanternator takes the ingredients of the level it enchants at and the item
+      it enchants, the JEI recipe transfer no longer reads past its slot views, and bone meal costs
+      the full fuel usage of the Fertilizer.
+    * Left out: the CraftTweaker integration and its test scripts.
     * Build: ForgeGradle for Forge 1.20.1 on Java 17, reproducible jar (no file timestamps, fixed
-      entry order, no build timestamp in the manifest). This NOTICE and the upstream LICENSE ship
-      inside the jar. mods.toml marks the build as a modified, unofficial one, sends bug reports to
-      SkyTekx and drops the upstream update URL.
+      entry order, no build timestamp in the manifest). mods.toml marks the build as a modified,
+      unofficial one, sends bug reports to SkyTekx and drops the upstream update URL.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/mysticalautomation.
   ports/mysticalautomation/UPSTREAM.md lists every change to the upstream build.
 
+Code and text from other projects
+---------------------------------
+  * Cucumber, Copyright (c) 2018 BlakeBr0, MIT License, https://github.com/BlakeBr0/Cucumber
+    (branch "1.2!", release 8.0.16): the classes QuickMover (unchanged), ContainerDataBuilder,
+    CachedRecipe, FuelWidget and ProgressArrowWidget and parts of BaseMachineTileEntity,
+    EnchanternatorTileEntity and the block classes are copies or adaptations of Cucumber 8 code,
+    in the packages of this mod. Its license ships in this jar as LICENSE-Cucumber.
+  * Mystical Agriculture, Copyright (c) 2018 BlakeBr0, MIT License,
+    https://github.com/BlakeBr0/MysticalAgriculture (branch 1.21, release 8.0.29): the English,
+    Japanese and Brazilian texts of three tooltips. Its license ships in this jar as
+    LICENSE-MysticalAgriculture.
+
 Licenses
 --------
   * Mystical Automation: MIT License. The upstream LICENSE ships in this jar, unchanged, as
     LICENSE_mysticalautomation.
+  * Cucumber and Mystical Agriculture: MIT License, see above. This jar contains no other part of
+    them. The pack downloads their own jars unchanged.

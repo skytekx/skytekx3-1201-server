@@ -41,11 +41,11 @@ public class InfusionAltarnatorRecipeTransferHandler implements IRecipeTransferH
             var index = 0;
 
             for (var slot : container.slots) {
-                if (index > views.size())
-                    return null;
-
+                // SkyTekx: upstream stops at index > views.size() and reads views.get(index) one step too far, which
+                // throws for a recipe with fewer inputs than ghost slots (an Infusion Altar recipe with fewer than
+                // eight pedestals). Ghost slots past the inputs of the recipe are cleared instead
                 if (slot instanceof FakeSlot) {
-                    var stack = views.get(index).getDisplayedItemStack().orElse(ItemStack.EMPTY);
+                    var stack = index < views.size() ? views.get(index).getDisplayedItemStack().orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
 
                     NetworkHandler.INSTANCE.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
 

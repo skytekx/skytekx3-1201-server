@@ -18,7 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -186,7 +185,9 @@ public class FertilizerTileEntity extends BaseMachineTileEntity implements MenuP
                         var fakePlayer = FakePlayerFactory.getMinecraft((ServerLevel) level);
                         var context = new UseOnContext(level, fakePlayer, InteractionHand.MAIN_HAND, stack, hitResult);
 
-                        if (stack.getItem().useOn(context) == InteractionResult.SUCCESS) {
+                        // SkyTekx: bone meal answers CONSUME on the server, the fertilizers of Mystical Agriculture
+                        // SUCCESS. Upstream charges the full fuel usage for SUCCESS only, so bone meal cost the scan rate
+                        if (stack.getItem().useOn(context).consumesAction()) {
                             tile.energy.extractEnergy(tile.getFuelUsage(), false);
                         } else {
                             tile.energy.extractEnergy(SCAN_FUEL_USAGE, false);

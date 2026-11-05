@@ -223,6 +223,14 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
   enchant, and does nothing when the recipe gives no result. The 26.1 line of upstream takes the item
   to enchant since `b100f44` but still enchants at the highest level.
 
+- JEI recipe transfer: the four transfer handlers stopped at `index > views.size()` and then read
+  `views.get(index)`, one step past the end for a recipe with fewer inputs than ghost slots, such as
+  an Infusion Altar recipe with fewer than eight pedestals. They now clear the ghost slots past the
+  inputs of the recipe.
+- Fertilizer fuel: vanilla bone meal answers `CONSUME` on the server and the fertilizers of Mystical
+  Agriculture answer `SUCCESS`. Upstream charged the full fuel usage for `SUCCESS` only, so bone meal
+  cost the scan rate. Every use that consumes the item now costs the full fuel usage.
+
 ### Left out
 
 - CraftTweaker integration (`compat/crafttweaker/FarmerCrafting.java`) and the CraftTweaker test

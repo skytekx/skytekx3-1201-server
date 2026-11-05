@@ -72,6 +72,9 @@ Modifications
     Speed below four hearts. It has a new texture, an edit of the mod's own, and its recipe takes
     diamond grit and a zinc plate instead of the emerald.
     The Tesla Coil gives light level 10 while it is powered.
+  - Charging in Sequenced Assembly from the 1.21.1 line: a createaddition:charging recipe can be
+    a step of a Create Sequenced Assembly, done by a Tesla Coil and shown in JEI. Charging recipes
+    may use Create's JSON keys besides the old ones.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

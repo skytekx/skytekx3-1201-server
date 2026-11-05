@@ -38,7 +38,8 @@ public class CARecipes {
 			new SequencedAssemblyRollingRecipeSerializer(new RollingRecipeProcessingFactory()));
 
 	public static final Supplier<RecipeType<ChargingRecipe>> CHARGING_TYPE = register("charging");
-	public static final RegistryObject<RecipeSerializer<?>> CHARGING = SERIALIZERS.register("charging", ChargingRecipeSerializer::new);
+	public static final RegistryObject<RecipeSerializer<?>> CHARGING = SERIALIZERS.register("charging", () ->
+			new ChargingRecipeSerializer(ChargingRecipe::new));
 
 	public static final Supplier<RecipeType<LiquidBurningRecipe>> LIQUID_BURNING_TYPE = register("liquid_burning");
 	public static final RegistryObject<RecipeSerializer<?>> LIQUID_BURNING = SERIALIZERS.register("liquid_burning", LiquidBurningRecipeSerializer::new);

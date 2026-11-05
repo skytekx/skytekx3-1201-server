@@ -11,12 +11,10 @@ public class CinnamonSignBlockEntity extends SignBlockEntity {
         super(pos, state);
     }
 
+    @Override
     public BlockEntityType<?> getType() {
         return EDBlockEntityTypes.CINNAMON_SIGN.get();
     }
 
-    public boolean isValidBlockState(BlockState state) {
-        return this.getType().isValid(state);
-    }
 }
 

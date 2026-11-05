@@ -18,25 +18,29 @@ public class EDCropBlock extends CropBlock {
 
 
     public EDCropBlock() {
-        super(BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT).instabreak().randomTicks().noCollission());
+        super(BlockBehaviour.Properties.copy(Blocks.WHEAT).instabreak().randomTicks().noCollission());
     }
 
+    // Upstream compares this block with the registry suppliers themselves, which never matches, so its crops
+    // fall back to themselves as seed. This port compares with the registered blocks.
+    @Override
     protected ItemLike getBaseSeedId() {
-        if(this == EDBlocks.ASPARAGUS_CROP) {
+        if(this == EDBlocks.ASPARAGUS_CROP.get()) {
             return EDItems.ASPARAGUS_SEEDS.get();
         }
-        if(this == EDBlocks.SWEET_POTATO_CROP) {
+        if(this == EDBlocks.SWEET_POTATO_CROP.get()) {
             return EDItems.SWEET_POTATO.get();
         }
-        if(this == EDBlocks.CHILI_PEPPER_CROP) {
+        if(this == EDBlocks.CHILI_PEPPER_CROP.get()) {
             return EDItems.CHILI_PEPPER_SEEDS.get();
         }
-        if(this == EDBlocks.PEANUT_CROP) {
+        if(this == EDBlocks.PEANUT_CROP.get()) {
             return EDItems.PEANUT.get();
         }
         return this;
     }
 
+    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE_BY_AGE[state.getValue(this.getAgeProperty())];
     }

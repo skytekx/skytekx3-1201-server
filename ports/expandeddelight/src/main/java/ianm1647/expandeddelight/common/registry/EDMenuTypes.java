@@ -4,8 +4,8 @@ import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.block.entity.container.JuicerMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
@@ -18,7 +18,7 @@ public class EDMenuTypes {
 
     static {
         MENU_TYPES = DeferredRegister.create(Registries.MENU, ExpandedDelight.MODID);
-        JUICER = MENU_TYPES.register("juicer", () -> IMenuTypeExtension.create(JuicerMenu::new));
+        JUICER = MENU_TYPES.register("juicer", () -> IForgeMenuType.create(JuicerMenu::new));
     }
 }
 

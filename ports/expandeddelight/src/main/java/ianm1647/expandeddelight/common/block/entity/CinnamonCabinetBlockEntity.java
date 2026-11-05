@@ -11,6 +11,7 @@ public class CinnamonCabinetBlockEntity extends CabinetBlockEntity {
         super(pos, state);
     }
 
+    @Override
     public BlockEntityType<?> getType() {
         return EDBlockEntityTypes.CINNAMON_CABINET.get();
     }

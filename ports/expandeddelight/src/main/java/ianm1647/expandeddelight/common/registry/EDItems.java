@@ -4,17 +4,17 @@ import com.google.common.collect.Sets;
 import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.entity.CinnamonBoat;
 import ianm1647.expandeddelight.common.item.CinnamonBoatItem;
+import ianm1647.expandeddelight.common.item.GoatMilkBucketItem;
 import ianm1647.expandeddelight.common.item.JellyItem;
 import ianm1647.expandeddelight.common.item.JuicerItem;
 import ianm1647.expandeddelight.common.item.LilypadCropItem;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 import vectorwing.farmersdelight.common.item.ConsumableItem;
 import vectorwing.farmersdelight.common.item.DrinkableItem;
 import vectorwing.farmersdelight.common.item.MilkBottleItem;
@@ -209,7 +209,8 @@ public class EDItems {
         WILD_SWEET_POTATO = registerWithTab("wild_sweet_potato", () -> new BlockItem(EDBlocks.WILD_SWEET_POTATO.get(), basicItem()));
         WILD_CHILI_PEPPER = registerWithTab("wild_chili_pepper", () -> new BlockItem(EDBlocks.WILD_CHILI_PEPPER.get(), basicItem()));
         WILD_PEANUTS = registerWithTab("wild_peanuts", () -> new BlockItem(EDBlocks.WILD_PEANUTS.get(), basicItem()));
-        CRANBERRY_PLANT = ITEMS.register("cranberry_plant", () -> new BlockItem(EDBlocks.CRANBERRY_PLANT.get(), basicItem()));
+        // a PlaceOnWaterBlockItem like the lily pad, so that Bukkit's BlockPlaceEvent covers the cranberries too
+        CRANBERRY_PLANT = ITEMS.register("cranberry_plant", () -> new PlaceOnWaterBlockItem(EDBlocks.CRANBERRY_PLANT.get(), basicItem()));
 
         SALT_ORE = registerWithTab("salt_ore", () -> new BlockItem(EDBlocks.SALT_ORE.get(), basicItem()));
         DEEPSLATE_SALT_ORE = registerWithTab("deepslate_salt_ore", () -> new BlockItem(EDBlocks.DEEPSLATE_SALT_ORE.get(), basicItem()));
@@ -222,7 +223,7 @@ public class EDItems {
         SALT_ROCK = registerWithTab("salt_rock", () -> new Item(basicItem()));
         SALT = registerWithTab("salt", () -> new Item(basicItem()));
 
-        GOAT_MILK_BUCKET = registerWithTab("goat_milk_bucket", () -> new MilkBucketItem(basicItem().craftRemainder(Items.BUCKET).stacksTo(1)));
+        GOAT_MILK_BUCKET = registerWithTab("goat_milk_bucket", () -> new GoatMilkBucketItem(basicItem().craftRemainder(Items.BUCKET).stacksTo(1)));
         GOAT_MILK_BOTTLE = registerWithTab("goat_milk_bottle", () -> new MilkBottleItem(basicItem().craftRemainder(Items.GLASS_BOTTLE).stacksTo(16)));
 
         ASPARAGUS_SEEDS = registerWithTab("asparagus_seeds", () -> new ItemNameBlockItem(EDBlocks.ASPARAGUS_CROP.get(), basicItem()));
@@ -306,42 +307,42 @@ public class EDItems {
     }
 
     public static Item.Properties foodItem(int nutrition, float saturation) {
-        return (new Item.Properties().food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation).build()));
+        return (new Item.Properties().food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation).build()));
     }
 
-    public static Item.Properties drinkItem(int nutrition, float saturation, Holder<MobEffect> effect) {
+    public static Item.Properties drinkItem(int nutrition, float saturation, MobEffect effect) {
         return (new Item.Properties().craftRemainder(Items.GLASS_BOTTLE).stacksTo(16)
-                .food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation)
+                .food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation)
                 .effect(() -> new MobEffectInstance(effect, 200, 0), 1.0f).build()));
     }
 
-    public static Item.Properties jellyItem(int nutrition, float saturation, Holder<MobEffect> effect) {
+    public static Item.Properties jellyItem(int nutrition, float saturation, MobEffect effect) {
         return (new Item.Properties().craftRemainder(GLASS_JAR.get()).stacksTo(16)
-                .food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation)
+                .food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation)
                         .effect(() -> new MobEffectInstance(effect, 400, 0), 1.0f).build()));
     }
 
     public static Item.Properties pieSliceItem(int nutrition, float saturation) {
-        return (new Item.Properties()).food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation).fast()
+        return (new Item.Properties()).food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation).fast()
                         .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600, 0), 1.0f).build());
     }
 
     public static Item.Properties stewItem(int nutrition, float saturation) {
         return (new Item.Properties()).craftRemainder(Items.BOWL).stacksTo(16)
-                .food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation)
-                        .effect(() -> new MobEffectInstance(ModEffects.COMFORT, 2400, 0), 1.0f).build());
+                .food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation)
+                        .effect(() -> new MobEffectInstance(ModEffects.COMFORT.get(), 2400, 0), 1.0f).build());
     }
 
     public static Item.Properties saladItem(int nutrition, float saturation) {
         return (new Item.Properties()).craftRemainder(Items.BOWL).stacksTo(16)
-                .food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation)
+                .food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation)
                 .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 100, 0), 1.0f).build());
     }
 
     public static Item.Properties mealItem(int nutrition, float saturation) {
         return (new Item.Properties()).craftRemainder(Items.BOWL).stacksTo(16)
-                .food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation)
-                        .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT, 3600, 0), 1.0f).build());
+                .food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation)
+                        .effect(() -> new MobEffectInstance(ModEffects.NOURISHMENT.get(), 3600, 0), 1.0f).build());
     }
 
 }

@@ -15,8 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-import java.util.Iterator;
-
 public class MilkCaskBlock extends Block {
     public static IntegerProperty FERMENTING = IntegerProperty.create("cheese_fermenting", 0, 7);
 
@@ -25,10 +23,12 @@ public class MilkCaskBlock extends Block {
         this.registerDefaultState(super.defaultBlockState().setValue(FERMENTING, 0));
     }
 
+    @Override
     public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FERMENTING);
         super.createBlockStateDefinition(builder);
@@ -38,15 +38,14 @@ public class MilkCaskBlock extends Block {
         return 7;
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!level.isClientSide) {
             float chance = 0.0F;
             boolean hasWater = false;
             int maxLight = 0;
-            Iterator var8 = BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 1, 1)).iterator();
-
-            while(var8.hasNext()) {
-                BlockPos neighborPos = (BlockPos)var8.next();
+            for (BlockPos neighborPos : BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 1, 1))) {
                 BlockState neighborState = level.getBlockState(neighborPos);
                 if (neighborState.is(EDTags.MILK_ACTIVATORS)) {
                     chance += 0.02F;
@@ -73,14 +72,19 @@ public class MilkCaskBlock extends Block {
         }
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
     public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
     public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos) {
         return this.getMaxFermentingStage() + 1 - blockState.getValue(FERMENTING);
     }
 
+    @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
         if (random.nextInt(10) == 0) {

@@ -1,6 +1,5 @@
 package ianm1647.expandeddelight.common.item;
 
-import ianm1647.expandeddelight.client.gui.JuicerTooltip;
 import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -18,21 +17,25 @@ public class JuicerItem extends BlockItem {
         super(block, properties);
     }
 
+    @Override
     public boolean isBarVisible(ItemStack stack) {
         return getServingCount(stack) > 0;
     }
 
+    @Override
     public int getBarWidth(ItemStack stack) {
         return Math.min(1 + 12 * getServingCount(stack) / 64, 13);
     }
 
+    @Override
     public int getBarColor(ItemStack stack) {
         return BAR_COLOR;
     }
 
+    @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         ItemStack drinkStack = JuicerBlockEntity.getDrinkFromItem(stack);
-        return Optional.of(new JuicerTooltip.JuicerTooltipComponent(drinkStack));
+        return Optional.of(new JuicerTooltipComponent(drinkStack));
     }
 
     private static int getServingCount(ItemStack stack) {

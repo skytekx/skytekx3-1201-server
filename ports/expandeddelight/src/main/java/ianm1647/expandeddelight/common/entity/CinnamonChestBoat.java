@@ -27,21 +27,28 @@ public class CinnamonChestBoat extends ChestBoat {
         this.zo = z;
     }
 
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_ID_TYPE, CinnamonBoat.Type.CINNAMON.ordinal());
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_ID_TYPE, CinnamonBoat.Type.CINNAMON.ordinal());
     }
 
+    // upstream overrides these two without calling super, which drops the chest's items on every save
+    @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
         compound.putString("Type", this.getModel().getSerializedName());
     }
 
+    @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
         if (compound.contains("Type", 8)) {
             this.setModel(CinnamonBoat.Type.byName(compound.getString("Type")));
         }
     }
 
+    @Override
     public Item getDropItem() {
         return switch (getModel()) {
             case CINNAMON -> EDItems.CINNAMON_CHEST_BOAT.get();

@@ -21,15 +21,15 @@ public class EDTags {
     public static final TagKey<Block> CINNAMON_LOGS_BLOCK = modBlockTag("cinnamon_logs");
 
     private static TagKey<Item> modItemTag(String path) {
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, path));
+        return ItemTags.create(new ResourceLocation(ExpandedDelight.MODID, path));
     }
 
     private static TagKey<Block> modBlockTag(String path) {
-        return BlockTags.create(ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, path));
+        return BlockTags.create(new ResourceLocation(ExpandedDelight.MODID, path));
     }
 
     private static TagKey<EntityType<?>> modEntityTag(String path) {
-        return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, path));
+        return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(ExpandedDelight.MODID, path));
     }
 
 }

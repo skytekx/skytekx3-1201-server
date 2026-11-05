@@ -21,6 +21,7 @@ import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.connection.StaticConnectionStates;
 import com.enderio.conduits.common.conduit.type.redstone.RedstoneConduitData;
 import com.enderio.conduits.common.init.ConduitCapabilities;
+import com.enderio.conduits.common.init.EIOConduitTypes;
 import com.enderio.conduits.common.menu.ConduitMenu;
 import com.enderio.conduits.common.network.ConduitSavedData;
 import com.enderio.core.common.blockentity.EnderBlockEntity;
@@ -34,6 +35,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -54,6 +56,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -555,6 +558,18 @@ public class ConduitBlockEntity extends EnderBlockEntity {
 
     public MenuProvider menuProvider(Direction direction, ConduitType<?> type) {
         return new ConduitMenuProvider(direction, type);
+    }
+
+    /**
+     * Open the conduit menu of a connection, as a click on the connection does. The back arrow of a filter opened from the
+     * conduit menu also comes here.
+     */
+    public void openMenu(ServerPlayer player, Direction direction, ConduitType<?> type) {
+        NetworkHooks.openScreen(player, menuProvider(direction, type), buf -> {
+            buf.writeBlockPos(getBlockPos());
+            buf.writeEnum(direction);
+            buf.writeInt(EIOConduitTypes.getConduitId(type));
+        });
     }
 
     private class ConduitMenuProvider implements MenuProvider {

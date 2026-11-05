@@ -60,7 +60,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -335,11 +334,7 @@ public class ConduitBlock extends Block implements EntityBlock, SimpleWaterlogge
         Optional<OpenInformation> openInformation = getOpenInformation(conduit, hit);
         if (openInformation.isPresent()) {
             if (player instanceof ServerPlayer serverPlayer) {
-                NetworkHooks.openScreen(serverPlayer, conduit.menuProvider(openInformation.get().direction(), openInformation.get().type()), buf -> {
-                    buf.writeBlockPos(conduit.getBlockPos());
-                    buf.writeEnum(openInformation.get().direction());
-                    buf.writeInt(EIOConduitTypes.getConduitId(openInformation.get().type()));
-                });
+                conduit.openMenu(serverPlayer, openInformation.get().direction(), openInformation.get().type());
             }
 
             return Optional.of(InteractionResult.sidedSuccess(isClientSide));

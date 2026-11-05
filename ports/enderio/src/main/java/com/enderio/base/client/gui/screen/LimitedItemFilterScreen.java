@@ -46,7 +46,7 @@ public class LimitedItemFilterScreen extends EIOScreen<LimitedItemFilterMenu> {
         xPos -= 18;
         addRenderableWidget(new ToggleImageButton<>(this, xPos, yPos, 16, 16, 0, 0, 16, 0, NBT_TEXTURE, filter::isNbt, getMenu()::setNbt, () -> filter.isNbt() ? EIOLang.NBT_FILTER : EIOLang.NO_NBT_FILTER));
 
-        addRenderableWidget(new EIOImageButton(this, getGuiLeft() + 3, getGuiTop() + 3, 16, 16, 0, 0, 0, BACK_TEXTURE, button -> closeContainer()));
+        addRenderableWidget(new EIOImageButton(this, getGuiLeft() + 3, getGuiTop() + 3, 16, 16, 0, 0, 0, BACK_TEXTURE, button -> FilterScreens.back(getMenu())));
     }
 
     private void setDamageMode(DamageFilterMode mode) {

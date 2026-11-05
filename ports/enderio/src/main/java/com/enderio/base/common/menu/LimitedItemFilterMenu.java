@@ -11,10 +11,8 @@ import com.enderio.core.common.network.CoreNetwork;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -22,18 +20,21 @@ import javax.annotation.Nullable;
 
 /**
  * The menu of the limited item filter, from LimitedItemFilterMenu of Ender IO 8.x (1a85694c2) in the style of the 6.x
- * {@link ItemFilterMenu}: it edits the filter in the main hand, whose inventory slot stays locked.
+ * {@link ItemFilterMenu}: it edits the filter in the main hand, whose inventory slot stays locked, or a filter in a conduit
+ * slot (see {@link FilterAccess}).
  */
-public class LimitedItemFilterMenu extends AbstractContainerMenu {
+public class LimitedItemFilterMenu extends AbstractFilterMenu {
 
     public static final int ROWS = 2;
 
-    private final ItemStack stack;
     private final LimitedItemFilterCapability capability;
 
     public LimitedItemFilterMenu(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory inventory, ItemStack stack) {
-        super(pMenuType, pContainerId);
-        this.stack = stack;
+        this(pMenuType, pContainerId, inventory, FilterAccess.hand(stack));
+    }
+
+    public LimitedItemFilterMenu(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory inventory, FilterAccess access) {
+        super(pMenuType, pContainerId, access);
 
         LazyOptional<ResourceFilter> resourceFilter = stack.getCapability(EIOCapabilities.FILTER);
 
@@ -57,49 +58,12 @@ public class LimitedItemFilterMenu extends AbstractContainerMenu {
         this(EIOMenus.LIMITED_ITEM_FILTER.get(), pContainerId, inventory, stack);
     }
 
-    public static LimitedItemFilterMenu factory(@Nullable MenuType<LimitedItemFilterMenu> pMenuType, int pContainerId, Inventory inventory, FriendlyByteBuf buf) {
-        return new LimitedItemFilterMenu(EIOMenus.LIMITED_ITEM_FILTER.get(), pContainerId, inventory, inventory.player.getMainHandItem());
+    public LimitedItemFilterMenu(int pContainerId, Inventory inventory, FilterAccess access) {
+        this(EIOMenus.LIMITED_ITEM_FILTER.get(), pContainerId, inventory, access);
     }
 
-    @Override
-    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean stillValid(Player pPlayer) {
-        return pPlayer.getMainHandItem().equals(stack);
-    }
-
-    public void addInventorySlots(int xPos, int yPos, Inventory inventory) {
-
-        // The slot that holds the opened filter is locked, so the stack the menu edits cannot be moved or duplicated.
-
-        // Hotbar
-        for (int x = 0; x < 9; x++) {
-            Slot ref = new Slot(inventory, x, xPos + x * 18, yPos + 58) {
-
-                @Override
-                public boolean mayPickup(Player player) {
-                    return !this.getItem().equals(LimitedItemFilterMenu.this.stack);
-                }
-            };
-            this.addSlot(ref);
-        }
-
-        // Inventory
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 9; x++) {
-                Slot ref = new Slot(inventory, x + y * 9 + 9, xPos + x * 18, yPos + y * 18) {
-
-                    @Override
-                    public boolean mayPickup(Player player) {
-                        return !this.getItem().equals(LimitedItemFilterMenu.this.stack);
-                    }
-                };
-                this.addSlot(ref);
-            }
-        }
+    public static LimitedItemFilterMenu factory(@Nullable MenuType<LimitedItemFilterMenu> pMenuType, int pContainerId, Inventory inventory, @Nullable FriendlyByteBuf buf) {
+        return new LimitedItemFilterMenu(EIOMenus.LIMITED_ITEM_FILTER.get(), pContainerId, inventory, FilterAccess.fromNetwork(inventory, buf));
     }
 
     public LimitedItemFilterCapability getFilter() {

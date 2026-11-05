@@ -9,6 +9,7 @@ import com.enderio.api.misc.ColorControl;
 import com.enderio.api.misc.RedstoneControl;
 import com.enderio.api.misc.Vector2i;
 import com.enderio.base.common.lang.EIOLang;
+import com.enderio.base.common.menu.AbstractFilterMenu;
 import com.enderio.conduits.client.gui.conduit.ConduitScreenExtensions;
 import com.enderio.conduits.common.conduit.ConduitBundle;
 import com.enderio.api.conduit.SlotType;
@@ -20,10 +21,12 @@ import com.enderio.conduits.common.conduit.type.item.ItemConduitType;
 import com.enderio.conduits.common.init.ConduitLang;
 import com.enderio.conduits.common.menu.ConduitMenu;
 import com.enderio.conduits.common.menu.ConduitSlot;
+import com.enderio.conduits.common.network.C2SOpenConduitFilterMenu;
 import com.enderio.conduits.common.network.C2SSetConduitConnectionState;
 import com.enderio.conduits.common.network.C2SSetConduitExtendedData;
 import com.enderio.core.client.gui.screen.EIOScreen;
 import com.enderio.core.client.gui.widgets.CheckBox;
+import com.enderio.core.client.gui.widgets.EIOImageButton;
 import com.enderio.core.client.gui.widgets.EnumIconWidget;
 import com.enderio.core.common.network.CoreNetwork;
 import net.minecraft.client.gui.GuiGraphics;
@@ -34,7 +37,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
 import java.util.function.Function;
 
@@ -45,8 +50,12 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
         super(pMenu, pPlayerInventory, title);
     }
 
+    // The gear icon of Ender IO 8.x (icon/configure, 04e69b8e6).
+    private static final ResourceLocation CONFIGURE_FILTER_TEXTURE = EnderIO.loc("textures/gui/icons/configure.png");
+
     private final List<ConduitSelectionButton> typeSelectionButtons = new ArrayList<>();
     private final List<GuiEventListener> typedButtons = new ArrayList<>();
+    private final Map<SlotType, AbstractWidget> filterButtons = new EnumMap<>(SlotType.class);
     private boolean recalculateTypedButtons = true;
 
     @Override
@@ -161,6 +170,19 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
                         EIOLang.REDSTONE_CHANNEL));
             }
 
+            // Ender IO 8.x (04e69b8e6): a button under a filter slot opens the menu of the filter in it, which stays in the conduit.
+            filterButtons.clear();
+            for (SlotType slotType : List.of(SlotType.FILTER_INSERT, SlotType.FILTER_EXTRACT)) {
+                if (slotType.isAvailableFor(data)) {
+                    EIOImageButton button = new EIOImageButton(this, getGuiLeft() + slotType.getX(), getGuiTop() + slotType.getY() + 19, 16, 16,
+                        0, 0, 0, CONFIGURE_FILTER_TEXTURE, 16, 16,
+                        pressed -> CoreNetwork.sendToServer(new C2SOpenConduitFilterMenu(menu.containerId, slotType)));
+                    button.visible = false;
+                    filterButtons.put(slotType, button);
+                    addTypedButton(button);
+                }
+            }
+
             ConduitScreenExtension<?> conduitScreenExtension = ConduitScreenExtensions.get(menu.getConduitType());
 
             if (conduitScreenExtension != null) {
@@ -242,6 +264,7 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
         } else {
             updateConnectionWidgets(false);
             menu.getConduitSlots().forEach(ConduitSlot::updateVisibilityPosition);
+            filterButtons.forEach((slotType, button) -> button.visible = hasFilterMenu(slotType));
             super.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
@@ -260,6 +283,18 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
         }
 
         super.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    /**
+     * @return whether the shown filter slot of this type holds a filter with a menu
+     */
+    private boolean hasFilterMenu(SlotType slotType) {
+        for (ConduitSlot slot : menu.getConduitSlots()) {
+            if (slot.getSlotType() == slotType && slot.isVisible()) {
+                return AbstractFilterMenu.hasMenu(slot.getItem());
+            }
+        }
+        return false;
     }
 
     @Override

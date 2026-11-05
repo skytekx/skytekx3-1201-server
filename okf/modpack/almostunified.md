@@ -41,11 +41,13 @@ The config lives in [config/almostunified/](../../config/almostunified) (commit 
 - The list `tags` names 12 tag patterns, all in the `forge` namespace: nuggets, dusts, gears, gems,
   ingots, raw materials, ores, plates, rods, wires, storage blocks and raw storage blocks, each as
   `forge:<kind>/{material}`.
-- The list `materials` names 47 materials: aeternium, aluminum, amber, apatite, bitumen, brass, bronze,
+- The list `materials` names 48 materials: aeternium, aluminum, amber, apatite, bitumen, brass, bronze,
   charcoal, chrome, cinnabar, coal, coal coke, cobalt, constantan, copper, diamond, electrum,
   elementium, emerald, enderium, fluorite, gold, graphite, invar, iridium, iron, lapis, lead, lumium,
-  mithril, netherite, nickel, obsidian, osmium, peridot, platinum, potassium nitrate, ruby, sapphire,
-  signalum, silver, steel, sulfur, tin, tungsten, uranium and zinc.
+  mithril, netherite, nickel, obsidian, osmium, peridot, platinum, potassium nitrate, ruby, salt, sapphire,
+  signalum, silver, steel, sulfur, tin, tungsten, uranium and zinc. Salt joined on 2026-11-05 (d8f433e)
+  with the Expanded Delight port, so the salt of that mod and of Pam's Food Core gives way to the
+  Mekanism salt, see [Expanded Delight port](expandeddelight-port.md#pack-fit).
 - The list `ignoredItems` holds `bigreactors:.*` since 2026-11-02 (87249b31), so no Extreme Reactors
   item takes part, see [Yellorium](#yellorium).
 - Recipes of the type `cucumber:shaped_tag` are left alone, and the setting `itemsHidingJeiRei` hides the

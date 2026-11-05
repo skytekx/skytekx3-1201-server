@@ -37,7 +37,7 @@ loot modifiers of other mods, see [Recipe failures](#recipe-failures). The last 
 | Script | What it does |
 |---|---|
 | Recipe fixes, `recipe_fixes.js` | Adds two recipes and gives the Chaotic Shield Capacity of Draconic Evolution its Awakened Core, the rest is commented out |
-| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags, lets every sulfur dust count as yellow dye and puts the Draconic Evolution tools into the vanilla tool tags |
+| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags, lets every sulfur dust count as yellow dye, puts the Draconic Evolution tools into the vanilla tool tags and links the salt, juice and jelly tags of Expanded Delight, Pam's Food Core and Mekanism |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
 | Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts and adds the wither cloud of the Withering Archer to the level, see [Apotheosis riders](#apotheosis-riders) |

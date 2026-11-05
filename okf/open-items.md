@@ -179,6 +179,13 @@ evidence and the page with the details. The rulings behind the first section are
 - The Auto Executor ignores hardness. It breaks any block it faces that is not air, bedrock and End
   portal frames included, because it calls `Level.destroyBlock` without a check. A guard in
   skytekx-compat would stop that, and whether it should was asked on 2026-11-04 and is open.
+- Expanded Delight on the Skylands islands (2026-11-05). Its wild crops, cranberries, cinnamon trees
+  and salt ore generate only in vanilla style biomes of the jungle, plains, desert, savanna, swamp and
+  ocean tags, and no Skylands biome is in them, so the islands get none. Adding the island biomes to
+  those tags would bring them there, but tags are global, so whether and which is the owner's choice.
+  The salt of the pack is the Mekanism salt by the AlmostUnified priority list. A priority override
+  could make it the Expanded Delight salt instead. See
+  [Expanded Delight port](modpack/expandeddelight-port.md#worldgen-and-the-skylands).
 
 ## Defects to fix
 
@@ -347,6 +354,11 @@ evidence and the page with the details. The rulings behind the first section are
   they take every variant of a material was not checked. No chunk generated since 17:33 that day was
   checked for Mekanism tin and lead either, only the loaded config. See
   [AlmostUnified](modpack/almostunified.md#one-item-per-material).
+- Expanded Delight on Arclight and in a client. A plain Forge test server loaded its recipes, items
+  and blocks and ran the juicer, the casks, the crops and the worldgen, but nobody has booted it with
+  the full pack on Arclight, opened the juicer screen or its recipe book, seen its JEI categories, its
+  boats and signs, or milked a goat, filled a cask, planted cranberries or stripped a cinnamon log by
+  hand. See [Expanded Delight port](modpack/expandeddelight-port.md#test-of-2026-11-05).
 
 ## Docs and housekeeping
 

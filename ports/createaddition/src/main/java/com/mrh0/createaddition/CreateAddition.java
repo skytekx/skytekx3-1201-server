@@ -30,6 +30,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
@@ -37,12 +38,15 @@ import net.minecraftforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.commands.CCApiCommand;
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.ObservePacket;
+import com.mrh0.createaddition.network.TimeRemainingPacket;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import com.simibubi.create.api.stress.BlockStressValues;
@@ -73,9 +77,9 @@ public class CreateAddition {
             .simpleChannel();
 
     // SkyTekx: message ids of the channel createaddition:main. Ids 0 and 1 are upstream's 1.20.1 ids.
-    // Id 2 is reserved for TimeRemainingPacket, the 1.20.1 form of the 1.21.1 TimeRemainingPacketPayload
-    // (54cf0c9), which answers ObservePacket with the burn and charge time left. Never reuse or
-    // renumber an id. ConsProdSyncPacket stays unregistered, as upstream leaves it.
+    // Id 2 is TimeRemainingPacket, the 1.20.1 form of the 1.21.1 TimeRemainingPacketPayload (54cf0c9),
+    // which answers ObservePacket with the burn and charge time left and only travels to the client.
+    // Never reuse or renumber an id. ConsProdSyncPacket stays unregistered, as upstream leaves it.
     public static final int PACKET_OBSERVE = 0;
     public static final int PACKET_ENERGY_NETWORK = 1;
     public static final int PACKET_TIME_REMAINING = 2;
@@ -137,6 +141,7 @@ public class CreateAddition {
     public void postInit(FMLLoadCompleteEvent evt) {
         Network.registerMessage(PACKET_OBSERVE, ObservePacket.class, ObservePacket::encode, ObservePacket::decode, ObservePacket::handle);
         Network.registerMessage(PACKET_ENERGY_NETWORK, EnergyNetworkPacket.class, EnergyNetworkPacket::encode, EnergyNetworkPacket::decode, EnergyNetworkPacket::handle);
+        Network.registerMessage(PACKET_TIME_REMAINING, TimeRemainingPacket.class, TimeRemainingPacket::encode, TimeRemainingPacket::decode, TimeRemainingPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
             BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);

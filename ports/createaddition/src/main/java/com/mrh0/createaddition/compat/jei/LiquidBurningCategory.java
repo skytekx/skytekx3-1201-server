@@ -19,6 +19,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
+import static com.mrh0.createaddition.util.Util.formatTime;
+
 public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe> {
 
 	private final AnimatedBlazeBurner heater = new AnimatedBlazeBurner();
@@ -67,11 +69,5 @@ public class LiquidBurningCategory extends CARecipeCategory<LiquidBurningRecipe>
 			.draw(gg, getBackground().getWidth() / 2 + 3, 55 - 50);
 
 		AllGuiTextures.JEI_DOWN_ARROW.render(gg, getBackground().getWidth() / 2 + 3, 8);
-	}
-
-	public static String formatTime(int ticks) {
-		if (ticks > 20*60) return (ticks/(20*60)) + " min";
-		if (ticks > 20) return (ticks/20) + " sec";
-		return (ticks) + " ticks";
 	}
 }

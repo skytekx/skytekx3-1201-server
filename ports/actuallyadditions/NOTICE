@@ -81,6 +81,8 @@ Modifications
     * Block shapes: outlines and collision boxes follow the new models as on upstream's main
       branch, with simple shapes for the generators, stands and the Phantom Booster and full
       blocks for the machines whose models now fill the block.
+    * Crystal clusters: they grow out of the face they are placed on, need a solid block behind
+      them, and drop crystal shards unless broken with silk touch, as on upstream's main branch.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

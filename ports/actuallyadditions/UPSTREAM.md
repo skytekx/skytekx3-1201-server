@@ -649,3 +649,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     copyright and permission notice. The class `CrystalClusterShapes` gets its reader with source
     change 20. Not ported from `6686f1f`: its change to `AllInOneTool.useOn`, which fixes the AIOT
     till and flatten code of `4d3ba55` that comes with the AIOT fixes.
+20. Crystal clusters: a cluster grows out of the face it is placed on, as on `main` since 1.3.21
+    (`b8e1cd6`). The block already had the property `facing`, but the base set it from the look
+    direction of the player and its blockstate drew the one upright model for every state. The
+    blockstate generator now writes the six facings with the rotations of `fullyDirectionalBlock`,
+    the same files as `main`, and `getShape` uses the six rotations of
+    `VoxelShapes.CrystalClusterShapes` (source change 19). A cluster needs a sturdy face behind it,
+    so it cannot be placed against air or a slab side and breaks when that support goes
+    (`745bb6c`). On 1.20.1 `canSurvive` and `updateShape` are public methods, `main` overrides the
+    protected ones of 1.20.5 and later. The six block models are the ones of `9282dcb`, which
+    share the new parent `raw_ore_template` with its credit line of `13897fa` and give each crystal
+    its palette texture. Broken without silk touch, a cluster drops two to eight shards of its
+    crystal with explosion decay, with silk touch the cluster itself (`09592c6`). The base dropped
+    the cluster in every case. The loot tables differ from `main` only in the 1.20.1 form of the
+    silk touch predicate. Savegame: no property changes. A cluster that the old jar placed keeps
+    its stored facing, so one placed while looking down (facing up) stands as before, and one
+    placed while looking sideways now hangs on the side its facing names. No world with the mod
+    existed before this change, so there is no migration.

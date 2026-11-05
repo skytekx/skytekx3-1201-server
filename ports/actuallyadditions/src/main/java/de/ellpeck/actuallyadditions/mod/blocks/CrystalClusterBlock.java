@@ -14,35 +14,22 @@ import de.ellpeck.actuallyadditions.mod.blocks.base.FullyDirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.items.metalists.Crystals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.stream.Stream;
 
 public class CrystalClusterBlock extends FullyDirectionalBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
-
-    public static final VoxelShape CRYSTAL_SHAPE = Stream.of(
-        Block.box(5, 4, 5, 10, 19, 10), Block.box(4, 0, 4, 11, 5, 11),
-        Block.box(3, 0, 3, 5, 4, 5), Block.box(10, 0, 3, 12, 2, 5),
-        Block.box(12, 0, 4, 13, 1, 5), Block.box(11, 0, 5, 12, 1, 6),
-        Block.box(10, 0, 10, 12, 3, 12), Block.box(3, 0, 10, 5, 1, 12),
-        Block.box(9, 0, 3, 10, 3, 4), Block.box(8, 0, 2, 11, 1, 4),
-        Block.box(4, 0, 2, 5, 2, 3), Block.box(5, 0, 3, 7, 1, 4),
-        Block.box(2, 0, 4, 4, 1, 6), Block.box(3, 0, 5, 4, 3, 6.5),
-        Block.box(3, 0, 9, 4, 2, 10), Block.box(2, 0, 8, 4, 1, 10),
-        Block.box(5, 0, 11, 7, 2, 13), Block.box(7, 0, 11, 11, 1, 13),
-        Block.box(10, 0, 9, 13, 1, 11), Block.box(11, 0, 7, 12, 3, 9)
-    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR) ).get();
 
     public CrystalClusterBlock(Crystals crystal) {
         super(Block.Properties.of()
@@ -53,6 +40,24 @@ public class CrystalClusterBlock extends FullyDirectionalBlock {
             .strength(0.25f, 1.0f));
     }
 
+    // SkyTekx: upstream 745bb6c6, the cluster needs a sturdy face behind it. canSurvive and
+    // updateShape are public on 1.20.1 (protected since 1.20.5)
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return canAttach(level, pos, state.getValue(FACING).getOpposite());
+    }
+
+    private static boolean canAttach(LevelReader reader, BlockPos pos, Direction direction) {
+        BlockPos blockpos = pos.relative(direction);
+        return reader.getBlockState(blockpos).isFaceSturdy(reader, blockpos, direction.getOpposite());
+    }
+
+    // SkyTekx: upstream b8e1cd69, the cluster grows out of the clicked face
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getClickedFace());
+    }
+
     @Override
     public BlockState getBaseConstructorState() {
         return this.defaultBlockState().setValue(FACING, Direction.UP);
@@ -60,6 +65,24 @@ public class CrystalClusterBlock extends FullyDirectionalBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        return CRYSTAL_SHAPE;
+        switch (state.getValue(FACING)) {
+            case UP:
+                return VoxelShapes.CrystalClusterShapes.SHAPE_U;
+            case DOWN:
+                return VoxelShapes.CrystalClusterShapes.SHAPE_D;
+            case EAST:
+                return VoxelShapes.CrystalClusterShapes.SHAPE_E;
+            case SOUTH:
+                return VoxelShapes.CrystalClusterShapes.SHAPE_S;
+            case WEST:
+                return VoxelShapes.CrystalClusterShapes.SHAPE_W;
+            default:
+                return VoxelShapes.CrystalClusterShapes.SHAPE_N;
+        }
+    }
+
+    @Override
+    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+        return state.getValue(FACING).getOpposite() == facing && !state.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
     }
 }

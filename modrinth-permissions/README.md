@@ -48,7 +48,7 @@ Permission depends on a CurseForge flag nobody has confirmed yet (Status VERIFY)
 On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and drop the bundled jar (no attribution needed):
 
 - **ElevatorMod (OpenBlocks Elevator)** (`elevatorid-1.20.1-1.9.1-forge.jar`) — https://modrinth.com/mod/elevatormod
-- **Ender IO** (`EnderIO-1.20.1-6.2.18-beta-all.jar`) — https://modrinth.com/mod/enderio
+- **Ender IO** (`EnderIO-1.20.1-6.2.18-beta-all.jar`) — https://modrinth.com/mod/enderio. Bundled, it needs the license texts and the non-commercial condition of its record.
 - **OfflineSkins** (`offlineskins-1.20.1-v1.jar`) — https://modrinth.com/mod/offlineskins
 - **Tumbleweed** (`Tumbleweed-forge-1.20.1-0.5.5.jar`) — https://modrinth.com/mod/tumbleweed
 
@@ -78,7 +78,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `elevatorid-1.20.1-1.9.1-forge.jar` | ElevatorMod (OpenBlocks Elevator) | MIT | Licensed | yes | yes |
 | `emi-1.1.24-skytekx.2+1.20.1+forge.jar` | EMI (JEI bridge fork by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `EnchantingPlus-1.20.1-1.3.0.jar` | Enchanting Plus (Classic) | All Rights Reserved | Special permission | yes | - |
-| `EnderIO-1.20.1-6.2.18-beta-all.jar` | Ender IO | Unlicense | Licensed | yes | yes |
+| `EnderIO-1.20.1-6.2.18-beta-all.jar` | Ender IO | Unlicense (core), CC BY-NC-SA 3.0 (code from Patchouli), MIT, MPL-2.0 and Apache-2.0 (adapted code and bundled libraries) | Licensed | yes, non-commercial only, with the texts in `licenses/EnderIO-1.20.1-6.2.18-beta/` | yes |
 | `Exchangers-1.20.1-3.5.1.jar` | Exchangers | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |
 | `ExtremeReactors2-1.20.1-2.0.97.jar` | Extreme Reactors 2 | MIT | Licensed | yes | older builds only |
 | `EyesInTheDarkness-1.20.1-1.3.10.jar` | Eyes in the Darkness | BSD-3-Clause | Licensed | yes | - |

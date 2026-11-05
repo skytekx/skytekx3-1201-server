@@ -24,3 +24,7 @@ libs
 logs
 runs
 run-data
+
+# SkyTekx
+*.log
+.mixin.out

@@ -1,0 +1,34 @@
+Mystical Automation, modified and unofficial SkyTekx build for Forge 1.20.1
+==========================================================================
+
+This is a MODIFIED, UNOFFICIAL version of Mystical Automation. It is not made, supported or
+endorsed by the author of Mystical Automation. Please report problems with this build to SkyTekx
+(https://github.com/skytekx/skytekx3-1201-server/issues), not to the upstream project.
+
+Original work
+-------------
+  Mystical Automation, Copyright (c) 2025 BlakeBr0, MIT License
+  Source:   https://github.com/BlakeBr0/MysticalAutomation
+  Base:     branch 1.21 @ 4149601b9c443eb7de5ebab6ecc9b6bdd7d6462d (2026-10-02, "Release 1.0.8",
+            version 1.21.1-1.0.8 for NeoForge 1.21.1)
+
+Modifications
+-------------
+  Modified by SkyTekx (the ts4.party community), 2026, for the SkyTekx 3 modpack. This build runs
+  on Minecraft 1.20.1 with Forge 47, Cucumber 7.0.16 and Mystical Agriculture 7.0.24, keeps the mod
+  id mysticalautomation and is versioned 1.0.8-skytekx.1.
+
+  Summary of the changes:
+    * Build: ForgeGradle for Forge 1.20.1 on Java 17, reproducible jar (no file timestamps, fixed
+      entry order, no build timestamp in the manifest). This NOTICE and the upstream LICENSE ship
+      inside the jar. mods.toml marks the build as a modified, unofficial one, sends bug reports to
+      SkyTekx and drops the upstream update URL.
+
+  The complete source of this build, with every change as a separate commit, is in
+  https://github.com/skytekx/skytekx3-1201-server under ports/mysticalautomation.
+  ports/mysticalautomation/UPSTREAM.md lists every change to the upstream build.
+
+Licenses
+--------
+  * Mystical Automation: MIT License. The upstream LICENSE ships in this jar, unchanged, as
+    LICENSE_mysticalautomation.

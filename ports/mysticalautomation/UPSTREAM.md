@@ -45,3 +45,48 @@ in this repository's history (`git log -- ports/mysticalautomation`).
 
 The dependencies Cucumber, Mystical Agriculture and Mystical Agradditions are MIT ("Copyright (c)
 2018 BlakeBr0") and stay CDN entries of `modrinth.index.json`.
+
+## Build
+
+Upstream builds with NeoForge ModDevGradle 2.0.83 on Java 21 for NeoForge 21.1.18. The port replaces
+that build with ForgeGradle for Forge 1.20.1 on Java 17.
+
+Build check (from this directory):
+
+```
+JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew build -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain -q
+```
+
+The jar is `build/libs/MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar`, which `reobfJar` rewrites in
+place with SRG names. That jar is the one to ship.
+
+- Gradle wrapper: `gradlew`, `gradlew.bat` and `gradle/wrapper/gradle-wrapper.jar` are the copies
+  that the Twilight Forest, Create Crafts & Additions and Actually Additions ports use (wrapper jar
+  SHA-256 `33ad4583...`, scripts with their Apache 2.0 headers). Upstream's wrapper is Gradle 8.9 for
+  ModDevGradle. `gradle-wrapper.properties` names Gradle 8.1.1 and pins `distributionSha256Sum` to
+  the official checksum of `gradle-8.1.1-bin.zip`.
+- Plugins: `net.minecraftforge.gradle` 6.0.54 and `org.parchmentmc.librarian.forgegradle`
+  1.2.0.7-dev-SNAPSHOT, pinned like in `../actuallyadditions` and `../enderio`. Forge 47.4.0 userdev
+  with Parchment 2023.06.26, as in `../createaddition`, so the ForgeGradle caches are shared. The pack
+  runs Forge 47.4.18.
+- Dependencies: Cucumber 1.20.1-7.0.16, Mystical Agriculture 1.20.1-7.0.24 and Mystical Agradditions
+  1.20.1-7.0.12 from maven.blakesmods.com, the builds of the pack's `modrinth.index.json`. The task
+  `verifyPackJars` checks their SHA-1 against the index before `compileJava`. JEI 15.74.0.233, the
+  build of the pack, is on the compile classpath with its API only.
+- Project name: `settings.gradle` sets `rootProject.name = 'mysticalautomation'`.
+- Version: `mod_version=1.0.8-skytekx.1`. The jar keeps upstream's name form
+  `MysticalAutomation-<minecraft>-<version>`. Forge shows the version `1.0.8-skytekx.1`.
+- Reproducible jar: the `jar` task sets `preserveFileTimestamps = false` and
+  `reproducibleFileOrder = true`, and the manifest has no timestamp.
+- License files in the jar: the `jar` task adds `LICENSE` (upstream's, unchanged) and `NOTICE`
+  (SkyTekx's) to the jar root as `LICENSE_mysticalautomation` and `NOTICE_mysticalautomation`. MIT
+  asks for the license text in every copy, and the official 1.0.8 jar carries none. The manifest's
+  `Implementation-Vendor` reads `Mystical Automation (modified build: SkyTekx)`.
+- Mod metadata: `META-INF/neoforge.mods.toml` became `META-INF/mods.toml` for Forge 47. It keeps
+  `license="MIT"`, the mod id, the display name, the authors and the description, and adds a line
+  that the build is unofficial. The field `issueTrackerURL` points to
+  https://github.com/skytekx/skytekx3-1201-server/issues, `credits` names the unofficial port, and
+  upstream's `updateJSONURL` (api.blakesmods.com, 1.21 updates) is gone. The dependencies are Forge
+  47 or newer, Minecraft 1.20.1, Cucumber 7.0.16 up to 8 and Mystical Agriculture 7.0.24 up to 8,
+  each loaded before this mod.
+- Ignored files: the fork's `.gitignore` also ignores `*.log` and `.mixin.out`.

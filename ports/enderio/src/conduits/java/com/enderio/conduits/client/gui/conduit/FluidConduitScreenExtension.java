@@ -52,19 +52,27 @@ public final class FluidConduitScreenExtension implements ConduitScreenExtension
         if (!conduitDataSupplier.get().isMultiFluid) {
             widgets.add(new FluidWidget(widgetsStart.add(0, 20),
                 () -> conduitDataSupplier.get().lockedFluid(),
-                () -> updateConduitData.update(data -> {
-                    data.setShouldReset(true);
-                    return data;
-                })
+                () -> {
+                    updateConduitData.update(data -> {
+                        data.setShouldReset(true);
+                        return data;
+                    });
+                    // The reset request is one shot. The update runs on the client's live data of the bundle, and the packet
+                    // has already serialized it, so clear the flag again. Server syncs never send ShouldReset, so without
+                    // this every later screen update of the conduit would ask for another reset.
+                    conduitDataSupplier.get().setShouldReset(false);
+                }
             ));
         }
 
         if (showPriority) {
             // The plus and minus buttons of the item conduit priority (6.x 37890e67d). The conduit screen draws the value.
+            // A priority click never asks for a fluid reset, whatever the client's data still holds.
             widgets.add(MultiIconButton.createAddButton(
                 widgetsStart.add(70, 4 + 4 + 8 + 16 + 8),
                 () -> conduitDataSupplier.get().getPriority(direction.get()),
                 priority -> updateConduitData.update(data -> {
+                    data.setShouldReset(false);
                     data.compute(direction.get()).setPriority(priority);
                     return data;
                 })));
@@ -72,6 +80,7 @@ public final class FluidConduitScreenExtension implements ConduitScreenExtension
                 widgetsStart.add(70, 4 + 4 + 8 + 16 + 16),
                 () -> conduitDataSupplier.get().getPriority(direction.get()),
                 priority -> updateConduitData.update(data -> {
+                    data.setShouldReset(false);
                     data.compute(direction.get()).setPriority(priority);
                     return data;
                 })));

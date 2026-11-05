@@ -20,7 +20,7 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
 | Index entries | 231 since c15417f on 2026-11-05, which added Create: Dragons Plus 1.11.9 for the [Create Integrated Farming port](createintegratedfarming-port.md), 227 of them from `cdn.modrinth.com` and 4 from GitHub. Before it, 230 since 2026-11-05 with Bygone Nether (61adc700, see [Bygone Nether](#bygone-nether)), 226 of them from `cdn.modrinth.com` and 4 from GitHub. Before that, 229 since 2026-11-05, after Extreme Reactors and ZeroCore (ffc3aa3, 230) and LittleTiles (18b2ad0) moved to `local-mods/`, 225 of them from `cdn.modrinth.com` and 4 from GitHub. Before them, 232 since 2026-11-04 (b36bc030 to 3b98076f), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since c482e040, after 394330db to c482e040 added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since d1cabf85, which added Just Enough Resources as a client only entry, and 223 since 56912155, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 551170bb, which removed Elenai Dodge 2. Before them, 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
 | Size of the index downloads | 1,020,916,258 bytes since c15417f, 1,019,927,924 from 61adc700, 1,012,285,311 from 18b2ad0, 1,014,908,901 from ffc3aa3, 1,018,751,213 from 3b98076f, 1,019,027,444 from 4e3c25b0 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b36bc030, 1,018,089,782 from c482e040, 1,007,463,556 from d1cabf85 with Just Enough Resources, 1,007,187,325 from 56912155, 1,007,808,005 from 551170bb, 1,008,110,498 from 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
-| Bundled jars | 56 in `local-mods/` since 2026-11-05 with the Create: Integrated Farming port (32d35c9), 55 with the Expanded Delight port (d9eb6cc, rebuilt in 047ff2d), 54 with the Mekanism: Extra Modules port (74bf989, rebuilt in fa64b7f), 53 with the Mystical Automation port (3b9e2f7, rebuilt in 3c92dcb), 52 with the LittleTiles build (18b2ad0), 51 with Extreme Reactors and ZeroCore (ffc3aa3), 49 with SkyTekx DE Fixes (0cb119e), 48 since Flux Networks (1984082), 47 since 2026-11-04 (f315fa3d and ee238bea), 45 since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
+| Bundled jars | 56 in `local-mods/` since 2026-11-05 with the Create: Integrated Farming port (32d35c9, rebuilt in 26fc840), 55 with the Expanded Delight port (d9eb6cc, rebuilt in 047ff2d), 54 with the Mekanism: Extra Modules port (74bf989, rebuilt in fa64b7f), 53 with the Mystical Automation port (3b9e2f7, rebuilt in 3c92dcb), 52 with the LittleTiles build (18b2ad0), 51 with Extreme Reactors and ZeroCore (ffc3aa3), 49 with SkyTekx DE Fixes (0cb119e), 48 since Flux Networks (1984082), 47 since 2026-11-04 (f315fa3d and ee238bea), 45 since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
@@ -484,8 +484,9 @@ counts in the list below are older than the last twenty-one of them and were not
   joins AlmostUnified as a material. The [NeoForge ports](neoforge-ports.md#expanded-delight) page
   sums it up, and [Expanded Delight port](expandeddelight-port.md) has the details. It reaches the
   server with the deploy of the next pack.
-- Create: Integrated Farming 1.4.3-skytekx.1 joined on 2026-11-05 (32d35c9). It is the pack's Forge
-  1.20.1 port of the NeoForge 1.21.1 Create addon by DragonsPlus, built from
+- Create: Integrated Farming 1.4.3-skytekx.1 joined on 2026-11-05 (32d35c9, the jar rebuilt with the
+  fixes of the integration review in 26fc840). It is the pack's Forge 1.20.1 port of the NeoForge
+  1.21.1 Create addon by DragonsPlus, built from
   [ports/createintegratedfarming/](../../ports/createintegratedfarming), LGPL 3.0 or later with MIT
   parts from Create and Farmer's Delight. It adds roosts for chickens, fishing nets for water and lava
   and the Vacuum Harvester, and it needs Create: Dragons Plus 1.11.9 from the index on both sides. The
@@ -493,6 +494,20 @@ counts in the list below are older than the last twenty-one of them and were not
   [NeoForge ports](neoforge-ports.md#create-integrated-farming) page sums it up, and
   [Create Integrated Farming port](createintegratedfarming-port.md) has the details. It reaches the
   server with the deploy of the next pack.
+
+  Its library Create: Dragons Plus 1.11.9 (index entry of c15417f, LGPL-3.0-or-later, a beta on
+  Modrinth) brings content of its own: liquid dyes of the 16 vanilla colors with buckets and 32
+  mixing recipes, dragon's breath as a fluid with a bucket, a cauldron, bottle filling and emptying and
+  a dripstone duplication, the Fluid Hatch, a Blaze Upgrade Smithing Template whose recipe is off by
+  default, and the fan processing types Bulk Coloring, Bulk Ending, Bulk Freezing and Bulk Sanding. The
+  ending recipes make end stone from cobblestone, end stone bricks from stone bricks, phantom membrane
+  from leather and chorus fruit from apples (`data/create_dragons_plus/recipes/ending/` in the jar),
+  the freezing recipes make packed ice, blue ice and slime balls from ice, packed ice and magma cream
+  (`recipes/freezing/`), and Bulk Sanding uses 141 sandpaper polishing recipes that the mod builds at load. A test copy counted
+  19 blocks, 21 items, 34 fluids and 186 recipes of the mod. It adds no material for AlmostUnified.
+  Nobody checked this content against the pack's progression, so it is an owner decision on
+  [open items](../open-items.md). The list with the config switches is on
+  [Create Integrated Farming port](createintegratedfarming-port.md#create-dragons-plus).
 
 Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils

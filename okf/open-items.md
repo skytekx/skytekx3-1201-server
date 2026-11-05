@@ -186,6 +186,18 @@ evidence and the page with the details. The rulings behind the first section are
   The salt of the pack is the Mekanism salt by the AlmostUnified priority list. A priority override
   could make it the Expanded Delight salt instead. See
   [Expanded Delight port](modpack/expandeddelight-port.md#worldgen-and-the-skylands).
+- The content of Create: Dragons Plus (2026-11-05). The library of the Create: Integrated Farming port
+  is an index entry since c15417f and brings its own blocks, fluids and recipes: liquid dyes,
+  dragon's breath as a fluid with a dripstone duplication, the Fluid Hatch, and the fan processing
+  types Bulk Coloring, Bulk Ending, Bulk Freezing and Bulk Sanding. Bulk Ending makes end stone from
+  cobblestone, end stone bricks from stone bricks, phantom membrane from leather and chorus fruit from
+  apples, and Bulk Freezing makes packed ice, blue ice and slime balls from ice, packed ice and magma
+  cream (`data/create_dragons_plus/recipes/` in `CreateDragonsPlus-1.11.9.jar`). Nobody checked them
+  against the progression of the pack or the Skylands. The owner decides whether they stay. The server
+  config `world/serverconfig/create_dragons_plus-server.toml` turns each fan type off,
+  `config/create_dragons_plus-common.toml` the fluids and generated recipes, and single recipes can go
+  in `kubejs/server_scripts/recipe_fixes.js`. See
+  [Create Integrated Farming port](modpack/createintegratedfarming-port.md#create-dragons-plus).
 
 ## Defects to fix
 
@@ -277,11 +289,13 @@ evidence and the page with the details. The rulings behind the first section are
   structure tag (2ac9b02), see [Mod set](modpack/mod-set.md#mixins-and-arclight). The
   deploy has to move the fixes pack to the end of the pack order once, or the repaired Quark tag fails
   again, see [Mod set](modpack/mod-set.md#deploy).
-- Create: Integrated Farming in a client and on Arclight. Plain Forge test servers ran its machines,
-  roosts, nets and integrations, but no client has opened its Ponder scenes or the JEI category Roosting
-  or seen its renderers, and nobody booted it, or Create: Dragons Plus with its mixins into
-  `ServerPlayer` and five more vanilla classes, on Arclight, see
-  [Create Integrated Farming port](modpack/createintegratedfarming-port.md#tests).
+- Create: Integrated Farming with the full pack and in a client. Plain Forge test servers ran its
+  machines, roosts, nets and integrations, and a minimal Arclight copy with the hardened
+  `arclight.jar` reached `Done` with no failed mixin, Create: Dragons Plus's mixins into `ServerPlayer`
+  and five more vanilla classes included. Nobody booted the full pack with the two mods, on Forge or on
+  Arclight, so their mixins never met those of the other pack mods and the Aether part of Create:
+  Dragons Plus never ran. No client has opened the Ponder scenes or the JEI category Roosting or seen
+  the renderers. See [Create Integrated Farming port](modpack/createintegratedfarming-port.md#integration-tests).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
   opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
   chest in EMI on the server and note how much longer the join takes with the loot that the server

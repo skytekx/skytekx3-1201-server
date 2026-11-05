@@ -75,6 +75,8 @@ Modifications
   - Charging in Sequenced Assembly from the 1.21.1 line: a createaddition:charging recipe can be
     a step of a Create Sequenced Assembly, done by a Tesla Coil and shown in JEI. Charging recipes
     may use Create's JSON keys besides the old ones.
+  - Recipes from the 1.21.1 line: the Tesla Coil charges gold ingots, nuggets, blocks, rods,
+    plates and wires into electrum.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

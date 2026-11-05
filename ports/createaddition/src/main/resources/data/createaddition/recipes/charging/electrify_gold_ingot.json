@@ -1,0 +1,12 @@
+{
+	"type":"createaddition:charging",
+	"input": {
+		"tag": "forge:ingots/gold"
+	},
+	"result": {
+		"item": "createaddition:electrum_ingot",
+		"count": 1
+	},
+	"energy": 36000,
+	"maxChargeRate": 360
+}

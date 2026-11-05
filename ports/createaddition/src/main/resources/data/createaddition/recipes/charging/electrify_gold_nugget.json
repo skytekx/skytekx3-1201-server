@@ -1,0 +1,12 @@
+{
+	"type":"createaddition:charging",
+	"input": {
+		"tag": "forge:nuggets/gold"
+	},
+	"result": {
+		"item": "createaddition:electrum_nugget",
+		"count": 1
+	},
+	"energy": 4000,
+	"maxChargeRate": 360
+}

@@ -1,0 +1,12 @@
+{
+	"type":"createaddition:charging",
+	"input": {
+		"tag": "forge:plates/gold"
+	},
+	"result": {
+		"item": "createaddition:electrum_sheet",
+		"count": 1
+	},
+	"energy": 36000,
+	"maxChargeRate": 360
+}

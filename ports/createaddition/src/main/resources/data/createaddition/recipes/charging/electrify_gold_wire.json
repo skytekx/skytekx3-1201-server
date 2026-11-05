@@ -1,0 +1,12 @@
+{
+	"type":"createaddition:charging",
+	"input": {
+		"tag": "forge:wires/gold"
+	},
+	"result": {
+		"item": "createaddition:electrum_wire",
+		"count": 1
+	},
+	"energy": 18000,
+	"maxChargeRate": 360
+}

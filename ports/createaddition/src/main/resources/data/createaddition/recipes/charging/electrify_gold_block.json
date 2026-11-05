@@ -1,0 +1,12 @@
+{
+	"type":"createaddition:charging",
+	"input": {
+		"tag": "forge:storage_blocks/gold"
+	},
+	"result": {
+		"item": "createaddition:electrum_block",
+		"count": 1
+	},
+	"energy": 324000,
+	"maxChargeRate": 360
+}

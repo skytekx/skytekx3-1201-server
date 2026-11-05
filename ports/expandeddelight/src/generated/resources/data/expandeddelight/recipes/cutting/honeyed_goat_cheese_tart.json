@@ -1,0 +1,23 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "expandeddelight:honeyed_goat_cheese_tart"
+    }
+  ],
+  "result": [
+    {
+      "item": "expandeddelight:honeyed_goat_cheese_tart_slice",
+      "count": 4
+    }
+  ],
+  "tool": [
+    {
+      "type": "farmersdelight:tool_action",
+      "action": "knife_dig"
+    },
+    {
+      "tag": "forge:tools/knives"
+    }
+  ]
+}

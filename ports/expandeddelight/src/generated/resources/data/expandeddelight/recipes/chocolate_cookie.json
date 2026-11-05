@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:cocoa_beans"
+    },
+    "w": {
+      "tag": "forge:grain"
+    }
+  },
+  "pattern": [
+    "cwc"
+  ],
+  "result": {
+    "item": "expandeddelight:chocolate_cookie",
+    "count": 8
+  }
+}

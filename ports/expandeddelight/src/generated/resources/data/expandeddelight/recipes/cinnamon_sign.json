@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "wooden_sign",
+  "key": {
+    "i": {
+      "item": "expandeddelight:cinnamon_planks"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "pattern": [
+    "iii",
+    "iii",
+    " s "
+  ],
+  "result": {
+    "item": "expandeddelight:cinnamon_sign",
+    "count": 3
+  }
+}

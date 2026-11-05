@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_ocean",
+  "features": "expandeddelight:salt_ore",
+  "step": "underground_ores"
+}

@@ -174,3 +174,67 @@ Left out of the code:
   that JSON once and keeps it in `src/generated/resources`. `EDConfiguredFeatures` keeps the keys.
 - `EDTableLootModifier`, which nothing registers upstream.
 - `EnumParameters`, the NeoForge enum extension parameters, replaced by `IExtensibleEnum` calls.
+
+## Data changes
+
+The script `tools/convert_data_to_1_20_1.py` converted upstream's data once, in place, and its
+docstring lists each step. It is idempotent, a second run changes nothing. The data stays where
+upstream keeps it, the datagen output in `src/generated/resources` and the hand written files in
+`src/main/resources`, so `git log --follow` shows each file's 1.21 form.
+
+1. Folder names: `recipe` to `recipes`, `loot_table` to `loot_tables`, `advancement` to
+   `advancements`, `tags/item` and `tags/block` to `tags/items` and `tags/blocks`,
+   `neoforge/biome_modifier` to `forge/biome_modifier` and `data/neoforge/loot_modifiers` to
+   `data/forge/loot_modifiers`.
+2. Formats: item stacks lose `id` for `item`, cooking results of the vanilla furnaces become plain
+   item ids, cutting board results become Farmer's Delight 1.20.1 chance results, item predicates
+   take lists and the 1.20.1 enchantment form, `neoforge:can_item_perform_ability` becomes
+   `forge:can_tool_perform_action`, `neoforge:loot_table_id` becomes `forge:loot_table_id` and the
+   biome modifiers use `forge:add_features`. The juicer's loot table copies the name with
+   `minecraft:copy_name` and the drink with the new `expandeddelight:copy_drink`, the cabinet's
+   only its name.
+3. Cutting board tools follow Farmer's Delight 1.20.1, a tool action and then the tag:
+   `knife_dig` with `forge:tools/knives` for upstream's `c:tools/knife`, and `axe_dig` with
+   `minecraft:axes` for upstream's `minecraft:axes`. The crushing mallet keeps its own tag.
+4. Common tags: upstream's c: tags become forge: tags with the names that Farmer's Delight 1.20.1
+   and Pam's HarvestCraft 2 Food Core use, so the crops, cheese, cookies, juices and salt of this
+   mod meet the same tags as theirs. The table is `TAG_MAP` in the script. Three c: tags have no
+   1.20.1 convention and are dropped: `c:foods` (a parent of the two cheese tags),
+   `c:foods/edible_when_placed` and `c:foods/soup`. The hanging sign recipe names
+   `minecraft:chain` instead of `c:chains`, which Forge 1.20.1 does not have.
+5. Worldgen: `minecraft:short_grass` is `minecraft:grass` in 1.20.1. The biome modifiers use
+   `#minecraft:is_jungle`, `#minecraft:is_ocean`, `#minecraft:is_savanna`, `#forge:is_desert`,
+   `#forge:is_plains` and `#forge:is_swamp`. None of them holds `skytekx3:sky_void` or another
+   biome of the SkyTekx Skylands, and the wild crop and cranberry patches also keep upstream's
+   placement filter `farmersdelight:biome_tag` for `#minecraft:is_overworld`.
+6. The pie models of the cranberry cobbler and the honeyed goat cheese tart point at Farmer's
+   Delight 1.20.1's `template_pie` models, which 1.21 renamed to `pie`.
+7. The composting chances of `data/neoforge/data_maps/item/compostables.json` moved to code, see
+   source change 11.
+
+Dropped data, with the reason:
+
+- Overrides of other mods' recipes: `farmersdelight:wheat_dough_from_water` and
+  `wheat_dough_from_eggs` (dough needs salt), `farmersdelight:melon_juice` and
+  `farmersrespite:brewing/melon_juice_from_water` (disabled), and the two advancements of the dough
+  recipes. The SkyTekx pack edits no recipe of another mod per mod, and Farmer's Delight 1.20.1 has
+  other dough recipe ids (`wheat_dough_from_egg`) and a special recipe type, so the files would add
+  recipes instead of replacing them.
+- The item tags `minecraft:chicken_food`, `parrot_food`, `pig_food` and `fox_food`, which only
+  exist from Minecraft 1.20.5 on.
+- The entry `expandeddelight:add_loot_sniffer_digging` of the global loot modifier list, for which
+  upstream has no file.
+- The datagen cache `src/generated/resources/.cache`.
+
+Assets:
+
+- The file `textures/gui/juicer_gui.png` is the author's juicer sheet of branch 1.20, unchanged
+  since commit `50e9c102aaa44dedae924ee1dc381af17aaa3d69` (2022-05-25), SHA-1 `94706b23`. The
+  license review found it mostly the author's own drawing, with 121 scattered pixels that coincide
+  with the slot frames of Farmer's Respite's kettle. It replaces the two left out juicer sheets.
+- The file `textures/gui/recipe_book_buttons.png` is built by `tools/make_recipe_book_buttons.py`
+  from upstream's four sprites, which stay in `textures/gui/sprites/recipe_book/`.
+- Upstream's `models/block/mortar_and_pestle.json` names a texture that does not exist. No block
+  state uses the model, so the game never loads it, and it stays as upstream has it.
+- No language file other than upstream's `en_us.json` is added. The 1.20 branch has eleven
+  translations with outside contributors and other item names.

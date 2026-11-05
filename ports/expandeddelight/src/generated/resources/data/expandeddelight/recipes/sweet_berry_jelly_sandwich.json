@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bread"
+    },
+    {
+      "item": "expandeddelight:peanut_butter"
+    },
+    {
+      "tag": "forge:jams/sweet_berry"
+    }
+  ],
+  "result": {
+    "item": "expandeddelight:sweet_berry_jelly_sandwich"
+  }
+}

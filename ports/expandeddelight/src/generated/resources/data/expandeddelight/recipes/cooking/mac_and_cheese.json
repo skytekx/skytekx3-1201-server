@@ -1,0 +1,25 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "tag": "forge:cheese"
+    },
+    {
+      "tag": "forge:pasta"
+    },
+    {
+      "tag": "forge:dusts/salt"
+    }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "item": "expandeddelight:mac_and_cheese"
+  }
+}

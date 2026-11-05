@@ -1,0 +1,19 @@
+{
+  "type": "expandeddelight:juicing",
+  "container": {
+    "item": "minecraft:glass_bottle"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    {
+      "item": "expandeddelight:cranberries"
+    },
+    {
+      "item": "minecraft:sugar"
+    }
+  ],
+  "recipe_book_tab": "drinks",
+  "result": {
+    "item": "expandeddelight:cranberry_juice"
+  }
+}

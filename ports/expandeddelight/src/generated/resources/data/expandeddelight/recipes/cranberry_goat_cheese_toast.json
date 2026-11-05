@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bread"
+    },
+    {
+      "tag": "forge:goat_cheese"
+    },
+    {
+      "item": "expandeddelight:cranberries"
+    }
+  ],
+  "result": {
+    "item": "expandeddelight:cranberry_goat_cheese_toast",
+    "count": 2
+  }
+}

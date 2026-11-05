@@ -43,6 +43,8 @@ Modifications
     * Models and data: the Actually Additions Manual and the Storage Crate Keeper have item
       models, flat items use the generated item model and tools the handheld one, crops render
       with cutout, and crushing recipes with one output no longer list an empty second one.
+    * Client: the empty ClientRegistryHandler is gone (upstream registered it on the wrong
+      event bus and later deleted it).
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

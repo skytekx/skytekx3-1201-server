@@ -55,11 +55,11 @@ of the snapshot are separate commits in this repository's history
 - 402 Java files at the base still carry the old per file header that points to the "Actually
   Additions License" at `http://ellpeck.de/actaddlicense`. The relicensing above supersedes it,
   and the snapshot keeps the headers unchanged.
-- Code excerpts that upstream marks as taken from other mods, all of them kept:
+- Code excerpts that upstream marks as taken from other mods, all of them kept in the base:
   `TileEntityXPSolidifier` (experience formulas excerpted from Ender IO with permission),
   `misc/BannerHelper` (a banner pattern helper excerpted from Additional Banners with permission,
   called from `ActuallyAdditions#setup`), `ClientRegistryHandler` (an empty method whose body is
-  commented out, excerpted from Tinkers' Construct with permission) and
+  commented out, excerpted from Tinkers' Construct with permission, removed by source change 8) and
   `booklet/misc/GuiAAAchievements` (a 1.12 class inside a block comment, partially excerpted from
   Botania with permission). Two methods are marked as copied from vanilla Minecraft code
   (`AssetUtil`, `AwfulUtil`).
@@ -164,8 +164,10 @@ next to it are upstream's Maven artifacts and are not shipped.
    `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
    clean builds of the same commit give the same SHA-1. With the build changes 1 to 9 and no
    source change, three clean builds gave the jar SHA-1
-   `c37140ce60ec6da5ac33ebea66b3f9fa3951f7fd` (4560170 bytes). That jar is the OLD side of the
-   savegame test of the release.
+   `c37140ce60ec6da5ac33ebea66b3f9fa3951f7fd` (4560170 bytes). That jar does not start in the
+   pack (source change 8), so the OLD side of the savegame test of the release is the base with
+   only the boot fix of source change 3, jar SHA-1 `237e0fc65275a0204fe7008f144c395207e41205`
+   (4557655 bytes).
 6. Javadoc: the task `javadoc` reads the sources as UTF-8. Upstream's `build` runs it for the
    javadoc artifact, and under a host locale that is not UTF-8 (POSIX here) it failed on the
    copyright sign in the API file headers.
@@ -292,3 +294,26 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    `556f4a7`, `a7e2d62` and `88b0775` only refresh the output of their own lines. Each change is in
    `src/generated` as `runData` writes it, with the `.cache` files of the three providers that
    changed.
+8. Boot: the base jar `c37140ce` reaches `Done` alone on a dedicated Forge 47.4.18 server with 0
+   ERROR lines, and its dev client (Forge 47.1.3 userdev) reaches the title screen. In the Arclight
+   pack it does not start. Immersive Engineering 10.2.0-183 ships the same package
+   `invtweaks.api.container`, and the module layer stops with a `ResolutionException` before any
+   mod loads (modules immersiveengineering and actuallyadditions export package
+   `invtweaks.api.container` to module enderio, Arclight safeiter2 pack boot of 2026-11-05). Source
+   change 3 is therefore the one boot fix the base needs. The OLD jar of the savegame test is the
+   base (`a6bcde1`) with only `src/main/java/invtweaks/` removed, built as above: SHA-1
+   `237e0fc65275a0204fe7008f144c395207e41205`, 4557655 bytes. It reaches `Done` in the Arclight
+   pack, and so does the jar of this change, both with the same three ERROR lines as the pack
+   without the mod (the AllTheLeaks line of the boot error baseline and two lines that every boot
+   of the fresh test copy shows) and no `Mixin apply failed`. This change also removes
+   `mod/ClientRegistryHandler.java`. The base registered it on the Forge bus
+   (`ActuallyAdditionsClient.java:97`), although its two listeners take the mod bus events
+   `ModelEvent.RegisterGeometryLoaders` and `ModelEvent.BakingCompleted`. Upstream `f9897f0` moved
+   it to the mod bus and `2e394d9` deleted it, since both listener bodies are commented out.
+   Forge 47 accepts such a registration without a check (`MinecraftForge.EVENT_BUS` is a plain
+   `BusBuilder` bus), so the listeners only never ran. Not needed on the base: `9ec20f4` (the base
+   already registers its particle providers in `RegisterParticleProvidersEvent`,
+   `ActuallyAdditions.java:115` and `159`) and `758001e` (a regression of the 1.21 line, the base
+   wraps its client listeners in `DistExecutor`, `ActuallyAdditions.java:112`). The base still
+   registers the fully commented `DungeonLoot` on the Forge bus (`ActuallyAdditions.java:105`),
+   which is harmless and goes away with the loot modifiers (`4a16be4`).

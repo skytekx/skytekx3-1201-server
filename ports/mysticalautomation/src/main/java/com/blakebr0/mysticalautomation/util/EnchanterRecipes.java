@@ -3,9 +3,12 @@ package com.blakebr0.mysticalautomation.util;
 import com.blakebr0.mysticalagriculture.api.crafting.IEnchanterRecipe;
 import com.blakebr0.mysticalautomation.compat.MysticalCompat;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -33,8 +36,8 @@ public final class EnchanterRecipes {
         var type = MysticalCompat.RecipeTypes.ENCHANTER.get();
         var manager = level.getRecipeManager();
 
-        return manager.getRecipeFor(type, new SimpleContainer(first, second, target), level)
-                .or(() -> manager.getRecipeFor(type, new SimpleContainer(second, first, target), level))
+        return manager.getRecipeFor(type, container(first, second, target), level)
+                .or(() -> manager.getRecipeFor(type, container(second, first, target), level))
                 .orElse(null);
     }
 
@@ -97,7 +100,7 @@ public final class EnchanterRecipes {
      */
     public static ItemStack assemble(IEnchanterRecipe recipe, List<ItemStack> inputs, RegistryAccess access, int level) {
         var ingredients = recipe.getIngredients();
-        var container = new SimpleContainer(3);
+        var container = container(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
         var taken = new boolean[2];
 
         // Mystical Agriculture 7 reads the level from the counts in slots 0 and 1, so these get exactly the counts of
@@ -123,5 +126,11 @@ public final class EnchanterRecipes {
         }
 
         return recipe.assemble(container, access);
+    }
+
+    // A vanilla SimpleContainer caps every stack it takes at 64, which would cut the counts of the higher levels.
+    // A RecipeWrapper over an ItemStackHandler keeps them as they are
+    private static Container container(ItemStack first, ItemStack second, ItemStack target) {
+        return new RecipeWrapper(new ItemStackHandler(NonNullList.of(ItemStack.EMPTY, first, second, target)));
     }
 }

@@ -2,8 +2,10 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    // SkyTekx: pinned to the versions that upstream's ranges '[6.0,6.2)' and '1.+' resolve to
+    // today, so a new plugin release cannot change the build
+    id 'net.minecraftforge.gradle' version '6.0.54'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.2.0.7-dev-SNAPSHOT'
 }
 
 version = "$mod_version"
@@ -12,9 +14,8 @@ base {
     archivesName = "ActuallyAdditions-$game_version"
 }
 
-if (System.getenv('BUILD_NUMBER') != null) {
-    version += "." + System.getenv('BUILD_NUMBER')
-}
+// SkyTekx: upstream appended the Jenkins BUILD_NUMBER here. The fork's version comes from
+// mod_version alone, so a CI variable cannot change the jar name or the mod version
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -96,12 +97,16 @@ dependencies {
 
 jar {
     group = 'artifact'
+    // SkyTekx: byte-reproducible jar (no file timestamps, fixed entry order, no build timestamp in
+    // the manifest), so a rebuild of the same commit can be checked against the SHA-1 recorded in
+    // modrinth-permissions/
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
     manifest {
         attributes(["Specification-Title"     : "Actually Additions",
                     "Specification-Version"   : "1",
                     "Implementation-Title"    : project.archivesBaseName,
-                    "Implementation-Version"  : project.version,
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+                    "Implementation-Version"  : project.version],)
     }
 
     from sourceSets.main.output
@@ -122,6 +127,9 @@ task apiJar(type: Jar) {
 
 javadoc {
     include 'de/ellpeck/actuallyadditions/api/**'
+    // SkyTekx: the API sources carry a UTF-8 copyright sign, and javadoc otherwise reads them in
+    // the platform charset, which fails the build on a host whose locale is not UTF-8
+    options.encoding = 'UTF-8'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

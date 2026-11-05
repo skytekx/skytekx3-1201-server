@@ -20,3 +20,8 @@
 *.launch
 .settings/org.eclipse.jdt.core.prefs
 *.prefs
+# SkyTekx: more build outputs and dev-run leftovers (/build, /.gradle and /run/ are listed above)
+/logs/
+*.log
+.mixin.out/
+mcmodsrepo/

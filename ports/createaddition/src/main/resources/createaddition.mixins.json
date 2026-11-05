@@ -3,9 +3,14 @@
 	"priority": 1000,
 	"package": "com.mrh0.createaddition.mixin",
 	"compatibilityLevel": "JAVA_17",
+	"refmap": "createaddition.refmap.json",
 	"mixins": [
+		"BaseFireBlockMixin",
 		"BlockMovementChecksMixin",
 		"ContraptionMixin",
+		"FireBlockInvoker",
+		"FireBlockMixin",
+		"FlowingFluidMixin",
 		"SpeedControllerTileEntityMixin"
 	],
 	"minVersion": "0.8.5"

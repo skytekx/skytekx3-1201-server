@@ -46,6 +46,10 @@ Modifications
     Digital Adapter peripheral.
   - Balance from the 1.21.1 line: the spool recipe makes 24 spools from iron plates and an iron
     rod.
+  - Ignitable fluids from the 1.21.1 line: fluids in the fluid tag forge:ignites (biofuel,
+    creosote, crude oil, plant oil, ethanol, gasoline, diesel and biodiesel, where a mod adds them)
+    catch fire and burn away, and falling burning fluid spreads the fire while doFireTick is on.
+    The mixin config now uses the refmap createaddition.refmap.json.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

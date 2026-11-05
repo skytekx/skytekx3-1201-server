@@ -1,0 +1,37 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#forge:biofuel",
+      "required": false
+    },
+    {
+      "id": "#forge:creosote",
+      "required": false
+    },
+    {
+      "id": "#forge:crude_oil",
+      "required": false
+    },
+    {
+      "id": "#forge:plantoil",
+      "required": false
+    },
+    {
+      "id": "#forge:ethanol",
+      "required": false
+    },
+    {
+      "id": "#forge:gasoline",
+      "required": false
+    },
+    {
+      "id": "#forge:diesel",
+      "required": false
+    },
+    {
+      "id": "#forge:biodiesel",
+      "required": false
+    }
+  ]
+}

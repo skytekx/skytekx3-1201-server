@@ -253,5 +253,6 @@
   "statusbar.createaddition.wire.long": "전선이 너무 깁니다",
   "statusbar.createaddition.wire.no_connection": "이곳에 전선이 연결되어 있지 않습니다",
   "statusbar.createaddition.wire.removed": "전선을 제거했습니다",
-  "statusbar.createaddition.wire.requires_high_current": "연결하려면 고전류 전선이 필요합니다"
+  "statusbar.createaddition.wire.requires_high_current": "연결하려면 고전류 전선이 필요합니다",
+  "tag.fluid.forge.ignites": "점화 가능 액체"
 }

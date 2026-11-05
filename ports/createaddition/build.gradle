@@ -28,8 +28,9 @@ mixin {
     debug.export = true
 }
 
-// SkyTekx: mod_version already names the Minecraft version (1.7.3-1.20.1-skytekx.1)
-version = "${mod_version}"
+// SkyTekx: upstream's version form. mod_version names the backported 1.21.1 line plus the unofficial
+// suffix, so the jar is createaddition-1.20.1-1.7.3-skytekx.1.jar and sorts above upstream's 1.20.1-1.3.3
+version = "${minecraft_version}-${mod_version}"
 
 group = 'com.mrh0.createaddition' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'createaddition'

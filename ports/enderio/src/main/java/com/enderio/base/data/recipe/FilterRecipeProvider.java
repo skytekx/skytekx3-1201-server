@@ -61,6 +61,14 @@ public class FilterRecipeProvider extends RecipeProvider {
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.ADVANCED_ITEM_FILTER))
             .save(consumer);
 
+        // SkyTekx: the limited item filter recipe of Ender IO 8.x (1a85694c2).
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EIOItems.LIMITED_ITEM_FILTER.get())
+            .define('C', Items.COMPARATOR)
+            .define('F', EIOItems.ADVANCED_ITEM_FILTER)
+            .pattern("CFC")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.ADVANCED_ITEM_FILTER))
+            .save(consumer);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EIOItems.BASIC_FLUID_FILTER.get())
             .define('P', Ingredient.of(Items.PAPER, EIOItems.BLACK_PAPER)) // TODO: forge:paper?
             .define('B', Items.BUCKET)

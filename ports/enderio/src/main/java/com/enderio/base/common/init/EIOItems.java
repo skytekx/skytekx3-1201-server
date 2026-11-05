@@ -7,6 +7,7 @@ import com.enderio.base.common.item.capacitors.LootCapacitorItem;
 import com.enderio.base.common.item.filter.EntityFilter;
 import com.enderio.base.common.item.filter.FluidFilter;
 import com.enderio.base.common.item.filter.ItemFilter;
+import com.enderio.base.common.item.filter.LimitedItemFilter;
 import com.enderio.base.common.item.misc.BrokenSpawnerItem;
 import com.enderio.base.common.item.misc.CreativeTabIconItem;
 import com.enderio.base.common.item.misc.EnderiosItem;
@@ -365,6 +366,12 @@ public class EIOItems {
 
     public static final ItemEntry<ItemFilter> BIG_ADVANCED_ITEM_FILTER = REGISTRATE
         .item("big_advanced_item_filter", props -> new ItemFilter(props, 4 * 9, true, true))
+        .tab(EIOCreativeTabs.GEAR)
+        .register();
+
+    // SkyTekx: the limited item filter of Ender IO 8.x (1a85694c2), which keeps a stock level per entry.
+    public static final ItemEntry<LimitedItemFilter> LIMITED_ITEM_FILTER = REGISTRATE
+        .item("limited_item_filter", LimitedItemFilter::new)
         .tab(EIOCreativeTabs.GEAR)
         .register();
 

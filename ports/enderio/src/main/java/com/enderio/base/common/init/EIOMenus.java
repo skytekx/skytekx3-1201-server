@@ -5,10 +5,12 @@ import com.enderio.base.client.gui.screen.CoordinateMenuScreen;
 import com.enderio.base.client.gui.screen.EntityFilterScreen;
 import com.enderio.base.client.gui.screen.FluidFilterScreen;
 import com.enderio.base.client.gui.screen.ItemFilterScreen;
+import com.enderio.base.client.gui.screen.LimitedItemFilterScreen;
 import com.enderio.base.common.menu.CoordinateMenu;
 import com.enderio.base.common.menu.EntityFilterMenu;
 import com.enderio.base.common.menu.FluidFilterMenu;
 import com.enderio.base.common.menu.ItemFilterMenu;
+import com.enderio.base.common.menu.LimitedItemFilterMenu;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.entry.MenuEntry;
 
@@ -26,6 +28,9 @@ public class EIOMenus {
 
     public static final MenuEntry<EntityFilterMenu> ENTITY_FILTER = REGISTRATE.menu("entity_filter",
         EntityFilterMenu::factory, () -> EntityFilterScreen::new).register();
+
+    public static final MenuEntry<LimitedItemFilterMenu> LIMITED_ITEM_FILTER = REGISTRATE.menu("limited_item_filter",
+        LimitedItemFilterMenu::factory, () -> LimitedItemFilterScreen::new).register();
 
     public static void register() {}
 }

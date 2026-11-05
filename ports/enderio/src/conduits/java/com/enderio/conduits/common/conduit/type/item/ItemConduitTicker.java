@@ -5,6 +5,7 @@ import com.enderio.api.conduit.ConduitGraph;
 import com.enderio.api.conduit.ConduitType;
 import com.enderio.api.conduit.ticker.CapabilityAwareConduitTicker;
 import com.enderio.api.filter.ItemStackFilter;
+import com.enderio.api.filter.LimitingItemStackFilter;
 import com.enderio.conduits.common.capability.ExtractionSpeedUpgrade;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -59,6 +60,18 @@ public class ItemConduitTicker extends CapabilityAwareConduitTicker<ItemConduitD
                     if (!itemFilter.test(extractedItem)) {
                         continue;
                     }
+
+                    // SkyTekx: a limited item filter leaves its stock level in the source (8.x 292bd84ed).
+                    if (itemFilter instanceof LimitingItemStackFilter limitingFilter) {
+                        int limit = limitingFilter.getTransferLimit(extractedItem, extractHandler, false);
+                        if (limit <= 0) {
+                            continue;
+                        }
+
+                        if (extractedItem.getCount() > limit) {
+                            extractedItem.setCount(limit);
+                        }
+                    }
                 }
 
                 ItemConduitData.ItemSidedData sidedExtractData = extract.data.castTo(ItemConduitData.class).compute(extract.direction);
@@ -80,15 +93,26 @@ public class ItemConduitTicker extends CapabilityAwareConduitTicker<ItemConduitD
                         continue;
                     }
 
+                    int insertCount = extractedItem.getCount();
                     if (insert.insertFilter instanceof ItemStackFilter itemFilter) {
                         if (!itemFilter.test(extractedItem)) {
                             continue;
                         }
+
+                        // SkyTekx: a limited item filter fills the target only up to its stock level (8.x 1a85694c2, 292bd84ed).
+                        if (itemFilter instanceof LimitingItemStackFilter limitingFilter) {
+                            int limit = limitingFilter.getTransferLimit(extractedItem, insert.capability, true);
+                            if (limit <= 0) {
+                                continue;
+                            }
+
+                            insertCount = Math.min(insertCount, limit);
+                        }
                     }
 
                     // Copy the stack to ensure extractedItem isn't modified by item handler implementations (Create Chute for example)
-                    ItemStack notInserted = ItemHandlerHelper.insertItem(insert.capability, extractedItem.copy(), false);
-                    int successfullyInserted = extractedItem.getCount() - notInserted.getCount();
+                    ItemStack notInserted = ItemHandlerHelper.insertItem(insert.capability, extractedItem.copyWithCount(insertCount), false);
+                    int successfullyInserted = insertCount - notInserted.getCount();
 
                     if (successfullyInserted > 0) {
                         extracted += successfullyInserted;

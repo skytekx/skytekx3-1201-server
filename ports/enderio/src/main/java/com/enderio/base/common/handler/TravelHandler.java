@@ -4,6 +4,9 @@ import com.enderio.api.integration.IntegrationManager;
 import com.enderio.api.travel.ITravelTarget;
 import com.enderio.base.common.config.BaseConfig;
 import com.enderio.base.common.init.EIOItems;
+import com.enderio.base.common.integrations.curios.CuriosCompat;
+import com.enderio.base.common.item.tool.TravelStaffItem;
+import com.enderio.base.common.network.C2SRequestShortTravel;
 import com.enderio.base.common.network.RequestTravelPacket;
 import com.enderio.base.common.travel.TravelSavedData;
 import com.enderio.core.common.network.CoreNetwork;
@@ -62,9 +65,74 @@ public class TravelHandler {
         return IntegrationManager.anyMatch(integration -> integration.canBlockTeleport(player));
     }
 
+    /**
+     * SkyTekx: whether the stack is a travel item for the travel key (565ef4c3e). 8.x marks travel items with the
+     * TRAVEL_ITEM data component, in 6.x the Staff of Travelling is the only one.
+     */
+    public static boolean isTravelItem(ItemStack stack) {
+        return !stack.isEmpty() && stack.getItem() instanceof TravelStaffItem;
+    }
+
+    /**
+     * SkyTekx: the travel item that the travel key uses (565ef4c3e): the first one in a Curios slot, then the first one
+     * in the inventory, that is not on cooldown and has the energy for a jump (any staff for a creative player).
+     *
+     * @return the live stack, or an empty stack when the player has no usable travel item
+     */
+    public static ItemStack findTravelItem(Player player) {
+        for (ItemStack stack : CuriosCompat.getActiveCurios(player, TravelHandler::isTravelItem)) {
+            if (canUseTravelItem(player, stack)) {
+                return stack;
+            }
+        }
+
+        var inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (isTravelItem(stack) && canUseTravelItem(player, stack)) {
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    private static boolean canUseTravelItem(Player player, ItemStack stack) {
+        return stack.getItem() instanceof TravelStaffItem staff
+            && !player.getCooldowns().isOnCooldown(staff)
+            && (player.isCreative() || staff.hasResources(stack));
+    }
+
+    /**
+     * SkyTekx: pays for a jump with a travel item found by {@link #findTravelItem}, as a use of the item does: the
+     * energy (not for a creative player) and the cooldown.
+     */
+    public static void consumeTravelItem(Player player, ItemStack stack) {
+        if (stack.getItem() instanceof TravelStaffItem staff) {
+            if (!player.isCreative()) {
+                staff.consumeResources(stack);
+            }
+
+            player.getCooldowns().addCooldown(staff, BaseConfig.COMMON.ITEMS.TRAVELLING_BLINK_DISABLED_TIME.get());
+        }
+    }
+
     public static boolean shortTeleport(Level level, Player player) {
+        return shortTeleport(level, player, false);
+    }
+
+    /**
+     * @param sendToServer SkyTekx: on the client, ask the server for the jump with {@link C2SRequestShortTravel}
+     *                     (565ef4c3e). The server finds the target again from its own copy of the player and posts the
+     *                     teleport event, so the client sends no position.
+     */
+    public static boolean shortTeleport(Level level, Player player, boolean sendToServer) {
         Optional<Vec3> pos = teleportPosition(level, player);
         if (pos.isPresent()) {
+            if (!(player instanceof ServerPlayer) && sendToServer) {
+                CoreNetwork.sendToServer(new C2SRequestShortTravel());
+            }
+
             if (player instanceof ServerPlayer serverPlayer) {
                 Optional<Vec3> eventPos = teleportEvent(player, pos.get());
                 if (eventPos.isPresent()) {

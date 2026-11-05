@@ -90,6 +90,22 @@ public abstract class PoweredToggledItem extends Item implements IMultiCapabilit
         return super.use(pLevel, pPlayer, pUsedHand);
     }
 
+    /**
+     * SkyTekx: toggles the item as a use while crouching does, for the electromagnet key (565ef4c3e). An item without
+     * charge stays off.
+     *
+     * @return whether the item is on now
+     */
+    public boolean toggle(ItemStack stack) {
+        if (Toggled.isEnabled(stack)) {
+            disable(stack);
+        } else if (hasCharge(stack)) {
+            enable(stack);
+        }
+
+        return Toggled.isEnabled(stack);
+    }
+
     @Override
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
         if (pEntity instanceof Player player) {

@@ -1,8 +1,10 @@
 package com.enderio.base.common.init;
 
 import com.enderio.base.common.network.AddTravelTargetPacket;
+import com.enderio.base.common.network.C2SRequestShortTravel;
 import com.enderio.base.common.network.C2SSetFluidFilterSlot;
 import com.enderio.base.common.network.C2SSetItemFilterSlot;
+import com.enderio.base.common.network.C2SToggleMagnet;
 import com.enderio.base.common.network.FilterUpdatePacket;
 import com.enderio.base.common.network.RemoveTravelTargetPacket;
 import com.enderio.base.common.network.RequestTravelPacket;
@@ -25,5 +27,8 @@ public class EIOPackets {
         CoreNetwork.registerPacket(new C2SSetItemFilterSlot.Handler(), C2SSetItemFilterSlot.class);
         CoreNetwork.registerPacket(new C2SSetFluidFilterSlot.Handler(), C2SSetFluidFilterSlot.class);
 
+        // SkyTekx: backported packets, appended (565ef4c3e).
+        CoreNetwork.registerPacket(new C2SRequestShortTravel.Handler(), C2SRequestShortTravel.class);
+        CoreNetwork.registerPacket(new C2SToggleMagnet.Handler(), C2SToggleMagnet.class);
     }
 }

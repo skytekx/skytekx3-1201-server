@@ -2,6 +2,7 @@ package com.enderio.base.client.renderer.travel;
 
 import com.enderio.api.travel.ITravelTarget;
 import com.enderio.api.travel.TravelRegistry;
+import com.enderio.base.client.input.KeymapHandler;
 import com.enderio.base.common.handler.TravelHandler;
 import com.enderio.base.common.travel.TravelSavedData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,11 +28,13 @@ public class RenderTravelTargets {
             return;
         }
 
-        if (!TravelHandler.canTeleport(player)) {
+        // SkyTekx: a held travel key shows the anchors in item range too (565ef4c3e).
+        boolean travelKeyHeld = KeymapHandler.showTravelTargets();
+        if (!TravelHandler.canTeleport(player) && !travelKeyHeld) {
             return;
         }
 
-        boolean itemTeleport = TravelHandler.canItemTeleport(player);
+        boolean itemTeleport = TravelHandler.canItemTeleport(player) || travelKeyHeld;
         TravelSavedData data = TravelSavedData.getTravelData(Minecraft.getInstance().level);
         @Nullable
         ITravelTarget activeTarget = TravelHandler.getTeleportAnchorTarget(player).orElse(null);

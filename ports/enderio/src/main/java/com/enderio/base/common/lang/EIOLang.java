@@ -222,6 +222,15 @@ public class EIOLang {
     // region KeyBindings
     public static final Component KEYBINDING_CATEGORY = REGISTRATE.addLang("keybinding", EnderIO.loc("category"), "EnderIO");
     public static final Component KEYBINDING_PROBE_MODE = REGISTRATE.addLang("keybinding", EnderIO.loc("probe_mode"), "Change Probe Mode");
+    // SkyTekx: the travel and electromagnet keys of 8.x (565ef4c3e), with the key names of 8.x.
+    public static final Component KEYBINDING_TRAVEL_STAFF = REGISTRATE.addLang("key", EnderIO.loc("travel_staff"), "Staff of Travelling");
+    public static final Component KEYBINDING_TOGGLE_MAGNET = REGISTRATE.addLang("key", EnderIO.loc("toggle_magnet"), "Toggle Electromagnet");
+
+    public static final Component ELECTROMAGNET_ON = REGISTRATE.addLang("gui", EnderIO.loc("electromagnet_on"), "Electromagnet On");
+    public static final Component ELECTROMAGNET_OFF = REGISTRATE.addLang("gui", EnderIO.loc("electromagnet_off"), "Electromagnet Off");
+    public static final Component TRAVEL_ERROR_CANNOT_TELEPORT = REGISTRATE.addLang("gui", EnderIO.loc("error_cannot_teleport"), "ERROR: Cannot teleport");
+    public static final Component TRAVEL_ERROR_INVALID_DESTINATION = REGISTRATE.addLang("gui", EnderIO.loc("error_invalid_destination"), "ERROR: Destination not a valid target");
+    public static final Component TRAVEL_ERROR_TOO_FAR = REGISTRATE.addLang("gui", EnderIO.loc("error_too_far"), "ERROR: Too far");
     
     // endregion
 

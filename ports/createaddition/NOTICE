@@ -65,6 +65,9 @@ Modifications
   - Changes of the 1.21.1 release 1.6.0: the Alternator takes a shaft on both faces of its axis
     and passes rotation through, with a Flywheel visual for the two half shafts, and its
     mechanical crafting recipe takes a second row of andesite alloy instead of the Capacitor.
+    The Capacitor stores FE (capacitor_capacity, capacitor_charge_rate) in the stack NBT key
+    energy. Unlike upstream an empty one stacks to 64, and only a single capacitor charges or
+    discharges, so a stack cannot dupe energy.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

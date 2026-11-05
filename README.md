@@ -319,6 +319,7 @@ upload. What blocks a public release is on [Publish](okf/modpack/publish.md).
 | Scan, `tools/void_scan.py` | Lists structure starts and blocks below the Skylands islands and in void columns, read only |
 | Scan, `tools/void_float.py` | Tells blocks that hang from an island apart from blocks that float free in the void |
 | Scan, `tools/structure_pieces.py` | Prints where every piece of one structure ended up, with its projection and box |
+| Scan, `tools/wire_scan.py` | Lists the Create Crafts & Additions wire nodes of a world and how the saved wire graph differs, read only |
 | Legacy, `tools/resolve_all.py` | Legacy resolver of a fixed slug list. Do not use it |
 
 More on each script is on [Tools](okf/modpack/tools.md).

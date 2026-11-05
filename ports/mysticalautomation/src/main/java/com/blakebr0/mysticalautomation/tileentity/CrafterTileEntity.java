@@ -288,6 +288,13 @@ public class CrafterTileEntity extends BaseMachineTileEntity implements MenuProv
         var amounts = new int[INPUT_SLOTS.length];
         var remaining = new int[INPUT_SLOTS.length];
 
+        // SkyTekx: special recipes (every vanilla CustomRecipe: shulker box coloring, book cloning, repair, firework
+        // rockets, banner copies and more) list no ingredients and build their result from the grid, here the ghost
+        // grid, so upstream crafted them from ghost items alone without taking anything. They keep items back through
+        // getRemainingItems, which the Crafter does not use, so the Crafter does not make them at all
+        if (recipe.isSpecial())
+            return new InputResult(false, amounts);
+
         for (int i = 0; i < INPUT_SLOTS.length; i++) {
             remaining[i] = this.inventory.getStackInSlot(INPUT_SLOTS[i]).getCount();
         }
@@ -310,6 +317,12 @@ public class CrafterTileEntity extends BaseMachineTileEntity implements MenuProv
                     break;
                 }
             }
+        }
+
+        // SkyTekx: from upstream 7a481dc of the 26.1 line ("Fix Crafter working if there are no required inputs from
+        // input display"), so a recipe without a single ingredient takes nothing and gives nothing
+        if (required == 0) {
+            return new InputResult(false, amounts);
         }
 
         return new InputResult(Arrays.stream(amounts).sum() == required, amounts);

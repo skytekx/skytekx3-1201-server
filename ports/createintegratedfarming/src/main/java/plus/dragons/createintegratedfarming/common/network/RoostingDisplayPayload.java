@@ -18,28 +18,16 @@
 
 package plus.dragons.createintegratedfarming.common.network;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import plus.dragons.createintegratedfarming.common.CIFCommon;
+import net.minecraft.network.FriendlyByteBuf;
 import plus.dragons.createintegratedfarming.common.ranching.roost.display.RoostingDisplaySnapshot;
 
-public record RoostingDisplayPayload(RoostingDisplaySnapshot snapshot) implements CustomPacketPayload {
-    public static final Type<RoostingDisplayPayload> TYPE = new Type<>(CIFCommon.asResource("roosting_display_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, RoostingDisplayPayload> STREAM_CODEC = StreamCodec.ofMember(
-            RoostingDisplayPayload::encode,
-            RoostingDisplayPayload::decode);
-
-    private void encode(RegistryFriendlyByteBuf buffer) {
+// SkyTekx: a SimpleChannel message (id 0 of CIFPackets) instead of a CustomPacketPayload
+public record RoostingDisplayPayload(RoostingDisplaySnapshot snapshot) {
+    public void encode(FriendlyByteBuf buffer) {
         RoostingDisplaySnapshot.STREAM_CODEC.encode(buffer, snapshot);
     }
 
-    private static RoostingDisplayPayload decode(RegistryFriendlyByteBuf buffer) {
+    public static RoostingDisplayPayload decode(FriendlyByteBuf buffer) {
         return new RoostingDisplayPayload(RoostingDisplaySnapshot.STREAM_CODEC.decode(buffer));
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

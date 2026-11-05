@@ -21,17 +21,19 @@ package plus.dragons.createintegratedfarming.mixin.create;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Leashable;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import plus.dragons.createintegratedfarming.config.CIFConfig;
 
+// SkyTekx: updateEntityAfterFallOn overrides a vanilla method, so its name goes through the refmap,
+// while canBePickedUp is Create's own and stays unmapped. 1.20.1 has no Leashable, only Mob leashes.
 @Mixin(SeatBlock.class)
 public class SeatBlockMixin {
-    @ModifyExpressionValue(method = "updateEntityAfterFallOn", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/actors/seat/SeatBlock;canBePickedUp(Lnet/minecraft/world/entity/Entity;)Z"))
+    @ModifyExpressionValue(method = "updateEntityAfterFallOn", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/actors/seat/SeatBlock;canBePickedUp(Lnet/minecraft/world/entity/Entity;)Z", remap = false))
     private boolean createintegratedfarming$ignoreLeashedEntity(boolean original, BlockGetter level, Entity entity) {
-        if (entity instanceof Leashable leashable && leashable.isLeashed())
+        if (entity instanceof Mob mob && mob.isLeashed())
             return original && CIFConfig.server().leashedEntitySitsAutomatically.get();
         return original;
     }

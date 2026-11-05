@@ -62,7 +62,7 @@ public class RoostBlockItem extends BlockItem {
         BaseSpawner spawner = ((SpawnerBlockEntity) blockEntity).getSpawner();
         List<SpawnData> possibleSpawns = spawner.spawnPotentials.unwrap()
                 .stream()
-                .map(WeightedEntry.Wrapper::data)
+                .map(WeightedEntry.Wrapper::getData)
                 .toList();
         if (possibleSpawns.isEmpty()) {
             possibleSpawns = new ArrayList<>();

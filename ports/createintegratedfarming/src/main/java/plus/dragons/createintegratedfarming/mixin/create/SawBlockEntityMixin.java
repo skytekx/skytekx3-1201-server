@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import plus.dragons.createintegratedfarming.api.saw.SawableBlockTags;
 
-@Mixin(SawBlockEntity.class)
+@Mixin(value = SawBlockEntity.class, remap = false)
 public class SawBlockEntityMixin {
     @ModifyReturnValue(method = "isSawable", at = @At("TAIL"))
     private static boolean createintegratedfarming$addVerticalPlants(boolean original, BlockState state) {

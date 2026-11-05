@@ -52,7 +52,7 @@ public class MushroomColonyHarvestBehaviour implements CustomHarvestBehaviour {
     public static @Nullable MushroomColonyHarvestBehaviour create(Block block) {
         if (!(block instanceof MushroomColonyBlock colony))
             return null;
-        if (!(colony.mushroomType.value() instanceof BlockItem mushroom))
+        if (!(colony.mushroomType.get() instanceof BlockItem mushroom))
             return null;
         if (BuiltInRegistries.BLOCK.getKey(colony).getPath().contains("cloudshroom")) // Delight o' Flight Cloudshroom has 'special' implements so here is special compat
             return null;
@@ -115,7 +115,7 @@ public class MushroomColonyHarvestBehaviour implements CustomHarvestBehaviour {
         Level level = context.world;
         level.playSound(null, pos, SoundEvents.MOOSHROOM_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.setBlockAndUpdate(pos, state.setValue(colony.getAgeProperty(), 0));
-        behaviour.collectOrDropItem(context, new ItemStack(mushroom, age));
+        behaviour.dropItem(context, new ItemStack(mushroom, age));
     }
 
     protected void harvestColony(HarvesterMovementBehaviour behaviour, MovementContext context, BlockPos pos, BlockState state) {
@@ -128,7 +128,7 @@ public class MushroomColonyHarvestBehaviour implements CustomHarvestBehaviour {
                 null,
                 CustomHarvestBehaviour.getHarvestTool(context, new ItemStack(Items.SHEARS)),
                 1,
-                stack -> behaviour.collectOrDropItem(context, stack));
+                stack -> behaviour.dropItem(context, stack));
         replantMushroom(context, pos);
     }
 

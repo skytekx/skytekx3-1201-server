@@ -19,16 +19,14 @@
 package plus.dragons.createintegratedfarming.integration.supplementaries;
 
 import net.mehvahdjukaar.supplementaries.common.block.blocks.FlaxBlock;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import plus.dragons.createintegratedfarming.api.harvester.CustomHarvestBehaviour;
-import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.integration.ModIntegration;
 import plus.dragons.createintegratedfarming.integration.supplementaries.farming.harvest.FlaxHarvestBehaviour;
 
-@Mod(CIFCommon.ID)
+// SkyTekx: CIFCommon constructs this entry point, since Forge 47 loads one @Mod class per mod id
 public class SupplementariesIntegration {
     public SupplementariesIntegration(IEventBus modBus) {
         if (ModIntegration.SUPPLEMENTARIES.enabled())

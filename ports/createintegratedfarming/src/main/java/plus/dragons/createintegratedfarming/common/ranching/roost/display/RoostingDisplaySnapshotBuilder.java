@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.valueproviders.IntProvider;
@@ -34,8 +33,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus;
 import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.ChickenFoodFluid;
 import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.ChickenFoodItem;
@@ -50,7 +48,7 @@ public final class RoostingDisplaySnapshotBuilder {
 
     public static RoostingDisplaySnapshot build(MinecraftServer server, int revision) {
         var lootParser = new RoostingLootTableParser(server);
-        Map<ResourceKey<LootTable>, RoostingLootTableParser.Result> lootCache = new LinkedHashMap<>();
+        Map<ResourceLocation, RoostingLootTableParser.Result> lootCache = new LinkedHashMap<>();
         List<FluidFeedDisplay> fluidFeeds = resolveFluidFeeds();
         var recipes = RoostingDisplayProfiles.all().stream()
                 .map(profile -> buildRecipe(profile, lootParser, lootCache, fluidFeeds))
@@ -62,7 +60,7 @@ public final class RoostingDisplaySnapshotBuilder {
     private static RoostingDisplayRecipe buildRecipe(
             RoostingDisplayProfile profile,
             RoostingLootTableParser lootParser,
-            Map<ResourceKey<LootTable>, RoostingLootTableParser.Result> lootCache,
+            Map<ResourceLocation, RoostingLootTableParser.Result> lootCache,
             List<FluidFeedDisplay> fluidFeeds) {
         ResourceLocation representative = BuiltInRegistries.BLOCK.getKey(profile.representativeRoost().get());
         List<ResourceLocation> equivalents = profile.equivalentRoosts().stream()
@@ -86,11 +84,10 @@ public final class RoostingDisplaySnapshotBuilder {
     private static List<ItemFeedDisplay> resolveItemFeeds(ItemFeedSource source) {
         var feeds = new ArrayList<ItemFeedDisplay>();
         if (source instanceof ItemFeedSource.ChickenDataMap) {
-            BuiltInRegistries.ITEM.holders().forEach(holder -> {
-                ChickenFoodItem food = holder.getData(CIFDataMaps.CHICKEN_FOOD_ITEMS);
+            CIFDataMaps.CHICKEN_FOOD_ITEMS.resolveServer().forEach((item, food) -> {
                 if (food != null) {
                     feeds.add(new ItemFeedDisplay(
-                            new ItemStack(holder.value()),
+                            new ItemStack(item),
                             range(food.progress()),
                             range(food.cooldown()),
                             food.usingConvertsTo().orElse(ItemStack.EMPTY)));
@@ -122,11 +119,9 @@ public final class RoostingDisplaySnapshotBuilder {
 
     private static List<FluidFeedDisplay> resolveFluidFeeds() {
         Map<Fluid, FluidFeedDisplay> feeds = new IdentityHashMap<>();
-        BuiltInRegistries.FLUID.holders().forEach(holder -> {
-            ChickenFoodFluid food = holder.getData(CIFDataMaps.CHICKEN_FOOD_FLUIDS);
+        CIFDataMaps.CHICKEN_FOOD_FLUIDS.resolveServer().forEach((fluid, food) -> {
             if (food == null)
                 return;
-            Fluid fluid = holder.value();
             Fluid source = fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid;
             if (source.defaultFluidState().isEmpty())
                 return;

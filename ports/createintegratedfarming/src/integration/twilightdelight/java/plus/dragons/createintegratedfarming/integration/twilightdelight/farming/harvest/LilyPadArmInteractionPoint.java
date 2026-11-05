@@ -18,7 +18,6 @@
 
 package plus.dragons.createintegratedfarming.integration.twilightdelight.farming.harvest;
 
-import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPoint;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
 import java.util.Set;
@@ -33,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import plus.dragons.createintegratedfarming.integration.ModIntegration;
 
 public class LilyPadArmInteractionPoint extends ArmInteractionPoint {
-    private static final ResourceLocation LILY_PAD = ResourceLocation.withDefaultNamespace("lily_pad");
+    private static final ResourceLocation LILY_PAD = new ResourceLocation("lily_pad");
     private static final ResourceLocation HUGE_LILY_PAD = ModIntegration.TWILIGHT_FOREST.asResource("huge_lily_pad");
     private static final ResourceLocation HUGE_WATER_LILY = ModIntegration.TWILIGHT_FOREST.asResource("huge_water_lily");
     private static final Set<ResourceLocation> HARVESTABLE_LILIES = Set.of(
@@ -57,7 +56,7 @@ public class LilyPadArmInteractionPoint extends ArmInteractionPoint {
     }
 
     @Override
-    public ItemStack extract(ArmBlockEntity armBlockEntity, int slot, int amount, boolean simulate) {
+    public ItemStack extract(int slot, int amount, boolean simulate) {
         HarvestTarget target = findHarvestTarget();
         if (target == null)
             return ItemStack.EMPTY;
@@ -67,7 +66,7 @@ public class LilyPadArmInteractionPoint extends ArmInteractionPoint {
     }
 
     @Override
-    public int getSlotCount(ArmBlockEntity armBlockEntity) {
+    public int getSlotCount() {
         return 1;
     }
 

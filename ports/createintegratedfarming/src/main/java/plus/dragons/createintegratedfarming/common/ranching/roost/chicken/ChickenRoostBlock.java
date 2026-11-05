@@ -18,21 +18,17 @@
 
 package plus.dragons.createintegratedfarming.common.ranching.roost.chicken;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import java.util.function.Supplier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
@@ -51,9 +47,10 @@ import plus.dragons.createintegratedfarming.common.ranching.roost.RoostCapturabl
 import plus.dragons.createintegratedfarming.common.registry.CIFBlockEntities;
 
 public class ChickenRoostBlock extends RoostBlock implements IBE<ChickenRoostBlockEntity>, RoostCapturable {
-    protected final Holder<Block> empty;
+    // SkyTekx: a supplier, since the BlockEntry of Registrate for 1.20.1 is no Holder
+    protected final Supplier<? extends Block> empty;
 
-    public ChickenRoostBlock(Properties properties, Holder<Block> empty) {
+    public ChickenRoostBlock(Properties properties, Supplier<? extends Block> empty) {
         super(properties);
         this.empty = empty;
     }
@@ -78,22 +75,22 @@ public class ChickenRoostBlock extends RoostBlock implements IBE<ChickenRoostBlo
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (stack.is(Items.LEAD)) {
             Chicken chicken = createChicken(level);
             chicken.setPos(pos.getCenter());
             chicken.setLeashedTo(player, true);
             level.addFreshEntity(chicken);
-            level.setBlockAndUpdate(pos, empty.value().withPropertiesOf(state));
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            level.setBlockAndUpdate(pos, empty.get().withPropertiesOf(state));
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return onBlockEntityUseItemOn(level, pos, coop -> {
+        return onBlockEntityUse(level, pos, coop -> {
             if (coop != null && coop.feedItem(stack, false)) {
-                if (!player.hasInfiniteMaterials())
+                if (!player.getAbilities().instabuild)
                     stack.shrink(1);
-                return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             }
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         });
     }
 
@@ -131,12 +128,6 @@ public class ChickenRoostBlock extends RoostBlock implements IBE<ChickenRoostBlo
         return ItemHelper.calcRedstoneFromBlockEntity(this, level, pos);
     }
 
-    @Override
-    protected MapCodec<? extends ChickenRoostBlock> codec() {
-        return RecordCodecBuilder.mapCodec(instance -> instance.group(
-                propertiesCodec(),
-                BuiltInRegistries.BLOCK.holderByNameCodec().fieldOf("empty").forGetter(block -> block.empty)).apply(instance, ChickenRoostBlock::new));
-    }
 
     @Override
     public Class<ChickenRoostBlockEntity> getBlockEntityClass() {
@@ -149,20 +140,20 @@ public class ChickenRoostBlock extends RoostBlock implements IBE<ChickenRoostBlo
     }
 
     @Override
-    public ItemInteractionResult captureBlock(Level level, BlockState state, BlockPos pos, ItemStack stack, Player player, Entity entity) {
+    public InteractionResult captureBlock(Level level, BlockState state, BlockPos pos, ItemStack stack, Player player, Entity entity) {
         if (entity instanceof Chicken chicken && !chicken.isBaby()) {
             level.setBlockAndUpdate(pos, this.withPropertiesOf(state));
             chicken.playSound(SoundEvents.CHICKEN_HURT);
             chicken.discard();
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
     public InteractionResult captureItem(Level level, ItemStack stack, InteractionHand hand, Player player, Entity entity) {
         if (entity instanceof Chicken chicken && !chicken.isBaby()) {
-            if (player.hasInfiniteMaterials())
+            if (player.getAbilities().instabuild)
                 player.getInventory().placeItemBackInInventory(new ItemStack(this));
             else {
                 if (stack.getCount() == 1) player.setItemInHand(hand, new ItemStack(this));

@@ -46,7 +46,7 @@ public class RoostScene {
 
         scene.world().createEntity(level -> {
             Chicken chicken = EntityType.CHICKEN.create(level);
-            Vec3 v = center.getBottomCenter();
+            Vec3 v = Vec3.atBottomCenterOf(center);
             chicken.setPosRaw(v.x, v.y, v.z);
             chicken.setYRot(chicken.yRotO = 180);
             chicken.yHeadRotO = 180;
@@ -71,7 +71,7 @@ public class RoostScene {
         scene.world().createEntity(level -> {
             Chicken chicken = EntityType.CHICKEN.create(level);
             chicken.setBaby(true);
-            Vec3 v = center.getBottomCenter();
+            Vec3 v = Vec3.atBottomCenterOf(center);
             chicken.setPosRaw(v.x, v.y, v.z);
             chicken.setYRot(chicken.yRotO = 180);
             chicken.yHeadRotO = 180;
@@ -120,7 +120,7 @@ public class RoostScene {
         BlockPos roost = util.grid().at(1, 1, 2);
         scene.world().createEntity(level -> {
             var chicken = EntityType.CHICKEN.create(level);
-            Vec3 v = util.grid().at(3, 1, 2).getBottomCenter();
+            Vec3 v = Vec3.atBottomCenterOf(util.grid().at(3, 1, 2));
             chicken.setPosRaw(v.x, v.y, v.z);
             chicken.setYRot(chicken.yRotO = 180);
             chicken.yHeadRotO = 180;
@@ -148,7 +148,7 @@ public class RoostScene {
         scene.world().modifyBlock(roost, state -> CIFBlocks.ROOST.getDefaultState(), false);
         scene.world().createEntity(level -> {
             var chicken = EntityType.CHICKEN.create(level);
-            Vec3 v = util.grid().at(2, 1, 2).getBottomCenter();
+            Vec3 v = Vec3.atBottomCenterOf(util.grid().at(2, 1, 2));
             chicken.setPosRaw(v.x, v.y, v.z);
             chicken.setYRot(chicken.yRotO = 180);
             chicken.yHeadRotO = 180;

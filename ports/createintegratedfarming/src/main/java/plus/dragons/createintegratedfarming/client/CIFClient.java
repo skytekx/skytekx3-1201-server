@@ -19,31 +19,31 @@
 package plus.dragons.createintegratedfarming.client;
 
 import net.createmod.ponder.foundation.PonderIndex;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import plus.dragons.createintegratedfarming.client.ponder.CIFPonderPlugin;
-import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.common.network.RoostingDisplayClientCache;
+import plus.dragons.createintegratedfarming.common.registry.CIFDataMaps;
 
-@Mod(value = CIFCommon.ID, dist = Dist.CLIENT)
+// SkyTekx: Forge 47 has no client-only @Mod classes, so CIFCommon calls init on the client
 public class CIFClient {
-    public CIFClient(IEventBus modBus) {
+    public static void init(IEventBus modBus) {
         // Register partial models before the first asynchronous resource reload starts.
         CIFPartialModels.init();
-        modBus.addListener(EventPriority.LOWEST, CIFClient::init);
-        NeoForge.EVENT_BUS.addListener(CIFClient::onLogout);
+        modBus.addListener(EventPriority.LOWEST, CIFClient::onClientSetup);
+        MinecraftForge.EVENT_BUS.addListener(CIFClient::onLogout);
     }
 
-    public static void init(final FMLClientSetupEvent event) {
+    public static void onClientSetup(final FMLClientSetupEvent event) {
         PonderIndex.addPlugin(new CIFPonderPlugin());
     }
 
     private static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         RoostingDisplayClientCache.clear();
+        CIFDataMaps.CHICKEN_FOOD_ITEMS.clearClient();
+        CIFDataMaps.CHICKEN_FOOD_FLUIDS.clearClient();
     }
 }

@@ -25,24 +25,22 @@ import static plus.dragons.createdragonsplus.data.recipe.VanillaRecipeBuilders.*
 import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.*;
 
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import net.minecraft.core.HolderLookup.Provider;
+import java.util.function.Consumer;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.conditions.OrCondition;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.conditions.OrCondition;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.integration.ModIntegration;
 
 public class CIFRecipeProvider extends RegistrateRecipeProvider {
-    public CIFRecipeProvider(PackOutput output, CompletableFuture<Provider> registries) {
-        super(CIFCommon.REGISTRATE, output, registries);
+    public CIFRecipeProvider(PackOutput output) {
+        super(CIFCommon.REGISTRATE, output);
     }
 
     // Fallback recipe if Farmer's Delight is not loaded
     @Override
-    protected void buildRecipes(RecipeOutput output) {
+    protected void buildRecipes(Consumer<FinishedRecipe> output) {
         shapeless().output(VACUUM_HARVESTER)
                 .require(MECHANICAL_HARVESTER)
                 .require(ENCASED_FAN)
@@ -82,11 +80,11 @@ public class CIFRecipeProvider extends RegistrateRecipeProvider {
                 .unlockedBy("has_chain", has(CHAIN))
                 .unlockedBy("has_blaze_rod", has(BLAZE_ROD))
                 .unlockedBy("has_andesite_alloy", has(ANDESITE_ALLOY))
-                .withCondition(new OrCondition(List.of(
+                .withCondition(new OrCondition(
                         ModIntegration.NETHER_DEPTHS_UPGRADE.condition(),
                         ModIntegration.TIDE.condition(),
                         ModIntegration.STARCATCHER.condition(),
-                        ModIntegration.CONFLUENCE.condition())))
+                        ModIntegration.CONFLUENCE.condition()))
                 .accept(output);
     }
 

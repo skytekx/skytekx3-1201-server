@@ -20,23 +20,23 @@ package plus.dragons.createintegratedfarming.config;
 
 import net.minecraft.Util;
 import net.minecraft.util.Unit;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.config.ModConfig.Type;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import plus.dragons.createdragonsplus.util.FieldsNullabilityUnknownByDefault;
 
 @FieldsNullabilityUnknownByDefault
 public class CIFConfig {
     private static final CIFServerConfig SERVER_CONFIG = new CIFServerConfig();
-    private static ModConfigSpec SERVER_SPEC;
+    private static ForgeConfigSpec SERVER_SPEC;
 
-    public CIFConfig(ModContainer modContainer) {
-        SERVER_SPEC = Util.make(new ModConfigSpec.Builder().configure(builder -> {
+    public CIFConfig(ModLoadingContext context) {
+        SERVER_SPEC = Util.make(new ForgeConfigSpec.Builder().configure(builder -> {
             SERVER_CONFIG.registerAll(builder);
             return Unit.INSTANCE;
-        }).getValue(), spec -> modContainer.registerConfig(Type.SERVER, spec));
+        }).getValue(), spec -> context.registerConfig(Type.SERVER, spec));
     }
 
     public static CIFServerConfig server() {

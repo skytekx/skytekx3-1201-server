@@ -18,13 +18,13 @@
 
 package plus.dragons.createintegratedfarming.common.farming.vacuum;
 
-import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -39,7 +39,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import plus.dragons.createintegratedfarming.common.registry.CIFBlockEntities;
 
 public class VacuumHarvesterBlock extends KineticBlock implements IBE<VacuumHarvesterBlockEntity> {
-    public static final MapCodec<VacuumHarvesterBlock> CODEC = simpleCodec(VacuumHarvesterBlock::new);
     private static final VoxelShape SHAPE = Shapes.or(
             box(1, 0, 2, 2, 2, 14),
             box(1, 0, 1, 15, 2, 2),
@@ -69,13 +68,16 @@ public class VacuumHarvesterBlock extends KineticBlock implements IBE<VacuumHarv
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
+    // SkyTekx: Block#use of 1.20.1 in place of 1.21.1's useWithoutItem, which only the main hand reaches
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    public InteractionResult use(
+            BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (hand != InteractionHand.MAIN_HAND)
+            return InteractionResult.PASS;
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
         return onBlockEntityUse(level, pos, harvester -> harvester.giveContentsTo(player) ? InteractionResult.SUCCESS : InteractionResult.PASS);
@@ -99,10 +101,5 @@ public class VacuumHarvesterBlock extends KineticBlock implements IBE<VacuumHarv
     @Override
     public BlockEntityType<? extends VacuumHarvesterBlockEntity> getBlockEntityType() {
         return CIFBlockEntities.VACUUM_HARVESTER.get();
-    }
-
-    @Override
-    protected MapCodec<? extends KineticBlock> codec() {
-        return CODEC;
     }
 }

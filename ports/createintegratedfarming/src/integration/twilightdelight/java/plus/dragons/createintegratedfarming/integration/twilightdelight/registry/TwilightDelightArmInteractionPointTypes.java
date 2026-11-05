@@ -21,13 +21,13 @@ package plus.dragons.createintegratedfarming.integration.twilightdelight.registr
 import static plus.dragons.createintegratedfarming.common.registry.CIFArmInteractionPoints.holder;
 
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import plus.dragons.createintegratedfarming.common.registry.CIFArmInteractionPoints;
 import plus.dragons.createintegratedfarming.integration.twilightdelight.farming.harvest.LilyPadArmInteractionPoint;
 
 public class TwilightDelightArmInteractionPointTypes {
     //spotless:off
-    public static final DeferredHolder<ArmInteractionPointType, ArmInteractionPointType>
+    public static final RegistryObject<ArmInteractionPointType>
             HUGE_WATER_LILY = holder("huge_water_lily");
     //spotless:on
 

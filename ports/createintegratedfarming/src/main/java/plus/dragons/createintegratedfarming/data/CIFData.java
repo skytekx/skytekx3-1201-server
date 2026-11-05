@@ -21,16 +21,15 @@ package plus.dragons.createintegratedfarming.data;
 import static plus.dragons.createintegratedfarming.common.CIFCommon.REGISTRATE;
 
 import com.tterrag.registrate.providers.ProviderType;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.data.loading.DatagenModLoader;
 import plus.dragons.createintegratedfarming.client.ponder.CIFPonderPlugin;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.common.registry.CIFLootTables;
 
-@Mod(CIFCommon.ID)
+// SkyTekx: CIFCommon constructs this class while data generation runs, see CIFCommon
 public class CIFData {
     public CIFData(IEventBus modBus) {
         if (!DatagenModLoader.isRunningDataGen())
@@ -46,10 +45,9 @@ public class CIFData {
     public void generate(final GatherDataEvent event) {
         var generator = event.getGenerator();
         var existingFileHelper = event.getExistingFileHelper();
-        var lookupProvider = event.getLookupProvider();
         var output = generator.getPackOutput();
         var client = event.includeClient();
         var server = event.includeServer();
-        generator.addProvider(server, new CIFRecipeProvider(output, lookupProvider));
+        generator.addProvider(server, new CIFRecipeProvider(output));
     }
 }

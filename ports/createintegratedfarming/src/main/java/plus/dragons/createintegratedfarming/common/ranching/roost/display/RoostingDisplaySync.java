@@ -19,11 +19,12 @@
 package plus.dragons.createintegratedfarming.common.ranching.roost.display;
 
 import net.minecraft.server.MinecraftServer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
+import plus.dragons.createintegratedfarming.common.network.CIFPackets;
 import org.jetbrains.annotations.ApiStatus;
 import plus.dragons.createintegratedfarming.common.network.RoostingDisplayPayload;
 
@@ -36,7 +37,7 @@ public final class RoostingDisplaySync {
     private RoostingDisplaySync() {}
 
     public static void register() {
-        NeoForge.EVENT_BUS.register(RoostingDisplaySync.class);
+        MinecraftForge.EVENT_BUS.register(RoostingDisplaySync.class);
     }
 
     @SubscribeEvent
@@ -51,7 +52,9 @@ public final class RoostingDisplaySync {
         if (cachedSnapshot == null || fullReload)
             cachedSnapshot = RoostingDisplaySnapshotBuilder.build(server, revision++);
         var payload = new RoostingDisplayPayload(cachedSnapshot);
-        event.getRelevantPlayers().forEach(player -> PacketDistributor.sendToPlayer(player, payload));
+        // SkyTekx: Forge 47 names one player at a join and none at a reload, which then reaches everyone
+        var players = event.getPlayer() != null ? java.util.List.of(event.getPlayer()) : event.getPlayerList().getPlayers();
+        players.forEach(player -> CIFPackets.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), payload));
     }
 
     @SubscribeEvent

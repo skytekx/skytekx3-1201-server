@@ -20,11 +20,11 @@ package plus.dragons.createintegratedfarming.common.ranching.roost.display;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
+import plus.dragons.createintegratedfarming.common.network.BufCodec;
 
 public record RoostingDisplayRecipe(
         ResourceLocation id,
@@ -39,8 +39,10 @@ public record RoostingDisplayRecipe(
     private static final int MAX_BLOCKS = 64;
     private static final int MAX_FEEDS = 4096;
     private static final int MAX_OUTPUTS = 4096;
+    private static final BufCodec<ResourceLocation> RESOURCE_LOCATION = BufCodec.ofMember(
+            (id, buffer) -> buffer.writeResourceLocation(id), FriendlyByteBuf::readResourceLocation);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, RoostingDisplayRecipe> STREAM_CODEC = StreamCodec.ofMember(
+    public static final BufCodec<RoostingDisplayRecipe> STREAM_CODEC = BufCodec.ofMember(
             RoostingDisplayRecipe::encode,
             RoostingDisplayRecipe::decode);
     public RoostingDisplayRecipe {
@@ -50,10 +52,10 @@ public record RoostingDisplayRecipe(
         outputs = List.copyOf(outputs);
     }
 
-    private void encode(RegistryFriendlyByteBuf buffer) {
-        ResourceLocation.STREAM_CODEC.encode(buffer, id);
-        ResourceLocation.STREAM_CODEC.encode(buffer, representativeBlock);
-        writeList(buffer, equivalentBlocks, ResourceLocation.STREAM_CODEC);
+    private void encode(FriendlyByteBuf buffer) {
+        buffer.writeResourceLocation(id);
+        buffer.writeResourceLocation(representativeBlock);
+        writeList(buffer, equivalentBlocks, RESOURCE_LOCATION);
         IntRange.STREAM_CODEC.encode(buffer, productionTime);
         writeList(buffer, itemFeeds, ItemFeedDisplay.STREAM_CODEC);
         writeList(buffer, fluidFeeds, FluidFeedDisplay.STREAM_CODEC);
@@ -61,11 +63,11 @@ public record RoostingDisplayRecipe(
         buffer.writeEnum(lootStatus);
     }
 
-    private static RoostingDisplayRecipe decode(RegistryFriendlyByteBuf buffer) {
+    private static RoostingDisplayRecipe decode(FriendlyByteBuf buffer) {
         return new RoostingDisplayRecipe(
-                ResourceLocation.STREAM_CODEC.decode(buffer),
-                ResourceLocation.STREAM_CODEC.decode(buffer),
-                readList(buffer, ResourceLocation.STREAM_CODEC, MAX_BLOCKS),
+                buffer.readResourceLocation(),
+                buffer.readResourceLocation(),
+                readList(buffer, RESOURCE_LOCATION, MAX_BLOCKS),
                 IntRange.STREAM_CODEC.decode(buffer),
                 readList(buffer, ItemFeedDisplay.STREAM_CODEC, MAX_FEEDS),
                 readList(buffer, FluidFeedDisplay.STREAM_CODEC, MAX_FEEDS),
@@ -74,14 +76,14 @@ public record RoostingDisplayRecipe(
     }
 
     private static <T> void writeList(
-            RegistryFriendlyByteBuf buffer, List<T> values, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+            FriendlyByteBuf buffer, List<T> values, BufCodec<T> codec) {
         buffer.writeVarInt(values.size());
         values.forEach(value -> codec.encode(buffer, value));
     }
 
     private static <T> List<T> readList(
-            RegistryFriendlyByteBuf buffer,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            FriendlyByteBuf buffer,
+            BufCodec<T> codec,
             int maximumSize) {
         int size = buffer.readVarInt();
         if (size < 0 || size > maximumSize)
@@ -93,7 +95,7 @@ public record RoostingDisplayRecipe(
     }
 
     public record IntRange(int minimum, int maximum) {
-        public static final StreamCodec<RegistryFriendlyByteBuf, IntRange> STREAM_CODEC = StreamCodec.ofMember(
+        public static final BufCodec<IntRange> STREAM_CODEC = BufCodec.ofMember(
                 IntRange::encode,
                 IntRange::decode);
 
@@ -118,12 +120,12 @@ public record RoostingDisplayRecipe(
             return new IntRange(Math.multiplyExact(minimum, value), Math.multiplyExact(maximum, value));
         }
 
-        private void encode(RegistryFriendlyByteBuf buffer) {
+        private void encode(FriendlyByteBuf buffer) {
             buffer.writeVarInt(minimum);
             buffer.writeVarInt(maximum);
         }
 
-        private static IntRange decode(RegistryFriendlyByteBuf buffer) {
+        private static IntRange decode(FriendlyByteBuf buffer) {
             return new IntRange(buffer.readVarInt(), buffer.readVarInt());
         }
     }
@@ -131,7 +133,7 @@ public record RoostingDisplayRecipe(
     public record ItemFeedDisplay(
             ItemStack ingredient, IntRange progress, IntRange cooldown, ItemStack remainder) {
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, ItemFeedDisplay> STREAM_CODEC = StreamCodec.ofMember(
+        public static final BufCodec<ItemFeedDisplay> STREAM_CODEC = BufCodec.ofMember(
                 ItemFeedDisplay::encode,
                 ItemFeedDisplay::decode);
         public ItemFeedDisplay {
@@ -139,40 +141,40 @@ public record RoostingDisplayRecipe(
             remainder = remainder.copy();
         }
 
-        private void encode(RegistryFriendlyByteBuf buffer) {
-            ItemStack.STREAM_CODEC.encode(buffer, ingredient);
+        private void encode(FriendlyByteBuf buffer) {
+            buffer.writeItem(ingredient);
             IntRange.STREAM_CODEC.encode(buffer, progress);
             IntRange.STREAM_CODEC.encode(buffer, cooldown);
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, remainder);
+            buffer.writeItem(remainder);
         }
 
-        private static ItemFeedDisplay decode(RegistryFriendlyByteBuf buffer) {
+        private static ItemFeedDisplay decode(FriendlyByteBuf buffer) {
             return new ItemFeedDisplay(
-                    ItemStack.STREAM_CODEC.decode(buffer),
+                    buffer.readItem(),
                     IntRange.STREAM_CODEC.decode(buffer),
                     IntRange.STREAM_CODEC.decode(buffer),
-                    ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
+                    buffer.readItem());
         }
     }
 
     public record FluidFeedDisplay(FluidStack ingredient, IntRange progress, IntRange cooldown) {
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, FluidFeedDisplay> STREAM_CODEC = StreamCodec.ofMember(
+        public static final BufCodec<FluidFeedDisplay> STREAM_CODEC = BufCodec.ofMember(
                 FluidFeedDisplay::encode,
                 FluidFeedDisplay::decode);
         public FluidFeedDisplay {
             ingredient = ingredient.copy();
         }
 
-        private void encode(RegistryFriendlyByteBuf buffer) {
-            FluidStack.STREAM_CODEC.encode(buffer, ingredient);
+        private void encode(FriendlyByteBuf buffer) {
+            ingredient.writeToPacket(buffer);
             IntRange.STREAM_CODEC.encode(buffer, progress);
             IntRange.STREAM_CODEC.encode(buffer, cooldown);
         }
 
-        private static FluidFeedDisplay decode(RegistryFriendlyByteBuf buffer) {
+        private static FluidFeedDisplay decode(FriendlyByteBuf buffer) {
             return new FluidFeedDisplay(
-                    FluidStack.STREAM_CODEC.decode(buffer),
+                    FluidStack.readFromPacket(buffer),
                     IntRange.STREAM_CODEC.decode(buffer),
                     IntRange.STREAM_CODEC.decode(buffer));
         }
@@ -180,22 +182,22 @@ public record RoostingDisplayRecipe(
 
     public record OutputDisplay(ItemStack ingredient, IntRange count, boolean conditional) {
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, OutputDisplay> STREAM_CODEC = StreamCodec.ofMember(
+        public static final BufCodec<OutputDisplay> STREAM_CODEC = BufCodec.ofMember(
                 OutputDisplay::encode,
                 OutputDisplay::decode);
         public OutputDisplay {
             ingredient = ingredient.copy();
         }
 
-        private void encode(RegistryFriendlyByteBuf buffer) {
-            ItemStack.STREAM_CODEC.encode(buffer, ingredient);
+        private void encode(FriendlyByteBuf buffer) {
+            buffer.writeItem(ingredient);
             IntRange.STREAM_CODEC.encode(buffer, count);
             buffer.writeBoolean(conditional);
         }
 
-        private static OutputDisplay decode(RegistryFriendlyByteBuf buffer) {
+        private static OutputDisplay decode(FriendlyByteBuf buffer) {
             return new OutputDisplay(
-                    ItemStack.STREAM_CODEC.decode(buffer),
+                    buffer.readItem(),
                     IntRange.STREAM_CODEC.decode(buffer),
                     buffer.readBoolean());
         }

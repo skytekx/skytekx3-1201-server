@@ -37,7 +37,7 @@ public class CIFPonderTags {
     public static final ResourceLocation OCCUPIED_ROOSTS = CIFCommon.asResource("occupied_roosts");
 
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?, ?>> entryHelper = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?>> entryHelper = helper.withKeyFunction(RegistryEntry::getId);
         helper.registerTag(FARMING_APPLIANCES)
                 .addToIndex()
                 .item(AllBlocks.MECHANICAL_HARVESTER, true, false)

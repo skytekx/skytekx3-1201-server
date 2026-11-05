@@ -22,7 +22,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.mojang.serialization.JsonOps;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -32,12 +31,13 @@ import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootDataId;
+import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.ApiStatus;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
@@ -54,31 +54,29 @@ public final class RoostingLootTableParser {
         this.server = server;
     }
 
-    public Result parse(ResourceKey<LootTable> key) {
+    public Result parse(ResourceLocation key) {
         return parse(key, new HashSet<>());
     }
 
-    private Result parse(ResourceKey<LootTable> key, Set<ResourceKey<LootTable>> visiting) {
-        var registries = server.reloadableRegistries().get();
-        LootTable table = registries.registryOrThrow(Registries.LOOT_TABLE).get(key);
+    // SkyTekx: 1.20.1 keeps loot tables in the LootDataManager and writes them to JSON with its Gson
+    private Result parse(ResourceLocation key, Set<ResourceLocation> visiting) {
+        LootTable table = server.getLootData().getElement(new LootDataId<>(LootDataType.TABLE, key));
         if (table == null)
             return Result.missing();
         if (!visiting.add(key))
             return Result.complex();
         try {
-            JsonElement encoded = LootTable.DIRECT_CODEC
-                    .encodeStart(registries.createSerializationContext(JsonOps.INSTANCE), table)
-                    .getOrThrow(error -> new IllegalStateException("Could not encode loot table " + key.location() + ": " + error));
+            JsonElement encoded = LootDataType.TABLE.parser().toJsonTree(table);
             return parseTable(encoded.getAsJsonObject(), visiting);
         } catch (RuntimeException exception) {
-            CIFCommon.LOGGER.warn("Could not inspect roost production loot table {}", key.location(), exception);
+            CIFCommon.LOGGER.warn("Could not inspect roost production loot table {}", key, exception);
             return Result.complex();
         } finally {
             visiting.remove(key);
         }
     }
 
-    private Result parseTable(JsonObject table, Set<ResourceKey<LootTable>> visiting) {
+    private Result parseTable(JsonObject table, Set<ResourceLocation> visiting) {
         Result result = Result.exact();
         JsonArray pools = array(table, "pools");
         JsonArray functions = array(table, "functions");
@@ -90,7 +88,7 @@ public final class RoostingLootTableParser {
     }
 
     private Result parsePool(
-            JsonObject pool, Set<ResourceKey<LootTable>> visiting, JsonArray tableFunctions) {
+            JsonObject pool, Set<ResourceLocation> visiting, JsonArray tableFunctions) {
         Optional<IntRange> rolls = numberRange(pool.get("rolls"), 1);
         if (rolls.isEmpty() || !rolls.get().isExact())
             return Result.complex();
@@ -113,7 +111,7 @@ public final class RoostingLootTableParser {
         return result;
     }
 
-    private Result parseEntry(JsonObject entry, Set<ResourceKey<LootTable>> visiting, boolean parentConditional) {
+    private Result parseEntry(JsonObject entry, Set<ResourceLocation> visiting, boolean parentConditional) {
         String type = string(entry, "type");
         boolean conditional = parentConditional || hasConditions(entry);
         Result result;
@@ -127,7 +125,8 @@ public final class RoostingLootTableParser {
                     result = result.combine(parseEntry(child.getAsJsonObject(), visiting, true));
                 conditional = true;
             }
-            case "minecraft:loot_table" -> result = parseNested(entry.get("value"), visiting);
+            // SkyTekx: 1.20.1 names the nested table in "name", 1.21.1 in "value"
+            case "minecraft:loot_table" -> result = parseNested(entry.has("value") ? entry.get("value") : entry.get("name"), visiting);
             default -> result = Result.complex();
         }
         result = applyFunctions(result, array(entry, "functions"));
@@ -155,14 +154,14 @@ public final class RoostingLootTableParser {
         return result;
     }
 
-    private Result parseNested(JsonElement value, Set<ResourceKey<LootTable>> visiting) {
+    private Result parseNested(JsonElement value, Set<ResourceLocation> visiting) {
         if (value == null)
             return Result.complex();
         if (value.isJsonPrimitive()) {
             ResourceLocation id = ResourceLocation.tryParse(value.getAsString());
             return id == null
                     ? Result.complex()
-                    : parse(ResourceKey.create(Registries.LOOT_TABLE, id), visiting);
+                    : parse(id, visiting);
         }
         return value.isJsonObject() ? parseTable(value.getAsJsonObject(), visiting) : Result.complex();
     }

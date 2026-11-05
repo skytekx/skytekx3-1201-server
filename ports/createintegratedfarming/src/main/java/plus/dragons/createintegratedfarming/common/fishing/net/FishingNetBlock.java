@@ -29,7 +29,7 @@ import net.createmod.catnip.placement.PlacementOffset;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -58,18 +58,20 @@ public class FishingNetBlock extends WrenchableDirectionalBlock implements Prope
                 .setValue(WATERLOGGED, false));
     }
 
+    // SkyTekx: Block#use of 1.20.1 in place of 1.21.1's useItemOn
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack stack = player.getItemInHand(hand);
         IPlacementHelper placementHelper = PlacementHelpers.get(PLACEMENT_HELPER_ID);
         if (!player.isShiftKeyDown() && player.mayBuild()) {
             if (placementHelper.matchesItem(stack)) {
                 placementHelper
                         .getOffset(player, level, state, pos, hitResult)
                         .placeInWorld(level, (BlockItem) stack.getItem(), player, hand, hitResult);
-                return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -78,7 +80,7 @@ public class FishingNetBlock extends WrenchableDirectionalBlock implements Prope
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity living && FishingNetEntityCaptures.canCapture(living))
             entity.makeStuckInBlock(state, new Vec3(0.25, 0.05, 0.25));
     }
@@ -95,12 +97,12 @@ public class FishingNetBlock extends WrenchableDirectionalBlock implements Prope
     }
 
     @Override
-    protected FluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return fluidState(state);
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         updateWater(level, state, pos);
         return state;
     }
@@ -154,7 +156,7 @@ public class FishingNetBlock extends WrenchableDirectionalBlock implements Prope
                 return PlacementOffset.fail();
             } else {
                 return PlacementOffset.success(
-                        pos.relative(directions.getFirst()),
+                        pos.relative(directions.get(0)),
                         placed -> placed.setValue(FACING, state.getValue(FACING)));
             }
         }

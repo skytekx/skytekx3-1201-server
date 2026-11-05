@@ -32,7 +32,7 @@ public abstract class AreaCompatibleHarvestBehaviour implements CustomHarvestBeh
     public final void harvest(HarvesterMovementBehaviour behaviour, MovementContext context, BlockPos pos, BlockState state) {
         harvestInArea(new AreaHarvestContext(context.world, CustomHarvestBehaviour.replant(),
                 CustomHarvestBehaviour.partial(), CustomHarvestBehaviour.getHarvestTool(context),
-                stack -> behaviour.collectOrDropItem(context, stack),
+                stack -> behaviour.dropItem(context, stack),
                 (predicate, amount) -> ItemHelper.extract(context.contraption.getStorage().getAllItems(), predicate, amount, false)),
                 pos, state);
     }

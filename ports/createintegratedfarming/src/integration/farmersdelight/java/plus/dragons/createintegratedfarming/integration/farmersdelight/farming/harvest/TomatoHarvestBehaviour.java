@@ -117,15 +117,15 @@ public class TomatoHarvestBehaviour implements CustomHarvestBehaviour {
                 null,
                 CustomHarvestBehaviour.getHarvestTool(context),
                 1,
-                stack -> behaviour.collectOrDropItem(context, stack));
+                stack -> behaviour.dropItem(context, stack));
         if (restoreRope)
             restoreRope(level, pos, state);
     }
 
     protected void dropTomatoes(Level level, HarvesterMovementBehaviour behaviour, MovementContext context) {
-        behaviour.collectOrDropItem(context, new ItemStack(ModItems.TOMATO.get(), 1 + level.random.nextInt(2)));
+        behaviour.dropItem(context, new ItemStack(ModItems.TOMATO.get(), 1 + level.random.nextInt(2)));
         if (level.random.nextFloat() < 0.05)
-            behaviour.collectOrDropItem(context, new ItemStack(ModItems.ROTTEN_TOMATO.get()));
+            behaviour.dropItem(context, new ItemStack(ModItems.ROTTEN_TOMATO.get()));
     }
 
     protected boolean isTomatoCrop(BlockState state) {
@@ -141,7 +141,7 @@ public class TomatoHarvestBehaviour implements CustomHarvestBehaviour {
     protected void restoreRope(Level level, BlockPos pos, BlockState state) {
         HangingTomatoBlock ropePlacer = state.getBlock() instanceof HangingTomatoBlock hangingTomato
                 ? hangingTomato
-                : ModBlocks.TOMATO_CROP_ON_ROPE.get();
+                : (HangingTomatoBlock) ModBlocks.TOMATO_CROP_ON_ROPE.get();
         ropePlacer.placeRope(level, pos);
     }
 }

@@ -21,13 +21,13 @@ package plus.dragons.createintegratedfarming.integration.farmersdelight.registry
 import static plus.dragons.createintegratedfarming.common.registry.CIFArmInteractionPoints.holder;
 
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import plus.dragons.createintegratedfarming.common.registry.CIFArmInteractionPoints;
 import plus.dragons.createintegratedfarming.integration.farmersdelight.logistics.basket.BasketArmInteractionPoint;
 
 public class FDArmInteractionPointTypes {
     //spotless:off
-    public static final DeferredHolder<ArmInteractionPointType, ArmInteractionPointType>
+    public static final RegistryObject<ArmInteractionPointType>
             BASKET = holder("basket");
     //spotless:on
 

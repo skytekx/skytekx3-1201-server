@@ -2,6 +2,7 @@ package com.enderio.machines.client;
 
 import com.enderio.EnderIO;
 import com.enderio.base.common.init.EIOBlocks;
+import com.enderio.base.common.init.EIOItems;
 import com.enderio.machines.client.rendering.blockentity.CapacitorBankBER;
 import com.enderio.machines.client.rendering.blockentity.FluidTankBER;
 import com.enderio.machines.client.rendering.blockentity.ObeliskBER;
@@ -36,6 +37,7 @@ public class MachinesClientSetup {
         event.registerBlockEntityRenderer(MachineBlockEntities.AVERSION_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, EIOBlocks.ENDERMAN_HEAD.asItem()));
         event.registerBlockEntityRenderer(MachineBlockEntities.INHIBITOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, Items.ENDER_PEARL));
         event.registerBlockEntityRenderer(MachineBlockEntities.RELOCATOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, Items.PRISMARINE));
+        event.registerBlockEntityRenderer(MachineBlockEntities.ATTRACTOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, EIOItems.ELECTROMAGNET.get()));
         for (BlockEntityEntry<CapacitorBankBlockEntity> value : MachineBlockEntities.CAPACITOR_BANKS.values()) {
             event.registerBlockEntityRenderer(value.get(), CapacitorBankBER::new);
         }

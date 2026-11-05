@@ -46,6 +46,8 @@ public class EnergyConfig {
     public final ForgeConfigSpec.ConfigValue<Integer> INHIBITOR_USAGE;
     public final ForgeConfigSpec.ConfigValue<Integer> RELOCATOR_CAPACITY;
     public final ForgeConfigSpec.ConfigValue<Integer> RELOCATOR_USAGE;
+    public final ForgeConfigSpec.ConfigValue<Integer> ATTRACTOR_CAPACITY;
+    public final ForgeConfigSpec.ConfigValue<Integer> ATTRACTOR_USAGE;
 
     public EnergyConfig(ForgeConfigSpec.Builder builder) {
         builder.push("energy");
@@ -153,6 +155,11 @@ public class EnergyConfig {
         builder.push("relocator");
             RELOCATOR_CAPACITY = builder.comment("The base energy capacity in uI.").defineInRange("capacity", 64_000, 1, Integer.MAX_VALUE);
             RELOCATOR_USAGE = builder.comment("The base energy consumption in uI/t.").defineInRange("usage",  20, 1, Integer.MAX_VALUE);
+        builder.pop();
+
+        builder.push("attractor");
+            ATTRACTOR_CAPACITY = builder.comment("The base energy capacity in uI.").defineInRange("capacity", 64_000, 1, Integer.MAX_VALUE);
+            ATTRACTOR_USAGE = builder.comment("The base energy consumption in uI/t.").defineInRange("usage",  20, 1, Integer.MAX_VALUE);
         builder.pop();
 
         builder.pop();

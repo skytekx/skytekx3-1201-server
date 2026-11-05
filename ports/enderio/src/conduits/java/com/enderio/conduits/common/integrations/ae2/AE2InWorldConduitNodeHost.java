@@ -102,7 +102,12 @@ public class AE2InWorldConduitNodeHost implements IInWorldGridNodeHost, ConduitD
             mainNode.setOwningPlayer(player);
         }
 
-        GridHelper.onFirstTick(level.getBlockEntity(pos), blockEntity -> mainNode.create(level, pos));
+        GridHelper.onFirstTick(level.getBlockEntity(pos), blockEntity -> {
+            // The node can be created already, or removed again, by the time the first tick runs.
+            if (mainNode != null && !mainNode.isReady()) {
+                mainNode.create(level, pos);
+            }
+        });
     }
 
     @Override

@@ -4,9 +4,7 @@ import com.enderio.api.capability.IEntityStorage;
 import com.enderio.api.capability.StoredEntityData;
 import com.enderio.base.common.init.EIOCapabilities;
 import com.enderio.core.common.menu.FilterSlot;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.common.util.LazyOptional;
@@ -29,14 +27,10 @@ public class EntityFilterSlot extends FilterSlot<StoredEntityData> {
             return Optional.of(storage.getStoredEntityData());
         }
 
+        // The menu also runs on the dedicated server, so only the entity type is stored. Creating the entity in the
+        // client level made the server fail to load this class at all.
         if (itemStack.getItem() instanceof SpawnEggItem spawnEggItem) {
-            Entity entity = spawnEggItem.getType(itemStack.getTag()).create(Minecraft.getInstance().level);
-            if (entity instanceof LivingEntity livingEntity) {
-                StoredEntityData ghost = new StoredEntityData(
-                    livingEntity.serializeNBT(),
-                    livingEntity.getMaxHealth());
-                return Optional.of(ghost);
-            }
+            return Optional.of(StoredEntityData.of(EntityType.getKey(spawnEggItem.getType(itemStack.getTag()))));
         }
 
         return Optional.empty();

@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,5 +84,20 @@ public class CapacitorUtil {
 
     public static CapacitorModifier getRandomModifier(RandomSource randomSource) {
         return CapacitorModifier.SELECTABLE_MODIFIERS.get(randomSource.nextInt(CapacitorModifier.SELECTABLE_MODIFIERS.size()));
+    }
+
+    /**
+     * Pick a random selectable modifier that is not in the given collection.
+     * @return The modifier, or empty if every selectable modifier is excluded.
+     */
+    public static Optional<CapacitorModifier> getRandomModifier(RandomSource randomSource, Collection<CapacitorModifier> exclude) {
+        var selectables = new ArrayList<>(CapacitorModifier.SELECTABLE_MODIFIERS);
+        selectables.removeAll(exclude);
+
+        if (selectables.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(selectables.get(randomSource.nextInt(selectables.size())));
     }
 }

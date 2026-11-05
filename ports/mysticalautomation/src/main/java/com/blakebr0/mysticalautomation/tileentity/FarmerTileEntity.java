@@ -177,7 +177,10 @@ public class FarmerTileEntity extends BaseMachineTileEntity implements MenuProvi
 
         if (tile.energy.getEnergyStored() >= tile.getFuelUsage()) {
             var recipe = tile.getActiveRecipe();
-            if (recipe != null) {
+            // SkyTekx: while the outputs cannot take every result of the recipe the Farmer waits with its progress
+            // kept, instead of rolling results that it would drop
+            var waiting = recipe != null && !tile.canFitResults(recipe);
+            if (recipe != null && !waiting) {
                 tile.isRunning = true;
                 tile.stages = recipe.getStages();
                 tile.energy.extractEnergy(tile.getFuelUsage(), false);
@@ -187,10 +190,13 @@ public class FarmerTileEntity extends BaseMachineTileEntity implements MenuProvi
 
                     if (tile.progress >= tile.getOperationTime()) {
                         var results = recipe.getRolledResults();
+                        var outputs = tile.getOutputs();
 
                         for (var result : results) {
-                            tile.addItemToInventory(result);
+                            addToOutputs(outputs, result, tile.inventory.getSlotLimit(OUTPUT_SLOTS[0]));
                         }
+
+                        tile.setOutputs(outputs);
 
                         tile.reset();
                     }
@@ -199,7 +205,7 @@ public class FarmerTileEntity extends BaseMachineTileEntity implements MenuProvi
                 }
 
                 tile.setChangedFast();
-            } else {
+            } else if (recipe == null) {
                 if (tile.progress > 0 || tile.stageProgress > 0 || tile.stages > 0) {
                     tile.reset();
                     tile.setChangedFast();
@@ -271,27 +277,63 @@ public class FarmerTileEntity extends BaseMachineTileEntity implements MenuProvi
         return this.inventory.toRecipeInventory(INPUT_SLOTS[0], INPUT_SLOTS.length);
     }
 
-    private void addItemToInventory(ItemStack stack) {
+    // SkyTekx: upstream merged part of a result into a matching output stack and then put a copy of the whole result
+    // into the next empty slot, so a result of 3 melon slices against a slot of 62 gave 2 + 3, and it dropped what
+    // found no room. The outputs now take each result once, in slot order as upstream, and canFitResults keeps the
+    // Farmer from finishing an operation whose results could not all fit
+    private ItemStack[] getOutputs() {
+        var outputs = new ItemStack[OUTPUT_SLOTS.length];
+
+        for (int i = 0; i < OUTPUT_SLOTS.length; i++) {
+            outputs[i] = this.inventory.getStackInSlot(OUTPUT_SLOTS[i]).copy();
+        }
+
+        return outputs;
+    }
+
+    private void setOutputs(ItemStack[] outputs) {
+        for (int i = 0; i < OUTPUT_SLOTS.length; i++) {
+            if (!ItemStack.matches(outputs[i], this.inventory.getStackInSlot(OUTPUT_SLOTS[i]))) {
+                this.inventory.setStackInSlot(OUTPUT_SLOTS[i], outputs[i]);
+            }
+        }
+    }
+
+    private boolean canFitResults(FarmerRecipe recipe) {
+        var outputs = this.getOutputs();
+        var limit = this.inventory.getSlotLimit(OUTPUT_SLOTS[0]);
+
+        // every result at its full count, the most one operation can roll
+        for (var result : recipe.getResults()) {
+            if (addToOutputs(outputs, result.stack(), limit) > 0)
+                return false;
+        }
+
+        return true;
+    }
+
+    // adds the stack to the outputs and gives back the count that found no room
+    private static int addToOutputs(ItemStack[] outputs, ItemStack stack, int slotLimit) {
         var remaining = stack.getCount();
-        for (var slot : OUTPUT_SLOTS) {
-            var stackInSlot = this.inventory.getStackInSlot(slot);
+        var limit = Math.min(stack.getMaxStackSize(), slotLimit);
+
+        for (int i = 0; i < outputs.length && remaining > 0; i++) {
+            var stackInSlot = outputs[i];
 
             if (stackInSlot.isEmpty()) {
-                this.inventory.setStackInSlot(slot, stack.copy());
-                return;
-            }
+                var insertSize = Math.min(remaining, limit);
 
-            if (StackHelper.areStacksEqual(stackInSlot, stack)) {
-                var insertSize = Math.min(remaining, stackInSlot.getMaxStackSize() - stackInSlot.getCount());
+                outputs[i] = stack.copyWithCount(insertSize);
+                remaining -= insertSize;
+            } else if (StackHelper.areStacksEqual(stackInSlot, stack)) {
+                var insertSize = Math.min(remaining, Math.max(0, limit - stackInSlot.getCount()));
 
-                this.inventory.setStackInSlot(slot, StackHelper.grow(stackInSlot, insertSize));
-
+                stackInSlot.grow(insertSize);
                 remaining -= insertSize;
             }
-
-            if (remaining == 0)
-                return;
         }
+
+        return remaining;
     }
 
     @Override

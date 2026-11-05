@@ -52,27 +52,30 @@ public class CABlocks {
 		CreateAddition.REGISTRATE.setCreativeTab(CACreativeModeTabs.MAIN_TAB);
 	}
 
+	// The stress values below only feed Create's item and goggle tooltips (upstream f3091d0). The block
+	// entities keep their own calculateStressApplied and calculateAddedStressCapacity, so the stress in a
+	// network does not change. The suppliers read the config when Create asks, never at registration.
 	public static final BlockEntry<ElectricMotorBlock> ELECTRIC_MOTOR = CreateAddition.REGISTRATE.block("electric_motor", ElectricMotorBlock::new)
 			.initialProperties(SharedProperties::softMetal)
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
-			//.transform(CStress.setCapacity(Config.MAX_STRESS.get()/256f))
-			//.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
+			.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
+			.onRegister(block -> BlockStressValues.CAPACITIES.register(block, () -> Config.MAX_STRESS.get() / 256f))
 			.item()
 			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<AlternatorBlock> ALTERNATOR = CreateAddition.REGISTRATE.block("alternator", AlternatorBlock::new)
 			.initialProperties(SharedProperties::softMetal)
-			//.transform(CStress.setImpact(Config.MAX_STRESS.get()/256f))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
+			.onRegister(block -> BlockStressValues.IMPACTS.register(block, () -> Config.MAX_STRESS.get() / 256f))
 			.item()
 			.transform(customItemModel())
 			.register();
 
 	public static final BlockEntry<RollingMillBlock> ROLLING_MILL = CreateAddition.REGISTRATE.block("rolling_mill", RollingMillBlock::new)
 			.initialProperties(SharedProperties::stone)
-			//.transform(CStress.setImpact(Config.ROLLING_MILL_STRESS.get()))
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
+			.onRegister(block -> BlockStressValues.IMPACTS.register(block, () -> Config.ROLLING_MILL_STRESS.get()))
 			.item()
 			.transform(customItemModel())
 			.register();

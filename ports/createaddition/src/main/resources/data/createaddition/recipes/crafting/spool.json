@@ -3,7 +3,7 @@
 	
 	"pattern":
 	["P",
-	 "N",
+	 "R",
 	 "P"],
 	"key":
 	{
@@ -11,13 +11,13 @@
 		{
 			"tag": "forge:plates/iron"
 		},
-		"N":
+		"R":
 		{
-			"tag": "forge:nuggets/iron"
+			"tag": "forge:rods/iron"
 		}
 	},
 	"result":{
 		"item": "createaddition:spool",
-		"count": 16
+		"count": 24
 	}
 }

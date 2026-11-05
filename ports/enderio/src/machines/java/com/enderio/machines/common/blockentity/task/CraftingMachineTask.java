@@ -163,7 +163,8 @@ public abstract class CraftingMachineTask<R extends MachineRecipe<C>, C extends 
         // See that we can add all the outputs
         MachineInventory snapshot = inventory.snapshot(outputSlots); // Snapshot for chained simulations.
         for (OutputStack output : outputs) {
-            ItemStack item = output.getItem();
+            // Insert a copy: the snapshot keeps the inserted stack by reference, and growing it must not change the task's outputs.
+            ItemStack item = output.getItem().copy();
 
             for (SingleSlotAccess outputAccess: outputSlots.getAccesses()) {
                 item = outputAccess.insertItem(snapshot, item, false); // Don't simulate, we are using a snapshot copy

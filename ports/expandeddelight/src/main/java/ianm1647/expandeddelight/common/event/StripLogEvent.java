@@ -22,7 +22,8 @@ import static net.minecraft.world.level.block.Block.popResource;
  * Upstream does the stripping itself in a right click event: it damages the tool in the hand that uses an
  * item rather than the clicked hand, and turns every log upright. This port answers Forge's tool
  * modification event for the axe_strip action instead, so that the axe's own stripping (sound, damage,
- * statistics, Bukkit's EntityChangeBlockEvent) does the work and the log keeps its axis.
+ * statistics, axis) does the work. On Arclight no Bukkit event covers axe stripping, for these logs or
+ * for vanilla ones, and the sticks drop only on the server after a stripping that is not simulated.
  */
 @Mod.EventBusSubscriber(modid = ExpandedDelight.MODID)
 public class StripLogEvent {

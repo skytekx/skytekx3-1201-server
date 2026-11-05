@@ -93,8 +93,18 @@ EnderIO Legacy Machines, Exchangers and AllTheLeaks. Two dev `runServer` boots w
 class, never committed, reached `Done` and passed 47 checks with no failure, the second one on the
 saved world with all four obelisks (workflow scratchpad, `bp2/enderio/b3/runserver8.log` line 5967 and
 `runserver9.log` line 5512). Nobody has joined with a client or run the Arclight tests yet, see the
-end of [Obelisks](#obelisks). The other content bundles are not ported yet. The pack still ships the
-6.2.18-beta jar, and no pack boot has run the fork.
+end of [Obelisks](#obelisks).
+
+The conduit improvements are the second bundle of the conduit and filter lane, done in 6443f98 (energy
+priorities), 5509705 (fluid priorities), c6b3ddb (strong redstone output), aae79b2 (the filter GUI from
+the conduit screen) and da9bdda (review fix). The integration compiled every source set with no new
+warning and ran a full build, whose `-all` jar has the SHA-1
+`48697c65f40daa6dbd788343b4025d2df08a2400`. The compat scan still finds 0 missing symbols for EnderIO
+Legacy Machines, Exchangers and AllTheLeaks. The porter's dev `runServer` with a temporary test class,
+never committed, reached `Done` and passed 44 of 44 checks (workflow scratchpad,
+`bp2/enderio/b6/runserver.log` line 5938). Nobody has joined with a client or loaded a copy of the live
+world yet, see the end of [Conduit improvements](#conduit-improvements). The other content bundles are
+not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -104,7 +114,7 @@ end of [Obelisks](#obelisks). The other content bundles are not ported yet. The 
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Done in 75fc204, d31b90a, ca6d3c8, 831c82c and 21ed590 |
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Planned |
 | Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Done in d956a04, 1b8b443, e24735f and 1a3a27b |
-| Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Planned |
+| Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Done in 6443f98, 5509705, c6b3ddb, aae79b2 and da9bdda |
 | Conduit facades (`eio-b7-conduit-facades`) | Four facade items on the 6.x conduit bundle, AE2 facades as conduit facades | 32 | Conduit improvements | Planned |
 | Powered spawner (`eio-b8-powered-spawner`) | Capture mode and the Mind Killer | 23 | Fix pack, charger and keybinds | Planned |
 | Visual polish (`eio-b9-visual-polish`) | Connected glass through Athena, machine particles, conduit movement particles | 14 | Powered spawner, conduit facades | Planned |
@@ -454,17 +464,82 @@ of that mod. Its evidence is the call to `ItemStackFilter.test` and the compat s
 
 - The template is the item conduit priority of 6.2.12 (37890e67d), a per side `Priority` from -9999 to
   9999 with plus and minus buttons.
-- Energy conduits get the same priority, and the round robin index stays per priority group. The 8.x
-  equal distribution (57fc40d61) stays out.
+- Energy conduits get the same priority beside `RotatingIndex` in each side compound (6443f98). The
+  ticker fills the inserts of a higher priority first with a stable sort and keeps the 6.x round robin
+  inside each priority group, so a network whose sides are all at 0 moves energy exactly as before.
+  The 8.x equal distribution (57fc40d61) stays out.
 - Fluid conduits get priorities on the pressurized and ender tiers only, as upstream does (6ecc1c788).
-  In 6.x those are `FLUID2` and `FLUID3` (`EIOConduitTypes.java:44-47`). Fluid locking stays.
-- Redstone conduits can output strong power on chosen sides (`StrongSides`), so the signal passes
-  through a block, as with 8.0.
-- The filter in a conduit connection opens from the conduit GUI (04e69b8e6, 7fe86947b). The server
-  checks the position and the reach through `Packet.canAccessBlock`, the conduit and the filter, and a
-  back button returns to the conduit menu. The menu closes when the bundle, the conduit or the connection disappears.
-- The GUI sends only its own fields, and the server clamps them. The energy path never touches the
-  stored energy.
+  In 6.x those are `FLUID2` and `FLUID3` (`EIOConduitTypes.java:44-47`), which the new flag
+  `FluidConduitType.supportsPriority` marks (5509705). Fluid locking stays, and the ticker alone sets
+  the locked fluid.
+- Redstone conduits output a strong signal on the sides chosen with a checkbox in the output column,
+  so the signal passes through the block they face, as with 8.0 (c6b3ddb). As in 8.x, an input that
+  reads a block which the same network powers strongly sees that signal again and holds it like a
+  latch.
+- A gear button under the filter slots of the conduit screen opens the menu of the item, fluid, entity
+  or limited item filter in that slot while the filter stays in the conduit (aae79b2 after 04e69b8e6).
+  The new packet `C2SOpenConduitFilterMenu` names only the container id of the open conduit menu and
+  the slot type. The server takes the conduit and the side from its own conduit menu, checks the
+  position and the reach through `Packet.canAccessBlock`, the conduit and the filter, and opens the
+  menu. A back arrow returns to the conduit menu. The fix of 7fe86947b needs no port, because the 6.x
+  `doClick` already checks `slotId >= 0`.
+- The filter menu edits a copy and writes it back through `DynamicConnectionState.withItem` on every
+  `broadcastChanges` and on close, but only while the slot still holds the stack it found or wrote
+  last. It writes nothing and closes when the bundle, the conduit or the connection goes, or when
+  another menu saved the filter first, so breaking the bundle with the menu open cannot duplicate the
+  filter.
+- Redstone filters, such as the counting, timer and logic filters, keep their own menus and packets.
+  They still open only from the main hand and get no gear button, as the feature plan says.
+- The GUI sends only its own fields, and the server clamps them. The energy screen data is the
+  priorities alone, so a client cannot set the stored energy or the round robin index. The fluid
+  screen data is a reset request and the priorities, and the redstone screen data is the strong side
+  mask.
+- The conduit probe copies and pastes the energy and fluid priorities and the strong signal flag.
+- The gear is a byte identical copy of the 1.21.1 sprite `icon/configure.png` (The Unlicense), shipped
+  as `textures/gui/icons/configure.png`. The packet joins the end of `ConduitNetwork`, and the protocol
+  stays "1.0-skytekx.1".
+- New public API that later bundles may use: `ConduitBlockEntity.openMenu(ServerPlayer, Direction,
+  ConduitType)`, the now public `ConduitSlot.isVisible()`, `FluidConduitType.supportsPriority()` with
+  new constructors of four arguments beside the old ones, `EnergyConduitData.getPriority(Direction)`
+  and `FluidConduitData.getPriority(Direction)`. The four filter menus extend the new
+  `AbstractFilterMenu` and keep their old constructors that take an `ItemStack`.
+
+The bundle is done in 6443f98, 5509705, c6b3ddb, aae79b2 and da9bdda. The porter's temporary test class
+ran in a dev server with Curios and AE2 on the classpath, with fake players. For energy it checked that
+a side of priority 10 fills first, that sides at 0 round robin as in 6.x and match the 6.x result on
+400 random networks, the spill to a lower priority when the higher one is full, the order of priority
+groups, that forged screen data keeps the stored energy, the capacity and the round robin index and
+clamps the priority, and that old energy NBT loads with priority 0. For fluids it checked that a
+pressurized conduit side of priority 5 fills first, that the basic fluid conduit keeps the 6.x order,
+that only `FLUID2` and `FLUID3` support priority, that screen data keeps the locked fluid and carries a
+reset request, that a stale screen cannot cancel a pending reset, and that old fluid NBT loads
+unchanged. For redstone it checked old NBT, the masked screen data and the round trip of `StrongSides`,
+that a strong side lights a lamp behind a stone block where a weak side leaves it dark, and that
+switching the side off and removing the conduit darken the lamp again. For the filter GUI it checked
+which slots open a menu, that the menu edits a copy and writes it back, that the node filter sees the
+new entry, that a second menu closes and writes nothing after the first one saved, the back button to
+the conduit menu, the hand menu, that breaking the bundle drops the filter once, and that an item
+conduit with the edited filter moves both its old and its new item. All 44 checks passed (workflow
+scratchpad, `bp2/enderio/b6/runserver.log` line 5938, test class in `bp2/enderio/b6/harness/`). The run
+shows only the two dev ERROR lines of the earlier runs, the client mixin of Athena on the dev classpath
+and the empty `layers` key of the dev `server.properties`.
+
+The review fix da9bdda makes the reset request of the fluid lock one shot on the client. The reset
+button wrote `ShouldReset` into the client's live data of the bundle, which no server sync clears,
+so after one reset every priority click of a pressurized conduit unlocked the fluid of its whole
+network again. The fix lives in the client screen extension and has no harness check, since the test
+class runs on a dedicated server.
+
+Nobody has tested these yet. No world copy was loaded, so existing energy, fluid and redstone conduits
+of the live world with all their settings, including fluid locks, are unverified. The evidence is the
+harness checks of the old NBT formats and an NBT round trip. No client joined, so the gear button, the
+client side of a filter menu with a conduit target (`FilterAccess.fromNetwork` and
+`FilterTarget.read`), `FilterScreens.back`, the back arrow as a real packet, `C2SOpenConduitFilterMenu`
+and `FilterUpdatePacket` over the network, the client sync of an edited filter, the one shot reset of
+da9bdda, and the look of the priority buttons and labels and of the strong signal checkbox and its
+tooltip are open. Editing a filter while a second real player watches the conduit menu was not run.
+No Arclight boot has run the new menu flow or two strong conduits that face each other, see
+[Arclight notes](#arclight-notes).
 
 ### Conduit facades
 
@@ -716,6 +791,11 @@ production Arclight.
   energy of energy conduits. The server runs EssentialsX as its only plugin (see
   [plugins](plugins.md)), so no claim plugin limited that. The fix pack closes it in 839e3be and
   260c7bb. A player within reach can still change the settings of any machine, as the screens allow.
+- The back arrow of a filter opened from a conduit opens the conduit menu with
+  `NetworkHooks.openScreen` from `clickMenuButton` of the filter menu. Nobody has run that flow on
+  Arclight, so whether its Bukkit inventory events see that open is unverified.
+- A strong redstone side updates the neighbours of the block it faces. Nobody has checked on the
+  production server how two strong conduits that face each other through one block update each other.
 - The fork adds no mixins, so nothing collides with the Bukkit patches.
 
 ## Local divergences
@@ -757,6 +837,26 @@ These differ from upstream on purpose and must survive a re-sync.
 - The output check of crafting machines inserts copies into its snapshot, where upstream's dccb83cda
   inserts the outputs themselves.
 - Connected glass wraps Athena's model in a cutout render type.
+- The strong signal checkbox has no label. The 6.x output column has no room left of the separator, so
+  the box is named only by its tooltip. It uses the two new keys
+  `gui.enderio.conduit.redstone.strong_signal.enabled` and
+  `gui.enderio.conduit.redstone.strong_signal.disabled` instead of the 8.x key
+  `gui.enderio.conduit.redstone.strong_signal`.
+- The strong sides are the byte bitmask `StrongSides` on `RedstoneConduitData`, not a field of the
+  connection config. The key is written only when it is not zero. The neighbours of the block behind a
+  side are updated only when the strong output of that side changes, plus once when the redstone
+  conduit is removed. The last output per side is runtime state.
+- The energy priority is clamped to -9999 to 9999 and written as `Priority` in every side compound.
+  The round robin is kept per priority group, and the 8.x equal distribution (57fc40d61) stays out.
+- Since 5509705 the fluid conduit data overrides `applyGuiNBT`. It takes only a reset request, a
+  `ShouldReset` of true, and the priorities, and no longer the client's locked fluid through
+  `deserializeNBT`. The fix pack had left fluid conduits on the default.
+- The packet `FilterUpdatePacket` acts on the filter of the open `AbstractFilterMenu` and does nothing
+  without one. It used to change the main hand at any time.
+- Filters whose extra menu data exceeds 32000 bytes are not opened from a conduit, a margin below the
+  32600 bytes that `NetworkHooks.openScreen` accepts (`AbstractFilterMenu.java:41`).
+- Two filter menus on the same conduit filter cannot both edit it. The first one to save wins, and the
+  other closes.
 
 ## Open questions
 

@@ -135,7 +135,10 @@ and recipe ids. Lines that differ from upstream carry a `SkyTekx port` comment t
   `getMaxResultEnchantmentLevel` and the `assemble` and `getRemainingItems` variants with a level, and
   its recipes match their two ingredients in a fixed order. `util/EnchanterRecipes` rebuilds these
   from `getIngredientCounts` and the recipe's own `assemble`, and looks the recipe up with the two
-  ingredients in either order, as version 8 matches them.
+  ingredients in either order, as version 8 matches them. It hands the counts to the recipe in a
+  `RecipeWrapper` over an `ItemStackHandler`, since a vanilla `SimpleContainer` caps every stack at 64
+  and Mystical Agriculture 7 reads the level from those counts (a first version did that and enchanted
+  at level 1, fixed in `f774dfe`).
 - Cucumber 8 classes that Cucumber 7 lacks: `QuickMover` (copied unchanged to
   `com.blakebr0.mysticalautomation.util`), `ContainerDataBuilder` (see below), `CachedRecipe` for any
   input type (`util/CachedRecipe`, since Cucumber 7's takes only `Recipe<Container>`),
@@ -241,3 +244,43 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
   scripts and test datapack under `src/test`. CraftTweaker is not in the pack, the build runs no
   game tests, and the test datapack is in the 1.21 format. Datapacks and KubeJS (`event.custom`) add
   Farmer recipes with the JSON form above.
+
+## Jar and tests
+
+The jar of `f774dfe` is `MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar`, SHA-1
+`d2891fe346f5f6878789385e45742c6583a8d7c7`, 308953 bytes, the same from two clean builds. It holds
+99 classes, upstream's assets with the added translations, the converted data, `pack.mcmeta`,
+`META-INF/mods.toml` and the four license and notice files.
+
+Tests of 2026-11-05 on a plain Forge 47.4.18 server with this jar, Cucumber 7.0.16, Mystical
+Agriculture 7.0.24, Mystical Agradditions 7.0.12, JEI 15.74.0.233 and Patchouli 85 (the files of the
+pack's index), driven over RCON:
+
+- Three boots reached `Done` with 0 FATAL lines. The first logged one ERROR from the flat world of the
+  test copy without generator settings, the two later ones 0 ERROR lines. Each stop over RCON ended
+  with exit code 0.
+- `loot spawn` dropped each of the seven block items from its loot table, and `setblock` placed each
+  machine with its block entity. The machines ran with fuel in their fuel slot and with NBT set
+  inventories: the Infuser (Inferium to Prudentium from a slot of 300, filled from a hopper above,
+  emptied by a hopper below), the Crafter (the Infuser recipe of this mod), two Farmers (wheat, and
+  Dirt Essence with Fertilized Essence from a recipe built at the reload), both Altarnators (Dirt
+  Seeds, Awakened Supremium Blocks), the Enchanternator (Sharpness II book at level 2, Sharpness III
+  sword at level 3, with the counts of those levels taken) and the Fertilizer (bone meal on wheat).
+  Machine Upgrades in the upgrade slot changed speed and capacity.
+- A hopper fed seeds and farmland into an empty Farmer and kept a stick and an essence back, so the
+  ingredient cache of the Farmer slots works. `/reload` rebuilt it without an error.
+- A `setblock` over a filled Crafter dropped nothing (Clearable). A destroyed Farmer dropped itself,
+  its upgrade and its contents. Energy, upgrades, inventories and modes survived a restart.
+- The Cucumber log line counts 78 dynamic Farmer recipes, and 0 with
+  `dynamicMysticalAgricultureRecipes = false`, when the dirt Farmer stopped. With the 24 recipe
+  files the mod brings 102 recipes.
+- The class load log of the dedicated server shows no class of the packages `client` and
+  `compat.jei` of this mod.
+
+A second test copy on the hardened Arclight jar of the pack
+(`arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`) with the same mods reached `Done`, ran the
+Infuser with its hoppers, the Crafter, a Farmer, the Enchanternator at level 2 and the Fertilizer, whose
+fake player grew eight of nine wheat crops to full age, and stopped with 0 ERROR lines.
+
+Not verified, because no client joined: the screens and widgets, the JEI categories, the recipe
+transfer and ghost slot messages, the full slot counts on a client and the guide book entries.

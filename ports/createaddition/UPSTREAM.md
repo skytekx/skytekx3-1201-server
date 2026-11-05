@@ -372,3 +372,13 @@ its item here, and the NOTICE in the jar sums them up.
     matches too, and use the JSON form of the 1.20.1 line. The same upstream commit lowers
     `channeling.json` to 1000000 FE at 360, which is not ported. The base keeps its own 10000000
     FE at 1000 from `f18dd66`.
+27. Copper tiles: nine charging recipes deoxidize Create's copper tiles, tile slabs and tile stairs
+    one step, from oxidized to weathered, weathered to exposed and exposed to plain, for 4000 FE
+    at a max charge rate of 200, like the shingle recipes of the base. Upstream `c08b593` added
+    them by hand under the same names, and `0ca5477` generates them as `deoxidize_create_*`. Each
+    file has the base's format and is named after its output, as `copper_tiles.json`,
+    `exposed_copper_tiles.json` and `weathered_copper_tiles.json` and the same for
+    `copper_tile_slab` and `copper_tile_stairs`. The 1.21 copper blocks that 1.20.1 lacks
+    (chiseled copper, bulbs, doors, grates and trapdoors) stay out, and so does the special
+    recipe type `createaddition:deoxidizing` of `1f606d3`, which upstream registers no more at
+    `658a390`.

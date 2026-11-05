@@ -76,7 +76,8 @@ Modifications
     a step of a Create Sequenced Assembly, done by a Tesla Coil and shown in JEI. Charging recipes
     may use Create's JSON keys besides the old ones.
   - Recipes from the 1.21.1 line: the Tesla Coil charges gold ingots, nuggets, blocks, rods,
-    plates and wires into electrum.
+    plates and wires into electrum and deoxidizes Create's copper tiles, tile slabs and tile
+    stairs.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

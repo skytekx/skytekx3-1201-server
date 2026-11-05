@@ -266,10 +266,11 @@ counts in the list below are older than the last fourteen of them and were not r
   [Draconic Evolution fixes](draconic-fixes.md).
 - Extreme Reactors 2.0.97 and ZeroCore 2.1.48 left the index on 2026-11-05 for the CurseForge files of
   the same author, because Modrinth stops at 2.0.84 and 2.1.45 for 1.20.1 and Extreme Reactors 2.0.97
-  needs ZeroCore 2.1.48. Extreme Reactors declares MIT and its MIT text travels in `licenses/`. ZeroCore
-  is All Rights Reserved and rides on the modpack grant of its project description, see
-  `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. The new Energizer Active FE Power Port of
-  2.0.97 has no loot table in the jar, so the fixes datapack gives it one, see
+  needs ZeroCore 2.1.48. Extreme Reactors declares MIT, and `licenses/` carries its MIT text together
+  with the MIT notice of Big Reactors, the 1.7.10 mod whose reactor and turbine code and fuel textures
+  it carries over. ZeroCore is All Rights Reserved and rides on the modpack grant of its project
+  description, see `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. The new Energizer Active FE
+  Power Port of 2.0.97 has no loot table in the jar, so the fixes datapack gives it one, see
   [Boot fixes](../content/boot-fixes.md#gameplay-overrides).
 - LittleTiles 1.6.0-pre161 left the index on 2026-11-05 for 1.6.0-pre161-skytekx.1, a build of the
   head of the upstream branch `1.20` (c5694e16), 43 commits past that last 1.20.1 release. Those

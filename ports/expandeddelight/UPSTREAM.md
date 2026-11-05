@@ -167,6 +167,11 @@ Fixes of upstream bugs, each small and local:
 - The cinnamon chest boat did not call its parent's save and load, so the chest lost its items at
   every save.
 - The juicer's inventory has the five slots that the code uses, upstream allocated nine.
+- The juicer registers its default state (facing north, not waterlogged) in the constructor that
+  takes block properties, the one that `EDBlocks` uses. Upstream registers it only in the
+  constructor without arguments, so the default state fell back to the first of all states, a
+  waterlogged juicer. Placing by hand was fine, but `/setblock`, `/fill` and every mod that places
+  `defaultBlockState()` made a juicer that ticked water and left a water source when broken.
 - The wild sweet potato gives Absorption in suspicious stew, as all wild crops of the 1.20 branch do,
   because Oozing does not exist before Minecraft 1.20.5.
 

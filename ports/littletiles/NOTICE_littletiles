@@ -1,0 +1,49 @@
+LittleTiles, SkyTekx build of the upstream branch 1.20
+=======================================================
+
+This jar is a build of LittleTiles that SkyTekx made for the SkyTekx 3 modpack (Minecraft 1.20.1,
+Forge 47). It is not an official release of LittleTiles. Report problems with it to SkyTekx
+(https://github.com/skytekx/skytekx3-1201-server), not to the LittleTiles project.
+
+Original work
+-------------
+  LittleTiles by CreativeMD and N247S (the authors in its mods.toml)
+  Source:   https://github.com/CreativeMD/LittleTiles
+  Commit:   c5694e16070fd10460a093df817149128936ba86, the head of the branch 1.20 on 2026-11-05
+            (2026-05-08, "Merge pull request #1195 from Deepseasaltyfish/1.20")
+  License:  GNU Lesser General Public License v3.0 only (LGPL-3.0-only, as its mods.toml says). The
+            LICENSE file of that commit ships inside this jar as LICENSE_littletiles. The LGPL v3 adds
+            permissions to the GNU General Public License v3, whose text ships inside this jar as
+            LICENSE_littletiles_GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.txt).
+
+Corresponding Source
+--------------------
+  The Java sources and resources of this jar are those of the commit above, unchanged. That commit
+  is 43 commits past 1b58169e ("Bumped version to 1.6.0-pre161", the last release for 1.20.1).
+  Among them is 32acae1c "fix hybrid server crash due to empty value of BETiles.tiles".
+
+  It was compiled against the unchanged CreativeCore 2.12.40 jar for Forge 1.20.1 from the Modrinth
+  project creativecore (https://github.com/CreativeMD/CreativeCore, LGPL-3.0-only). CreativeCore is
+  not part of this jar.
+
+  The jar carries MixinExtras 0.4.1 (io.github.llamalad7:mixinextras-forge, MIT license,
+  https://github.com/LlamaLad7/MixinExtras) unchanged under META-INF/jarjar, as the upstream jar does.
+
+Build changes
+-------------
+  SkyTekx, 2026-11-05. Only the build differs from upstream:
+  - The version is 1.6.0-pre161-skytekx.1 instead of 1.6.0-pre161, in the version line of
+    META-INF/mods.toml, in the manifest and in the file name. The mod id stays littletiles.
+  - LICENSE_littletiles, LICENSE_littletiles_GPL-3.0 and this NOTICE_littletiles were added to the
+    jar.
+  - It was built with Java 17, ForgeGradle 6 and Forge 1.20.1-47.4.0 by a small Gradle workspace of
+    SkyTekx instead of the build files of the upstream repository. The workspace files are in the
+    SkyTekx 3 repository, folder ports/littletiles:
+    https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/littletiles
+  - It compiles against the Embeddium 0.3.20 release of Modrinth instead of the git build
+    0.3.20-git-b21cfd8 that upstream names, and against two empty compile-only stand-ins for the
+    Fabric API types FabricBlockView and RenderAttachedBlockView, which that Embeddium build brings
+    upstream. The Fabric annotations Environment and EnvType come from the forge sources of
+    CreativeCore at commit 4138056ac47874a1de3e4211e5ee5c6767fe1664 (version 2.12.40), as in the
+    workspace of upstream. None of these is part of the jar, and no class of LittleTiles names the
+    two Fabric API types.

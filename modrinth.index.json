@@ -1806,21 +1806,6 @@
       "fileSize": 101931
     },
     {
-      "path": "mods/LittleTiles_BETA_v1.6.0-pre161_mc1.20.1.jar",
-      "hashes": {
-        "sha1": "858d2de167f660c491632ed9727292b418ca804a",
-        "sha512": "e9bf001062959a729165c12a6858a6be8349c503840e06240a065dbabaf0d005ce9275589dc2c8cbe44474be0a2f94353f44cc67376ae00d79284aa4ff8e991f"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/RCRxC1tD/versions/sBbUjEhq/LittleTiles_BETA_v1.6.0-pre161_mc1.20.1.jar"
-      ],
-      "fileSize": 2623590
-    },
-    {
       "path": "mods/lootjs-forge-1.20.1-2.13.1.jar",
       "hashes": {
         "sha1": "804deb0bd34d69cad873170642b9d7e47fa0d6ad",

@@ -103,7 +103,7 @@ rewrites in place. That jar is the one to ship.
     call to an inherited vanilla method through the class hierarchy of its owner, and without the
     integration targets the calls of `TomatoHarvestBehaviour` and `FlaxHarvestBehaviour` to
     `CropBlock#getAge` and its siblings kept their Mojang names. The first test boot crashed there with a
-    `NoSuchMethodError` (commit 3b2fabcc).
+    `NoSuchMethodError` (commit 0ee7113).
 
 ## Source changes
 
@@ -163,7 +163,11 @@ items below are what differs from upstream, with the reason.
     the `minecraft:recipes/root` parent. The chicken food maps use the 1.20.1 uniform int provider form.
     The item map names the new tag `create_integrated_farming:chicken_food` with the six chicken foods of
     1.20.1 (`Chicken.FOOD_ITEMS`), the fluid map `#forge:plantoil`. The block atlas file goes, because
-    it only served the removed roosts.
+    it only served the removed roosts. `MODPACK_README.md` stays upstream's 1.21.1 text and does not
+    match this build. It names `#minecraft:chicken_food`, `#c:plantoil`, the 1.21.1 int provider form
+    without `value`, the chicken roosts of Vanilla Backport and the duck, goose and turkey roosts with
+    their food tags. Data packs for this build follow source changes 3 and 11 and the chicken food
+    section of `okf/modpack/createintegratedfarming-port.md` in the pack repository.
 12. Lava Fishing Net drops: Forge 1.20.1 loot tables have no load conditions, and a table that names the
     net's item fails to load with an error while the block is not registered. The conditional loot table
     goes, and `LavaFishingNetBlock#getDrops` drops the block under the same `survives_explosion` rule.
@@ -199,7 +203,7 @@ items below are what differs from upstream, with the reason.
 
 | Part | Reason |
 |---|---|
-| The integration source sets for Atmospheric, Autumnity, Confluence, Cook's Collection, Corn Delight, Crabber's Delight, Create Enchantable Machinery, Cultural Delights, Delight o' Flight, Ender's Delight, Environmental, Festive Delight, Haunted Harvest, Hearth and Harvest, My Nether's Delight, Neapolitan, Nether Depths Upgrade, Jaden's Nether Expansion, Nether's Exoticism, Sable, Starcatcher, Tide, Untitled Duck Mod, Upgrade Aquatic, Vanilla Backport and Windswept | The SkyTekx pack carries none of these mods. Their 1.20.1 builds, where any exist, have other APIs, and nothing could test them. Their source stays in the git history (commit 6e33465f) |
+| The integration source sets for Atmospheric, Autumnity, Confluence, Cook's Collection, Corn Delight, Crabber's Delight, Create Enchantable Machinery, Cultural Delights, Delight o' Flight, Ender's Delight, Environmental, Festive Delight, Haunted Harvest, Hearth and Harvest, My Nether's Delight, Neapolitan, Nether Depths Upgrade, Jaden's Nether Expansion, Nether's Exoticism, Sable, Starcatcher, Tide, Untitled Duck Mod, Upgrade Aquatic, Vanilla Backport and Windswept | The SkyTekx pack carries none of these mods. Their 1.20.1 builds, where any exist, have other APIs, and nothing could test them. Their source stays in the git history (commit 41cc12e) |
 | The duck, goose, turkey and warm or cold chicken roosts | They belong to the removed integrations (Untitled Duck Mod, Environmental, Confluence, Autumnity and Vanilla Backport). The warm and cold chickens are 1.21.5 content |
 | The datagen output of the port | The datagen classes compile against Registrate MC1.20-1.3.3 and Create: Dragons Plus 1.11.9, but nobody ran them. The files under `src/generated/` are upstream's output, converted by hand (source change 11). A datagen run would rewrite them and is not verified to give the same files |
 | Spotless | See build change 3 |

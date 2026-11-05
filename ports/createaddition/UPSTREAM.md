@@ -129,8 +129,9 @@ its item here, and the NOTICE in the jar sums them up.
    is `liquid_blaze_burner_max_liquid_capacity`, whose default stays 4000 mB, the tank size of the
    live burners, instead of the 1000 mB of upstream `6cbf853`. Loading an older
    `createaddition-common.toml` keeps its values and appends the new keys. The Liquid Blaze Burner
-   reads its two keys since item 4. The other keys wait for their bundles, and every reader calls
-   `get()` inside a method or supplier, never in a static initialiser.
+   reads its two keys since item 4 and the Capacitor its two since item 22. The other keys wait for
+   their bundles, and every reader calls `get()` inside a method or supplier, never in a static
+   initialiser.
 2. Network: the channel `createaddition:main` goes from protocol `1` to `2`, and its message ids
    are the constants `PACKET_OBSERVE` (0), `PACKET_ENERGY_NETWORK` (1) and
    `PACKET_TIME_REMAINING` (2) in `CreateAddition.java`. Id 2 carries the `TimeRemainingPacket`
@@ -298,3 +299,19 @@ its item here, and the NOTICE in the jar sums them up.
     instead of the Capacitor. Block state, NBT and the speed requirement `MEDIUM` stay. An
     alternator whose back face touches a kinetic block of another network joins that network on
     its next update, and a speed conflict there breaks a block as in any Create network.
+22. Capacitor as an FE item: upstream `5c2b9ea` and `51e4a38`. The new `item/CapacitorItem`
+    stores up to `capacitor_capacity` FE and moves at most `capacitor_charge_rate` FE per call. It
+    shows a light blue bar (`0x00BFFF`) and the stored energy in its tooltip through
+    `Util.getTextComponent`. The energy lives in the stack NBT key `energy`, where upstream uses
+    the key `energy` of the `CUSTOM_DATA` component. At 0 FE the key goes, and the whole tag goes
+    when nothing else is in it, so an empty capacitor stacks with the capacitors of 1.3.3 (an empty
+    tag does not stack with no tag). Upstream's `RegisterCapabilitiesEvent.registerItem` becomes
+    `Item.initCapabilities` with a plain `ICapabilityProvider` for `ForgeCapabilities.ENERGY`. It is
+    not serializable, so no `ForgeCaps` tag is written. Two local changes: an empty capacitor still
+    stacks to 64 instead of upstream's 16, which would oversize the stacks in the world, and a
+    charged one stacks to 1 (`getMaxStackSize(ItemStack)` of `IForgeItem`). The storage only
+    charges and discharges a stack of exactly one capacitor and reports `canReceive` and
+    `canExtract` as false otherwise. Upstream charges a whole stack as one item, which then splits
+    into several charged capacitors and dupes energy, on a Tesla Coil depot, in another mod's
+    charger or by the Electrum Amulet. The bar width is capped at full when the capacity in the
+    config shrinks below the stored energy.

@@ -6,6 +6,7 @@ import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.item.ElectrumAmulet;
 import com.mrh0.createaddition.item.WireSpool;
 import com.mrh0.createaddition.item.BiomassPellet;
+import com.mrh0.createaddition.item.CapacitorItem;
 import com.mrh0.createaddition.item.DiamondGritSandpaper;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
@@ -18,8 +19,8 @@ public class CAItems {
 		CreateAddition.REGISTRATE.setCreativeTab(CACreativeModeTabs.MAIN_TAB);
 	}
 
-	public static final ItemEntry<Item> CAPACITOR =
-			CreateAddition.REGISTRATE.item("capacitor", Item::new)
+	public static final ItemEntry<CapacitorItem> CAPACITOR =
+			CreateAddition.REGISTRATE.item("capacitor", CapacitorItem::new)
 			.register();
 
 	public static final ItemEntry<Item> DIAMOND_GRIT =

@@ -37,20 +37,20 @@ not exist yet.
 ## Status on 2026-11-05
 
 The vendored base (d8d06f5), the reproducible Java 17 build (28bde03), the license files in the jar
-(c276dbd), the baseline bundle, the small fixes, the ignitable fluids and the connector rework are on
-the branch `claude/twilight-forest-port-mods-j2owbq`. The small fixes, the ignitable fluids and the
-connector rework are the first ported features. The pack still ships the Modrinth jar 1.3.3. Only test
-servers with a reduced mod set have booted the fork: those of the ignitable fluids (e0fed53) and the
-[wire graph test](#wire-graph-test) on the production Arclight jar. The boot and login checks of the
-baseline and the in game tests of the small fixes and the connector rework wait for the
-[release](#release).
+(c276dbd), the baseline bundle, the small fixes, the ignitable fluids, the connector rework and the
+changes of 1.6.0 are on the branch `claude/twilight-forest-port-mods-j2owbq`. They are the first
+ported features. The pack still ships the Modrinth jar 1.3.3. Only test servers with a reduced mod
+set have booted the fork: those of the ignitable fluids (e0fed53), the
+[wire graph test](#wire-graph-test) on the production Arclight jar and the Forge 47.4.18 tests of the
+[changes of 1.6.0](#changes-of-160). The boot and login checks of the baseline and the in game tests
+of the small fixes, the connector rework and the changes of 1.6.0 wait for the [release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in d7d4fad, 35706d8, 0611ece and ecf5303 on top of d8d06f5, 28bde03 and c276dbd. The boot and login checks belong to the release |
 | Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Done in ce05082, 9db6834, 30ce6cc, eba2b0d, 9a4cfa1, dec0962 and 788fd47, with the scan tool a1a1500, the test record 823b8db and the review fix e3fd422. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release |
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 010ffd5, 1ad4bf1, 8fb90f8, 0bb10b7, f855f94, 66076fb, 2f39e85, fa15e47, 95a599b, 47f954c and d4ee92e, with the review fix 8224da6. The in game and boot tests belong to the release |
-| Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Planned |
+| Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Done in cb3030a, d547bba, 83fad0b and 229ff9d, with the review fix 3f97be7 and the scan tool ade8903. Tested on a Forge 47.4.18 server with Create 6.0.8. The in game tests with a client, the Arclight boot and the scan of the live world belong to the release |
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in e0fed53 and 7ee0449, with the review fixes d49e1b0 and 200afee. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
 | Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Planned |
 | Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Planned |
@@ -216,16 +216,38 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 
 - The alternator takes a shaft on both faces of its axis and gets a Flywheel visual with two half
   shafts (7cb0ef9, 5c2b9ea). Its mechanical crafting recipe trades the Capacitor for a second row of
-  andesite alloy.
-- The Capacitor becomes an FE item that stores `capacitor_capacity` and moves `capacitor_charge_rate`
-  per tick (5c2b9ea, 51e4a38). The energy lives in the stack NBT key `energy`, and an empty capacitor
-  carries no tag, so it stacks with old ones. Two local changes apply, see
-  [Local divergences](#local-divergences).
+  andesite alloy. Done in cb3030a, source change 21 of `UPSTREAM.md`. A placed alternator joins a
+  network behind it on its own, see [Savegame notes](#savegame-notes).
+- The Capacitor becomes an FE item that stores `capacitor_capacity` FE and moves at most
+  `capacitor_charge_rate` FE per transfer (5c2b9ea, 51e4a38). Each `receiveEnergy` and
+  `extractEnergy` call is capped (`CapacitorItem.java:115-130`), so at the defaults a charge of 600 FE
+  from the amulet fills a capacitor by 500 FE. The energy lives in the stack NBT key `energy`, and an
+  empty capacitor carries no tag, so it stacks with old ones. Two local changes apply, see
+  [Local divergences](#local-divergences). Done in d547bba.
 - The Electrum Amulet, held in either hand, now and then charges the FE item in the other hand,
   shocks the player for 40 ticks and plays a zap (5c2b9ea, b0b8bc9, 4414193). This replaces the Luck
-  and Speed below four hearts. The texture is a new edit of the mod's own amulet texture, and the
-  recipe uses diamond grit and a zinc plate instead of the emerald.
-- The Tesla Coil gives light level 10 while it is powered (5490949).
+  and Speed below four hearts. A charge comes with a chance of 1 in 300 per tick, about every 15
+  seconds while a chargeable item is in the other hand. Shocking carries a movement speed modifier of
+  minus 100 with `MULTIPLY_TOTAL` (`CAEffects.java:17-18`), so every charge roots the holder for two
+  seconds, as upstream. The config key `amulet_effect_enabled` turns the amulet off, the charge and
+  the effect together (`ElectrumAmulet.java:39`). The texture is a new edit of the mod's own amulet
+  texture, and the recipe uses diamond grit and a zinc plate instead of the emerald. Done in 83fad0b.
+- The Tesla Coil gives light level 10 while it is powered (5490949). Done in 229ff9d.
+- The porter tested each change on a dedicated Forge 47.4.18 server with Create 6.0.8 and the jar of
+  the four commits before the integration (SHA-1 `2f7283083b5d208109c80b0c8e9aba53f53a0dfc`), as the
+  commit bodies record. A creative motor, an alternator, a shaft and a second alternator turned at
+  16 RPM each. A Tesla Coil depot charged a single capacitor to 5000 FE, a stack of 64 stayed
+  uncharged, and a powered coil gave light 10 or more at its position. The binary compat scan of that
+  jar against the 265 jars of the Forge pack boot found 0 missing symbols.
+- The integration rebuilt the jar on top of the connector rework. The task `compileJava` ends with
+  38 warnings, as before. The slim jar of 229ff9d and of the later commits, which change no file in
+  the jar, has the SHA-1 `7ca52244c20d8a63bc1f1130e2fea85cc1e8b35e`, and the compat scan of that jar
+  against the same 265 jars again reported `TOTAL MISSING: 0`.
+- The review fix 3f97be7 corrects source change 21. A test world saved by 1.3.3 held three
+  alternators driven at 16 RPM: one with a shaft at minus 16 RPM behind it, one with a shaft at 32 RPM
+  and one with stone. The first fork boot dropped the first alternator as an item and raised the
+  second to 32 RPM, with no player action and no ERROR line. The scan `tools/alternator_scan.py`
+  (ade8903) listed the first two before the boot and counted 4 alternators instead of 5 after it.
 
 ### Ignitable fluids
 
@@ -331,6 +353,9 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   `tooltip.alternator.info` of the small fixes are only in en_us (8fb90f8) and get their translated
   values here. The death message keys are already renamed in all 21 locales (66076fb), so this
   bundle must not add them again under the old names.
+- The key `item.createaddition.electrum_amulet.tooltip.summary` still describes the old Luck effect
+  in all 20 locales other than en_us, as on upstream 658a390. This bundle translates the new text or
+  drops the key there, so that the English summary shows (83fad0b).
 
 ### Release
 
@@ -367,6 +392,21 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   production Arclight must load no client class (only a static javap check of the new and changed
   classes ran), and a client must show the burn and charge timers on the goggles, the stress values
   in the item tooltips and the death messages of barbed wire and the Tesla Coil in chat.
+- The alternator scan is a rollout gate. Run `tools/alternator_scan.py <world> --json before.json`
+  on a copy of the live world with every dimension. Each listed alternator has a kinetic block behind
+  it that Create joins to its network on the first server tick after the upgrade (3f97be7). Then
+  boot the copy with the release jar, run a Chunky pass over the built area of each dimension, stop
+  the server and run the scan again with `--compare before.json`. A lower alternator count means
+  Create broke one. Before the deploy, fix every listed spot with opposite directions, different
+  speeds or a check hint, with a gap or a block that is not kinetic, or tell its owner to.
+- The in game tests of the changes of 1.6.0 have not run, since no client was available. They are the
+  chain of motor, alternator, shaft and alternator with Flywheel on and off (visual and renderer),
+  the Electrum Amulet with a player (a Capacitor charged in the other hand, Shocking, the zap sound,
+  `amulet_effect_enabled` set to false), a capacitor that discharges into a machine that drains item
+  FE, crafting with a charged capacitor, its tooltip and bar on a client, and old capacitor stacks
+  in a copy of the live world that stack with new empty ones. The production Arclight jar with the
+  full pack has not booted these changes either. Only a plain Forge 47.4.18 server with Create 6.0.8
+  ran them.
 - The ignitable fluids ran only on reduced test servers (e0fed53). The full pack boot on Arclight
   must show the seven fire and fluid injectors once each in the exported `FireBlock`,
   `BaseFireBlock` and `FlowingFluid`, next to those of every other mod, and keep the two accepted
@@ -479,10 +519,15 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   lost exactly that wire end. Run `tools/wire_scan.py` on the copy of the live world before the
   deploy to count them.
 - The existing world changes its behaviour in four ways. Wires and relays work across unloaded
-  chunks. An alternator whose back face touches another kinetic network joins it on its next update,
-  and a speed conflict breaks a block, so the live world should be scanned or the players warned.
-  Fire spreads over the oils and fuels that [Ignitable fluids](#ignitable-fluids) lists, Thermal
-  crude oil among them, in loaded chunks. Tesla Coils saved as powered keep their old light until they toggle.
+  chunks. An alternator whose back face touches a shaft of another kinetic network joins it on the
+  first server tick after its chunk loads, with no player action. Create 6.0.8 sets `updateSpeed` in
+  the `KineticBlockEntity` constructor and runs `attachKinetics`, `RotationPropagator.handleAdded`
+  and `propagateNewSource` on that tick. Opposite directions or overspeed break a block with drops,
+  and a faster network overpowers a slower one (UPSTREAM.md source change 21, 3f97be7). Warning the
+  players after the deploy cannot protect those builds, so the alternator scan under
+  [Release](#release) is a gate before it. Fire spreads over the oils and fuels that
+  [Ignitable fluids](#ignitable-fluids) lists, Thermal crude oil among them, in loaded chunks. Tesla
+  Coils saved as powered keep their old light until they toggle.
 - Existing stacks stay valid: empty capacitors still stack to 64, charged ones do not stack, and
   existing festive wires between two large connectors stay.
 
@@ -603,6 +648,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   A charged one stacks to 1.
 - A Capacitor charges and discharges only as a single item. Upstream charges a whole stack as one item,
   which splits into several charged capacitors and dupes energy.
+- The Capacitor's bar stays at full when the capacity in the config drops below the stored energy.
+- The Electrum Amulet computes its charge in long and caps it at `Integer.MAX_VALUE`, so a large
+  `electrum_amulet_charge_rate` cannot overflow into a negative amount. It keeps its 1.20.1 class name
+  `ElectrumAmulet`.
 - The WireGraph verifier only trusts full saved chunks, see [Arclight notes](#arclight-notes).
 - The WireGraph verifier drops a chunk read that does not answer on the server thread, which happens
   after the server has stopped, see [Arclight notes](#arclight-notes).
@@ -643,8 +692,8 @@ The plan ports these with upstream's or the safe default, and the owner may rule
   and copy the fork jar from `local-mods/` into `mods/`. Then boot and commit the refreshed
   `config/createaddition-common.toml` before `tools/build_mrpack.py`, which takes overrides from git
   HEAD.
-- Deploy only after the live world test under [Savegame notes](#savegame-notes) has passed, and take
-  a backup of `world/` first.
+- Deploy only after the live world test under [Savegame notes](#savegame-notes) and the alternator
+  scan under [Release](#release) have passed, and take a backup of `world/` first.
 - Before and after that test, scan the copy with
   `tools/wire_scan.py <world> --json before.json` and later `--compare before.json`. One sided wire
   ends in the first scan are the wires the upgrade cuts. Reconnect them in game after the update.
@@ -658,7 +707,8 @@ The plan ports these with upstream's or the safe default, and the owner may rule
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only the
   two accepted ERROR lines, and when every charging recipe parses.
 - Announce the alternator with two shafts, the new Electrum Amulet and the fire over oils to the
-  players.
+  players. The announcement says that every charge of the amulet stops its holder for two seconds,
+  and that the server can turn the amulet off with `amulet_effect_enabled`.
 
 ## Changelog for players
 
@@ -677,8 +727,11 @@ Planned, not shipped.
 ### Changed for players
 
 - Wires and relays carry energy across unloaded chunks.
-- The alternator takes a shaft on both sides.
-- The Electrum Amulet charges FE items instead of giving Luck and Speed.
+- The alternator takes a shaft on both sides. An existing alternator with a shaft of another network
+  behind it joins that network at the update.
+- The Electrum Amulet charges FE items instead of giving Luck and Speed. Each charge also shocks
+  its holder, who cannot walk for two seconds, about every 15 seconds while a chargeable item is in
+  the other hand. The config key `amulet_effect_enabled` turns the amulet off.
 - The Capacitor holds FE.
 - Fire spreads over oils and fuels.
 - The spool recipe makes 24 from iron plate and rod.

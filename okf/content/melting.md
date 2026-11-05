@@ -32,8 +32,9 @@ unification, the follow-up of 2026-11-05 and its review (see [fixes of the revie
 [sync with the unification](#sync-with-the-unification), [follow-up of 2026-11-05](#follow-up-of-2026-11-05) and
 [review of the follow-up](#review-of-the-follow-up)).
 The recheck of 2026-11-05 held the folder back from the deploy of 3.1.3 at 00:46 until its three faults were
-fixed. The recipes are server side, so they need no new pack. The counts below come from the dump of 01:19 on the
-test server of the follow-up.
+fixed. It reached the Mac mini at 03:47 and went live with a `/reload` at 05:45, after which KubeJS found
+46,980 recipes, as on the test server. The recipes are server side, so they need no new pack. The counts below
+come from the dump of 01:19 on the test server of the follow-up.
 
 | Count | Without Molten | With Molten |
 |---|---:|---:|

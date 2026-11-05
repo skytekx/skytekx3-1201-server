@@ -24,7 +24,8 @@ common rules in the first bundle), `plan.excluded` holds the upstream work left 
 and `critic_notes` holds the review that corrected the first draft. The critic notes give 29 features
 and 241 h, while the bundle list sums to 31 features and 244 h. The bundle list is the reference. The
 file `ports/enderio-backport-carryover.json` will record what a bundle hands to a later one. It does
-not exist yet.
+not exist yet. Until it does, the rules that the fix pack hands to later bundles sit in the common
+rules of the first bundle's spec.
 
 | Property | Value |
 |---|---|
@@ -35,7 +36,7 @@ not exist yet.
 | Fork | Folder `ports/enderio/` with the 6.x layout `src/{api,core,main,machines,conduits,armory}`, Java 17, ForgeGradle 6.0.54 (`UPSTREAM.md`, Build changes) |
 | Target version | Version 6.3.0-skytekx.1 in `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar`, the jarJar jar with Registrate and GraphLib3 inside |
 | Ships as | A jar in `local-mods/` that replaces the 6.2.18-beta jar |
-| Build check | The `compileJava` call of the bundle specs, with `/opt/jdk17` and `-Xmx2g`. A full build needs `LC_ALL=C.UTF-8` because of the lang file `no_no<U+200C>.json` (`UPSTREAM.md`, Building) |
+| Build check | The tasks `compileJava`, `compileMachinesJava`, `compileConduitsJava` and `compileArmoryJava` in one call, with `/opt/jdk17`, `-Xmx2g` and `LC_ALL=C.UTF-8`. The task `compileJava` alone covers only the api, core and main source sets, and the module tasks run `processResources`. A full build needs `LC_ALL=C.UTF-8` because of the lang file `no_no<U+200C>.json` (`UPSTREAM.md`, Building) |
 | Addon check | The script `bp2/enderio-tools/eiocompat.py` in the workflow scratchpad must print `TOTAL MISSING: 0` for the built jar against `local-mods/eio_legacy_machines-0.4.9.jar` |
 
 ## Status on 2026-11-05
@@ -52,14 +53,24 @@ The fork infrastructure is done in 6a3268f (protocol bump), 90c9f8b (JSON data m
 and a full build, and the compat scan still finds 0 missing symbols for EnderIO Legacy Machines,
 Exchangers and AllTheLeaks. Nothing uses the data maps or the Curios helper yet. The data map sync was
 only tested as an encode and decode round trip in one process, since no headless client was at hand,
-so a real client join that shows the values in JEI is still open for the Vat bundle. Nobody has run a
-dedicated `runServer` of the fork with and without Curios yet. No feature of the content bundles is
-ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
+so a real client join that shows the values in JEI is still open for the Vat bundle. A dedicated
+`runServer` of the fork without Curios is still open.
+
+The fix pack is done in 1e5fde6 (fluid tank), 59e7770 (capacitor bank items), 6f5774a (ghost and
+filter slots), 49bb41c (machine outputs and IO), 91a7f49 (recipe outputs), 46b3e5f (small fixes),
+be881bc (packet validation) and f142998 (review fixes). The integration compiled every source set and
+ran a full build, whose `-all` jar has the SHA-1 `5128f86d85be037887fc4ca9016aebeff4beeca1`, and the
+compat scan still finds 0 missing symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks. A
+dev `runServer` of the fix pack with Curios and AE2 on the classpath reached `Done` (workflow
+scratchpad, `bp2/enderio/b1/runserver2.log` line 6889). No NBT key, packet format, protocol version
+or generated resource changed. Nobody has run the in game tests of the fix pack yet, see the end of
+[Fix pack](#fix-pack). No feature of the content bundles is ported yet. The pack still ships the
+6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Fork infrastructure (`eio-b0-fork-bootstrap`) | Network protocol bump, JSON data maps for 1.20.1, optional Curios support | 10 | The vendored base | Done in 6a3268f, 90c9f8b, 10ba7e1 and effd892. The vendor, version and license work of the old feature `fork-bootstrap` is done in 8799e05, dd66c98 and e508261 |
-| Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Planned |
+| Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Done in 1e5fde6, 59e7770, 6f5774a, 49bb41c, 91a7f49, 46b3e5f, be881bc and f142998 |
 | Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Planned |
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Planned |
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Planned |
@@ -127,35 +138,73 @@ Everything is added on the 6.x core, and no 8.x core code is ported.
 
 ### Fix pack
 
+Each item names the upstream commit it ports and the commit on the branch.
+
 - The fluid tank checks the full fluid amount before it shrinks the input (fad146640), checks the
-  recipe again before it runs it (1b36f8464, which closes the live sponge dupe of
-  `data/enderio/recipes/tank_empty/sponge.json`), mends a tool only into an empty output (95fb1e4be)
-  and skips fluids without a bucket (500f11729).
-- A stack of capacitor bank items splits its energy per item (7a5e3ebf3). Today a stack of 64 charges
-  once, and every placed bank carries the full charge.
+  recipe again before it runs it (1b36f8464), mends a tool only into an empty output (95fb1e4be) and
+  skips fluids without a bucket (500f11729), all in 1e5fde6. The sponge dupe of
+  `data/enderio/recipes/tank_empty/sponge.json` was not live in 6.x. A stale cached recipe only turns
+  out one more dry sponge once the input shrinks after the fill, the order of fad146640, so the recheck
+  guards that new order.
+- A stack of capacitor bank items splits its energy per item (7a5e3ebf3, 59e7770). Before, a stack of
+  64 charged once, and every placed bank carried the full charge. Beyond upstream, `setEnergyStored`
+  now writes the energy into `BlockEntityTag`, the compound it reads back, so a freshly crafted bank
+  keeps what a charger pays in.
 - Ghost slots and filter slots can no longer be picked up, ghost slots ignore every click type except
   pick up and quick move (aba7ff872), and a filter menu locks the player slot that holds the opened
-  filter (8c7952cf7). The slot classes `GhostMachineSlot` and `PreviewMachineSlot` join the Inventory
-  Sorter blacklist, which today lists only `ItemFilterSlot` and `FluidFilterSlot`
-  (`EnderIO.java:187-188`).
-- Crafting machines simulate their outputs against a snapshot of the inventory, so a second output can
-  no longer void (dccb83cda). The fluid distribution pulls into empty tanks again (f600657d8).
-- SAG Mill tag outputs keep their count (4061eacf8). Soul binding keeps the input tag when the output
-  is the same item (aa963f47d), which fixes the powered spawner rebind recipe of 6.2.5 (f49ba60d) that
-  loses the capacitor and the IO config. The mossy cobblestone dupe dc01be82e does not apply, because
-  6.x has no such SAG Mill recipe.
-- The small fixes are a copy in `ChunkBoundLookup` (69b0bd57f), the fire crafting sound config
-  (4b57a5733), the swimming pose after a staff blink into a wall (59b00dd66), no doubled modifiers on
-  loot capacitors (ed55f0d53) and a guard on the AE2 first tick of ME conduits (4bb7e90e9,
-  `AE2InWorldConduitNodeHost.java:105`).
-- The packet validation is a SkyTekx fix without an upstream commit, and both upstream lines have the
-  bug. The packets `C2SDataSlotChange` and `C2SSetConduitExtendedData` accept any block position
-  without a reach or loaded check, `EnderBlockEntity.serverHandleBufferChange` trusts the slot index
-  (`EnderBlockEntity.java:224`), and `ConduitBlockEntity.handleExtendedDataUpdate` passes client NBT
-  into the full `deserializeNBT` (`ConduitBlockEntity.java:118`). Any client can therefore set any data
-  slot of any loaded machine and the stored energy of any energy conduit. The handlers now require a
-  loaded position within 8 blocks, check the slot index, apply conduit GUI data through a new
-  `applyGuiNBT` that ignores the stored energy, and clamp obelisk ranges.
+  filter (8c7952cf7), all in 6f5774a. The entity filter menu now shares the click guard of the other
+  two, which closes a number key that deleted the hotbar stack, and a swap onto the opened filter is
+  ignored. The class `EntityFilterSlot` joins the Inventory Sorter blacklist next to `ItemFilterSlot`
+  and `FluidFilterSlot` (`EnderIO.java:188-190`). Inventory Sorter 23.0.11 matches the exact class name
+  (`InventorySorter.isSlotBlacklisted` calls `getClass().getName()`). The machine slots
+  `GhostMachineSlot` and `PreviewMachineSlot` were already on that list (`EIOMachines.java:84-85`).
+  Upstream's change to `ImpulseHopperMenu` in aba7ff872 only adds imports, and the impulse hopper gets
+  the ghost guard from `MachineMenu`.
+- Crafting machines check their outputs against a snapshot of the inventory, so a second output can
+  no longer void (dccb83cda, 49bb41c). The check inserts copies into the snapshot (f142998), because
+  Forge's `ItemStackHandler.insertItem` keeps an inserted stack by reference, and upstream's version
+  would grow the outputs of the task when two of them stack. The fluid distribution pulls into empty
+  tanks again (f600657d8). The item push of `TransferUtil.moveItems` now extracts for real before it
+  inserts, a SkyTekx hardening of the 6.x method.
+- SAG Mill tag outputs keep their count (4061eacf8, 91a7f49). No shipped recipe changes its yield,
+  because the three tag outputs, for coal, sand and wheat, all have count 1. Soul binding keeps the
+  input tag when the output is the same item (aa963f47d), which fixes the powered spawner rebind
+  recipe of 6.2.5 (f49ba60d) that lost the capacitor and the IO config. The soul binder also crafts its
+  outputs again from the current inputs when it places them, so a swapped input cannot copy a
+  capacitor. The mossy cobblestone dupe dc01be82e does not apply, because 6.x has no such SAG Mill
+  recipe.
+- The small fixes in 46b3e5f are a copy in `ChunkBoundLookup` (69b0bd57f), the fire crafting sound
+  config (4b57a5733), the swimming pose after a staff blink into a wall (59b00dd66), no doubled
+  modifiers on loot capacitors (ed55f0d53) and a guard on the AE2 first tick of ME conduits
+  (4bb7e90e9, `AE2InWorldConduitNodeHost.java:110-112`), which also skips a node that was removed
+  before its first tick. The same commit stops `EntityFilterSlot` from creating an entity in the
+  client level. The JVM verifier loads `ClientLevel` for that call, so opening an entity filter on a
+  dedicated server would throw `NoClassDefFoundError`.
+- The packet validation in be881bc is a SkyTekx fix without an upstream commit, and both upstream
+  lines have the bug. The packets `C2SDataSlotChange`, `C2SSetConduitExtendedData` and
+  `C2SSetConduitConnectionState` accepted any block position without a reach or loaded check, the
+  base trusted the slot index in `EnderBlockEntity.serverHandleBufferChange` (line 224 of 8799e05),
+  and `ConduitBlockEntity.handleExtendedDataUpdate` passed client NBT into the full `deserializeNBT`.
+  Any client could therefore set any data slot of any loaded machine and the stored energy of any
+  energy conduit. The handlers now require a loaded position within reach, accept client values only
+  for slots registered through `addClientDataSlot`, apply conduit GUI data through a new `applyGuiNBT`
+  that ignores the stored energy and keep the server's filter and upgrade items in a connection state.
+  Obelisk, vacuum and drain ranges are clamped, and travel anchor names are cut to 50 characters. The
+  travel request also refuses a target that takes no teleports, except an elevator jump.
+- The reach test is `player.canReach(pos, 1.5)`, the test of `MachineBlockEntity.stillValid` and
+  `ConduitBlockEntity.stillValid`. It measures from the eye and follows the `forge:block_reach`
+  attribute, so a packet passes exactly while its screen may stay open (f142998, `Packet.java:51`).
+
+The common rules in the spec of the first bundle carry what the fix pack hands to later bundles:
+client data slots, obelisk ranges, the conduit GUI data path, conduit items, the packet reach and the
+output check.
+
+Nobody has run these tests yet. The in game tests on a world copy cover tank recipes with a nearly
+full tank, the sponge and wet sponge swap, mending with an occupied output, charging stacked capacitor
+banks, ghost slots with Inventory Sorter, a SAG Mill with two outputs stalled, the powered spawner
+rebind keeping its capacitor and ME conduits reloading next to an AE2 controller. Forged packets from
+100 blocks away need a modified client. The entity filter fix was not run on a production dedicated
+server, and its only evidence is a javac verifier test and a reading of the bytecode.
 
 ### Vat
 
@@ -239,8 +288,8 @@ Everything is added on the 6.x core, and no 8.x core code is ported.
 - Redstone conduits can output strong power on chosen sides (`StrongSides`), so the signal passes
   through a block, as with 8.0.
 - The filter in a conduit connection opens from the conduit GUI (04e69b8e6, 7fe86947b). The server
-  checks the position, the reach of 8 blocks, the conduit and the filter, and a back button returns to
-  the conduit menu. The menu closes when the bundle, the conduit or the connection disappears.
+  checks the position and the reach through `Packet.canAccessBlock`, the conduit and the filter, and a
+  back button returns to the conduit menu. The menu closes when the bundle, the conduit or the connection disappears.
 - The GUI sends only its own fields, and the server clamps them. The energy path never touches the
   stored energy.
 
@@ -480,9 +529,10 @@ production Arclight.
 - The wireless charger writes to player inventory stacks, throttled by `chargeInterval`.
 - Capture mode spawns no entity, and the spawn reason of the powered spawner stays `SPAWNER`. A mob
   limit plugin, if one is ever added, needs a check.
-- Today any client can change data slots of loaded machines anywhere and the stored energy of energy
-  conduits. The server runs EssentialsX as its only plugin (see [plugins](plugins.md)), so no claim
-  plugin limits that. The fix pack closes it.
+- Before the fix pack any client could change data slots of loaded machines anywhere and the stored
+  energy of energy conduits. The server runs EssentialsX as its only plugin (see
+  [plugins](plugins.md)), so no claim plugin limited that. The fix pack closes it in be881bc and
+  f142998. A player within reach can still change the settings of any machine, as the screens allow.
 - The fork adds no mixins, so nothing collides with the Bukkit patches.
 
 ## Local divergences
@@ -503,8 +553,12 @@ These differ from upstream on purpose and must survive a re-sync.
 - The damage mode of the filters is a 6.x cycle button.
 - Data maps run through the fork's own reload listener in upstream's JSON format.
 - The charger charges every `chargeInterval` ticks, 5 by default.
-- The packet validation, the energy fix of the aversion obelisk and its position rounding are SkyTekx
-  fixes without an upstream commit.
+- The packet validation with the reach test of the menus, the hardened item push of
+  `TransferUtil.moveItems`, the output recheck of the soul binder, the entity filter slot without a
+  client level, the energy fix of the aversion obelisk and its position rounding are SkyTekx fixes
+  without an upstream commit.
+- The output check of crafting machines inserts copies into its snapshot, where upstream's dccb83cda
+  inserts the outputs themselves.
 - Connected glass wraps Athena's model in a cutout render type.
 
 ## Open questions
@@ -516,7 +570,6 @@ Nobody has verified these yet (inventory, `critic_notes`, Things nobody has veri
 - Whether upstream's electromagnet pulls items from a Curios slot or only toggles there. If it does not
   pull, the Curios class gets a curio tick that runs the magnet logic.
 - The license of the Apothic Spawners snippet.
-- Whether Inventory Sorter matches blacklisted slots by their exact class name.
 
 The owner may also want the content left out with a small cost: the weather obelisk (about 10 h, with
 a permission gate) and the painted walls (about 3 h). The wind charge default is the owner's to change
@@ -524,9 +577,9 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
 
 ## Operator notes
 
-- Before a release, every bundle passes `compileJava`, a full build with `LC_ALL=C.UTF-8` and the
-  compat scan with `TOTAL MISSING: 0` against EnderIO Legacy Machines. A dedicated `runServer` reaches
-  `Done` with and without Curios.
+- Before a release, every bundle passes the compile tasks of every source set, a full build with
+  `LC_ALL=C.UTF-8` and the compat scan with `TOTAL MISSING: 0` against EnderIO Legacy Machines. A
+  dedicated `runServer` reaches `Done` with and without Curios.
 - The release stage runs `runData` and reconciles the generated resources, then swaps the `-all` jar
   into `local-mods/` and removes the 6.2.18-beta jar, so two Ender IO jars never load together. The
   same swap goes into `mods/` by hand, as `AGENTS.md` asks (see [mod set](mod-set.md)). The pack
@@ -561,6 +614,10 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   work to the excluded list, chained the machine and the conduit bundles into two lanes, added the
   packet validation and the AE2 guard to the fix pack and corrected the capability, Athena, keybind,
   Curios and spawner details (inventory, `critic_notes`).
+- The first packet validation of the fix pack (be881bc) refused a packet when the block centre was more
+  than 8 blocks from the feet, the distance of a vanilla container. The review replaced it in f142998
+  with the reach test of the menus, because the Apotheosis 7.4.8 reach affix and gems open screens from
+  9 to 13 blocks away, and every change made there was dropped.
 
 Related: [Twilight Forest backport](twilightforest-backport.md), [mod set](mod-set.md),
 [publish](publish.md), [Arclight runtime](../server/arclight.md), [open items](../open-items.md).

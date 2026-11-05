@@ -246,11 +246,11 @@ counts in the list below are older than the last fourteen of them and were not r
 - Flux Networks 7.2.1.15 joined on 2026-11-04 as a CurseForge file, see
   [Flux Networks](#flux-networks). It is MIT licensed, and the LICENSE of its repository travels in
   `licenses/` because the jar has none.
-- SkyTekx Molten 1.0.0 joined on 2026-11-05 (9f47d1b0). The pack's own mod, built from the local repo
-  `~/git/skytekx-molten` at edec978, adds 70 molten fluids with their melting and casting recipes for
-  the ingot materials that Tinkers' Construct does not handle, such as palladium and yellorium. It
-  registers fluids, blocks and buckets, so it is required on both sides. It is MIT licensed, and its
-  license text travels in `licenses/` because the jar has none.
+- SkyTekx Molten 1.0.0 joined on 2026-11-05 (9f47d1b0). The pack's own mod, built from the public repo
+  [skytekx/skytekx-molten](https://github.com/skytekx/skytekx-molten) at edec978, adds 70 molten fluids
+  with their melting and casting recipes for the ingot materials that Tinkers' Construct does not handle,
+  such as palladium and yellorium. It registers fluids, blocks and buckets, so it is required on both
+  sides. It is MIT licensed, and its license text travels in `licenses/` because the jar has none.
 
 Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils

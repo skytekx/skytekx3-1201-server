@@ -105,32 +105,32 @@ public class DigitalAdapterPeripheral implements IPeripheral {
     // Stress Gauge
 
     @LuaFunction(mainThread = true)
-    public final int getKineticStress(String direction) {
+    public final float getKineticStress(String direction) {
         Direction dir = Helpers.nameToDir(direction);
         if(dir == null) return 0;
         var sg = this.tileEntity.getStressGauge(dir);
         if(sg == null) return 0;
-        return (int) sg.getNetworkStress();
+        return sg.getNetworkStress();
     }
 
     @LuaFunction(mainThread = true)
-    public final int getKineticCapacity(String direction) {
+    public final float getKineticCapacity(String direction) {
         Direction dir = Helpers.nameToDir(direction);
         if(dir == null) return 0;
         var sg = this.tileEntity.getStressGauge(dir);
         if(sg == null) return 0;
-        return (int) sg.getNetworkCapacity();
+        return sg.getNetworkCapacity();
     }
 
     // Speed Gauge
 
     @LuaFunction(mainThread = true)
-    public final int getKineticSpeed(String direction) {
+    public final float getKineticSpeed(String direction) {
         Direction dir = Helpers.nameToDir(direction);
         if(dir == null) return 0;
         var sg = this.tileEntity.getSpeedGauge(dir);
         if(sg == null) return 0;
-        return (int) sg.getSpeed();
+        return sg.getSpeed();
     }
 
     @LuaFunction(mainThread = true)
@@ -141,42 +141,34 @@ public class DigitalAdapterPeripheral implements IPeripheral {
     // Pulley
 
     @LuaFunction(mainThread = true)
-    public final int getPulleyDistance(String direction) {
+    public final float getPulleyDistance(String direction) {
         Direction dir = Helpers.nameToDir(direction);
         if(dir == null) return 0;
         var rp = this.tileEntity.getRopePulley(dir);
         var hp = this.tileEntity.getHosePulley(dir);
         var ep = this.tileEntity.getElevatorPulley(dir);
-        if(rp != null) {
-            return (int) rp.getInterpolatedOffset(.5f);
-        }
-        else if(hp != null) {
-            return (int) hp.getInterpolatedOffset(.5f);
-        }
-        else if(ep != null) {
-            return (int) ep.getInterpolatedOffset(.5f);
-        }
-        else {
-            return 0;
-        }
+        if(rp != null) return rp.getInterpolatedOffset(.5f);
+        else if(hp != null) return hp.getInterpolatedOffset(.5f);
+        else if(ep != null) return ep.getInterpolatedOffset(.5f);
+        else return 0;
     }
 
     @LuaFunction(mainThread = true)
-    public final int getPistonDistance(String direction) {
+    public final float getPistonDistance(String direction) {
         Direction dir = Helpers.nameToDir(direction);
         if(dir == null) return 0;
         var mp = this.tileEntity.getMechanicalPiston(dir);
         if(mp == null) return 0;
-        return (int) mp.getInterpolatedOffset(.5f);
+        return mp.getInterpolatedOffset(.5f);
     }
 
     @LuaFunction(mainThread = true)
-    public final int getBearingAngle(String direction) {
+    public final float getBearingAngle(String direction) {
         Direction dir = Helpers.nameToDir(direction);
         if(dir == null) return 0;
         var mp = this.tileEntity.getMechanicalBearing(dir);
         if(mp == null) return 0;
-        return (int) mp.getInterpolatedAngle(.5f);
+        return mp.getInterpolatedAngle(.5f);
     }
 
     public final @Nullable ElevatorContraption getElevatorContraption(ElevatorPulleyBlockEntity ep) {

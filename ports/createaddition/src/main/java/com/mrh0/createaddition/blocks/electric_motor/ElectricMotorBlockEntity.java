@@ -242,6 +242,8 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 
 	// This is the callback used by the CC Peripheral!
 	public boolean setRPM(float rpm) {
+		// Ignore NaN and infinities, which the clamp below lets through (upstream 9dd1b46).
+		if (!Float.isFinite(rpm)) return false;
 		rpm = Math.max(Math.min(rpm, Config.ELECTRIC_MOTOR_RPM_RANGE.get()), -Config.ELECTRIC_MOTOR_RPM_RANGE.get());
 		cc_new_rpm = rpm;
 		cc_update_rpm = true;

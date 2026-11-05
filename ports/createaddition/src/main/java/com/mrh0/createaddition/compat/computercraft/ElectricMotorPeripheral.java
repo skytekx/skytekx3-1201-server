@@ -53,6 +53,9 @@ public class ElectricMotorPeripheral implements IPeripheral {
     
     @LuaFunction(mainThread = true)
     public final void setSpeed(double rpm) throws LuaException {
+    	// NaN or an infinity would reach the Create network (upstream 9dd1b46).
+    	if (!Double.isFinite(rpm))
+    		throw new LuaException("Speed must be a finite number.");
     	if ((float) rpm == getSpeed())
     		return;
     	if(tileEntity != null) {
@@ -89,6 +92,8 @@ public class ElectricMotorPeripheral implements IPeripheral {
     
     @LuaFunction(mainThread = true)
     public final float rotate(double deg, Optional<Double> rpm) throws LuaException {
+    	if (!Double.isFinite(deg))
+    		throw new LuaException("Angle must be a finite number.");
     	if(tileEntity != null) {
     		double _rpm = rpm.orElse((double) getSpeed());
     		if(rpm.isPresent())
@@ -100,6 +105,8 @@ public class ElectricMotorPeripheral implements IPeripheral {
     
     @LuaFunction(mainThread = true)
     public final float translate(double dist, Optional<Double> rpm) throws LuaException {
+    	if (!Double.isFinite(dist))
+    		throw new LuaException("Distance must be a finite number.");
     	if(tileEntity != null) {
     		double _rpm = rpm.orElse((double) getSpeed());
     		if(rpm.isPresent())

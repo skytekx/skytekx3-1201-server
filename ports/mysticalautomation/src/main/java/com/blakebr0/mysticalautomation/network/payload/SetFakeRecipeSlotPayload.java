@@ -1,5 +1,6 @@
 package com.blakebr0.mysticalautomation.network.payload;
 
+import com.blakebr0.mysticalautomation.container.slot.FakeSlot;
 import com.blakebr0.mysticalautomation.util.IFakeRecipeContainer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -25,10 +26,15 @@ public record SetFakeRecipeSlotPayload(int slot, ItemStack stack) {
 
         var menu = player.containerMenu;
 
-        if (payload.slot < menu.slots.size() && menu instanceof IFakeRecipeContainer fakeRecipeContainer) {
+        // SkyTekx: upstream 9777e82 checks only the upper bound of the index, and any slot of the open menu could be
+        // set, a player inventory or machine input slot too. A modified client could create items that way, so only
+        // the ghost slots of a menu the player may still use take the stack
+        if (payload.slot >= 0 && payload.slot < menu.slots.size() && menu.stillValid(player) && menu instanceof IFakeRecipeContainer fakeRecipeContainer) {
             var slot = menu.slots.get(payload.slot);
 
-            fakeRecipeContainer.setFakeRecipeSlot(slot, payload.stack);
+            if (slot instanceof FakeSlot) {
+                fakeRecipeContainer.setFakeRecipeSlot(slot, payload.stack);
+            }
         }
     }
 }

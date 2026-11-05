@@ -37,13 +37,16 @@ not exist yet.
 ## Status on 2026-11-05
 
 The vendored base (78f4f06), the reproducible Java 17 build (7286996), the license files in the jar
-(f11c10b), the baseline bundle, the small fixes, the ignitable fluids, the connector rework and the
-changes of 1.6.0 are on the branch `claude/twilight-forest-port-mods-j2owbq`. They are the first
-ported features. The pack still ships the Modrinth jar 1.3.3. Only test servers with a reduced mod
-set have booted the fork: those of the ignitable fluids (11cd485), the
-[wire graph test](#wire-graph-test) on the production Arclight jar and the Forge 47.4.18 tests of the
-[changes of 1.6.0](#changes-of-160). The boot and login checks of the baseline and the in game tests
-of the small fixes, the connector rework and the changes of 1.6.0 wait for the [release](#release).
+(f11c10b), the baseline bundle, the small fixes, the ignitable fluids, the connector rework, the
+changes of 1.6.0 and the charging recipes are on the branch
+`claude/twilight-forest-port-mods-j2owbq`. They are the first ported features. The pack still ships
+the Modrinth jar 1.3.3. Only test servers with a reduced mod set have booted the fork: those of the
+ignitable fluids (11cd485), the
+[wire graph test](#wire-graph-test) on the production Arclight jar, the Forge 47.4.18 tests of the
+[changes of 1.6.0](#changes-of-160) and the Forge and Arclight tests of the
+[charging recipes](#charging-recipes). The boot and login checks of the baseline and the in game
+tests of the small fixes, the connector rework, the changes of 1.6.0 and the charging recipes wait
+for the [release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -52,7 +55,7 @@ of the small fixes, the connector rework and the changes of 1.6.0 wait for the [
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 68ac009, 1c55181, d200303, 4cea82f, bc65bd1, f084665, ee2e417, 5946e46, 12ac066, e782463 and c0c031d, with the review fix 739b6f8. The in game and boot tests belong to the release |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Done in a7cbc03, f287b38, c2bbc62 and 36d6c2d, with the review fix b83da4e and the scan tool 7f1364c. Tested on a Forge 47.4.18 server with Create 6.0.8. The in game tests with a client, the Arclight boot and the scan of the live world belong to the release |
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in 11cd485 and f6885dd, with the review fixes fb644ea and a60df19. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
-| Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Planned |
+| Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Done in d19a5ef, 915d9b6 and c792a68, with the test record b091152 and the review fix 434f71a. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the belt run and the full pack boot belong to the release |
 | Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Planned |
 | Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Planned |
 | Ponders and translations (`cca-ponders-and-translations`) | Three new ponder scenes with their NBT converted to 1.20.1, and 41 new lang keys | 9 | Connector rework, the 1.6.0 changes, ignitable fluids, charging, pump, servo | Planned |
@@ -342,12 +345,21 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   and two loops gave a diamond, also from a transitional item at step 2 after `/reload`, while a
   precision mechanism at its deploying step stayed untouched. Weathered copper tiles turned into
   plain ones, oxidized tile stairs into plain stairs, a weathered tile slab into a plain slab, gold
-  ingots, plates, sheets and blocks into Thermal electrum, gold wire into CC&A electrum wire
-  (the test servers have no Immersive Engineering),
-  certus quartz into charged certus quartz and a Create form test recipe gave its count of 2.
-  Neither server loaded a class of `com.mrh0.createaddition.compat` (`-Xlog:class+load`). Both kept
-  only the ERROR lines of the test setup, the flat world settings and a test recipe without
-  energy, which fails with `Missing energy`.
+  ingots, plates, sheets and blocks into Thermal electrum, gold wire into CC&A electrum wire (the
+  test servers have no Immersive Engineering), certus quartz into charged certus quartz and a
+  Create form test recipe gave its count of 2. Neither server loaded a class of
+  `com.mrh0.createaddition.compat` (`-Xlog:class+load`). Both kept only the ERROR lines of the test
+  setup, the flat world settings and a test recipe without energy, which fails with
+  `Missing energy`.
+- The integration put the three commits on top of the connector rework and the changes of 1.6.0
+  with no change to their Java code. The jar of c792a68 (SHA-1
+  9cf70e69d5f0bcde700a7e9ba934e94eb14774db) booted again on both test servers, with the same
+  world and datapack. On a depot under a powered coil the Sequenced Assembly of iron gave a diamond,
+  a gold ingot gave Thermal's electrum ingot and a weathered copper tile went down to a plain one.
+  Both servers logged one ERROR line, the test recipe without energy, loaded no compat class and
+  stopped with java exit 0. The jar of 434f71a (SHA-1 122017190996b570f15af20e6befd38732ba6050)
+  differs only by a comment, compiled with 38 warnings as before, and the compat scan of both jars
+  against the 265 jars of the Forge pack boot reported TOTAL MISSING 0.
 
 ### Electric Pump
 

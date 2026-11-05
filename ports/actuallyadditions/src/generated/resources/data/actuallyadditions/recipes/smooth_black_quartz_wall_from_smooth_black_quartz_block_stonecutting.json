@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 1,
+  "ingredient": {
+    "item": "actuallyadditions:smooth_black_quartz_block"
+  },
+  "result": "actuallyadditions:smooth_black_quartz_wall"
+}

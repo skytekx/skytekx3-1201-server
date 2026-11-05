@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 1,
+  "ingredient": {
+    "item": "actuallyadditions:ethetic_green_block"
+  },
+  "result": "actuallyadditions:ethetic_green_stairs"
+}

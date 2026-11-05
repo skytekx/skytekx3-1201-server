@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Melting
-description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,530 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
+description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,527 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
 tags: [content, recipes, tconstruct, datapack, tools]
 timestamp: 2026-11-05
 ---
@@ -28,8 +28,9 @@ recipe declares, so a reader fault that would hide a dupe stops the run as well 
 
 The counts are those of pack 3.1.3 with the nine mods of 2026-11-04, Flux Networks and SkyTekx Molten (see
 [mod set](../modpack/mod-set.md#additions-of-2026-11-04)), after the fixes of the review, the sync with the
-unification and the follow-up of 2026-11-05 (see [fixes of the review](#fixes-of-the-review),
-[sync with the unification](#sync-with-the-unification) and [follow-up of 2026-11-05](#follow-up-of-2026-11-05)).
+unification, the follow-up of 2026-11-05 and its review (see [fixes of the review](#fixes-of-the-review),
+[sync with the unification](#sync-with-the-unification), [follow-up of 2026-11-05](#follow-up-of-2026-11-05) and
+[review of the follow-up](#review-of-the-follow-up)).
 The recheck of 2026-11-05 held the folder back from the deploy of 3.1.3 at 00:46 until its three faults were
 fixed. The recipes are server side, so they need no new pack. The counts below come from the dump of 01:19 on the
 test server of the follow-up.
@@ -38,14 +39,14 @@ test server of the follow-up.
 |---|---:|---:|
 | Recipes read from the dump | 38,068 | 38,677 |
 | Items that melt already and keep their recipe | 1,375 | 1,658 |
-| Items that get a generated recipe | 7,868 | 8,321 |
+| Items that get a generated recipe | 7,865 | 8,318 |
 | Of them gear that melts by its repair material | 46 | 49 |
-| Items that stay out below 10 mB | 77 | 278 |
+| Items that stay out below 10 mB | 80 | 281 |
 | Recipes the reader cannot read | 599 | 599 |
 | Recipes left out because an ingredient matches no item | 4 | 4 |
 | Recipes that take only inputs the machine keeps | 32 | 32 |
 
-The folder holds 9,530 files with 4.0 MB: 6,659 for both cases, 1,209 only without Molten and 1,662 only with
+The folder holds 9,527 files with 4.0 MB: 6,656 for both cases, 1,209 only without Molten and 1,662 only with
 it. With Molten, 1,523 of the generated recipes give at least one of 63 Molten fluids, led by soularium 303,
 manasteel 186, dark steel 162 and draconium 161, and 517 items melt only because Molten is there.
 
@@ -67,8 +68,22 @@ The content of an item is a vector of fluids in mB.
   rolls all products of a recipe once per round while the output multiplier of the ball is above zero, the last
   round with the chance of what is left of it, and multiplies the chance of each product by the bonus of the ball,
   unless the recipe has the bonus type `none`. The vibrant alloy ball has the largest multiplier of the 10 balls,
-  1.75, so a product of a recipe with a bonus counts with twice its count in the generator and with its expected
-  count in the audit.
+  1.75, so a product of a recipe with the bonus type `multiply_output`, or with no bonus type, counts with twice
+  its count in the generator and with its expected count in the audit. With `chance_only` the mill rolls once with
+  the bonus of the ball on the chance, and with `none` once without it, so these products keep their count.
+- A product of a Thermal machine counts with the best catalyst and the best augments of the pack. Thermal reads a
+  product without a chance, or one marked `locked`, as locked (`RecipeJsonUtils.parseItemChance`). Every other
+  chance becomes the chance times the mod of the catalyst times the mod of the machine, and at least the smallest
+  chance of the catalyst (`BaseMachineRecipe` and `CatalyzedMachineRecipe`). The first product takes the primary
+  mods, the others the secondary ones, and the machine gives the whole part of the chance for sure and one stack
+  more at the rest. No augment raises the primary mod. Four Auxiliary Process Sieves of the Abyssal tier of Thermal
+  Extra in the four augment slots raise the secondary mod to 2.6. The catalysts come from the dump, the strongest
+  are phytogro in the insolator (3.0 and 3.0), basalz powder in the pulverizer (1.25 and 3.0), cinnabar in the
+  smelter (3.0 primary, 3.5 secondary as dust) and nuke TNT in the nitratic igniter of Thermal Extra (5.0 and 5.0).
+  A raw osmium in the igniter therefore gives up to 15 osmium ore chunks, 6 locked and 9 from the chance of 0.65,
+  and a raw iron in the smelter up to 10 nickel nuggets.
+- The Cyclic crusher adds its bonus once at its percent, always at a percent of 1, with up to the count of its
+  stack (`TileCrusher`). The fluid that the Ender IO tank empties out of an item is a product, not an input.
 - A sequenced assembly of Create gives exactly one of its results per craft and draws it by the chances, which
   act as weights. Each result therefore counts with its own count, and in the audit at its share of the weights.
 - Catching a fish, an axolotl or a tadpole with a water bucket is no recipe, so the generator adds a catch for
@@ -128,13 +143,15 @@ The content of an item is a vector of fluids in mB.
   generator had read such recipes as free, so the 16 concretes and the fragments of Blood Magic got no recipe
   before.
 - A recipe with several products gives a product that does not melt nothing, since nobody knows how the cost
-  splits.
+  splits. A fluid product takes its content with it, so it comes off the share of the item products. No recipe of
+  the pack gives an item together with a fluid that counts, so this changes no file today.
 - Without Molten the same is computed again with its fluids and recipes removed. An item whose content is the same
   in both cases gets one file, an item whose content differs gets `<item>.json` with
   `forge:not` of `forge:mod_loaded skytekx_molten` and `<item>_molten.json` with `forge:mod_loaded skytekx_molten`.
-- The largest fluid is the result and the others are byproducts. Items with durability use
-  `tconstruct:damagable_melting` with the unit size Tinkers uses for the fluid, so a worn piece returns less. The
-  amounts are whole units, because Tinkers rounds the output down to them even at full durability.
+- The largest fluid is the result and the others are byproducts, which only the foundry gives out. Items with
+  durability use `tconstruct:damagable_melting` with the unit size Tinkers uses for the fluid, so a worn piece
+  returns less. The amounts are whole units, because Tinkers rounds the output down to them even at full
+  durability.
 - The temperature is the one Tinkers uses for the result fluid, the time follows the Tinkers formula.
 - Gear that nothing makes, such as dungeon loot, melts by its repair material at the unit counts Tinkers uses for
   vanilla gear: helmet 5, chestplate 8, leggings 7, boots 4, sword 2, pickaxe 3, axe 3, shovel 1 and hoe 2. That
@@ -147,7 +164,9 @@ The content of an item is a vector of fluids in mB.
   their recipe has `forge:item_exists` instead.
 - The fluids that count are metals, gems (diamond, emerald, quartz, amethyst), obsidian, glass, ender, debris and
   the Molten fluids. Left out are water, lava, milk, blazing blood, magma, venom, honey, liquid soul, the slimes,
-  the soups and stews, clay, seared and scorched stone and the charred prismarine of Tinkers' Reforged.
+  the soups and stews, clay, seared and scorched stone and the charred prismarine of Tinkers' Reforged. Fluids
+  that share a `forge:molten_*` tag count as one, and so do molten ender and the resonant ender of Thermal, which
+  share `forge:ender` and hold 250 mB per pearl each.
 - Items of Tinkers itself, Tinkers tools and Tinkers parts stay out, Tinkers melts them by their materials.
 
 ## Fixes of the review
@@ -253,6 +272,27 @@ Against the folder of 9,546 files the new one has 9,530:
 No other file changed, since no product of the 32 slicing recipes and the other 12 SAG mill recipes gets a
 generated recipe.
 
+### Review of the follow-up
+
+A review of the follow-up confirmed its counts, conditions and readers and found seven smaller faults. None was a
+dupe in the folder, and all seven are fixed:
+
+| Fault | Effect | Fix |
+|---|---|---|
+| The reader did not know the catalysts and augments of the Thermal machines | The nitratic igniter of Thermal Extra gives up to 15 ore chunks per raw osmium, uranium or zinc. The reader counted 7, so each chunk melted into 12 mB of its metal instead of 6 | Every unlocked chance counts with the best catalyst and augments (see [the rules](#the-rules)). The three chunks fall below 10 mB and stay out |
+| Four ironwood overrides had the unit size 10 for amounts that ten does not divide | Tinkers rounds even a new piece down to whole units, so the ironwood axe melted into 130 mB iron and 10 mB gold instead of 135 and 15. The helmet and the leggings lost 5 mB of each fluid the same way, the shovel 5 mB iron | Unit size 5 for both fluids. The generator falls back to a unit that divides the amount, which changes none of its files |
+| A full refund plus a gained fluid counted as a conversion | 16 findings without Molten and 15 with it, such as the beacon recipe of Tinkers | They are sources now, and the report notes the refund |
+| The reader did not know the bonus of the Cyclic crusher, the fluid that the Ender IO tank empties out, the product under `byproduct` of the Iron's Spellbooks cauldron and the fluid under `mix` of the Cyclic solidifier, and it kept resonant ender apart from molten ender | No file changed. The audit lost three sources, the Tinkers casts of the ender pearl and the ender eye and the pearl of the Thermal chiller, which took resonant ender as nothing, and gained two, the ender pearl that the Cyclic crusher adds to end stone and the quartz it adds to diorite | The reader knows them all, and the summary lists the JSON keys it still does not know, 287 in each case, such as energy fuels, enchanting stats and gases |
+| The owner question on Neptune's Bounty named one item of a larger group | Loot and gifts that hold metal melt as well, such as the Faraday armor of the Immersive Engineering hero gifts and the gun parts of its commandos | The question covers all loot that melts into metal now (see [open items](../open-items.md#owner-decisions)) |
+| The text on the obsidian overrides said that the two switch-off files only add a condition | Wording | They replace the two conditions of the Molten jar (see [dupes closed with overrides](#dupes-closed-with-overrides)) |
+| The SAG rule said that every recipe with a bonus counts twice | Wording, the code was right | It names `multiply_output` and the missing bonus type (see [the rules](#the-rules)) |
+
+Against the folder of 9,530 files the new one has 9,527: the osmium, uranium and zinc ore chunks of Thermal Extra
+are gone, and no other file changed. The audit has 196 conversions and 360 sources without Molten and 250 and 386
+with it, and no new dupe. The generator gives the same 9,527 files from the dump of 23:22 and from the dump of
+01:19. The runs of the review found one more wording fault: the text said that the smeltery gives out the
+byproducts, which only the foundry does (see [runs of the follow-up](#runs-of-the-follow-up)).
+
 ## Counts per mod
 
 Generated recipes per item namespace, without and with Molten. Eight of the nine mods of 2026-11-04 and Flux
@@ -263,7 +303,8 @@ fragments to `bloodmagic` and the universal terminal to `ae2wtlib`, and the craf
 `farmingforblockheads` its only one. With the unification `ae2`, `advanced_ae` and `enderio` lost two items each
 and `createaddition` gained three rods (see [sync with the unification](#sync-with-the-unification)). With the
 follow-up `railways` lost the phantom track and `minecraft` gained four mob buckets (see
-[follow-up of 2026-11-05](#follow-up-of-2026-11-05)).
+[follow-up of 2026-11-05](#follow-up-of-2026-11-05)), and with its review `thermal_extra` lost three ore chunks
+(see [review of the follow-up](#review-of-the-follow-up)).
 
 | Namespace | Without Molten | With Molten |
 |---|---:|---:|
@@ -274,7 +315,7 @@ follow-up `railways` lost the phantom track and `minecraft` gained four mob buck
 | `botania` | 217 | 340 |
 | `railcraft` | 321 | 321 |
 | `medievalembroidery` | 239 | 239 |
-| `thermal_extra` | 228 | 201 |
+| `thermal_extra` | 225 | 198 |
 | `mysticalagriculture` | 215 | 209 |
 | `cyclic` | 212 | 212 |
 | `immersiveengineering` | 203 | 205 |
@@ -418,7 +459,7 @@ tools and 684 stay out. The largest groups are Medieval Embroidery 91, Blue Skie
   the fixes of the review these 46 items melted into molten bendalloy.
 
 The leather horse armor and the Magistu Armory barding are the two horse armors that do not melt, the other 12
-do. Items whose largest fluid is below 10 mB (77 without Molten, 278 with it) stay out. With Molten 204 of them
+do. Items whose largest fluid is below 10 mB (80 without Molten, 281 with it) stay out. With Molten 204 of them
 are Ender IO clear glass variants: their glass can be made from Aether quicksoil glass, which holds nothing, so only
 2 mB soularium or dark steel of the token is left. The others are Railcraft tracks, Reliquary bullets, the phantom
 track of Railways and the like.
@@ -441,7 +482,9 @@ takes, with the ingredients at their content and expected counts for chance outp
 
 - A dupe takes some of the fluid and the melting gives more of it back, with no other fluid lost on the way.
 - A trade pays for the gain with another fluid that the melting does not give back.
-- A conversion takes only other fluids, and a source takes nothing that melts, such as an essence.
+- A conversion takes only other fluids that the melting does not give back in full. A source takes nothing that
+  melts, such as an essence, or only fluids that the melting refunds in full. The beacon recipe of Tinkers is such
+  a source: the melting refunds its obsidian and gains glass, since a glass that does not melt fills the recipe.
 
 Ore processing by machines is left out, it is what the ore rates are for. The audit runs a second time with the
 generated recipes in place, with ingredients at what they melt into. Both runs find no open dupe in either case,
@@ -454,8 +497,8 @@ and the self check of the reader finds no product below the count of its recipe:
 | Products that the reader counts below their recipe | 0 | 0 |
 | Known machine dupes, in 16 melting recipes | 36 | 36 |
 | Trades | 11 | 11 |
-| Conversions | 212 | 265 |
-| Sources | 345 | 372 |
+| Conversions | 196 | 250 |
+| Sources | 360 | 386 |
 
 ### Dupes closed with overrides
 
@@ -490,7 +533,8 @@ Molten melts both items itself, into the same molten obsidian but without the 40
 overrides give as a byproduct. Two files at the ids of its recipes,
 `skytekx_molten:smeltery/melting/obsidian/ingot` and `skytekx_molten:smeltery/melting/obsidian/block`, therefore
 switch them off with `forge:false`, so the overrides give the iron with Molten as well. Each file is the recipe of
-the Molten jar with only the condition added. The override `obsidian_with_iron` keeps its recipe in both cases.
+the Molten jar with its two conditions, `forge:mod_loaded` of `forbidden_arcanus` and `forge:item_exists`, replaced
+by `forge:false`. The override `obsidian_with_iron` keeps its recipe in both cases.
 
 ### Known machine dupes
 
@@ -593,7 +637,8 @@ the count of KubeJS for the other runs:
 The melts were done by commands only: a seared fuel tank with 4,000 mB lava (blazing blood for the template), a
 seared melter on it and a hopper on top. The command `item replace` put the item into the hopper, since the
 melter itself is no container for the command, and `data get block` read the melter tank. The melter keeps only
-the result fluid, the byproducts come out of the smeltery.
+the result fluid. The byproducts come out of the foundry alone, since only `FoundryBlockEntity` uses the
+`ByproductMeltingModuleInventory` of Tinkers 3.12.1. A smeltery gives only the result, like the melter.
 
 On the folders of 9,181 and 9,182 files, before the nine mods:
 
@@ -762,6 +807,8 @@ fixes pack, so the first boot moved it last with the two commands of [load order
 |---|---|---|---:|---|---:|---:|
 | 01:17 | Yes | Folder of 9,530 files, dump script and probes | 51.5 s | 0 and 2 | 46,983 | 8,321 |
 | 01:21 | No | Same, probe | 49.4 s | 0 and 6 | 45,921 | 7,868 |
+| 03:24 | Yes | Folder of 9,527 files of the review, probe and melters | 51.4 s | 0 and 2 | 46,982, then 46,980 | 8,318 |
+| 03:32 | No | Same, probe | 49.2 s | 0 and 6 | 45,918 | 7,865 |
 
 The ERRORs are the `ModelBakery` line and AllTheLeaks, and without Molten the four "Unidentified mapping" lines,
 as before, and no log has "Parsing error loading recipe" or a line that names a generated recipe. The probe found
@@ -774,7 +821,8 @@ probe counted exactly the 7,868 generated recipes, and the Molten jar has no rec
 
 The dump of 01:19 read 46,998 recipes with 15,631 distinct ingredients, 36,084 items, 695 fluids, 4,133 item
 tags and 417 fluid tags of 291 mods in 4,799 ms. No recipe was unreadable, 49 had an ingredient that no item
-fills, and 124 barriers were left out. The generator gives the same 9,530 files from it as from the dump of 23:22.
+fills, and 124 barriers were left out. The generator of the follow-up gave the same 9,530 files from it as from
+the dump of 23:22.
 
 The probe of 01:18 with Molten and of 01:22 without it found these recipes:
 
@@ -803,6 +851,35 @@ Obsidian Block stayed in the melter, since its 9,000 mB do not fit the melter ta
 (`MelterBlockEntity.TANK_CAPACITY`), so it needs a smeltery or foundry with room for them. Neptune's Bounty stayed
 as well, since it has no recipe without Molten. Every melter was read empty before its item went in.
 
+The fixes of the review ran at 03:24 with Molten and at 03:32 without it. The boot of 01:21 without the Molten jar
+had dropped its mod pack, and the boot of 03:24 added it after the fixes pack again. So KubeJS found 46,982
+recipes at first, two more than expected, since the two obsidian recipes of Molten came back over the two files
+that switch them off. The two commands of [load order](boot-fixes.md#load-order) moved the fixes pack last at
+03:29, and KubeJS found 46,980, three fewer than at 01:17, as many as the folder has fewer files. That reload
+logged the same 13 advancement errors of other mods as the one at 01:15. Without Molten KubeJS found 45,918,
+again three fewer than at 01:21. The live server has the fixes pack last, 308th of 309 packs with Molten at 299,
+and needs no move.
+
+The probe at 03:30 with Molten and at 03:33 without it found the recipes of the table above again, and these for
+the review:
+
+| Item | With Molten | Without Molten |
+|---|---|---|
+| Osmium, uranium and zinc ore chunks of Thermal Extra | None | None |
+| Ironwood axe, override | 135 mB iron, 15 mB gold | The same |
+| Ironwood helmet, override | 225 mB iron, 25 mB gold | The same |
+| Ironwood leggings, override | 315 mB iron, 35 mB gold | The same |
+| Ironwood shovel, override | 45 mB iron, 5 mB gold | The same |
+| Faraday chestplate of Immersive Engineering | 720 mB aluminum | The same |
+
+The ironwood pieces match the recipes of Twilight Construct as well, which give 90 mB molten ironwood per ingot.
+In real melters with Molten at 03:30 the ironwood axe took the override and melted into 135 mB molten iron, not
+the 130 mB of the unit size 10, and the 15 mB gold stayed out as a byproduct. The ironwood shovel took the recipe
+of Twilight Construct and melted into 90 mB molten ironwood, its whole ingot. The iron longsword melted into
+360 mB molten iron. The osmium ore chunk stayed in its melter, which did not heat up, since no recipe takes it.
+The melters ran with Molten only, since the four items have the same recipes without it, and every spot of the
+rig was air before and after it.
+
 ### Recipe sync to the clients
 
 Every client gets the whole recipe list at login in one recipe packet. A probe at 22:02, 22:21 and 23:22 serialized it
@@ -817,15 +894,15 @@ with the splitter of Forge (`VanillaPacketSplitter`), which cuts every packet ab
 | 46,995 at 23:22, after the sync, with the folder of 9,546 files | 12,527,084 bytes | 12 | 2,564,447 bytes |
 
 The packet was above 8 MiB and split for every client before the folder already, so the folder adds 0.8 MB and
-about 0.3 MB on the wire and no new kind of packet. The folder of 9,530 files gives three recipes more with Molten
-than the one of 9,546 files, so it was not measured again. Packet Fixer of the pack also lifts the size limits
-(`allSizesUnlimited=true`). No client joined a test server: the only clients on the build machine are the owner's
-instances, which the tests leave alone. The login with JEI and the Tinkers recipe pages is therefore part of the
-check after the deploy.
+about 0.3 MB on the wire and no new kind of packet. The folders of the follow-up and its review differ from the
+one of 9,546 files by at most three recipes with Molten, so they were not measured again. Packet Fixer of the
+pack also lifts the size limits (`allSizesUnlimited=true`). No client joined a test server: the only clients on
+the build machine are the owner's instances, which the tests leave alone. The login with JEI and the Tinkers
+recipe pages is therefore part of the check after the deploy.
 
 ## One JSON folder or one KubeJS table
 
-The recipes ship as 9,530 JSON files in the fixes pack, which is the default. For the comparison at 19:25 the 9,181
+The recipes ship as 9,527 JSON files in the fixes pack, which is the default. For the comparison at 19:25 the 9,181
 recipes of that time were turned into one KubeJS script of 2.7 MB that adds them with `event.custom`:
 
 | Point | JSON folder | KubeJS table |
@@ -834,7 +911,7 @@ recipes of that time were turned into one KubeJS script of 2.7 MB that adds them
 | Cost at boot | Parsed with the other datapack recipes, no measurable time | 0.19 s to load the script and 95 ms for the table, the KubeJS recipe event took 717 ms against 488 ms to 648 ms with the folder |
 | Molten and mod checks | Forge conditions in each file | Hand written checks in the script |
 | AlmostUnified | Sees and unifies the recipes | Runs before the table and never sees it |
-| Git | 9,530 files under `world/`, added with `git add -f` | One file in `kubejs/server_scripts/` |
+| Git | 9,527 files under `world/`, added with `git add -f` | One file in `kubejs/server_scripts/` |
 | Live server | Copied with the datapack, `/reload` is enough | Needs KubeJS and a reload of the scripts |
 
 Both forms gave all 7,943 recipes of the folder at that time. The JSON folder stays, it needs no script, keeps the
@@ -859,12 +936,13 @@ new dump:
 python3 -I tools/gen_melting.py ~/skytest-melting/kubejs
 ```
 
-It prints the counts per world and mod, the unreadable recipe types, the fluids left out and the audit, and
-rewrites the folder. Exit status 1 means a new dupe or a product that the reader counts below its recipe, both
-named in the summary. A dupe is closed with an override in the fixes pack at the recipe's own id, or listed in
-`KNOWN_DUPES` of the script when a machine loop makes it without melting. A low product needs a fix of the reader
-for its recipe type, as the SAG mill and the sequenced assembly did on 2026-11-05. Then the command runs again. With `--check` it changes nothing and exits 1 when the folder differs from
-what the dump gives. A dump of a server that already has the generated recipes and overrides gives the same
+It prints the counts per world and mod, the unreadable recipe types, the fluids left out, the JSON keys that the
+reader does not know and the audit, and rewrites the folder. Exit status 1 means a new dupe or a product that the
+reader counts below its recipe, both named in the summary. A dupe is closed with an override in the fixes pack at
+the recipe's own id, or listed in `KNOWN_DUPES` of the script when a machine loop makes it without melting. A low
+product needs a fix of the reader for its recipe type, as the SAG mill and the sequenced assembly did on
+2026-11-05. Then the command runs again. With `--check` it changes nothing and exits 1 when the folder differs
+from what the dump gives. A dump of a server that already has the generated recipes and overrides gives the same
 files. The new folder then goes into git with `git add -f`, since `world/` is ignored, and to the live server
 with the datapack.
 
@@ -874,8 +952,11 @@ Energistics 2 would have on 2026-11-04. Comparing the per mod counts with the pr
 A new machine that keeps some of its inputs, such as on pedestals or in a mould slot, needs an entry in
 `KEPT_KEYS` or `RETURNED_ITEMS` of the script, or its products melt into more than they take. A recipe type that
 uses up a container whole, such as a catch with a water bucket, needs an entry in `WHOLE_TYPES`, or the crafting
-remainder of the container is subtracted. Its code shows which inputs it uses up. The summary also lists the recipes left out because an ingredient matches no item, and a
-recipe there that works in game points to a reader fault, as the apprentice spell book did.
+remainder of the container is subtracted. Its code shows which inputs it uses up. The summary also lists the
+recipes left out because an ingredient matches no item, and a recipe there that works in game points to a reader
+fault, as the apprentice spell book did. A JSON key in the list of unknown keys that names a product or an input
+that the machine uses up needs a reader entry as well, as `byproduct` and `mix` did in the review of the
+follow-up.
 
 The dump leaves the barrier out of every item list, and the generator drops it from the dumps of older versions of
 `melting_dump.js` as well. The final generator gave the same 9,540 files from three dumps: the one of 20:09 made
@@ -883,6 +964,6 @@ with the first script, the one of 21:58 without the folder and the one of 22:20 
 with Flux Networks it gives 9,546 files, from the dump of 23:12 on the folder of the review fixes and from the
 dump of 23:22 on the new one, while the dump of 22:20 still gives the folder of the review fixes. A new config of
 AlmostUnified therefore needs a new dump as well, since the variants it swaps away lose their recipes. The
-generator of the follow-up gives the same 9,530 files from the dump of 23:22 and from the dump of 01:19 on the
-new folder. Both dumps are kept on the build machine under `~/skytekx3-dumps/`, in `melting-2026-11-04-2322/` and
-`melting-2026-11-05-0119/`, about 45 MB each.
+generator of the follow-up gave the same 9,530 files from the dump of 23:22 and from the dump of 01:19 on the
+new folder, and after its review it gives 9,527 files from both. Both dumps are kept on the build machine under
+`~/skytekx3-dumps/`, in `melting-2026-11-04-2322/` and `melting-2026-11-05-0119/`, about 45 MB each.

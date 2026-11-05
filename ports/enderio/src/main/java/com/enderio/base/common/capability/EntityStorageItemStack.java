@@ -28,9 +28,8 @@ public class EntityStorageItemStack implements IEntityStorage {
 
     @Override
     public void setStoredEntityData(StoredEntityData entity) {
-        CompoundTag tag = stack.getOrCreateTag();
-        CompoundTag entityTag = new CompoundTag();
-        entityTag.put(EIONBTKeys.ENTITY_STORAGE, entity.serializeNBT());
-        tag.put(BlockItem.BLOCK_ENTITY_TAG, entityTag);
+        // Only replace the stored entity, and keep whatever else the block entity tag holds.
+        CompoundTag blockEntityTag = stack.getOrCreateTagElement(BlockItem.BLOCK_ENTITY_TAG);
+        blockEntityTag.put(EIONBTKeys.ENTITY_STORAGE, entity.serializeNBT());
     }
 }

@@ -50,6 +50,10 @@ Modifications
     creosote, crude oil, plant oil, ethanol, gasoline, diesel and biodiesel, where a mod adds them)
     catch fire and burn away, and falling burning fluid spreads the fire while doFireTick is on.
     The mixin config now uses the refmap createaddition.refmap.json.
+  - Wires: the energy networks of connectors and redstone relays live in a graph saved per
+    dimension (data/createaddition_wires.dat), so energy and relays work across unloaded chunks
+    and no wire lookup loads a chunk (upstream 126ed38, 393c51f, 9dd1b46). The graph only trusts
+    a saved chunk with the full status and a block entity list (a local change).
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

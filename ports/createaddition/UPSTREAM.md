@@ -231,3 +231,16 @@ its item here, and the NOTICE in the jar sums them up.
     lies one block above the fluid and `isRainingAt` returns false there. Fire beside such a fluid
     survives rain through `keepFire`, which makes the fluid count as a fire source in
     `FireBlock.tick`, so `tick` neither puts the fire out in rain nor lets it burn out.
+14. Wire graph: the connector rework of upstream `126ed38` with the buffer config of `393c51f` and the
+    `EnergyNetwork` tidy ups of `9dd1b46`. The package `energy/network` gains `WireGraph` (the saved
+    data `createaddition_wires` of each dimension), `WireGraphVerifier`, `WireVertex`, `WireSlot`,
+    `PortKey` and `WireNodeKind`. `EnergyNetwork` loses its world walk and reads
+    `wires.connector_network_internal_buffer`. `IWireNode.getWireNode` never loads a chunk, and the
+    connector and relay block entities report loads, unloads, wire changes and removals to the graph,
+    which also ticks the relays. `EnergyNetworkManager` stays as an empty deprecated class with its
+    field `instances`, which AllTheLeaks 1.1.1 links. The translation to 1.20.1 uses
+    `DimensionDataStorage.computeIfAbsent(load, create, name)`, `SavedData.save(CompoundTag)`,
+    `TickEvent.LevelTickEvent` in phase `START` and the Forge 47 `ChunkEvent.Load` of a `LevelChunk`.
+    No Sable code is ported. One local change: the verifier accepts a saved chunk as an answer only
+    with the status `minecraft:full` and a `block_entities` list, and a lookup that throws leaves the
+    position unresolved. A misread tag can then never mark a real wire end missing.

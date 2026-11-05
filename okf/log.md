@@ -844,5 +844,33 @@ logs stay on the Mac and are not in the repo.
   without an error and found 38,661 recipes, and AlmostUnified turned 43,596 recipes into 43,087. The
   unification of 2026-11-04, the two trims and the EMI hide list went live with this start.
 
+## 2026-11-05: Every item that holds a meltable material melts
+
+- The three dupes of the recheck were faults of the reader of `tools/gen_melting.py`. By 01:14 it read
+  the count inside the item of a SAG mill product with the best grinding ball, the result counts of a
+  sequenced assembly and a count beside a plain result id, and it modelled the catch of a mob with a
+  water bucket, which uses up the bucket whole. A new reader check stops the run when a product counts
+  below its recipe, and on the old reader it reported 81 findings in 47 recipes. The obsidian ingot of
+  Forbidden & Arcanus melts with its iron again when Molten is loaded, since two files switch off the
+  obsidian recipes of Molten. The folder then had 9,530 files (39435a34), see
+  [Melting](content/melting.md#follow-up-of-2026-11-05).
+- On the new test server `skytest-melt5`, with the 264 jars of 3.1.3, the boots of 01:17 with Molten
+  and 01:21 without it loaded all 8,321 and 7,868 generated recipes with no parse error. Real melters
+  gave 27 mB ender for the ender pearl dusts, 29 mB iron for the monorail track and 270 mB iron for the
+  fish buckets, see [Melting](content/melting.md#runs-of-the-follow-up).
+- A review of the follow-up found seven smaller faults, all fixed in c7a764b5 to 91004246. The reader
+  counts the catalysts and augments of the Thermal machines, so the three ore chunks of Thermal Extra
+  fall below 10 mB and stay out, four ironwood overrides of Tinkers melt in full with the unit size 5,
+  and the audit counts a full refund as a source. The folder has 9,527 files. The boots of 03:24 with
+  Molten and 03:32 without it loaded all 8,318 and 7,865 generated recipes with no parse error, and a
+  new ironwood axe melted into 135 mB iron, see [Melting](content/melting.md#review-of-the-follow-up).
+- At 03:47 the 9,546 new files and the three changed overrides reached the fixes pack of the Mac mini
+  after a checksum dry run and an APFS clone of the pack to
+  `~/skytekx3-backups/before-melting-2026-11-05/`. The pack has 9,796 files and is still the last of
+  309 packs. The recipes go live with the next restart or `/reload`.
+- The owner decisions on loot that melts into metal, the eleven trades, the known machine dupes, the
+  variants of AlmostUnified and the cheap ender pearl dust are in
+  [Open items](open-items.md#owner-decisions).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

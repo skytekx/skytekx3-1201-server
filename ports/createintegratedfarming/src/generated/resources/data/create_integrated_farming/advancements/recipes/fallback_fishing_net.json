@@ -36,7 +36,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "create_integrated_farming:fallback_fishing_net"
+        "recipe": "create_integrated_farming:crafting/fallback_fishing_net"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -50,7 +50,7 @@
   ],
   "rewards": {
     "recipes": [
-      "create_integrated_farming:fallback_fishing_net"
+      "create_integrated_farming:crafting/fallback_fishing_net"
     ]
   },
   "sends_telemetry_event": true

@@ -4,7 +4,6 @@ import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import ianm1647.expandeddelight.common.registry.EDRecipeTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 import java.util.List;
@@ -23,6 +22,6 @@ public class JEIRecipes {
    }
 
    public List<JuicerRecipe> getJuicerRecipes() {
-      return recipeManager.getAllRecipesFor(EDRecipeTypes.JUICING.get()).stream().map(RecipeHolder::value).toList();
+      return recipeManager.getAllRecipesFor(EDRecipeTypes.JUICING.get());
    }
 }

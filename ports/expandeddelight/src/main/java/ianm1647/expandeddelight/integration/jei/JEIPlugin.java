@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.client.gui.JuicerScreen;
 import ianm1647.expandeddelight.common.block.entity.container.JuicerMenu;
+import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import ianm1647.expandeddelight.common.registry.EDItems;
 import ianm1647.expandeddelight.common.registry.EDMenuTypes;
 import ianm1647.expandeddelight.integration.jei.category.CheeseFermentingRecipeCategory;
@@ -25,13 +26,15 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
-   private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "jei_plugin");
+   private static final ResourceLocation ID = new ResourceLocation(ExpandedDelight.MODID, "jei_plugin");
 
+   @Override
    public void registerCategories(IRecipeCategoryRegistration registry) {
       registry.addRecipeCategories(new JuicingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
       registry.addRecipeCategories(new CheeseFermentingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
    }
 
+   @Override
    public void registerRecipes(IRecipeRegistration registration) {
       JEIRecipes modRecipes = new JEIRecipes();
       registration.addRecipes(JEIRecipeTypes.JUICING, modRecipes.getJuicerRecipes());
@@ -45,19 +48,23 @@ public class JEIPlugin implements IModPlugin {
 
    }
 
+   @Override
    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
       registration.addRecipeCatalyst(new ItemStack(EDItems.JUICER.get()), JEIRecipeTypes.JUICING);
       registration.addRecipeCatalyst(new ItemStack(EDItems.CASK.get()), JEIRecipeTypes.CHEESE_FERMENTING);
    }
 
+   @Override
    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-      registration.addRecipeClickArea(JuicerScreen.class, 71, 25, 30, 17, JEIRecipeTypes.JUICING);
+      registration.addRecipeClickArea(JuicerScreen.class, JuicerScreen.PROGRESS_ARROW.x, JuicerScreen.PROGRESS_ARROW.y, JuicerScreen.PROGRESS_ARROW.width, JuicerScreen.PROGRESS_ARROW.height, JEIRecipeTypes.JUICING);
    }
 
+   @Override
    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-      registration.addRecipeTransferHandler(JuicerMenu.class, EDMenuTypes.JUICER.get(), JEIRecipeTypes.JUICING, 0, 2, 5, 36);
+      registration.addRecipeTransferHandler(JuicerMenu.class, EDMenuTypes.JUICER.get(), JEIRecipeTypes.JUICING, 0, JuicerRecipe.INPUT_SLOTS, JuicerMenu.INVENTORY_START, 36);
    }
 
+   @Override
    public ResourceLocation getPluginUid() {
       return ID;
    }

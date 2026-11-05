@@ -88,9 +88,89 @@ with the one of `../skytekx-defixes`.
    Farmer's Delight 1.20.1-1.3.4 or newer, points `issueTrackerURL` and `displayURL` at this
    repository and credits the author. `enumextensions.json` is gone, Forge 1.20.1 extends enums
    through `IExtensibleEnum`.
+7. The port has no mixin and no access transformer, so the build has no MixinGradle and the manifest
+   names no mixin config. Upstream's only mixin goes away with source change 6, and its access
+   transformer served the datagen only.
 
 Build check (from this directory):
 
 ```
 JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew build -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain -q
 ```
+
+## Source changes
+
+These changes translate the 1.21.1 code to Forge 1.20.1. Each keeps upstream's ids, block states,
+recipe keys and NBT names unless it says otherwise.
+
+1. Registries: `DeferredRegister` and `RegistryObject` of Forge, the menu type through
+   `IForgeMenuType`, the recipe serializer with `fromJson`, `fromNetwork` and `toNetwork`, and the
+   1.20.1 constructors of the wood set (`ButtonBlock`, `PressurePlateBlock`, `DoorBlock`,
+   `TrapDoorBlock`, `FenceGateBlock`, the four sign blocks), of `DropExperienceBlock` and of the stairs.
+   The sapling grows through an `AbstractTreeGrower`, the foliage placer has a `Codec`. The creative
+   tab, the wood type and the block set type keep upstream's names.
+2. Data components: the juicer item keeps its drink and container as `BlockEntityTag` NBT, as the
+   cooking pot of Farmer's Delight 1.20.1 does, and `EDDataComponents` is gone. A new loot function
+   `expandeddelight:copy_drink` (`CopyDrinkFunction`, written like Farmer's Delight's
+   `CopyMealFunction`) writes it into the dropped juicer, and pick block and the custom name of a
+   placed juicer use the same NBT.
+3. Capabilities: the juicer answers `ForgeCapabilities.ITEM_HANDLER` in `getCapability`, with
+   upstream's split: the top takes ingredients, every other side and no side give the output.
+4. The juicer menu is new (`JuicerMenu`), written from Farmer's Delight's `CookingPotMenu` (MIT) for
+   two input slots. Its slots match the author's juicer sheet `textures/gui/juicer_gui.png` of the
+   1.20 branch: inputs at (48, 25) and (48, 43), the drink at (116, 35), the container at (80, 60) and
+   the output at (116, 60). The screen draws that sheet and its 22 pixel progress arrow at (79, 35),
+   and the JEI juicing category cuts its background out of the same sheet. The JEI container slot
+   is a catalyst, as in Farmer's Delight, upstream calls it an output.
+5. The recipe book: `RecipeBookType.create("EXPANDEDDELIGHT_JUICING")` in the main class and three
+   `RecipeBookCategories` on the client, as Farmer's Delight 1.20.1 does. The filter button reads
+   `textures/gui/recipe_book_buttons.png`, the four upstream sprites of
+   `textures/gui/sprites/recipe_book/` laid out in one sheet for 1.20.1's `StateSwitchingButton`.
+   The tab enum `JuicerRecipeBookTab` moves to `common/crafting`, because the common recipe uses it.
+6. Goat milk: upstream's `RemoveMilkGoatMixin` answered `FAIL` in `Goat#mobInteract` for every
+   bucket, so that the vanilla milking could not run after its own. The port drops the mixin and
+   cancels the Forge interaction event when it fills a bucket or a bottle, which ends the
+   interaction before the goat sees it. No mixin touches the goat, a class that Bukkit patches on the
+   Arclight server.
+7. The goat milk bucket is a `GoatMilkBucketItem` that cures effects as the vanilla milk bucket
+   does, since Forge 1.20.1 cures only effects whose curative items include the drunk item.
+8. Cinnamon logs and wood are stripped through Forge's `BlockToolModificationEvent` for the
+   `axe_strip` action, which gives the sticks only when the change is real and keeps the log's axis.
+   Upstream stripped them itself in a right click event, damaged the tool in the wrong hand and
+   turned every log upright.
+9. Cranberries plant through the `cranberry_plant` item, a vanilla `PlaceOnWaterBlockItem`, so the
+   placement checks the spot and Bukkit sees it as a block placement. Upstream set the block above
+   any water source it hit without such a check. The cranberry plant reports the plant type `WATER`,
+   which Forge 1.20.1 needs to keep it on water.
+10. The client classes register through Forge 1.20.1 events: the juicer screen and the cinnamon wood
+    type sheets in `FMLClientSetupEvent`, the boat layers in `RegisterLayerDefinitions`. The tooltip
+    data record `JuicerTooltipComponent` moves to common code, so that no common class names a
+    client class. The tooltip and screen use the language keys of Farmer's Delight 1.20.1
+    (`tooltip.farmersdelight.cooking_pot.*`, `container.farmersdelight.cooking_pot.served_on`).
+11. Composting chances come from code in `EDCompostables` instead of upstream's NeoForge data map
+    `data/neoforge/data_maps/item/compostables.json`, with the same values.
+12. The KubeJS plugin uses the KubeJS 6 API of the pack's KubeJS 2001.6.5 with upstream's keys and
+    order: `event.recipes.expandeddelight.juicing(ingredients, result, experience, juicingtime,
+    container)`.
+13. The tags in `EDCommonTags` are forge: tags, see the data changes.
+
+Fixes of upstream bugs, each small and local:
+
+- The crops named themselves as their seed (`EDCropBlock#getBaseSeedId` compared a block with a
+  supplier), so pick block gave nothing for asparagus and chili peppers.
+- The juicer saved its progress as the total time, and handing out a drink with a held bottle neither
+  marked the block entity for saving nor synced it, so a drink taken just before a restart could
+  come back.
+- The cinnamon chest boat did not call its parent's save and load, so the chest lost its items at
+  every save.
+- The juicer's inventory has the five slots that the code uses, upstream allocated nine.
+- The wild sweet potato gives Absorption in suspicious stew, as all wild crops of the 1.20 branch do,
+  because Oozing does not exist before Minecraft 1.20.5.
+
+Left out of the code:
+
+- The datagen classes in `data/` (19 files) and the worldgen bootstrap classes `EDBiomeModifiers`,
+  `EDPlacedFeatures` and `OrePlacement`. They build upstream's JSON on NeoForge. This port converts
+  that JSON once and keeps it in `src/generated/resources`. `EDConfiguredFeatures` keeps the keys.
+- `EDTableLootModifier`, which nothing registers upstream.
+- `EnumParameters`, the NeoForge enum extension parameters, replaced by `IExtensibleEnum` calls.

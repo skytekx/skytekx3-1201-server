@@ -4,48 +4,51 @@ import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.registry.EDBlocks;
 import ianm1647.expandeddelight.common.registry.EDItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import static net.minecraft.world.level.block.Block.popResource;
 
-@EventBusSubscriber(modid = ExpandedDelight.MODID)
+/**
+ * Stripping a cinnamon log gives two cinnamon sticks, stripping cinnamon wood three.
+ * <p>
+ * Upstream does the stripping itself in a right click event: it damages the tool in the hand that uses an
+ * item rather than the clicked hand, and turns every log upright. This port answers Forge's tool
+ * modification event for the axe_strip action instead, so that the axe's own stripping (sound, damage,
+ * statistics, Bukkit's EntityChangeBlockEvent) does the work and the log keeps its axis.
+ */
+@Mod.EventBusSubscriber(modid = ExpandedDelight.MODID)
 public class StripLogEvent {
 
     @SubscribeEvent
-    public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
-        ItemStack stack = event.getItemStack();
-        Player player = event.getEntity();
-        InteractionHand hand = player.getUsedItemHand();
-        BlockPos pos = event.getPos();
-        Level level = event.getLevel();
-        BlockState state = level.getBlockState(pos);
-
-        if (stack.getItem() instanceof AxeItem) {
-            if (state.is(EDBlocks.CINNAMON_LOG.get())) {
-                popResource(level, pos, new ItemStack(EDItems.CINNAMON_STICK.get(), 2));
-                level.setBlock(pos, EDBlocks.CINNAMON_STRIPPED_LOG.get().defaultBlockState(), 3);
-                level.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0f, 1.0f);
-                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-                player.swing(hand);
-            }
-            if (state.is(EDBlocks.CINNAMON_WOOD.get())) {
-                popResource(level, pos, new ItemStack(EDItems.CINNAMON_STICK.get(), 3));
-                level.setBlock(pos, EDBlocks.CINNAMON_STRIPPED_WOOD.get().defaultBlockState(), 3);
-                level.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0f, 1.0f);
-                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-                player.swing(hand);
-            }
+    public static void onToolModification(BlockEvent.BlockToolModificationEvent event) {
+        if (event.getToolAction() != ToolActions.AXE_STRIP) {
+            return;
+        }
+        BlockState state = event.getState();
+        Block stripped;
+        int sticks;
+        if (state.is(EDBlocks.CINNAMON_LOG.get())) {
+            stripped = EDBlocks.CINNAMON_STRIPPED_LOG.get();
+            sticks = 2;
+        } else if (state.is(EDBlocks.CINNAMON_WOOD.get())) {
+            stripped = EDBlocks.CINNAMON_STRIPPED_WOOD.get();
+            sticks = 3;
+        } else {
+            return;
+        }
+        event.setFinalState(stripped.defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+        LevelAccessor level = event.getLevel();
+        if (!event.isSimulated() && !level.isClientSide() && level instanceof net.minecraft.world.level.Level realLevel) {
+            BlockPos pos = event.getPos();
+            popResource(realLevel, pos, new ItemStack(EDItems.CINNAMON_STICK.get(), sticks));
         }
     }
 }

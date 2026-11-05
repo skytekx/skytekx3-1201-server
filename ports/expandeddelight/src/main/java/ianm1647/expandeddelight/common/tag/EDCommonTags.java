@@ -1,12 +1,16 @@
 package ianm1647.expandeddelight.common.tag;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 
+/**
+ * The common tags of the mod. Upstream uses the c: tags of 1.21.1, this port the forge: tags of 1.20.1 under
+ * the names that Farmer's Delight 1.20.1 and Pam's HarvestCraft 2 use where they have one. The data files in
+ * src/generated/resources follow the same table, see UPSTREAM.md. No code reads these keys, upstream's
+ * datagen did.
+ */
 public class EDCommonTags {
     //ores
     public static final TagKey<Item> ORES_SALT = itemTag("ores/salt");
@@ -21,13 +25,13 @@ public class EDCommonTags {
     public static final TagKey<Item> CROPS_CHILI_PEPPER = itemTag("crops/chili_pepper");
     public static final TagKey<Item> CROPS_PEANUT = itemTag("crops/peanut");
 
-    //foods
-    public static final TagKey<Item> FOODS_ASPARAGUS = itemTag("foods/asparagus");
-    public static final TagKey<Item> FOODS_SWEET_POTATO = itemTag("foods/sweet_potato");
-    public static final TagKey<Item> FOODS_CHILI_PEPPER = itemTag("foods/chili_pepper");
-    public static final TagKey<Item> FOODS_PEANUT = itemTag("foods/peanut");
-    public static final TagKey<Item> FOODS_CHEESE = itemTag("foods/cheese");
-    public static final TagKey<Item> FOODS_GOAT_CHEESE = itemTag("foods/goat_cheese");
+    //foods (c:foods/<crop> becomes forge:vegetables/<crop> as in Farmer's Delight, the peanut forge:nuts/peanut)
+    public static final TagKey<Item> FOODS_ASPARAGUS = itemTag("vegetables/asparagus");
+    public static final TagKey<Item> FOODS_SWEET_POTATO = itemTag("vegetables/sweet_potato");
+    public static final TagKey<Item> FOODS_CHILI_PEPPER = itemTag("vegetables/chili_pepper");
+    public static final TagKey<Item> FOODS_PEANUT = itemTag("nuts/peanut");
+    public static final TagKey<Item> FOODS_CHEESE = itemTag("cheese");
+    public static final TagKey<Item> FOODS_GOAT_CHEESE = itemTag("goat_cheese");
 
     //jams
     public static final TagKey<Item> JAMS = itemTag("jams");
@@ -45,11 +49,7 @@ public class EDCommonTags {
     public EDCommonTags() {
     }
 
-    private static TagKey<Block> blockTag(String path) {
-        return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", path));
-    }
-
     private static TagKey<Item> itemTag(String path) {
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", path));
+        return ItemTags.create(new ResourceLocation("forge", path));
     }
 }

@@ -37,11 +37,11 @@ public class EDCompatTags {
     }
 
     private static TagKey<Item> externalItemTag(String modId, String path) {
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+        return ItemTags.create(new ResourceLocation(modId, path));
     }
 
     private static TagKey<Block> externalBlockTag(String modId, String path) {
-        return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+        return BlockTags.create(new ResourceLocation(modId, path));
     }
 
 }

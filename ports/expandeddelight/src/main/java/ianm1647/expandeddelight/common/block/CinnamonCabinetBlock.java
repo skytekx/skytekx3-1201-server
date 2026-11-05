@@ -10,9 +10,10 @@ import vectorwing.farmersdelight.common.block.CabinetBlock;
 public class CinnamonCabinetBlock extends CabinetBlock {
 
     public CinnamonCabinetBlock() {
-        super(Properties.ofFullCopy(Blocks.BARREL));
+        super(Properties.copy(Blocks.BARREL));
     }
 
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return EDBlockEntityTypes.CINNAMON_CABINET.get().create(pos, state);
     }

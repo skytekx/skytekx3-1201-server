@@ -1,6 +1,6 @@
 package ianm1647.expandeddelight.common.world.tree.placer;
 
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ianm1647.expandeddelight.common.world.tree.EDTreePlacers;
 import net.minecraft.util.RandomSource;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
 public class CinnamonFoliagePlacer extends FoliagePlacer {
-    public static final MapCodec<CinnamonFoliagePlacer> CODEC = RecordCodecBuilder.mapCodec(foliagePlacerInstance
+    public static final Codec<CinnamonFoliagePlacer> CODEC = RecordCodecBuilder.create(foliagePlacerInstance
             -> foliagePlacerParts(foliagePlacerInstance).and(IntProvider.codec(0, 16).fieldOf("height")
             .forGetter(fp -> fp.height)).apply(foliagePlacerInstance, CinnamonFoliagePlacer::new));
     private final IntProvider height;

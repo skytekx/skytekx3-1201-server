@@ -1,9 +1,7 @@
 package ianm1647.expandeddelight.common.item;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
+import ianm1647.expandeddelight.common.registry.EDItems;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +14,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
+/**
+ * Cranberries: eaten, or planted on a water source like a lily pad.
+ * <p>
+ * Upstream places the plant with setBlock above any water source it hits, without asking whether the block
+ * there may be replaced. This port hands the placement to the cranberry_plant item, a vanilla
+ * PlaceOnWaterBlockItem, which checks the spot, uses the cranberries in hand and lets Bukkit's
+ * BlockPlaceEvent and protection plugins see the placement on the Arclight server.
+ */
 public class LilypadCropItem extends Item {
     private final Block block;
 
@@ -24,31 +30,28 @@ public class LilypadCropItem extends Item {
         block = block1;
     }
 
+    public Block getBlock() {
+        return this.block;
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
+        BlockHitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hitresult.getType() == HitResult.Type.BLOCK && level.getFluidState(hitresult.getBlockPos()).is(FluidTags.WATER) && !player.isUnderWater()) {
+            InteractionResultHolder<ItemStack> placed = EDItems.CRANBERRY_PLANT.get().use(level, player, hand);
+            if (placed.getResult().consumesAction()) {
+                return placed;
+            }
+        }
+
         FoodProperties foodproperties = itemstack.getFoodProperties(player);
-        BlockHitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.WATER);
-        BlockPos pos = hitresult.getBlockPos();
-        if (foodproperties != null && !level.getBlockState(pos).getFluidState().isSource()) {
+        if (foodproperties != null) {
             if (player.canEat(foodproperties.canAlwaysEat())) {
                 player.startUsingItem(hand);
                 return InteractionResultHolder.consume(itemstack);
             } else {
                 return InteractionResultHolder.fail(itemstack);
-            }
-        }
-        if (hitresult.getType() == HitResult.Type.MISS) {
-            return InteractionResultHolder.pass(itemstack);
-        } else {
-            if (hitresult.getType() == HitResult.Type.BLOCK && level.getBlockState(pos).getFluidState().isSource() && !player.isUnderWater()) {
-                if (!level.isClientSide) {
-                    level.setBlock(pos.above(), block.defaultBlockState(), 2);
-                    itemstack.consume(1, player);
-                }
-                level.playSound(player, pos, SoundEvents.WET_GRASS_PLACE, SoundSource.BLOCKS, 1.0f, 1.0f);
-                player.awardStat(Stats.ITEM_USED.get(this));
-                return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
             }
         }
         return InteractionResultHolder.pass(itemstack);

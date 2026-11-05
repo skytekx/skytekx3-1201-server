@@ -3,8 +3,8 @@ package ianm1647.expandeddelight.common.block.entity.container;
 import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,10 +21,12 @@ public class JuicerResultSlot extends SlotItemHandler {
         this.player = player;
     }
 
+    @Override
     public boolean mayPlace(ItemStack stack) {
         return false;
     }
 
+    @Override
     @Nonnull
     public ItemStack remove(int amount) {
         if (this.hasItem()) {
@@ -34,16 +36,19 @@ public class JuicerResultSlot extends SlotItemHandler {
         return super.remove(amount);
     }
 
+    @Override
     public void onTake(Player thePlayer, ItemStack stack) {
         this.checkTakeAchievements(stack);
         super.onTake(thePlayer, stack);
     }
 
+    @Override
     protected void onQuickCraft(ItemStack stack, int amount) {
         this.removeCount += amount;
         this.checkTakeAchievements(stack);
     }
 
+    @Override
     protected void checkTakeAchievements(ItemStack stack) {
         stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
         if (!this.player.level().isClientSide) {

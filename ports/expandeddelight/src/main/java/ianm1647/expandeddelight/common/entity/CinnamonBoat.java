@@ -15,6 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
+import java.util.function.Supplier;
+
 import java.util.function.IntFunction;
 
 public class CinnamonBoat extends Boat {
@@ -32,21 +34,27 @@ public class CinnamonBoat extends Boat {
         this.zo = z;
     }
 
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_ID_TYPE, Type.CINNAMON.ordinal());
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_ID_TYPE, Type.CINNAMON.ordinal());
     }
 
+    @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
         compound.putString("Type", this.getModel().getSerializedName());
     }
 
+    @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
         if (compound.contains("Type", 8)) {
             this.setModel(Type.byName(compound.getString("Type")));
         }
     }
 
+    @Override
     public Item getDropItem() {
         return switch (getModel()) {
             case CINNAMON -> EDItems.CINNAMON_BOAT.get();
@@ -62,14 +70,15 @@ public class CinnamonBoat extends Boat {
     }
 
     public enum Type implements StringRepresentable {
-        CINNAMON("cinnamon", EDBlocks.CINNAMON_PLANKS.get());
+        CINNAMON("cinnamon", EDBlocks.CINNAMON_PLANKS);
 
         private final String name;
-        private final Block planks;
+        // a supplier, so that the enum does not depend on when the blocks are registered
+        private final Supplier<Block> planks;
         public static final StringRepresentable.EnumCodec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
         private static final IntFunction<Type> BY_ID = ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
 
-        Type( String name, Block planks) {
+        Type(String name, Supplier<Block> planks) {
             this.name = name;
             this.planks = planks;
         }
@@ -83,7 +92,7 @@ public class CinnamonBoat extends Boat {
         }
 
         public Block getPlanks() {
-            return this.planks;
+            return this.planks.get();
         }
 
         public String toString() {

@@ -23,7 +23,7 @@ public class CinnamonBoatRenderer extends BoatRenderer {
         super(context, false);
         this.shadowRadius = 0.8F;
         this.boatResources = Stream.of(CinnamonBoat.Type.values()).collect(ImmutableMap.toImmutableMap((key) -> key, (model) ->
-                Pair.of(ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, getTextureLocation(model, chestBoat)), createBoatModel(context, model, chestBoat))));
+                Pair.of(new ResourceLocation(ExpandedDelight.MODID, getTextureLocation(model, chestBoat)), createBoatModel(context, model, chestBoat))));
     }
 
     private static String getTextureLocation(CinnamonBoat.Type type, boolean chestBoat) {
@@ -37,7 +37,7 @@ public class CinnamonBoatRenderer extends BoatRenderer {
     }
 
     private static ModelLayerLocation getModel(String name, String model) {
-        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, name), model);
+        return new ModelLayerLocation(new ResourceLocation(ExpandedDelight.MODID, name), model);
     }
 
     public static ModelLayerLocation boatTextureLocation(CinnamonBoat.Type type) {
@@ -48,6 +48,7 @@ public class CinnamonBoatRenderer extends BoatRenderer {
         return getModel("chest_boat/" + type.getName(), "main");
     }
 
+    @Override
     public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) {
         if (boat instanceof CinnamonBoat cinnamonBoat) {
             return this.boatResources.get(cinnamonBoat.getModel());

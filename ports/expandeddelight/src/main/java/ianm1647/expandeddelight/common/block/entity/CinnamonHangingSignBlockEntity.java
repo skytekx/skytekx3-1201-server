@@ -11,18 +11,17 @@ public class CinnamonHangingSignBlockEntity extends HangingSignBlockEntity {
         super(pos, state);
     }
 
+    @Override
     public BlockEntityType<?> getType() {
         return EDBlockEntityTypes.CINNAMON_HANGING_SIGN.get();
     }
 
-    public boolean isValidBlockState(BlockState state) {
-        return this.getType().isValid(state);
-    }
-
+    @Override
     public int getTextLineHeight() {
         return 9;
     }
 
+    @Override
     public int getMaxTextLineWidth() {
         return 60;
     }

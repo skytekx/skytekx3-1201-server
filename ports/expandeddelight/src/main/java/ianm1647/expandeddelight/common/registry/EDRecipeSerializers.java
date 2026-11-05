@@ -4,7 +4,7 @@ import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 

@@ -2,10 +2,10 @@ plugins {
     id 'eclipse'
     id 'idea'
     // Pinned to the versions that ../skytekx-defixes uses, so a rebuild cannot pick a newer plugin release
-    // with other reobf or refmap output. Librarian has no release, only this snapshot.
+    // with other reobf output. Librarian has no release, only this snapshot. The port has no mixin, see
+    // UPSTREAM.md, so it needs no MixinGradle.
     id 'net.neoforged.gradle' version '6.0.21'
     id 'org.parchmentmc.librarian.forgegradle' version '1.2.0.7-dev-SNAPSHOT'
-    id 'org.spongepowered.mixin' version '0.7.38'
 }
 
 version = project.mod_version
@@ -22,15 +22,11 @@ minecraft {
 
     copyIdeResources = true
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
     runs {
         configureEach {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 "${mod_id}" {
@@ -53,11 +49,6 @@ minecraft {
 // Upstream keeps its datagen output in src/generated/resources. This port converted that output to the
 // 1.20.1 formats by hand and keeps it there, see UPSTREAM.md. The datagen classes are not ported.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
-}
 
 // Jars of the pack's modrinth.index.json, as the exact files. Modrinth CDN layout:
 // https://cdn.modrinth.com/data/<project>/versions/<version>/<file>.jar, coordinates here <project>:<file>:<version>.
@@ -105,8 +96,6 @@ dependencies {
     // compile against the JEI API only, the pack brings JEI itself
     compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}")
-
-    annotationProcessor "org.spongepowered:mixin:${project.mixin_version}:processor"
 }
 
 def verifyPackJars = tasks.register('verifyPackJars') {
@@ -175,7 +164,6 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : 'ianm1647 (modified build: SkyTekx)',
-                'MixinConfigs'            : "${mod_id}.mixins.json",
         ])
     }
 

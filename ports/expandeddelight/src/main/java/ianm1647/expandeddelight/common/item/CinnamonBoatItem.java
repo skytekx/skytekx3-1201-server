@@ -2,13 +2,11 @@ package ianm1647.expandeddelight.common.item;
 
 import ianm1647.expandeddelight.common.entity.CinnamonBoat;
 import ianm1647.expandeddelight.common.entity.CinnamonChestBoat;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
@@ -20,7 +18,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -35,6 +32,7 @@ public class CinnamonBoatItem extends Item {
         this.type = type;
     }
 
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         HitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
@@ -46,10 +44,8 @@ public class CinnamonBoatItem extends Item {
             List<Entity> list = level.getEntities(player, player.getBoundingBox().expandTowards(vec3.scale(5.0)).inflate(1.0), ENTITY_PREDICATE);
             if (!list.isEmpty()) {
                 Vec3 vec31 = player.getEyePosition();
-                Iterator var11 = list.iterator();
 
-                while(var11.hasNext()) {
-                    Entity entity = (Entity)var11.next();
+                for (Entity entity : list) {
                     AABB aabb = entity.getBoundingBox().inflate((double)entity.getPickRadius());
                     if (aabb.contains(vec31)) {
                         return InteractionResultHolder.pass(itemstack);
@@ -58,7 +54,7 @@ public class CinnamonBoatItem extends Item {
             }
 
             if (hitresult.getType() == HitResult.Type.BLOCK) {
-                Boat boat = this.getBoat(level, hitresult, itemstack, player);
+                Boat boat = this.getBoat(level, hitresult);
                 if (boat instanceof CinnamonChestBoat chestBoat) {
                     chestBoat.setModel(this.type);
                 } else if (boat instanceof CinnamonBoat) {
@@ -71,7 +67,9 @@ public class CinnamonBoatItem extends Item {
                     if (!level.isClientSide) {
                         level.addFreshEntity(boat);
                         level.gameEvent(player, GameEvent.ENTITY_PLACE, hitresult.getLocation());
-                        itemstack.consume(1, player);
+                        if (!player.getAbilities().instabuild) {
+                            itemstack.shrink(1);
+                        }
                     }
 
                     player.awardStat(Stats.ITEM_USED.get(this));
@@ -83,12 +81,9 @@ public class CinnamonBoatItem extends Item {
         }
     }
 
-    private Boat getBoat(Level level, HitResult hitResult, ItemStack stack, Player player) {
+    // 1.21.1 applies the item's entity data and custom name here, 1.20.1's BoatItem does neither
+    private Boat getBoat(Level level, HitResult hitResult) {
         Vec3 vec3 = hitResult.getLocation();
-        Boat boat = this.hasChest ? new CinnamonChestBoat(level, vec3.x, vec3.y, vec3.z) : new CinnamonBoat(level, vec3.x, vec3.y, vec3.z);
-        if (level instanceof ServerLevel serverlevel) {
-            EntityType.createDefaultStackConfig(serverlevel, stack, player).accept(boat);
-        }
-        return boat;
+        return this.hasChest ? new CinnamonChestBoat(level, vec3.x, vec3.y, vec3.z) : new CinnamonBoat(level, vec3.x, vec3.y, vec3.z);
     }
 }

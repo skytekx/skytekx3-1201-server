@@ -9,7 +9,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 import vectorwing.farmersdelight.common.block.PieBlock;
 import vectorwing.farmersdelight.common.block.WildCropBlock;
 
@@ -76,35 +76,35 @@ public class EDBlocks {
         BLOCKS = DeferredRegister.create(Registries.BLOCK, ExpandedDelight.MODID);
 
         CINNAMON_SAPLING = BLOCKS.register("cinnamon_sapling",
-                () -> new SaplingBlock(EDTreeGrowers.CINNAMON, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)));
+                () -> new SaplingBlock(new EDTreeGrowers.Cinnamon(), BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
         CINNAMON_LEAVES = BLOCKS.register("cinnamon_leaves",
-                () -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)));
+                () -> new LeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES)));
         CINNAMON_LOG = BLOCKS.register("cinnamon_log",
-                () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)));
+                () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG)));
         CINNAMON_WOOD = BLOCKS.register("cinnamon_wood",
-                () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)));
+                () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_WOOD)));
         CINNAMON_STRIPPED_LOG = BLOCKS.register("stripped_cinnamon_log",
-                () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_OAK_LOG)));
+                () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_OAK_LOG)));
         CINNAMON_STRIPPED_WOOD = BLOCKS.register("stripped_cinnamon_wood",
-                () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_OAK_WOOD)));
+                () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_OAK_WOOD)));
         CINNAMON_PLANKS = BLOCKS.register("cinnamon_planks",
-                () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
+                () -> new Block(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS)));
         CINNAMON_STAIRS = BLOCKS.register("cinnamon_stairs",
-                () -> new StairBlock(CINNAMON_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS)));
+                () -> new StairBlock(() -> CINNAMON_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.OAK_STAIRS)));
         CINNAMON_SLAB = BLOCKS.register("cinnamon_slab",
-                () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB)));
+                () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SLAB)));
         CINNAMON_FENCE = BLOCKS.register("cinnamon_fence",
-                () -> new FenceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE)));
+                () -> new FenceBlock(BlockBehaviour.Properties.copy(Blocks.OAK_FENCE)));
         CINNAMON_FENCE_GATE = BLOCKS.register("cinnamon_fence_gate",
-                () -> new FenceGateBlock(EDWoodTypes.CINNAMON, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE_GATE)));
+                () -> new FenceGateBlock(BlockBehaviour.Properties.copy(Blocks.OAK_FENCE_GATE), EDWoodTypes.CINNAMON));
         CINNAMON_DOOR = BLOCKS.register("cinnamon_door",
-                () -> new DoorBlock(EDWoodTypes.CINNAMON.setType(), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_DOOR)));
+                () -> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_DOOR), EDWoodTypes.CINNAMON_SET));
         CINNAMON_TRAPDOOR = BLOCKS.register("cinnamon_trapdoor",
-                () -> new TrapDoorBlock(EDWoodTypes.CINNAMON.setType(), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_TRAPDOOR)));
+                () -> new TrapDoorBlock(BlockBehaviour.Properties.copy(Blocks.OAK_TRAPDOOR), EDWoodTypes.CINNAMON_SET));
         CINNAMON_PRESSURE_PLATE = BLOCKS.register("cinnamon_pressure_plate",
-                () -> new PressurePlateBlock(EDWoodTypes.CINNAMON.setType(), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PRESSURE_PLATE)));
+                () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.OAK_PRESSURE_PLATE), EDWoodTypes.CINNAMON_SET));
         CINNAMON_BUTTON = BLOCKS.register("cinnamon_button",
-                () -> new ButtonBlock(EDWoodTypes.CINNAMON.setType(), 30, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_BUTTON)));
+                () -> new ButtonBlock(BlockBehaviour.Properties.copy(Blocks.OAK_BUTTON), EDWoodTypes.CINNAMON_SET, 30, true));
         CINNAMON_SIGN = BLOCKS.register("cinnamon_sign", CinnamonStandingSignBlock::new);
         CINNAMON_WALL_SIGN = BLOCKS.register("cinnamon_wall_sign", CinnamonWallSignBlock::new);
         CINNAMON_CEILING_HANGING_SIGN = BLOCKS.register("cinnamon_ceiling_hanging_sign", CinnamonCeilingHangingSignBlock::new);
@@ -124,9 +124,9 @@ public class EDBlocks {
         GOAT_CHEESE_CASK = BLOCKS.register("goat_cheese_cask",
                 () -> new CheeseCaskBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0F, 1.0F).sound(SoundType.CHERRY_WOOD)));
         CHEESE_WHEEL = BLOCKS.register("cheese_wheel",
-                    () -> new PieBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), EDItems.CHEESE_SLICE));
+                    () -> new PieBlock(BlockBehaviour.Properties.copy(Blocks.CAKE), EDItems.CHEESE_SLICE));
         GOAT_CHEESE_WHEEL = BLOCKS.register("goat_cheese_wheel",
-                () -> new PieBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), EDItems.GOAT_CHEESE_SLICE));
+                () -> new PieBlock(BlockBehaviour.Properties.copy(Blocks.CAKE), EDItems.GOAT_CHEESE_SLICE));
 
         ASPARAGUS_CRATE = BLOCKS.register("asparagus_crate",
                 () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD)));
@@ -135,30 +135,30 @@ public class EDBlocks {
         CHILI_PEPPER_CRATE = BLOCKS.register("chili_pepper_crate",
                 () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD)));
         CRANBERRY_BAG = BLOCKS.register("cranberry_bag",
-                () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_WOOL)));
+                () -> new Block(BlockBehaviour.Properties.copy(Blocks.RED_WOOL)));
 
         WILD_ASPARAGUS  = BLOCKS.register("wild_asparagus",
-                () -> new WildCropBlock(MobEffects.ABSORPTION, 6, BlockBehaviour.Properties.ofFullCopy(Blocks.TALL_GRASS)));
+                () -> new WildCropBlock(MobEffects.ABSORPTION, 6, BlockBehaviour.Properties.copy(Blocks.TALL_GRASS)));
         WILD_SWEET_POTATO  = BLOCKS.register("wild_sweet_potato",
-                () -> new WildCropBlock(MobEffects.OOZING, 6, BlockBehaviour.Properties.ofFullCopy(Blocks.TALL_GRASS)));
+                () -> new WildCropBlock(MobEffects.ABSORPTION, 6, BlockBehaviour.Properties.copy(Blocks.TALL_GRASS)));
         WILD_CHILI_PEPPER  = BLOCKS.register("wild_chili_pepper",
-                () -> new WildCropBlock(MobEffects.CONFUSION, 6, BlockBehaviour.Properties.ofFullCopy(Blocks.TALL_GRASS)));
+                () -> new WildCropBlock(MobEffects.CONFUSION, 6, BlockBehaviour.Properties.copy(Blocks.TALL_GRASS)));
         WILD_PEANUTS  = BLOCKS.register("wild_peanuts",
-                () -> new WildCropBlock(MobEffects.DAMAGE_RESISTANCE, 6, BlockBehaviour.Properties.ofFullCopy(Blocks.TALL_GRASS)));
+                () -> new WildCropBlock(MobEffects.DAMAGE_RESISTANCE, 6, BlockBehaviour.Properties.copy(Blocks.TALL_GRASS)));
 
         SALT_ORE = BLOCKS.register("salt_ore",
-                () -> new DropExperienceBlock(UniformInt.of(0, 2), BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
-                        .strength(3.0f, 3.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+                () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                        .strength(3.0f, 3.0f).sound(SoundType.STONE).requiresCorrectToolForDrops(), UniformInt.of(0, 2)));
         DEEPSLATE_SALT_ORE = BLOCKS.register("deepslate_salt_ore",
-                () -> new DropExperienceBlock(UniformInt.of(0, 2), BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
-                        .strength(4.5f, 3.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
+                () -> new DropExperienceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                        .strength(4.5f, 3.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops(), UniformInt.of(0, 2)));
 
         CRANBERRY_PLANT = BLOCKS.register("cranberry_plant",
-                () -> new CranberryPlantBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_PAD).mapColor(MapColor.PLANT).sound(SoundType.LILY_PAD)));
+                () -> new CranberryPlantBlock(BlockBehaviour.Properties.copy(Blocks.LILY_PAD).mapColor(MapColor.PLANT).sound(SoundType.LILY_PAD)));
         CRANBERRY_COBBLER = BLOCKS.register("cranberry_cobbler",
-                () -> new PieBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), EDItems.CRANBERRY_COBBLER_SLICE));
+                () -> new PieBlock(BlockBehaviour.Properties.copy(Blocks.CAKE), EDItems.CRANBERRY_COBBLER_SLICE));
         HONEYED_GOAT_CHEESE_TART = BLOCKS.register("honeyed_goat_cheese_tart",
-                () -> new PieBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), EDItems.HONEYED_GOAT_CHEESE_TART_SLICE));
+                () -> new PieBlock(BlockBehaviour.Properties.copy(Blocks.CAKE), EDItems.HONEYED_GOAT_CHEESE_TART_SLICE));
 
         ASPARAGUS_CROP = BLOCKS.register("asparagus_crop", EDCropBlock::new);
         SWEET_POTATO_CROP = BLOCKS.register("sweet_potato_crop", EDCropBlock::new);

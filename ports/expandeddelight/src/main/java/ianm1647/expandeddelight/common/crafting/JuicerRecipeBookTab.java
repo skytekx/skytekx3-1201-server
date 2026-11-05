@@ -1,4 +1,4 @@
-package ianm1647.expandeddelight.client.recipebook;
+package ianm1647.expandeddelight.common.crafting;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

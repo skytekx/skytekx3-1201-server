@@ -12,9 +12,10 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CinnamonWallHangingSignBlock extends WallHangingSignBlock {
 
     public CinnamonWallHangingSignBlock() {
-        super(EDWoodTypes.CINNAMON, BlockBehaviour.Properties.ofFullCopy(Blocks.SPRUCE_HANGING_SIGN));
+        super(BlockBehaviour.Properties.copy(Blocks.SPRUCE_HANGING_SIGN), EDWoodTypes.CINNAMON);
     }
 
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return EDBlockEntityTypes.CINNAMON_HANGING_SIGN.get().create(pos, state);
     }

@@ -64,14 +64,23 @@ compat scan still finds 0 missing symbols for EnderIO Legacy Machines, Exchanger
 dev `runServer` of the fix pack with Curios and AE2 on the classpath reached `Done` (workflow
 scratchpad, `bp2/enderio/b1/runserver2.log` line 6889). No NBT key, packet format, protocol version
 or generated resource changed. Nobody has run the in game tests of the fix pack yet, see the end of
-[Fix pack](#fix-pack). No feature of the content bundles is ported yet. The pack still ships the
-6.2.18-beta jar, and no pack boot has run the fork.
+[Fix pack](#fix-pack).
+
+The Vat is the first content bundle, done in e7e29bd (the machine), a175998 (the recipes and data)
+and bef7784 (review fixes). The integration compiled every source set, ran `runData`, which changed
+nothing beyond the two tag files of bef7784, and ran a full build, whose `-all` jar has the SHA-1
+`9594b5708d5dbd5779a64de42bb98b5bbcb4ad79`. The compat scan still finds 0 missing symbols for
+EnderIO Legacy Machines, Exchangers and AllTheLeaks. A dev `runServer` with a temporary test class,
+never committed, reached `Done` and passed 38 of 38 checks (workflow scratchpad,
+`bp2/enderio/b2int/runserver-int.log`). Nobody has joined with a client yet, see the end of
+[Vat](#vat). The other content bundles are not ported yet. The pack still ships the 6.2.18-beta jar,
+and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Fork infrastructure (`eio-b0-fork-bootstrap`) | Network protocol bump, JSON data maps for 1.20.1, optional Curios support | 10 | The vendored base | Done in 6a3268f, 90c9f8b, 10ba7e1 and effd892. The vendor, version and license work of the old feature `fork-bootstrap` is done in 8799e05, dd66c98 and e508261 |
 | Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Done in 1e5fde6, 59e7770, 6f5774a, 49bb41c, 91a7f49, 46b3e5f, be881bc and f142998 |
-| Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Planned |
+| Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Done in e7e29bd, a175998 and bef7784 |
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Planned |
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Planned |
 | Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Planned |
@@ -223,9 +232,64 @@ server, and its only evidence is a javac verifier test and a reading of the byte
   `#minecraft:meat` exists only since 1.20.5. The tag `enderio:wind_charges` holds
   `minecraft:phantom_membrane`, because the wind charge is 1.21 content and an empty tag would make the
   concentrated cloud seed uncraftable. A datapack can change that default.
+- The tags `enderio:crops` and `enderio:seeds` hold the forge tags plus the vanilla items that only
+  the NeoForge 1.21.1 tags `c:crops` and `c:seeds` list, which upstream points them at (bef7784,
+  `MachineItemTagsProvider.java:32-33`). Forge 47's `forge:crops` holds only beetroot, carrot, nether
+  wart, potato and wheat (`forge-1.20.1-47.4.0-universal.jar`), so the crops tag adds cactus, cocoa
+  beans, melon, pumpkin and sugar cane, and the seeds tag adds torchflower seeds. Without sugar cane
+  the reagent slot refused it, and its 0.5 factor in `vat_reagent.json` never applied.
 - The output is capped at the output tank, see [Local divergences](#local-divergences).
 - The Vat is the first survival source of `enderio:nutrient_distillation`. The Killer Joe of EnderIO
   Legacy Machines compares that exact fluid id.
+
+The bundle is done in e7e29bd, a175998 and bef7784. Beyond the list above it brings these changes.
+
+- The block uses `baseMachine` with the 6.x machine model, and both power states of its blockstate
+  point at the one model `vat_combined`, as upstream has no active model
+  (`MachineBlocks.java:252`). The item keeps the tanks, the reagents and the running task through the
+  `copy_nbt` loot of the 6.x machines.
+- The 6.x `MachineFluidHandler` checks `canExtract` in `drain(FluidStack)` but not in `drain(int)`,
+  which always drains the first tank, here the Vat input. The Vat's handler overrides `drain(int)` to
+  drain only the output tank (`VatBlockEntity.java:184-194`). The bucket interaction of
+  `IFluidItemInteractive` gains the `canExtract` and `canInsert` checks of 1cb2e1420
+  (`IFluidItemInteractive.java:38` and `55`). The fluid tank, its only other user, allows both, so it
+  behaves as before.
+- The task builds its output again from the reagents it consumes when it places the output
+  (`VatBlockEntity.java:285`). The 6.x task fixes its outputs when it starts and consumes the inputs
+  after the output is placed, so a reagent swapped for a weaker one of the same tag during the task
+  could otherwise keep the higher output. This is the rule of the soul binder fix in 91a7f49.
+- The JEI transfer goes through `VatRecipeTransferHandler`. It checks the fluid in the input tank like
+  the 8.x `VATTransferHelper` and hands only the two reagent slots to JEI's basic transfer
+  (`VatRecipeTransferHandler.java:72-77`), because JEI's own transfer counts every input slot and
+  would refuse the fluid slot. The base has no `ServerboundTransferItemsPacket`.
+- The packets `VatMoveTankPacket` and `VatDumpTankPacket` sit at the end of `MachinePackets`
+  (`MachinePackets.java:24-25`), so they shift the ids of the conduit packets. The protocol
+  "1.0-skytekx.1" of 6a3268f covers every packet of the unreleased 6.3.0-skytekx.1 and was not
+  raised again. Later bundles of the machine lane append after the two Vat packets.
+- Unchanged from 6.x, `MachineFluidHandler.drain(int)` drains tank 0 without a `canExtract` check in
+  every other machine. Its identity check against `FluidStack.EMPTY` never fails, because
+  `MachineFluidTank.drain` returns a new stack (`MachineFluidHandler.java:186-197`). External pipes can therefore still pull the insert only XP tank of the soul
+  binder. The obelisk, charger and spawner bundles keep this in mind for any machine with several
+  tanks.
+
+The test class of the integration placed Vats in a dev server with Curios and AE2 on the classpath.
+It checked the nine loaded recipes, the data map values, the reagent tags with sugar cane, melon and
+torchflower seeds, which items the reagent slots take in both orders, the bucket and capability rules
+of both tanks, the move and dump actions, the drop and its placed copy, hootch in both reagent orders,
+nutrient distillation, blue ice capped at 8000 mB and its wait while the output is full. All 38 checks
+passed (workflow scratchpad, `bp2/enderio/b2int/runserver-int.log`). The porter's earlier run of the
+same class passed 32 of 33 (`bp2/enderio/b2/runserver1.log`), and its one failure, the drop check,
+passed in the rerun with a fresh world. Both runs show only the two dev ERROR lines of the fix pack
+run, the client mixin of Athena on the dev classpath and the empty `layers` key of the dev
+`server.properties`.
+
+Nobody has tested these yet. No client joined, so the screen layout, the move and dump buttons sent
+as real packets, all nine recipes in JEI and EMI with the reagent factors, the JEI transfer, two
+players in one Vat menu and the synced data map values on a client are open. The Killer Joe of
+EnderIO Legacy Machines burning Vat made nutrient distillation was not run, because the dev
+environment cannot load the production jar of that mod. Its evidence is the matching fluid id and the
+compat scan. Forged move and dump packets from out of reach or without the menu open need a modified
+client.
 
 ### Obelisks
 
@@ -494,7 +558,9 @@ Already in the 6.x base, so no work (same file):
   `attractor_obelisk`, `mind_killer`, the wireless charger and its antennas
   `wireless_charger_antenna` and `wireless_charger_antenna_advanced`, the items `big_item_filter`,
   `big_advanced_item_filter`, `limited_item_filter` and the four conduit facades, and the recipe type
-  `enderio:vat_fermenting`.
+  `enderio:vat_fermenting`. The Vat also registers the block entity type and the menu `enderio:vat`
+  and the recipe serializer `enderio:vat_fermenting` (e7e29bd). Its saved data uses the 6.x keys
+  `Fluid`, `Items` and the task keys of the other crafting machines.
 - Two level capabilities are new, `enderio:inhibitor_obelisk_manager_capability` and
   `enderio:relocator_obelisk_manager_capability`. The obelisk managers live at runtime only and are
   rebuilt on load.
@@ -547,6 +613,13 @@ These differ from upstream on purpose and must survive a re-sync.
 - The tag `enderio:wind_charges` holds phantom membrane, and `enderio:meat` lists the vanilla meats.
 - The Vat caps its output at the 8000 mB output tank. Upstream multiplies the reagent factors and
   stalls for good above the tank size: cloud seed with packed ice makes 9000 mB, with blue ice 81000 mB.
+- The tags `enderio:crops` and `enderio:seeds` hold the forge tags plus the vanilla items of the
+  NeoForge 1.21.1 tags `c:crops` and `c:seeds` that the forge tags lack.
+- The Vat drains only its output tank through `drain(int)`, and its task builds the output again from
+  the reagents it consumes. Both are SkyTekx fixes without an upstream commit.
+- Vat recipes read their input and output objects like the 6.x tank recipes, with `fluid` or `tag`
+  plus `amount`. Only the reagent field names `left_reagent` and `right_reagent` match 8.x, so an 8.x
+  recipe file does not load unchanged.
 - Capture mode writes only the entity type in `ENTITYTYPE` mode and the full entity only in `COPY` mode.
 - The fork ships no size for the Curios `charm` slot.
 - The basic and advanced item filters keep 5 and 10 slots.

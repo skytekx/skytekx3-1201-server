@@ -17,6 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 // after a flip of the pump and after the pipe at its face was replaced. The wrap lets the Electric
 // Pump through as well.
 // Create is no Bukkit class, so Arclight does not patch the target.
+// Like the other mixins of this fork the wrap sets no require. Should a Create update drop the
+// call, the mixin stops applying without an error and the pump falls back to the bug, so every
+// Create update checks the wrapper in the exported FluidPropagator
+// (okf/modpack/createaddition-backport.md, Release).
 @Mixin(value = FluidPropagator.class, remap = false)
 public abstract class FluidPropagatorMixin {
 

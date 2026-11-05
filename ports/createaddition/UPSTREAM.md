@@ -430,3 +430,11 @@ its item here, and the NOTICE in the jar sums them up.
     mixin `mixin/FluidPropagatorMixin` wraps that `BlockEntry.has` call with `@WrapOperation` and
     also accepts the Electric Pump. It sets `remap = false` like the other Create mixins, and
     Arclight does not patch Create.
+    Two traits of upstream stay as they are (review of the pump bundle). The pump has no hysteresis,
+    so one that gets a little less FE than it draws switches on and off every one to three ticks,
+    and each switch runs `PumpBlockEntity.updatePressureChange` with two `propagateChangedPipe`
+    searches of the pipe network and sends the block entity to the clients. Schematics keep the
+    stored FE, because Create saves `writeSafe` into them, and a printed pump can only spend it on
+    itself. The wrap of the mixin sets no `require`, like the other mixins of the fork, so it would
+    stop applying without an error if a Create update dropped the call. Every Create update
+    therefore checks the wrapper in the exported `FluidPropagator`.

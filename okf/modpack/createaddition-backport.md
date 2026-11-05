@@ -396,7 +396,18 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   `ElectricPumpRenderer`, `ElectricPumpVisual` or other client class of CC&A. The loot table
   drops the pump and the block is in `#minecraft:mineable/pickaxe`. One early test line with many
   NBT edits stopped moving fluid with an Electric and a mechanical pump in series, and three fresh
-  lines in the same setup did not repeat it.
+  lines in the same setup did not repeat it. Nobody has explained that stall, so it may be a real
+  interaction of two pumps in series at different speeds. It stays open for the [release](#release).
+- An underpowered pump toggles. With a little less FE than it draws, for example 10 FE/t against
+  15 FE/t at 32 RPM, it switches on and off every one to three ticks once its buffer is empty
+  (`ElectricPumpBlockEntity.tick`, review of the pump bundle). Each switch runs Create's
+  `PumpBlockEntity.updatePressureChange`, which costs two `propagateChangedPipe` searches of the
+  pipe network (javap of Create 6.0.8), and sends the block entity to the clients. On a large pipe
+  network that is a steady server cost. Upstream behaves the same way, and the fork keeps it, see
+  [Open owner decisions](#open-owner-decisions).
+- Schematics keep the stored FE of a pump, up to `pump_capacity`, because Create saves `writeSafe`
+  into them. The storage gives no FE away, so a printed pump can only spend it on its own run, about
+  333 ticks at 32 RPM with the defaults. Upstream does the same.
 - The client side has not run: the goggle line, the pulsing partials with Flywheel on and off, the
   wrench, the recipe in JEI and EMI, and the item model. These belong to the [release](#release).
 
@@ -491,7 +502,14 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   its goggle line with the draw, its two pulsing partials with Flywheel on and with
   `/flywheel backend off`, the reversal with a wrench, the recipe in JEI and EMI and the item in
   hand. The full pack boot must show `FluidPropagatorMixin` applied in the exported
-  `FluidPropagator` next to any other mod's mixin there.
+  `FluidPropagator` next to any other mod's mixin there. Its wrap sets no `require`, like the other
+  mixins of the fork, so a Create update that drops the wrapped call would only bring the pipe bug
+  back without an error. Repeat that export check after every Create update through
+  `tools/update_mods.py`.
+- In a full pack client world, run an Electric Pump and a Mechanical Pump in series at different
+  speeds, 32 and 256 RPM, in both orders. Toggle redstone on the Electric Pump and check that the
+  flow resumes each time. This test answers the stall of the early test line under
+  [Electric Pump](#electric-pump), and the pump only counts as tested in game after it.
 - The server handler of `ObservePacket` calls `getBlockEntity` at any position a client names,
   without a loaded chunk check or a distance check, and only the client keeps its cooldown of 10
   ticks. A modified client could make the live server load or generate chunks anywhere. This
@@ -794,6 +812,9 @@ The plan ports these with upstream's or the safe default, and the owner may rule
 - An empty Capacitor stacks to 64.
 - Electrum comes from charged gold without silver.
 - The alternator keeps its speed requirement, and seed oil and bioethanol keep the water tag.
+- The Electric Pump has no hysteresis, as upstream, so an underpowered pump toggles every few ticks
+  (see [Electric Pump](#electric-pump)). A start at 20 ticks of stored FE and a stop below one tick
+  would end that, as a local divergence. Schematics keep the pump's FE, as upstream.
 
 ## Operator notes
 
@@ -817,6 +838,9 @@ The plan ports these with upstream's or the safe default, and the owner may rule
   any other dimension that holds wires.
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only the
   two accepted ERROR lines, and when every charging recipe parses.
+- An Electric Pump that toggles on and off is underpowered. Each toggle costs a pressure update of
+  its pipe network, so feed it at least its draw. With the defaults that is 15 FE/t at 32 RPM or
+  less and 120 FE/t at 256 RPM.
 - Announce the alternator with two shafts, the new Electrum Amulet and the fire over oils to the
   players. The announcement says that every charge of the amulet stops its holder for two seconds,
   and that the server can turn the amulet off with `amulet_effect_enabled`.

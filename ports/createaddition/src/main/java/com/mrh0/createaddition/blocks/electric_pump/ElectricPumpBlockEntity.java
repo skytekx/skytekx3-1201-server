@@ -156,6 +156,8 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity {
 		tag.putBoolean("Active", active);
 	}
 
+	// As upstream, schematics keep the stored FE, since Create saves writeSafe into them. A printed
+	// pump can only spend it on itself, because the storage extracts nothing.
 	@Override
 	public void writeSafe(CompoundTag tag) {
 		super.writeSafe(tag);
@@ -175,6 +177,10 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity {
 
 		if (level.isClientSide()) return;
 
+		// Kept as upstream, without hysteresis. A pump that gets a little less FE than it draws runs on
+		// what each tick brings and stops again, so it switches every one to three ticks. Each switch
+		// runs PumpBlockEntity.updatePressureChange, two propagateChangedPipe searches of the pipe
+		// network, and sends the block entity to the clients.
 		int con = getEnergyConsumptionRate(pumpSpeed);
 		boolean powered = getBlockState().getValue(ElectricPumpBlock.POWERED);
 		boolean shouldRun = !powered && con > 0 && energy.getEnergyStored() >= con;

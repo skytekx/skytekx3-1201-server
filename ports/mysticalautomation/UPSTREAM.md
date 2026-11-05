@@ -171,6 +171,29 @@ and recipe ids. Lines that differ from upstream carry a `SkyTekx port` comment t
   counts the filled ones. It also reports `isSpecial`, which keeps the Farmer recipes out of the
   vanilla recipe book, which has no category for them and would log a warning for each.
 
+### Data
+
+- Folders: `recipe` became `recipes`, `loot_table` became `loot_tables`, `tags/item` became
+  `tags/items` and `tags/block` became `tags/blocks`, the 1.20.1 names. Blockstates, models,
+  textures, the Patchouli entries and the loot tables keep their content, since 1.20.1 reads the same
+  forms. Mystical Agriculture 7.0.24 has every texture, item, block and book entry they name (checked
+  against its jar).
+- Recipes: `neoforge:conditions` became `conditions`, `neoforge:mod_loaded` became
+  `forge:mod_loaded`, and Cucumber 7 reads the `cucumber:feature_flag` condition as Cucumber 8 does.
+  Crafting results name their item with `item` instead of `id`, and so do the result stacks of the
+  Farmer recipes. The common tags `c:ingots/iron` and `c:gems/diamond` became `forge:ingots/iron` and
+  `forge:gems/diamond`, the forms AlmostUnified works with. Forge 47 has no tag for crafting tables,
+  so the Crafter recipe asks for `minecraft:crafting_table`, the only entry NeoForge puts into
+  `c:player_workstations/crafting_tables`.
+- Tag `mysticalautomation:fertilizers`: upstream lists `#c:fertilizers`, which NeoForge fills with
+  bone meal and Mystical Agriculture 8 with Fertilized Essence and Mystical Fertilizer. Forge 47 has
+  no such common tag, so the port lists these three items and adds `#forge:fertilizers` as an
+  optional entry for mods that define it.
+- `pack.mcmeta` with `pack_format` 15, as in the Mystical Agriculture 7 jar.
+- Translations: the three tooltip keys above, with the texts of Mystical Agriculture 8 in `en_us`,
+  `ja_jp` and `pt_br`. Its `zh_cn` has no text for them, so Chinese clients show the English one,
+  as they do upstream.
+
 ### Left out
 
 - CraftTweaker integration (`compat/crafttweaker/FarmerCrafting.java`) and the CraftTweaker test

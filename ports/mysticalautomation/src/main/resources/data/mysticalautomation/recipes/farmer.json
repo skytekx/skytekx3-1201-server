@@ -1,31 +1,31 @@
 {
-  "type": "crafting_shaped",
-  "neoforge:conditions": [
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
     {
       "type": "cucumber:feature_flag",
-      "flag": "mysticalautomation:awakening_altarnator"
+      "flag": "mysticalautomation:farmer"
     }
   ],
   "pattern": [
-    "IHI",
-    "SBS",
+    "ISI",
+    "HBH",
     "ISI"
   ],
   "key": {
     "I": {
-      "tag": "c:ingots/iron"
+      "tag": "forge:ingots/iron"
     },
     "S": {
       "item": "mysticalagriculture:soulium_ingot"
     },
     "H": {
-      "item": "mysticalagriculture:awakening_altar"
+      "tag": "mysticalagriculture:diamond_sickles"
     },
     "B": {
       "item": "mysticalagriculture:machine_frame"
     }
   },
   "result": {
-    "id": "mysticalautomation:awakening_altarnator"
+    "item": "mysticalautomation:farmer"
   }
 }

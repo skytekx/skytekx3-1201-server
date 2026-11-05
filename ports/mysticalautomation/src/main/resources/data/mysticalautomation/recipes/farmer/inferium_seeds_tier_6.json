@@ -1,8 +1,8 @@
 {
   "type": "mysticalautomation:farmer",
-  "neoforge:conditions": [
+  "conditions": [
     {
-      "type": "neoforge:mod_loaded",
+      "type": "forge:mod_loaded",
       "modid": "mysticalagradditions"
     }
   ],
@@ -16,7 +16,7 @@
   "results": [
     {
       "item": {
-        "id": "mysticalagriculture:inferium_essence",
+        "item": "mysticalagriculture:inferium_essence",
         "count": 4
       },
       "chance": 1.0

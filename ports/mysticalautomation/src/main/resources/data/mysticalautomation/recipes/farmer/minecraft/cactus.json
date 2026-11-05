@@ -1,16 +1,16 @@
 {
   "type": "mysticalautomation:farmer",
   "seeds": {
-    "item": "minecraft:wheat_seeds"
+    "item": "minecraft:cactus"
   },
   "soil": {
-    "item": "minecraft:farmland"
+    "item": "minecraft:sand"
   },
   "stages": 7,
   "results": [
     {
       "item": {
-        "id": "minecraft:wheat",
+        "item": "minecraft:cactus",
         "count": 1
       },
       "chance": 1.0

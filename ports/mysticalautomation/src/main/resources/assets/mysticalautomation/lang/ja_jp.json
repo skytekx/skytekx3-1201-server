@@ -19,6 +19,9 @@
 
   "tooltip.mysticalautomation.stage": "成長段階：%s／%s",
   "tooltip.mysticalautomation.stages": "成長段階：%s",
+  "tooltip.mysticalautomation.chance": "確率：%s",
+  "tooltip.mysticalautomation.machine_fuel_usage": "燃料使用：%s",
+  "tooltip.mysticalautomation.machine_scan_fuel_usage": "スキャンでの燃料使用：%s",
 
   "jei.category.mysticalautomation.farmer": "耕作機",
   "jei.category.mysticalautomation.fertilizer": "施肥機",

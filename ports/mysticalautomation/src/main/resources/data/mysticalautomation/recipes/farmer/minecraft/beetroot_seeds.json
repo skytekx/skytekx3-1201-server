@@ -10,7 +10,7 @@
   "results": [
     {
       "item": {
-        "id": "minecraft:beetroot",
+        "item": "minecraft:beetroot",
         "count": 1
       },
       "chance": 1.0

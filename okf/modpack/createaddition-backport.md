@@ -38,16 +38,17 @@ not exist yet.
 
 The vendored base (d8d06f5), the reproducible Java 17 build (28bde03), the license files in the jar
 (c276dbd), the baseline bundle, the small fixes, the ignitable fluids, the connector rework, the
-changes of 1.6.0, the charging recipes, the Electric Pump and the Servo Motor are on the branch
-`claude/twilight-forest-port-mods-j2owbq`. They are the first ported features. The pack still ships
-the Modrinth jar 1.3.3. Only test servers with a reduced mod set have booted the fork: those of the
-ignitable fluids (e0fed53), the [wire graph test](#wire-graph-test) on the production Arclight jar,
-the Forge 47.4.18 tests of the [changes of 1.6.0](#changes-of-160) and of the
-[Servo Motor](#servo-motor), and the Forge and Arclight tests of the
-[charging recipes](#charging-recipes) and of the [Electric Pump](#electric-pump). The boot and login
-checks of the baseline and the in game tests of the small fixes, the connector rework, the changes
-of 1.6.0, the charging recipes, the Electric Pump and the Servo Motor wait for the
-[release](#release).
+changes of 1.6.0, the charging recipes, the Electric Pump, the Servo Motor and the ponders and
+translations are on the branch `claude/twilight-forest-port-mods-j2owbq`. They are the first ported
+features. The pack still ships the Modrinth jar 1.3.3. Only test servers with a reduced mod set have
+booted the fork: those of the ignitable fluids (e0fed53), the [wire graph test](#wire-graph-test) on
+the production Arclight jar, the Forge 47.4.18 tests of the [changes of 1.6.0](#changes-of-160) and
+of the [Servo Motor](#servo-motor), and the Forge and Arclight tests of the
+[charging recipes](#charging-recipes) and of the [Electric Pump](#electric-pump). Besides them, a dev
+client with Create 6.0.8 opened the new [ponders](#ponders-and-translations). The boot and login
+checks of the baseline, the in game tests of the small fixes, the connector rework, the changes of
+1.6.0, the charging recipes, the Electric Pump and the Servo Motor and a look at the ponders on a pack
+client wait for the [release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -59,7 +60,7 @@ of 1.6.0, the charging recipes, the Electric Pump and the Servo Motor wait for t
 | Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Done in fa51d4c, ddb7fc6 and e277ef6, with the test record 2a2b79b and the review fix 353c753. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the belt run and the full pack boot belong to the release |
 | Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Done in 1051eaf and a56b0c4, with the test record 9dc45aa and the review fix 914089f. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the pumps in series in game and the full pack boot belong to the release |
 | Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Done in 3d9bdf0 and e84695f, with the review fix 7571bc4. Tested on a reduced Forge 47.4.18 server with Create 6.0.8, with and without CC:Tweaked 1.120.2. The client tests, the Arclight boot and the full pack boot belong to the release |
-| Ponders and translations (`cca-ponders-and-translations`) | Three new ponder scenes with their NBT converted to 1.20.1, and 41 new lang keys | 9 | Connector rework, the 1.6.0 changes, ignitable fluids, charging, pump, servo | Planned |
+| Ponders and translations (`cca-ponders-and-translations`) | Three new ponder scenes with their NBT converted to 1.20.1, and 41 new lang keys | 9 | Connector rework, the 1.6.0 changes, ignitable fluids, charging, pump, servo | Done in 65de407 and 74a1e31, with the review fix 64a412d. The scenes ran in a dev client under Xvfb with Create 6.0.8 and Ponder 1.0.91. The look on a pack client belongs to the release |
 | Release (`cca-pack-release`) | Pack wiring, license and model checks, compat scan, boots on Forge and Arclight, rollout, docs | 8.5 | All other bundles | Planned |
 
 After the baseline, the connector rework, the small fixes and the ignitable fluids can run in
@@ -494,23 +495,75 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 
 ### Ponders and translations
 
-- New scenes cover the Electric Pump (562d383), the connectors and their removal, and the servo
-  (d0993a0). The schematics are the mod's own builds and share only the vanilla snow and concrete
-  floor with Create's schematics.
+- Commit 65de407 ports the scenes of the Electric Pump (562d383), of the connectors and their removal
+  and of the servo (d0993a0) with their 28 English texts (`UPSTREAM.md` source change 31). The scene
+  code is upstream's byte for byte. The new scenes pass upstream's English literals to `title` and
+  `text`, while the scenes of the base use `CALang.translateDirect`. Ponder reads the lang key either
+  way.
+- The connector and servo schematics are the mod's own builds. A layout check with
+  `tools/layout_cmp.py` in `bp2/createaddition/` of the workflow scratchpad matched neither of them
+  with a ponder schematic of Create 6.0.8. The pump schematic `electric_pump_flow.nbt` keeps the
+  positions of the two fluid tanks and six fluid pipes of Create's `ponder/mechanical_pump/flow.nbt`
+  (git blob 2ecaed7). That file is the same in `create-1.20.1-6.0.3.jar` of 2025-03-14 and in 6.0.8,
+  so it is MIT. The scene code and texts of the pump follow Create's `PumpScenes.flow`. The `NOTICE`
+  lists both under Create's notice, see [License conditions](#license-conditions).
 - The 1.21 schematics are DataVersion 3955 and store `LastKnownPos` and `Controller` as int arrays.
   The 1.20.1 code reads them as compounds (`ModularAccumulatorBlockEntity:390-393`, Create's
   `FluidTankBlockEntity`), so the scenes need DataVersion 3465 and compound positions, or the tanks and
-  accumulators fall apart.
-- The ponder plugin drops its duplicate call of the controller fix (8c4c64d).
-- The 41 new English keys come with their translations from the 1.21.1 zh_cn, ru_ru, pt_br, ja_jp,
-  es_es, es_mx, fr_fr and ko_kr files (3e49327). The locales and keys that only 1.20.1 has stay.
-- The five keys `createaddition.tooltip.liquid_burning.*`, `tooltip.charging.*` and
-  `tooltip.alternator.info` of the small fixes are only in en_us (8fb90f8) and get their translated
-  values here. The death message keys are already renamed in all 21 locales (66076fb), so this
-  bundle must not add them again under the old names.
-- The key `item.createaddition.electrum_amulet.tooltip.summary` still describes the old Luck effect
-  in all 20 locales other than en_us, as on upstream 658a390. This bundle translates the new text or
-  drops the key there, so that the English summary shows (83fad0b).
+  accumulators fall apart. The converter also moves the 9000 mB of water in the right tank of the
+  pump scene from the NeoForge form `TankContent.Fluid` with `id` and `amount` to the `FluidName` and
+  `Amount` that Forge reads, or the pump would pump from an empty tank (`UPSTREAM.md` source
+  change 31).
+- The class `CAPonders` gives the pump scene to the Electric Pump, both connector scenes to the three
+  connectors and the servo scene to the Servo Motor. It puts the connectors and the servo into the
+  Electric tag and the servo into Create's Movement Anchor tag. As a local change the Electric Pump
+  also joins the Electric tag, which upstream forgot, and Create's Fluids tag, where Create lists its
+  Mechanical Pump. Upstream's development scene `DebugScenes` stays out, see [Excluded](#excluded).
+- The ponder plugin drops its duplicate call of the controller fix (8c4c64d). Create's plugin
+  already runs `PonderWorldBlockEntityFix.fixControllerBlockEntities` on every ponder level, and the
+  second run moved the controllers of fluid tanks and accumulators off their multiblock. The 1.3.3
+  jar of the pack makes the same call (javap of `CAPonderPlugin.onPonderLevelRestore`), so the fork
+  also mends the accumulator scene of the base and Create's own Fluid Tank scene.
+- A dev client under Xvfb (Forge 47.4.0 userdev, Create 6.0.8, Ponder 1.0.91, JEI and CC:Tweaked)
+  ran a temporary test hook from a scratch copy that is not committed. It opened the scenes of the
+  Electric Pump, the three connectors, the Servo Motor, the Modular Accumulator and Create's Fluid
+  Tank and Mechanical Pump, seeked to each keyframe and the end, logged the multiblock controllers of
+  the scene level and took 32 screenshots. The log `client-after.log`, the folder `shots-after/` and
+  the contact sheets in `sheets/` lie in `bp2/createaddition/ponders-x/` of the workflow scratchpad.
+- Every fluid tank and accumulator block of that run named a valid controller. The right tank of
+  the pump scene started with 9000 mB of water, which flowed into the left tank and back after the
+  wrench step. The connector scenes drew and removed their wires, and the servo turned the observer.
+  The only ERROR line is the sound engine, which finds no audio device under Xvfb. With the duplicate
+  call put back, the same run found 30 blocks whose controller lay outside the scene
+  (`client-before.log`), among them both upper tank blocks of the pump scene, seven of the eight
+  blocks of the accumulator scene and the upper block of Create's Fluid Tank scene.
+- Commit 74a1e31 merges the translations (`UPSTREAM.md` source change 32). The 41 new English keys
+  take the values that the 1.21.1 locales at 658a390 hold for them, with `tag.fluid.c.ignites` read
+  as `tag.fluid.forge.ignites`. A locale only takes a value that its 1.21.1 file really translates,
+  not the English text and not one marked `[NEEDS_TRANSLATION]`.
+- That brings translations to es_es, es_mx, fr_fr, pt_br, ru_ru and pl_pl only. Spanish, Portuguese
+  and Russian gain the five goggle keys `createaddition.tooltip.liquid_burning.*`,
+  `tooltip.charging.*` and `tooltip.alternator.info` of the small fixes (8fb90f8), and French the
+  four without the alternator. Russian also takes three reworded death messages, and Polish its four
+  death messages, which the base held as untranslated English. The ko_kr and zh_cn files already
+  had their translations, and the fork's ko_kr from the base already has the key names that upstream
+  3e49327 fixes in the 1.21.1 file.
+- The death message keys are already renamed in all 21 locales (66076fb), and the merge adds none
+  under the old names, which 1.21.1 still keeps with the same text in 11 locales.
+- The plan expected the key `item.createaddition.electrum_amulet.tooltip.summary` to describe the
+  old Luck effect in all 20 locales other than en_us at 658a390. That is wrong for fr_fr, whose
+  1.21.1 file already describes the charging, so French uses that text. The other 19 locales drop the
+  key, so the English summary shows instead of a wrong one (83fad0b). They include hu_hu, no_no and
+  vi_vn, which only 1.20.1 has and which keep all their other keys.
+- No 1.21.1 locale translates the ponder texts, `block.createaddition.electric_pump`,
+  `block.createaddition.servo_motor` or `createaddition.recipe.charging.sequence`, and French lacks
+  `tooltip.alternator.info`, so these show English. The bundle adds no translation of its own.
+- All 21 lang files parse with Gson 2.10.1 in strict mode, as Minecraft's `Language.loadFromJson`
+  reads them, with no duplicate key. The vi_vn file of the base holds a raw line break inside one
+  string, which Gson accepts, so it stays as it is.
+- The bundle changes no registry id, NBT key, config key or server class. Ponder scenes and lang
+  files are client content, and `CAPonders` is only reached through `CAPonderPlugin`, which
+  `doClientStuff` registers. The fork compiled with 38 warnings as before.
 
 ### Release
 
@@ -616,6 +669,9 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   Create 6.0.10 assets of the 1.21.1 line, and confirm the copyright line of Create's current MIT
   code license for the `NOTICE` paragraph on the servo renderer, visual and assembly, which follow
   Create 6 bearing code.
+- The new ponders ran only in a dev client. A pack client must open the scenes of the pump, the
+  connectors and the servo, the accumulator scene and Create's Fluid Tank scene with the whole mod
+  set, see [Ponders and translations](#ponders-and-translations).
 - The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
 
 ## Excluded
@@ -710,6 +766,13 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   percent. Create's 1.21.1 tree has the same texture blob. Commit 1051eaf lists both files in the
   Create derived part of `NOTICE` (`UPSTREAM.md`, License). The other new models
   share at most one trivial cuboid with any Create model.
+- The pump's ponder schematic keeps the positions of the two fluid tanks and six fluid pipes of
+  Create's `ponder/mechanical_pump/flow.nbt` (blob 2ecaed7), and its scene code and texts follow
+  Create's `PumpScenes.flow`. Both were already in `create-1.20.1-6.0.3.jar` of 2025-03-14, the
+  schematic the same in 6.0.8, so they are MIT. Commit 65de407 lists both in the Create derived part
+  of `NOTICE`. The connector and servo schematics match no ponder schematic of Create 6.0.8
+  (`tools/layout_cmp.py` in `bp2/createaddition/`). The ponder bundle adds no texture, so the texture
+  checks get nothing new from it.
 
 ## Savegame notes
 
@@ -901,6 +964,7 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The paper to straw recipe lives at `data/createaddition/recipes/rolling/straw_from_paper.json`, not
   in upstream's `create:rolling/paper`.
 - The ponder schematics are converted to the NBT of 1.20.1.
+- The Electric Pump joins the Electric ponder tag and Create's Fluids tag, and its scene names both.
 - The Electric Pump shows its draw in fe/t and reads the redstone signal when it is placed.
 - A mixin into Create's `FluidPropagator` wakes the Electric Pump after a pipe change.
 - The target angle of the Servo Motor follows a new Min or Max Angle while the redstone signal stays
@@ -985,6 +1049,9 @@ Planned, not shipped.
 - Festive wire no longer joins two large connectors.
 - The Digital Adapter returns fractions to scripts instead of whole numbers.
 - JEI shows the burn time of liquid fuels as 20m instead of 20 min.
+- More goggle texts and death messages are translated in Spanish, French, Polish, Portuguese and
+  Russian. Outside French the Electrum Amulet summary shows in English until someone translates
+  the new text.
 
 ### Fixed for players
 
@@ -997,6 +1064,8 @@ Planned, not shipped.
 - The mod's ambient sounds play while Create's ambient sounds are on.
 - Barbed wire can be waterlogged and wrenched.
 - Stress values show in the tooltips.
+- The ponder scenes of the Modular Accumulator and of Create's Fluid Tank show their multiblocks
+  whole.
 
 ## History
 

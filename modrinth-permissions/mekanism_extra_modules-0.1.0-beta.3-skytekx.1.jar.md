@@ -1,0 +1,20 @@
+# Mekanism: Extra Modules (1.20.1 Forge port by SkyTekx)
+
+Bundled file: `mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar`
+Status: OK
+
+## Paste into the Modrinth attribution form
+
+- Permission reason: Licensed
+- Link to work: https://modrinth.com/mod/mekanism-extra-modules
+- License: LGPL-3.0-or-later
+- Explanation:
+
+  The file mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar is an unofficial SkyTekx port of Mekanism: Extra Modules 0.1.0-beta.3 (https://github.com/Lumysia/mekanism-extra-modules, tag v1.21.1-0.1.0-beta.3, commit 1548dd6f2d41906e845c626895cb35769a33a61e of 2026-09-13) from Minecraft 1.21.1 NeoForge to Minecraft 1.20.1 Forge 47 and Mekanism 10.4.16. Upstream only publishes 1.21.1 NeoForge builds on Modrinth. The repository carries the GNU LGPL v3 as LICENSE, its README and gradle.properties say LGPL-3.0-or-later, and the Modrinth project lists LGPL-3.0-or-later. The LGPL allows modifying the mod and conveying the modified object code, modpacks included, under the same license with the license texts, notices of the modification and the Corresponding Source. The jar ships the LGPL v3 as LICENSE_mekanism_extra_modules and the GPL v3 that it incorporates as LICENSE_mekanism_extra_modules_GPL-3.0. Its NOTICE_mekanism_extra_modules says that the build is unofficial and modified, names the upstream commit, lists the changed files with the date 2026-11-05 and points to the Corresponding Source in ports/mekanism-extra-modules of the SkyTekx 3 repository (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/mekanism-extra-modules). The pack also carries that source as licenses/mekanism_extra_modules-0.1.0-beta.3-skytekx.1-sources.zip. The item textures and HUD icons are edited copies of Mekanism textures, and Mekanism is MIT licensed, so the jar also ships Mekanism's MIT notice as LICENSE_mekanism_extra_modules_Mekanism-MIT. The mod id mekanism_extra_modules, the license field and the author entry stay upstream's, and the version carries the suffix -skytekx.1.
+
+## Reference
+
+- Redistribution allowed: yes, once master carries its source (see Notes)
+- On Modrinth: 1.21.1 NeoForge only (https://modrinth.com/mod/mekanism-extra-modules, project TfCrGUbp, newest version 0.1.0-beta.3 `WRuXXPxB`)
+- Author: the Mekanism: Extra Modules project (original mod), ported by SkyTekx
+- Notes: SHA-1 ca7f070e3f78405968a6fe93257fe235e4f3e925, 658,607 bytes. Built from `ports/mekanism-extra-modules/` of this repository with Java 17 and the Gradle 8.2.1 wrapper, `./gradlew build`. The build fetches Mekanism 10.4.16.80, Draconic Evolution 3.1.2.621, Brandon's Core 3.2.1.302 and CodeChicken Lib 4.4.0.528 from the Modrinth CDN as compile only dependencies and checks their SHA-1 against the pack's index. None of them is inside the jar. A second build from a clean git archive gave the same SHA-1. It requires Mekanism and Mekanism Tools [10.4.16,10.5) and takes Draconic Evolution 3.1.2 or newer as an optional dependency, whose Chaos Guardian laser it guards with two Mixin redirects that copy no Draconic Evolution code. The source mirror `licenses/mekanism_extra_modules-0.1.0-beta.3-skytekx.1-sources.zip` is `git archive --format=zip --prefix=skytekx3-1201-server-f87739e/ f87739e15aa53ac72a5608026c1aac2120aefbae -- ports/mekanism-extra-modules` of this repository, 1,322,237 bytes, SHA-1 3194fb9b97a773de98120eebd950b35ef34f1cb5, and two runs gave the same bytes. The license texts also travel in `licenses/mekanism_extra_modules-0.1.0-beta.3-skytekx.1/`. Forge 47.4.18 test servers, one of them on the pack's Arclight jar, booted it on 2026-11-05 with 0 ERROR lines, see `ports/mekanism-extra-modules/UPSTREAM.md`. The LGPL needs the Corresponding Source to stay available while the jar is offered, so the jar may only be distributed once master on GitHub holds `ports/mekanism-extra-modules/` and this jar. `tools/mrpack_permissions.py` refuses it until then. The license adds no non-commercial condition.

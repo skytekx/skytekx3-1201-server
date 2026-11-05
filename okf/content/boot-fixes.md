@@ -37,9 +37,9 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 250 files, 249 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 114 are
-[gameplay overrides](#gameplay-overrides).
+is tracked: 9,799 files, 9,798 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,663 are
+[gameplay overrides](#gameplay-overrides), 9,530 of them the generated recipes of [melting](melting.md).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -117,7 +117,7 @@ be none.
 
 ### Gameplay overrides
 
-Eight groups of files in the pack change the game on purpose:
+Nine groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -142,7 +142,7 @@ Eight groups of files in the pack change the game on purpose:
   all on grass blocks. The final files gave 25 logs in 278 forest chunks (0.090) in 10,082 fresh
   chunks, all on grass or coarse dirt and none floating. The live boot of 2026-11-04 16:06 no longer
   logs the tag warning.
-- The 32 melting recipes under `data/tconstruct/recipes/smeltery/melting/` let the smeltery and the
+- The 32 hand written melting recipes under `data/tconstruct/recipes/smeltery/melting/` let the smeltery and the
   melter of Tinkers' Construct 3.12 melt the horse armor, the gloves and three obsidian items of other
   mods since 2026-11-04.
   Tinkers ships recipes only for vanilla items and its own compat metals, so the owner's horse armor
@@ -154,15 +154,20 @@ Eight groups of files in the pack change the game on purpose:
   only with the mod `skytekx_molten`, which the server runs since the deploy of 3.1.3 on 2026-11-05. It
   melts at 960, the palladium temperature of SkyTekx Molten, in 130 ticks (790 and 120 before that day). The 9 files in `gloves/` cover the Aether (iron, golden, diamond,
   netherite and chainmail) and Twilight Aether (ironwood, fiery, knightmetal and steeleaf). They use
-  `tconstruct:damagable_melting`, so a worn glove returns less, as Tinkers does for tools. Every file
+  `tconstruct:damagable_melting`, so a worn glove returns less, as Tinkers does for tools. Since 2026-11-05 the
+  ironwood gloves give 90 mB of iron and 10 mB of gold, half of before, since one raw iron makes two raw
+  ironwood (see [Melting](melting.md#dupes-closed-with-overrides)). Every file
   for another mod carries a `forge:mod_loaded` condition. The 3 files in `forbidden_arcanus/` answer the
   prompt of 16:43, which asked why Obsidian With Iron does not melt. In Forbidden & Arcanus 2.2.6 it
   takes one obsidian and four iron nuggets, and the furnace turns it into an Obsidian Ingot. Both melt
   into 1000 mB of molten obsidian and the Processed Obsidian Block of nine ingots into 9000 mB. The iron
   comes back as a byproduct, 40 mB per ingot, which only the foundry gives out. SkyTekx Molten melts the
-  ingot and the block itself, so since 2026-11-05 the two files load only without `skytekx_molten`.
-  Molten's recipes give the same molten obsidian but no iron byproduct, so with Molten the four iron
-  nuggets of an ingot do not come back. Obsidian With Iron keeps its file in both cases.
+  ingot and the block itself into the same molten obsidian but without the iron. From 93bed42c on the two
+  files loaded only without `skytekx_molten`, so with Molten the four iron nuggets of an ingot did not come
+  back. Since the follow-up of 2026-11-05 they load in both cases again, and two files under
+  `data/skytekx_molten/recipes/smeltery/melting/obsidian/` switch off the two recipes of Molten with
+  `forge:false` (see [Melting](melting.md#dupes-closed-with-overrides)). Obsidian With Iron keeps its file in
+  both cases.
 - Three of these files replace the recipes of Tinkers for the vanilla iron, golden and diamond horse
   armor at their own ids. DragN's Livestock Overhaul makes them craftable from 4 ingots or diamonds,
   and Tinkers melted them into 7 (630 mB, 630 mB and 700 mB), a dupe. They now give 360 mB, 360 mB and
@@ -173,6 +178,15 @@ Eight groups of files in the pack change the game on purpose:
   log names one of the files. The three files of Forbidden & Arcanus went live at 17:39:10 with another
   `/reload`, after which KubeJS counted 37,023 recipes and the log had no new ERROR line. Nobody melted
   one in game yet.
+- 9,530 generated melting recipes under `data/skytekx3/recipes/melting/` let every armor piece, weapon,
+  tool and other item that holds a meltable material melt since 2026-11-05, as the owner asked on
+  2026-11-04 at 17:35. The script `tools/gen_melting.py` writes them from a dump of a test server, one per
+  item with the content of its cheapest recipe, and audits every melting recipe of the pack for dupes. With
+  them came 16 files under `data/tconstruct/recipes/smeltery/melting/` that close dupes of Tinkers which the
+  audit found, such as the ironwood of the Twilight Forest and the enchanted golden apple, the item tag
+  `data/skytekx3/tags/items/melting/not_as_template.json`, which keeps the stratus smithing template of
+  Deep Aether out of the template recipe of Tinkers, and the two files of SkyTekx Molten above. See
+  [Melting](melting.md).
 - One crafting recipe at `data/exura/recipes/auto_executor.json` makes the Auto Executor of Extra
   Utilities Reborn Again craftable since 2026-11-04. Version 1.2.0-rc10 registers the block with its
   item but ships no recipe for it, and the upstream source on GitHub (main of 2026-10-13) has none

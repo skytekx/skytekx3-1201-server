@@ -6,6 +6,7 @@ import com.enderio.api.conduit.screen.RegisterConduitScreenExtensionsEvent;
 import com.enderio.api.misc.ColorControl;
 import com.enderio.conduits.client.gui.ConduitIconTextureManager;
 import com.enderio.conduits.client.gui.conduit.ConduitScreenExtensions;
+import com.enderio.conduits.client.gui.conduit.EnergyConduitScreenExtension;
 import com.enderio.conduits.client.gui.conduit.FluidConduitScreenExtension;
 import com.enderio.conduits.client.gui.conduit.ItemConduitScreenExtension;
 import com.enderio.conduits.client.model.ConduitGeometry;
@@ -87,6 +88,7 @@ public class ConduitClientSetup {
         event.register(EIOConduitTypes.FLUID2.get(), () -> FluidConduitScreenExtension.INSTANCE);
         event.register(EIOConduitTypes.FLUID3.get(), () -> FluidConduitScreenExtension.INSTANCE);
         event.register(EIOConduitTypes.ITEM.get(), ItemConduitScreenExtension::new);
+        event.register(EIOConduitTypes.ENERGY.get(), EnergyConduitScreenExtension::new);
     }
 
     @SubscribeEvent

@@ -14,6 +14,7 @@ import com.enderio.conduits.common.conduit.ConduitBundle;
 import com.enderio.api.conduit.SlotType;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
+import com.enderio.conduits.common.conduit.type.energy.EnergyConduitType;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitType;
 import com.enderio.conduits.common.init.ConduitLang;
 import com.enderio.conduits.common.menu.ConduitMenu;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.function.Function;
 
 public class ConduitScreen extends EIOScreen<ConduitMenu> {
@@ -78,8 +80,9 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
 
         guiGraphics.drawString(this.font, ConduitLang.CONDUIT_INSERT,  22 + 16,  7 + 4, 4210752, false);
 
-        if (menu.getConduitType() instanceof ItemConduitType itemConduitType) {
-            String priority = String.valueOf(getBundle().getNodeFor(itemConduitType).getConduitData().get(menu.getDirection()).getPriority());
+        OptionalInt insertPriority = getInsertPriority();
+        if (insertPriority.isPresent()) {
+            String priority = String.valueOf(insertPriority.getAsInt());
             guiGraphics.drawString(this.font, ConduitLang.CONDUIT_PRIORITY, 22,  7 + 4 + 4 + 8 + 16 + 12, 4210752, false);
             guiGraphics.drawString(
                 this.font,
@@ -92,6 +95,21 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
         if (data.showBothEnable()) {
             guiGraphics.drawString(this.font, ConduitLang.CONDUIT_EXTRACT, 112 + 16, 7 + 4, 4210752, false);
         }
+    }
+
+    /**
+     * The insert priority of the shown side, for the conduits that have one: item conduits (6.x 37890e67d) and energy
+     * conduits (8.x 57fc40d61).
+     */
+    private OptionalInt getInsertPriority() {
+        ConduitType<?> conduitType = menu.getConduitType();
+        if (conduitType instanceof ItemConduitType itemConduitType) {
+            return OptionalInt.of(getBundle().getNodeFor(itemConduitType).getConduitData().get(menu.getDirection()).getPriority());
+        }
+        if (conduitType instanceof EnergyConduitType energyConduitType) {
+            return OptionalInt.of(getBundle().getNodeFor(energyConduitType).getConduitData().getPriority(menu.getDirection()));
+        }
+        return OptionalInt.empty();
     }
 
     private void updateConnectionWidgets(boolean forceUpdate) {

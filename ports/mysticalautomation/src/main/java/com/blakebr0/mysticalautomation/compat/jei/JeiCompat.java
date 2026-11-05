@@ -1,6 +1,5 @@
 package com.blakebr0.mysticalautomation.compat.jei;
 
-import com.blakebr0.cucumber.helper.RecipeHelper;
 import com.blakebr0.mysticalagriculture.api.MysticalAgricultureAPI;
 import com.blakebr0.mysticalagriculture.api.crafting.IAwakeningRecipe;
 import com.blakebr0.mysticalagriculture.api.crafting.IEnchanterRecipe;
@@ -71,7 +70,7 @@ public final class JeiCompat implements IModPlugin {
         if (level != null) {
             var manager = level.getRecipeManager();
 
-            registration.addRecipes(FarmerCategory.RECIPE_TYPE, RecipeHelper.byTypeValues(manager, ModRecipeTypes.FARMER.get()));
+            registration.addRecipes(FarmerCategory.RECIPE_TYPE, manager.getAllRecipesFor(ModRecipeTypes.FARMER.get()));
         }
 
         registration.addRecipes(FertilizerCategory.RECIPE_TYPE, FertilizerFakeRecipe.createAll());

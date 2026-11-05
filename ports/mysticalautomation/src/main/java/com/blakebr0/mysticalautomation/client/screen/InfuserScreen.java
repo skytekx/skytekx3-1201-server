@@ -3,19 +3,20 @@ package com.blakebr0.mysticalautomation.client.screen;
 import com.blakebr0.cucumber.client.render.GhostItemRenderer;
 import com.blakebr0.cucumber.client.screen.BaseContainerScreen;
 import com.blakebr0.cucumber.client.screen.widget.EnergyBarWidget;
-import com.blakebr0.cucumber.client.screen.widget.FuelWidget;
+import com.blakebr0.mysticalautomation.client.screen.widget.EnergyStorageView;
+import com.blakebr0.mysticalautomation.client.screen.widget.FuelWidget;
 import com.blakebr0.mysticalautomation.MysticalAutomation;
 import com.blakebr0.mysticalautomation.client.screen.widget.InfuserProgressWidget;
 import com.blakebr0.mysticalautomation.client.screen.widget.InfuserSelectedWidget;
 import com.blakebr0.mysticalautomation.compat.MysticalCompat;
 import com.blakebr0.mysticalautomation.container.InfuserContainer;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.RegistryObject;
 
 public class InfuserScreen extends BaseContainerScreen<InfuserContainer> {
     public static final ResourceLocation BACKGROUND = MysticalAutomation.resource("textures/gui/infuser.png");
@@ -31,7 +32,10 @@ public class InfuserScreen extends BaseContainerScreen<InfuserContainer> {
         int x = this.getGuiLeft();
         int y = this.getGuiTop();
 
-        this.addRenderableWidget(new EnergyBarWidget(x + 7, y + 17, this.menu::getEnergyStored, this.menu::getMaxEnergyStored));
+        // SkyTekx port: Cucumber 7's energy bar reads an IEnergyStorage and is clickable unless told otherwise
+        var energyBar = new EnergyBarWidget(x + 7, y + 17, new EnergyStorageView(this.menu::getEnergyStored, this.menu::getMaxEnergyStored));
+        energyBar.active = false;
+        this.addRenderableWidget(energyBar);
         this.addRenderableWidget(new FuelWidget(x + 30, y + 39, this.menu::getFuelItemValue, this.menu::getFuelLeft));
 
         for (var i = 0; i < 6; i++) {
@@ -54,7 +58,7 @@ public class InfuserScreen extends BaseContainerScreen<InfuserContainer> {
 
     @Override
     protected void renderBg(GuiGraphics gfx, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(gfx, partialTicks, mouseX, mouseY);
+        this.renderDefaultBg(gfx, partialTicks, mouseX, mouseY);
 
         var x = this.getGuiLeft();
         var y = this.getGuiTop();
@@ -68,16 +72,16 @@ public class InfuserScreen extends BaseContainerScreen<InfuserContainer> {
         this.renderGhostItem(7, x + 192, y + 33, MysticalCompat.Items.INSANIUM_ESSENCE);
     }
 
-    private void renderGhostItem(int index, int x, int y, Holder<Item> item) {
+    private void renderGhostItem(int index, int x, int y, RegistryObject<Item> item) {
         if (this.minecraft == null)
             return;
 
-        if (!item.isBound())
+        if (!item.isPresent())
             return;
 
         if (this.menu.slots.get(index).hasItem())
             return;
 
-        GhostItemRenderer.renderItemIntoGui(new ItemStack(item), x, y, this.minecraft.getItemRenderer());
+        GhostItemRenderer.renderItemIntoGui(new ItemStack(item.get()), x, y, this.minecraft.getItemRenderer());
     }
 }

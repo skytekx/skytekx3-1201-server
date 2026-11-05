@@ -3,44 +3,39 @@ package com.blakebr0.mysticalautomation.tileentity;
 import com.blakebr0.cucumber.energy.DynamicEnergyStorage;
 import com.blakebr0.cucumber.helper.StackHelper;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
-import com.blakebr0.cucumber.inventory.CachedRecipe;
-import com.blakebr0.cucumber.inventory.OnContentsChangedFunction;
-import com.blakebr0.cucumber.inventory.SidedInventoryWrapper;
-import com.blakebr0.cucumber.tileentity.BaseInventoryTileEntity;
-import com.blakebr0.cucumber.util.ContainerDataBuilder;
-import com.blakebr0.mysticalagriculture.api.machine.IUpgradeableMachine;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeTier;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
+import com.blakebr0.mysticalagriculture.util.IUpgradeableMachine;
+import com.blakebr0.mysticalagriculture.util.MachineUpgradeTier;
 import com.blakebr0.mysticalautomation.block.FarmerBlock;
 import com.blakebr0.mysticalautomation.container.FarmerContainer;
 import com.blakebr0.mysticalautomation.crafting.recipe.FarmerRecipe;
 import com.blakebr0.mysticalautomation.init.ModRecipeTypes;
 import com.blakebr0.mysticalautomation.init.ModTileEntities;
+import com.blakebr0.mysticalautomation.util.CachedRecipe;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
 import com.blakebr0.mysticalautomation.util.RecipeIngredientCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.common.ForgeHooks;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.stream.IntStream;
 
-public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuProvider, IUpgradeableMachine {
+public class FarmerTileEntity extends BaseMachineTileEntity implements MenuProvider, IUpgradeableMachine {
     private static final int[] INPUT_SLOTS = IntStream.rangeClosed(0, 2).toArray();
     private static final int FUEL_SLOT = 3;
     private static final int[] OUTPUT_SLOTS = IntStream.rangeClosed(4, 12).toArray();
@@ -51,10 +46,9 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
     public static final int FUEL_CAPACITY = 80000;
 
     private final BaseItemStackHandler inventory;
-    private final MachineUpgradeItemStackHandler upgradeInventory;
+    private final UpgradeItemStackHandler upgradeInventory;
     private final DynamicEnergyStorage energy;
-    private final SidedInventoryWrapper[] sidedInventoryWrappers;
-    private final CachedRecipe<RecipeInput, FarmerRecipe> recipe;
+    private final CachedRecipe<Container, FarmerRecipe> recipe;
 
     private final ContainerData dataAccess;
 
@@ -68,10 +62,9 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
 
     public FarmerTileEntity(BlockPos pos, BlockState state) {
         super(ModTileEntities.FARMER.get(), pos, state);
-        this.inventory = createInventoryHandler(slot -> this.setChanged());
-        this.upgradeInventory = new MachineUpgradeItemStackHandler();
+        this.inventory = createInventoryHandler(this::setChanged);
+        this.upgradeInventory = new UpgradeItemStackHandler();
         this.energy = new DynamicEnergyStorage(FUEL_CAPACITY, this::setChangedFast);
-        this.sidedInventoryWrappers = SidedInventoryWrapper.create(this.inventory, List.of(Direction.UP, Direction.DOWN, Direction.NORTH), this::canInsertStackSided, null);
         this.recipe = new CachedRecipe<>(ModRecipeTypes.FARMER.get());
 
         this.dataAccess = ContainerDataBuilder.builder()
@@ -103,26 +96,26 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
     }
 
     @Override
-    public MachineUpgradeItemStackHandler getUpgradeInventory() {
+    public UpgradeItemStackHandler getUpgradeInventory() {
         return this.upgradeInventory;
     }
 
     @Override
-    public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
-        super.loadAdditional(tag, lookup);
+    public void load(CompoundTag tag) {
+        super.load(tag);
 
         this.progress = tag.getInt("Progress");
         this.stages = tag.getInt("Stages");
         this.stageProgress = tag.getInt("StageProgress");
         this.fuelLeft = tag.getInt("FuelLeft");
         this.fuelItemValue = tag.getInt("FuelItemValue");
-        this.energy.deserializeNBT(lookup, tag.get("Energy"));
-        this.upgradeInventory.deserializeNBT(lookup, tag.getCompound("UpgradeInventory"));
+        loadEnergy(this.energy, tag);
+        this.upgradeInventory.deserializeNBT(tag.getCompound("UpgradeInventory"));
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
-        super.saveAdditional(tag, lookup);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
 
         tag.putInt("Progress", this.progress);
         tag.putInt("Stages", this.stages);
@@ -130,7 +123,7 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
         tag.putInt("FuelLeft", this.fuelLeft);
         tag.putInt("FuelItemValue", this.fuelItemValue);
         tag.putInt("Energy", this.energy.getEnergyStored());
-        tag.put("UpgradeInventory", this.upgradeInventory.serializeNBT(lookup));
+        tag.put("UpgradeInventory", this.upgradeInventory.serializeNBT());
     }
 
     @Override
@@ -143,7 +136,7 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
             var fuel = tile.inventory.getStackInSlot(FUEL_SLOT);
 
             if (tile.fuelLeft <= 0 && !fuel.isEmpty()) {
-                tile.fuelItemValue = fuel.getBurnTime(null);
+                tile.fuelItemValue = ForgeHooks.getBurnTime(fuel, null);
 
                 if (tile.fuelItemValue > 0) {
                     tile.fuelLeft = tile.fuelItemValue *= FUEL_TICK_MULTIPLIER;
@@ -173,7 +166,7 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
             if (tier == null) {
                 tile.energy.resetMaxEnergyStorage();
             } else {
-                tile.energy.setMaxEnergyStorage(tier.getFuelCapacity(FUEL_CAPACITY));
+                tile.energy.setMaxEnergyStorage(MachineUpgrades.getFuelCapacity(tier, FUEL_CAPACITY));
             }
 
             tile.setChangedFast();
@@ -225,7 +218,7 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
         return createInventoryHandler(null);
     }
 
-    public static BaseItemStackHandler createInventoryHandler(@Nullable OnContentsChangedFunction onContentsChanged) {
+    public static BaseItemStackHandler createInventoryHandler(@Nullable Runnable onContentsChanged) {
         return BaseItemStackHandler.create(16, onContentsChanged, handler -> {
             handler.setCanInsert((slot, stack) -> switch (slot) {
                 case 0 -> RecipeIngredientCache.INSTANCE.isValidInput(RecipeIngredientCache.Key.FARMER_SEEDS, stack);
@@ -245,16 +238,9 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
         });
     }
 
+    @Override
     public DynamicEnergyStorage getEnergy() {
         return this.energy;
-    }
-
-    public IItemHandler getSidedInventory(@Nullable Direction direction) {
-        return switch (direction) {
-            case UP -> this.sidedInventoryWrappers[0];
-            case DOWN -> this.sidedInventoryWrappers[1];
-            case null, default -> this.sidedInventoryWrappers[2];
-        };
     }
 
     private void reset() {
@@ -269,19 +255,20 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
     }
 
     private int getOperationTime() {
-        return this.tier == null ? OPERATION_TIME : this.tier.getOperationTime(OPERATION_TIME);
+        return this.tier == null ? OPERATION_TIME : MachineUpgrades.getOperationTime(this.tier, OPERATION_TIME);
     }
 
     private int getFuelUsage() {
-        return this.tier == null ? FUEL_USAGE : this.tier.getFuelUsage(FUEL_USAGE);
+        return this.tier == null ? FUEL_USAGE : MachineUpgrades.getFuelUsage(this.tier, FUEL_USAGE);
     }
 
     private int getStageOperationTime() {
-        return this.tier == null ? OPERATION_TIME * this.stages : this.tier.getOperationTime(OPERATION_TIME) * this.stages;
+        return this.tier == null ? OPERATION_TIME * this.stages : MachineUpgrades.getOperationTime(this.tier, OPERATION_TIME) * this.stages;
     }
 
-    private CraftingInput toCraftingInput() {
-        return this.inventory.toCraftingInput(1, 3, INPUT_SLOTS[0], INPUT_SLOTS[0] + INPUT_SLOTS.length);
+    // SkyTekx port: the three input slots as a recipe Container, the 1.20.1 form of upstream's CraftingInput
+    private Container toCraftingInput() {
+        return this.inventory.toRecipeInventory(INPUT_SLOTS[0], INPUT_SLOTS.length);
     }
 
     private void addItemToInventory(ItemStack stack) {
@@ -307,7 +294,8 @@ public class FarmerTileEntity extends BaseInventoryTileEntity implements MenuPro
         }
     }
 
-    private boolean canInsertStackSided(int slot, ItemStack stack, @Nullable Direction direction) {
+    @Override
+    protected boolean canInsertStackSided(int slot, ItemStack stack, @Nullable Direction direction) {
         if (direction == null)
             return true;
         if (ArrayUtils.contains(INPUT_SLOTS, slot) && direction == Direction.UP)

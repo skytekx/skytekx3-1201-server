@@ -1,22 +1,22 @@
 package com.blakebr0.mysticalautomation.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class ModConfigs {
-    public static final ModConfigSpec COMMON;
+    public static final ForgeConfigSpec COMMON;
 
-    public static final ModConfigSpec.BooleanValue INFUSER_ENABLED;
-    public static final ModConfigSpec.BooleanValue CRAFTER_ENABLED;
-    public static final ModConfigSpec.BooleanValue FARMER_ENABLED;
-    public static final ModConfigSpec.BooleanValue FARMER_DYNAMIC_MYSTICAL_AGRICULTURE_RECIPES;
-    public static final ModConfigSpec.BooleanValue FERTILIZER_ENABLED;
-    public static final ModConfigSpec.BooleanValue INFUSION_ALTARNATOR_ENABLED;
-    public static final ModConfigSpec.BooleanValue AWAKENING_ALTARNATOR_ENABLED;
-    public static final ModConfigSpec.BooleanValue ENCHANTERNATOR_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue INFUSER_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue CRAFTER_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue FARMER_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue FARMER_DYNAMIC_MYSTICAL_AGRICULTURE_RECIPES;
+    public static final ForgeConfigSpec.BooleanValue FERTILIZER_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue INFUSION_ALTARNATOR_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue AWAKENING_ALTARNATOR_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue ENCHANTERNATOR_ENABLED;
 
     // common
     static {
-        final var common = new ModConfigSpec.Builder();
+        final var common = new ForgeConfigSpec.Builder();
 
         common.comment("Machine configuration options").push("Machines");
 

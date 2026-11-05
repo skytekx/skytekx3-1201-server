@@ -3,8 +3,9 @@ package com.blakebr0.mysticalautomation.client.screen;
 import com.blakebr0.cucumber.client.render.GhostItemRenderer;
 import com.blakebr0.cucumber.client.screen.BaseContainerScreen;
 import com.blakebr0.cucumber.client.screen.widget.EnergyBarWidget;
-import com.blakebr0.cucumber.client.screen.widget.FuelWidget;
-import com.blakebr0.cucumber.client.screen.widget.ProgressArrowWidget;
+import com.blakebr0.mysticalautomation.client.screen.widget.EnergyStorageView;
+import com.blakebr0.mysticalautomation.client.screen.widget.FuelWidget;
+import com.blakebr0.mysticalautomation.client.screen.widget.ProgressArrowWidget;
 import com.blakebr0.mysticalautomation.MysticalAutomation;
 import com.blakebr0.mysticalautomation.client.screen.widget.EnchanternatorLevelWidget;
 import com.blakebr0.mysticalautomation.container.EnchanternatorContainer;
@@ -27,7 +28,10 @@ public class EnchanternatorScreen extends BaseContainerScreen<EnchanternatorCont
         int x = this.getGuiLeft();
         int y = this.getGuiTop();
 
-        this.addRenderableWidget(new EnergyBarWidget(x + 7, y + 17, this.menu::getEnergyStored, this.menu::getMaxEnergyStored));
+        // SkyTekx port: Cucumber 7's energy bar reads an IEnergyStorage and is clickable unless told otherwise
+        var energyBar = new EnergyBarWidget(x + 7, y + 17, new EnergyStorageView(this.menu::getEnergyStored, this.menu::getMaxEnergyStored));
+        energyBar.active = false;
+        this.addRenderableWidget(energyBar);
         this.addRenderableWidget(new FuelWidget(x + 30, y + 39, this.menu::getFuelItemValue, this.menu::getFuelLeft));
         this.addRenderableWidget(new ProgressArrowWidget(x + 143, y + 47, this.menu::getProgress, this.menu::getOperationTime));
 
@@ -46,7 +50,7 @@ public class EnchanternatorScreen extends BaseContainerScreen<EnchanternatorCont
 
     @Override
     protected void renderBg(GuiGraphics gfx, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(gfx, partialTicks, mouseX, mouseY);
+        this.renderDefaultBg(gfx, partialTicks, mouseX, mouseY);
 
         var x = this.getGuiLeft();
         var y = this.getGuiTop();

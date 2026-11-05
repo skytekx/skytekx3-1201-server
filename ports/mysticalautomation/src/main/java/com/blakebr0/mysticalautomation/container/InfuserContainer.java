@@ -3,12 +3,13 @@ package com.blakebr0.mysticalautomation.container;
 import com.blakebr0.cucumber.container.BaseContainerMenu;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
 import com.blakebr0.cucumber.inventory.slot.BaseItemStackHandlerSlot;
-import com.blakebr0.cucumber.util.QuickMover;
-import com.blakebr0.mysticalagriculture.api.machine.IMachineUpgrade;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
 import com.blakebr0.mysticalautomation.compat.MysticalCompat;
 import com.blakebr0.mysticalautomation.init.ModMenuTypes;
 import com.blakebr0.mysticalautomation.tileentity.InfuserTileEntity;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
+import com.blakebr0.mysticalautomation.util.QuickMover;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,17 +18,18 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class InfuserContainer extends BaseContainerMenu {
     private final ContainerData data;
     private final QuickMover mover;
 
     public InfuserContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, InfuserTileEntity.createInventoryHandler(), new MachineUpgradeItemStackHandler(), new SimpleContainerData(8), buffer.readBlockPos());
+        this(id, playerInventory, InfuserTileEntity.createInventoryHandler(), new UpgradeItemStackHandler(), new SimpleContainerData(ContainerDataBuilder.slots(8)), buffer.readBlockPos());
     }
 
-    public InfuserContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, MachineUpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
+    public InfuserContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, UpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
         super(ModMenuTypes.INFUSER.get(), id, pos);
         this.data = data;
         this.mover = new QuickMover(this::moveItemStackTo);
@@ -62,9 +64,9 @@ public class InfuserContainer extends BaseContainerMenu {
         }
 
         this.mover.after(10)
-                .add((slot, stack, player) -> stack.getItem() instanceof IMachineUpgrade, 0, 1) // machine upgrade
+                .add((slot, stack, player) -> MachineUpgrades.isUpgrade(stack), 0, 1) // machine upgrade
                 .add((slot, stack, player) -> MysticalCompat.isEssence(stack) || MysticalCompat.isInfusionCrystal(stack), 1, 7) // inputs
-                .add((slot, stack, player) -> stack.getBurnTime(null) > 0, 8, 1) // fuel
+                .add((slot, stack, player) -> ForgeHooks.getBurnTime(stack, null) > 0, 8, 1) // fuel
                 .add((slot, stack, player) -> slot < this.slots.size() - 9, this.slots.size() - 9, 9) // hotbar
                 .add((slot, stack, player) -> slot >= this.slots.size() - 9, this.slots.size() - 36, 27); // inventory
         this.mover.fallback(10, 36);
@@ -102,34 +104,34 @@ public class InfuserContainer extends BaseContainerMenu {
     }
 
     public int getEnergyStored() {
-        return this.data.get(0);
+        return ContainerDataBuilder.get(this.data, 0);
     }
 
     public int getMaxEnergyStored() {
-        return this.data.get(1);
+        return ContainerDataBuilder.get(this.data, 1);
     }
 
     public int getFuelLeft() {
-        return this.data.get(2);
+        return ContainerDataBuilder.get(this.data, 2);
     }
 
     public int getFuelItemValue() {
-        return this.data.get(3);
+        return ContainerDataBuilder.get(this.data, 3);
     }
 
     public int getProgress() {
-        return this.data.get(4);
+        return ContainerDataBuilder.get(this.data, 4);
     }
 
     public int getOperationTime() {
-        return this.data.get(5);
+        return ContainerDataBuilder.get(this.data, 5);
     }
 
     public int getProgressingIndex() {
-        return this.data.get(6);
+        return ContainerDataBuilder.get(this.data, 6);
     }
 
     public int getSelectedIndex() {
-        return this.data.get(7);
+        return ContainerDataBuilder.get(this.data, 7);
     }
 }

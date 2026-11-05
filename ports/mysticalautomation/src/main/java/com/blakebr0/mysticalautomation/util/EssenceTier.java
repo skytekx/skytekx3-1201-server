@@ -2,7 +2,7 @@ package com.blakebr0.mysticalautomation.util;
 
 import com.blakebr0.mysticalautomation.compat.MysticalCompat;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
 public enum EssenceTier {
@@ -15,15 +15,15 @@ public enum EssenceTier {
 
     private static final EssenceTier[] VALUES = values();
 
-    private final DeferredHolder<Item, Item> item;
+    private final RegistryObject<Item> item;
 
-    EssenceTier(DeferredHolder<Item, Item> item) {
+    EssenceTier(RegistryObject<Item> item) {
         this.item = item;
     }
 
     @Nullable
     public Item getItem() {
-        return this.item.isBound() ? this.item.value() : null;
+        return this.item.isPresent() ? this.item.get() : null;
     }
 
     @Nullable

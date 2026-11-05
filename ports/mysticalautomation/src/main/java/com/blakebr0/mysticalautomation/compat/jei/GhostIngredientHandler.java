@@ -2,13 +2,14 @@ package com.blakebr0.mysticalautomation.compat.jei;
 
 import com.blakebr0.cucumber.client.screen.BaseContainerScreen;
 import com.blakebr0.mysticalautomation.container.slot.FakeSlot;
+import com.blakebr0.mysticalautomation.network.NetworkHandler;
 import com.blakebr0.mysticalautomation.network.payload.SetFakeRecipeSlotPayload;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class GhostIngredientHandler<T extends BaseContainerScreen<?>> implements
                                 return;
 
                             slot.set(stack);
-                            PacketDistributor.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
+                            NetworkHandler.INSTANCE.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
                         }
                     }
                 });

@@ -1,12 +1,12 @@
 package com.blakebr0.mysticalautomation.init;
 
 import com.blakebr0.mysticalautomation.MysticalAutomation;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class ModItems {
-    public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(Registries.ITEM, MysticalAutomation.MOD_ID);
+    public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, MysticalAutomation.MOD_ID);
 
     // register block items here for class load order purposes
     static {

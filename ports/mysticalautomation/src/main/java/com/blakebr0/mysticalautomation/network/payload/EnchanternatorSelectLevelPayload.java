@@ -1,44 +1,38 @@
 package com.blakebr0.mysticalautomation.network.payload;
 
-import com.blakebr0.mysticalautomation.MysticalAutomation;
 import com.blakebr0.mysticalautomation.tileentity.EnchanternatorTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
 
-public record EnchanternatorSelectLevelPayload(BlockPos pos, int level) implements CustomPacketPayload {
-    public static final Type<EnchanternatorSelectLevelPayload> TYPE = new Type<>(MysticalAutomation.resource("enchanternator_select_level"));
+import java.util.function.Supplier;
 
-    public static final StreamCodec<FriendlyByteBuf, EnchanternatorSelectLevelPayload> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
-            EnchanternatorSelectLevelPayload::pos,
-            ByteBufCodecs.VAR_INT,
-            EnchanternatorSelectLevelPayload::level,
-            EnchanternatorSelectLevelPayload::new
-    );
-
-    @Override
-    public Type<EnchanternatorSelectLevelPayload> type() {
-        return TYPE;
+// SkyTekx port: a SimpleChannel message (NetworkHandler) for upstream's CustomPacketPayload and StreamCodec
+public record EnchanternatorSelectLevelPayload(BlockPos pos, int level) {
+    public static EnchanternatorSelectLevelPayload read(FriendlyByteBuf buffer) {
+        return new EnchanternatorSelectLevelPayload(buffer.readBlockPos(), buffer.readVarInt());
     }
 
-    public static void handleServer(EnchanternatorSelectLevelPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            var player = context.player();
-            var level = player.level();
-            var tile = level.getBlockEntity(payload.pos);
+    public static void write(EnchanternatorSelectLevelPayload payload, FriendlyByteBuf buffer) {
+        buffer.writeBlockPos(payload.pos);
+        buffer.writeVarInt(payload.level);
+    }
 
-            if (tile instanceof EnchanternatorTileEntity machine) {
-                var selectedLevel = machine.getSelectedLevel();
-                if (selectedLevel == payload.level) {
-                    machine.setSelectedLevel(0);
-                } else {
-                    machine.setSelectedLevel(payload.level);
-                }
+    public static void handleServer(EnchanternatorSelectLevelPayload payload, Supplier<NetworkEvent.Context> context) {
+        var player = context.get().getSender();
+        if (player == null)
+            return;
+
+        var level = player.level();
+        var tile = level.getBlockEntity(payload.pos);
+
+        if (tile instanceof EnchanternatorTileEntity machine) {
+            var selectedLevel = machine.getSelectedLevel();
+            if (selectedLevel == payload.level) {
+                machine.setSelectedLevel(0);
+            } else {
+                machine.setSelectedLevel(payload.level);
             }
-        });
+        }
     }
 }

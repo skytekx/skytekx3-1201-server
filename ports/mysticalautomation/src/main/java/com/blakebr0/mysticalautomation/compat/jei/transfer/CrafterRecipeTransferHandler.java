@@ -3,6 +3,7 @@ package com.blakebr0.mysticalautomation.compat.jei.transfer;
 import com.blakebr0.mysticalautomation.container.CrafterContainer;
 import com.blakebr0.mysticalautomation.container.slot.FakeSlot;
 import com.blakebr0.mysticalautomation.init.ModMenuTypes;
+import com.blakebr0.mysticalautomation.network.NetworkHandler;
 import com.blakebr0.mysticalautomation.network.payload.SetFakeRecipeSlotPayload;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -14,12 +15,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Optional;
 
-public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<CrafterContainer, RecipeHolder<CraftingRecipe>> {
+public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<CrafterContainer, CraftingRecipe> {
     @Override
     public Class<? extends CrafterContainer> getContainerClass() {
         return CrafterContainer.class;
@@ -31,12 +30,12 @@ public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<Craf
     }
 
     @Override
-    public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
+    public RecipeType<CraftingRecipe> getRecipeType() {
         return RecipeTypes.CRAFTING;
     }
 
     @Override
-    public IRecipeTransferError transferRecipe(CrafterContainer container, RecipeHolder<CraftingRecipe> recipe, IRecipeSlotsView recipeSlots, Player player, boolean maxTransfer, boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(CrafterContainer container, CraftingRecipe recipe, IRecipeSlotsView recipeSlots, Player player, boolean maxTransfer, boolean doTransfer) {
         if (doTransfer) {
             var views = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT);
             var index = 0;
@@ -48,7 +47,7 @@ public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<Craf
                 if (slot instanceof FakeSlot) {
                     var stack = views.get(index).getDisplayedItemStack().orElse(ItemStack.EMPTY);
 
-                    PacketDistributor.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
+                    NetworkHandler.INSTANCE.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
 
                     index++;
                 }

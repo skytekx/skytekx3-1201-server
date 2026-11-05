@@ -3,14 +3,14 @@ package com.blakebr0.mysticalautomation.crafting;
 import com.blakebr0.cucumber.event.RecipeManagerLoadingEvent;
 import com.blakebr0.mysticalagriculture.api.MysticalAgricultureAPI;
 import com.blakebr0.mysticalagriculture.api.crop.Crop;
+import com.blakebr0.mysticalagriculture.config.ModConfigs;
 import com.blakebr0.mysticalautomation.MysticalAutomation;
 import com.blakebr0.mysticalautomation.compat.MysticalCompat;
-import com.blakebr0.mysticalautomation.config.ModConfigs;
 import com.blakebr0.mysticalautomation.crafting.recipe.FarmerRecipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.bus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.List;
 
@@ -19,21 +19,22 @@ public final class DynamicRecipeManager {
 
     @SubscribeEvent
     public void onRecipeManagerLoading(RecipeManagerLoadingEvent event) {
-        if (ModConfigs.FARMER_DYNAMIC_MYSTICAL_AGRICULTURE_RECIPES.get()) {
+        if (com.blakebr0.mysticalautomation.config.ModConfigs.FARMER_DYNAMIC_MYSTICAL_AGRICULTURE_RECIPES.get()) {
             for (var crop : MysticalAgricultureAPI.getCropRegistry().getCrops()) {
                 if (crop.isEnabled() && !"inferium".equals(crop.getName())) {
                     var id = MysticalAutomation.resource("farmer/mysticalagriculture/" + crop.getNameWithSuffix("seeds"));
-                    var recipe = createResourceSeedRecipe(crop);
+                    var recipe = createResourceSeedRecipe(id, crop);
 
                     if (recipe != null) {
-                        event.addRecipe(new RecipeHolder<>(id, recipe));
+                        event.addRecipe(recipe);
                     }
                 }
             }
         }
     }
 
-    private static FarmerRecipe createResourceSeedRecipe(Crop crop) {
+    // SkyTekx port: 1.20.1 recipes carry their id, which upstream's RecipeHolder holds
+    private static FarmerRecipe createResourceSeedRecipe(ResourceLocation id, Crop crop) {
         var seeds = crop.getSeedsItem();
         if (seeds == null)
             return null;
@@ -49,13 +50,14 @@ public final class DynamicRecipeManager {
         var crux = crop.getCruxBlock() != null ? Ingredient.of(crop.getCruxBlock()) : Ingredient.EMPTY;
         var stages = crop.getCropBlock() != null ? crop.getCropBlock().getMaxAge() : 7;
 
-        var fertilizedEssenceChance = (float) MysticalAgricultureAPI.getConfigValues().getFertilizedEssenceDropChance();
+        // SkyTekx port: Mystical Agriculture 7 has no getConfigValues() in its API, the value is its own config
+        var fertilizedEssenceChance = ModConfigs.FERTILIZED_ESSENCE_DROP_CHANCE.get().floatValue();
 
         var results = List.of(
                 new FarmerRecipe.FarmerResult(new ItemStack(crop.getEssenceItem()), 1.0F),
-                new FarmerRecipe.FarmerResult(new ItemStack(MysticalCompat.Items.FERTILIZED_ESSENCE), fertilizedEssenceChance)
+                new FarmerRecipe.FarmerResult(new ItemStack(MysticalCompat.Items.FERTILIZED_ESSENCE.get()), fertilizedEssenceChance)
         );
 
-        return new FarmerRecipe(Ingredient.of(seeds), Ingredient.of(farmland), crux, stages, results);
+        return new FarmerRecipe(id, Ingredient.of(seeds), Ingredient.of(farmland), crux, stages, results);
     }
 }

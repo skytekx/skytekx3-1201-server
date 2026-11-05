@@ -3,7 +3,6 @@ package com.blakebr0.mysticalautomation;
 import com.blakebr0.mysticalautomation.client.ModMenuScreens;
 import com.blakebr0.mysticalautomation.config.ModConfigs;
 import com.blakebr0.mysticalautomation.crafting.DynamicRecipeManager;
-import com.blakebr0.mysticalautomation.handler.RegisterCapabilityHandler;
 import com.blakebr0.mysticalautomation.init.ModBlocks;
 import com.blakebr0.mysticalautomation.init.ModCreativeModeTabs;
 import com.blakebr0.mysticalautomation.init.ModItems;
@@ -14,15 +13,15 @@ import com.blakebr0.mysticalautomation.init.ModTileEntities;
 import com.blakebr0.mysticalautomation.network.NetworkHandler;
 import com.blakebr0.mysticalautomation.util.RecipeIngredientCache;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,9 @@ public final class MysticalAutomation {
     public static final String NAME = "Mystical Automation";
     public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
 
-    public MysticalAutomation(IEventBus bus, ModContainer mod) {
+    public MysticalAutomation() {
+        var bus = FMLJavaModLoadingContext.get().getModEventBus();
+
         ModBlocks.REGISTRY.register(bus);
         ModItems.REGISTRY.register(bus);
         ModCreativeModeTabs.REGISTRY.register(bus);
@@ -42,23 +43,28 @@ public final class MysticalAutomation {
         ModRecipeSerializers.REGISTRY.register(bus);
 
         bus.register(this);
-        bus.register(new NetworkHandler());
-        bus.register(new RegisterCapabilityHandler());
+
+        // SkyTekx port: Forge has no block capability event, the machines hand out their capabilities themselves
+        // (BaseMachineTileEntity), and the network channel registers in common setup
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             bus.register(new ModMenuScreens());
         }
 
-        mod.registerConfig(ModConfig.Type.STARTUP, ModConfigs.COMMON, "mysticalautomation-common.toml");
+        // SkyTekx port: Forge 47 has no STARTUP config type. A COMMON config loads at mod construction too, before
+        // recipes, tags and creative tabs read the feature flags, and keeps the file name
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigs.COMMON, "mysticalautomation-common.toml");
     }
 
     @SubscribeEvent
     public void onCommonSetup(FMLCommonSetupEvent event) {
-        NeoForge.EVENT_BUS.register(DynamicRecipeManager.INSTANCE);
-        NeoForge.EVENT_BUS.register(RecipeIngredientCache.INSTANCE);
+        event.enqueueWork(NetworkHandler::register);
+
+        MinecraftForge.EVENT_BUS.register(DynamicRecipeManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RecipeIngredientCache.INSTANCE);
     }
 
     public static ResourceLocation resource(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        return new ResourceLocation(MOD_ID, path);
     }
 }

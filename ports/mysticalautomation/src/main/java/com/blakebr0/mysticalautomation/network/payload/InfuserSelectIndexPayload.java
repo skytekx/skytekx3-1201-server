@@ -1,44 +1,38 @@
 package com.blakebr0.mysticalautomation.network.payload;
 
-import com.blakebr0.mysticalautomation.MysticalAutomation;
 import com.blakebr0.mysticalautomation.tileentity.InfuserTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
 
-public record InfuserSelectIndexPayload(BlockPos pos, int index) implements CustomPacketPayload {
-    public static final Type<InfuserSelectIndexPayload> TYPE = new Type<>(MysticalAutomation.resource("infuser_select_index"));
+import java.util.function.Supplier;
 
-    public static final StreamCodec<FriendlyByteBuf, InfuserSelectIndexPayload> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
-            InfuserSelectIndexPayload::pos,
-            ByteBufCodecs.VAR_INT,
-            InfuserSelectIndexPayload::index,
-            InfuserSelectIndexPayload::new
-    );
-
-    @Override
-    public Type<InfuserSelectIndexPayload> type() {
-        return TYPE;
+// SkyTekx port: a SimpleChannel message (NetworkHandler) for upstream's CustomPacketPayload and StreamCodec
+public record InfuserSelectIndexPayload(BlockPos pos, int index) {
+    public static InfuserSelectIndexPayload read(FriendlyByteBuf buffer) {
+        return new InfuserSelectIndexPayload(buffer.readBlockPos(), buffer.readVarInt());
     }
 
-    public static void handleServer(InfuserSelectIndexPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            var player = context.player();
-            var level = player.level();
-            var tile = level.getBlockEntity(payload.pos);
+    public static void write(InfuserSelectIndexPayload payload, FriendlyByteBuf buffer) {
+        buffer.writeBlockPos(payload.pos);
+        buffer.writeVarInt(payload.index);
+    }
 
-            if (tile instanceof InfuserTileEntity machine) {
-                var selectedIndex = machine.getSelectedIndex();
-                if (selectedIndex == payload.index) {
-                    machine.setSelectedIndex(0);
-                } else {
-                    machine.setSelectedIndex(payload.index);
-                }
+    public static void handleServer(InfuserSelectIndexPayload payload, Supplier<NetworkEvent.Context> context) {
+        var player = context.get().getSender();
+        if (player == null)
+            return;
+
+        var level = player.level();
+        var tile = level.getBlockEntity(payload.pos);
+
+        if (tile instanceof InfuserTileEntity machine) {
+            var selectedIndex = machine.getSelectedIndex();
+            if (selectedIndex == payload.index) {
+                machine.setSelectedIndex(0);
+            } else {
+                machine.setSelectedIndex(payload.index);
             }
-        });
+        }
     }
 }

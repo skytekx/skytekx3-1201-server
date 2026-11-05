@@ -3,20 +3,17 @@ package com.blakebr0.mysticalautomation.tileentity;
 import com.blakebr0.cucumber.energy.DynamicEnergyStorage;
 import com.blakebr0.cucumber.helper.StackHelper;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
-import com.blakebr0.cucumber.inventory.OnContentsChangedFunction;
-import com.blakebr0.cucumber.inventory.SidedInventoryWrapper;
-import com.blakebr0.cucumber.tileentity.BaseInventoryTileEntity;
-import com.blakebr0.cucumber.util.ContainerDataBuilder;
-import com.blakebr0.mysticalagriculture.api.machine.IUpgradeableMachine;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeTier;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
+import com.blakebr0.mysticalagriculture.util.IUpgradeableMachine;
+import com.blakebr0.mysticalagriculture.util.MachineUpgradeTier;
 import com.blakebr0.mysticalautomation.block.FertilizerBlock;
 import com.blakebr0.mysticalautomation.container.FertilizerContainer;
 import com.blakebr0.mysticalautomation.init.ModTileEntities;
 import com.blakebr0.mysticalautomation.lib.ModTags;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -34,15 +31,14 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.common.util.FakePlayerFactory;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.stream.IntStream;
 
-public class FertilizerTileEntity extends BaseInventoryTileEntity implements MenuProvider, IUpgradeableMachine {
+public class FertilizerTileEntity extends BaseMachineTileEntity implements MenuProvider, IUpgradeableMachine {
     private static final int[] INPUT_SLOTS = IntStream.rangeClosed(0, 7).toArray();
     private static final int FUEL_SLOT = 8;
 
@@ -54,9 +50,8 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
     public static final int BASE_RANGE = 1;
 
     private final BaseItemStackHandler inventory;
-    private final MachineUpgradeItemStackHandler upgradeInventory;
+    private final UpgradeItemStackHandler upgradeInventory;
     private final DynamicEnergyStorage energy;
-    private final SidedInventoryWrapper[] sidedInventoryWrappers;
 
     private final ContainerData dataAccess;
 
@@ -69,10 +64,9 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
 
     public FertilizerTileEntity(BlockPos pos, BlockState state) {
         super(ModTileEntities.FERTILIZER.get(), pos, state);
-        this.inventory = createInventoryHandler(slot -> this.setChanged());
-        this.upgradeInventory = new MachineUpgradeItemStackHandler();
+        this.inventory = createInventoryHandler(this::setChanged);
+        this.upgradeInventory = new UpgradeItemStackHandler();
         this.energy = new DynamicEnergyStorage(FUEL_CAPACITY, this::setChangedFast);
-        this.sidedInventoryWrappers = SidedInventoryWrapper.create(this.inventory, List.of(Direction.UP, Direction.DOWN, Direction.NORTH), this::canInsertStackSided, null);
 
         this.dataAccess = ContainerDataBuilder.builder()
                 .sync(this.energy::getEnergyStored, this.energy::setEnergyStored)
@@ -98,32 +92,32 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
     }
 
     @Override
-    public MachineUpgradeItemStackHandler getUpgradeInventory() {
+    public UpgradeItemStackHandler getUpgradeInventory() {
         return this.upgradeInventory;
     }
 
     @Override
-    public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
-        super.loadAdditional(tag, lookup);
+    public void load(CompoundTag tag) {
+        super.load(tag);
 
         this.progress = tag.getInt("Progress");
         this.lastScanIndex = tag.getInt("LastScanIndex");
         this.fuelLeft = tag.getInt("FuelLeft");
         this.fuelItemValue = tag.getInt("FuelItemValue");
-        this.energy.deserializeNBT(lookup, tag.get("Energy"));
-        this.upgradeInventory.deserializeNBT(lookup, tag.getCompound("UpgradeInventory"));
+        loadEnergy(this.energy, tag);
+        this.upgradeInventory.deserializeNBT(tag.getCompound("UpgradeInventory"));
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
-        super.saveAdditional(tag, lookup);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
 
         tag.putInt("Progress", this.progress);
         tag.putInt("LastScanIndex", this.lastScanIndex);
         tag.putInt("FuelLeft", this.fuelLeft);
         tag.putInt("FuelItemValue", this.fuelItemValue);
         tag.putInt("Energy", this.energy.getEnergyStored());
-        tag.put("UpgradeInventory", this.upgradeInventory.serializeNBT(lookup));
+        tag.put("UpgradeInventory", this.upgradeInventory.serializeNBT());
     }
 
     @Override
@@ -136,7 +130,7 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
             var fuel = tile.inventory.getStackInSlot(FUEL_SLOT);
 
             if (tile.fuelLeft <= 0 && !fuel.isEmpty()) {
-                tile.fuelItemValue = fuel.getBurnTime(null);
+                tile.fuelItemValue = ForgeHooks.getBurnTime(fuel, null);
 
                 if (tile.fuelItemValue > 0) {
                     tile.fuelLeft = tile.fuelItemValue *= FUEL_TICK_MULTIPLIER;
@@ -166,7 +160,7 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
             if (tier == null) {
                 tile.energy.resetMaxEnergyStorage();
             } else {
-                tile.energy.setMaxEnergyStorage(tier.getFuelCapacity(FUEL_CAPACITY));
+                tile.energy.setMaxEnergyStorage(MachineUpgrades.getFuelCapacity(tier, FUEL_CAPACITY));
             }
 
             tile.setChangedFast();
@@ -186,7 +180,7 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
                     var plantState = level.getBlockState(nextPos);
                     var plantBlock = plantState.getBlock();
 
-                    if (plantBlock instanceof BonemealableBlock bonemealable && bonemealable.isValidBonemealTarget(level, nextPos, plantState)) {
+                    if (plantBlock instanceof BonemealableBlock bonemealable && bonemealable.isValidBonemealTarget(level, nextPos, plantState, level.isClientSide())) {
                         var stack = tile.inventory.getStackInSlot(slot);
                         var hitResult = new BlockHitResult(nextPos.getCenter(), Direction.DOWN, nextPos, false);
                         var fakePlayer = FakePlayerFactory.getMinecraft((ServerLevel) level);
@@ -224,7 +218,7 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
         return createInventoryHandler(null);
     }
 
-    public static BaseItemStackHandler createInventoryHandler(@Nullable OnContentsChangedFunction onContentsChanged) {
+    public static BaseItemStackHandler createInventoryHandler(@Nullable Runnable onContentsChanged) {
         return BaseItemStackHandler.create(9, onContentsChanged, handler -> {
             handler.setCanInsert((slot, stack) -> {
                 if (ArrayUtils.contains(INPUT_SLOTS, slot)) {
@@ -236,24 +230,17 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
         });
     }
 
+    @Override
     public DynamicEnergyStorage getEnergy() {
         return this.energy;
     }
 
-    public IItemHandler getSidedInventory(@Nullable Direction direction) {
-        return switch (direction) {
-            case UP -> this.sidedInventoryWrappers[0];
-            case DOWN -> this.sidedInventoryWrappers[1];
-            case null, default -> this.sidedInventoryWrappers[2];
-        };
-    }
-
     private int getOperationTime() {
-        return this.tier == null ? OPERATION_TIME : this.tier.getOperationTime(OPERATION_TIME);
+        return this.tier == null ? OPERATION_TIME : MachineUpgrades.getOperationTime(this.tier, OPERATION_TIME);
     }
 
     private int getFuelUsage() {
-        return this.tier == null ? FUEL_USAGE : this.tier.getFuelUsage(FUEL_USAGE);
+        return this.tier == null ? FUEL_USAGE : MachineUpgrades.getFuelUsage(this.tier, FUEL_USAGE);
     }
 
     private int findNextFertilizerSlot() {
@@ -283,15 +270,16 @@ public class FertilizerTileEntity extends BaseInventoryTileEntity implements Men
         var center = this.getBlockPos().relative(direction, range + 1);
 
         return switch (direction) {
-            case Direction.NORTH -> new BlockPos(center.getX() + xOffset, center.getY(), center.getZ() - zOffset);
-            case Direction.SOUTH -> new BlockPos(center.getX() - xOffset, center.getY(), center.getZ() + zOffset);
-            case Direction.EAST -> new BlockPos(center.getX() + zOffset, center.getY(), center.getZ() + xOffset);
-            case Direction.WEST -> new BlockPos(center.getX() - zOffset, center.getY(), center.getZ() - xOffset);
+            case NORTH -> new BlockPos(center.getX() + xOffset, center.getY(), center.getZ() - zOffset);
+            case SOUTH -> new BlockPos(center.getX() - xOffset, center.getY(), center.getZ() + zOffset);
+            case EAST -> new BlockPos(center.getX() + zOffset, center.getY(), center.getZ() + xOffset);
+            case WEST -> new BlockPos(center.getX() - zOffset, center.getY(), center.getZ() - xOffset);
             default -> center;
         };
     }
 
-    private boolean canInsertStackSided(int slot, ItemStack stack, @Nullable Direction direction) {
+    @Override
+    protected boolean canInsertStackSided(int slot, ItemStack stack, @Nullable Direction direction) {
         if (direction == null)
             return true;
         if (ArrayUtils.contains(INPUT_SLOTS, slot) && direction == Direction.UP)

@@ -323,8 +323,15 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - Six new recipes charge gold into electrum (d2234ce, ported in ddb7fc6) with `forge:` tag inputs,
   so a gold plate that AlmostUnified gave the player from another mod still matches. AlmostUnified
   turns the outputs into the item of the first mod in `modPriorities` that has one
-  (`config/almostunified/unify.json`), Thermal's for the ingot, nugget, plate and block. The
-  channeling recipe keeps its 1.20.1 values.
+  (`config/almostunified/unify.json`), Thermal's for the ingot, nugget, plate and block. In the
+  full pack the wire comes out as Immersive Engineering's `wire_electrum`, because
+  `immersiveengineering` leads `createaddition` in `modPriorities` and IE 10.2.0 puts that wire
+  into `forge:wires/electrum` (`ImmersiveEngineering-1.20.1-10.2.0-183.jar`). The rod stays CC&A's.
+  Thermal Extra 3.3.3 also tags its `electrum_rod` as `forge:rods/electrum`, but neither
+  `createaddition` nor `thermal_extra` is in `modPriorities`, and AlmostUnified 0.11.0 picks no
+  item for a tag that no listed mod owns (`ReplacementMap.getPreferredItemForTag`). IE also adds
+  its `plate_gold` to `forge:plates/gold`, so that plate charges too. Nobody has checked the wire
+  and the rod in the full pack yet. The channeling recipe keeps its 1.20.1 values.
 - Nine new recipes deoxidize Create's copper tiles, tile slabs and tile stairs (c08b593 and
   0ca5477, ported in e277ef6), in the format of the shingle files in
   `data/createaddition/recipes/charging/` and named after their output.
@@ -335,7 +342,8 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   and two loops gave a diamond, also from a transitional item at step 2 after `/reload`, while a
   precision mechanism at its deploying step stayed untouched. Weathered copper tiles turned into
   plain ones, oxidized tile stairs into plain stairs, a weathered tile slab into a plain slab, gold
-  ingots, plates, sheets and blocks into Thermal electrum, gold wire into CC&A electrum wire,
+  ingots, plates, sheets and blocks into Thermal electrum, gold wire into CC&A electrum wire
+  (the test servers have no Immersive Engineering),
   certus quartz into charged certus quartz and a Create form test recipe gave its count of 2.
   Neither server loaded a class of `com.mrh0.createaddition.compat` (`-Xlog:class+load`). Both kept
   only the ERROR lines of the test setup, the flat world settings and a test recipe without
@@ -445,10 +453,23 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   observed block entities. The connector rework or this bundle guards `sendUpdate` with
   `hasChunkAt` and a distance of 64 blocks and limits how often each player may send the packet,
   which needs no protocol change.
-- The charging recipes ran only on reduced test servers without a client. A client must show a
-  charging step of a Sequenced Assembly in JEI and in EMI through its JEI layer, with the powered
-  coil and the step tooltip, and must get the synced recipes with charging steps from the fork
-  server. The full pack boot must parse every charging recipe.
+- The charging recipes ran only on reduced test servers without a client, and the Sequenced
+  Assembly only on a depot. A client must show a charging step of a Sequenced Assembly in JEI and
+  in EMI through its JEI layer, with the powered coil and the step tooltip, and must get the synced
+  recipes with charging steps from the fork server. A Sequenced Assembly with a charging step must
+  also run on a moving belt under a coil.
+- The coil drawing of a charging step needs a look in the JEI Sequenced Assembly category and
+  through EMI's JEI layer on a fork client. The class `ChargingAssemblySubCategory` draws the coil
+  with `FACING` up, while `AnimatedTeslaCoil` of the plain charging category uses down. Both come
+  from upstream as they are, and the blockstates match upstream's, but nobody has seen them drawn.
+- The full pack boot must parse every charging recipe. On that boot a gold wire under a powered
+  coil must come out as Immersive Engineering's `wire_electrum` and a gold rod as CC&A's
+  `electrum_rod`, as the AlmostUnified priorities predict.
+- The release changelog must tell the players that powered Tesla Coils now hold gold items (ingots,
+  nuggets, plates and sheets, rods, wires and blocks) and charge them into electrum, and turn
+  Create's copper tiles back towards plain copper. Before the update those items passed under a
+  coil untouched, so belt and depot lines that carry gold or copper tiles under coils, such as
+  charging or deoxidizing lines, change their output. Players should check such lines.
 - The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
 
 ## Excluded
@@ -701,6 +722,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The electrify recipes take `forge:` tags as inputs.
 - Charging recipes may still leave out the max charge rate, which upstream requires, and may use
   the old JSON keys besides Create's.
+- The JEI charging category shows only the first result of a charging recipe and no chance
+  (`ChargingCategory.java`, `getResultItem()`). A Create form charging recipe with several results
+  or a chance below 1 would look like a sure single output in JEI. Every shipped charging recipe
+  has one result with chance 1.
 - The paper to straw recipe lives at `data/createaddition/recipes/rolling/straw_from_paper.json`, not
   in upstream's `create:rolling/paper`.
 - The ponder schematics are converted to the NBT of 1.20.1.
@@ -768,6 +793,9 @@ Planned, not shipped.
 - Fire spreads over oils and fuels.
 - The spool recipe makes 24 from iron plate and rod.
 - The Tesla Coil glows while powered.
+- A powered Tesla Coil now holds gold ingots, nuggets, plates, sheets, rods, wires and blocks and
+  charges them into electrum, and turns Create's copper tiles back towards plain copper. Check belt
+  and depot lines that carry these items under a coil.
 - Festive wire no longer joins two large connectors.
 - The Digital Adapter returns fractions to scripts instead of whole numbers.
 - JEI shows the burn time of liquid fuels as 20m instead of 20 min.

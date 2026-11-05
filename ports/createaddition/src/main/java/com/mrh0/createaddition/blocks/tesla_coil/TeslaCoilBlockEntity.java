@@ -1,5 +1,6 @@
 package com.mrh0.createaddition.blocks.tesla_coil;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.energy.BaseElectricBlockEntity;
 import com.mrh0.createaddition.index.CABlocks;
@@ -7,16 +8,23 @@ import com.mrh0.createaddition.index.CADamageTypes;
 import com.mrh0.createaddition.index.CAEffects;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.index.CASounds;
+import com.mrh0.createaddition.network.IObserveTileEntity;
+import com.mrh0.createaddition.network.ObservePacket;
+import com.mrh0.createaddition.network.TimeRemainingPacket;
 import com.mrh0.createaddition.recipe.charging.ChargingRecipe;
 import com.mrh0.createaddition.sound.CASoundScapes;
+import com.mrh0.createaddition.util.CALang;
 import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,10 +45,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHaveGoggleInformation {
+public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHaveGoggleInformation, IObserveTileEntity {
 
 	private Optional<ChargingRecipe> recipeCache = Optional.empty();
 
@@ -195,7 +204,8 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 			return BeltProcessingBehaviour.ProcessingResult.HOLD;
 		}
 		else if(chargeRecipe(stack, transported, handler)) {
-			poweredTimer = 10;
+			// Only show the powered state while the recipe really draws energy (upstream 7cb0ef9).
+			if (energyRemoved > 0) poweredTimer = 10;
 			return BeltProcessingBehaviour.ProcessingResult.HOLD;
 		}
 		return BeltProcessingBehaviour.ProcessingResult.PASS;
@@ -210,16 +220,29 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 		return true;
 	}
 
+	// The energy of the last charging tick and the last 20 of them, for the powered state and the
+	// charge time left on the goggles (upstream 7cb0ef9).
+	private int energyRemoved = 0;
+	private final int[] chargeRateHistory = new int[20];
+	private int chargeRateIndex = 0;
+	private int chargeRateSamples = 0;
+
 	private boolean chargeRecipe(ItemStack stack, TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
 		if(this.getLevel() == null) return false;
 		if(!inputInv.getStackInSlot(0).is(stack.getItem())) {
 			inputInv.setStackInSlot(0, stack);
 			recipeCache = find(new RecipeWrapper(inputInv), this.getLevel());
 			chargeAccumulator = 0;
+			Arrays.fill(chargeRateHistory, 0);
+			chargeRateIndex = 0;
+			chargeRateSamples = 0;
 		}
 		if(recipeCache.isPresent()) {
 			ChargingRecipe recipe = recipeCache.get();
-			int energyRemoved = localEnergy.internalConsumeEnergy(Util.min(Config.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
+			energyRemoved = localEnergy.internalConsumeEnergy(Util.min(Config.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate()));
+			chargeRateHistory[chargeRateIndex] = energyRemoved;
+			chargeRateIndex = (chargeRateIndex + 1) % chargeRateHistory.length;
+			if (chargeRateSamples < chargeRateHistory.length) chargeRateSamples++;
 			chargeAccumulator += energyRemoved;
 			if(chargeAccumulator >= recipe.getEnergy()) {
 				TransportedItemStack remainingStack = transported.copy();
@@ -239,5 +262,37 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 
 	public Optional<ChargingRecipe> find(RecipeWrapper wrapper, Level world) {
 		return world.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, world);
+	}
+
+	// The charge time left comes from the server as a TimeRemainingPacket, -1 while the coil gets no energy
+	// (upstream 54cf0c9 and 7cb0ef9). Times of a second or less are not shown.
+	@Override
+	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		if (level == null) return false;
+		ObservePacket.send(worldPosition, 0);
+		int timeRemaining = TimeRemainingPacket.clientTimeRemaining;
+		if (timeRemaining == 0 || timeRemaining > 0 && timeRemaining <= 20) return false;
+		String timeStr = timeRemaining == -1 ? "\u221E" : Util.formatTime(timeRemaining);
+		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.charging.info").withStyle(ChatFormatting.WHITE)).forGoggles(tooltip);
+		CALang.builder().add(Component.literal(" ").append(Component.translatable(CreateAddition.MODID + ".tooltip.charging.time_remaining").withStyle(ChatFormatting.GRAY))
+			.append(Component.literal(" " + timeStr).withStyle(ChatFormatting.AQUA))).forGoggles(tooltip);
+		return true;
+	}
+
+	@Override
+	public void onObserved(ServerPlayer player, ObservePacket pkt) {
+		int timeRemaining = 0;
+		if (recipeCache.isPresent() && chargeRateSamples > 0) {
+			ChargingRecipe recipe = recipeCache.get();
+			int totalRate = 0;
+			for (int rate : chargeRateHistory) totalRate += rate;
+			int avgChargeRate = totalRate / chargeRateSamples;
+			if (avgChargeRate == 0) {
+				TimeRemainingPacket.send(-1, player);
+				return;
+			}
+			timeRemaining = (recipe.getEnergy() - chargeAccumulator) / avgChargeRate;
+		}
+		TimeRemainingPacket.send(timeRemaining, player);
 	}
 }

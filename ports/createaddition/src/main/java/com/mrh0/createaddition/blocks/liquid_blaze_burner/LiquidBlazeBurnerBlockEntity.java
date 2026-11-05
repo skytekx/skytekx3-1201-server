@@ -6,13 +6,17 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.index.CAItems;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.network.IObserveTileEntity;
 import com.mrh0.createaddition.network.ObservePacket;
+import com.mrh0.createaddition.network.TimeRemainingPacket;
 import com.mrh0.createaddition.recipe.FluidRecipeWrapper;
 import com.mrh0.createaddition.recipe.liquid_burning.LiquidBurningRecipe;
+import com.mrh0.createaddition.util.CALang;
+import com.mrh0.createaddition.util.Util;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -27,6 +31,7 @@ import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -465,11 +470,19 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		ObservePacket.send(worldPosition, 0);
-		return containedFluidTooltip(tooltip, isPlayerSneaking, this.getCapability(ForgeCapabilities.FLUID_HANDLER));
+		containedFluidTooltip(tooltip, isPlayerSneaking, this.getCapability(ForgeCapabilities.FLUID_HANDLER));
+		// The burn time left comes from the server as a TimeRemainingPacket (upstream 54cf0c9).
+		int timeRemaining = TimeRemainingPacket.clientTimeRemaining;
+		if (timeRemaining > 20)
+			CALang.builder().add(Component.literal(" ").append(Component.translatable(CreateAddition.MODID + ".tooltip.liquid_burning.time_remaining").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(" " + Util.formatTime(timeRemaining)).withStyle(ChatFormatting.AQUA))).forGoggles(tooltip);
+		return true;
 	}
 
+	// ObservePacket also sends this block entity's update packet to the player, so the tank shows its
+	// content without a broadcast to every player nearby.
 	@Override
 	public void onObserved(ServerPlayer player, ObservePacket pack) {
-		notifyUpdate();
+		TimeRemainingPacket.send(remainingBurnTime, player);
 	}
 }

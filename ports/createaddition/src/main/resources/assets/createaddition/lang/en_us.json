@@ -17,6 +17,13 @@
 	"createaddition.tooltip.energy.passive": "Passive",
 	"createaddition.tooltip.energy.none": "None",
 
+	"createaddition.tooltip.liquid_burning.info": "Liquid Blaze Burner Info:",
+	"createaddition.tooltip.liquid_burning.time_remaining": "Burn Time Remaining:",
+
+	"createaddition.tooltip.charging.info": "Tesla Coil Info:",
+	"createaddition.tooltip.charging.time_remaining": "Charge Time Remaining:",
+
+	"createaddition.tooltip.alternator.info": "Alternator Info:",
 	"createaddition.tooltip.accumulator.info": "Accumulator Info:",
 	"createaddition.tooltip.relay.info": "Relay Info:",
 	"createaddition.tooltip.connector.info": "Connector Info:",

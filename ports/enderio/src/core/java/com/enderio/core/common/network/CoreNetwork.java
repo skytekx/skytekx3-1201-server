@@ -10,7 +10,10 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class CoreNetwork {
-    private static final String PROTOCOL_VERSION = "1.0";
+    // SkyTekx: the backport adds packets. Packet ids follow the registration order of core, EIOPackets, MachinePackets
+    // and ConduitNetwork, so a new packet shifts the ids after it. The changed version makes a stock 6.2.x side refuse
+    // the connection at login instead of misreading packets. Register new packets at the end of their module's list.
+    private static final String PROTOCOL_VERSION = "1.0-skytekx.1";
     private static SimpleChannel CHANNEL;
 
     private static int packetId = 0;

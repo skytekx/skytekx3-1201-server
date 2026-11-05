@@ -438,3 +438,41 @@ its item here, and the NOTICE in the jar sums them up.
     itself. The wrap of the mixin sets no `require`, like the other mixins of the fork, so it would
     stop applying without an error if a Create update dropped the call. Every Create update
     therefore checks the wrapper in the exported `FluidPropagator`.
+29. Servo Motor: upstream `a8a51a2`, `84c7b2c`, `89f01b9`, `9dd1b46` and `a1b6da6` (release 1.7.2).
+    The new block, item and block entity type `createaddition:servo_motor` is a bearing that turns a
+    `BearingContraption` to a target angle. Redstone on its top side drives it towards the Max Angle
+    and on the opposite side towards the Min Angle, and the two signals are summed. A right click
+    with an empty hand assembles or disassembles it. The wrench rolls it around its facing (block
+    state `roll`, 0 to 3), and `rotate`, `mirror` and Create's `TransformableBlock.transform` turn
+    its facing and top together. The angles count from the servo's front, so the contraption and the
+    disc turn the other way round for north, west and down (the 1.7.2 fix in `a1b6da6`). The class
+    `ServoMotorBlockEntity` extends Create's `MechanicalBearingBlockEntity`, whose protected fields
+    and methods are the same in Create 6.0.8 for 1.20.1 (javap). The movement mode, the Max Angle
+    and the Min Angle get their own `BehaviourType`, net id and NBT key (`RotationMode`, `MaxAngle`,
+    `MinAngle`), so they coexist with the speed scroll value (`ScrollValue`). The block entity also
+    saves `TargetAngle`, `servo_active` and `energy` next to the bearing's `Running` and `Angle`. It
+    runs on FE with the buffer, input, speed range and consumption of the `electric_motor` config,
+    draws nothing until it is assembled and a tenth of that while it holds its angle, and ignores a
+    speed that is not finite (`9dd1b46`). The translation drops the `HolderLookup` of the
+    behaviours' `write` and `read`, turns `useItemOn` into `use` with the results of Create's
+    `MechanicalBearingBlock.use`, and makes the energy capability a `LazyOptional` that
+    `invalidateCaps` invalidates. The renderer, the Flywheel visual, the blockstate with its 24
+    variants and the models are upstream's files, unchanged. The model `block_rolled.json` rolls the
+    block model with a root `transform`, which Forge 47 reads (`ExtendedBlockModelDeserializer`),
+    and a script checked that every variant turns the model's front to `facing` and its top to
+    `ServoMotorBlock.getTop`. The shapeless recipe `recipes/crafting/servo_motor.json` (Mechanical
+    Bearing, Electric Motor and Electron Tube) and the loot table are hand written in the 1.20.1
+    folders, the block joins `minecraft:mineable/pickaxe`, and en_us names it Servo Motor. The
+    recipe advancement is left out, as for every other recipe of the fork. The texture
+    `textures/block/servo_motor/block.png` (32x32) is CC&A's own. The script `texcmp.py` finds no
+    texture of that size in Create 6.0.8 that shares more than 8% of its opaque pixels. The port
+    makes three local changes. The target angle follows a new Min or Max Angle while the redstone
+    signal stays the same. Upstream recomputes it only when the signal changes, so a new scroll
+    value or a peripheral call moved nothing until the redstone changed. The block entity marks
+    itself changed while the angle moves, and the setters of the two limits go through
+    `ScrollValueBehaviour.setValue`, which marks it changed too. Upstream only sent the data, so a
+    save kept an angle up to ten seconds old (the eager chunk save of 1.18 and later) and a limit
+    set through the peripheral could be lost. On a test server stopped mid rotation, the servo came
+    back at 73.8 degrees, although it had already turned down to 49.8 degrees before the save. The
+    goggles show `fe/t` like the fork's Electric Motor instead of the lightning sign of the 1.21.1
+    line. The ponder scene and the servo's entries in the ponder tags come with the ponder bundle.

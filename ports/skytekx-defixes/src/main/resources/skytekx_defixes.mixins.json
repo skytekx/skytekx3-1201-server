@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.skytekx.defixes.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "skytekx_defixes.refmap.json",
+  "mixins": [
+    "ChaosCrystalMixin",
+    "CreativeOPSourceMixin",
+    "DEContentMixin",
+    "DETileMenuMixin",
+    "DislocatorReceptacleMixin",
+    "DraconiumChestMenuMixin",
+    "LaserBeamPhaseMixin",
+    "LootEventHandlerMixin",
+    "ModularArmorEventHandlerMixin",
+    "TileGrinderMixin"
+  ],
+  "client": [
+    "client.GrinderGuiMixin",
+    "client.HudManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

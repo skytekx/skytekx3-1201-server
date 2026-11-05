@@ -1,0 +1,46 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="${mod_license}"
+issueTrackerURL="https://github.com/skytekx/skytekx3-1201-server/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/skytekx-defixes"
+authors="${mod_authors}"
+credits="The fixes follow upstream fixes on the Draconic Evolution and Brandon's Core 1.21 branches by brandon3055 and the Draconic-Inc contributors (https://github.com/Draconic-Inc), applied as an addon to the unmodified 1.20.1 builds. Portions under the Draconic Evolution Don't Be a Jerk license, see NOTICE_skytekx_defixes. Source of this build: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/skytekx-defixes"
+description='''
+Addon for Draconic Evolution ${de_version} on Forge 1.20.1. It fixes bugs that upstream only fixed for Minecraft 1.21.1: the Draconium Chest crafting dupe, insta-kill damage that Apothic Attributes can overflow, a Chaos Crystal crash, the soul drop rate of water animals, the Chaos Implosion death message, light through the Dislocator Receptacle and the Creative OP Capacitor, the Grinder's Claim XP label, the Draconic tool tier, and the Brandon's Core HUD in F1 mode.
+
+Draconic Evolution itself is not modified or bundled.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+# The mixins are verified against exactly these builds (both 1.20.1 branches are unmaintained).
+[[dependencies.${mod_id}]]
+    modId="draconicevolution"
+    mandatory=true
+    versionRange="[${de_version}]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="brandonscore"
+    mandatory=true
+    versionRange="[${bc_version}]"
+    ordering="AFTER"
+    side="BOTH"

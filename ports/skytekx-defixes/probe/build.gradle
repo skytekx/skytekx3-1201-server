@@ -1,0 +1,131 @@
+// Test-only probe for SkyTekx DE Fixes, built apart from the fix pack and never shipped.
+// Build with Java 17 from the port directory: ../gradlew -p probe build (or ./gradlew -p probe build there).
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.neoforged.gradle' version '6.0.21'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.2.0.7-dev-SNAPSHOT'
+}
+
+version = project.mod_version
+group = project.group_name
+
+base {
+    archivesName = project.mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            taskName "Minecraft_Client_${project.minecraft_version}"
+        }
+
+        server {
+            taskName "Minecraft_Server_${project.minecraft_version}"
+            args '--nogui'
+        }
+    }
+}
+
+
+// The three mods the fix pack patches, as the exact files of the pack's modrinth.index.json.
+// Modrinth CDN layout: https://cdn.modrinth.com/data/<project>/versions/<version>/<file>.jar
+// Coordinates here: <project>:<file>:<version>.
+def packJars = [
+        [name: 'Draconic Evolution', coord: "${de_project}:${de_file}:${de_cdn_version}", sha1: de_sha1],
+        [name: "Brandon's Core", coord: "${bc_project}:${bc_file}:${bc_cdn_version}", sha1: bc_sha1],
+        [name: 'CodeChicken Lib', coord: "${ccl_project}:${ccl_file}:${ccl_cdn_version}", sha1: ccl_sha1],
+]
+
+repositories {
+    ivy {
+        name = 'Modrinth CDN'
+        url = 'https://cdn.modrinth.com/data/'
+        patternLayout {
+            artifact '[organisation]/versions/[revision]/[artifact].[ext]'
+        }
+        metadataSources { artifact() }
+        content {
+            packJars.each { includeGroup it.coord.split(':')[0] }
+        }
+    }
+}
+
+configurations {
+    // the raw (not deobfuscated) pack jars, only used to check their SHA-1
+    packJarsRaw { transitive = false }
+}
+
+dependencies {
+    minecraft "net.neoforged:forge:${project.minecraft_version}-${project.neo_version}"
+
+    packJars.each {
+        implementation fg.deobf(it.coord)
+        packJarsRaw it.coord
+    }
+
+}
+
+def verifyPackJars = tasks.register('verifyPackJars') {
+    description = 'Checks that the compile dependencies are byte identical to the jars of modrinth.index.json.'
+    inputs.files(configurations.packJarsRaw)
+    doLast {
+        def artifacts = configurations.packJarsRaw.resolvedConfiguration.resolvedArtifacts
+        packJars.each { jar ->
+            def (group, module, cdnVersion) = jar.coord.split(':')
+            def artifact = artifacts.find { it.moduleVersion.id.group == group && it.moduleVersion.id.name == module }
+            if (artifact == null) {
+                throw new GradleException("${jar.name}: ${module}.jar was not resolved")
+            }
+            def sha1 = java.security.MessageDigest.getInstance('SHA-1').digest(artifact.file.bytes).encodeHex().toString()
+            if (sha1 != jar.sha1) {
+                throw new GradleException("${jar.name}: ${module}.jar has SHA-1 ${sha1}, expected ${jar.sha1} (gradle.properties)")
+            }
+            logger.lifecycle("${jar.name}: ${module}.jar (Modrinth ${group}/${cdnVersion}) SHA-1 ${sha1} OK")
+        }
+    }
+}
+
+tasks.named('compileJava') { dependsOn verifyPackJars }
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            mod_version: project.mod_version,
+            mod_id     : project.mod_id,
+            mod_name   : project.mod_name,
+            mod_license: project.mod_license,
+            mod_authors: project.mod_authors,
+            de_version : project.de_version,
+            bc_version : project.bc_version,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure { finalizedBy 'reobfJar' }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

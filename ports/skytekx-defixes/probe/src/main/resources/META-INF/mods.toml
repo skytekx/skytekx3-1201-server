@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+[[mods]]
+modId="skytekx_deprobe"
+version="${mod_version}"
+displayName="DE Fixes Probe (test only)"
+[[dependencies.skytekx_deprobe]]
+    modId="draconicevolution"
+    mandatory=true
+    versionRange="[3.1.2.621]"
+    ordering="AFTER"
+    side="BOTH"

@@ -1,0 +1,80 @@
+SkyTekx DE Fixes, an addon for Draconic Evolution 3.1.2.621 (Forge 1.20.1)
+==========================================================================
+
+This mod is NOT a modified Draconic Evolution. It is an addon that depends on the
+unmodified Draconic Evolution 3.1.2.621, Brandon's Core 3.2.1.302 and CodeChicken Lib
+4.4.0.528 jars, which the SkyTekx 3 modpack downloads from Modrinth as they are. It
+changes their behaviour at runtime through Mixin and carries no data file of theirs.
+
+Credits
+-------
+  Draconic Evolution and Brandon's Core by brandon3055 and the Draconic-Inc contributors.
+    https://github.com/Draconic-Inc/Draconic-Evolution
+    https://github.com/Draconic-Inc/BrandonsCore
+  CodeChicken Lib by the CB Project, https://github.com/TheCBProject/CodeChickenLib
+  The bugs fixed here were fixed upstream on the 1.21 branches by the Draconic-Inc
+  contributors. This mod fixes them for the 1.20.1 builds, whose branches
+  (Draconic-Evolution 1.20, head 4e7fc310f025a255b685c9e9754d2369f8d7b561 of 2025-07-21,
+  and BrandonsCore master, head 5450c53 of 2024-06-13) get no more fixes.
+
+Upstream commits
+----------------
+  Draconic Evolution, branch 1.21 (https://github.com/Draconic-Inc/Draconic-Evolution/commit/<hash>):
+   1 e405445ba6dc7355d99e536188479c0e3a2acca0  Fix chest dupe issue
+                                                (same bug, closed here by an own mechanism)
+   2 4683a54f7c5a2dd1df501bae6a78a994e7f2857b  Insta-kill damage no longer sometimes bugs out
+   3 8ec180abc13d87fbf51a579ec6c5d8b63da71dc0  Fixed potential chaos crystal crash
+   4 0c85f0d9da50d0f3bd11295230661b8e28a9eca7  Fixed chaotic shield capacity recipe
+                                                (not in this jar, the SkyTekx 3 pack swaps the
+                                                ingredient in its own KubeJS script)
+   5 4d360c95bb8282c27071079e51011d248442eba2  Added missing tool tags
+                                                (not in this jar, the SkyTekx 3 pack adds the
+                                                tags in its own KubeJS script)
+   6 d297c2657cefa6ac2af19a96ee12a51ab07d36f5  Fixed soul drop rate with water animals
+   7 9282fa7cb0e5d6101b868a1f4ee72a04d472b4aa  Added missing Chaos Implosion death message
+                                                (the key only, the English text is this mod's)
+   8 51ab0afb2839512b4a165b3ea5020e960635fc14  Fixed Dislocator Receptacle light transparency.
+   9 3ae9baa2531927471d98bb49be2cc08e9b68697f  Fixed grinder kill box (only the Claim XP label,
+                                                the kill box is correct on 1.20.1)
+  10 d6a3ceaebe3f1349fa1f3cec51046775089dc062  Fixed Draconic pickaxe mining level
+  11 4d6fc7bfe19abd4ac6e75517e8bcb5806a87ff81  Fixed Dislocator Shift-Scroll (not applied)
+  Brandon's Core, branch 1.21 (https://github.com/Draconic-Inc/BrandonsCore/commit/<hash>):
+  12 6d6c5a55fc9f725b80d44c388c612583c022308e  Properly hide hud elements in F1 mode
+
+  README.md in the source directory says for each fix how this mod applies it on 1.20.1.
+
+License terms followed
+----------------------
+  Draconic Evolution and Brandon's Core use the CoFH "Don't Be a Jerk" license (LICENSE.md
+  of both repositories): "ALL RIGHTS RESERVED", with these grants:
+    You CAN  "Copy portions of this code for use in other projects."
+             "Write your own code that uses this code as a dependency. (addon mods!)"
+    You CANNOT "Redistribute this in its entirety as source or compiled code (Except in the
+             case of mod packs)." / "Create or distribute code which contains 50% or more
+             Functionally Equivalent Statements* from this repository."
+    You MUST "Maintain a visible repository of your code which is inspired by, derived from,
+             or copied from this code."
+  This mod follows them as follows:
+  - It is an addon that uses Draconic Evolution and Brandon's Core as dependencies. It
+    contains no class, recipe, tag or other data file of Draconic Evolution or Brandon's
+    Core, and the modpack ships their jars unmodified from Modrinth (the mod-pack exception).
+  - It copies only small portions, and LICENSE_skytekx_defixes lists each of them. Counted
+    as follows: one statement per executable Java statement (a declaration with a value, an
+    expression, a return, an if or a for), without imports, annotations, declarations
+    without code and constants, plus one per entry of a data file. The jar has 31 such
+    statements in its Java code and 1 language entry. 11 of the 31 achieve the same result
+    as a statement of Draconic Evolution or Brandon's Core: the block properties chain of
+    OpaqueMachineProperties, the null check of the crystal part offset, the damage of
+    Float.MAX_VALUE / 100 in four handlers, the Draconic tech level, the water animal check,
+    the claim.xp label key and the two statements of the F1 check. That is 11 of 32, or 34
+    percent. The other 20 statements and the language entry, whose English text is this
+    mod's own, do not reproduce upstream code. The Draconium Chest fix in particular works
+    in another way than upstream's: the menu remembers the grid that its result came from
+    and computes the result again before a click when the grid has changed since.
+  - Its complete source is public in the SkyTekx 3 repository:
+      https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/skytekx-defixes
+    The exact source of a given jar is that directory at the commit that last changed the
+    jar in local-mods/.
+  - It claims no ownership of Draconic Evolution or Brandon's Core code. The portions listed
+    in LICENSE_skytekx_defixes remain the work of brandon3055. The rest of the code is MIT
+    licensed (LICENSE_skytekx_defixes), Copyright (c) 2026 Florian Kleber (SkyTekx).

@@ -1,0 +1,160 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    // Pinned to what [6.0.18,6.2), 1.+ and 0.7.+ resolved to for the 1.0.0 jar, so a rebuild cannot pick a
+    // newer plugin release with other reobf or refmap output. Librarian has no release, only this snapshot.
+    id 'net.neoforged.gradle' version '6.0.21'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.2.0.7-dev-SNAPSHOT'
+    id 'org.spongepowered.mixin' version '0.7.38'
+}
+
+version = project.mod_version
+group = project.group_name
+
+base {
+    archivesName = project.mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            taskName "Minecraft_Client_${project.minecraft_version}"
+        }
+
+        server {
+            taskName "Minecraft_Server_${project.minecraft_version}"
+            args '--nogui'
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+// The three mods this one patches, as the exact files of the pack's modrinth.index.json.
+// Modrinth CDN layout: https://cdn.modrinth.com/data/<project>/versions/<version>/<file>.jar
+// Coordinates here: <project>:<file>:<version>.
+def packJars = [
+        [name: 'Draconic Evolution', coord: "${de_project}:${de_file}:${de_cdn_version}", sha1: de_sha1],
+        [name: "Brandon's Core", coord: "${bc_project}:${bc_file}:${bc_cdn_version}", sha1: bc_sha1],
+        [name: 'CodeChicken Lib', coord: "${ccl_project}:${ccl_file}:${ccl_cdn_version}", sha1: ccl_sha1],
+]
+
+repositories {
+    ivy {
+        name = 'Modrinth CDN'
+        url = 'https://cdn.modrinth.com/data/'
+        patternLayout {
+            artifact '[organisation]/versions/[revision]/[artifact].[ext]'
+        }
+        metadataSources { artifact() }
+        content {
+            packJars.each { includeGroup it.coord.split(':')[0] }
+        }
+    }
+}
+
+configurations {
+    // the raw (not deobfuscated) pack jars, only used to check their SHA-1
+    packJarsRaw { transitive = false }
+}
+
+dependencies {
+    minecraft "net.neoforged:forge:${project.minecraft_version}-${project.neo_version}"
+
+    packJars.each {
+        implementation fg.deobf(it.coord)
+        packJarsRaw it.coord
+    }
+
+    annotationProcessor "org.spongepowered:mixin:${project.mixin_version}:processor"
+}
+
+def verifyPackJars = tasks.register('verifyPackJars') {
+    description = 'Checks that the compile dependencies are byte identical to the jars of modrinth.index.json.'
+    inputs.files(configurations.packJarsRaw)
+    doLast {
+        def artifacts = configurations.packJarsRaw.resolvedConfiguration.resolvedArtifacts
+        packJars.each { jar ->
+            def (group, module, cdnVersion) = jar.coord.split(':')
+            def artifact = artifacts.find { it.moduleVersion.id.group == group && it.moduleVersion.id.name == module }
+            if (artifact == null) {
+                throw new GradleException("${jar.name}: ${module}.jar was not resolved")
+            }
+            def sha1 = java.security.MessageDigest.getInstance('SHA-1').digest(artifact.file.bytes).encodeHex().toString()
+            if (sha1 != jar.sha1) {
+                throw new GradleException("${jar.name}: ${module}.jar has SHA-1 ${sha1}, expected ${jar.sha1} (gradle.properties)")
+            }
+            logger.lifecycle("${jar.name}: ${module}.jar (Modrinth ${group}/${cdnVersion}) SHA-1 ${sha1} OK")
+        }
+    }
+}
+
+tasks.named('compileJava') { dependsOn verifyPackJars }
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            mod_version: project.mod_version,
+            mod_id     : project.mod_id,
+            mod_name   : project.mod_name,
+            mod_license: project.mod_license,
+            mod_authors: project.mod_authors,
+            de_version : project.de_version,
+            bc_version : project.bc_version,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    // byte-reproducible jar, so the SHA-1 in modrinth-permissions/ can be checked against a rebuild
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    from('LICENSE') {
+        rename { "LICENSE_${project.mod_id}" }
+    }
+    from('NOTICE') {
+        rename { "NOTICE_${project.mod_id}" }
+    }
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : 'SkyTekx',
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : 'SkyTekx',
+                'MixinConfigs'            : "${mod_id}.mixins.json",
+        ])
+    }
+
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

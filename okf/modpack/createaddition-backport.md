@@ -37,9 +37,10 @@ not exist yet.
 ## Status on 2026-11-05
 
 The vendored base (d8d06f5), the reproducible Java 17 build (28bde03), the license files in the jar
-(c276dbd), the baseline bundle and the small fixes are on the branch
-`claude/twilight-forest-port-mods-j2owbq`. The small fixes are the first ported features. The
-pack still ships the Modrinth jar 1.3.3, and no boot has run the fork, so the boot and login checks
+(c276dbd), the baseline bundle, the small fixes and the ignitable fluids are on the branch
+`claude/twilight-forest-port-mods-j2owbq`. The small fixes and the ignitable fluids are the first
+ported features. The pack still ships the Modrinth jar 1.3.3. Only the test servers of the ignitable
+fluids, with a reduced mod set, have booted the fork (e0fed53), so the boot and login checks
 of the baseline and the in game tests of the small fixes wait for the [release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
@@ -48,7 +49,7 @@ of the baseline and the in game tests of the small fixes wait for the [release](
 | Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Planned |
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 010ffd5, 1ad4bf1, 8fb90f8, 0bb10b7, f855f94, 66076fb, 2f39e85, fa15e47, 95a599b, 47f954c and d4ee92e, with the review fix 8224da6. The in game and boot tests belong to the release |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Planned |
-| Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Planned |
+| Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in e0fed53 and 7ee0449, with the review fixes d49e1b0 and 200afee. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
 | Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Planned |
 | Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Planned |
 | Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Planned |
@@ -228,7 +229,7 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   and biodiesel as optional entries. It is not `c:ignites`.
 - Four mixins go into `BaseFireBlock`, `FireBlock` and `FlowingFluid`. They need a refmap, which the
   mod had never used: `createaddition.mixins.json` had no `refmap` key, and the built refmap was
-  empty because the three Create mixins use `remap=false`. The port adds the key (56f628f). Forge
+  empty because the three Create mixins use `remap=false`. The port adds the key (e0fed53). Forge
   methods without SRG names act in two ways. As the target method of an injector, as `canCatchFire`
   and `tryCatchFire` are, they fail the annotation processor, so those two injectors set
   `remap = false`. As an `@At` target, as `isFireSource` in `tick` is, they only make it warn, which
@@ -251,8 +252,8 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   Thermal fluid that can lie in the world and burn there. Ad Astra puts its oil in `forge:oil`, which
   the tag does not name.
 - Tested on Arclight with Create, Immersive Engineering, Supplementaries, Moonlight,
-  NostalgicTweaks, Ad Astra and Thermal Foundation and `-Dmixin.debug.export=true` (test boots of
-  2026-11-05 in the workflow scratchpad). Each of the seven injectors sits once in the exported
+  NostalgicTweaks, Ad Astra and Thermal Foundation and `-Dmixin.debug.export=true`, as the body of
+  commit e0fed53 records. Each of the seven injectors sits once in the exported
   classes, next to those of Arclight and the other mods. A plain Forge 47.4.18 boot with the same
   mods shows the same seven. A dispenser with flint and steel lit creosote and seed oil but not
   honey. Pools of creosote and seed oil with a fire in the middle burned down to 1 and 5 of 25
@@ -260,6 +261,16 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   did. Creosote and seed oil that fell into a fire lit the four blocks beside it. In rain the fire
   in a creosote pool lived on. With `doFireTick` off nothing burned or spread. Supplementaries' own
   lumisene fire was not tried.
+- Fire beside such a fluid survives rain through the `keepFire` injector, which makes the fluid count
+  as a fire source in `FireBlock.tick`, so the rain check and the burn out checks of `tick` skip it.
+  Upstream's own rain values, ignite odds of 100 and a flammability of 300, never apply at a fluid
+  block. Both ask `Level.isRainingAt` at the fluid's position, and the `MOTION_BLOCKING` heightmap
+  counts a block with a fluid, so its top lies above the fluid and the check is false there. The
+  port keeps that code as upstream has it (`FireBlockMixin.java`, `UPSTREAM.md` source change 13,
+  200afee).
+- The `@WrapMethod` injector needs MixinExtras 0.4.0 or later, and the slim jar nests none. Every
+  Create jar that the range `[6.0.3,)` of `mods.toml` admits, 6.0.3 to 6.0.8 on Modrinth, nests
+  mixinextras-forge 0.4.1 with the range `[0.4.1,)` (200afee).
 
 ### Charging recipes
 
@@ -350,6 +361,11 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   production Arclight must load no client class (only a static javap check of the new and changed
   classes ran), and a client must show the burn and charge timers on the goggles, the stress values
   in the item tooltips and the death messages of barbed wire and the Tesla Coil in chat.
+- The ignitable fluids ran only on reduced test servers (e0fed53). The full pack boot on Arclight
+  must show the seven fire and fluid injectors once each in the exported `FireBlock`,
+  `BaseFireBlock` and `FlowingFluid`, next to those of every other mod, and keep the two accepted
+  ERROR lines. Supplementaries' own lumisene fire still needs a test in game, since only the mixin
+  export shows that its injectors and these sit on different injection points.
 - The server handler of `ObservePacket` calls `getBlockEntity` at any position a client names,
   without a loaded chunk check or a distance check, and only the client keeps its cooldown of 10
   ticks. A modified client could make the live server load or generate chunks anywhere. This

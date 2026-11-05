@@ -436,5 +436,39 @@ public class MachineRecipeProvider extends RecipeProvider {
             .pattern("MRM")
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(Items.BARREL).build()))
             .save(finishedRecipeConsumer);
+
+        // SkyTekx: the Wireless Charger and antenna recipes of 8.x (4ad73fff0, conductive alloy since the 8.1 recipes), with forge tags for the c: tags.
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.WIRELESS_CHARGER.get())
+            .define('C', EIOTags.Items.INGOTS_CONDUCTIVE_ALLOY)
+            .define('V', EIOBlocks.VOID_CHASSIS.get())
+            .define('E', EIOItems.ENDER_RESONATOR.get())
+            .pattern("CCC")
+            .pattern("CVC")
+            .pattern("CEC")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOBlocks.VOID_CHASSIS.get()))
+            .save(finishedRecipeConsumer);
+
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.WIRELESS_CHARGER_ANTENNA.get())
+            .define('C', EIOTags.Items.INGOTS_CONDUCTIVE_ALLOY)
+            .define('S', EIOTags.Items.INGOTS_PULSATING_ALLOY)
+            .define('E', EIOItems.ENDER_RESONATOR.get())
+            .pattern(" S ")
+            .pattern(" S ")
+            .pattern("CEC")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.ENDER_RESONATOR.get()))
+            .save(finishedRecipeConsumer);
+
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.WIRELESS_CHARGER_ANTENNA_ADVANCED.get())
+            .define('C', EIOTags.Items.INGOTS_CONDUCTIVE_ALLOY)
+            .define('S', EIOTags.Items.INGOTS_VIBRANT_ALLOY)
+            .define('E', EIOItems.SENTIENT_ENDER.get())
+            .pattern(" S ")
+            .pattern(" S ")
+            .pattern("CEC")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.SENTIENT_ENDER.get()))
+            .save(finishedRecipeConsumer);
     }
 }

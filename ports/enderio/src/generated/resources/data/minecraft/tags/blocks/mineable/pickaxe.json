@@ -68,6 +68,9 @@
     "enderio:relocator_obelisk",
     "enderio:attractor_obelisk",
     "enderio:vat",
+    "enderio:wireless_charger",
+    "enderio:wireless_charger_antenna",
+    "enderio:wireless_charger_antenna_advanced",
     "enderio:conduit"
   ]
 }

@@ -13,6 +13,7 @@ import com.enderio.machines.common.block.PaintedTravelAnchorBlock;
 import com.enderio.machines.common.block.ProgressMachineBlock;
 import com.enderio.machines.common.block.SolarPanelBlock;
 import com.enderio.machines.common.block.TravelAnchorBlock;
+import com.enderio.machines.common.block.WirelessAntennaBlock;
 import com.enderio.machines.common.blockentity.base.MachineBlockEntity;
 import com.enderio.machines.common.blockentity.capacitorbank.CapacitorBankBlockEntity;
 import com.enderio.machines.common.blockentity.capacitorbank.CapacitorTier;
@@ -21,6 +22,7 @@ import com.enderio.machines.common.blockentity.solar.SolarPanelTier;
 import com.enderio.machines.common.item.BoundSoulBlockItem;
 import com.enderio.machines.common.item.CapacitorBankItem;
 import com.enderio.machines.common.item.FluidTankItem;
+import com.enderio.machines.common.tag.MachineTags;
 import com.enderio.machines.data.loot.MachinesLootTable;
 import com.enderio.machines.data.model.MachineModelUtil;
 import com.google.common.collect.ImmutableMap;
@@ -290,6 +292,17 @@ public class MachineBlocks {
         .lang("VAT")
         .register();
 
+    // SkyTekx: backported from 8.x (4ad73fff0).
+    public static final BlockEntry<ProgressMachineBlock> WIRELESS_CHARGER = progressMachine("wireless_charger", () -> MachineBlockEntities.WIRELESS_CHARGER)
+        .register();
+
+    // SkyTekx: backported from 8.x (4ad73fff0). The range bonus of each antenna is in the range_extender data map.
+    public static final BlockEntry<WirelessAntennaBlock> WIRELESS_CHARGER_ANTENNA = wirelessAntenna("wireless_charger_antenna", "Pulsating Wireless Antenna")
+        .register();
+
+    public static final BlockEntry<WirelessAntennaBlock> WIRELESS_CHARGER_ANTENNA_ADVANCED = wirelessAntenna("wireless_charger_antenna_advanced", "Vibrant Wireless Antenna")
+        .register();
+
     //used when single methods needs to be overridden in the block class
     private static <T extends MachineBlock> BlockBuilder<T, Registrate> baseMachine(BlockBuilder<T, Registrate> machineBlock,
         NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockstateProvider> blockStateProvider) {
@@ -311,6 +324,18 @@ public class MachineBlocks {
     private static BlockBuilder<ProgressMachineBlock, Registrate> progressMachine(String name,
         Supplier<BlockEntityEntry<? extends MachineBlockEntity>> blockEntityEntry) {
         return baseMachine(REGISTRATE.block(name, props -> new ProgressMachineBlock(props, blockEntityEntry.get())), MachineModelUtil::progressMachineBlock);
+    }
+
+    private static BlockBuilder<WirelessAntennaBlock, Registrate> wirelessAntenna(String name, String translation) {
+        return REGISTRATE
+            .block(name, WirelessAntennaBlock::new)
+            .properties(props -> props.strength(2.5f, 8).isViewBlocking((pState, pLevel, pPos) -> false).noOcclusion())
+            .tag(BlockTags.NEEDS_IRON_TOOL, BlockTags.MINEABLE_WITH_PICKAXE, MachineTags.Blocks.RANGE_EXTENDER)
+            .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().getExistingFile(EnderIO.loc("block/" + ctx.getName()))))
+            .lang(translation)
+            .item()
+            .tab(EIOCreativeTabs.MACHINES)
+            .build();
     }
 
     private static BlockBuilder<SolarPanelBlock, Registrate> solarPanel(String name, Supplier<BlockEntityEntry<? extends SolarPanelBlockEntity>> blockEntityEntry, SolarPanelTier tier) {

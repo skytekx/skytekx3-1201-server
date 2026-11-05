@@ -48,6 +48,9 @@ public class EnergyConfig {
     public final ForgeConfigSpec.ConfigValue<Integer> RELOCATOR_USAGE;
     public final ForgeConfigSpec.ConfigValue<Integer> ATTRACTOR_CAPACITY;
     public final ForgeConfigSpec.ConfigValue<Integer> ATTRACTOR_USAGE;
+    public final ForgeConfigSpec.ConfigValue<Integer> WIRELESS_CHARGER_CAPACITY;
+    public final ForgeConfigSpec.ConfigValue<Integer> WIRELESS_CHARGER_USAGE;
+    public final ForgeConfigSpec.ConfigValue<Integer> WIRELESS_CHARGER_UPKEEP;
 
     public EnergyConfig(ForgeConfigSpec.Builder builder) {
         builder.push("energy");
@@ -160,6 +163,13 @@ public class EnergyConfig {
         builder.push("attractor");
             ATTRACTOR_CAPACITY = builder.comment("The base energy capacity in uI.").defineInRange("capacity", 64_000, 1, Integer.MAX_VALUE);
             ATTRACTOR_USAGE = builder.comment("The base energy consumption in uI/t.").defineInRange("usage",  20, 1, Integer.MAX_VALUE);
+        builder.pop();
+
+        // SkyTekx: the Wireless Charger defaults of 8.x (4ad73fff0).
+        builder.push("wirelessCharger");
+            WIRELESS_CHARGER_CAPACITY = builder.comment("The base energy capacity in uI.").defineInRange("capacity", 128_000, 1, Integer.MAX_VALUE);
+            WIRELESS_CHARGER_UPKEEP = builder.comment("The base energy consumption in uI/t.").defineInRange("energyUpkeep", 2, 1, Integer.MAX_VALUE);
+            WIRELESS_CHARGER_USAGE = builder.comment("The charge speed in uI/t.").defineInRange("chargeRate", 60, 1, Integer.MAX_VALUE);
         builder.pop();
 
         builder.pop();

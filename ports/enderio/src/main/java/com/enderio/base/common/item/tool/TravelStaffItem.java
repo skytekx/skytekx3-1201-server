@@ -148,6 +148,18 @@ public class TravelStaffItem extends Item implements IMultiCapabilityItem, IAdva
         tooltips.add(TooltipUtil.styledWithArgs(EIOLang.ENERGY_AMOUNT, energy));
     }
 
+    // SkyTekx: a charge from the Wireless Charger changes only the energy NBT, so it should neither replay the equip
+    // animation nor reset block breaking (4ad73fff0).
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged || oldStack.getItem() != newStack.getItem();
+    }
+
+    @Override
+    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+        return oldStack.getItem() != newStack.getItem();
+    }
+
     protected enum ActivationStatus {
         BLOCK(true, false), AIR(false, true), ALL(true, true);
 

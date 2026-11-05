@@ -16,6 +16,8 @@ public class MachinesCommonConfig {
     public final ForgeConfigSpec.IntValue RELOCATOR_RANGE;
     public final ForgeConfigSpec.IntValue ATTRACTOR_RANGE;
     public final ForgeConfigSpec.BooleanValue ATTRACTOR_PULL_BOSSES;
+    public final ForgeConfigSpec.IntValue WIRELESS_CHARGER_RANGE;
+    public final ForgeConfigSpec.IntValue WIRELESS_CHARGER_INTERVAL;
 
     public MachinesCommonConfig(ForgeConfigSpec.Builder builder) {
         ENERGY = new EnergyConfig(builder);
@@ -39,6 +41,14 @@ public class MachinesCommonConfig {
             RELOCATOR_RANGE = builder.comment("Relocator Obelisk base range").defineInRange("relocatorRange", 16, 0, Integer.MAX_VALUE);
             ATTRACTOR_RANGE = builder.comment("Attractor Obelisk base range").defineInRange("attractorRange", 8, 0, Integer.MAX_VALUE);
             ATTRACTOR_PULL_BOSSES = builder.comment("Attractor Obelisk attracts bosses").define("attractorAttractBosses", false);
+        builder.pop();
+
+        // SkyTekx: the Wireless Charger range of 8.x (4ad73fff0) and a charge interval, which bounds the item updates sent to players.
+        builder.push("wirelessCharger");
+            WIRELESS_CHARGER_RANGE = builder.comment("Wireless Charger base range. An antenna on top adds its range_extender data map value.")
+                .defineInRange("baseRange", 16, 1, 256);
+            WIRELESS_CHARGER_INTERVAL = builder.comment("Ticks between two charges of the items of the players in range. Each charge moves the charge speed times this interval.")
+                .defineInRange("chargeInterval", 5, 1, 100);
         builder.pop();
     }
 }

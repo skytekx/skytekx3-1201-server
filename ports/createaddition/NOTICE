@@ -29,8 +29,23 @@ Modifications
     and the amulet and capacitor keys in misc). The Liquid Blaze Burner tank default stays
     4000 mB instead of upstream's 1000 mB. Existing values are kept.
   - Network: the channel createaddition:main uses protocol 2, so this build does not connect to
-    upstream 1.20.1 builds such as 1.3.3, in either direction. Packet id 2 is reserved for the
-    time remaining packet.
+    upstream 1.20.1 builds such as 1.3.3, in either direction. Packet id 2 carries the time
+    remaining packet of the goggle timers.
+  - Fixes from the 1.21.1 line: the Modular Accumulator capability no longer recurses into a
+    StackOverflowError, goggles show the controller's data and schematics keep its size. The
+    Liquid Blaze Burner reads its tank and heat capacity from the config, and a switch of fuel
+    no longer adds up the burn times. The soundscapes play while Create's ambient sounds are on.
+    The death messages of barbed wire and the Tesla Coil are translated in every locale. The
+    Electric Motor peripheral rejects NaN and infinite numbers. A mined Electrum Block drops
+    itself, needs an iron pickaxe and serves as a beacon base. The girder connector has a valid
+    particle texture.
+  - Features from the 1.21.1 line: goggle timers for the burn time of the Liquid Blaze Burner
+    and the charge time of the Tesla Coil, the stress values of the Electric Motor, Alternator
+    and Rolling Mill in the item and goggle tooltips, waterloggable and wrenchable barbed wire,
+    paper rolled into straw, the two buckets in forge:buckets, and float results from the
+    Digital Adapter peripheral.
+  - Balance from the 1.21.1 line: the spool recipe makes 24 spools from iron plates and an iron
+    rod.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

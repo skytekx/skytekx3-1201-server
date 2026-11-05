@@ -122,11 +122,68 @@ its item here, and the NOTICE in the jar sums them up.
    `capacitor_capacity` and `capacitor_charge_rate` in `misc`, 11 keys in all. The one divergence
    is `liquid_blaze_burner_max_liquid_capacity`, whose default stays 4000 mB, the tank size of the
    live burners, instead of the 1000 mB of upstream `6cbf853`. Loading an older
-   `createaddition-common.toml` keeps its values and appends the new keys. Nothing reads them yet,
-   and every reader calls `get()` inside a method or supplier, never in a static initialiser.
+   `createaddition-common.toml` keeps its values and appends the new keys. The Liquid Blaze Burner
+   reads its two keys since item 4. The other keys wait for their bundles, and every reader calls
+   `get()` inside a method or supplier, never in a static initialiser.
 2. Network: the channel `createaddition:main` goes from protocol `1` to `2`, and its message ids
    are the constants `PACKET_OBSERVE` (0), `PACKET_ENERGY_NETWORK` (1) and
-   `PACKET_TIME_REMAINING` (2) in `CreateAddition.java`. Id 2 is reserved for the
-   `TimeRemainingPacket` of the goggle timers (the 1.20.1 form of `54cf0c9`). The channel accepts
+   `PACKET_TIME_REMAINING` (2) in `CreateAddition.java`. Id 2 carries the `TimeRemainingPacket`
+   of the goggle timers (the 1.20.1 form of `54cf0c9`, item 5). The channel accepts
    only its own protocol, so Forge 47 ends a login between this build and an upstream 1.20.1 build
    such as 1.3.3 with `Connection closed - mismatched mod channel list`.
+3. The Modular Accumulator capability stops when the controller is the part itself and after four
+   hops, so a broken controller link or a cycle of two controllers no longer ends in a
+   `StackOverflowError` (upstream `f6dd767`, the hop limit is local). Goggles observe the
+   controller, which syncs at once after a multiblock update (`4ae8f91`). The safe NBT of a
+   controller carries `Size` and `Height` for schematics, and the block item does not auto join
+   while a Symmetry Wand is in the hotbar (`9dd1b46`). No NBT key changes.
+4. The Liquid Blaze Burner takes its tank and heat capacity from
+   `liquid_blaze_burner_max_liquid_capacity` and `liquid_blaze_burner_max_heat_capacity` through
+   the static methods `getMaxLiquidCapacity` and `getMaxHeatCapacity`, which replace the constant
+   `MAX_HEAT_CAPACITY` (`5935afa`, read when needed instead of in a static field initialiser). A
+   switch between normal and superheated fuel starts the time of the new fuel (`0a92b74`), and the
+   renderer fetches each buffer right before its use (`9adb5b0`). The 1000 mB recipe probe of
+   `de9d7e7` is not ported, because the fluid ingredient of Create 6.0.8 for 1.20.1 ignores the
+   amount (`FluidIngredient.testInternal` compares fluids and tags only).
+5. The new `TimeRemainingPacket` (id 2, server to client only, one VarInt) answers the
+   `ObservePacket` of a Liquid Blaze Burner or a Tesla Coil, and the goggles show the burn or
+   charge time left (`54cf0c9`). The client handler only stores the value, so no client class is
+   reachable from the server. The coil averages its last 20 charging ticks, sends -1 while it gets
+   no energy, which the goggles show as an infinity sign, and shows its powered state only while a
+   recipe draws energy (`7cb0ef9`). The short time format moves to `Util.formatTime`, which the
+   JEI Liquid Burning category also uses, and en_us gains the keys `tooltip.liquid_burning.*`,
+   `tooltip.charging.*` and `tooltip.alternator.info`.
+6. The soundscape tick negates Create's client option `enableAmbientSounds` (`a68965a`). The base
+   read it without the negation and cut every CC&A soundscape while the ambient sounds were on.
+   The tick also returns while the client has no level (`f83f9fd`).
+7. The Electric Motor, Alternator and Rolling Mill register their generator speed, capacity and
+   impact in Create's `BlockStressValues` for the item and goggle tooltips, with suppliers that
+   read the config when Create asks (`f3091d0`). The motor names itself as its stress config key
+   instead of the Water Wheel, and the alternator's goggles start with Create's kinetic stats. The
+   block entities keep their own stress methods, so the stress in a network does not change, and
+   the alternator keeps its `MEDIUM` speed requirement, which `f3091d0` drops.
+8. All 21 locales name the death messages `death.attack.createaddition.barbed_wire` and
+   `death.attack.createaddition.tesla_coil`, each with `.player`, as the message ids of the two
+   damage types ask. The base used `attack.death.createaddition.*` or keys without the namespace.
+   Upstream `ced6d21` fixed en_us only.
+9. The Electric Motor peripheral throws a `LuaException` for a non finite speed, angle or
+   distance, and the motor ignores a non finite rpm (`9dd1b46`). The Digital Adapter peripheral
+   returns floats instead of ints for stress, capacity, speed, pulley and piston distance and the
+   bearing angle (`393c51f`), which Lua scripts see.
+10. Barbed wire is waterloggable (`7a66e82`) and wrenchable (`a44784e`). The new block state
+    property `waterlogged` defaults to false, so saved wire loads unchanged, and the blockstate
+    file covers it because its variant keys leave the property out. Unlike upstream it also
+    schedules a water tick in `updateShape`.
+11. The girder connector's particle texture is `create:block/industrial_iron_block` instead of
+    the `chute_block` that Create 6.0.8 lacks (`043b22e`). The Rolling Mill also rolls paper into
+    straw (`recipes/rolling/straw_from_paper.json`, `ced6d21`, filed under createaddition instead
+    of upstream's create namespace). The bioethanol and seed oil buckets are in `forge:buckets`
+    (`7a66e82`), and the spool recipe makes 24 spools from two iron plates and an iron rod
+    (`7cb0ef9`, `9dd1b46`).
+12. The Electrum Block gets the loot table `blocks/electrum_block.json` and joins
+    `minecraft:mineable/pickaxe`, `minecraft:needs_iron_tool`, `minecraft:beacon_base_blocks`,
+    `forge:storage_blocks/electrum` and `forge:storage_blocks` (`a7382cc`, `5c44881`). From the
+    same datagen the Rolling Mill joins `minecraft:mineable/axe`, the Biomass Pellet Block
+    `minecraft:mineable/hoe`, and the chocolate and honey cakes `create:brittle` and
+    `farmersdelight:mineable/knife`. All of them are hand written, since the base commits no
+    datagen output.

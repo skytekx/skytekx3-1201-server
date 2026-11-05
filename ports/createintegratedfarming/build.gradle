@@ -172,6 +172,17 @@ tasks.named("jar", Jar) {
     finalizedBy 'reobfJar'
 }
 
+// SkyTekx: reobfJar maps a call to an inherited vanilla method through the class hierarchy of its owner,
+// so it needs the integration targets on its library path too. Without them a call such as
+// TomatoBlock#getAge keeps its Mojang name and fails with a NoSuchMethodError at runtime.
+reobf {
+    jar {
+        allIntegrationSourceSets.each { name ->
+            libraries.from(sourceSets[name].compileClasspath)
+        }
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }

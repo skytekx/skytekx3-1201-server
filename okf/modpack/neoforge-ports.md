@@ -1,8 +1,8 @@
 ---
 type: Reference
 title: NeoForge ports
-description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether, the Mystical Automation port, the Mekanism: Extra Modules port and the Expanded Delight port so far.
-tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism, expandeddelight, farmersdelight]
+description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether, the Mystical Automation port, the Mekanism: Extra Modules port, the Expanded Delight port and the Create: Integrated Farming port so far.
+tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism, expandeddelight, farmersdelight, createintegratedfarming, create]
 timestamp: 2026-11-05
 ---
 
@@ -24,6 +24,7 @@ worlds and configs keep working if an upstream build for Forge 1.20.1 replaces i
 | [Mystical Automation](#mystical-automation) 1.0.8-skytekx.1 | Itself, NeoForge 1.21.1 and newer only | Fork in `ports/mysticalautomation/`, jar in `local-mods/` | Branch `1.21` of the upstream repository at 4149601 ("Release 1.0.8") | Commits c3bb6eb and e6b9182, 2026-11-05 |
 | [Mekanism: Extra Modules](#mekanism-extra-modules) 0.1.0-beta.3-skytekx.1 | Itself, NeoForge 1.21.1 with Mekanism 10.7 only | Fork in `ports/mekanism-extra-modules/`, jar in `local-mods/` | Tag `v1.21.1-0.1.0-beta.3` of the upstream repository at 1548dd6 | Commits a2df2b5 to b59a9df, 2026-11-05 |
 | [Expanded Delight](#expanded-delight) 0.1.4-skytekx.1 | Itself, NeoForge 1.21.1 only, and on 1.20.1 an older Fabric line with 44 items | Fork in `ports/expandeddelight/`, jar in `local-mods/` | Branch `1.21-neo` of the upstream repository at ea82640, with branch `1.20` at 8d8fe44 as the reference for the 1.20.1 API | Commits c8c0ef8 to d93682b, 2026-11-05 |
+| [Create: Integrated Farming](#create-integrated-farming) 1.4.3-skytekx.1 | Itself, NeoForge 1.21.1 only | Fork in `ports/createintegratedfarming/`, jar in `local-mods/`, its library Create: Dragons Plus 1.11.9 as an index entry | Branch `1.21.1/6.0.0-dev` of the upstream repository at 1f63780 ("[version] Release 1.4.3") | Commits dc176f0 to 3b20b42, 2026-11-05 |
 
 ## Bygone Nether
 
@@ -516,7 +517,148 @@ sides):
 - Before a public pack, merge and push the branch with `ports/expandeddelight/` to master and fetch,
   see [publish](publish.md).
 
+## Create: Integrated Farming
+
+Create: Integrated Farming is a Create addon of the DragonsPlus team with roosts that hold chickens and
+lay eggs, fishing nets for water and lava that work on contraptions, and the Vacuum Harvester, a
+kinetic block that harvests and replants crops around it. Upstream builds it only for NeoForge 1.21.1,
+so the pack bundles a port to Forge 1.20.1 and Create 6.0.8 in `ports/createintegratedfarming/`
+(dc176f0 to 1d98af2, the jar in 4dc1819 and rebuilt in 3b20b42). The full change list is
+`ports/createintegratedfarming/UPSTREAM.md`, and the page
+[Create Integrated Farming port](createintegratedfarming-port.md) has the content, the pack fit and
+the test tables.
+
+### Source and ref
+
+- The base is the branch `1.21.1/6.0.0-dev` of https://github.com/DragonsPlusMinecraft/CreateIntegratedFarming
+  at commit 1f63780108d1d51f3b2c9ebdf4bb0cd5cb3f5906 ("[version] Release 1.4.3", 2026-09-21). It is
+  the only branch, the repository has no tags, and all 285 Java files of the sources jar of the
+  Modrinth release 1.4.3 (version `EWfVwbHy`) are byte identical to it (dc176f0).
+- The jar `local-mods/create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` has SHA-1
+  74b2b560712ba3efe7992fb354cfef8b8d18275a and 488,836 bytes since 3b20b42, the same from two clean
+  builds of a git archive export with `./gradlew build` on Java 17 (ForgeGradle 6.0.6, Forge 47.4.0
+  userdev, Create 6.0.8-289). The first bundled build of 4dc1819, SHA-1
+  0d447e2c04a55b83a657a2f34f34fac192ea1288, lacks the review fixes.
+- It needs Create 6.0.8 and Create: Dragons Plus 1.11.9 for Forge 1.20.1 (Modrinth version
+  `eMalpJtP`, `CreateDragonsPlus-1.11.9.jar`, SHA-1 cb249347ad15914619a81371b4cfa35f74f575ed), which
+  joined the index in b548251. Upstream asks for Create 6.0.10 or newer, which does not exist for
+  1.20.1, so the fork asks for `[6.0.8,6.1.0)`, the range of Create: Dragons Plus. The build fetches
+  Create: Dragons Plus, Farmer's Delight, Supplementaries and Moonlight from the Modrinth Maven, so it
+  needs network access.
+
+### What came in and what stayed out
+
+- The whole mod came in with its mod id, registry ids, block states, NBT keys and config keys: the
+  Roost, the Chicken Roost, the Fishing Net, the Lava Fishing Net and the Vacuum Harvester, their
+  Ponder scenes, the custom harvest rules for Create's Mechanical Harvester and saws, the leash rule of
+  Create's seats, and the integrations of Farmer's Delight, Supplementaries and Twilight Delight. The
+  Java code moved to Forge 47 (ed35b76): one `@Mod` entry point, Forge capabilities for the roost,
+  the harvester and the Farmer's Delight basket, a `SimpleChannel` `create_integrated_farming:main`
+  with protocol 1, `Block#use`, the loot data manager and the 1.20.1 fishing forms. The five mixins
+  into Create set `remap = false`, and no mixin targets a Minecraft class.
+- The synced NeoForge data maps for chicken food became `ChickenFoodMap`, which reads the same files
+  on every reload and sends them to clients. The data moved to the 1.20.1 folders with `forge:` tags
+  (`forge:rods/wooden`, `forge:plantoil`) and a new item tag `create_integrated_farming:chicken_food`
+  with the six chicken foods of 1.20.1 (0b79507). The mod adds no material, so AlmostUnified and
+  `config/almostunified/unify.json` need no change, and no KubeJS script was needed.
+- An addition over upstream: the pack has none of the four mods that upstream's Lava Fishing Net
+  needs, so a new integration lets Lava Fishing 1.2.1 fill it (969c81d).
+- Fixes over upstream: the roost drops a copy of the chicken food remainder, so every feeding returns
+  it (802e1ee), the integrations are reobfuscated against their targets, which fixed a
+  `NoSuchMethodError` crash next to Farmer's Delight tomatoes (0ee7113), and from the review the
+  remainder field takes the 1.21.1 object form again (634441d), the roost Ponder scene stores its egg as
+  a 1.20.1 stack (0440680) and the recipe advancements unlock the crafting recipes (9194d58).
+- The port leaves out the integrations of 26 mods that the pack does not carry, with their duck, goose,
+  turkey and warm or cold chicken roosts (41cc12e). The warm and cold chickens are 1.21.5 content.
+  The datagen classes compile but never ran, so the generated files are upstream's output converted by
+  hand. Spotless is gone, because it rewrote the checkout on every build.
+- The library Create: Dragons Plus brings content of its own into the pack: liquid dyes, dragon's
+  breath as a fluid with a cauldron and a dripstone duplication, the Fluid Hatch, and the fan
+  processing types Bulk Coloring, Bulk Ending, Bulk Freezing and Bulk Sanding with recipes such as
+  end stone from cobblestone, phantom membrane from leather and blue ice from packed ice. The list
+  with the jar paths and the config switches is on
+  [Create Integrated Farming port](createintegratedfarming-port.md#create-dragons-plus). Nobody
+  checked it against the progression of the pack, see [open items](../open-items.md).
+- Neither mod has worldgen, so the Skylands rules are not touched.
+
+### License
+
+The code is LGPL 3.0 or later (`mod_license` in `gradle.properties`, `license` in mods.toml and every
+source header), and Modrinth lists LGPL-3.0-only. The license review of 2026-11-05 allowed the public
+fork and the bundled jar, monetization included, under twelve conditions that the record
+`modrinth-permissions/create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar.md` lists one by one. All
+are met:
+
+- Upstream's `LICENSE.txt` (the LGPL 3.0 text followed by the GPL 3.0 text) stays unchanged in the fork
+  and the jar, and so does `FARMERS_DELIGHT_LICENSE.txt` (MIT) next to the basket and safety net
+  textures that come from Farmer's Delight.
+- The jar adds Create's MIT notice as `LICENSE-CREATE.txt`, for a harvest method adapted from Create's
+  `BlockHelper#destroyBlockAs` and pixel blocks of two Create textures that predate Create's commit
+  9dcc21950 (2025-09-21), after which Create's assets are All Rights Reserved. No newer Create asset is
+  copied.
+- Every upstream header keeps "Copyright (C) 2025 DragonsPlus". The three Lava Fishing classes are
+  modified copies of upstream's Nether Depths Upgrade integration and keep that line next to the
+  SkyTekx line (40ba8f8). The fork adds no further terms.
+- A `NOTICE` in the fork and the jar marks the build as unofficial and modified, names the upstream
+  repository and commit, gives the date and sums up the changes (GPL 5(a)). The same license texts and
+  the NOTICE lie in `licenses/create-integrated-farming-1.20.1-1.4.3-skytekx.1/`.
+- The complete source is `ports/createintegratedfarming/` at the commit that last changed the jar in
+  `local-mods/` (3b20b42), and it must stay public as long as a pack that ships the jar is offered
+  (GPL 6(d)). The record links `tree/master/ports/createintegratedfarming`, so
+  `tools/mrpack_permissions.py` refuses a public build until `origin/master` holds the fork and the
+  same jar.
+- Create: Dragons Plus (LGPL-3.0-or-later) comes from the Modrinth CDN, so the pack does not
+  redistribute it, and the port vendors none of its code. Not verified: whether the texture
+  `textures/block/chicken.png` derives from the vanilla chicken, which nobody compared.
+
+### Tests
+
+Evidence of 2026-11-05 from test copies outside the repository, driven over RCON. The full tables
+are on [Create Integrated Farming port](createintegratedfarming-port.md#tests).
+
+- The port's tests with the first build on plain Forge 47.4.18 with Create, Create: Dragons Plus,
+  Farmer's Delight, Supplementaries, Twilight Delight with the Twilight Forest fork, Lava Fishing and
+  KubeJS: every boot reached `Done` with no FATAL line and no ERROR line from the mod. The Vacuum
+  Harvester harvested and replanted seven kinds of crops, the roosts took food by hand, belt and Spout
+  and laid eggs, a roost item caught a chicken, both fishing nets caught fish on a Mechanical Bearing,
+  and inventories survived a restart. The class load log held no client class of the mod.
+- The review's Arclight copy with the repo's hardened `arclight.jar` and the same mods reached
+  `Done (3.666s)` with no FATAL line and no failed mixin. Create: Dragons Plus applied its mixins into
+  `ServerPlayer`, `BottleItem`, `ConcretePowderBlock`, `PointedDripstoneBlock`, `RecipeManager` and
+  `ReloadableServerResources`, and the only ERROR lines were the flat world line and the three tag
+  lines that Twilight Delight 2.2.8 logs on any server.
+- The integration test with the jar of 3b20b42 on the same Forge copy reached `Done` with the same
+  ERROR lines, loaded `using_converts_to` in both forms, dropped a bowl for each of two feedings of
+  bread, showed the egg of the placed roost schematic and the `crafting/` rewards of the recipe
+  advancements, and stopped over RCON with exit code 0 after a second boot.
+- Nobody tested a client (the Ponder scenes, the JEI category Roosting, the renderers) or a boot of the
+  full pack with the two mods, on Forge or on Arclight, and the Aether part of Create: Dragons Plus
+  never ran.
+
+### Operator steps
+
+The owner mirrors the server by hand, and the mod goes live with the next pack, because clients
+without it cannot join (the channel `create_integrated_farming:main` and the blocks of both mods are
+needed on both sides):
+
+- Stop the server over RCON and wait until the java process is gone.
+- Copy `local-mods/create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` into the server's `mods/` by
+  hand and check its SHA-1 against the one above. Download `CreateDragonsPlus-1.11.9.jar` from its
+  `cdn.modrinth.com` URL in `modrinth.index.json` into `mods/` too and check its SHA-1
+  cb249347ad15914619a81371b4cfa35f74f575ed. Create 6.0.8, Farmer's Delight, Supplementaries, Twilight
+  Delight and Lava Fishing are there already. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/`
+  from the build machine.
+- Clients need the same two jars, which the next pack brings them.
+- Start the server and check the boot against the error baseline. The first boot writes
+  `world/serverconfig/create_integrated_farming-server.toml`, `world/serverconfig/create_dragons_plus-server.toml`
+  and `config/create_dragons_plus-common.toml`. Commit the last one before `tools/build_mrpack.py`,
+  which takes overrides from git HEAD.
+- Neither mod generates anything in the world, so old chunks need no change and no pregen.
+- Before a public pack, merge and push the branch with `ports/createintegratedfarming/` to master and
+  fetch, see [publish](publish.md).
+
 Related: [Mod set](mod-set.md), [Boot fixes](../content/boot-fixes.md), [Publish](publish.md),
 [Mystical Automation port](mysticalautomation-port.md),
 [Mekanism Extra Modules port](mekanism-extra-modules.md),
-[Expanded Delight port](expandeddelight-port.md), [Open items](../open-items.md).
+[Expanded Delight port](expandeddelight-port.md),
+[Create Integrated Farming port](createintegratedfarming-port.md), [Open items](../open-items.md).

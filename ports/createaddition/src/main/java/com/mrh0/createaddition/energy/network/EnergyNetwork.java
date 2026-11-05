@@ -1,12 +1,9 @@
 package com.mrh0.createaddition.energy.network;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
 
 import com.mrh0.createaddition.config.Config;
-import com.mrh0.createaddition.energy.IWireNode;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 
 public class EnergyNetwork {
 	private int id;
@@ -18,29 +15,26 @@ public class EnergyNetwork {
 	private int outBuffRetained;
 	private int outDemand;
 	private boolean valid;
-	
+
 	private int pulled = 0;
 	private int pushed = 0;
 
-	private int nodeCount = 0;
-	
-	private static final int MAX_BUFF = 80000;
-	
-	public EnergyNetwork(Level world) {
+	// The graph ports this network spans; maintained by WireGraph.
+	Set<PortKey> members = Collections.emptySet();
+
+	public EnergyNetwork() {
 		this.inBuff = 0;
 		this.outBuff = 0;
 		this.outBuffRetained = 0;
 		this.inDemand = 0;
 		this.outDemand = 0;
 		this.valid = true;
-		
-		EnergyNetworkManager.instances.get(world).add(this);
 	}
 
 	public int getMaxBuff() {
-		return Math.min(nodeCount * (outDemand + inDemand * 2 + 10), MAX_BUFF);
+		return Math.min(members.size() * (outDemand + inDemand * 2 + 10), Config.CONNECTOR_NETWORK_INTERNAL_BUFFER.get());
 	}
-	
+
 	public void tick(int index) {
 		this.id = index;
 		int t = outBuff;
@@ -49,11 +43,11 @@ public class EnergyNetwork {
 		inBuff = t;
 		outDemand = inDemand;
 		inDemand = 0;
-				
+
 		pulled = 0;
 		pushed = 0;
 	}
-	
+
 	public int getBuff() {
 		return outBuffRetained;
 	}
@@ -72,20 +66,20 @@ public class EnergyNetwork {
 	public int push(int energy) {
 		return push(energy, false);
 	}
-	
+
 	public int demand(int demand) {
 		this.inDemand += demand;
 		return demand;
 	}
-	
+
 	public int getDemand() {
 		return outDemand;
 	}
-	
+
 	public int getPulled() {
 		return pulled;
 	}
-	
+
 	public int getPushed() {
 		return pushed;
 	}
@@ -103,36 +97,40 @@ public class EnergyNetwork {
 	public int pull(int max) {
 		return pull(max, false);
 	}
-	
-	public static EnergyNetwork nextNode(Level level, EnergyNetwork en, Map<String, IWireNode> visited, IWireNode current, int index) {
-		if (visited.containsKey(posKey(current.getPos(), index))) return null; // should never matter?
-		current.setNetwork(index, en);
-		visited.put(posKey(current.getPos(), index), current);
-		en.nodeCount++;
-		
-		for (int i = 0; i < current.getNodeCount(); i++) {
-			IWireNode next = current.getWireNode(i);
-			if (next == null) continue;
-			if (!current.isNodeIndeciesConnected(index, i)) continue;
-			nextNode(level, en, visited, next, current.getOtherNodeIndex(i));
-		}
-		return en;
+
+	// Takes over the stored energy of a network this one replaced.
+	void absorb(EnergyNetwork other) {
+		restore(other.inBuff, other.outBuff);
 	}
-	
-	private static String posKey(BlockPos pos, int index) {
-		return pos.getX()+","+pos.getY()+","+pos.getZ()+":"+index;
+
+	void restore(int in, int out) {
+		inBuff += in;
+		outBuff += out;
+		outBuffRetained = outBuff;
 	}
-	
+
+	boolean hasStoredEnergy() {
+		return inBuff > 0 || outBuff > 0;
+	}
+
+	int getStoredIn() {
+		return inBuff;
+	}
+
+	int getStoredOut() {
+		return outBuff;
+	}
+
 	public void invalidate() {
 		this.valid = false;
 	}
-	
+
 	public boolean isValid() {
 		return this.valid;
 	}
-	
+
 	public void removed() {}
-	
+
 	public int getId() {
 		return id;
 	}

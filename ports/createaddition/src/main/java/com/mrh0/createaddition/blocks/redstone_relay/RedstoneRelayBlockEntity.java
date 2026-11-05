@@ -14,7 +14,8 @@ import com.mrh0.createaddition.energy.LocalNode;
 import com.mrh0.createaddition.energy.NodeRotation;
 import com.mrh0.createaddition.energy.WireType;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
-import com.mrh0.createaddition.index.CABlocks;
+import com.mrh0.createaddition.energy.network.WireGraph;
+import com.mrh0.createaddition.energy.network.WireNodeKind;
 import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.IObserveTileEntity;
@@ -52,8 +53,6 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 	private final IWireNode[] nodeCache;
 	private EnergyNetwork networkIn;
 	private EnergyNetwork networkOut;
-	private int demand = 0;
-	private int throughput = 0;
 
 	private boolean wasContraption = false;
 	private boolean firstTick = true;
@@ -108,9 +107,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 		notifyUpdate();
 
-		// Invalidate
-		if (networkIn != null) networkIn.invalidate();
-		if (networkOut != null) networkOut.invalidate();
+		WireGraph.nodeChanged(level, this);
 	}
 
 	@Override
@@ -121,9 +118,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		invalidateNodeCache();
 		notifyUpdate();
 
-		// Invalidate
-		if (networkIn != null) networkIn.invalidate();
-		if (networkOut != null) networkOut.invalidate();
+		WireGraph.nodeChanged(level, this);
 		// Drop wire next tick.
 		if (dropWire && old != null) this.wireCache.add(old);
 	}
@@ -249,11 +244,8 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			}
 		}
 
-		// Invalidate the network if we updated the nodes.
-		if (!nodes.isEmpty() && this.networkIn != null && this.networkOut != null) {
-			this.networkIn.invalidate();
-			this.networkOut.invalidate();
-		}
+		// Only when already in the level (e.g. /data); on chunk load the level isn't set yet and onLoad registers instead.
+		if (!clientPacket) WireGraph.nodeChanged(level, this);
 	}
 
 	@Override
@@ -283,9 +275,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 		if (changed) {
 			invalidateNodeCache();
-			// Invalidate
-			if (networkIn != null) networkIn.invalidate();
-			if (networkOut != null) networkOut.invalidate();
+			WireGraph.nodeChanged(level, this);
 		}
 	}
 
@@ -310,42 +300,66 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		networkTick();
 	}
 
+	// The wire graph moves the energy, so the relay keeps working while unloaded; the networks here are for the goggles.
 	private void networkTick() {
-		if(awakeNetwork(level)) notifyUpdate();
-		BlockState bs = getBlockState();
-		throughput = 0;
-		if(!bs.is(CABlocks.REDSTONE_RELAY.get())) return;
-		if(bs.getValue(RedstoneRelayBlock.POWERED)) {
-			throughput = networkOut.push(networkIn.pull(demand));
-			demand = networkIn.demand(networkOut.getDemand());
-		}
+		awakeNetwork(level);
 	}
 
 	public int getThroughput() {
-		return throughput;
+		return WireGraph.getBridgeThroughput(level, getBlockPos());
+	}
+
+	public int getDemand() {
+		return WireGraph.getBridgeDemand(level, getBlockPos());
+	}
+
+	// Called when the block state changes in place, which is how POWERED changes.
+	@Override
+	@SuppressWarnings("deprecation")
+	public void setBlockState(BlockState state) {
+		super.setBlockState(state);
+		WireGraph.nodeChanged(level, this);
+	}
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		WireGraph.nodeLoaded(level, this);
+	}
+
+	// Chunk unloaded or block removed.
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		WireGraph.nodeUnloaded(level, this);
 	}
 
 	@Override
 	public void remove() {
+		if (level == null) return;
 		if (level.isClientSide()) return;
 		// Remove all nodes.
 		for (int i = 0; i < getNodeCount(); i++) {
 			LocalNode localNode = getLocalNode(i);
 			if (localNode == null) continue;
 			IWireNode otherNode = getWireNode(i);
-			if (otherNode == null) continue;
+			if (otherNode == null) {
+				// The other end is unloaded and lets go of the wire when it next loads
+				if (!localNode.isInvalid()) dropWire(level, localNode);
+				continue;
+			}
 
 			int ourNode = localNode.getOtherIndex();
+			LocalNode otherLocal = otherNode.getLocalNode(ourNode);
+			if (otherLocal == null || !otherLocal.getPos().equals(getBlockPos())) continue;
 			if (localNode.isInvalid()) otherNode.removeNode(ourNode);
-			else otherNode.removeNode(ourNode, true); // Make the other node drop the wires.
+			else otherNode.removeNode(ourNode, true);
 		}
 
 		invalidateNodeCache();
 		invalidateCaps();
 
-		// Invalidate
-		if (networkIn != null) networkIn.invalidate();
-		if (networkOut != null) networkOut.invalidate();
+		WireGraph.nodeRemoved(level, this);
 	}
 
 	public void invalidateLocalNodes() {
@@ -359,9 +373,10 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			this.nodeCache[i] = null;
 	}
 
+	// Input and output nodes are separate networks; the wire graph relays between them.
 	@Override
-	public boolean isNodeIndeciesConnected(int in, int other) {
-		return isNodeInput(in) == isNodeInput(other);
+	public WireNodeKind getWireNodeKind() {
+		return WireNodeKind.RELAY;
 	}
 
 	@Override
@@ -369,9 +384,6 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		return ConnectorType.Small;
 	}
 
-	public int getDemand() {
-		return demand;
-	}
 
 	@Override
 	public void onObserved(ServerPlayer player, ObservePacket pack) {

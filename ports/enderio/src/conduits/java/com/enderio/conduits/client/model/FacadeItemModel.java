@@ -88,9 +88,12 @@ public class FacadeItemModel implements IDynamicBakedModel {
 
     @Override
     public ItemTransforms getTransforms() {
-        return frameModel().getTransforms();
+        // The frame is only known once the models are baked. A mod that asks earlier gets the facade's own transforms.
+        @Nullable BakedModel frame = frameModel();
+        return frame != null ? frame.getTransforms() : facadeModel.getTransforms();
     }
 
+    @Nullable
     private static BakedModel frameModel() {
         return ConduitClientSetup.modelOf(ConduitClientSetup.CONDUIT_FACADE_OVERLAY);
     }
@@ -165,7 +168,8 @@ public class FacadeItemModel implements IDynamicBakedModel {
         @Override
         public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData,
             @Nullable RenderType renderType) {
-            return frameModel().getQuads(state, side, rand, extraData, renderType);
+            @Nullable BakedModel frame = frameModel();
+            return frame != null ? frame.getQuads(state, side, rand, extraData, renderType) : List.of();
         }
 
         @Override

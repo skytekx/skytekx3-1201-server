@@ -148,12 +148,16 @@ evidence and the page with the details. The rulings behind the first section are
   own, but gems such as zanite and skyjade have none, so their gloves and tools cannot melt. Whether
   they get fluids too was asked on 2026-11-04 and is open, see
   [Melting](content/melting.md#what-stays-out).
-- Neptune's Bounty of Aquaculture melts into 720 mB neptunium with Molten, the cost of its recipe of
-  eight neptunium ingots. Aquaculture also hands it out filled as very rare fishing loot
-  (`aquaculture:gameplay/fishing/neptunium`), and the emptied block drops itself, so every fished
-  bounty adds eight ingots to its loot, and a fishing farm can repeat that. Keep it, or leave
-  containers that loot hands out filled out of the melting, see
-  [Melting](content/melting.md#runs-of-the-follow-up).
+- Loot and gifts that hold metal melt into it now. Neptune's Bounty of Aquaculture melts into 720 mB
+  neptunium with Molten, the cost of its recipe of eight neptunium ingots. Aquaculture also hands it
+  out filled as very rare fishing loot (`aquaculture:gameplay/fishing/neptunium`), and the emptied
+  block drops itself, so every fished bounty adds eight ingots to its loot, and a fishing farm can
+  repeat that. The same holds for other loot and gifts that a recipe also makes, such as the Faraday
+  armor of the Immersive Engineering hero gifts (up to 720 mB aluminum a piece) and its revolver
+  magazine, the gun parts that its commandos drop (the drum 405 mB steel), the evocation rune of Iron's
+  Spellbooks (800 mB emerald) and the dragon scales of Forbidden & Arcanus (333 mB ender each). Keep
+  it, as the request of 2026-11-04 asks, or leave such items out of the melting, which takes it from
+  the crafted ones too, see [Melting](content/melting.md#review-of-the-follow-up).
 - Eleven melting trades gain a fluid by paying with another one that the melting does not give back.
   Most take tinted glass where `forge:glass` stands, in the seared tanks and gauges, the crushers and
   the ARC of Blood Magic. The closest to a dupe is the Immersive Engineering recipe that makes three
@@ -237,10 +241,10 @@ evidence and the page with the details. The rulings behind the first section are
 - Most tools and armor of other mods do not melt in the smeltery of the live server yet, because
   Tinkers' Construct ships melting recipes only for vanilla items and its own compat metals, and with
   SkyTekx Molten the Obsidian Ingot of Forbidden & Arcanus melts without its iron. Since 2026-11-05 the
-  fixes pack holds the 9,530 generated recipes of [Melting](content/melting.md), whose three dupes of
-  the recheck are fixed, with 16 overrides of Tinkers dupes and two files that switch off the obsidian
-  recipes of Molten. They reach the game with the next restart or `/reload` of the Mac mini. Server
-  side recipes need no new pack.
+  fixes pack holds the 9,527 generated recipes of [Melting](content/melting.md), whose three dupes of
+  the recheck and seven faults of its review are fixed, with 16 overrides of Tinkers dupes and two
+  files that switch off the obsidian recipes of Molten. They reach the game with the next restart or
+  `/reload` of the Mac mini. Server side recipes need no new pack.
 
 ## Not verified
 
@@ -288,7 +292,7 @@ evidence and the page with the details. The rulings behind the first section are
 - The melting recipes of 2026-11-04 in game. Nobody has melted a horse armor or a glove since they
   went live, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 - The generated melting recipes in a client. On the test servers real melters gave the amounts of the
-  files, but no client has logged in with the 9,530 files, so the login with about 8,300 more recipes
+  files, but no client has logged in with the 9,527 files, so the login with about 8,300 more recipes
   in the recipe packet and the pages of the smeltery in JEI or EMI and the Tinkers book were not seen.
   The first client should melt one generated item in a smeltery and look it up in EMI, see
   [Melting](content/melting.md#recipe-sync-to-the-clients).

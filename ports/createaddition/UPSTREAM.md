@@ -331,3 +331,7 @@ its item here, and the NOTICE in the jar sums them up.
     `forge:plates/zinc` instead of the emerald, in the pattern ` WW`, `EZW`, `GE `. The en_us
     tooltip summary is upstream's new one. The other 20 locales keep the summary of the old effect
     until the translations bundle.
+24. Tesla Coil light: upstream `5490949`. The block properties give light level 10 while the
+    block state `powered` is true. The state and its model are in the base. Light is part of the
+    saved chunk, so a coil saved as powered keeps its old light until it toggles. The Sable parts
+    of `5490949` stay out (inventory, excluded `sable-aeronautics-compat`).

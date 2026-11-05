@@ -153,6 +153,8 @@ public class CABlocks {
 
 	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE.block("tesla_coil",  TeslaCoilBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			// Light level 10 while powered (upstream 5490949).
+			.properties(p -> p.lightLevel(state -> state.getValue(TeslaCoilBlock.POWERED) ? 10 : 0))
 			.item(AssemblyOperatorBlockItem::new)
 			.transform(customItemModel())
 			.register();

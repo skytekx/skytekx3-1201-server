@@ -25,3 +25,10 @@ run-data
 
 repo
 /src/generated/resources/.cache/
+
+# SkyTekx: more build outputs and dev-run leftovers of the Forge build
+classes/
+mcmodsrepo/
+.mixin.out/
+logs/
+*.log

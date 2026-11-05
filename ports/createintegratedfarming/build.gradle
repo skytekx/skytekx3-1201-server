@@ -1,99 +1,50 @@
-plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
-    id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
-    id "com.diffplug.spotless" version "7.0.2"
-    id 'idea'
+// SkyTekx: Forge 1.20.1 build of the port. Upstream builds for NeoForge 1.21.1 with ModDevGradle 2.0.141
+// on Gradle 9.5 and Java 21. This build uses ForgeGradle 6.0.6 on Gradle 8.1.1 and Java 17 like the other
+// Create addon forks in ports/, against Create 6.0.8 for 1.20.1. See UPSTREAM.md for every change.
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forgegradle_version}", changing: true
+        classpath "org.parchmentmc:librarian:${librarian_version}"
+        classpath "org.spongepowered:mixingradle:${mixingradle_version}"
+    }
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
-}
+apply plugin: 'java-library'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'org.spongepowered.mixin'
 
-version = mod_version
+// SkyTekx: the jar is create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar. mods.toml carries mod_version.
+version = "${minecraft_version}-${mod_version}"
 group = mod_group_id
 
 base {
     archivesName = mod_artifact_id
 }
 
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
-    withSourcesJar()
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+// SkyTekx: only the integrations of mods that the SkyTekx pack carries are ported. lavafishing is a
+// SkyTekx addition (the pack's lava fishing mod, which upstream has no integration for).
 def allIntegrationSourceSets = [
         "farmersdelight",
-        "netherdepthsupgrade",
-        "mynethersdelight",
-        "corndelight",
-        "createenchantablemachinery",
-        "crabberdelight",
-        "untitledduck",
-        "environmental",
-        "autumnity",
-        "neapolitan",
-        "atmospheric",
         "supplementaries",
-        "hauntedharvest",
-        "netherexp",
-        "culturaldelights",
-        "cookscollection",
-        "endersdelight",
-        "upgradeaquatic",
-        "hearthandharvest",
-        "windswept",
-        "festivedelight",
-        "nethersexoticism",
-        "delightoflight",
-        "sable",
         "twilightdelight",
-        "tide",
-        "starcatcher",
-        "confluence",
-        "vanillabackport",
+        "lavafishing",
 ]
 
 def integrationSourceSetDependencies = [
-        mynethersdelight: ["farmersdelight"],
-        corndelight    : ["farmersdelight"],
-        crabberdelight : ["farmersdelight"],
-        culturaldelights: ["farmersdelight"],
-        cookscollection: ["farmersdelight"],
-        endersdelight  : ["farmersdelight"],
-        hearthandharvest: ["farmersdelight"],
-        festivedelight  : ["farmersdelight"],
-        delightoflight : ["farmersdelight"],
         twilightdelight: ["farmersdelight"],
 ]
 
-def isIntegrationEnabled = { name ->
-    providers.gradleProperty("enable_${name}_integration")
-            .map { it.toBoolean() }
-            .orElse(true)
-            .get()
-}
-
-def enabledIntegrationSourceSets = allIntegrationSourceSets.findAll { name ->
-    isIntegrationEnabled(name)
-}
-
-def hasIntegration = { name ->
-    enabledIntegrationSourceSets.contains(name)
-}
-
-integrationSourceSetDependencies.each { name, dependencies ->
-    if (hasIntegration(name)) {
-        def missingDependencies = dependencies.findAll { dependencyName -> !hasIntegration(dependencyName) }
-        if (!missingDependencies.empty) {
-            throw new GradleException("The ${name} integration requires the following integration source sets: ${missingDependencies.join(', ')}")
-        }
-    }
-}
-
 sourceSets {
-    enabledIntegrationSourceSets.each { name ->
+    allIntegrationSourceSets.each { name ->
         create(name) {
             java {
                 srcDir "src/integration/${name}/java"
@@ -107,453 +58,120 @@ sourceSets {
             }
         }
     }
-    main {
-        enabledIntegrationSourceSets.each { name ->
-            runtimeClasspath += sourceSets[name].output
-        }
-    }
-}
-
-tasks.named("classes") {
-    enabledIntegrationSourceSets.each { name ->
-        finalizedBy(tasks.named("${name}Classes"))
-    }
-}
-
-tasks.named("jar", Jar) {
-    enabledIntegrationSourceSets.each { name ->
-        from sourceSets[name].output
-    }
-}
-
-tasks.named("sourcesJar", Jar) {
-    enabledIntegrationSourceSets.each { name ->
-        from sourceSets[name].allJava
-    }
-}
-
-def integrationMixinConfigs = [
-        netherexp                : "${mod_id}.netherexp.mixins.json",
-        createenchantablemachinery: "${mod_id}.createenchantablemachinery.mixins.json",
-        tide                     : "${mod_id}.tide.mixins.json",
-        delightoflight            : "${mod_id}.delightoflight.mixins.json",
-        sable                     : "${mod_id}.sable.mixins.json",
-]
-
-def integrationMixinBlocks = integrationMixinConfigs
-        .findAll { name, config -> hasIntegration(name) }
-        .collect { name, config ->
-            "[[mixins]]\n    config=\"${config}\""
-        }
-        .join("\n\n")
-
-neoForge {
-    version = project.neo_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
-
-    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        client {
-            client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        server {
-            server()
-            programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        gameTestServer {
-            type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        data {
-            data()
-            def dataArgs = [
-                    '--mod', project.mod_id,
-                    '--all',
-                    '--output', file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/translations/').getAbsolutePath(),
-                    "--existing-mod", "create",
-                    "--existing-mod", "create_dragons_plus",
-                    "--existing-mod", "farmersdelight",
-                    "--existing-mod", "netherdepthsupgrade",
-                    "--existing-mod", "tide",
-                    "--existing-mod", "starcatcher",
-                    "--existing-mod", "confluence",
-                    "--existing-mod", "vanillabackport"
-            ]
-            enabledIntegrationSourceSets.each { name ->
-                dataArgs.addAll('--existing', file("src/integration/${name}/resources/").getAbsolutePath())
-            }
-            programArguments.addAll dataArgs
-        }
-
-        configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-            logLevel = org.slf4j.event.Level.DEBUG
-        }
-    }
-
-    mods {
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
-            enabledIntegrationSourceSets.each { name ->
-                sourceSet(sourceSets[name])
-            }
-        }
-    }
 }
 
 configurations {
-    localImplementation
-    compileClasspath.extendsFrom localImplementation
-    runtimeClasspath.extendsFrom localImplementation
-    runtimeClasspath.extendsFrom localRuntime
-}
-
-enabledIntegrationSourceSets.each { name ->
-    def localConfig = configurations.create("${name}LocalImplementation") {
-        canBeConsumed = false
-        canBeResolved = false
-    }
-
-    configurations.named("${name}CompileClasspath") {
-        extendsFrom localConfig
-    }
-
-    configurations.named("${name}RuntimeClasspath") {
-        extendsFrom localConfig
-    }
-
-    configurations.named("runtimeClasspath") {
-        extendsFrom localConfig
+    allIntegrationSourceSets.each { name ->
+        def localConfig = create("${name}LocalImplementation") {
+            canBeConsumed = false
+            canBeResolved = false
+        }
+        named("${name}CompileClasspath") {
+            extendsFrom localConfig
+        }
     }
 }
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // SkyTekx: no run configurations. The port is tested on a plain Forge server, see UPSTREAM.md.
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven { url "https://maven.dragons.plus/releases" } // Ponder, Flywheel
-    maven { url "https://maven.createmod.net" } // Ponder, Flywheel
-    maven { url "https://mvn.devos.one/snapshots" } // Registrate
-    maven { url "https://maven.blamejared.com" } // JEI
-    maven { url "https://maven.theillusivec4.top/" } // Curios API
-    maven { url "https://maven.shedaniel.me/" } // Cloth Config
+    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
+    maven { url = "https://maven.tterrag.com" } // Registrate
+    maven { url = "https://maven.blamejared.com" } // JEI
     maven {
-        url "https://www.cursemaven.com"
-        content { includeGroup "curse.maven" }
-    }
-    maven {
-        url "https://api.modrinth.com/maven"
+        url = "https://api.modrinth.com/maven"
         content { includeGroup "maven.modrinth" }
     }
-    maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // NeoForge config api port, needed by ponder
-    maven { url 'https://maven.fallenbreath.me/releases' } // Conditional Mixin
-    maven { url "https://maven.ryanhcode.dev/releases" } // RyanHCode Maven - Sable
 }
 
 dependencies {
-    compileOnly("me.fallenbreath:conditional-mixin-neoforge:${conditional_mixin_version}")
-    implementation("plus.dragons.createdragonsplus:create-dragons-plus-${minecraft_version}:${create_dragons_plus_version}")
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
-    compileOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge-api:${jei_version}")
-    localRuntime("mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}")
+    implementation(fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false })
+    implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
+    compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
+    implementation(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
-    compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}+${curios_minecraft_version}:api")
-    localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}+${curios_minecraft_version}")
+    // Create: Dragons Plus 1.11.9 for Forge 1.20.1, the Modrinth file of the pack's index entry
+    implementation(fg.deobf("maven.modrinth:${create_dragons_plus_project}:${create_dragons_plus_file}"))
 
-    if (hasIntegration("farmersdelight")) {
-        farmersdelightLocalImplementation("maven.modrinth:farmers-delight:${farmers_delight_version}")
-    }
+    compileOnly(fg.deobf("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-${jei_minecraft_version}-forge-api:${jei_version}"))
 
-    if (hasIntegration("mynethersdelight")) {
-        mynethersdelightLocalImplementation("maven.modrinth:my-nethers-delight:${my_nethers_delight_version}")
-    }
-
-    if (hasIntegration("crabberdelight")) {
-        crabberdelightLocalImplementation("maven.modrinth:crabbers-delight:${crabbers_delight_version}")
-    }
-
-    if (hasIntegration("corndelight")) {
-        corndelightLocalImplementation("maven.modrinth:mmlib:${mmlib_version}")
-        localRuntime("maven.modrinth:corn-delight:${corn_delight_version}")
-    }
-
-    if (hasIntegration("createenchantablemachinery")) {
-        compileOnly("maven.modrinth:create-enchantable-machinery:${create_enchantable_machinery_version}")
-    }
-
-    if (hasIntegration("untitledduck")) {
-        untitledduckLocalImplementation("maven.modrinth:geckolib:${geckolib_version}")
-        untitledduckLocalImplementation("maven.modrinth:untitled-duck-mod:${untitled_duck_version}")
-    }
-
-    if (hasIntegration("environmental")) {
-        environmentalLocalImplementation("maven.modrinth:blueprint:${blueprint_version}")
-        environmentalLocalImplementation("maven.modrinth:environmental:${environmental_version}")
-    }
-
-    if (hasIntegration("autumnity")) {
-        autumnityLocalImplementation("maven.modrinth:blueprint:${blueprint_version}")
-        autumnityLocalImplementation("maven.modrinth:autumnity:${autumnity_version}")
-        // Autumnity's GatherDataEvent references Gallery's model provider even though Gallery is not a runtime dependency.
-        localRuntime("maven.modrinth:gallery:${gallery_version}")
-    }
-
-    if (hasIntegration("culturaldelights")) {
-        culturaldelightsLocalImplementation("maven.modrinth:YttyNOFA:${cultural_delights_version}")
-        if (!hasIntegration("cookscollection")) {
-            localRuntime("maven.modrinth:QC7N8ljN:${cooks_collection_version}")
-        }
-    }
-
-    if (hasIntegration("cookscollection")) {
-        cookscollectionLocalImplementation("maven.modrinth:QC7N8ljN:${cooks_collection_version}")
-    }
-
-    if (hasIntegration("endersdelight")) {
-        endersdelightLocalImplementation("maven.modrinth:2uEhdGKt:${enders_delight_version}")
-    }
-
-    if (hasIntegration("upgradeaquatic")) {
-        upgradeaquaticLocalImplementation("maven.modrinth:blueprint:${blueprint_version}")
-        upgradeaquaticLocalImplementation("maven.modrinth:gTuTFFyz:${upgrade_aquatic_version}")
-    }
-
-    if (hasIntegration("hearthandharvest")) {
-        hearthandharvestLocalImplementation("maven.modrinth:hearth-and-harvest:${hearth_and_harvest_version}")
-    }
-
-    if (hasIntegration("windswept")) {
-        windsweptLocalImplementation("maven.modrinth:blueprint:${blueprint_version}")
-        windsweptLocalImplementation("curse.maven:windsweptmod-636321:${windswept_version}")
-    }
-
-    if (hasIntegration("festivedelight")) {
-        festivedelightLocalImplementation("maven.modrinth:festive-delight:${festive_delight_version}")
-    }
-
-    if (hasIntegration("nethersexoticism")) {
-        nethersexoticismLocalImplementation("maven.modrinth:3e4LaIlU:${nethers_exoticism_version}")
-    }
-
-    if (hasIntegration("netherdepthsupgrade")) {
-        netherdepthsupgradeLocalImplementation("maven.modrinth:geckolib:${geckolib_version}")
-        netherdepthsupgradeLocalImplementation("maven.modrinth:nether-depths-upgrade:${nether_depths_upgrade_version}")
-    }
-
-    if (hasIntegration("neapolitan")) {
-        neapolitanLocalImplementation("maven.modrinth:blueprint:${blueprint_version}")
-        neapolitanLocalImplementation("maven.modrinth:neapolitan:${neapolitan_version}")
-    }
-
-    if (hasIntegration("atmospheric")) {
-        atmosphericLocalImplementation("maven.modrinth:blueprint:${blueprint_version}")
-        atmosphericLocalImplementation("maven.modrinth:atmospheric:${atmospheric_version}")
-        // Atmospheric's GatherDataEvent references Woodworks even though it is not a runtime dependency.
-        localRuntime("maven.modrinth:woodworks:${woodworks_version}")
-    }
-
-    if (hasIntegration("supplementaries")) {
-        supplementariesLocalImplementation("maven.modrinth:moonlight:${moonlight_version}")
-        supplementariesLocalImplementation("maven.modrinth:supplementaries:${supplementaries_version}")
-    }
-
-    if (hasIntegration("hauntedharvest")) {
-        hauntedharvestLocalImplementation("maven.modrinth:moonlight:${moonlight_version}")
-        hauntedharvestLocalImplementation("maven.modrinth:haunted-harvest:${haunted_harvest_version}")
-    }
-
-    if (hasIntegration("netherexp")) {
-        netherexpLocalImplementation("maven.modrinth:elysium-api:${elysium_api_version}")
-        netherexpLocalImplementation("maven.modrinth:lodestonelib:${lodestone_version}")
-        netherexpLocalImplementation("maven.modrinth:jadens-nether-expansion:${nether_expansion_version}")
-    }
-
-    if (hasIntegration("tide")) {
-        tideLocalImplementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
-        tideLocalImplementation("maven.modrinth:die1AF7i:${tide_version}")
-    }
-
-    if (hasIntegration("starcatcher")) {
-        starcatcherLocalImplementation("curse.maven:starcatcher-1357603:${starcatcher_version}")
-    }
-
-    if (hasIntegration("confluence")) {
-        confluenceLocalImplementation("maven.modrinth:9kp7blvl:${confluence_version}")
-    }
-
-    if (hasIntegration("vanillabackport")) {
-        vanillabackportLocalImplementation("curse.maven:platform-997634:${vanilla_backport_platform_version}")
-        vanillabackportLocalImplementation("curse.maven:vanillabackport-417430:${vanilla_backport_version}")
-    }
-
-    if (hasIntegration("delightoflight")) {
-        delightoflightLocalImplementation("curse.maven:delighto-flight-1347014:${delighto_flight_version}")
-    }
-
-    if (hasIntegration("sable")) {
-        sableLocalImplementation("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}")
-        sableLocalImplementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${create_aeronautics_version}")  { transitive false }
-        sableLocalImplementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${create_aeronautics_version}")  { transitive false }
-        sableLocalImplementation("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${create_aeronautics_version}")  { transitive false }
-    }
-
-    if (hasIntegration("twilightdelight")) {
-        twilightdelightLocalImplementation("curse.maven:the-twilight-forest-227639:${twilight_forest_version}")
-        twilightdelightLocalImplementation("maven.modrinth:twilight-delight:${twilight_delight_version}")
-        localRuntime("maven.modrinth:cuisine-delight:gdWm3nOx") // java.lang.NoClassDefFoundError: dev/xkmc/cuisinedelight/content/logic/IngredientConfig TODO wait for fix
-    }
-}
-
-if (hasIntegration("confluence")) {
-    configurations.named("confluenceLocalImplementation") {
-        canBeResolved = true
-    }
-    def confluenceNestedCompileJarsDir = layout.buildDirectory.dir("generated/confluenceNestedCompileJars")
-    def extractConfluenceNestedCompileJars = tasks.register("extractConfluenceNestedCompileJars", Copy) {
-        from {
-            configurations.confluenceLocalImplementation.collect { zipTree(it) }
-        }
-        include "META-INF/jarjar/*.jar"
-        eachFile { details -> details.path = details.name }
-        includeEmptyDirs = false
-        into confluenceNestedCompileJarsDir
-    }
-    def confluenceNestedCompileJars = files(fileTree(confluenceNestedCompileJarsDir) {
-        include "*.jar"
-    }).builtBy(extractConfluenceNestedCompileJars)
-    sourceSets.confluence.compileClasspath += confluenceNestedCompileJars
+    farmersdelightLocalImplementation(fg.deobf("maven.modrinth:${farmers_delight_project}:${farmers_delight_file}"))
+    supplementariesLocalImplementation(fg.deobf("maven.modrinth:${moonlight_project}:${moonlight_file}"))
+    supplementariesLocalImplementation(fg.deobf("maven.modrinth:${supplementaries_project}:${supplementaries_file}"))
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
-            minecraft_version                   : minecraft_version,
-            minecraft_version_range             : minecraft_version_range,
-            neo_version                         : neo_version,
-            neo_version_range                   : neo_version_range,
-            loader_version_range                : loader_version_range,
-            mod_id                              : mod_id,
-            mod_name                            : mod_name,
-            mod_license                         : mod_license,
-            mod_version                         : mod_version,
-            mod_authors                         : mod_authors,
-            mod_description                     : mod_description,
-            mod_github                          : mod_github,
-            mod_logo                            : mod_logo,
-            create_version_range                : create_version_range,
-            create_dragons_plus_version_range   : create_dragons_plus_version_range,
-            farmers_delight_version_range       : farmers_delight_version_range,
-            cultural_delights_version_range     : cultural_delights_version_range,
-            cooks_collection_version_range      : cooks_collection_version_range,
-            enders_delight_version_range         : enders_delight_version_range,
-            upgrade_aquatic_version_range        : upgrade_aquatic_version_range,
-            neapolitan_version_range            : neapolitan_version_range,
-            atmospheric_version_range           : atmospheric_version_range,
-            supplementaries_version_range       : supplementaries_version_range,
-            haunted_harvest_version_range        : haunted_harvest_version_range,
-            nether_expansion_version_range       : nether_expansion_version_range,
-            nether_depths_upgrade_version_range : nether_depths_upgrade_version_range,
-            tide_version_range                  : tide_version_range,
-            starcatcher_version_range           : starcatcher_version_range,
-            confluence_version_range            : confluence_version_range,
-            vanilla_backport_version_range      : vanilla_backport_version_range,
-            integration_mixin_blocks            : integrationMixinBlocks
+            minecraft_version                : minecraft_version,
+            minecraft_version_range          : minecraft_version_range,
+            forge_version_range              : forge_version_range,
+            loader_version_range             : loader_version_range,
+            mod_id                           : mod_id,
+            mod_name                         : mod_name,
+            mod_license                      : mod_license,
+            mod_version                      : mod_version,
+            mod_authors                      : mod_authors,
+            mod_credits                      : mod_credits,
+            mod_description                  : mod_description,
+            mod_github                       : mod_github,
+            mod_issues                       : mod_issues,
+            mod_logo                         : mod_logo,
+            create_version_range             : create_version_range,
+            create_dragons_plus_version_range: create_dragons_plus_version_range,
+            farmers_delight_version_range    : farmers_delight_version_range,
+            supplementaries_version_range    : supplementaries_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
+sourceSets.main.resources.srcDir generateModMetadata
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-    srcDir generateModMetadata
-}
-neoForge.ideSyncTask generateModMetadata
-
-tasks.withType(Jar) {
+tasks.named("jar", Jar) {
+    allIntegrationSourceSets.each { name ->
+        from sourceSets[name].output
+    }
+    // SkyTekx: LGPL 3(b) and 4(b) ask for the GPL and the LGPL texts with the object code (upstream's
+    // LICENSE.txt holds both). LICENSE-CREATE.txt is Create's MIT notice for the parts taken from Create,
+    // and NOTICE says that this is a modified, unofficial build and where its source is.
     from "LICENSE.txt"
+    from "LICENSE-CREATE.txt"
+    from "NOTICE"
     exclude ".cache"
-}
-
-spotless {
-    java {
-        endWithNewline()
-        leadingTabsToSpaces()
-        removeUnusedImports()
-        toggleOffOn()
-        importOrder()
-        eclipse().configFile "codeformat/formatter-config.xml"
-        licenseHeaderFile "codeformat/HEADER.txt"
+    // SkyTekx: byte-reproducible jar, so a rebuild of a commit can be checked against the recorded SHA-1
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    manifest {
+        attributes([
+                "Specification-Title"   : mod_id,
+                "Specification-Vendor"  : mod_authors,
+                "Specification-Version" : "1",
+                "Implementation-Title"  : project.name,
+                "Implementation-Version": project.version,
+                "Implementation-Vendor" : "${mod_authors} (modified build: SkyTekx)",
+                "MixinConfigs"          : "${mod_id}.mixins.json"
+        ])
     }
-}
-
-build.dependsOn(spotlessApply)
-
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            artifactId = mod_artifact_id + "-" + minecraft_version
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            name "DragonsPlus"
-            url "https://maven.dragons.plus/releases"
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-    }
-}
-
-publishMods {
-    file = jar.archiveFile
-    additionalFiles.from sourcesJar.archiveFile
-    changelog = project.file("CHANGELOG.md").text
-    version = mod_version
-    type = STABLE
-    displayName = "Create: Integrated Farming ${mod_version} for Create ${minecraft_version}-${create_version_production}"
-    modLoaders.add("neoforge")
-
-    curseforge {
-        projectId = "1249131"
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        minecraftVersions.add(minecraft_version)
-        requires("create")
-        requires("create-dragons-plus")
-        client = true
-        server = true
-    }
-
-    modrinth {
-        projectId = "9k1pAsfR"
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add(minecraft_version)
-        requires("create")
-        requires("create-dragons-plus")
-    }
+    finalizedBy 'reobfJar'
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
+    options.encoding = 'UTF-8'
 }

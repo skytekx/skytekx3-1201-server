@@ -54,12 +54,14 @@ public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     private static final VoxelShape SHAPE_WEST;
 
     public JuicerBlock() {
-        super(Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD));
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
+        this(Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD));
     }
 
+    // upstream registers the default state only in the constructor without arguments, which EDBlocks does not
+    // use, so defaultBlockState() was a waterlogged juicer for /setblock, /fill and every mod that places it
     public JuicerBlock(BlockBehaviour.Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.blakebr0.mysticalautomation.init.ModTileEntities;
 import com.blakebr0.mysticalautomation.inventory.RecipeGrid;
 import com.blakebr0.mysticalautomation.util.CachedRecipe;
 import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.GhostGridInputs;
 import com.blakebr0.mysticalautomation.util.MachineUpgrades;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +26,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -33,7 +35,6 @@ import net.minecraftforge.common.ForgeHooks;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class CrafterTileEntity extends BaseMachineTileEntity implements MenuProvider, IUpgradeableMachine {
@@ -180,11 +181,11 @@ public class CrafterTileEntity extends BaseMachineTileEntity implements MenuProv
             if (recipe != null) {
                 var inputs = tile.getInputResult(recipe);
                 if (inputs.hasAll) {
-                    var inventory = tile.toCraftingInput();
-                    var result = recipe.assemble(inventory, level.registryAccess());
+                    // SkyTekx: the result comes from the items taken (getInputResult), not from the ghost grid
+                    var result = recipe.assemble(inputs.craftingInput, level.registryAccess());
                     var output = tile.inventory.getStackInSlot(OUTPUT_SLOT);
 
-                    if (StackHelper.canCombineStacks(result, output)) {
+                    if (!result.isEmpty() && StackHelper.canCombineStacks(result, output)) {
                         tile.isRunning = true;
                         tile.progress++;
                         tile.energy.extractEnergy(tile.getFuelUsage(), false);
@@ -286,46 +287,31 @@ public class CrafterTileEntity extends BaseMachineTileEntity implements MenuProv
 
     private InputResult getInputResult(CraftingRecipe recipe) {
         var amounts = new int[INPUT_SLOTS.length];
-        var remaining = new int[INPUT_SLOTS.length];
 
         // SkyTekx: special recipes (every vanilla CustomRecipe: shulker box coloring, book cloning, repair, firework
         // rockets, banner copies and more) list no ingredients and build their result from the grid, here the ghost
         // grid, so upstream crafted them from ghost items alone without taking anything. They keep items back through
         // getRemainingItems, which the Crafter does not use, so the Crafter does not make them at all
         if (recipe.isSpecial())
-            return new InputResult(false, amounts);
-
-        for (int i = 0; i < INPUT_SLOTS.length; i++) {
-            remaining[i] = this.inventory.getStackInSlot(INPUT_SLOTS[i]).getCount();
-        }
-
-        var ingredients = recipe.getIngredients();
-        var required = 0;
-
-        for (var ingredient : ingredients) {
-            if (ingredient.isEmpty())
-                continue;
-
-            required++;
-
-            for (int j = 0; j < INPUT_SLOTS.length; j++) {
-                var slot = INPUT_SLOTS[j];
-                var stack = this.inventory.getStackInSlot(slot);
-                if (remaining[j] > 0 && ingredient.test(stack)) {
-                    remaining[j]--;
-                    amounts[j]++;
-                    break;
-                }
-            }
-        }
+            return new InputResult(false, amounts, null);
 
         // SkyTekx: from upstream 7a481dc of the 26.1 line ("Fix Crafter working if there are no required inputs from
         // input display"), so a recipe without a single ingredient takes nothing and gives nothing
-        if (required == 0) {
-            return new InputResult(false, amounts);
-        }
+        if (recipe.getIngredients().stream().allMatch(Ingredient::isEmpty))
+            return new InputResult(false, amounts, null);
 
-        return new InputResult(Arrays.stream(amounts).sum() == required, amounts);
+        // SkyTekx: upstream tested the real inputs with Ingredient#test, which ignores NBT, and assembled the result
+        // from the ghost grid, so an enchanted ghost over a plain input gave enchanted output. Every filled ghost slot
+        // now takes one real item that equals it, item and NBT, and the result comes from copies of the items taken
+        var taken = GhostGridInputs.take(this.inventory, INPUT_SLOTS, this.recipeInventory, GhostGridInputs.onePerGhost(this.recipeInventory));
+        if (!taken.hasAll())
+            return new InputResult(false, taken.amounts(), null);
+
+        var grid = new RecipeGrid(taken.taken(), 3, 3);
+        if (!recipe.matches(grid, this.level))
+            return new InputResult(false, taken.amounts(), null);
+
+        return new InputResult(true, taken.amounts(), grid);
     }
 
     @Override
@@ -340,5 +326,5 @@ public class CrafterTileEntity extends BaseMachineTileEntity implements MenuProv
         return false;
     }
 
-    private record InputResult(boolean hasAll, int[] amounts) { }
+    private record InputResult(boolean hasAll, int[] amounts, @Nullable CraftingContainer craftingInput) { }
 }

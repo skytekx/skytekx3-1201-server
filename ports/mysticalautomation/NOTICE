@@ -32,7 +32,9 @@ Modifications
       it enchants, the JEI recipe transfer no longer reads past its slot views, and bone meal costs
       the full fuel usage of the Fertilizer. The Crafter refuses special recipes and recipes
       without a required input (the second check after upstream 7a481dc of the 26.1 line), which
-      upstream crafted from ghost items alone.
+      upstream crafted from ghost items alone. The Crafter and both Altarnators take real inputs
+      that equal their ghost items, NBT included, and assemble the result from the items they take,
+      not from the ghost grid.
     * Left out: the CraftTweaker integration and its test scripts.
     * Build: ForgeGradle for Forge 1.20.1 on Java 17, reproducible jar (no file timestamps, fixed
       entry order, no build timestamp in the manifest). mods.toml marks the build as a modified,

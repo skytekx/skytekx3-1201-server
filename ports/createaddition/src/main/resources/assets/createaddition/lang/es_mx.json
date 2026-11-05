@@ -16,6 +16,11 @@
 	"createaddition.tooltip.energy.pull": "Tirar",
 	"createaddition.tooltip.energy.passive": "Pasivo",
 	"createaddition.tooltip.energy.none": "Ninguno",
+	"createaddition.tooltip.liquid_burning.info": "Información del quemador de Blaze líquido:",
+	"createaddition.tooltip.liquid_burning.time_remaining": "Tiempo de combustión restante:",
+	"createaddition.tooltip.charging.info": "Información de la bobina de Tesla:",
+	"createaddition.tooltip.charging.time_remaining": "Tiempo de carga restante:",
+	"createaddition.tooltip.alternator.info": "Información del alternador:",
 
 	"createaddition.tooltip.accumulator.info": "Información del acumulador:",
 	"createaddition.tooltip.relay.info": "Información del relé:",
@@ -96,7 +101,6 @@
 
 	"item.createaddition.electrum_amulet": "Amuleto de oro pálido",
 	"item.createaddition.electrum_amulet.tooltip": "AMULETO_DE_ELECTRUM",
-	"item.createaddition.electrum_amulet.tooltip.summary": "Cuando la _vida_ te tiene deprimido, aferrarte a este _amuleto_ en tu bolsillo te hace sentir que tu _suerte_ está a punto de cambiar.",
 
 	"item.createaddition.brass_figurine": "Figura de latón",
 	"item.createaddition.brass_figurine.tooltip": "FIGURA_DE_LATÓN",

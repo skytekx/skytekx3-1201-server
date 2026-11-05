@@ -90,6 +90,10 @@ Modifications
     between connectors and for the Servo Motor, with their schematics converted to the NBT of
     Minecraft 1.20.1. The ponder plugin no longer runs Create's controller fix a second time, which
     broke the fluid tank and accumulator multiblocks in the scenes.
+  - Translations from the 1.21.1 line for the new goggle texts and death messages in the
+    Spanish, French, Polish, Portuguese and Russian locales. The Electrum Amulet summary keeps a
+    translation only in French, the one locale that describes the new effect, and shows the
+    English text elsewhere.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

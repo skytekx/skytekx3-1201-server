@@ -666,3 +666,15 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     its stored facing, so one placed while looking down (facing up) stands as before, and one
     placed while looking sideways now hangs on the side its facing names. No world with the mod
     existed before this change, so there is no migration.
+21. Lamps: the sixteen lamps show their unlit texture again (`248011b`, changelog 1.3.13). The
+    base wrote the model `lamp_<color>` twice in `buildLitState`, first with the unlit and then
+    with the lit texture, so the second write won and a lamp looked lit in both states. The
+    generator now writes `lamp_<color>` and `lamp_<color>_on`, and the blockstates point the
+    state `lit=true` at the second one. The model of the Lamp Controller is the one of `248011b`,
+    which turns its front to the top of the model, the side that the rotations of
+    `fullyDirectionalBlock` expect, so the controller faces the player who placed it. Before, its
+    front pointed north in the model and ended up on a side or the bottom. The recipes of the
+    lamps and the controller and the tag `actuallyadditions:lamps` came with source changes 9 and
+    10 (`248011b`, `c09b365`), so the name of the controller loses its `(wip)` label here, as in
+    `248011b`. The `runData` output has 16 new and 32 changed files, and all 49 lamp and controller
+    files of `src/generated` are byte identical to `main`.

@@ -51,6 +51,24 @@ No registry id, block state, NBT key or config key changed between 1.3.3 and the
   2025-03-14, SHA-512 `645e99ae...` as the Modrinth API lists it) already holds both blobs byte for
   byte. Both blobs therefore date from the time when Create's assets were MIT, and the NOTICE
   lists them with the other parts derived from Create.
+- Release check of 2026-11-05: a blob:none clone of Create's repository dates every Create file
+  that the fork reuses with `git log --all --find-object`. The model blob `34cb63e` came with
+  Create commit `94ddf43` (2024-12-20, still the file on `mc1.20.1/dev`), `pump.png` (`8f3d8f7`)
+  with `ad1ea7a` (2024-12-20), `bearing_top.png` (`1d156fa`) and `clockwork_bearing_side.png`
+  (`e21a7de`) with `c81e535` (2023-04-30) and the ponder schematic `flow.nbt` (`2ecaed7`) with
+  `ca94873` (2021-07-17). All of them predate 2025-09-21. Create 6.0.10 for 1.21.1 ships the
+  same three texture blobs and the model as blob `45100c6` (`15565fa`, 2025-01-07), whose two
+  flange cuboids have the same boxes and UVs as those of the Electric Pump models. The texture
+  checks gave the same matches against Create 6.0.3, 6.0.8 and 6.0.10. The whole image check
+  `texcmp.py` found no Create texture at or above 25 percent (best: `pump.png`, 23 percent of
+  `electric_pump/block.png`), and the sliding check `texslide.py` found only the textures above.
+  Its other matches at or above 25 percent, `cart_assembler_top.png` (206 pixels),
+  `super_glue/slime.png` (109) and three tiles with 64, sit on the same places of the servo
+  texture, and every one of their identical pixels is also identical in `bearing_top.png` or
+  `clockwork_bearing_side.png`. The Electrum Amulet shares no pixel with any Create tile and the
+  barbed wire texture at most 1, also with `--min-opaque 4`. Create's `LICENSE.md` names the
+  holder of its MIT code license `The Create Team / The Creators of Create` since `9dcc21950`,
+  and the NOTICE gives that line next to the 2019 notice.
 - Upstream jars carry no LICENSE file. The SkyTekx build adds `LICENSE` and the SkyTekx `NOTICE`
   (what changed, the upstream commits, where the source is, Create's MIT notice for the parts
   derived from Create) to the jar; see build changes 7 and 8.

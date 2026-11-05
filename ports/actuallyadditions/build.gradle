@@ -102,11 +102,20 @@ jar {
     // modrinth-permissions/
     preserveFileTimestamps = false
     reproducibleFileOrder = true
+    // SkyTekx: MIT asks for the license text in every copy, and upstream jars carry none. The
+    // NOTICE says that this is a modified, unofficial build and where its source is
+    from('LICENSE') {
+        rename { "LICENSE_actuallyadditions" }
+    }
+    from('NOTICE') {
+        rename { "NOTICE_actuallyadditions" }
+    }
     manifest {
         attributes(["Specification-Title"     : "Actually Additions",
                     "Specification-Version"   : "1",
                     "Implementation-Title"    : project.archivesBaseName,
-                    "Implementation-Version"  : project.version],)
+                    "Implementation-Version"  : project.version,
+                    "Implementation-Vendor"   : "Actually Additions (modified build: SkyTekx)"],)
     }
 
     from sourceSets.main.output

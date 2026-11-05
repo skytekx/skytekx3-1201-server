@@ -309,12 +309,12 @@
 	"createaddition.schedule.condition.threshold.unit": "K⚡",
 	"createaddition.schedule.condition.threshold.energy": "Energía",
 
-	"attack.death.createaddition.barbed_wire": "%1$s intentó cruzar el alambre de púas",
-	"attack.death.createaddition.barbed_wire.player": "%1$s intentó cruzar el alambre de púas mientras luchaba contra %2$s",
+	"death.attack.createaddition.barbed_wire": "%1$s intentó cruzar el alambre de púas",
+	"death.attack.createaddition.barbed_wire.player": "%1$s intentó cruzar el alambre de púas mientras luchaba contra %2$s",
 
 	"effect.createaddition.shocking":"Electrocutado",
-	"attack.death.createaddition.tesla_coil": "%1$s recibió una descarga eléctrica letal",
-	"attack.death.createaddition.tesla_coil.player": "%1$s recibió una descarga eléctrica letal mientras luchaba contra %2$s",
+	"death.attack.createaddition.tesla_coil": "%1$s recibió una descarga eléctrica letal",
+	"death.attack.createaddition.tesla_coil.player": "%1$s recibió una descarga eléctrica letal mientras luchaba contra %2$s",
 	"effect.createaddition.shocking.description": "Causa una velocidad de movimiento severamente reducida",
 
 	"createaddition.subtitle.loud_zap": "La Bobina de Tesla descarga",

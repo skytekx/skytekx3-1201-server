@@ -309,12 +309,12 @@
 	"createaddition.schedule.condition.threshold.unit": "K⚡",
 	"createaddition.schedule.condition.threshold.energy": "Energia",
 
-	"attack.death.createaddition.barbed_wire": "%1$s tentou atravessar arame farpado",
-  	"attack.death.createaddition.barbed_wire.player": "%1$s tentou atravessar arame farpado enquanto lutava contra %2$s",
+	"death.attack.createaddition.barbed_wire": "%1$s tentou atravessar arame farpado",
+  	"death.attack.createaddition.barbed_wire.player": "%1$s tentou atravessar arame farpado enquanto lutava contra %2$s",
 
 	"effect.createaddition.shocking": "Chocado",
-	"attack.death.createaddition.tesla_coil": "%1$s recebeu um choque elétrico letal",
-  	"attack.death.createaddition.tesla_coil.player": "%1$s recebeu um choque elétrico letal enquanto lutava contra %2$s",
+	"death.attack.createaddition.tesla_coil": "%1$s recebeu um choque elétrico letal",
+  	"death.attack.createaddition.tesla_coil.player": "%1$s recebeu um choque elétrico letal enquanto lutava contra %2$s",
   	"effect.createaddition.shocking.description": "Causa redução severa na velocidade de movimento",
 
 	"createaddition.subtitle.loud_zap": "Descarga de Bobina de Tesla",

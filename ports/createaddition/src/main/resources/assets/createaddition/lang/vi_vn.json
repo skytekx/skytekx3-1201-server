@@ -320,12 +320,12 @@ khả năng tương thích với mod, Bộ tích điện sẽ chủ động đ�
 	"createaddition.schedule.condition.threshold.unit": "K⚡",
 	"createaddition.schedule.condition.threshold.energy": "Năng lượng",
 
-	"attack.death.createaddition.barbed_wire": "%1$s đã cố gắng vượt qua dây thép gai",
-  	"attack.death.createaddition.barbed_wire.player": "%1$s đã cố gắng vượt qua dây thép gai trong khi chiến đấu với %2$s",
+	"death.attack.createaddition.barbed_wire": "%1$s đã cố gắng vượt qua dây thép gai",
+  	"death.attack.createaddition.barbed_wire.player": "%1$s đã cố gắng vượt qua dây thép gai trong khi chiến đấu với %2$s",
 
 	"effect.createaddition.shocking":"Bị sốc",
-	"attack.death.createaddition.tesla_coil": "%1$s đã nhận một cú sốc điện gây chết người",
-  	"attack.death.createaddition.tesla_coil.player": "%1$s đã nhận một cú sốc điện gây chết người trong khi chiến đấu với %2$s",
+	"death.attack.createaddition.tesla_coil": "%1$s đã nhận một cú sốc điện gây chết người",
+  	"death.attack.createaddition.tesla_coil.player": "%1$s đã nhận một cú sốc điện gây chết người trong khi chiến đấu với %2$s",
   	"effect.createaddition.shocking.description": "Gây giảm đáng kể tốc độ di chuyển",
 
 	"createaddition.subtitle.loud_zap": "Tiếng Cuộn dây Tesla giật lớn",

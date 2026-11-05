@@ -309,12 +309,12 @@
 	"createaddition.schedule.condition.threshold.unit": "K⚡",
 	"createaddition.schedule.condition.threshold.energy": "Energia",
 
-	"death.attack.barbed_wire": "%1$s megoróbált átkelni egy szögesdróton",
-  	"death.attack.barbed_wire.player": "%1$s megoróbált átkelni egy szögesdróton miközben vele harcolt %2$s",
+	"death.attack.createaddition.barbed_wire": "%1$s megoróbált átkelni egy szögesdróton",
+  	"death.attack.createaddition.barbed_wire.player": "%1$s megoróbált átkelni egy szögesdróton miközben vele harcolt %2$s",
 
 	"effect.createaddition.shocking":"Sokkolva",
-	"death.attack.tesla_coil": "%1$s halálos elektromos sokkot kapott",
-  	"death.attack.tesla_coil.player": "%1$s halálos elektromos sokkot kapott miközben vele harcolt: %2$s",
+	"death.attack.createaddition.tesla_coil": "%1$s halálos elektromos sokkot kapott",
+  	"death.attack.createaddition.tesla_coil.player": "%1$s halálos elektromos sokkot kapott miközben vele harcolt: %2$s",
   	"effect.createaddition.shocking.description": "Komolyan csökkentett mozgási sebesség",
 
 	"createaddition.subtitle.loud_zap": "Teslatekercs csattanása",

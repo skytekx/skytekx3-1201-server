@@ -184,10 +184,10 @@
   "createaddition.tooltip.energy.usage": "Использование сетью:",
   "createaddition.tooltip.relay.info": "Информация о реле:",
   
-  "death.attack.barbed_wire": "%1$s попытался пересечь колючую проволоку",
-  "death.attack.barbed_wire.player": "%1$s попытался пересечь колючую проволоку во время боя %2$s",
-  "death.attack.tesla_coil": "%1$s получил смертельный удар током",
-  "death.attack.tesla_coil.player": "%1$s получил смертельный удар током во время боя %2$s",
+  "death.attack.createaddition.barbed_wire": "%1$s попытался пересечь колючую проволоку",
+  "death.attack.createaddition.barbed_wire.player": "%1$s попытался пересечь колючую проволоку во время боя %2$s",
+  "death.attack.createaddition.tesla_coil": "%1$s получил смертельный удар током",
+  "death.attack.createaddition.tesla_coil.player": "%1$s получил смертельный удар током во время боя %2$s",
   
   "desc.immersiveengineering.info.mineral.sphalerite": "Сфалерит",
   

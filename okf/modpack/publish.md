@@ -102,14 +102,15 @@ boots had rewritten on disk (ce31f6f, the builder reads git HEAD).
 - Every index entry with its client env, from the Modrinth CDN, unpatched. The server runs eleven of
   them patched, which only matters on the server. Since 3.0.7 this includes Modflared, which opens the
   Cloudflare Tunnel to `hex.skytekx.com`, see [client](client.md#mac-mini).
-- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 52,
+- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 53,
   Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO
-  Legacy Machines, Mob Grinding Utils, Flux Networks, SkyTekx DE Fixes, Extreme Reactors 2, ZeroCore 2
-  and the LittleTiles build of c5694e16 (`local-mods/`, 52 jars on 2026-11-05). Under
+  Legacy Machines, Mob Grinding Utils, Flux Networks, SkyTekx DE Fixes, Extreme Reactors 2, ZeroCore 2,
+  the LittleTiles build of c5694e16 and the Mystical Automation port (`local-mods/`, 53 jars on
+  2026-11-05). Under
   `overrides/licenses/` travel the sources of the Backpack port and of the LittleTiles build, the
   license texts of Simply Jetpacks 2, EnderIO Legacy Machines, Flux Networks, Extreme Reactors 2, SkyTekx
-  DE Fixes and the boss data of Iron's Apothic Invaders, and the license texts of the parts of Ender IO
-  6.2.18 with their NOTICE (`licenses/` in git).
+  DE Fixes, Mystical Automation and the boss data of Iron's Apothic Invaders, and the license texts
+  of the parts of Ender IO 6.2.18 with their NOTICE (`licenses/` in git).
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
   KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
   FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
@@ -209,15 +210,17 @@ first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
 [mod set](mod-set.md#advanced-loot-info)), with Flux Networks (see [mod set](mod-set.md#flux-networks)),
 with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with Extreme Reactors
 2.0.97, ZeroCore 2.1.48 and the LittleTiles build of c5694e16 bundled (see
-[mod set](mod-set.md#bundled-jars)), with the Apotheosis bosses of Iron's Apothic Invaders and three
-Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine mods of 2026-11-04, five addons of
-Applied Energistics 2 and Cyclic among them (see [mod set](mod-set.md#additions-of-2026-11-04)), and
-with Bygone Nether, whose tag repair in the fixes pack also needs that pack at the end of the pack
-order (see [mod set](mod-set.md#bygone-nether)). Its
+[mod set](mod-set.md#bundled-jars)), with the Mystical Automation port (see
+[Mystical Automation port](mysticalautomation-port.md)), with the Apotheosis bosses of Iron's
+Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine mods of
+2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
+[mod set](mod-set.md#additions-of-2026-11-04)), and with Bygone Nether, whose tag repair in the fixes
+pack also needs that pack at the end of the pack order (see [mod set](mod-set.md#bygone-nether)). Its
 row should record whether a fresh install and the
 update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
 Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server,
-whether the machines of the new mods work there, whether the Draconic Evolution fixes work in a
+whether the machines of the new mods work there, whether the screens and JEI categories of
+Mystical Automation work in a client, whether the Draconic Evolution fixes work in a
 client and whether the mobs and structures of Bygone Nether render there. Its deploy has to move the fixes pack to the end of the
 pack order, see [boot fixes](../content/boot-fixes.md#load-order).
 

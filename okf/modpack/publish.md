@@ -139,8 +139,13 @@ On the build machine, after the blockers are fixed:
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
    write the changelog in `publish_modrinth.py`. If the public address changes, change `SERVERS` in
    `build_mrpack.py` as well.
-2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Then build
-   with `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`.
+2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Merge the
+   branch that carries `ports/` into master, push it and run `git fetch`. Then build with
+   `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The builder refuses
+   a public pack while a bundled jar points its source at `tree/master/ports/<dir>` on GitHub and the
+   local `origin/master` lacks that directory or that build of the jar in `local-mods/`, and the upload
+   script checks the jars inside the `.mrpack` the same way (`tools/mrpack_permissions.py`). Those
+   source links are the source offers that the licenses of these builds demand.
 3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap, add BrassAmber BattleTowers by
    hand as players do, and join the server with it. On Asahi Linux add the JVM flag from
    [client](client.md#java-and-the-asahi-flag) and join by the Mac mini's LAN address, since Modflared

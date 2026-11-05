@@ -173,25 +173,37 @@ public abstract class MachineMenu<T extends MachineBlockEntity> extends SyncedMe
         return flag;
     }
 
-    // Overrides the swapping behaviour. Required for ghost slots to prevent duping
+    // Overrides the click behaviour of ghost slots. Required to prevent duping, also with inventory mods.
+    // Ghost slots never reach the vanilla click logic, because that logic hands out the slot item.
     @Override
     public void doClick(int slotId, int button, ClickType clickType, Player player) {
-        if(slotId >= 0 && this.slots.get(slotId) instanceof GhostMachineSlot ghostSlot) {
-            if (clickType == ClickType.PICKUP) {
-                ItemStack slotItem = ghostSlot.getItem();
-                ItemStack carriedItem = this.getCarried();
-                if(!slotItem.isEmpty() && !carriedItem.isEmpty() && ghostSlot.mayPlace(carriedItem)){
-                    if(!ItemStack.isSameItemSameTags(slotItem, carriedItem)){
-                        int count = Math.min(carriedItem.getCount(), ghostSlot.getMaxStackSize(carriedItem));
-                        ghostSlot.setByPlayer(carriedItem.copyWithCount(count));
-                        ghostSlot.setChanged();
-                        return;
-                    }
-                }
-            } else if (clickType == ClickType.SWAP) {
+        if (slotId >= 0 && slotId < this.slots.size() && this.slots.get(slotId) instanceof GhostMachineSlot ghostSlot) {
+            // Only allow PICKUP (click) or QUICK_MOVE (shift + click) events.
+            if (clickType != ClickType.PICKUP && clickType != ClickType.QUICK_MOVE) {
                 return;
             }
+
+            ItemStack slotItem = ghostSlot.getItem();
+            ItemStack carriedItem = this.getCarried();
+
+            // A click with an empty hand clears the ghost slot.
+            if (carriedItem.isEmpty()) {
+                if (!slotItem.isEmpty()) {
+                    ghostSlot.set(ItemStack.EMPTY);
+                }
+                return;
+            }
+
+            // A click with an item copies it into the ghost slot, or replaces the ghost item. The carried stack stays untouched.
+            // A shift click with an item does nothing.
+            if (clickType == ClickType.PICKUP && ghostSlot.mayPlace(carriedItem)) {
+                int count = Math.min(carriedItem.getCount(), ghostSlot.getMaxStackSize(carriedItem));
+                ghostSlot.setByPlayer(carriedItem.copyWithCount(count));
+                ghostSlot.setChanged();
+            }
+            return;
         }
+
         super.doClick(slotId, button, clickType, player);
     }
 }

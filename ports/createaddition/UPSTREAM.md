@@ -285,3 +285,16 @@ its item here, and the NOTICE in the jar sums them up.
     energy over the missing connector until `/cca_wires rebuild`. With the check the graph matched the
     world right after the boot. The checks read saved chunks in the background and never load a
     chunk.
+21. Alternator with two shafts: upstream `7cb0ef9`, with the recipe of `5c2b9ea`.
+    `AlternatorBlock.hasShaftTowards` accepts both faces of the facing axis, so rotation passes
+    through the alternator, and the housing of the shape spans 2 to 14 along the axis instead of 0
+    to 14. `AlternatorRenderer` draws a half shaft on each face while Flywheel does not visualize
+    the level, and the new `AlternatorVisual` with two `RotatingInstance`s of `SHAFT_HALF` replaces
+    `OrientedRotatingVisual` in `CABlockEntities`. The models `block/alternator/block.json` and
+    `item.json` are upstream's two sided ones, `block_half_shaft.json` and `item_half_shaft.json`
+    keep the one sided shape, and the unused `block_old.json` and `item_old.json` are gone. The
+    models use CC&A's own textures and refer to `create:block/axis` and `create:block/axis_top`,
+    and no texture changes. The mechanical crafting recipe takes a second row of andesite alloy
+    instead of the Capacitor. Block state, NBT and the speed requirement `MEDIUM` stay. An
+    alternator whose back face touches a kinetic block of another network joins that network on
+    its next update, and a speed conflict there breaks a block as in any Create network.

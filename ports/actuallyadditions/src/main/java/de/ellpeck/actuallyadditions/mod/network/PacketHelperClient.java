@@ -10,10 +10,6 @@
 
 package de.ellpeck.actuallyadditions.mod.network;
 
-import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
-import de.ellpeck.actuallyadditions.api.booklet.IBookletChapter;
-import de.ellpeck.actuallyadditions.mod.data.PlayerData;
-import de.ellpeck.actuallyadditions.mod.data.PlayerData.PlayerSave;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -54,27 +50,7 @@ public final class PacketHelperClient {
             compound.putString("World", player.level().dimension().location().toString());
             compound.putUUID("UUID", player.getUUID());
 
-            PlayerSave data = PlayerData.getDataFromPlayer(player);
-
-            if (type == 0) {
-                compound.put("Bookmarks", data.saveBookmarks());
-            } else if (type == 1) {
-                compound.putBoolean("DidBookTutorial", data.didBookTutorial);
-            } else if (type == 2) {
-                compound.put("Trials", data.saveTrials());
-
-                int total = 0;
-                for (IBookletChapter chapter : ActuallyAdditionsAPI.entryTrials.getAllChapters()) {
-                    //if (chapter instanceof BookletChapterTrials) {
-                    //    total++;
-                    //}
-                }
-
-                if (data.completedTrials.size() >= total) {
-                    compound.putBoolean("Achievement", true);
-                }
-            }
-
+            // SkyTekx: no booklet data any more (upstream c8e90aef), and the server ignores the packet
             PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(compound, PacketHandler.PLAYER_DATA_TO_SERVER));
         }
     }

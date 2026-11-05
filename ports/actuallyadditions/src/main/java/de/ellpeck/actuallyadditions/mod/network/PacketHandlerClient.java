@@ -59,7 +59,10 @@ public final class PacketHandlerClient {
 
     public static void handlePlayerData(CompoundTag compound, NetworkEvent.Context context) {
         CompoundTag dataTag = compound.getCompound("Data");
-        Player player = context.getSender(); //ActuallyAdditions.PROXY.getCurrentPlayer();
+        // SkyTekx: the local player, as upstream's ClientPayloadHandler.handleSyncPlayer takes the
+        // player of the clientbound flow. The base read context.getSender(), which is null for a
+        // clientbound packet, so the client never got its player data and logged an ERROR
+        Player player = Minecraft.getInstance().player;
 
         if (player != null) {
             PlayerData.getDataFromPlayer(player).readFromNBT(dataTag, false);

@@ -24,17 +24,33 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 public final class ProtectionService {
+    /**
+     * SkyTekx port: players whose death went through, that is whose LivingDeathEvent nobody canceled. Runtime state
+     * of the server thread only, never saved, cleared on respawn and logout.
+     */
+    private static final Set<UUID> DIED = new HashSet<>();
+
     // SkyTekx port: Forge 47 has one PlayerTickEvent with a phase and a side, NeoForge 21 has PlayerTickEvent.Post.
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.side != LogicalSide.SERVER) {
             return;
         }
+        if (!(event.player instanceof ServerPlayer player) || player.isRemoved()) {
+            return;
+        }
         // SkyTekx port: a dead player keeps ticking until respawn. Without this check a suit that survives death
         // (keepInventory, or a death that bypassed Phase Guard such as /kill) would draw energy and set the
-        // dead player's health back to minHealth.
-        if (!(event.player instanceof ServerPlayer player) || !player.isAlive()) {
+        // dead player's health back to minHealth. The check keys on a death that went through, not on health, so a
+        // player whose health a mod wrote to 0 without a death is still rescued, as upstream does.
+        if (player.isAlive()) {
+            DIED.remove(player.getUUID());
+        } else if (DIED.contains(player.getUUID())) {
             return;
         }
         updatePhaseGuard(player);
@@ -108,13 +124,24 @@ public final class ProtectionService {
         }
     }
 
+    // SkyTekx port: runs last and only for a death that no listener canceled, so the tick handler can tell a real
+    // death from a health of 0.
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onDeathNotCanceled(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            DIED.add(player.getUUID());
+        }
+    }
+
     @SubscribeEvent
     public static void onClone(PlayerEvent.Clone event) {
+        DIED.remove(event.getOriginal().getUUID());
         ExtraModulesPlayerData.copyForRespawn(event.getOriginal(), event.getEntity());
     }
 
     @SubscribeEvent
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        DIED.remove(event.getEntity().getUUID());
         ExtraModulesPlayerData.setPhaseActive(event.getEntity(), false);
     }
 

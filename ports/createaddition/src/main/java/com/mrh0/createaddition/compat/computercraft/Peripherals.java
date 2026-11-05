@@ -4,6 +4,7 @@ import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlockEntity;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBlockEntity;
 import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyInterfaceBlockEntity;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlockEntity;
+import com.mrh0.createaddition.blocks.servo_motor.ServoMotorBlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
@@ -33,5 +34,9 @@ public class Peripherals {
 
 	public static DigitalAdapterPeripheral createDigitalAdapterPeripheral(DigitalAdapterBlockEntity te) {
 		return new DigitalAdapterPeripheral("digital_adapter", te);
+	}
+
+	public static ServoMotorPeripheral createServoMotorPeripheral(ServoMotorBlockEntity te) {
+		return new ServoMotorPeripheral(te);
 	}
 }

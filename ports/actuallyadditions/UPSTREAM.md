@@ -375,3 +375,16 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     advancement can be earned. On the base the coal generator, leaf generator, coffee maker,
     crusher, double crusher and the three phantom faces had no recipe, so eight of the 17 children
     of the root could not be crafted.
+12. JEI: the plugin registers the categories whose recipe types exist on the base, with the
+    API of JEI 15. The fermenting, laser and empowerer categories move into their own packages
+    as on the newer lines (`2f50f5e`), and their catalysts and recipes lose the comments that
+    called them disabled. New is the category of the Lens of the Miner with its two lang keys
+    and the lens as catalyst (`b866f50`). In it and in the laser category the Atomic
+    Reconstructor is a render only slot and the lens a catalyst, so EMI's recipe tree, which
+    reads the JEI categories, no longer asks for one reconstructor per craft (`d1eb4ca`,
+    `fa4ccab`, changelog 1.3.16). The slots line up with the new
+    `gui_nei_atomic_reconstructor.png` of `4a1e483` (PR #1508), the only change of that texture
+    since 2016. The categories keep `getBackground`, since the switch to `getWidth`, `getHeight`
+    and a drawn background of `31e2f47` follows JEI 19. The click areas of `53414c4` need the
+    coffee category and the powered furnace fixes and come with them, like the coffee, crusher
+    and pressing categories, the powered furnace catalyst and the energy subtype interpreter.

@@ -53,6 +53,8 @@ Modifications
       slabs and stairs give the vanilla amounts and have stonecutter recipes.
     * Advancements: every advancement of the Actually Additions tab can be earned, and their
       titles are in title case as on upstream's main branch.
+    * JEI: a category for the Lens of the Miner, and the Atomic Reconstructor shows as a
+      machine, not as an ingredient, so EMI's recipe tree no longer counts one per craft.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

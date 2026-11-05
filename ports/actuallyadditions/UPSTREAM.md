@@ -82,7 +82,8 @@ produces. The ids are also cross checked against the blockstates, item models an
   world generation, villages, giant chests, the smiley cloud and older compat code. So the base
   has no world generation at all (`gen/AAWorldGen` is dead code) and no in game manual.
 - It integrates with JEI only (`compileOnly` API 15.3.0.4). Patchouli and Curios come with the
-  backport. The One Probe and Mekanism appear only as `runtimeOnly` dev run dependencies.
+  backport (build change 10). The One Probe and Mekanism appear only as `runtimeOnly` dev run
+  dependencies.
 - The client fetches `specialPeopleStuff.properties` from upstream's `1.16` branch on GitHub for
   its special renders (source change 5 moves it to the list on `main`). The update checker is
   commented out, so the server makes no network call.
@@ -180,6 +181,35 @@ next to it are upstream's Maven artifacts and are not shipped.
    bugs of this build are ours, and `credits` adds "Modified, unofficial 1.20.1 build by SkyTekx,
    not supported by the Actually Additions team". The fields `authors`, `displayName` and
    `description` are unchanged.
+10. Integrations at compile time: Patchouli `1.20.1-85-FORGE` (maven.blamejared.com) and Curios
+    `5.14.1+1.20.1` (maven.theillusivec4.top, the repository of upstream `a556377`) are
+    `compileOnly` through `fg.deobf`, the versions the pack ships. Patchouli is the full jar and
+    not its API, because the manual pages of `main` use Patchouli client classes outside the API
+    (`PageReconstructor` extends `vazkii.patchouli.client.book.page.abstr.PageSimpleProcessingRecipe`,
+    `PatchouliPages` calls `vazkii.patchouli.client.book.ClientBookRegistry`). Curios needs only its
+    `api` jar. Both full jars are `runtimeOnly` for the dev runs, the way upstream `654465b` and
+    the `localRuntime` lines of `main` add them. JEI stays at the 15.3.0.4 API. The Patchouli
+    Provider data generator of `654465b` is not added, since the fork writes the manual by hand.
+11. Mixin: the plugin `org.spongepowered.mixin` is pinned to `0.7.38` and the annotation
+    processor `org.spongepowered:mixin:0.8.5:processor` writes the refmap
+    `actuallyadditions.refmap.json`, the setup of `ports/littletiles` and
+    `ports/skytekx-defixes`. Forge 47 does not read the `[[mixins]]` block of the NeoForge
+    `mods.toml` that upstream `6f56772` added, so the jar manifest names the config in
+    `MixinConfigs`, as `ports/enderio/build.gradle:342` does. The config
+    `src/main/resources/actuallyadditions.mixins.json` is the one of `main` with
+    `compatibilityLevel` `JAVA_17` instead of `JAVA_21`, `minVersion` 0.8.5, `required`,
+    `defaultRequire` 1 and the refmap. Its lists stay empty until the mixins land with their
+    features (`AnvilMixin` and `ItemCombinerMenuAccessor` of `6f56772` with the Item Tag filter,
+    `client.MinecraftMixin` of `3b29799` with the Engineer's Goggles). Until then the annotation
+    processor writes no refmap, so the jar has none and Mixin logs one WARN line at boot that the
+    reference map could not be read. The dev runs get the properties `mixin.env.remapRefMap` and
+    `mixin.env.refMapRemappingFile`, so the mixins of the deobfuscated mod jars apply there. The
+    two mixins of `main` touch nothing that Arclight patches: `AnvilMixin` injects at the head of
+    `AnvilMenu.mayPickup`, while Arclight's `RepairContainerMixin` only redirects and injects in
+    `AnvilMenu.createResult` and its `ItemCombinerMixin` injects at the head of
+    `ItemCombinerMenu.stillValid` and leaves `inputSlots` alone (javap of `common.jar` in
+    `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`). The client mixin `MinecraftMixin`
+    injects at the head of `Minecraft.shouldEntityAppearGlowing`. No mixin uses `@Overwrite`.
 
 ## Source changes
 

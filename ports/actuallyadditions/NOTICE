@@ -25,7 +25,9 @@ Modifications
     * Build: reproducible jar (no file timestamps, fixed entry order, no build timestamp in the
       manifest). This NOTICE and the upstream LICENSE ship inside the jar. mods.toml marks the
       build as a modified, unofficial one and sends bug reports to SkyTekx.
-    * Build: the hash cache of the data generator (.cache/) no longer ends up in the jar.
+    * Build: the hash cache of the data generator (.cache/) no longer ends up in the jar. The
+      build compiles against Patchouli and the Curios API and registers the mixin config
+      actuallyadditions.mixins.json through the jar manifest, as Forge 1.20.1 expects.
     * Metadata: mods.toml declares Patchouli, Curios and JEI as optional dependencies, and
       pack.mcmeta uses pack_format 15, the format of Minecraft 1.20.1, instead of the 1.16 value.
     * Left out of the source: the fully commented out classes

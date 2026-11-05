@@ -75,6 +75,9 @@ Modifications
       booklet (bookmarks, trials, tutorial flag) is no longer saved.
     * Firework Box: numbers outside the ranges of its sliders are clamped when they arrive and
       when the box loads, so a crafted packet or save can no longer crash its tick.
+    * Assets: the textures and block models of upstream's 1.20+ retexture with four stage crops
+      and fixed AIOT sprites, mono machine sounds, and none of the 1.12 leftovers (old
+      blockstates, models, textures, loot tables and a structure) in the jar any more.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

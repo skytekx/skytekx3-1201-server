@@ -146,7 +146,37 @@ evidence and the page with the details. The rulings behind the first section are
   islands, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 - Fluids for the gems of other mods. Tinkers' Construct melts diamond and emerald into fluids of their
   own, but gems such as zanite and skyjade have none, so their gloves and tools cannot melt. Whether
-  they get fluids too was asked on 2026-11-04 and is open.
+  they get fluids too was asked on 2026-11-04 and is open, see
+  [Melting](content/melting.md#what-stays-out).
+- Neptune's Bounty of Aquaculture melts into 720 mB neptunium with Molten, the cost of its recipe of
+  eight neptunium ingots. Aquaculture also hands it out filled as very rare fishing loot
+  (`aquaculture:gameplay/fishing/neptunium`), and the emptied block drops itself, so every fished
+  bounty adds eight ingots to its loot, and a fishing farm can repeat that. Keep it, or leave
+  containers that loot hands out filled out of the melting, see
+  [Melting](content/melting.md#runs-of-the-follow-up).
+- Eleven melting trades gain a fluid by paying with another one that the melting does not give back.
+  Most take tinted glass where `forge:glass` stands, in the seared tanks and gauges, the crushers and
+  the ARC of Blood Magic. The closest to a dupe is the Immersive Engineering recipe that makes three
+  tinted glass of one glass, four amethyst shards and four lead wires. Leave them, or override the
+  melting or the recipes, see [Melting](content/melting.md#trades-for-the-owner).
+- Sixteen melting recipes show machine loops that multiply an item without any melting, such as the
+  Alkahestry Tome of Reliquary for ingots, gems, obsidian and sand, the SAG mill of Ender IO with a
+  grinding ball and the Mekanism combiner for obsidian, and the Cyclic solidifier with Create crushing
+  for gilded blackstone, which multiplies gold ninefold. The melting stays as it is. Closing a loop,
+  such as with `forge:false` on `cyclic:solidifier/gilded_blackstone`, is the owner's choice, see
+  [Melting](content/melting.md#known-machine-dupes).
+- Variants that AlmostUnified swaps away count as nothing in the melting generator, since no recipe
+  makes them any more, and so does a slot that also takes them. On 2026-11-04 that took the ender out
+  of 107 files, such as the 12,000 mB of the lava immunity card of AdvancedAE. A rule that leaves the
+  variants out of a slot would count such a slot as the Thermal dust, 27 mB ender since 2026-11-05,
+  but then a variant from loot or from before the unification would fill it for less than it counts,
+  see [Melting](content/melting.md#sync-with-the-unification).
+- The SAG mill of Ender IO grinds one ender pearl into nine ender pearl dusts, the dusts of Thermal
+  since the unification of 2026-11-04. Recipes of AE2 and Thermal that take a dust of
+  `forge:dusts/ender_pearl` therefore get it for a ninth of a pearl, as they got the powder of Ender IO
+  before. No recipe turns one dust back into a pearl, and the dust melts into 27 mB ender since
+  2026-11-05. Keep the SAG recipe, or let it give fewer dusts, see
+  [Melting](content/melting.md#follow-up-of-2026-11-05).
 - Recipes for the other uncraftable items of Extra Utilities Reborn Again. Version 1.2.0-rc10 registers
   17 more names without a recipe, among them the Resonator, which the four resonator recipes of the mod
   need, the Stone, Iron, Reinforced Large and Demonically Gargantuan Drums and the Halitosis Generator.
@@ -204,18 +234,13 @@ evidence and the page with the details. The rulings behind the first section are
   `Entity.load` for a NaN coordinate, and which mod writes such entities is still open. Since
   skytekx-compat 2.1.6 a "Dropped entity" line names the next one with its type, chunk and raw
   position, see [SkyTekx Compat](content/compat-mod.md#entities-that-fail-to-load).
-- Most tools and armor of other mods do not melt in the smeltery, because Tinkers' Construct ships
-  melting recipes only for vanilla items and its own compat metals. Since 2026-11-04 the fixes pack
-  melts horse armor and gloves, see [Boot fixes](content/boot-fixes.md#gameplay-overrides). A
-  generator over all crafting and smithing recipes, built on 2026-11-04 with about 9,500 recipes and 16
-  overrides of Tinkers dupes, did not go live with 3.1.3. Its recheck found three dupes in its output:
-  the Thermal ender pearl dust melted into nine times its share, two Railways tracks into 32 and 6
-  times theirs, and the salmon and tropical fish buckets into totemic gold, which a water bucket
-  catches for free. They are fixed before the recipes go live. Server side recipes need no new pack.
-- With SkyTekx Molten the Obsidian Ingot of Forbidden & Arcanus melts without its iron. Since
-  2026-11-05 the fixes pack leaves the ingot and the Processed Obsidian Block to the recipes of Molten,
-  which give the molten obsidian but not the 40 mB of iron per ingot that the overrides gave as a
-  byproduct, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- Most tools and armor of other mods do not melt in the smeltery of the live server yet, because
+  Tinkers' Construct ships melting recipes only for vanilla items and its own compat metals, and with
+  SkyTekx Molten the Obsidian Ingot of Forbidden & Arcanus melts without its iron. Since 2026-11-05 the
+  fixes pack holds the 9,530 generated recipes of [Melting](content/melting.md), whose three dupes of
+  the recheck are fixed, with 16 overrides of Tinkers dupes and two files that switch off the obsidian
+  recipes of Molten. They reach the game with the next restart or `/reload` of the Mac mini. Server
+  side recipes need no new pack.
 
 ## Not verified
 
@@ -262,6 +287,11 @@ evidence and the page with the details. The rulings behind the first section are
   [KubeJS](modpack/kubejs.md#apotheosis-riders).
 - The melting recipes of 2026-11-04 in game. Nobody has melted a horse armor or a glove since they
   went live, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- The generated melting recipes in a client. On the test servers real melters gave the amounts of the
+  files, but no client has logged in with the 9,530 files, so the login with about 8,300 more recipes
+  in the recipe packet and the pages of the smeltery in JEI or EMI and the Tinkers book were not seen.
+  The first client should melt one generated item in a smeltery and look it up in EMI, see
+  [Melting](content/melting.md#recipe-sync-to-the-clients).
 - Modflared in a running game. Nobody has joined through it yet. The second MacBook is set up for it,
   but its sign-in and first launch are left to the person at that Mac. Where Modflared runs, and that
   on Linux on ARM it only logs an error and cannot join through the tunnel, was read from its

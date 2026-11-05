@@ -4,6 +4,8 @@ import com.enderio.api.conduit.ConduitType;
 import com.enderio.api.conduit.ConduitData;
 import com.enderio.api.conduit.model.ConduitCoreModelModifier;
 import com.enderio.api.misc.RedstoneControl;
+import com.enderio.conduits.client.ConduitFacadeColor;
+import com.enderio.conduits.client.model.conduit.facades.ClientFacadeVisibility;
 import com.enderio.conduits.client.model.conduit.modifier.ConduitCoreModelModifiers;
 import com.enderio.conduits.common.Area;
 import com.enderio.conduits.common.conduit.ConduitGraphObject;
@@ -12,6 +14,7 @@ import com.enderio.conduits.common.conduit.ConduitBundle;
 import com.enderio.conduits.common.conduit.OffsetHelper;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
+import com.enderio.conduits.common.conduit.facades.ConduitFacade;
 import com.enderio.conduits.common.init.EIOConduitTypes;
 import com.enderio.core.data.model.EIOModel;
 import com.mojang.math.Axis;
@@ -28,6 +31,9 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.IDynamicBakedModel;
@@ -45,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.enderio.conduits.client.ConduitClientSetup.BOX;
@@ -60,6 +67,13 @@ import static com.enderio.conduits.client.ConduitClientSetup.modelOf;
 
 public class ConduitBlockModel implements IDynamicBakedModel {
 
+    private static final ChunkRenderTypeSet CONDUIT_RENDER_TYPES = ChunkRenderTypeSet.of(RenderType.cutout());
+
+    /**
+     * Moves the tint indices of the facade quads out of the range of the conduit channel colors (78e627263), see {@link ConduitFacadeColor}.
+     */
+    private static final IQuadTransformer MOVE_FACADE_TINT = quad -> quad.tintIndex = ConduitFacadeColor.moveTintIndex(quad.getTintIndex());
+
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData,
         @Nullable RenderType renderType) {
@@ -68,6 +82,24 @@ public class ConduitBlockModel implements IDynamicBakedModel {
         BlockPos pos = extraData.get(ConduitBlockEntity.POS);
 
         if (conduitBundle != null && pos != null) {
+            // Ender IO 7.1 (78e627263): a visible facade adds the quads of its block. While the local player holds an item that hides the
+            // facades, the ghost pass of ConduitFacadeRendering draws it instead.
+            Optional<ConduitFacade> facade = conduitBundle.getFacade();
+            if (facade.isPresent() && ClientFacadeVisibility.areFacadesVisible()) {
+                BlockState facadeState = facade.get().state();
+                addFacadeQuads(quads, facadeState, side, rand, extraData, renderType);
+
+                // A transparent facade hides the conduits, and nothing shows through an opaque full block.
+                if (facade.get().type().doesHideConduits() || facadeState.isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
+                    return quads;
+                }
+            }
+
+            // The conduits are in the cutout layer only. A facade may ask for more layers.
+            if (renderType != null && renderType != RenderType.cutout()) {
+                return quads;
+            }
+
             Direction.Axis axis = OffsetHelper.findMainAxis(conduitBundle);
             Map<ConduitType<?>, List<Vec3i>> offsets = new HashMap<>();
 
@@ -197,6 +229,15 @@ public class ConduitBlockModel implements IDynamicBakedModel {
         return quads;
     }
 
+    private static void addFacadeQuads(List<BakedQuad> quads, BlockState facadeState, @Nullable Direction side, RandomSource rand,
+        ModelData extraData, @Nullable RenderType renderType) {
+        BakedModel facadeModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(facadeState);
+        ModelData facadeData = Objects.requireNonNullElse(extraData.get(ConduitBlockEntity.FACADE_MODEL_DATA), ModelData.EMPTY);
+        if (renderType == null || facadeModel.getRenderTypes(facadeState, rand, facadeData).contains(renderType)) {
+            quads.addAll(MOVE_FACADE_TINT.process(facadeModel.getQuads(facadeState, side, rand, facadeData, renderType)));
+        }
+    }
+
     /**
      * @param toDirection the Direction you want to transform to from the Bottom as base
      * @param toTransform the Direction to follow the same Transformation as bottom -> toDirection
@@ -245,6 +286,15 @@ public class ConduitBlockModel implements IDynamicBakedModel {
         return false;
     }
 
+    /**
+     * The conduits stay without ambient occlusion, as in 6.x. They render in the cutout layer only, so the other layers of a facade, such
+     * as the solid layer of a stone facade, get the shading of the blocks around them.
+     */
+    @Override
+    public boolean useAmbientOcclusion(BlockState state, RenderType renderType) {
+        return renderType != RenderType.cutout();
+    }
+
     @Override
     public boolean isGui3d() {
         return false;
@@ -271,6 +321,16 @@ public class ConduitBlockModel implements IDynamicBakedModel {
         if (conduitBundle == null || conduitBundle.getTypes().isEmpty()) {
             return EIOModel.getMissingTexture();
         }
+
+        // The hit, landing and running particles of a visible facade use the facade's texture (78e627263).
+        Optional<BlockState> facadeState = conduitBundle.getFacadeState();
+        if (facadeState.isPresent() && ClientFacadeVisibility.areFacadesVisible()) {
+            return Minecraft.getInstance()
+                .getBlockRenderer()
+                .getBlockModel(facadeState.get())
+                .getParticleIcon(Objects.requireNonNullElse(data.get(ConduitBlockEntity.FACADE_MODEL_DATA), ModelData.EMPTY));
+        }
+
         return sprite(conduitBundle, conduitBundle.getTypes().get(0));
     }
 
@@ -281,7 +341,42 @@ public class ConduitBlockModel implements IDynamicBakedModel {
 
     @Override
     public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
-        return ChunkRenderTypeSet.of(RenderType.cutout());
+        ConduitBundle conduitBundle = data.get(ConduitBlockEntity.BUNDLE_MODEL_PROPERTY);
+        if (conduitBundle != null) {
+            Optional<BlockState> facadeState = conduitBundle.getFacadeState();
+            if (facadeState.isPresent()) {
+                ModelData facadeData = Objects.requireNonNullElse(data.get(ConduitBlockEntity.FACADE_MODEL_DATA), ModelData.EMPTY);
+                ChunkRenderTypeSet facadeTypes = Minecraft.getInstance()
+                    .getBlockRenderer()
+                    .getBlockModel(facadeState.get())
+                    .getRenderTypes(facadeState.get(), rand, facadeData);
+                return ChunkRenderTypeSet.union(CONDUIT_RENDER_TYPES, facadeTypes);
+            }
+        }
+
+        return CONDUIT_RENDER_TYPES;
+    }
+
+    /**
+     * Adds the model data of the facade's block (78e627263). A facade block with a block entity would find the conduit's block entity at
+     * this position, so it gets no model data, as the ME controller paint of bceadbded shows.
+     */
+    @Override
+    public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state,
+        @NotNull ModelData modelData) {
+        ConduitBundle conduitBundle = modelData.get(ConduitBlockEntity.BUNDLE_MODEL_PROPERTY);
+        if (conduitBundle != null) {
+            Optional<BlockState> facadeState = conduitBundle.getFacadeState();
+            if (facadeState.isPresent() && !(facadeState.get().getBlock() instanceof EntityBlock)) {
+                ModelData facadeData = Minecraft.getInstance()
+                    .getBlockRenderer()
+                    .getBlockModel(facadeState.get())
+                    .getModelData(level, pos, facadeState.get(), ModelData.EMPTY);
+                return modelData.derive().with(ConduitBlockEntity.FACADE_MODEL_DATA, facadeData).build();
+            }
+        }
+
+        return modelData;
     }
 
     private static <T extends ConduitData<T>> TextureAtlasSprite sprite(ConduitBundle conduitBundle, ConduitType<T> type) {

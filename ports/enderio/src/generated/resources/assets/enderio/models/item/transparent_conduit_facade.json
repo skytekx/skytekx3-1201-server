@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "enderio:item/conduit_facade_transparent"
+  "loader": "enderio:facades_item",
+  "model": {
+    "parent": "enderio:block/transparent_conduit_facade"
   }
 }

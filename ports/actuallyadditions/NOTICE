@@ -25,8 +25,16 @@ Modifications
     * Build: reproducible jar (no file timestamps, fixed entry order, no build timestamp in the
       manifest). This NOTICE and the upstream LICENSE ship inside the jar. mods.toml marks the
       build as a modified, unofficial one and sends bug reports to SkyTekx.
-    * Left out of the source: the fully commented out class
-      de.ellpeck.actuallyadditions.mod.util.crafting.RecipeHandler (it compiled to nothing).
+    * Build: the hash cache of the data generator (.cache/) no longer ends up in the jar.
+    * Metadata: mods.toml declares Patchouli, Curios and JEI as optional dependencies, and
+      pack.mcmeta uses pack_format 15, the format of Minecraft 1.20.1, instead of the 1.16 value.
+    * Left out of the source: the fully commented out classes
+      de.ellpeck.actuallyadditions.mod.util.crafting.RecipeHandler and RecipeHelper and
+      de.ellpeck.actuallyadditions.mod.inventory.ContainerGiantChest (they compiled to nothing),
+      and the two Inventory Tweaks API annotations in the package invtweaks.api.container, which
+      upstream removed on its 1.20.4 line too.
+    * Special renders: the client reads the list of upstream's main branch instead of the one on
+      the 1.16 branch, as upstream does since its 1.21 line.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

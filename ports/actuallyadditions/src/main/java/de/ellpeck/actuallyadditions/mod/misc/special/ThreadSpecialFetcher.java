@@ -28,8 +28,9 @@ public class ThreadSpecialFetcher extends Thread {
     public void run() {
         ActuallyAdditions.LOGGER.info("Fetching Special People Stuff...");
         try {
-            //URL url = new URL("https://raw.githubusercontent.com/Ellpeck/ActuallyAdditions/main/specialPeopleStuff.properties");
-            URL url = new URL("https://raw.githubusercontent.com/Ellpeck/ActuallyAdditions/1.16/specialPeopleStuff.properties");
+            // SkyTekx: upstream d9b0a714. The list on the 1.16 branch last changed in 2021, upstream
+            // keeps the current one on main as specialPeopleStuffNew.properties
+            URL url = new URL("https://raw.githubusercontent.com/Ellpeck/ActuallyAdditions/main/specialPeopleStuffNew.properties");
             Properties specialProperties = new Properties();
             specialProperties.load(new InputStreamReader(url.openStream()));
             SpecialRenderInit.parse(specialProperties);

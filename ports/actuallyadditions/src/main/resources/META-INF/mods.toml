@@ -28,3 +28,27 @@ Do you want Automation? Wireless Transport? Better Machines? A cup o' Coffee? Ch
     versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"
+
+# SkyTekx: the integrations of the newer upstream lines. All three stay optional, as upstream
+# has them (only its Modrinth and CurseForge pages mark Patchouli as required). Forge checks the
+# version range of each one that is present, and the mod list names them
+[[dependencies.actuallyadditions]]
+    modId="patchouli"
+    mandatory=false
+    versionRange="[1.20.1-81,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.actuallyadditions]]
+    modId="curios"
+    mandatory=false
+    versionRange="[5.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.actuallyadditions]]
+    modId="jei"
+    mandatory=false
+    versionRange="[15.0,)"
+    ordering="NONE"
+    side="BOTH"

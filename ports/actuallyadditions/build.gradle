@@ -60,6 +60,12 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// SkyTekx: the data generator keeps its hash cache in src/generated/resources/.cache, which is
+// build state and not a resource. Upstream jars carry its 18 files at the jar root
+processResources {
+    exclude '.cache/**'
+}
+
 repositories {
     maven {
         url = "https://maven.blamejared.com"

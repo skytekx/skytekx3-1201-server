@@ -10,7 +10,8 @@ Researched automatically across the 40 bundled mods of that time. The table belo
 
 ## TL;DR
 
-- **45** mods are fine to bundle (open license or author allows modpacks).
+- **44** mods are fine to bundle (open license or author allows modpacks).
+- **2** need a manual check, Status VERIFY: Deadly World, whose CurseForge modpack flag is unconfirmed, and ZeroCore 2, whose author allows modpacks but forbids reposts on other websites, while git tracks its jar in `local-mods/` of this public repository.
 Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
@@ -40,9 +41,10 @@ These cannot legally be bundled in a public modpack as-is:
 
 ## Manual check (resolve before publishing)
 
-Permission depends on a CurseForge flag nobody has confirmed yet (Status VERIFY):
+Two jars have Status VERIFY. Deadly World depends on a CurseForge flag nobody has confirmed yet, and ZeroCore 2 on where its jar is hosted:
 
 - **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
+- ZeroCore 2 (`ZeroCore2-1.20.1-2.1.48.jar`) is All Rights Reserved. Its author grants modpack use but adds "No one is authorized to repost my mods, or any part of them, on any other website then the ones I post them to", which names CurseForge, Modrinth and the FTB launcher. The `.mrpack` on Modrinth is covered. The copy that git tracks in `local-mods/` since d74909e is not, because pushing the branch to GitHub makes it a download of its own there. Ask the author to allow that copy, go back to the Modrinth builds, or keep the jar out of the public git history before the push, see the record.
 
 ## Could be CDN-linked instead of bundled
 
@@ -63,6 +65,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `connectivity-1.20.1-7.7.jar` | Connectivity | All Rights Reserved | No permission | **NO** | - |
 | `cupboard-1.20.1-4.2.jar` | Cupboard | All Rights Reserved | No permission | **NO** | - |
 | `deadlyworld-1.20.1-1.2.3.jar` | Deadly World | All Rights Reserved | Unknown | **NO** | - |
+| `ZeroCore2-1.20.1-2.1.48.jar` | ZeroCore 2 | All Rights Reserved (MIT multiblock API) | Special permission, modpacks only | **VERIFY**, not while git holds the jar in the public repository | older builds only |
 | `fireflies-1.0.0-forge-1.20.1.jar` | 🟨⬛!!Fireflies!!🟨⬛ | All Rights Reserved | No permission | **NO** | - |
 | `hexxit_additions-1.0.2-forge-1.20.1.jar` | Hexxit Additions | All Rights Reserved | No permission | **NO** | - |
 | `mob_grinding_utils-1.20.1-1.1.0.jar` | Mob Grinding Utils | All Rights Reserved | No permission | **NO** | - |
@@ -111,7 +114,6 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar` | The Twilight Forest (SkyTekx 1.20.1 fork, TF 4.8 backport) | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures), MIT (Mystic Crown Compat parts) | Special permission | yes | - |
 | `twilightforestfinalboss-1.0.1-forge-1.20.1.jar` | The King of Twilight | MIT | Licensed | yes | - |
 | `twilighttweaks-1.20.x-1.2.jar` | Twilight Tweaks | LGPL-2.1 | Licensed | yes | - |
-| `ZeroCore2-1.20.1-2.1.48.jar` | ZeroCore 2 | All Rights Reserved (MIT multiblock API) | Special permission | yes | older builds only |
 
 ## How to fill the form
 

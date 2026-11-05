@@ -246,6 +246,12 @@ public abstract class FluidTankBlockEntity extends MachineBlockEntity implements
             if (inputItem.getItem() == Items.BUCKET) {
                 if (!TANK.getFluid(this).isEmpty()) {
                     FluidStack stack = TANK.drain(this, FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE);
+
+                    // Ensure there's a bucket to be given to the player.
+                    if (stack.getFluid().getBucket() == Items.AIR) {
+                        return;
+                    }
+
                     if (stack.getAmount() == FluidType.BUCKET_VOLUME && (outputItem.isEmpty() || (outputItem.getItem() == stack.getFluid().getBucket()
                         && outputItem.getCount() < outputItem.getMaxStackSize()))) {
                         TANK.drain(this, FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
@@ -273,15 +279,26 @@ public abstract class FluidTankBlockEntity extends MachineBlockEntity implements
 
     private void tryTankRecipe() {
         currentRecipe.ifPresent(recipe -> {
+            // Ensure the recipe is still valid.
+            // Fixes GH-1302.
+            if (!recipe.matches(container, level)) {
+                return;
+            }
+
             ItemStack recipeOutput = recipe.getOutput().copy();
 
             if (recipe.isEmptying()) {
                 ItemStack outputStack = FLUID_FILL_OUTPUT.getItemStack(this);
 
                 if (outputStack.isEmpty() || (outputStack.is(recipeOutput.getItem()) && outputStack.getCount() < outputStack.getMaxStackSize())) {
-                    FLUID_FILL_INPUT.getItemStack(this).shrink(1);
+                    // Only convert the item once the tank takes the whole recipe amount.
+                    int filled = TANK.fill(this, recipe.getFluid(), IFluidHandler.FluidAction.SIMULATE);
+                    if (filled != recipe.getFluid().getAmount()) {
+                        return;
+                    }
 
                     TANK.fill(this, recipe.getFluid(), IFluidHandler.FluidAction.EXECUTE);
+                    FLUID_FILL_INPUT.getItemStack(this).shrink(1);
 
                     if (outputStack.isEmpty()) {
                         FLUID_FILL_OUTPUT.setStackInSlot(this, recipeOutput);
@@ -293,9 +310,14 @@ public abstract class FluidTankBlockEntity extends MachineBlockEntity implements
                 ItemStack outputStack = FLUID_DRAIN_OUTPUT.getItemStack(this);
 
                 if (outputStack.isEmpty() || (outputStack.is(recipeOutput.getItem()) && outputStack.getCount() < outputStack.getMaxStackSize())) {
-                    FLUID_DRAIN_INPUT.getItemStack(this).shrink(1);
+                    // Only convert the item once the tank holds the whole recipe amount.
+                    FluidStack drained = TANK.drain(this, recipe.getFluid(), IFluidHandler.FluidAction.SIMULATE);
+                    if (drained.getAmount() != recipe.getFluid().getAmount()) {
+                        return;
+                    }
 
                     TANK.drain(this, recipe.getFluid(), IFluidHandler.FluidAction.EXECUTE);
+                    FLUID_DRAIN_INPUT.getItemStack(this).shrink(1);
 
                     if (outputStack.isEmpty()) {
                         FLUID_DRAIN_OUTPUT.setStackInSlot(this, recipeOutput);
@@ -310,7 +332,8 @@ public abstract class FluidTankBlockEntity extends MachineBlockEntity implements
     private void tryMendTool() {
         FluidStack fluid = TANK.getFluid(this);
 
-        if (!fluid.isEmpty() && fluid.getFluid().is(EIOTags.Fluids.EXPERIENCE)) {
+        if (!fluid.isEmpty() && fluid.getFluid().is(EIOTags.Fluids.EXPERIENCE)
+                && FLUID_DRAIN_OUTPUT.getItemStack(this).isEmpty()) {
             ItemStack tool = FLUID_DRAIN_INPUT.getItemStack(this);
             if (tool.isDamageableItem() && tool.getEnchantmentLevel(Enchantments.MENDING) > 0) {
 

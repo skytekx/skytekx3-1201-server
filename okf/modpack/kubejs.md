@@ -34,8 +34,8 @@ other mods, see [Recipe failures](#recipe-failures). The last boot on the build 
 
 | Script | What it does |
 |---|---|
-| Recipe fixes, `recipe_fixes.js` | Adds two recipes, the rest is commented out |
-| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags and lets every sulfur dust count as yellow dye |
+| Recipe fixes, `recipe_fixes.js` | Adds two recipes and gives the Chaotic Shield Capacity of Draconic Evolution its Awakened Core, the rest is commented out |
+| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags, lets every sulfur dust count as yellow dye and puts the Draconic Evolution tools into the vanilla tool tags |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
 | Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts and adds the wither cloud of the Withering Archer to the level, see [Apotheosis riders](#apotheosis-riders) |
@@ -61,6 +61,13 @@ The file [recipe_fixes.js](../../kubejs/server_scripts/recipe_fixes.js) has two 
   bookshelves are on (`config/quark-common.toml:137`), and Quark ships its own `minecraft:bookshelf`
   recipe that switches itself off when they are on. That is why the log says "removed 0 recipes". The
   added recipe overlaps Quark's per wood bookshelf recipes, and Polymorph lets the player choose.
+
+Since 2026-11-05 it also swaps the Chaotic Core in the recipe
+`draconicevolution:modules/item_chaotic_shield_capacity` for an Awakened Core with a `replaceInput`, as
+Draconic Evolution did on its 1.21 branch in commit 0c85f0d9. It stays out of the jar of SkyTekx DE
+Fixes, so that no data file of Draconic Evolution ships, see
+[Draconic Evolution fixes](draconic-fixes.md#license). A test server with Draconic
+Evolution and KubeJS showed the Awakened Core in the bottom middle of that recipe on 2026-11-05.
 
 The commented blocks wait for the right item ids:
 
@@ -153,6 +160,13 @@ recipe. After the change and a `/reload` the tag held yellow dye and the sulfur 
 Mekanism, Immersive Engineering, Railcraft and Blood Magic, and the same scan of 37,011 recipes found
 0 recipes that take one dust and not the other, against 165 that take both. The recipe summary stayed at
 "Added 2 recipes, removed 0 recipes, modified 9 recipes, with 10 failed recipes".
+
+Since 2026-11-05 it puts the Wyvern, Draconic and Chaotic tools of Draconic Evolution into the vanilla
+tags for pickaxes, axes, shovels, swords and hoes, and both staffs into the first four, the tag set of
+commit 4d360c95 on the 1.21 branch of Draconic Evolution. Like the recipe above it stays out of the
+jar of SkyTekx DE Fixes, see [Draconic Evolution fixes](draconic-fixes.md#license). The block runs only
+with Draconic Evolution loaded. A test server with Draconic Evolution and KubeJS found every tool and
+both staffs in their tags on 2026-11-05 and loaded the script with 0 errors.
 
 ### Apotheosis riders
 

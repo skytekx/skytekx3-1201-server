@@ -3,7 +3,7 @@ type: Project
 title: SkyTekx 3
 description: Knowledge base for SkyTekx 3, the Minecraft 1.20.1 modpack and server on Forge and Arclight, with its state on 2026-10-31, the stack at a glance and a map of every page.
 tags: [skytekx, minecraft, modpack, server, overview]
-timestamp: 2026-11-01
+timestamp: 2026-11-05
 ---
 
 # SkyTekx 3
@@ -77,6 +77,7 @@ What is still open, from owner rulings that were never built to unverified claim
 |---|---|
 | [Modpack](modpack/index.md) | What the pack is made of and the recipe layers |
 | [Mod set](modpack/mod-set.md) | The index, the bundled jars, the server's mods folder, the jars outside the index and how to change the set |
+| [Draconic Evolution fixes](modpack/draconic-fixes.md) | Why Draconic Evolution is not backported and what the addon SkyTekx DE Fixes changes in the stock jar |
 | [AlmostUnified](modpack/almostunified.md) | One item per material across the tech mods |
 | [KubeJS](modpack/kubejs.md) | The four server scripts and how to work with Rhino |
 | [Plugins](modpack/plugins.md) | EssentialsX, its files, permissions, metrics and update checks |

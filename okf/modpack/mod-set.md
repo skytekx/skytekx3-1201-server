@@ -3,7 +3,7 @@ type: Reference
 title: Mod set
 description: What SkyTekx 3 is made of, how the Modrinth index, the bundled jars and the server's mods folder relate, which jars sit outside the pack, and how to change the set.
 tags: [modpack, mods, modrinth]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Mod set
@@ -20,7 +20,7 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
 | Index entries | 232 since 2026-11-04 (b36bc030 to 3b98076f), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since c482e040, after 394330db to c482e040 added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since d1cabf85, which added Just Enough Resources as a client only entry, and 223 since 56912155, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 551170bb, which removed Elenai Dodge 2. Before them, 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
 | Size of the index downloads | 1,018,751,213 bytes since 3b98076f, 1,019,027,444 from 4e3c25b0 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b36bc030, 1,018,089,782 from c482e040, 1,007,463,556 from d1cabf85 with Just Enough Resources, 1,007,187,325 from 56912155, 1,007,808,005 from 551170bb, 1,008,110,498 from 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
-| Bundled jars | 47 in `local-mods/` since 2026-11-04 (f315fa3d and ee238bea), 45 since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
+| Bundled jars | 49 in `local-mods/` since 2026-11-05 with SkyTekx DE Fixes, 48 since Flux Networks (1984082), 47 since 2026-11-04 (f315fa3d and ee238bea), 45 since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
@@ -168,8 +168,8 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 48 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library and Flux Networks join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder [local-mods/](../../local-mods) | Yes | 49 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx DE Fixes join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since ca131c3, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from d1cabf85 to 3b98076f |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
@@ -217,8 +217,8 @@ loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 
-The 48 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
-counts in the list below are older than the last thirteen of them and were not recounted:
+The 49 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+counts in the list below are older than the last fourteen of them and were not recounted:
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
@@ -247,6 +247,12 @@ counts in the list below are older than the last thirteen of them and were not r
 - Flux Networks 7.2.1.15 joined on 2026-11-04 as a CurseForge file, see
   [Flux Networks](#flux-networks). It is MIT licensed, and the LICENSE of its repository travels in
   `licenses/` because the jar has none.
+- SkyTekx DE Fixes 1.0.0 joined on 2026-11-05. It is the pack's own addon, built from
+  `ports/skytekx-defixes/`, MIT for our code with a few portions under the Draconic Evolution license.
+  It fixes eight bugs of Draconic Evolution and one of Brandon's Core after their 1.21 branches in the
+  stock jars of the index, which stay as they are, and the KubeJS scripts fix two more. It needs
+  exactly Draconic Evolution 3.1.2.621 and Brandon's Core 3.2.1.302 and is required on both sides, see
+  [Draconic Evolution fixes](draconic-fixes.md).
 
 Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils

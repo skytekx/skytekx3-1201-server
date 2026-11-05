@@ -3,7 +3,7 @@ type: Runbook
 title: Publish
 description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Publish
@@ -177,12 +177,14 @@ The next pack is the first with Simply Jetpacks 2 bundled, the first that ships 
 [boot fixes](../content/boot-fixes.md#jar-patches)), the first that keeps Starlight off the clients, the
 first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
 [client](client.md#dropped-items)), and the first with Advanced Loot Info (see
-[mod set](mod-set.md#advanced-loot-info)), with Flux Networks (see [mod set](mod-set.md#flux-networks))
-and with the nine mods of 2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
+[mod set](mod-set.md#advanced-loot-info)), with Flux Networks (see [mod set](mod-set.md#flux-networks)),
+with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)) and with the nine mods of
+2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
 [mod set](mod-set.md#additions-of-2026-11-04)). Its row should record whether a fresh install and the
 update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
-Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server and
-whether the machines of the new mods work there. Its deploy has to move the fixes pack to the end of the
+Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server,
+whether the machines of the new mods work there and whether the Draconic Evolution fixes work in a
+client. Its deploy has to move the fixes pack to the end of the
 pack order, see [boot fixes](../content/boot-fixes.md#load-order).
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the

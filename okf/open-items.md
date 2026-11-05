@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-11-04
+timestamp: 2026-11-05
 ---
 
 # Open items
@@ -223,6 +223,17 @@ evidence and the page with the details. The rulings behind the first section are
 - Flux Networks in play. A test server ran its devices, but nobody has opened their screens, made Flux
   Dust or sent energy from a plug to a point in a client, see
   [Mod set](modpack/mod-set.md#flux-networks).
+- SkyTekx DE Fixes in a client. A test server applied its server mixins, and a probe checked the chest
+  with three kinds of click, the recipe and the tags of the KubeJS scripts, the tier and the blocks
+  there. Nobody has seen the HUDs hide in F1 mode with a screen open, the Claim XP label, the Chaos
+  Implosion message or a Draconium Chest shared by two real players in a client, and no client without
+  the mod has tried to join, see [Draconic Evolution fixes](modpack/draconic-fixes.md#tests).
+- Written permission of the copyright holder of Draconic Evolution for SkyTekx DE Fixes. Nobody has
+  asked yet. The addon keeps the share of statements that reproduce upstream code at 11 of 32 and
+  leaves out the shift and scroll fix of the Advanced Dislocator for that, see
+  [Draconic Evolution fixes](modpack/draconic-fixes.md#license). With a grant, for example in an issue
+  on Draconic-Inc/Draconic-Evolution, that fix could come back. Record the grant and its link in
+  `modrinth-permissions/skytekx_defixes-1.0.0.jar.md`.
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
   opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
   chest in EMI on the server and note how much longer the join takes with the loot that the server

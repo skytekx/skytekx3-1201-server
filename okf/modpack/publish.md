@@ -153,7 +153,16 @@ On the build machine, after the blockers are fixed:
    cannot open the tunnel on Linux on ARM. Stay in the world until EMI logs "Reloaded EMI" and the heap
    settles. The 90% message of AllTheLeaks at the join is normal. A heap that stays full is not.
 4. Load the token from the vault (see [secrets](../server/secrets.md)) into `MODRINTH_TOKEN` and run
-   the dry run: `python3 tools/publish_modrinth.py`.
+   the dry run: `python3 tools/publish_modrinth.py`. It prints the `monetization_status` that the
+   Modrinth API reports for the project. The Patchouli parts of Ender IO (CC BY-NC-SA 3.0) and the
+   assets of the Twilight Forest fork (CC BY-NC-SA 4.0) allow no commercial use, so the pack must earn
+   nothing, Modrinth creator rewards included
+   (`modrinth-permissions/EnderIO-1.20.1-6.2.18-beta-all.jar.md`). Before each upload, confirm that in
+   the settings of the project and of the owner's Modrinth account, and record the status and the date
+   in the row of the version. The public projects of Extreme Reactors and ZeroCore both reported
+   `monetized` on 2026-11-05, so that value may be the default, and nobody has read it for `skytekx3`
+   yet. Listing Ender IO as a CDN entry of the index instead of bundling it would drop the Patchouli
+   condition, but not the one of the Twilight Forest fork.
 5. Upload: `python3 tools/publish_modrinth.py --go`. The version goes up as a featured beta, and the
    script compares the SHA-512 of the uploaded file with the local build.
 6. If `docs/MODPACK_SUMMARY.txt` or `docs/MODPACK_DESCRIPTION.md` changed, replace the project texts

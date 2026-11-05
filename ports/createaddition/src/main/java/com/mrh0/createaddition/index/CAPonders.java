@@ -31,8 +31,10 @@ public class CAPonders {
 				.add(CABlocks.ROLLING_MILL)
 				.add(CABlocks.ALTERNATOR);
 
+		// Local change: Create lists its own Mechanical Pump under Fluids, upstream leaves the Electric Pump out.
 		HELPER.addToTag(AllCreatePonderTags.FLUIDS)
-				.add(CAItems.STRAW);
+				.add(CAItems.STRAW)
+				.add(CABlocks.ELECTRIC_PUMP);
 
 		HELPER.addToTag(AllCreatePonderTags.CONTRAPTION_ACTOR)
 				.add(CABlocks.PORTABLE_ENERGY_INTERFACE);
@@ -42,7 +44,16 @@ public class CAPonders {
 				.add(CABlocks.ALTERNATOR)
 				.add(CABlocks.TESLA_COIL)
 				.add(CABlocks.MODULAR_ACCUMULATOR)
-				.add(CABlocks.PORTABLE_ENERGY_INTERFACE);
+				.add(CABlocks.PORTABLE_ENERGY_INTERFACE)
+				.add(CABlocks.SMALL_CONNECTOR)
+				.add(CABlocks.SMALL_LIGHT_CONNECTOR)
+				.add(CABlocks.LARGE_CONNECTOR)
+				// Local change: upstream gives the Electric Pump scene the Electric tag but leaves the pump out of it.
+				.add(CABlocks.ELECTRIC_PUMP)
+				.add(CABlocks.SERVO_MOTOR);
+
+		HELPER.addToTag(AllCreatePonderTags.MOVEMENT_ANCHOR)
+				.add(CABlocks.SERVO_MOTOR);
 	}
 
 	public static void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
@@ -59,7 +70,11 @@ public class CAPonders {
 		HELPER.addStoryBoard(CABlocks.MODULAR_ACCUMULATOR, "accumulator", PonderScenes::modularAccumulator, ELECTRIC);
 		HELPER.addStoryBoard(CABlocks.PORTABLE_ENERGY_INTERFACE, "pei_transfer", PonderScenes::peiTransfer, AllCreatePonderTags.CONTRAPTION_ACTOR, ELECTRIC);
 		HELPER.addStoryBoard(CABlocks.PORTABLE_ENERGY_INTERFACE, "pei_redstone", PonderScenes::peiRedstone, AllCreatePonderTags.CONTRAPTION_ACTOR, ELECTRIC);
-		
+		HELPER.addStoryBoard(CABlocks.ELECTRIC_PUMP, "electric_pump_flow", PonderScenes::electricPumpflow, AllCreatePonderTags.FLUIDS, ELECTRIC);
+		HELPER.forComponents(CABlocks.SMALL_CONNECTOR, CABlocks.SMALL_LIGHT_CONNECTOR, CABlocks.LARGE_CONNECTOR)
+				.addStoryBoard("connector", PonderScenes::connector, ELECTRIC)
+				.addStoryBoard("connector", PonderScenes::connectorRemove, ELECTRIC);
+		HELPER.addStoryBoard(CABlocks.SERVO_MOTOR, "servo", PonderScenes::servoMotor, AllCreatePonderTags.MOVEMENT_ANCHOR, ELECTRIC);
 		
 		if(CreateAddition.CC_ACTIVE)
 			HELPER.addStoryBoard(CABlocks.ELECTRIC_MOTOR, "cc_electric_motor", PonderScenes::ccMotor, AllCreatePonderTags.KINETIC_SOURCES, ELECTRIC);

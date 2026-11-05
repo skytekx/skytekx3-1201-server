@@ -266,6 +266,12 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
   slot that shows it, the one at the ingredient's index first, and asks that slot for the essence
   count. Unlike upstream, a ghost grid with two variants of one tag (oak and birch planks for any
   planks) takes each variant as shown. A result that comes out empty takes nothing.
+- Farmer outputs: upstream merged part of a result into a matching output stack and then put a copy
+  of the whole result into the next empty slot, not the rest, so a result of 3 melon slices against
+  a slot of 62 gave 2 plus 3, and it dropped whatever found no room. The 26.1 line rewrote this loop
+  in `b100f44` and still drops the rest. The port puts only the rest into the empty slot, and the
+  Farmer waits with its progress kept, without using fuel, while its outputs could not take every
+  result of the recipe at full count.
 
 ### Left out
 

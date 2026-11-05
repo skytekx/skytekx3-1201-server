@@ -13,14 +13,20 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Optional;
 
 public class FluidFilter extends Item {
 
@@ -50,6 +56,38 @@ public class FluidFilter extends Item {
             openMenu(serverPlayer);
         }
         return super.use(pLevel, pPlayer, pUsedHand);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        readFilter(stack).ifPresent(filter -> {
+            if (filter.getEntries().stream().allMatch(FluidStack::isEmpty) && !filter.isInvert() && !filter.isNbt()) {
+                tooltip.add(FilterTooltips.unconfiguredHint());
+            }
+
+            tooltip.add(FilterTooltips.listMode(filter.isInvert()));
+            tooltip.add(FilterTooltips.nbtMode(filter.isNbt()));
+        });
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        if (FilterTooltips.isAdditionalTooltipHidden(stack)) {
+            return Optional.empty();
+        }
+
+        return readFilter(stack).flatMap(filter -> FilterTooltips.fluidList(filter.getEntries()));
+    }
+
+    /**
+     * Reads the filter of a copy, because the capability writes the empty entry list into a stack that has none,
+     * and a tooltip must not change the stack it shows.
+     */
+    private static Optional<FluidFilterCapability> readFilter(ItemStack stack) {
+        return stack.copy().getCapability(EIOCapabilities.FILTER).resolve()
+            .filter(FluidFilterCapability.class::isInstance)
+            .map(FluidFilterCapability.class::cast);
     }
 
     private static void openMenu(ServerPlayer player) {

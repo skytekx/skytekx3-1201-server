@@ -6,7 +6,7 @@ import com.enderio.conduits.common.network.CountFilterPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
-public class RedstoneCountFilter implements RedstoneInsertFilter {
+public class RedstoneCountFilter implements RedstoneInsertFilter, ConfigurableRedstoneFilter {
 
     private static final String CHANNEL_KEY = "Channel";
     private static final String MAX_COUNT_KEY = "MaxCount";
@@ -57,6 +57,14 @@ public class RedstoneCountFilter implements RedstoneInsertFilter {
     public void setMaxCount(int count) {
         CompoundTag tag = this.stack.getOrCreateTag();
         tag.putInt(MAX_COUNT_KEY, count);
+    }
+
+    /**
+     * Only the channel and the count to reach are settings, the running count and the last state are not.
+     */
+    @Override
+    public boolean isConfigured() {
+        return getChannel() != ColorControl.GREEN || getMaxCount() != 8;
     }
 
     public int getCount() {

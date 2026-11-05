@@ -58,6 +58,10 @@ public class ConduitSlot extends SlotItemHandler {
         }
     }
 
+    public SlotType getSlotType() {
+        return slotType;
+    }
+
     @Override
     public int getMaxStackSize(@NotNull ItemStack stack) {
         return getMaxStackSize();

@@ -7,8 +7,10 @@ import com.enderio.api.conduit.ticker.ConduitTicker;
 import com.enderio.api.conduit.upgrade.ConduitUpgrade;
 import com.enderio.api.filter.ItemStackFilter;
 import com.enderio.api.filter.ResourceFilter;
+import com.enderio.base.common.lang.EIOLang;
 import com.enderio.conduits.common.capability.ExtractionSpeedUpgrade;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
 public class ItemConduitType extends ConduitType<ItemConduitData> {
@@ -37,5 +39,13 @@ public class ItemConduitType extends ConduitType<ItemConduitData> {
     @Override
     public boolean canApplyFilter(SlotType slotType, ResourceFilter resourceFilter) {
         return resourceFilter instanceof ItemStackFilter;
+    }
+
+    @Override
+    public Component getSlotTooltip(SlotType slotType) {
+        return switch (slotType) {
+            case FILTER_EXTRACT, FILTER_INSERT -> EIOLang.ITEM_FILTER_SLOT;
+            default -> Component.empty();
+        };
     }
 }

@@ -84,7 +84,11 @@ produces. The ids are also cross checked against the blockstates, item models an
 - It integrates with JEI only (`compileOnly` API 15.3.0.4). Patchouli and Curios come with the
   backport. The One Probe and Mekanism appear only as `runtimeOnly` dev run dependencies.
 - The client fetches `specialPeopleStuff.properties` from upstream's `1.16` branch on GitHub for
-  its special renders. The update checker is commented out, so the server makes no network call.
+  its special renders (source change 5 moves it to the list on `main`). The update checker is
+  commented out, so the server makes no network call.
+- The source folder `src/main/java/invtweaks/` holds two annotation types of the Inventory Tweaks
+  API, which the jar carries as the package `invtweaks.api.container` (source change 3 removes
+  them).
 
 Gaps of the base that the backport has to close, since upstream never released it:
 
@@ -93,7 +97,7 @@ Gaps of the base that the backport has to close, since upstream never released i
   1.20.4 line.
 - The `pack.mcmeta` still says `pack_format` 6 (the 1.16 value). The data generator cache
   `src/generated/resources/.cache/` ends up in the jar as 18 `.cache/` entries, as it does
-  upstream.
+  upstream. Source changes 2 and 4 close both.
 
 Registry ids that differ on `main` at `cd9d9c6` (from the same scan of `main`):
 
@@ -150,7 +154,11 @@ next to it are upstream's Maven artifacts and are not shipped.
    has the mod yet, so the number can still change before the first release. If the backport
    brings the content close to the 1.3.x line, `1.3.26-skytekx.N` would say that more clearly, the
    way the Create Crafts & Additions fork names the line it backports (`1.20.1-1.7.3-skytekx.1`).
-   That choice belongs to the release.
+   That choice belongs to the release. The plan keeps 1.1.52: the code base is 1.1.52, and a
+   1.3.26 base number would claim parity with a NeoForge 1.21.1 build that has data components
+   and 1.21 content, and it would point bug reports at the wrong changelog. Once the backport
+   bundles have landed, this file and the NOTICE state the content level as "content parity:
+   upstream 1.3.26 (`cd9d9c6`) except the exclusions".
 5. Reproducible jar: the `jar` task sets `preserveFileTimestamps = false` and
    `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
    clean builds of the same commit give the same SHA-1. With the build changes 1 to 9 and no
@@ -175,5 +183,33 @@ next to it are upstream's Maven artifacts and are not shipped.
 
 ## Source changes
 
-None yet. Each later commit that ports a fix or a feature adds its item here, and the NOTICE in
-the jar sums them up.
+These commits change the mod itself on top of the base. Each later commit that ports a fix or a
+feature adds its item here, and the NOTICE in the jar sums them up.
+
+1. Optional dependencies: `mods.toml` declares `patchouli` (`[1.20.1-81,)`), `curios` (`[5.0,)`)
+   and `jei` (`[15.0,)`), each with `mandatory=false`, ordering `NONE` and side `BOTH`, so Forge
+   checks the version of each one that is present and the mod list names them. Upstream declares
+   none of the three in `neoforge.mods.toml` on `main`. Only its publish block marks Patchouli
+   as required and JEI and Curios as optional on Modrinth and CurseForge (`main`
+   `build.gradle:287-289`), and its manual says in chat when Patchouli is missing (`19cfbc92`,
+   which comes with the Patchouli manual). The pack ships Patchouli `1.20.1-85-FORGE`, Curios
+   `5.14.1+1.20.1` and JEI `15.74.0.233`.
+2. Pack format: `pack.mcmeta` says `pack_format` 15, the resource and data pack format of
+   Minecraft 1.20.1, instead of the 1.16 value 6 and its 1.16 comment. Upstream moved on with each
+   line (26 on `1.20.4`, 34 on `1.21` and `main`).
+3. Dead code: the folder `src/main/java/invtweaks/` is gone, as upstream `9bc38d2` removed it on
+   `1.20.4`. Its two annotation types `ChestContainer` and `InventoryContainer` came from the
+   Inventory Tweaks API without a license note, and the pack's Immersive Engineering ships the
+   same package `invtweaks.api.container`, which stops Forge's module layer with a split package
+   (source change 8). The fully
+   commented `mod/inventory/ContainerGiantChest.java`, the only file that imported them, is gone
+   too (upstream dropped it on `1.21` in `268cf65`). So is the fully commented
+   `mod/util/crafting/RecipeHelper.java`, whose header names a third party author and the MIT
+   License without the notice text. Both compiled to nothing.
+4. Build: `processResources` leaves out `.cache/**`, so the hash cache of the data generator no
+   longer ends up in the jar.
+5. Special renders: the client thread `ThreadSpecialFetcher` reads
+   `specialPeopleStuffNew.properties` from upstream's `main` branch (upstream `d9b0a71`) instead
+   of `specialPeopleStuff.properties` from the `1.16` branch, which last changed in 2021. Only
+   the client starts it (`ActuallyAdditionsClient` registers `SpecialRenderInit`), so the server
+   still makes no network call.

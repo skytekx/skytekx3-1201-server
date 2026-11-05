@@ -9,6 +9,7 @@ import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.debug.IDebugDrawer;
 import com.mrh0.createaddition.energy.*;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
+import com.mrh0.createaddition.energy.HeldWireBounds;
 import com.mrh0.createaddition.energy.network.WireGraph;
 import com.mrh0.createaddition.util.Util;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
@@ -29,8 +30,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -134,6 +138,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		this.localNodes[index] = new LocalNode(this, index, other, type, pos);
 
 		notifyUpdate();
+		invalidateRenderBoundingBox();
 
 		WireGraph.nodeChanged(level, this);
 	}
@@ -146,6 +151,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 		invalidateNodeCache();
 		notifyUpdate();
+		invalidateRenderBoundingBox();
 
 		WireGraph.nodeChanged(level, this);
 		// Drop wire next tick.
@@ -207,6 +213,9 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 			}
 		}
 
+		// The client gets new nodes through here, so its render box has to follow.
+		invalidateRenderBoundingBox();
+
 		// Only when already in the level (e.g. /data); on chunk load the level isn't set yet and onLoad registers instead.
 		if (!clientPacket) WireGraph.nodeChanged(level, this);
 	}
@@ -235,6 +244,7 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 
 		if (changed) {
 			invalidateNodeCache();
+			invalidateRenderBoundingBox();
 			WireGraph.nodeChanged(level, this);
 		}
 	}
@@ -340,6 +350,22 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 		invalidateCaps();
 
 		WireGraph.nodeRemoved(level, this);
+	}
+
+	// The wires reach every node this one is wired to, so the render box spans all of them.
+	@Override
+	protected AABB createRenderBoundingBox() {
+		return IWireNode.wireRenderBounds(this);
+	}
+
+	// While the local player places a wire from here, the box also reaches the player.
+	// Client only, like the cached box of Create's CachedRenderBBBlockEntity.
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public AABB getRenderBoundingBox() {
+		AABB box = super.getRenderBoundingBox();
+		AABB held = level != null && level.isClientSide() ? HeldWireBounds.forStart(worldPosition) : null;
+		return held == null ? box : box.minmax(held);
 	}
 
 	public void invalidateLocalNodes() {

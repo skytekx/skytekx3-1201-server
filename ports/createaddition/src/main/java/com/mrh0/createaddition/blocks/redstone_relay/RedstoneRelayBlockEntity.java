@@ -14,6 +14,7 @@ import com.mrh0.createaddition.energy.LocalNode;
 import com.mrh0.createaddition.energy.NodeRotation;
 import com.mrh0.createaddition.energy.WireType;
 import com.mrh0.createaddition.energy.network.EnergyNetwork;
+import com.mrh0.createaddition.energy.HeldWireBounds;
 import com.mrh0.createaddition.energy.network.WireGraph;
 import com.mrh0.createaddition.energy.network.WireNodeKind;
 import com.mrh0.createaddition.util.Util;
@@ -35,8 +36,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
@@ -106,6 +110,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		this.localNodes[index] = new LocalNode(this, index, other, type, pos);
 
 		notifyUpdate();
+		invalidateRenderBoundingBox();
 
 		WireGraph.nodeChanged(level, this);
 	}
@@ -117,6 +122,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 		invalidateNodeCache();
 		notifyUpdate();
+		invalidateRenderBoundingBox();
 
 		WireGraph.nodeChanged(level, this);
 		// Drop wire next tick.
@@ -244,6 +250,9 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 			}
 		}
 
+		// The client gets new nodes through here, so its render box has to follow.
+		invalidateRenderBoundingBox();
+
 		// Only when already in the level (e.g. /data); on chunk load the level isn't set yet and onLoad registers instead.
 		if (!clientPacket) WireGraph.nodeChanged(level, this);
 	}
@@ -275,6 +284,7 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 
 		if (changed) {
 			invalidateNodeCache();
+			invalidateRenderBoundingBox();
 			WireGraph.nodeChanged(level, this);
 		}
 	}
@@ -360,6 +370,22 @@ public class RedstoneRelayBlockEntity extends SmartBlockEntity implements IWireN
 		invalidateCaps();
 
 		WireGraph.nodeRemoved(level, this);
+	}
+
+	// The wires reach every node this one is wired to, so the render box spans all of them.
+	@Override
+	protected AABB createRenderBoundingBox() {
+		return IWireNode.wireRenderBounds(this);
+	}
+
+	// While the local player places a wire from here, the box also reaches the player.
+	// Client only, like the cached box of Create's CachedRenderBBBlockEntity.
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public AABB getRenderBoundingBox() {
+		AABB box = super.getRenderBoundingBox();
+		AABB held = level != null && level.isClientSide() ? HeldWireBounds.forStart(worldPosition) : null;
+		return held == null ? box : box.minmax(held);
 	}
 
 	public void invalidateLocalNodes() {

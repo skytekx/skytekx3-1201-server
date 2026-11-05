@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "criteria": {
+    "has_canvas": {
+      "conditions": {
+        "items": [
+          {
+            "items": "farmersdelight:canvas"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "create_integrated_farming:roost"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_canvas"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "create_integrated_farming:roost"
+    ]
+  },
+  "sends_telemetry_event": true
+}

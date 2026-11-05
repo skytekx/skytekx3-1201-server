@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "priority": 1000,
+  "package": "plus.dragons.createintegratedfarming.mixin.sable",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "plus.dragons.createintegratedfarming.mixin.UniversalConditionalMixinPlugin",
+  "mixins": [
+    "AugerShaftBlockEntityMixin",
+    "BlockEntityBehaviourMixin",
+    "LevelPlotMixin",
+    "MovementBehaviourMixin",
+    "MushroomColonyHarvestBehaviourMixin",
+    "ServerLevelPlotMixin",
+    "SpoutBlockEntityMixin",
+    "VacuumHarvesterBlockEntityMixin",
+    "VacuumHarvesterMovementBehaviourMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -1,0 +1,25 @@
+{
+  "parent": "create_integrated_farming:block/roost",
+  "loader": "neoforge:composite",
+  "children": {
+    "roost": {
+      "parent": "create_integrated_farming:block/roost"
+    },
+    "duck": {
+      "parent": "block/block",
+      "loader": {
+        "id": "create_integrated_farming:confluence_duck",
+        "optional": true
+      },
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "duck": "terra_entity:entity/animal/duck/duck_1",
+        "particle": "terra_entity:entity/animal/duck/duck_1"
+      }
+    }
+  },
+  "item_render_order": [
+    "roost",
+    "duck"
+  ]
+}

@@ -158,6 +158,12 @@ Keep the share of reproduced statements in view with every change, and recount i
   Spellbooks, and one of the flat test world. Started with `-Dmixin.debug.export=true`, it exported
   `DETileMenu` and `DraconiumChestMenu` with the new handlers next to the other targets and the mixin of
   TiCEX in `ModuleEntity`.
+- The full pack of 9638ffb with this jar reached `Done` on Arclight on 2026-11-05 after 15.8 seconds
+  with 0 FATAL lines and the same 3 ERROR lines as the boot before the addon, see
+  [mod set](mod-set.md#bundled-jars). Its debug log shows 9 of the 10 server mixins applied,
+  `DETileMenuMixin` and `DraconiumChestMenuMixin` among them. The tenth, for `LaserBeamPhase`, applies
+  when the first Chaos Guardian loads that class. KubeJS modified one recipe more than before, the
+  Chaotic Shield Capacity.
 - The 2 client mixins applied in a client data run of the Forge development environment with the first
   draft, whose client mixins are the same as in the jar. Nobody has played with the fix pack in a real
   client yet, see [open items](../open-items.md#not-verified).

@@ -893,6 +893,17 @@ logs stay on the Mac and are not in the repo.
   through the KubeJS scripts and has its own death message. The jar reproduces 11 of 32 statements and
   lists them in its LICENSE. Since 8d7f17d the build tools refuse our own builds whose source is not
   on master yet.
+- Extreme Reactors 2.0.97 and ZeroCore 2.1.48 left the index for their CurseForge files in
+  `local-mods/` (d74909e), because Modrinth stops at 2.0.84 and 2.1.45 for 1.20.1. LittleTiles became
+  a build of the head of its 1.20 branch, 1.6.0-pre161-skytekx.1 (fcf1ef3), with a crash fix for
+  hybrid servers, and since 1adf445 the pack carries a copy of its sources. The ten bosses of Iron's
+  Apothic Invaders came as Apotheosis 7.4.8 data (46e73dc), three Twilight Delight 3.2 recipes joined
+  the KubeJS data (ff8ff40), and the bundled Ender IO 6.2.18 got its license texts and conditions
+  (7bfc177), among them that the pack stays non-commercial, which the publish dry run helps to check
+  since a326d7d, see [Mod set](modpack/mod-set.md#bundled-jars) and [KubeJS](modpack/kubejs.md).
+- The full pack with all of it booted on Arclight in a test copy with 0 FATAL lines and the same 3
+  ERROR lines as before the wave, see [Mod set](modpack/mod-set.md#bundled-jars). The server's
+  `mods/` gets the new jars only with the deploy of 3.1.3.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

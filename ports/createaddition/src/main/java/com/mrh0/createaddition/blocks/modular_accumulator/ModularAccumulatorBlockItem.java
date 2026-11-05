@@ -1,6 +1,7 @@
 package com.mrh0.createaddition.blocks.modular_accumulator;
 
 import com.mrh0.createaddition.index.CABlockEntities;
+import com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,6 +74,9 @@ public class ModularAccumulatorBlockItem extends BlockItem {
 		BlockState placedOnState = world.getBlockState(placedOnPos);
 
 		if (!ModularAccumulatorBlock.isAccumulator(placedOnState))
+			return;
+		// No auto join while a Symmetry Wand is in the hotbar, as in Create's FluidTankItem (upstream 9dd1b46).
+		if (SymmetryWandItem.presentInHotbar(player))
 			return;
 		ModularAccumulatorBlockEntity accumulatorAt = CAConnectivityHandler.partAt(CABlockEntities.MODULAR_ACCUMULATOR.get(), world, placedOnPos);
 		if (accumulatorAt == null)

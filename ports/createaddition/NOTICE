@@ -86,6 +86,10 @@ Modifications
   - Servo Motor from the 1.21.1 line: a bearing that turns a contraption to an angle set by
     redstone on two of its sides and by its Min and Max Angle. It runs on FE, rolls with a
     wrench and is a CC:Tweaked peripheral.
+  - Ponder scenes from the 1.21.1 line for the Electric Pump, for placing and removing wires
+    between connectors and for the Servo Motor, with their schematics converted to the NBT of
+    Minecraft 1.20.1. The ponder plugin no longer runs Create's controller fix a second time, which
+    broke the fluid tank and accumulator multiblocks in the scenes.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of
@@ -132,6 +136,16 @@ Licenses
     assembly in ServoMotorBlockEntity) follows the code of Create 6's BearingRenderer,
     BearingVisual and MechanicalBearingBlockEntity, which Create's LICENSE.md keeps under the MIT
     License after 2025-09-21.
+    The Electric Pump ponder scene of the 1.21.1 line reuses two Create parts in the versions that
+    Create 6.0.3 for Minecraft 1.20.1 already shipped on 2025-03-14, while Create's assets were
+    still under the MIT License:
+      * the scene code and texts of Create's PumpScenes.flow in
+        com.mrh0.createaddition.ponder.PonderScenes.electricPumpflow and the
+        createaddition.ponder.electric_pump_flow texts of the lang files (scene code, which
+        Create's LICENSE.md keeps under the MIT License after 2025-09-21).
+      * the positions of the two fluid tanks and six fluid pipes of Create's
+        ponder/mechanical_pump/flow.nbt (git blob 2ecaed7) in
+        assets/createaddition/ponder/electric_pump_flow.nbt.
     This build adds no Create asset that Create published on or after 2025-09-21 (Create's assets
     are All Rights Reserved from then on). Models that use create: textures only refer to them;
     those textures are not part of this jar.

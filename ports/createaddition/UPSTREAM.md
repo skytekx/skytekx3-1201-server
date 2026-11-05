@@ -501,3 +501,49 @@ its item here, and the NOTICE in the jar sums them up.
     not have. The pack's CC:Tweaked 1.120.2 has the same `IPeripheral`, `IComputerAccess`,
     `LuaFunction`, `LuaException` and `Capabilities.CAPABILITY_PERIPHERAL` as the CC:Tweaked 1.108.1
     (CurseMaven file 4740605) that the fork compiles against (javap of both jars).
+31. Ponders: upstream `562d383` (the scene `electric_pump_flow`), `d0993a0` (the scenes `connector`,
+    `connector_remove` and `servo_motor`) and `8c4c64d`. The four scenes, `rotateServo` and
+    `turnLever` in `ponder/PonderScenes.java` are upstream's code byte for byte. They pass their
+    English texts to `title` and `text` as upstream does, where the scenes of the base pass
+    `CALang.translateDirect`, and Ponder shows the lang key either way. En_us gains the 28 keys
+    `createaddition.ponder.electric_pump_flow.*`, `connector.*`, `connector_remove.*` and
+    `servo_motor.*`. `CAPonders` gives the pump scene to the Electric Pump, both connector scenes to
+    the small, the small light and the large connector, and the servo scene to the Servo Motor. It
+    puts the three connectors and the Servo Motor into the Electric tag and the Servo Motor into
+    Create's Movement Anchor tag. One local change: the Electric Pump also joins the Electric tag,
+    which upstream gives its scene but not the pump, and Create's Fluids tag, where Create lists its
+    own Mechanical Pump, and its scene names both tags. `CAPonderPlugin` no longer overrides
+    `onPonderLevelRestore` (`8c4c64d`). Create's own plugin already runs
+    `PonderWorldBlockEntityFix.fixControllerBlockEntities` on every ponder level (javap of
+    `CreatePonderPlugin` in Create 6.0.8 and of `PonderLevel.restore` in Ponder 1.0.91). The fix
+    moves each controller by the offset between the saved and the actual position, so the second
+    run moved the controllers of fluid tanks and accumulators off the multiblock.
+    A dev client under Xvfb (Forge 47.4.0 userdev, Create 6.0.8, Ponder 1.0.91) opened every new
+    scene, seeked to each keyframe and the end, logged the multiblock controllers of the scene level
+    and took screenshots. Every fluid tank and accumulator block of the pump and servo scenes, of the
+    base's accumulator scene and of Create's Fluid Tank and Mechanical Pump scenes named a valid
+    controller. The right tank of the pump scene started with 9000 mB of water, which flowed into
+    the left tank and back after the wrench step, the connector scenes drew and removed their wires
+    and the servo turned the observer. With the duplicate call put back, the same run found 30
+    blocks whose controller lay outside the scene: both upper tank blocks of the pump scene, seven
+    of the eight blocks of the accumulator scene and the upper block of Create's own Fluid Tank
+    scene, since every plugin's `onPonderLevelRestore` runs on every ponder level.
+    The schematics `ponder/connector.nbt`, `electric_pump_flow.nbt` and `servo.nbt` are upstream's
+    files rewritten for 1.20.1 by a standard library script. DataVersion 3955 becomes 3465. Every
+    `LastKnownPos` and `Controller` stored as an int array (`NbtUtils.writeBlockPos` of 1.20.5 and
+    later) becomes the compound of X, Y and Z that 1.20.1 reads with
+    `NbtUtils.readBlockPos(getCompound(...))`, in `ModularAccumulatorBlockEntity.read` and in the
+    fluid tank of Create 6.0.8. Read as a compound, an int array gives 0, 0, 0 and breaks the tank
+    and accumulator multiblocks of the scenes. The 9000 mB of water in the right tank of the pump
+    scene, which NeoForge saves as `TankContent.Fluid` with `id` and `amount`, becomes the
+    `FluidName` and `Amount` that Forge's `FluidStack.loadFluidStackFromNBT` reads, or the pump
+    would pump from an empty tank. The script writes every other tag unchanged, and reading and
+    writing the upstream files with it gives the same bytes. Every block of the palettes exists in
+    the fork, the connector `nodes` have the fork's format and no file holds entities. The connector
+    and servo schematics are CC&A's own builds and match no Create ponder schematic beyond the
+    vanilla floor. The pump schematic keeps the layout of Create's `ponder/mechanical_pump/flow.nbt`
+    (git blob `2ecaed7`, the same file in Create 6.0.3 of 2025-03-14 and in 6.0.8): its two fluid
+    tanks and six fluid pipes stand on the same positions, with the Electric Pump, an accumulator
+    and two connectors in place of the Mechanical Pump and its drive. The pump scene's code and
+    texts follow Create's `PumpScenes.flow`, which Create 6.0.3 already shipped. Both date from the
+    time when Create was MIT as a whole, and the NOTICE lists them under Create's notice.

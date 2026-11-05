@@ -2,9 +2,7 @@ package com.mrh0.createaddition.ponder;
 
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.index.CAPonders;
-import com.simibubi.create.foundation.ponder.PonderWorldBlockEntityFix;
 
-import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.registration.IndexExclusionHelper;
 import net.createmod.ponder.api.registration.PonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
@@ -32,11 +30,6 @@ public class CAPonderPlugin implements PonderPlugin {
     @Override
     public void registerSharedText(SharedTextRegistrationHelper helper) {
         // helper.registerSharedText("rpm8", "8 RPM");
-    }
-
-    @Override
-    public void onPonderLevelRestore(PonderLevel ponderLevel) {
-        PonderWorldBlockEntityFix.fixControllerBlockEntities(ponderLevel);
     }
 
     @Override

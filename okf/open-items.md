@@ -308,6 +308,11 @@ evidence and the page with the details. The rulings behind the first section are
   structure tag (1e25cdf), see [Mod set](modpack/mod-set.md#mixins-and-arclight). The
   deploy has to move the fixes pack to the end of the pack order once, or the repaired Quark tag fails
   again, see [Mod set](modpack/mod-set.md#deploy).
+- Create: Integrated Farming in a client and on Arclight. Plain Forge test servers ran its machines,
+  roosts, nets and integrations, but no client has opened its Ponder scenes or the JEI category Roosting
+  or seen its renderers, and nobody booted it, or Create: Dragons Plus with its mixins into
+  `ServerPlayer` and five more vanilla classes, on Arclight, see
+  [Create Integrated Farming port](modpack/createintegratedfarming-port.md#tests).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
   opened its tabs yet. It runs on the server and in pack 3.1.3 since 2026-11-05. The first client
   should open the loot tabs of a block, a mob and a chest in EMI on the server and note how much longer the join takes with the loot that the server

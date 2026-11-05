@@ -121,6 +121,13 @@ Licenses
         assets/createaddition/models/block/electric_pump/block.json and item.json.
       * pixels of textures/block/pump.png (git blob 8f3d8f7) in
         assets/createaddition/textures/block/electric_pump/block.png.
+    The Servo Motor, which Create Crafts & Additions added in 2026, reuses two Create textures in
+    the versions that Create 6.0.3 for Minecraft 1.20.1 already shipped on 2025-03-14, while
+    Create's assets were still under the MIT License:
+      * textures/block/bearing_top.png (git blob 1d156fa) as the lower left quarter of
+        assets/createaddition/textures/block/servo_motor/block.png.
+      * pixels of textures/block/clockwork_bearing_side.png (git blob e21a7de) in the upper left
+        quarter of assets/createaddition/textures/block/servo_motor/block.png.
     The Servo Motor of the 1.21.1 line (ServoMotorRenderer, ServoMotorVisual and the contraption
     assembly in ServoMotorBlockEntity) follows the code of Create 6's BearingRenderer,
     BearingVisual and MechanicalBearingBlockEntity, which Create's LICENSE.md keeps under the MIT

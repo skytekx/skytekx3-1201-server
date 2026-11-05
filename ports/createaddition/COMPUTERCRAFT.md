@@ -99,7 +99,7 @@ local servo = peripheral.wrap("bottom")
 ```
 The Servo Motor turns the blocks in front of it to a target angle. Redstone on its top side turns it towards its Max Angle and redstone on the opposite side towards its Min Angle. The two signals are summed, with the Min side counting as negative, and a summed signal of 15 turns the servo all the way to the limit. Without a signal the target is 0 degrees. The setters below change the speed and the limits, and the servo only moves while a signal is on. It also needs energy (fe) to move.
 
-The function `setSpeed(rpm)` sets the speed at which the servo turns, a number between `-256` and `256` (the `electric_motor_rpm_range` of the config). It throws an exception for a speed out of that range or a value that is not a finite number.
+The function `setSpeed(rpm)` sets the speed at which the servo turns, a number between `-256` and `256` (the `motor_rpm_range` in the `[electric_motor]` section of the common config). It throws an exception for a speed out of that range or a value that is not a finite number.
 ```lua
 servo.setSpeed(64)
 ```

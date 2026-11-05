@@ -182,10 +182,10 @@ its item here, and the NOTICE in the jar sums them up.
    `death.attack.createaddition.tesla_coil`, each with `.player`, as the message ids of the two
    damage types ask. The base used `attack.death.createaddition.*` or keys without the namespace.
    Upstream `ced6d21` fixed en_us only.
-9. The Electric Motor peripheral throws a `LuaException` for a non finite speed, angle or
-   distance, and the motor ignores a non finite rpm (`9dd1b46`). Unlike upstream, `setSpeed`
-   clamps the speed to `electric_motor_rpm_range` before the cast to float, so a finite value
-   beyond the float range still means full speed. The Digital Adapter peripheral
+9. The Electric Motor peripheral throws a `LuaException` for a non finite speed, angle or distance,
+   and the motor ignores a non finite rpm (`9dd1b46`). Unlike upstream, `setSpeed` clamps the speed
+   to the `motor_rpm_range` of the `[electric_motor]` config section before the cast to float, so a
+   finite value beyond the float range still means full speed. The Digital Adapter peripheral
    returns floats instead of ints for stress, capacity, speed, pulley and piston distance and the
    bearing angle (`393c51f`), which Lua scripts see.
 10. Barbed wire is waterloggable (`7a66e82`) and wrenchable (`a44784e`). The new block state
@@ -464,30 +464,40 @@ its item here, and the NOTICE in the jar sums them up.
     Bearing, Electric Motor and Electron Tube) and the loot table are hand written in the 1.20.1
     folders, the block joins `minecraft:mineable/pickaxe`, and en_us names it Servo Motor. The
     recipe advancement is left out, as for every other recipe of the fork. The texture
-    `textures/block/servo_motor/block.png` (32x32) is CC&A's own. The script `texcmp.py` finds no
-    texture of that size in Create 6.0.8 that shares more than 8% of its opaque pixels. The port
-    makes three local changes. The target angle follows a new Min or Max Angle while the redstone
-    signal stays the same. Upstream recomputes it only when the signal changes, so a new scroll
-    value or a peripheral call moved nothing until the redstone changed. The block entity marks
-    itself changed while the angle moves, and the setters of the two limits go through
-    `ScrollValueBehaviour.setValue`, which marks it changed too. Upstream only sent the data, so a
-    save kept an angle up to ten seconds old (the eager chunk save of 1.18 and later) and a limit
-    set through the peripheral could be lost. On a test server stopped mid rotation, the servo came
-    back at 73.8 degrees, although it had already turned down to 49.8 degrees before the save. The
-    goggles show `fe/t` like the fork's Electric Motor instead of the lightning sign of the 1.21.1
-    line. The ponder scene and the servo's entries in the ponder tags come with the ponder bundle.
+    `textures/block/servo_motor/block.png` (32x32) is upstream's file and reuses two Create
+    textures. Its lower left quarter (pixels 0 to 15 by 16 to 31), which the item model shows on its
+    up face (uv 0, 8, 8, 16), is Create's `textures/block/bearing_top.png` (git blob `1d156fa`) with
+    256 of 256 pixels identical. Its upper left quarter, which the side faces of the block and the
+    item model use, matches 128 of 256 pixels of Create's
+    `textures/block/clockwork_bearing_side.png` (blob `e21a7de`), with rows 0 to 5 and 14 to 15
+    identical, so it is an edited copy. Both blobs are already in `create-1.20.1-6.0.3.jar`, which
+    Modrinth published on 2025-03-14, so they are MIT, and the NOTICE lists them under Create's
+    notice. The whole image check `texcmp.py` missed them, because it only compares images of the
+    same size at the same place. The review of the servo bundle found them with a check that slides
+    every Create texture up to 16x16, and every 16x16 tile of a larger one, in all four rotations
+    and their mirrors over the texture. The port makes three local changes. The target angle follows
+    a new Min or Max Angle while the redstone signal stays the same. Upstream recomputes it only
+    when the signal changes, so a new scroll value or a peripheral call moved nothing until the
+    redstone changed. The block entity marks itself changed while the angle moves, and the setters
+    of the two limits go through `ScrollValueBehaviour.setValue`, which marks it changed too.
+    Upstream only sent the data, so a save kept an angle up to ten seconds old (the eager chunk save
+    of 1.18 and later) and a limit set through the peripheral could be lost. On a test server
+    stopped mid rotation, the servo came back at 73.8 degrees, although it had already turned down
+    to 49.8 degrees before the save. The goggles show `fe/t` like the fork's Electric Motor instead
+    of the lightning sign of the 1.21.1 line. The ponder scene and the servo's entries in the ponder
+    tags come with the ponder bundle.
 30. Servo Motor peripheral: upstream `84c7b2c` and `9dd1b46`. With CC:Tweaked loaded, the Servo
     Motor is a peripheral of the type `servo_motor` with the functions `getSpeed`, `setSpeed`,
     `getAngle`, `getTargetAngle`, `setTargetAngle`, `getMinAngle`, `setMinAngle`, `getMaxAngle`,
     `setMaxAngle`, `isAssembled`, `assemble`, `disassemble` and `getEnergyConsumption`, all of them
     on the main thread. Each setter raises a `LuaException` for a value that is not finite or out of
-    range, and `setSpeed` takes at most the `electric_motor_rpm_range` of the config (256 by
-    default). The class `ServoMotorPeripheral` is upstream's with `Config` for `CommonConfig`. Where
-    1.21 registers it through `RegisterCapabilitiesEvent` in `Peripherals.register`, the block
-    entity hands it out through `getCapability` as a `LazyOptional` made by
-    `Peripherals.createServoMotorPeripheral`, the pattern of the Electric Motor. Only a server with
-    CC:Tweaked creates it, so a server without CC:Tweaked never loads a CC:Tweaked class. The file
-    `COMPUTERCRAFT.md` gains a section Servo Motor, which upstream does not have. The pack's
-    CC:Tweaked 1.120.2 has the same `IPeripheral`, `IComputerAccess`, `LuaFunction`, `LuaException`
-    and `Capabilities.CAPABILITY_PERIPHERAL` as the CC:Tweaked 1.108.1 (CurseMaven file 4740605)
-    that the fork compiles against (javap of both jars).
+    range, and `setSpeed` takes at most the `motor_rpm_range` in the `[electric_motor]` section of
+    the common config (256 by default). The class `ServoMotorPeripheral` is upstream's with `Config`
+    for `CommonConfig`. Where 1.21 registers it through `RegisterCapabilitiesEvent` in
+    `Peripherals.register`, the block entity hands it out through `getCapability` as a
+    `LazyOptional` made by `Peripherals.createServoMotorPeripheral`, the pattern of the Electric
+    Motor. Only a server with CC:Tweaked creates it, so a server without CC:Tweaked never loads a
+    CC:Tweaked class. The file `COMPUTERCRAFT.md` gains a section Servo Motor, which upstream does
+    not have. The pack's CC:Tweaked 1.120.2 has the same `IPeripheral`, `IComputerAccess`,
+    `LuaFunction`, `LuaException` and `Capabilities.CAPABILITY_PERIPHERAL` as the CC:Tweaked 1.108.1
+    (CurseMaven file 4740605) that the fork compiles against (javap of both jars).

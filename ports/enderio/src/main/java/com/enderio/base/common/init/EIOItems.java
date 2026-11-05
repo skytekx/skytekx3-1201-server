@@ -353,7 +353,18 @@ public class EIOItems {
         .register();
 
     public static final ItemEntry<ItemFilter> ADVANCED_ITEM_FILTER = REGISTRATE
-        .item("advanced_item_filter", props -> new ItemFilter(props, 10))
+        .item("advanced_item_filter", props -> new ItemFilter(props, 10, true, true))
+        .tab(EIOCreativeTabs.GEAR)
+        .register();
+
+    // SkyTekx: the big filters of Ender IO 8.x with 4 rows of 9 slots, on the 6.x filter capability.
+    public static final ItemEntry<ItemFilter> BIG_ITEM_FILTER = REGISTRATE
+        .item("big_item_filter", props -> new ItemFilter(props, 4 * 9, false, false))
+        .tab(EIOCreativeTabs.GEAR)
+        .register();
+
+    public static final ItemEntry<ItemFilter> BIG_ADVANCED_ITEM_FILTER = REGISTRATE
+        .item("big_advanced_item_filter", props -> new ItemFilter(props, 4 * 9, true, true))
         .tab(EIOCreativeTabs.GEAR)
         .register();
 

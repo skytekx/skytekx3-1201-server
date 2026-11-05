@@ -15,13 +15,27 @@ public class ItemFilterCapability implements IFilterCapability<ItemStack>, ItemS
     private static final String NBT_KEY = "IsNbt";
     private static final String INVERTED_KEY = "IsInverted";
     private static final String ENTRIES_KEY = "ItemEntries";
+    // SkyTekx: optional key of the damage modes from Ender IO 8.x, absent means DamageFilterMode.IGNORE
+    private static final String DAMAGE_MODE_KEY = "DamageMode";
 
     private final ItemStack container;
     private final int size;
+    private final boolean canMatchNbt;
+    private final boolean canFilterByDamage;
 
     public ItemFilterCapability(ItemStack container, int size) {
+        this(container, size, true, false);
+    }
+
+    /**
+     * @param canMatchNbt       whether the filter may compare NBT, false for the big item filter as in 8.x
+     * @param canFilterByDamage whether the filter has a damage mode, true for the advanced filters as in 8.x
+     */
+    public ItemFilterCapability(ItemStack container, int size, boolean canMatchNbt, boolean canFilterByDamage) {
         this.container = container;
         this.size = size;
+        this.canMatchNbt = canMatchNbt;
+        this.canFilterByDamage = canFilterByDamage;
 
         CompoundTag tag = container.getOrCreateTag();
         if (!tag.contains(ENTRIES_KEY, CompoundTag.TAG_LIST)) {
@@ -90,16 +104,59 @@ public class ItemFilterCapability implements IFilterCapability<ItemStack>, ItemS
         entriesList.set(index, stack.serializeNBT());
     }
 
+    public boolean canMatchNbt() {
+        return canMatchNbt;
+    }
+
+    public boolean canFilterByDamage() {
+        return canFilterByDamage;
+    }
+
     @Override
     public void setNbt(Boolean nbt) {
+        if (!canMatchNbt) {
+            return;
+        }
+
         CompoundTag tag = container.getOrCreateTag();
         tag.putBoolean(NBT_KEY, nbt);
     }
 
     @Override
     public boolean isNbt() {
+        if (!canMatchNbt) {
+            return false;
+        }
+
         CompoundTag tag = container.getOrCreateTag();
         return tag.contains(NBT_KEY, CompoundTag.TAG_BYTE) && tag.getBoolean(NBT_KEY);
+    }
+
+    public DamageFilterMode getDamageMode() {
+        if (!canFilterByDamage) {
+            return DamageFilterMode.IGNORE;
+        }
+
+        CompoundTag tag = container.getTag();
+        if (tag == null || !tag.contains(DAMAGE_MODE_KEY, CompoundTag.TAG_STRING)) {
+            return DamageFilterMode.IGNORE;
+        }
+
+        return DamageFilterMode.byName(tag.getString(DAMAGE_MODE_KEY));
+    }
+
+    public void setDamageMode(DamageFilterMode mode) {
+        if (!canFilterByDamage) {
+            return;
+        }
+
+        // IGNORE removes the key, so a filter set back to IGNORE has the NBT of a 6.x filter again.
+        CompoundTag tag = container.getOrCreateTag();
+        if (mode == DamageFilterMode.IGNORE) {
+            tag.remove(DAMAGE_MODE_KEY);
+        } else {
+            tag.putString(DAMAGE_MODE_KEY, mode.getSerializedName());
+        }
     }
 
     @Override
@@ -116,6 +173,11 @@ public class ItemFilterCapability implements IFilterCapability<ItemStack>, ItemS
 
     @Override
     public boolean test(ItemStack stack) {
+        // As in 8.x EnderItemFilter.test, a stack outside the damage mode never passes, on allow and deny lists alike.
+        if (!getDamageMode().test(stack)) {
+            return false;
+        }
+
         for (ItemStack testStack : getEntries()) {
             boolean test = isNbt() ? ItemStack.isSameItemSameTags(testStack, stack) : ItemStack.isSameItem(testStack, stack);
             if (test) {

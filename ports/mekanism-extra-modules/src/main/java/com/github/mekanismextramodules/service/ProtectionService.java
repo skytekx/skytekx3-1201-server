@@ -17,6 +17,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -59,8 +60,26 @@ public final class ProtectionService {
         }
     }
 
+    /**
+     * SkyTekx port: a mod that calls {@code actuallyHurt} directly skips {@code Player.hurt} and LivingAttackEvent.
+     * Upstream's invulnerability check also stops that path at its first line. In Forge 47 the first hook of
+     * {@code actuallyHurt} is LivingHurtEvent, which fires before armor, absorption hearts and Mekanism's own MekaSuit
+     * absorption (a LivingHurtEvent listener that draws suit energy). Canceling it at the highest priority makes
+     * {@code ForgeHooks.onLivingHurt} return 0, and {@code actuallyHurt} returns before any of them.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onHurt(LivingHurtEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || isCommandKill(event.getSource())) {
+            return;
+        }
+        if (isPhaseGuardActive(player)) {
+            event.setCanceled(true);
+            stabilizePhaseGuard(player);
+        }
+    }
+
     // SkyTekx port: Forge 47's LivingDamageEvent is NeoForge 21's LivingDamageEvent.Pre, the damage after armor
-    // and absorption, just before health drops.
+    // and absorption, just before health drops. It stays as the last backstop.
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDamage(LivingDamageEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || isCommandKill(event.getSource())) {

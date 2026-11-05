@@ -6,6 +6,7 @@ import com.github.mekanismextramodules.data.ExtraModulesPlayerData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -43,7 +44,7 @@ public final class ProtectionService {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onAttack(LivingAttackEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || isCommandKill(event.getSource())) {
             return;
         }
         if (isPhaseGuardActive(player)) {
@@ -59,7 +60,7 @@ public final class ProtectionService {
     // and absorption, just before health drops.
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDamage(LivingDamageEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || isCommandKill(event.getSource())) {
             return;
         }
         if (isPhaseGuardActive(player)) {
@@ -71,7 +72,7 @@ public final class ProtectionService {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        if (!(entity instanceof ServerPlayer player)) {
+        if (!(entity instanceof ServerPlayer player) || isCommandKill(event.getSource())) {
             return;
         }
         if (isPhaseGuardActive(player)) {
@@ -231,6 +232,14 @@ public final class ProtectionService {
             return false;
         }
         return ExtraModulesConfig.ALLOWED_DIMENSIONS.get().isEmpty() || ExtraModulesConfig.ALLOWED_DIMENSIONS.get().contains(dimension);
+    }
+
+    /**
+     * /kill must always work, so server operators can still remove a protected player. Taken from upstream
+     * db62401 (2026-10-27). In 1.20.1 {@code LivingEntity.kill()} hurts with {@code genericKill()}.
+     */
+    private static boolean isCommandKill(DamageSource source) {
+        return source.is(DamageTypes.GENERIC_KILL);
     }
 
     private static void logProtection(String message, Object... args) {

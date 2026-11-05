@@ -29,6 +29,10 @@ public class ContainerFilter extends AbstractContainerMenu {
 
     private final ItemStackHandlerAA filterInventory = new ItemStackHandlerAA(SLOT_AMOUNT);
     private final Inventory inventory;
+    // SkyTekx: the hotbar slot and the filter stack of the moment the menu opened, as in
+    // ContainerDrill. The base wrote the ghost items into whatever stack was selected at close
+    private final int selectedSlot;
+    private final ItemStack filterStack;
 
     public static ContainerFilter fromNetwork(int windowId, Inventory inv, FriendlyByteBuf data) {
         return new ContainerFilter(windowId, inv);
@@ -57,9 +61,10 @@ public class ContainerFilter extends AbstractContainerMenu {
             }
         }
 
-        ItemStack stack = inventory.getSelected();
-        if (SlotFilter.isFilter(stack)) {
-            DrillItem.loadSlotsFromNBT(this.filterInventory, inventory.getSelected());
+        this.selectedSlot = inventory.selected;
+        this.filterStack = inventory.getSelected();
+        if (SlotFilter.isFilter(this.filterStack)) {
+            DrillItem.loadSlotsFromNBT(this.filterInventory, this.filterStack);
         }
     }
 
@@ -120,15 +125,15 @@ public class ContainerFilter extends AbstractContainerMenu {
 
     @Override
     public void removed(Player player) {
-        ItemStack stack = this.inventory.getSelected();
-        if (SlotFilter.isFilter(stack)) {
-            DrillItem.writeSlotsToNBT(this.filterInventory, this.inventory.getSelected());
+        if (SlotFilter.isFilter(this.filterStack)) {
+            DrillItem.writeSlotsToNBT(this.filterInventory, this.filterStack);
         }
         super.removed(player);
     }
 
+    // SkyTekx: valid while the selected hotbar slot still holds the filter it was opened with
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return this.inventory.selected == this.selectedSlot && this.inventory.getSelected() == this.filterStack && SlotFilter.isFilter(this.filterStack);
     }
 }

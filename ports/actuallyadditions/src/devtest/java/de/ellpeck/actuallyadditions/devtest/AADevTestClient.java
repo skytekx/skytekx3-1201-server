@@ -16,6 +16,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerAbilitiesPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Pig;
@@ -180,6 +182,7 @@ public final class AADevTestClient {
     private void scheduleAll() {
         this.scheduleSetup();
         this.schedulePacketTests();
+        this.scheduleMenuTests();
         this.scheduleBlockAndItemTests();
         this.step("done", 40, () -> LOG.info("AADEVTEST DONE"));
         if (this.stopAtEnd) {
@@ -299,6 +302,109 @@ public final class AADevTestClient {
         connection().send(new ServerboundCustomPayloadPacket(CHANNEL, buffer));
     }
 
+    // ---- menu-open-and-validity ----------------------------------------------------------------
+
+    /**
+     * The drill upgrade dupe and the filter: a menu that belongs to the selected hotbar stack,
+     * with a selected slot switched by packet while it is open.
+     */
+    private void scheduleMenuTests() {
+        this.step("drill: give two drills and two upgrades", 10, () -> {
+            this.command("clear @s");
+            this.command("item replace entity @s hotbar.0 with actuallyadditions:drill_light_blue");
+            this.command("item replace entity @s hotbar.1 with actuallyadditions:drill_light_blue");
+            this.command("item replace entity @s hotbar.2 with actuallyadditions:drill_upgrade_speed");
+            this.command("item replace entity @s hotbar.3 with actuallyadditions:drill_upgrade_three_by_three");
+            player().getInventory().selected = 0;
+        });
+        this.step("drill: open the first drill", 15, this::openSelectedItemMenu);
+        this.step("drill: put both upgrades in", 10, () -> {
+            this.logMenu("drill first open");
+            // Menu slots: 0 to 4 the upgrades, 5 to 31 the inventory, 32 to 40 the hotbar
+            this.click(34, ClickType.QUICK_MOVE);
+            this.click(35, ClickType.QUICK_MOVE);
+        });
+        this.step("drill: close", 10, () -> player().closeContainer());
+        this.step("drill: open again", 15, this::openSelectedItemMenu);
+        this.step("drill: take one upgrade out", 10, () -> {
+            this.logMenu("drill second open");
+            this.click(0, ClickType.QUICK_MOVE);
+        });
+        this.step("drill: switch the selected slot by packet", 20, () -> {
+            LOG.info("AADEVTEST SEND carried item slot 1 while the drill menu is open");
+            connection().send(new ServerboundSetCarriedItemPacket(1));
+        });
+        this.step("drill: result", 20, () -> {
+            this.logMenu("drill after the slot switch");
+            player().getInventory().selected = 1;
+            connection().send(new ServerboundSetCarriedItemPacket(1));
+            this.command("data get entity @s Inventory");
+        });
+        this.step("filter: give a filter", 10, () -> {
+            this.command("clear @s");
+            this.command("item replace entity @s hotbar.0 with actuallyadditions:filter");
+            this.command("item replace entity @s hotbar.1 with actuallyadditions:filter");
+            player().getInventory().selected = 0;
+            connection().send(new ServerboundSetCarriedItemPacket(0));
+        });
+        this.step("filter: open", 15, this::openSelectedItemMenu);
+        this.step("filter: switch the selected slot by packet", 20, () -> {
+            this.logMenu("filter open");
+            LOG.info("AADEVTEST SEND carried item slot 1 while the filter menu is open");
+            connection().send(new ServerboundSetCarriedItemPacket(1));
+        });
+        this.step("filter: result", 10, () -> {
+            this.logMenu("filter after the slot switch");
+            player().getInventory().selected = 1;
+            connection().send(new ServerboundSetCarriedItemPacket(1));
+            this.command("clear @s");
+        });
+        // The machine screens that must close at more than 8 blocks: see the block exercise
+    }
+
+    /**
+     * Waits until the client has been teleported away (the server may lag), then logs whether the
+     * server closed the screen.
+     */
+    private void checkClosedAway(ResourceLocation id, int tries) {
+        boolean away = player().getX() < this.origin.getX() - 5;
+        if (Minecraft.getInstance().screen != null && !away && tries < 40) {
+            this.steps.addFirst(new Step("block " + id + ": wait for the teleport", 1, () -> this.checkClosedAway(id, tries + 1)));
+            return;
+        }
+        if (Minecraft.getInstance().screen != null) {
+            // Give the server up to 40 more ticks to notice the distance
+            if (tries < 40) {
+                this.steps.addFirst(new Step("block " + id + ": wait for the server", 1, () -> this.checkClosedAway(id, tries + 1)));
+                return;
+            }
+            LOG.info("AADEVTEST MENU {} still open {} blocks away: screen {}", id, Math.round(this.origin.getX() + 0.5 - player().getX()), Minecraft.getInstance().screen.getClass().getSimpleName());
+            player().closeContainer();
+        } else if (away) {
+            LOG.info("AADEVTEST MENU {} closed by the server {} blocks away", id, Math.round(this.origin.getX() + 0.5 - player().getX()));
+        }
+        this.backToOrigin();
+    }
+
+    private void openSelectedItemMenu() {
+        Minecraft.getInstance().options.keyShift.setDown(true);
+        this.steps.addFirst(new Step("use the selected item while sneaking", 10, () -> {
+            Minecraft.getInstance().gameMode.useItem(player(), InteractionHand.MAIN_HAND);
+            this.steps.addFirst(new Step("stop sneaking", 5, () -> Minecraft.getInstance().options.keyShift.setDown(false)));
+        }));
+    }
+
+    private void click(int slot, ClickType type) {
+        LocalPlayer player = player();
+        LOG.info("AADEVTEST CLICK slot {} {} in menu {}", slot, type, player.containerMenu.containerId);
+        Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, slot, 0, type, player);
+    }
+
+    private void logMenu(String what) {
+        Minecraft mc = Minecraft.getInstance();
+        LOG.info("AADEVTEST MENU {}: screen {}, menu {}", what, mc.screen == null ? "none" : mc.screen.getClass().getSimpleName(), player().containerMenu.getClass().getSimpleName());
+    }
+
     // ---- dedicated-server-client-split ---------------------------------------------------------
 
     /**
@@ -339,7 +445,16 @@ public final class AADevTestClient {
                 player().getInventory().selected = 1;
                 this.useOn(this.testSpot);
             });
-            this.step("block " + id + ": screen", 2, () -> this.logAndCloseScreen(id.toString()));
+            // menu-open-and-validity: an open machine screen must close once the player is more
+            // than 8 blocks away. The server ignores block clicks until the client confirms a
+            // teleport, so the player goes back a few ticks before the next click
+            this.step("block " + id + ": screen", 10, () -> {
+                if (Minecraft.getInstance().screen != null) {
+                    this.logMenu(id + " opened");
+                    this.command("tp @s " + (this.origin.getX() - 10) + ".5 " + this.origin.getY() + " " + this.origin.getZ() + ".5");
+                }
+            });
+            this.step("block " + id + ": screen 10 blocks away", 5, () -> this.checkClosedAway(id, 0));
             this.step("block " + id + ": wrench", 4, () -> {
                 player().getInventory().selected = 0;
                 this.useOn(this.testSpot);

@@ -491,3 +491,22 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Interface: the base lacks its `facing` property, so its first server tick crashes the server
     (`TileEntityItemInterfaceHopping.java:129`), which the port of the item interfaces fixes. The
     harness skips it until then.
+15. Menu validity: the drill, the Item Filter and the firework box returned `true` from
+    `stillValid`, so their screens never closed. The drill menu read its upgrades from
+    `inventory.getSelected()` when it opened and wrote them back into `inventory.getSelected()` when
+    it closed (unchanged on `main`). A client that switched the selected hotbar slot by packet while
+    the menu was open got the remaining upgrades written into a second drill, while the first drill
+    kept every upgrade the player had taken out, a duplication. Now `ContainerDrill` remembers the
+    hotbar slot and the drill stack of the moment it opened, `stillValid` fails once the selected
+    slot changes or the slot holds another stack or none, and the upgrades go only into the
+    remembered drill. Since a drill could also be copied while the menu is open (a crafted drop of
+    the selected item splits a copy off the stack), every change of the upgrade slots is written
+    into the drill right away and not only at close. The keys of the drill NBT (`Items`) do not
+    change. `ContainerFilter` gets the same remembered slot and stack, which keeps its ghost items
+    out of another filter. `ContainerFireworkBox` now knows its box, as on `main` (the field
+    `fireworkbox`, the client reads the position that `BlockContainerBase.openGui` sends), and
+    checks `canPlayerUse`, the 8 block reach of the other machine menus. The existing
+    `SlotImmovable` on the drill's own hotbar slot and the `SWAP` check stay. Upstream `f2596f97`
+    (the block position in `openMenu`) and `82aaacf1` (`getBlockPos()` in `canPlayerUse`) are
+    already in effect on the base, which opens its menus through `NetworkHooks.openScreen(player,
+    tile, pos)` and reads the same field. The test mod gains the drill, filter and walk away tests.

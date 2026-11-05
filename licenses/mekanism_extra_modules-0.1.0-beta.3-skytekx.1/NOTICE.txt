@@ -28,8 +28,9 @@ Modifications
   - data/mekanism_extra_modules/recipes/ and pack.mcmeta: the 1.20.1 data
     format, with forge tags for the circuit, alloy and obsidian inputs.
   - service.ProtectionService: /kill bypasses the protection (taken from
-    upstream commit db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6), and the tick
-    handler skips dead players.
+    upstream commit db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6), Phase Guard
+    also cancels the hurt event of a direct actuallyHurt call, and the tick
+    handler skips players whose death went through.
   - LICENSE kept unchanged. GPL-3.0.txt, Mekanism-MIT.txt, NOTICE and
     UPSTREAM.md added.
   The source directory's UPSTREAM.md lists every change with its reason, and the

@@ -338,8 +338,10 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    unify them with coal and charcoal. AlmostUnified lists neither black quartz nor a crystal as a
    material, so these tags unify nothing of the mod's own items. The tag `worm_drop` has no reader
    yet (the worm change of `e37019a` comes with the worm fixes), and the Curios `charm` tag and the
-   banner pattern tags come with their features. Every `forge:` file matches the generated file of
-   the 1.20.4 line byte for byte.
+   banner pattern tags come with their features. The 20 `forge:` files that the 1.20.4 line also
+   generates match it byte for byte. The other 24 are the storage block tags of the crystals and
+   empowered crystals, which came after that line (#1418, `c952c77`), and they match the `c:` files
+   of `main` with the namespace changed.
 10. Recipes: the two recipe generators carry the crafting, smelting and stonecutting recipes of
     `main` for every block and item the base registers, which adds 111 files to the 299 of the
     base. They are 33 machine recipes, among them the generators, crushers, breakers, placers,
@@ -352,8 +354,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     sixteen lamps and the lamp controller (the recipe parts of `248011b` and `c09b365`), the 24
     compress and decompress recipes of the six crystal and six empowered crystal blocks
     (`8f73813`), the ring and rice dough (`2040c68`), rice paper (`cf80d17`), the Ender Star
-    (`1440baa`), sticky pistons and slime blocks from any `forge:slimeballs` (`06ef714`,
-    `f524ecc`), rice dough smelted to bread (`c29830a`) and black quartz ore smelted and blasted
+    (`1440baa`), sticky pistons from any `forge:slimeballs` and slime blocks from rice slimeballs
+    (`06ef714`, `f524ecc`), rice dough smelted to bread (`c29830a`) and black quartz ore smelted and blasted
     (`d1f77f3`). Walls, slabs and stairs give 6, 6 and 4 as vanilla does, and 24 stonecutter
     recipes cut them and the black quartz variants from their block. The black quartz wall, slab
     and stairs are made from the black quartz block instead of the pillar, whose own wall, slab
@@ -365,8 +367,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     keep their contents, the Item Tag, the banner patterns and the compat recipes, which come with
     their features. Apart from those, the folder holds every top level, compress and decompress
     file of `main`, and each one matches its file on `main` except for the 1.20.1 form (the
-    stonecutting count at the top, `forge:conditional` around the tiny coal recipes, the
-    `forge:nbt` ingredient of the Lens of the Killer).
+    stonecutting count at the top and `forge:conditional` around the tiny coal recipes) and two
+    SkyTekx fixes. The Lens of the Killer takes a `forge:partial_nbt` enchanted book whose
+    `StoredEnchantments` hold Sharpness V. The base and the 1.20.4 line build that ingredient with
+    `ItemStack#enchant`, which writes the tool tag `Enchantments`, into a strict `forge:nbt`
+    ingredient. No villager, loot or anvil book carries that tag, so the lens could not be crafted
+    in survival, although JEI showed the recipe. The branch `main` matches the stored enchantments
+    through its data components. The partial match also takes books with a `RepairCost` or further
+    enchantments. The slime block recipe `tagged_slime_block` takes the rice slimeball instead of
+    `forge:slimeballs`. In the pack that tag also holds the sky, ichor and ender slime balls of
+    Tinkers' Construct 3.12.1.231 and the maze slime ball of Twilight Forest 4.3.2508-skytekx.1,
+    whose own 3x3 recipes make their slime blocks, and two matching recipes let automated
+    crafters turn them into vanilla slime blocks. The vanilla recipe already covers the slime ball,
+    so the rice slimeball keeps the purpose of `06ef714`. The sticky piston recipe keeps the tag,
+    since its output is the vanilla one and no other recipe of the pack overlaps it.
 11. Advancements: the generator writes the 18 advancements of `main` with the same ids, parents,
     icons and criteria. The fix of `50407e9` is the 1.20.2 `DisplayInfo` with an `Optional`
     background and has nothing to do on 1.20.1. The note about an advancement for the underwater

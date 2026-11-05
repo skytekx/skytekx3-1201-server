@@ -51,6 +51,11 @@ Modifications
     * Recipes: the machines, lamps and blocks that had no recipe can be crafted as on upstream's
       main branch, crystal blocks compress and decompress, black quartz ore smelts, and walls,
       slabs and stairs give the vanilla amounts and have stonecutter recipes.
+    * Recipes: the Lens of the Killer accepts a real Sharpness V enchanted book. The base and
+      upstream's 1.20.4 line asked for a book with the tool enchantment tag, which no book has.
+      The 3x3 slime block recipe of the mod takes rice slimeballs instead of every
+      forge:slimeballs item, so that it no longer clashes with the slime block recipes of other
+      mods.
     * Advancements: every advancement of the Actually Additions tab can be earned, and their
       titles are in title case as on upstream's main branch.
     * JEI: a category for the Lens of the Miner, and the Atomic Reconstructor shows as a

@@ -18,15 +18,17 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
+import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
@@ -153,12 +155,14 @@ public class ItemRecipeGenerator extends RecipeProvider {
             .define('E', Tags.Items.GEMS_EMERALD).save(consumer);
 
         //Killer Lens
-        ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-        enchantedBook.enchant(Enchantments.SHARPNESS, 5);
+        // SkyTekx: an enchanted book keeps its enchantments in StoredEnchantments, and ItemStack#enchant
+        // writes the tool tag Enchantments, which no real Sharpness V book has. A partial match also
+        // takes books that carry a RepairCost or further enchantments.
+        ItemStack enchantedBook = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(Enchantments.SHARPNESS, 5));
         Recipe.shapeless(ActuallyItems.LENS_OF_THE_KILLER.get())
             .requires(Items.DIAMOND_SWORD)
             .requires(ActuallyItems.LENS_OF_CERTAIN_DEATH.get())
-            .requires(StrictNBTIngredient.of(enchantedBook)).save(consumer);
+            .requires(PartialNBTIngredient.of(Items.ENCHANTED_BOOK, enchantedBook.getTag())).save(consumer);
 
 
         //Filter
@@ -520,10 +524,13 @@ public class ItemRecipeGenerator extends RecipeProvider {
                 .define('P', Items.PISTON)
                 .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "tagged_sticky_piston"));
 
-        // Slime block from tagged balls
+        // Slime block from rice slimeballs
+        // SkyTekx: upstream takes any forge:slimeballs, which also holds the sky, ichor and ender
+        // slime balls of Tinkers' Construct and the maze slime ball of Twilight Forest, whose own
+        // 3x3 recipes make their slime blocks. The vanilla recipe already covers minecraft:slime_ball.
         Recipe.shaped(Items.SLIME_BLOCK)
                 .pattern("RRR", "RRR", "RRR")
-                .define('R', Tags.Items.SLIMEBALLS)
+                .define('R', ActuallyItems.RICE_SLIMEBALL.get())
                 .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "tagged_slime_block"));
 
         //Shards

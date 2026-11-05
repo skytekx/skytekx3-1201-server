@@ -37,7 +37,7 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 243 files, 242 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+is tracked: 244 files, 243 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
 fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 107 are
 [gameplay overrides](#gameplay-overrides).
 is tracked: 9,796 files, 9,795 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
@@ -48,7 +48,7 @@ fixes. Four files add [missing structure pools](#missing-structure-pools), and t
 |---|---:|---|
 | Loot tables | 101 | Tables that name items or types missing on 1.20.1, replaced with valid tables with empty pools: mekanism_extras 60, decocraft 28, dragnlivestock 3, irons_spellbooks 2, and one each for aether_villages, ancient_aether, expatternprovider, galosphere, lost_aether_content, megacells, mocreatures and naturalist |
 | Advancements | 14 | Malformed advancements, replaced with one `minecraft:impossible` criterion: galosphere 9, dragnlivestock 3, aether_redux 1, industrialforegoing 1 |
-| Tags | 8 | Tags with a missing required entry, rewritten with `replace: true` and every entry `required: false`: five `forge` tags (`ungrown_ender_lilly_states`, `pink_items`, `generator_eur`, `frosty_gen_tag`, `rabbit_hutches`), `galosphere:experimental_blocks`, `bibliocraft:potion_shelf_potions` and `aether_villages:collections/ancient_aether_biomes` |
+| Tags | 9 | Tags with a missing required entry, rewritten with `replace: true` and every entry `required: false`: five `forge` tags (`ungrown_ender_lilly_states`, `pink_items`, `generator_eur`, `frosty_gen_tag`, `rabbit_hutches`), `galosphere:experimental_blocks`, `bibliocraft:potion_shelf_potions`, `aether_villages:collections/ancient_aether_biomes` and since 2026-11-05 the block tag `quark:wraith_spawnable` |
 | Recipes | 6 | The Create recipes `silver_ingot_compat_galosphere` for smelting and blasting, and the four melter recipes `cyclic:compat/melter_blood_*` of Cyclic, which take the blood slime that Tinkers' Construct 3.12 no longer has, switched off with a `forge:false` condition |
 | Farming for Blockheads compat | 1 | The Thermal Cultivation seeds entry, made silent |
 | Biome modifier | 1 | The Mo' Creatures modifier `wyvern_nests`, which names the tag `mocreatures:worldgen/biome/is_wyvern_lair` that does not exist, set to `forge:none` |
@@ -61,9 +61,20 @@ Each override was checked on 2026-10-31 against the last boot before the pack ex
 the originals never loaded. An empty loot table and an advancement that cannot be earned behave the
 same as a file that failed to load. These 113 overrides only remove log noise.
 
-The 8 tags are different. That same boot logged a "Couldn't load tag" error for each of them, and a
-tag with a missing required entry does not load at all. With the overrides they load and hold the
-entries that exist. So these tags now work where they were empty before.
+The first 8 tags are different. That same boot logged a "Couldn't load tag" error for each of them,
+and a tag with a missing required entry does not load at all. With the overrides they load and hold
+the entries that exist. So these tags now work where they were empty before.
+
+The Quark tag `quark:wraith_spawnable` came in on 2026-11-05 with
+[Bygone Nether](../modpack/mod-set.md#bygone-nether). Its jar adds `quark:soul_stone` to the tag
+without `required: false` (`data/quark/tags/blocks/wraith_spawnable.json`), a block that Quark 4.0
+does not have. A Forge test server with Quark 4.0-462 and Bygone Nether logged "Couldn't load tag
+quark:wraith_spawnable as it is missing following references: quark:soul_stone", and the command
+`execute if block` called the tag unknown. Quark reads it only in the walk target value of its Wraith (`Wraith.m_5610_`), so wraiths
+still spawn but lose their liking for soul sand and soul soil. The override keeps the two entries of
+Quark and the soul stone of Bygone Nether. On the next boot the tag matched soul sand, soul soil and
+soul stone, and the log had no ERROR. With the fixes pack moved before the pack of Bygone Nether the
+error came back, so this override too needs the fixes pack at the end, see [load order](#load-order).
 
 Until 2026-11-04 the pack also held a `book.json` for the Simply Jetpacks 2 guide book, set to
 `use_resource_pack: true`. It could not work. The boot of 2026-07-12 still logs "Failed to load book

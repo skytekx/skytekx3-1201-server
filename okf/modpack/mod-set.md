@@ -18,8 +18,8 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since c70f699, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
-| Index entries | 229 since 2026-11-05, after Extreme Reactors and ZeroCore (d74909e, 230) and LittleTiles (fcf1ef3) moved to `local-mods/`, 225 of them from `cdn.modrinth.com` and 4 from GitHub. Before them, 232 since 2026-11-04 (b8cbda3e to 14fc2390), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since 3c3aa05b, after 0156111b to 3c3aa05b added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
-| Size of the index downloads | 1,012,285,311 bytes since fcf1ef3, 1,014,908,901 from d74909e, 1,018,751,213 from 14fc2390, 1,019,027,444 from 46d4d298 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b8cbda3e, 1,018,089,782 from 3c3aa05b, 1,007,463,556 from 19e712ec with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
+| Index entries | 230 since 2026-11-05 with Bygone Nether (3d7c5cc0, see [Bygone Nether](#bygone-nether)), 226 of them from `cdn.modrinth.com` and 4 from GitHub. Before it, 229 since 2026-11-05, after Extreme Reactors and ZeroCore (d74909e, 230) and LittleTiles (fcf1ef3) moved to `local-mods/`, 225 of them from `cdn.modrinth.com` and 4 from GitHub. Before them, 232 since 2026-11-04 (b8cbda3e to 14fc2390), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since 3c3aa05b, after 0156111b to 3c3aa05b added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
+| Size of the index downloads | 1,019,927,924 bytes since 3d7c5cc0, 1,012,285,311 from fcf1ef3, 1,014,908,901 from d74909e, 1,018,751,213 from 14fc2390, 1,019,027,444 from 46d4d298 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b8cbda3e, 1,018,089,782 from 3c3aa05b, 1,007,463,556 from 19e712ec with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
 | Bundled jars | 52 in `local-mods/` since 2026-11-05 with the LittleTiles build (fcf1ef3), 51 with Extreme Reactors and ZeroCore (d74909e), 49 with SkyTekx DE Fixes (c93babf), 48 since Flux Networks (221f71c), 47 since 2026-11-04 (303b8077 and 96278bdb), 45 since 2d356b97, 44 since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
 | Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 | Index entries | 232 since 2026-11-04 (b8cbda3e to 14fc2390), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since 3c3aa05b, after 0156111b to 3c3aa05b added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
@@ -151,6 +151,139 @@ and the jar has no license text, so the LICENSE of the branch `1.20` travels in 
   ran for half a minute without an error. Nobody made Flux Dust or sent energy through a network, which
   needs a player.
 
+## Bygone Nether
+
+On 2026-11-05 Bygone Nether 1.3.2 joined the index (3d7c5cc0) in place of Eternal Nether, the
+continuation of the mod, which only exists for NeoForge 1.21.1. The Modrinth project `kt3BLgXB` has a
+single build for Forge 1.20.1, version `RA38ax2z` of 2023-09-10, the file
+`bygonenether-1.3.2-1.20.x.jar` with 7,642,613 bytes and SHA-1
+529e31d2877b87a8bf006f590513a33ab6b73171. The download matched the SHA-1, SHA-512 and size that the
+Modrinth API reported on 2026-11-05. The later uploads of the project are Fabric builds of the same
+version.
+
+- The jar was built from commit cb38a20 ("v1.3.2 (i)", 2023-09-10), the head of the branch `1.20.1` of
+  the source repository that the Modrinth project links and of the branch `1.20.1-legacy-forge` of the
+  Eternal Nether repository. Code and assets of that commit are MIT, and the jar carries no third party
+  code (license review of 2026-11-05). The 12 textures of Eternal Nether that are All Rights Reserved
+  came later and are not in the jar. They must stay out of the pack.
+- Its `mods.toml` needs only Forge 46 or newer and Minecraft 1.20 up to 1.21. It has no jar in jar. It
+  is required on both sides, because it registers blocks, items and entities.
+- It adds three structures, each only in Nether biomes: the Catacomb in soul sand valleys and in the
+  Withered Abyss of Biomes O' Plenty, the Piglin Manor in crimson forests and the Citadel in warped
+  forests (`data/bygonenether/tags/worldgen/biome/has_structure/` of the jar, which also names biomes
+  of Incendium and BYG that the pack does not have). It puts `minecraft:basalt_deltas` into
+  `#minecraft:has_structure/bastion_remnant`, so bastions generate in basalt deltas too, and a biome
+  modifier adds soul stone blobs to the biomes of the Catacomb. It adds no biomes.
+- Eight mobs come with it: the Corpor, Piglin Hunter, Piglin Prisoner, Warped Enderman, Wex, Wither
+  Skeleton Horse, Wither Skeleton Knight and Wraither. The structures place them when their chunks
+  generate. Inside the structures their spawn overrides replace the natural spawns of the biome with
+  magma cubes in the Catacomb, piglins and Piglin Hunters in the Piglin Manor, and endermen and Warped
+  Endermen in the Citadel (`data/bygonenether/worldgen/structure/`).
+- It registers 21 blocks, among them withered blackstone, withered debris, soul stone, warped nether
+  bricks and the Netherite Bell, and 35 items, among them the Gilded Netherite Shield, which an axe
+  cannot disable, the Warped Ender Pearl, the music disc Wither Waltz and eight spawn eggs. Six of them
+  exist only next to other mods: three items for the Create chain with Create and three vertical slabs
+  with Quark. The pack has both.
+- It loads 58 recipes: 18 crafting, 11 stonecutting, 2 smelting and 27 for Create (13 crushing, 12
+  splashing, one mixing and one pressing). The Create recipes turn withered debris into netherite
+  scrap through crushed debris, nuggets and a scrap ingot.
+- The jar replaces the vanilla loot table `minecraft:blocks/blackstone`. Blackstone mined without Silk
+  Touch now drops Cobbled Blackstone, which a furnace turns back into blackstone. The jar puts it into
+  `minecraft:stone_crafting_materials` and `minecraft:stone_tool_materials`, so furnaces and stone
+  tools accept it. No other jar of the pack, no datapack and no KubeJS script touches that table (scan
+  of 2026-11-05). The block `chipped:cobbled_blackstone` of Chipped has the same name but is another
+  item.
+- The mod adds no `forge:` material tags, and its netherite scrap nugget is another material than the
+  netherite nuggets of Cyclic, Tinkers' Construct and Thermal. So `config/almostunified/unify.json`
+  needs no change.
+- Its tag file for `quark:wraith_spawnable` names a block that Quark 4.0 lacks, so the whole Quark tag
+  failed to load and every boot logged one ERROR more. The fixes pack repairs the tag, see
+  [boot fixes](../content/boot-fixes.md#the-override-datapack).
+
+### Mixins and Arclight
+
+The jar has six mixin classes and no `@Overwrite`. Two hooks go into the piglin AI (`PiglinAi`) and
+two into the brute AI (`PiglinBruteAi`), so piglins count armor with a gold trim as gold and brutes
+spare a player in netherite armor with a gold trim. One goes into `Player.disableShield` for its
+shield, one each into the basalt columns and delta features, meant to keep them out of its
+structures, and one is an accessor on `WorldGenRegion`. Arclight 1.0.6 overwrites other methods of
+`PiglinAi`, those of bartering, and touches none of the methods and fields that the mod targets (read
+from its `common.jar`). Curios, Saturn, Repurposed Structures, Cataclysm and YUNG's Better Dungeons
+mix into the same classes, and the classes that the test server exported held the handlers of all of
+them.
+
+Three defects of the jar stay as they are, because none of them logs an ERROR line or breaks the game:
+
+- The basalt mixins read the structure tag `bygonenether:no_basalt`, but the jar ships it under the
+  folder `tags/worldgen/configured_structure_feature/` of Minecraft 1.18, which 1.20.1 does not read.
+  The tag is empty, so basalt columns and deltas can still grow into its structures and into bastions
+  in basalt deltas. A copy under `tags/worldgen/structure/` in the fixes pack would switch the check
+  on, at some cost for every basalt column in the Nether. Nobody asked for it.
+- The delta mixin casts the level to `WorldGenRegion` without a check, so a delta feature placed with
+  `/place feature` in a running world would throw. Worldgen always passes a `WorldGenRegion`. Not
+  tried.
+- The mod never registers the serializer of its two global loot modifiers, which swap its soul stone
+  for the one of Infernal Expansion. Each boot logs two WARN lines "Could not decode
+  GlobalLootModifier". The pack has no Infernal Expansion, so nothing is lost.
+
+### Tests
+
+A plain Forge 47.4.18 test server booted on 2026-11-05 with Bygone Nether and the pack mods that it
+touches, all taken from the index with matching SHA-1: Create 6.0.8, Quark 4.0-462 with Zeta, Biomes
+O' Plenty with TerraBlender and GlitchCore, Curios, Repurposed Structures, Cataclysm with its library,
+YUNG's Better Dungeons with YUNG's API, Saturn and Chunky. The second boot added KubeJS with Rhino and
+Architectury to count the recipes. Seed `skytekx3-bygone`, 3 GB heap.
+
+| Check | Result |
+|---|---|
+| First boot | Done after 35.6 s, 0 FATAL, 1 ERROR, the Quark tag above |
+| Second boot, with the tag override of the fixes pack | Done, 0 ERROR, 0 FATAL. KubeJS counted 58 recipes of the mod |
+| Registry | All 35 items went into a barrel, all 21 blocks were placed with `setblock`, and the Netherite Bell has its block entity |
+| Entities | All 9 entity types were summoned in the Nether and ticked without an error. The piglins and the wither skeletons fought each other |
+| Loot | Blackstone dropped Cobbled Blackstone with a netherite pickaxe and Blackstone with Silk Touch |
+| Structures | In the Nether the nearest Catacomb was at -96 -288, the Piglin Manor at -480 208 and the Citadel at 1248 272. In the overworld and the End none was found |
+| Nether pregen | Radius 640, 6,561 chunks in 2:52, no ERROR. Its only WARN lines were one "Can't keep up" and two unknown attributes in a structure of Cataclysm |
+| Mobs in the Catacomb area | 9 Corpors, 12 Wither Skeleton Knights, 11 Wraithers, 2 Piglin Prisoners and 10 wither skeletons |
+| Mobs in the Piglin Manor area | 3 Piglin Hunters, 2 Wither Skeleton Horses and 11 piglins |
+| Citadel | Placed with `/place structure`, it held 16 Warped Endermen |
+| Blocks around the Catacomb | 7,556 soul stone, 3,215 withered blackstone and 887 withered debris in a box of 160 by 96 by 160 blocks |
+| Biome tags | Basalt deltas are in `#minecraft:has_structure/bastion_remnant`, and the Withered Abyss is in the catacomb tag |
+| Client classes | The class load log of the server lists 192 classes of the mod and none of its package `client`. The only class under `net.minecraft.client` is `LanServerPinger` of the server jar |
+| Stop | Over RCON, java exit 0, no crash report |
+
+The same mods then booted on Arclight 1.0.6 with the repo's `arclight.jar` and the tag override, in a
+fresh world with the same seed. It reached Done after 36.5 s with 0 ERROR and 0 FATAL lines and no
+failed mixin. The structures lay at the same places, the Nether pregen of 6,561 chunks took 3:13
+without an error, and the Catacomb, the Piglin Manor and a placed Citadel held the same mobs as on
+Forge. The entities, the blocks and the bell block entity passed the same checks. It stopped cleanly
+over RCON, without a crash report or a watchdog.
+
+Not tested: the natural spawns of the structures, which need a player close by, the rescue of a
+Piglin Prisoner, the shield, the piglins next to armor with a gold trim, the textures in a client, and
+a boot of the full pack with the mod. See [open items](../open-items.md#not-verified).
+
+### Deploy
+
+Clients without the mod cannot join a server with it, so it goes live together with the pack that
+carries it, 3.1.3. The owner mirrors the server by hand:
+
+1. Stop the server over RCON and wait until the java process is gone.
+2. Download the jar from its CDN link in `modrinth.index.json`, check the SHA-1 above, and put it into
+   `mods/` of the server. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/` from the build
+   machine.
+3. Deploy the fixes pack with the new file `data/quark/tags/blocks/wraith_spawnable.json`.
+4. Start the server. The first start appends the pack `mod:bygonenether` after the fixes pack, so with
+   nobody online run `/datapack disable "file/skytekx3_fixes"` and
+   `/datapack enable "file/skytekx3_fixes" last` once, as the deploy of 3.1.3 needs anyway (see
+   [boot fixes](../content/boot-fixes.md#load-order)). Then `tools/datapack_order.py world/level.dat`
+   should show no mod pack after the fixes pack.
+5. Check the boot against the baseline. No line "Couldn't load tag quark:wraith_spawnable" may remain.
+
+The structures and soul stone blobs only generate in Nether chunks that do not exist yet. The Nether of
+the live world was never pregenerated, so players find them beyond the area that they explored. A
+pregen of the Nether would place them ahead of time, one dimension at a time as usual
+(`chunky world minecraft:the_nether`). The blackstone drop changes at once in every dimension.
+
 ## Owner rulings
 
 From `~/.claude/history.jsonl`, session 5bd3e1de:
@@ -172,7 +305,7 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
 | Folder [local-mods/](../../local-mods) | Yes | 52 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx DE Fixes join them only with the deploy of 3.1.3. That deploy also swaps three jars by hand: Extreme Reactors 2.0.84 out and 2.0.97 in, ZeroCore 2.1.45 out and 2.1.48 in, and LittleTiles 1.6.0-pre161 out and 1.6.0-pre161-skytekx.1 in, because two jars of one mod id stop the boot. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks, SkyTekx DE Fixes and Bygone Nether join them only with the deploy of 3.1.3. That deploy also swaps three jars by hand: Extreme Reactors 2.0.84 out and 2.0.97 in, ZeroCore 2.1.45 out and 2.1.48 in, and LittleTiles 1.6.0-pre161 out and 1.6.0-pre161-skytekx.1 in, because two jars of one mod id stop the boot. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder [local-mods/](../../local-mods) | Yes | 49 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since 44358a8, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from 19e712ec to 14fc2390 |
@@ -191,12 +324,13 @@ No tool does that today, see [tools](tools.md).
 
 ## Sides
 
-Each index entry says whether the client and the server need it (counted on 2026-11-04 in the index
-for the next pack).
+Each index entry says whether the client and the server need it (counted on 2026-11-05 in the index
+for the next pack, after Extreme Reactors, ZeroCore and LittleTiles left it and Bygone Nether joined,
+203 entries required on both sides on 2026-11-04).
 
 | Client | Server | Count | Examples |
 |---|---|---:|---|
-| Required | Required | 203 | Content mods and libraries, Create and GeckoLib among them |
+| Required | Required | 201 | Content mods and libraries, Create and GeckoLib among them |
 | Required | Unsupported | 16 | BetterAdvancements, BetterF3, Controlling, CrashAssistant, Forgematica, MaFgLib, MouseTweaks, NekosEnchantedBooks, Prism, Searchables, athena, bwncr, embeddium, entityculling, jumpoverfences, modflared |
 | Unsupported | Required | 13 | AI Improvements, Apothic Category Compat, Dungeon Crawl, Dungeons Arise, Ksyxis, three YUNG's Better mods, LootJS, Nether Portal Fix, Noisium, Repurposed Structures, Starlight |
 

@@ -48,7 +48,6 @@ public class ConduitClientSetup {
     private static final Map<ResourceLocation, BakedModel> MODELS = new HashMap<>();
 
     public static final ResourceLocation CONDUIT_CONNECTOR = loc("block/conduit_connector");
-    public static final ResourceLocation CONDUIT_FACADE = loc("block/conduit_facade");
     public static final ResourceLocation CONDUIT_CONNECTION = loc("block/conduit_connection");
     public static final ResourceLocation CONDUIT_CORE = loc("block/conduit_core");
     public static final ResourceLocation BOX = loc("block/box/1x1x1");

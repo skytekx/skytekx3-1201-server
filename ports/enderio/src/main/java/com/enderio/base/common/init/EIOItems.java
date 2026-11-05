@@ -301,7 +301,7 @@ public class EIOItems {
         .item("yeta_wrench", YetaWrenchItem::new)
         .tab(EIOCreativeTabs.GEAR)
         .properties(props -> props.stacksTo(1))
-        .tag(EIOTags.Items.WRENCH)
+        .tag(EIOTags.Items.WRENCH, EIOTags.Items.HIDE_FACADES)
         .register();
 
     public static final ItemEntry<LocationPrintoutItem> LOCATION_PRINTOUT = REGISTRATE

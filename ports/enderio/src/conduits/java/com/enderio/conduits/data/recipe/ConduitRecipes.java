@@ -37,6 +37,7 @@ public class ConduitRecipes extends RecipeProvider {
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
         buildUpgradeRecipes(pWriter);
         buildUtilityRecipes(pWriter);
+        buildFacadeCraftingRecipes(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ConduitItems.ITEM, 8)
             .pattern("BBB")
@@ -314,5 +315,55 @@ public class ConduitRecipes extends RecipeProvider {
             .define('R', ConduitItems.REDSTONE)
             .unlockedBy("has_ingrediant", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUCTIVE_ALLOY_INGOT))
             .save(pWriter);
+    }
+
+    // Ender IO 7.1 (1a14aa55e). The 8.x clear glass tag c:glass_blocks/clear becomes the 6.x enderio:clear_glass tag of the fluid conduit.
+    private void buildFacadeCraftingRecipes(Consumer<FinishedRecipe> pWriter) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ConduitItems.CONDUIT_FACADE)
+            .pattern("BBB")
+            .pattern("B B")
+            .pattern("BBB")
+            .define('B', EIOItems.CONDUIT_BINDER)
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUIT_BINDER))
+            .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ConduitItems.HARDENED_CONDUIT_FACADE)
+            .pattern(" O ")
+            .pattern("OFO")
+            .pattern(" O ")
+            .define('O', EIOTags.Items.DUSTS_OBSIDIAN)
+            .define('F', ConduitItems.CONDUIT_FACADE)
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUIT_BINDER))
+            .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ConduitItems.TRANSPARENT_CONDUIT_FACADE)
+            .pattern("BBB")
+            .pattern("BGB")
+            .pattern("BBB")
+            .define('B', EIOItems.CONDUIT_BINDER)
+            .define('G', EIOTags.Items.CLEAR_GLASS)
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUIT_BINDER))
+            .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ConduitItems.TRANSPARENT_CONDUIT_FACADE)
+            .requires(ConduitItems.CONDUIT_FACADE)
+            .requires(EIOTags.Items.CLEAR_GLASS)
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUIT_BINDER))
+            .save(pWriter, EnderIO.loc("transparent_conduit_facade_from_conduit_facade"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ConduitItems.TRANSPARENT_HARDENED_CONDUIT_FACADE)
+            .pattern(" O ")
+            .pattern("OFO")
+            .pattern(" O ")
+            .define('O', EIOTags.Items.DUSTS_OBSIDIAN)
+            .define('F', ConduitItems.TRANSPARENT_CONDUIT_FACADE)
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUIT_BINDER))
+            .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ConduitItems.TRANSPARENT_HARDENED_CONDUIT_FACADE)
+            .requires(ConduitItems.HARDENED_CONDUIT_FACADE)
+            .requires(EIOTags.Items.CLEAR_GLASS)
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.CONDUIT_BINDER))
+            .save(pWriter, EnderIO.loc("transparent_hardened_conduit_facade_from_hardened_conduit_facade"));
     }
 }

@@ -35,6 +35,8 @@ public class EIOTags {
     
         public static final TagKey<Item> WRENCH = ItemTags.create(new ResourceLocation(ForgeVersion.MOD_ID, "tools/wrench"));
         public static final TagKey<Item> GLIDER = ItemTags.create(EnderIO.loc("tools/glider"));
+        // Ender IO 7.1 (78e627263): while a player holds one of these, the conduit facades let the player see and reach the conduits.
+        public static final TagKey<Item> HIDE_FACADES = ItemTags.create(EnderIO.loc("hide_facades"));
 
         public static final TagKey<Item> DUSTS_LAPIS = ItemTags.create(new ResourceLocation(ForgeVersion.MOD_ID, "dusts/lapis"));
         public static final TagKey<Item> DUSTS_COAL = ItemTags.create(new ResourceLocation(ForgeVersion.MOD_ID, "dusts/coal"));

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "enderio:transparent_conduit_facade"
+    },
+    "O": {
+      "tag": "forge:dusts/obsidian"
+    }
+  },
+  "pattern": [
+    " O ",
+    "OFO",
+    " O "
+  ],
+  "result": {
+    "item": "enderio:transparent_hardened_conduit_facade"
+  },
+  "show_notification": true
+}

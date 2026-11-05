@@ -196,7 +196,6 @@
   "item.createaddition.diamond_grit_sandpaper.tooltip.summary": "Wird benutzt zur verfeinerung von Materialen. Automatisierung mit Einsatzgerät möglich.",
   "item.createaddition.electrum_amulet": "blasses Goldamulett",
   "item.createaddition.electrum_amulet.tooltip": "ELECTRUM_AMULETT",
-  "item.createaddition.electrum_amulet.tooltip.summary": "When _life_ has got you down, clutching this _amulet_ in your pocket makes you feel like your _luck_ is about to change.",
   "item.createaddition.electrum_ingot": "Electrumbarren",
   "item.createaddition.electrum_nugget": "Electrumnugget",
   "item.createaddition.electrum_rod": "Electrumrute",

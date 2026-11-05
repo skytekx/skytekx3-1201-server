@@ -547,3 +547,25 @@ its item here, and the NOTICE in the jar sums them up.
     and two connectors in place of the Mechanical Pump and its drive. The pump scene's code and
     texts follow Create's `PumpScenes.flow`, which Create 6.0.3 already shipped. Both date from the
     time when Create was MIT as a whole, and the NOTICE lists them under Create's notice.
+32. Translations: the 1.21.1 locales at `658a390` give their values for the 41 en_us keys that the
+    1.21.1 line added since the base (the keys of items 5, 8, 13, 25, 28, 29 and 31, with
+    `tag.fluid.c.ignites` read as `tag.fluid.forge.ignites`). A locale takes a value where its
+    1.21.1 file holds a translation (not the English text and not marked `[NEEDS_TRANSLATION]`)
+    that differs from the fork's. That gives es_es, es_mx, pt_br and ru_ru the five goggle keys
+    `tooltip.liquid_burning.*`, `tooltip.charging.*` and `tooltip.alternator.info`, fr_fr the four
+    without the alternator, ru_ru three reworded death messages and pl_pl its four death messages,
+    which the base had as `[NEEDS_TRANSLATION]` English. No 1.21.1 locale translates the ponder
+    texts, the Electric Pump, the Servo Motor or `createaddition.recipe.charging.sequence`, so en_us
+    shows for them. The ko_kr `tag.fluid.forge.ignites` and the zh_cn goggle keys are already in the
+    fork with the same text, and the death messages that 1.21.1 still keeps under the old key names
+    in 11 locales have the same text as the renamed keys of item 8. The Electrum Amulet summary that
+    item 23 changed in en_us takes fr_fr's new text, the only 1.21.1 locale that describes the
+    charging. The other 19 locales drop the key, because their text still promises Luck (ru_ru only
+    rewords it in 1.21.1), so en_us shows. Upstream `3e49327` renames three ko_kr keys and the death
+    message keys of the 1.21.1 ko_kr. The fork's ko_kr comes from the base, a separate file with
+    sorted keys, and already has the right names for all of them (item 8 for the death messages).
+    The locales that only the base has (hu_hu, no_no and vi_vn) keep their keys apart from the stale
+    summary, and no other key changes. A standard library script made the merge and keeps each
+    file's indentation, line endings and key order. Every file parses with Gson 2.10.1 in its strict
+    mode, as Minecraft's `Language.loadFromJson` reads it, with no duplicate key. The vi_vn file of
+    the base holds a line break inside one string, which Gson accepts.

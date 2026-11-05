@@ -164,6 +164,9 @@
   "createaddition.subtitle.loud_zap": "Катушка теслы бьёт током",
   
   "createaddition.tooltip.accumulator.info": "Информация об аккумуляторе:",
+  "createaddition.tooltip.alternator.info": "Информация о генераторе переменного тока:",
+  "createaddition.tooltip.charging.info": "Информация о катушке Теслы:",
+  "createaddition.tooltip.charging.time_remaining": "Оставшееся время зарядки:",
   "createaddition.tooltip.connector.info": "Информация об коннекторе:",
   
   "createaddition.tooltip.energy.capacity": "Вместимость:",
@@ -182,12 +185,14 @@
   "createaddition.tooltip.energy.stored": "Накопленная энергия:",
   "createaddition.tooltip.energy.supply": "Выработка сети:",
   "createaddition.tooltip.energy.usage": "Использование сетью:",
+  "createaddition.tooltip.liquid_burning.info": "Информация о жидкостной горелке всполоха:",
+  "createaddition.tooltip.liquid_burning.time_remaining": "Оставшееся время горения:",
   "createaddition.tooltip.relay.info": "Информация о реле:",
   
-  "death.attack.createaddition.barbed_wire": "%1$s попытался пересечь колючую проволоку",
-  "death.attack.createaddition.barbed_wire.player": "%1$s попытался пересечь колючую проволоку во время боя %2$s",
+  "death.attack.createaddition.barbed_wire": "%1$s пытался перебраться через колючую проволоку",
+  "death.attack.createaddition.barbed_wire.player": "%1$s пытался перебраться через колючую проволоку, пока боролся с %2$s",
   "death.attack.createaddition.tesla_coil": "%1$s получил смертельный удар током",
-  "death.attack.createaddition.tesla_coil.player": "%1$s получил смертельный удар током во время боя %2$s",
+  "death.attack.createaddition.tesla_coil.player": "%1$s получил смертельный удар током, пока боролся с %2$s",
   
   "desc.immersiveengineering.info.mineral.sphalerite": "Сфалерит",
   
@@ -239,7 +244,6 @@
   
   "item.createaddition.electrum_amulet": "Бледно-золотой амулет",
   "item.createaddition.electrum_amulet.tooltip": "АМУЛЕТ_ИЗ_ЭЛЕКТРУМА",
-  "item.createaddition.electrum_amulet.tooltip.summary": "Когда _жизнь_ подводит вас, держа этот _амулет_ в кармане, вы почувствуете, что _удача_ вновь к вам вернулась.",
   
   "item.createaddition.electrum_spool": "Электрумовая катушка",
   "item.createaddition.electrum_spool.tooltip": "КАТУШКА",

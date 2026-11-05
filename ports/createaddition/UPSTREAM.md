@@ -244,3 +244,6 @@ its item here, and the NOTICE in the jar sums them up.
     No Sable code is ported. One local change: the verifier accepts a saved chunk as an answer only
     with the status `minecraft:full` and a `block_entities` list, and a lookup that throws leaves the
     position unresolved. A misread tag can then never mark a real wire end missing.
+15. Command: `commands/WireGraphCommand.java` of `126ed38` adds `/cca_wires stats`, `verify` and
+    `rebuild` at permission level 2, registered in `CreateAddition.onRegisterCommandEvent` next to
+    `CCApiCommand`. Each action works on the graph of the dimension the command runs in.

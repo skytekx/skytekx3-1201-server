@@ -150,6 +150,11 @@ public class ChunkBoundLookup<T> {
      */
     public void remove(T value) {
         Set<ChunkPos> chunks = valueKeys.get(value);
+        // SkyTekx: a value that was never added, or a second remove, is a no-op instead of a NullPointerException.
+        if (chunks == null) {
+            return;
+        }
+
         for (ChunkPos chunkPos : chunks) {
             Set<T> dataAtChunk = chunkData.get(chunkPos.toLong());
 

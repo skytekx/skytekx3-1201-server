@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-public class ObeliskBER implements BlockEntityRenderer<ObeliskBlockEntity> {
+public class ObeliskBER<T extends ObeliskBlockEntity<T>> implements BlockEntityRenderer<T> {
     private final Item obeliskRenderItem;
 
     public ObeliskBER(BlockEntityRendererProvider.Context context, Item renderItem) {
@@ -22,7 +22,7 @@ public class ObeliskBER implements BlockEntityRenderer<ObeliskBlockEntity> {
     }
 
     @Override
-    public void render(ObeliskBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(0.5, 0.75, 0.5);
         poseStack.scale(0.5f, 0.5f, 0.5f);

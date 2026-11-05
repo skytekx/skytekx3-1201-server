@@ -32,7 +32,7 @@ public class MachinesClientSetup {
         event.registerBlockEntityRenderer(MachineBlockEntities.FLUID_TANK.get(), FluidTankBER::new);
         event.registerBlockEntityRenderer(MachineBlockEntities.PRESSURIZED_FLUID_TANK.get(), FluidTankBER::new);
         event.registerBlockEntityRenderer(MachineBlockEntities.XP_OBELISK.get(), XPObeliskBER::new);
-        event.registerBlockEntityRenderer(MachineBlockEntities.AVERSION_OBELISK.get(), (ctx) -> new ObeliskBER(ctx, EIOBlocks.ENDERMAN_HEAD.asItem()));
+        event.registerBlockEntityRenderer(MachineBlockEntities.AVERSION_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, EIOBlocks.ENDERMAN_HEAD.asItem()));
         for (BlockEntityEntry<CapacitorBankBlockEntity> value : MachineBlockEntities.CAPACITOR_BANKS.values()) {
             event.registerBlockEntityRenderer(value.get(), CapacitorBankBER::new);
         }

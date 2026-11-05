@@ -20,6 +20,8 @@ public record MachineState(MachineStateType type, MutableComponent component) {
     public static final MachineState NOT_SOULBOUND = new MachineState(MachineStateType.ERROR, MachineLang.TOOLTIP_NO_SOULBOUND);
     public static final MachineState FULL_OUTPUT = new MachineState(MachineStateType.ERROR, MachineLang.TOOLTIP_OUTPUT_FULL);
     public static final MachineState REDSTONE = new MachineState(MachineStateType.DISABLED, MachineLang.TOOLTIP_BLOCKED_RESTONE);
+    // SkyTekx: from 8.x (461cf0511), an obelisk that needs an entity filter has none.
+    public static final MachineState NO_ENTITY_FILTER = new MachineState(MachineStateType.ERROR, MachineLang.TOOLTIP_NO_ENTITY_FILTER);
 
     @Override
     public boolean equals(Object o) {

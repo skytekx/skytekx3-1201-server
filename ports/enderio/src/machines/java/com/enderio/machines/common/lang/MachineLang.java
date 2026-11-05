@@ -34,6 +34,10 @@ public class MachineLang {
     public static final MutableComponent TOOLTIP_OUTPUT_FULL = REGISTRATE.addLang("gui", EnderIO.loc("output_full"), "There is not enough room for the output");
     public static final MutableComponent TOOLTIP_INPUT_EMPTY = REGISTRATE.addLang("gui", EnderIO.loc("input_empty"), "There is no item in the input");
 
+    // SkyTekx: obelisk texts of 8.x (461cf0511), with the upstream keys.
+    public static final MutableComponent TOOLTIP_NO_ENTITY_FILTER = REGISTRATE.addLang("gui", EnderIO.loc("obelisk.no_soul_filter"), "No Soul Filter Installed");
+    public static final MutableComponent OBELISK_UPKEEP = REGISTRATE.addLang("gui", EnderIO.loc("obelisk.upkeep_cost"), "Upkeep %s \u00B5I/t ");
+
 
     // region JEI Categories
 

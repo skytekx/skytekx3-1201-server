@@ -31,7 +31,8 @@ public class AversionObeliskManager extends ObeliskManager<AversionObeliskBlockE
         ServerLevelAccessor levelAccessor = event.getLevel();
         ServerLevel level = levelAccessor.getLevel();
         getManager(level).ifPresent(obeliskManager -> {
-            var pos = new BlockPos((int) event.getX(), (int) event.getY(), (int) event.getZ());
+            // SkyTekx: floor the position, a cast to int rounds toward zero and misses the chunk at negative coordinates.
+            var pos = BlockPos.containing(event.getX(), event.getY(), event.getZ());
 
             Set<AversionObeliskBlockEntity> obelisks = obeliskManager.getObelisksFor(pos);
             if (obelisks == null || obelisks.isEmpty()) {

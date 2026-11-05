@@ -1,0 +1,288 @@
+/*
+ * This file ("TileEntityGrinder.java") is part of the Actually Additions mod for Minecraft.
+ * It is created and owned by Ellpeck and distributed
+ * under the Actually Additions License to be found at
+ * http://ellpeck.de/actaddlicense
+ * View the source code at https://github.com/Ellpeck/ActuallyAdditions
+ *
+ * © 2015-2017 Ellpeck
+ */
+
+package de.ellpeck.actuallyadditions.mod.tile;
+
+import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
+import de.ellpeck.actuallyadditions.mod.AASounds;
+import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
+import de.ellpeck.actuallyadditions.mod.crafting.CrushingRecipe;
+import de.ellpeck.actuallyadditions.mod.inventory.CrusherContainer;
+import de.ellpeck.actuallyadditions.mod.network.gui.IButtonReactor;
+import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IAcceptor;
+import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IRemover;
+import de.ellpeck.actuallyadditions.mod.util.StackUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
+
+public class TileEntityCrusher extends TileEntityInventoryBase implements IButtonReactor, MenuProvider {
+
+    public static final int SLOT_INPUT_1 = 0;
+    public static final int SLOT_OUTPUT_1_1 = 1;
+    public static final int SLOT_OUTPUT_1_2 = 2;
+    public static final int SLOT_INPUT_2 = 3;
+    public static final int SLOT_OUTPUT_2_1 = 4;
+    public static final int SLOT_OUTPUT_2_2 = 5;
+    public static final int ENERGY_USE = 40;
+    public final CustomEnergyStorage storage = new CustomEnergyStorage(60000, 100, 0);
+    public final LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> this.storage);
+    public int firstCrushTime;
+    public int secondCrushTime;
+    public boolean isDouble;
+    public boolean isAutoSplit;
+    private int lastEnergy;
+    private int lastFirstCrush;
+    private int lastSecondCrush;
+    private boolean lastAutoSplit;
+    private boolean lastCrushed;
+
+    public TileEntityCrusher(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
+        super(type, pos, state, slots);
+    }
+
+    public TileEntityCrusher(BlockPos pos, BlockState state) {
+        super(ActuallyBlocks.CRUSHER.getTileEntityType(), pos, state, 3);
+        this.isDouble = false;
+    }
+
+    @Override
+    public void writeSyncableNBT(CompoundTag compound, NBTType type) {
+        if (type != NBTType.SAVE_BLOCK) {
+            compound.putInt("FirstCrushTime", this.firstCrushTime);
+            compound.putInt("SecondCrushTime", this.secondCrushTime);
+            compound.putBoolean("IsAutoSplit", this.isAutoSplit);
+        }
+        this.storage.writeToNBT(compound);
+        super.writeSyncableNBT(compound, type);
+    }
+
+    @Override
+    public void readSyncableNBT(CompoundTag compound, NBTType type) {
+        if (type != NBTType.SAVE_BLOCK) {
+            this.firstCrushTime = compound.getInt("FirstCrushTime");
+            this.secondCrushTime = compound.getInt("SecondCrushTime");
+            this.isAutoSplit = compound.getBoolean("IsAutoSplit");
+        }
+        this.storage.readFromNBT(compound);
+        super.readSyncableNBT(compound, type);
+    }
+
+    public static <T extends BlockEntity> void clientTick(Level level, BlockPos pos, BlockState state, T t) {
+        if (t instanceof TileEntityCrusher tile) {
+            tile.clientTick();
+        }
+    }
+
+    public static <T extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState state, T t) {
+        if (t instanceof TileEntityCrusher tile) {
+            tile.serverTick();
+
+            if (tile.isDouble && tile.isAutoSplit) {
+                TileEntityPoweredFurnace.autoSplit(tile.inv, SLOT_INPUT_1, SLOT_INPUT_2);
+            }
+
+            boolean crushed = false;
+
+            boolean canCrushOnFirst = tile.canCrushOn(SLOT_INPUT_1, SLOT_OUTPUT_1_1, SLOT_OUTPUT_1_2);
+            boolean canCrushOnSecond = false;
+            if (tile.isDouble) {
+                canCrushOnSecond = tile.canCrushOn(SLOT_INPUT_2, SLOT_OUTPUT_2_1, SLOT_OUTPUT_2_2);
+            }
+
+            boolean shouldPlaySound = false;
+
+            if (canCrushOnFirst) {
+                if (tile.storage.getEnergyStored() >= ENERGY_USE) {
+                    if (tile.firstCrushTime % 20 == 0) {
+                        shouldPlaySound = true;
+                    }
+                    tile.firstCrushTime++;
+                    if (tile.firstCrushTime >= tile.getMaxCrushTime()) {
+                        tile.finishCrushing(SLOT_INPUT_1, SLOT_OUTPUT_1_1, SLOT_OUTPUT_1_2);
+                        tile.firstCrushTime = 0;
+                    }
+                    tile.storage.extractEnergyInternal(ENERGY_USE, false);
+                }
+                crushed = tile.storage.getEnergyStored() >= ENERGY_USE;
+            } else {
+                tile.firstCrushTime = 0;
+            }
+
+            if (tile.isDouble) {
+                if (canCrushOnSecond) {
+                    if (tile.storage.getEnergyStored() >= ENERGY_USE) {
+                        if (tile.secondCrushTime % 20 == 0) {
+                            shouldPlaySound = true;
+                        }
+                        tile.secondCrushTime++;
+                        if (tile.secondCrushTime >= tile.getMaxCrushTime()) {
+                            tile.finishCrushing(SLOT_INPUT_2, SLOT_OUTPUT_2_1, SLOT_OUTPUT_2_2);
+                            tile.secondCrushTime = 0;
+                        }
+                        tile.storage.extractEnergyInternal(ENERGY_USE, false);
+                    }
+                    crushed = tile.storage.getEnergyStored() >= ENERGY_USE;
+                } else {
+                    tile.secondCrushTime = 0;
+                }
+            }
+
+            boolean current = state.getValue(BlockStateProperties.LIT);
+            boolean changeTo = current;
+            if (tile.lastCrushed != crushed) {
+                changeTo = crushed;
+            }
+            if (tile.isRedstonePowered) {
+                changeTo = true;
+            }
+            if (!crushed && !tile.isRedstonePowered) {
+                changeTo = false;
+            }
+
+            if (changeTo != current) {
+                level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, changeTo));
+            }
+
+            tile.lastCrushed = crushed;
+
+            if ((tile.lastEnergy != tile.storage.getEnergyStored() || tile.lastFirstCrush != tile.firstCrushTime || tile.lastSecondCrush != tile.secondCrushTime || tile.isAutoSplit != tile.lastAutoSplit) && tile.sendUpdateWithInterval()) {
+                tile.lastEnergy = tile.storage.getEnergyStored();
+                tile.lastFirstCrush = tile.firstCrushTime;
+                tile.lastSecondCrush = tile.secondCrushTime;
+                tile.lastAutoSplit = tile.isAutoSplit;
+            }
+
+            if (shouldPlaySound) {
+                level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AASounds.CRUSHER.get(), SoundSource.BLOCKS, 0.025F, 1.0F);
+            }
+        }
+    }
+
+    @Override
+    public IAcceptor getAcceptor() {
+        return (slot, stack, automation) -> !automation || (slot == SLOT_INPUT_1 || slot == SLOT_INPUT_2); /*CrusherRecipeRegistry.getRecipeFromInput(stack) != null*/ //TODO
+    }
+
+    @Override
+    public IRemover getRemover() {
+        return (slot, automation) -> !automation || slot == SLOT_OUTPUT_1_1 || slot == SLOT_OUTPUT_1_2 || slot == SLOT_OUTPUT_2_1 || slot == SLOT_OUTPUT_2_2;
+    }
+
+    public static Optional<CrushingRecipe> getRecipeForInput(ItemStack itemStack) {
+        return ActuallyAdditionsAPI.CRUSHER_RECIPES.stream().filter($ -> $.matches(itemStack)).findFirst();
+    }
+    public boolean canCrushOn(int theInput, int theFirstOutput, int theSecondOutput) {
+        ItemStack inputStack = this.inv.getStackInSlot(theInput);
+        if (!inputStack.isEmpty()) {
+            Optional<CrushingRecipe> recipeOpt = getRecipeForInput(inputStack);
+            if (!recipeOpt.isPresent()) {
+                return false;
+            }
+            CrushingRecipe recipe = recipeOpt.get();
+            ItemStack outputOne = recipe.getOutputOne();
+            ItemStack outputTwo = recipe.getOutputTwo();
+            if (!outputOne.isEmpty()) {
+                return (this.inv.getStackInSlot(theFirstOutput).isEmpty() || ItemStack.isSameItem(this.inv.getStackInSlot(theFirstOutput), outputOne) && this.inv.getStackInSlot(theFirstOutput).getCount() <= this.inv.getStackInSlot(theFirstOutput).getMaxStackSize() - outputOne.getCount()) && (outputTwo.isEmpty() || this.inv.getStackInSlot(theSecondOutput).isEmpty() || ItemStack.isSameItem(this.inv.getStackInSlot(theSecondOutput), outputTwo) && this.inv.getStackInSlot(theSecondOutput).getCount() <= this.inv.getStackInSlot(theSecondOutput).getMaxStackSize() - outputTwo.getCount());
+            }
+        }
+        return false;
+    }
+
+    private int getMaxCrushTime() {
+        return this.isDouble
+            ? 150
+            : 100;
+    }
+
+    public void finishCrushing(int theInput, int theFirstOutput, int theSecondOutput) {
+        Optional<CrushingRecipe> recipeOpt = getRecipeForInput(this.inv.getStackInSlot(theInput));
+        if (!recipeOpt.isPresent()) {
+            return;
+        }
+        CrushingRecipe recipe = recipeOpt.get();
+
+        ItemStack outputOne = recipe.getOutputOne();
+        if (!outputOne.isEmpty()) {
+            if (this.inv.getStackInSlot(theFirstOutput).isEmpty()) {
+                this.inv.setStackInSlot(theFirstOutput, outputOne.copy());
+            } else if (this.inv.getStackInSlot(theFirstOutput).getItem() == outputOne.getItem()) {
+                this.inv.setStackInSlot(theFirstOutput, StackUtil.grow(this.inv.getStackInSlot(theFirstOutput), outputOne.getCount()));
+            }
+        }
+
+        ItemStack outputTwo = recipe.getOutputTwo();
+        if (!outputTwo.isEmpty()) {
+            float rand = this.level.random.nextFloat();
+            if (rand <= recipe.getSecondChance()) {
+                if (this.inv.getStackInSlot(theSecondOutput).isEmpty()) {
+                    this.inv.setStackInSlot(theSecondOutput, outputTwo.copy());
+                } else if (this.inv.getStackInSlot(theSecondOutput).getItem() == outputTwo.getItem()) {
+                    this.inv.setStackInSlot(theSecondOutput, StackUtil.grow(this.inv.getStackInSlot(theSecondOutput), outputTwo.getCount()));
+                }
+            }
+        }
+
+        this.inv.getStackInSlot(theInput).shrink(1);
+    }
+
+    public int getEnergyScaled(int i) {
+        return this.storage.getEnergyStored() * i / this.storage.getMaxEnergyStored();
+    }
+
+    public int getFirstTimeToScale(int i) {
+        return this.firstCrushTime * i / this.getMaxCrushTime();
+    }
+
+    public int getSecondTimeToScale(int i) {
+        return this.secondCrushTime * i / this.getMaxCrushTime();
+    }
+
+    @Override
+    public void onButtonPressed(int buttonID, Player player) {
+        if (buttonID == 0) {
+            this.isAutoSplit = !this.isAutoSplit;
+            this.setChanged();
+        }
+    }
+
+    @Override
+    public LazyOptional<IEnergyStorage> getEnergyStorage(Direction facing) {
+        return this.lazyEnergy;
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("container.actuallyadditions.crusher");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player player) {
+        return new CrusherContainer(windowId, playerInventory, this);
+    }
+}

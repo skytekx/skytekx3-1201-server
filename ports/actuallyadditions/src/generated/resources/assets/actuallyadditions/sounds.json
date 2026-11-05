@@ -1,0 +1,22 @@
+{
+  "coffee_machine": {
+    "sounds": [
+      "actuallyadditions:coffee_machine"
+    ]
+  },
+  "crusher": {
+    "sounds": [
+      "actuallyadditions:crusher"
+    ]
+  },
+  "duh_duh_duh_duuuh": {
+    "sounds": [
+      "actuallyadditions:duh_duh_duh_duuuh"
+    ]
+  },
+  "reconstructor": {
+    "sounds": [
+      "actuallyadditions:reconstructor"
+    ]
+  }
+}

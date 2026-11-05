@@ -1,0 +1,10 @@
+{
+  "type": "actuallyadditions:laser",
+  "energy": 60,
+  "ingredient": {
+    "tag": "forge:gems/diamond"
+  },
+  "result": {
+    "item": "actuallyadditions:diamatine_crystal"
+  }
+}

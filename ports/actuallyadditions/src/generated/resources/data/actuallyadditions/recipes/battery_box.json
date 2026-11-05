@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "actuallyadditions:energizer"
+    },
+    {
+      "item": "actuallyadditions:enervator"
+    },
+    {
+      "item": "actuallyadditions:basic_coil"
+    }
+  ],
+  "result": {
+    "item": "actuallyadditions:battery_box"
+  }
+}

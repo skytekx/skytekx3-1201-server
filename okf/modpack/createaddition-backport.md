@@ -37,16 +37,18 @@ not exist yet.
 ## Status on 2026-11-05
 
 The vendored base (78f4f06), the reproducible Java 17 build (7286996), the license files in the jar
-(f11c10b), the baseline bundle, the small fixes and the ignitable fluids are on the branch
-`claude/twilight-forest-port-mods-j2owbq`. The small fixes and the ignitable fluids are the first
-ported features. The pack still ships the Modrinth jar 1.3.3. Only the test servers of the ignitable
-fluids, with a reduced mod set, have booted the fork (11cd485), so the boot and login checks
-of the baseline and the in game tests of the small fixes wait for the [release](#release).
+(f11c10b), the baseline bundle, the small fixes, the ignitable fluids and the connector rework are on
+the branch `claude/twilight-forest-port-mods-j2owbq`. The small fixes, the ignitable fluids and the
+connector rework are the first ported features. The pack still ships the Modrinth jar 1.3.3. Only test
+servers with a reduced mod set have booted the fork: those of the ignitable fluids (11cd485) and the
+[wire graph test](#wire-graph-test) on the production Arclight jar. The boot and login checks of the
+baseline and the in game tests of the small fixes and the connector rework wait for the
+[release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in 779a060, 946c19c, ea5b3dc and 0f93520 on top of 78f4f06, 7286996 and f11c10b. The boot and login checks belong to the release |
-| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Planned |
+| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Ported. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release |
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 68ac009, 1c55181, d200303, 4cea82f, bc65bd1, f084665, ee2e417, 5946e46, 12ac066, e782463 and c0c031d, with the review fix 739b6f8. The in game and boot tests belong to the release |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Planned |
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in 11cd485 and f6885dd, with the review fixes fb644ea and a60df19. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
@@ -142,7 +144,11 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - A connector retries its neighbour's energy capability in the lazy tick while it has none, because a
   chunk load sends no neighbour update. This is the 1.20.1 form of d239617
   (`AbstractConnectorBlockEntity:375-395`).
-- No Sable code is ported.
+- No Sable code is ported. The energy meter also implements `IWireNode`, but its three classes are
+  commented out on both branches, so it needs no change.
+- Two local changes came out of the [Wire graph test](#wire-graph-test). The graph checks every saved
+  node against the world when it loads, not only the far ends it has never seen, and shears only cut
+  the far end's wire if that wire still leads back to the sheared connector.
 
 ### Small fixes
 
@@ -458,9 +464,19 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   stats and verify, a Chunky run of radius 500 around a network, unload and reload with relays toggled
   while unloaded, a restart, a region scan that compares every connector's node list with the 1.3.3
   copy, the same with skytekx-compat 2.1.3 and 2.1.6, and a round trip to 1.3.3 and back.
-- A rollback to 1.3.3 ignores `data/createaddition_wires.dat`, but a later upgrade would trust the stale
-  graph for unloaded chunks. So a rollback deletes that file in every dimension folder of the world,
-  or the operator runs `/cca_wires rebuild` in each dimension after the upgrade.
+- A rollback to 1.3.3 ignores `data/createaddition_wires.dat`. With upstream's logic a later upgrade
+  trusts the stale graph for unloaded chunks: on the test world it carried 1000 FE/t over a connector
+  that 1.3.3 had removed, until `/cca_wires rebuild`. The fork checks every saved node at load, and
+  the same round trip matched the world right after the boot. The rollback rule stays as a second
+  line of defence: delete that file in every dimension folder of the world, or run
+  `/cca_wires rebuild` in each dimension after the upgrade. A boot of 1.3.3 also drops the 11 new
+  config keys from `createaddition-common.toml`, and the next fork boot adds them back with their
+  defaults, so changed values of those keys are lost on a round trip.
+- Version 1.3.3 deletes the local end of a wire whose far end it cannot find (`getWireNodeFrom`), and such a
+  wire can keep its other end. The graph only counts a wire whose two ends agree, so it cuts the
+  remaining end at its first check, without a drop. The test world built such a pair on purpose and
+  lost exactly that wire end. Run `tools/wire_scan.py` on the copy of the live world before the
+  deploy to count them.
 - The existing world changes its behaviour in four ways. Wires and relays work across unloaded
   chunks. An alternator whose back face touches another kinetic network joins it on its next update,
   and a speed conflict breaks a block, so the live world should be scanned or the players warned.
@@ -487,6 +503,74 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   `BlockIgniteEvent`, so a protection plugin could not cancel it. The `plugins/` folder holds no such
   plugin today.
 - The research rates the new blocks, block entities and visuals as low risk.
+- On the test world with the production Arclight jar and skytekx-compat 2.1.3 the verifier read 26
+  saved chunks on the first boot, a Chunky run of 4225 chunks around a network and 60 graph rebuilds
+  between chunk saves logged no `ConcurrentModificationException`, no "Failed to store chunk", no
+  "Could not read chunk ... to check wire nodes" and no ERROR line. See
+  [Wire graph test](#wire-graph-test).
+
+## Wire graph test
+
+The test of 2026-11-05 ran on a test world, because the build machine had no copy of the live world.
+It used the production Arclight jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` on Temurin
+17.0.21 with Create 6.0.8, Steam 'n' Rails 1.7.3 (for its mixin into `IOWorker.store`), Chunky
+1.3.146, AllTheLeaks 1.1.1, skytekx-compat 2.1.3 and the three mods its mixins target. The fork jar
+was the build of this bundle. Every step ran over RCON. The logs and scripts of the run stayed in the
+session's scratch folder and are not in the repository.
+
+The world was built with 1.3.3 by `setblock` with node NBT:
+
+- A chain of 40 small connectors with copper wire every 16 blocks from X 0 to X 640 at Y 200, with a
+  powered redstone relay at X 320, a creative energy block at the west end and a Modular Accumulator at
+  the east end. Only the spawn chunks and the chunk at X 640 stayed loaded.
+- Near the spawn, two large connectors joined by festive wire, a light connector and a connector
+  joined by gold wire, and a pair whose wire exists at one end only.
+- In the Nether, two connectors joined by electrum wire across a chunk border.
+
+| Step | Result |
+|---|---|
+| Version 1.3.3 with the middle of the chain unloaded | No energy reached the accumulator, 609,400 FE before and after 10 s |
+| First fork boot | The graph walked the far ends through the saved chunks: 47 nodes, all checked against the world, 21 of them loaded, 6 networks and 0 chunks waiting. The accumulator got 1000 FE/t, the limit of a small connector, while the relay and 25 other nodes were not loaded |
+| Wire at one end only | That end was cut, as designed. Every other node matched the 1.3.3 copy |
+| Nether | The graph of the Nether found both nodes once one of their chunks was force loaded |
+| Chunky radius 500 around X 320 | 4225 chunks in 2 min 23 s, the flow stayed at 1000 FE/t |
+| Stress | 60 rounds of force loading, editing and unloading three chunks of the chain with `/cca_wires rebuild` in between. The graph came back to 47 nodes and 6 networks |
+| Relay | Unpowered while loaded and then unloaded, no energy crossed it. Powered again and unloaded, 1000 FE/t |
+| Restart | Vertices and buffers were saved and loaded, and the flow resumed. `/cca_wires verify` read the 26 unloaded nodes back |
+| Broken connector with the far end unloaded | The wire dropped at the broken connector, and the far end let go without a drop when its chunk loaded |
+| Round trip to 1.3.3 | Version 1.3.3 kept every wire and ignored the saved graph. A connector broken under 1.3.3 left the graph stale, see the first finding |
+| Region scan at the end | `tools/wire_scan.py` found no difference between the saved graphs and the region files |
+
+All nine boots, four of them on 1.3.3, reached `Done` with no ERROR or FATAL line and no crash report.
+The test setup holds no EssentialsX and no Citadel, so the two accepted ERROR lines of the pack do not
+appear. The first fork boot appended the 11 new config keys to the `createaddition-common.toml` that
+1.3.3 had written.
+
+Findings:
+
+- With upstream's logic the graph trusted its save after the round trip to 1.3.3 and carried 1000 FE/t
+  over the missing connector until `/cca_wires rebuild`. The commit "check every saved wire node
+  against the world at load" fixes this. With it, the same round trip gave 50 nodes and 10 networks
+  that matched the region files right after the boot, and no energy crossed the gap.
+- A wire that 1.3.3 left at one end is cut at the first check, see [Savegame notes](#savegame-notes).
+  The commit "add a read-only scan of the CC&A wire nodes of a world" adds `tools/wire_scan.py` to
+  count such wires on the copy of the live world.
+- The neighbour of a ticking connector is always in a chunk at full level on Forge 1.20.1, and
+  `getBlockEntity` waits for it. The capability retry therefore matters for neighbours whose block
+  entity or capability is not ready at the first lookup. The chunk border case of the plan cannot be
+  built, and the retry was not seen at work.
+- A far end whose chunk is still in memory but no longer accessible, because its ticket level dropped
+  below full while a nearby chunk keeps its holder, counts as loaded, as upstream. A wire edit on such
+  a block entity can stay unsaved, since vanilla `setChanged` only marks accessible chunks. The graph
+  repairs that end at the next real load of its chunk.
+
+Not covered by this run:
+
+- The copy of the live world, and skytekx-compat 2.1.6, which only the Mac mini has.
+- Everything that needs a client: the render culling, the wire in hand, shears, the status bar message
+  for festive wire and the refusal of a player without op level 2.
+- Nodes in the old `node0` to `node7` format. A loaded block entity converts them at once, so the test
+  world could not hold any.
 
 ## Local divergences
 
@@ -507,6 +591,14 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - A Capacitor charges and discharges only as a single item. Upstream charges a whole stack as one item,
   which splits into several charged capacitors and dupes energy.
 - The WireGraph verifier only trusts full saved chunks, see [Arclight notes](#arclight-notes).
+- The WireGraph checks every saved node against the world when it loads (`WireGraph.load`), see
+  [Savegame notes](#savegame-notes).
+- Shears only cut the far end's wire if that wire still leads back to the sheared connector.
+- The render box of a wire node is built by the block entity (`createRenderBoundingBox`, Create's
+  cache), and the wire in hand grows it through the common class `HeldWireBounds`, because Forge
+  1.20.1 has no `BlockEntityRenderer.getRenderBoundingBox`.
+- A connector looks up its neighbour's energy storage again in the lazy tick while it has none,
+  because Forge 1.20.1 has no `BlockCapabilityCache`.
 - The alternator keeps its minimum speed MEDIUM.
 - Ignitable fluids use `forge:ignites`, and seed oil and bioethanol keep their `minecraft:water` tag.
 - A flowing fluid ignites when its source fluid is in `forge:ignites`.
@@ -538,6 +630,9 @@ The plan ports these with upstream's or the safe default, and the owner may rule
   HEAD.
 - Deploy only after the live world test under [Savegame notes](#savegame-notes) has passed, and take
   a backup of `world/` first.
+- Before and after that test, scan the copy with
+  `tools/wire_scan.py <world> --json before.json` and later `--compare before.json`. One sided wire
+  ends in the first scan are the wires the upgrade cuts. Reconnect them in game after the update.
 - The command `/cca_wires stats`, `verify` or `rebuild` runs over RCON, for example
   `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" cca_wires stats`.
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only the
@@ -574,6 +669,9 @@ Planned, not shipped.
 
 ### Fixed for players
 
+- Long wires stay visible when their connector is off screen, and a wire to a connector that is not
+  loaded on the client is still drawn.
+- A connector that found no machine at its first lookup keeps looking for it.
 - A mined Electrum Block drops itself.
 - Death messages by barbed wire and the Tesla Coil show their text.
 - The Modular Accumulator no longer crashes with a stack overflow.

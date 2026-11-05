@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -195,14 +196,18 @@ public class CrushingRecipe implements Recipe<Container> {
             result1.addProperty("count", countOne);
             result1.addProperty("chance", outputChance1);
 
-            JsonObject result2 = new JsonObject();
-            result2.addProperty("item", ForgeRegistries.ITEMS.getKey(outputTwo.asItem()).toString());
-            result2.addProperty("count", countTwo);
-            result2.addProperty("chance", outputChance2);
-
             JsonArray resultList = new JsonArray();
             resultList.add(result1);
-            resultList.add(result2);
+
+            // SkyTekx: upstream c1b23b52. Only a real second output is written, an empty one
+            // (air or a count of 0) is left out and the serializer reads the recipe as one output
+            if (outputTwo.asItem() != Items.AIR && countTwo > 0) {
+                JsonObject result2 = new JsonObject();
+                result2.addProperty("item", ForgeRegistries.ITEMS.getKey(outputTwo.asItem()).toString());
+                result2.addProperty("count", countTwo);
+                result2.addProperty("chance", outputChance2);
+                resultList.add(result2);
+            }
 
             pJson.add("result", resultList);
         }

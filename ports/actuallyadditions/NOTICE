@@ -40,6 +40,9 @@ Modifications
     * Config: actuallyadditions-common.toml has the keys of upstream's main branch with its
       camelCase names, and a new actuallyadditions-client.toml holds hideEnergyOverlay. Forge no
       longer rewrites the common config at every load.
+    * Models and data: the Actually Additions Manual and the Storage Crate Keeper have item
+      models, flat items use the generated item model and tools the handheld one, crops render
+      with cutout, and crushing recipes with one output no longer list an empty second one.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

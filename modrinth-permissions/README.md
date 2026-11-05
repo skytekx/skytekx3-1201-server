@@ -5,12 +5,12 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 55 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 56 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-05. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **47** mods are fine to bundle (open license or author allows modpacks).
+- **48** mods are fine to bundle (open license or author allows modpacks).
 - **2** need a manual check, Status VERIFY: Deadly World, whose CurseForge modpack flag is unconfirmed, and ZeroCore 2, whose author allows modpacks but forbids reposts on other websites, while git tracks its jar in `local-mods/` of this public repository.
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
@@ -20,7 +20,7 @@ Researched automatically across the 40 bundled mods of that time. The table belo
 
 ## BLOCKERS (resolve before publishing)
 
-Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered), LittleTiles, SkyTekx DE Fixes, Mekanism: Extra Modules and Expanded Delight carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (c825572), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here. Mystical Automation is the same kind: its `NOTICE_mysticalautomation` and mods.toml credits name the repo root https://github.com/skytekx/skytekx3-1201-server and the path `ports/mysticalautomation`, so master must hold that directory, and its `tree/master/ports/mysticalautomation` URL is only in its permission file here.
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered), LittleTiles, SkyTekx DE Fixes, Mekanism: Extra Modules and Expanded Delight carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (c825572), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here. Mystical Automation is the same kind: its `NOTICE_mysticalautomation` and mods.toml credits name the repo root https://github.com/skytekx/skytekx3-1201-server and the path `ports/mysticalautomation`, so master must hold that directory, and its `tree/master/ports/mysticalautomation` URL is only in its permission file here. Create: Integrated Farming is like Mystical Automation. Its jar NOTICE names the repo root and the path `ports/createintegratedfarming` as the source at the commit that last changed the jar in `local-mods/`, its mods.toml credits hold no URL, and its `tree/master/ports/createintegratedfarming` URL is only in its permission file here. So master must hold that directory and that commit.
 
 These cannot legally be bundled in a public modpack as-is:
 
@@ -71,6 +71,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `ChunkOpt-1.0.2.jar` | Chunk Optimization (ChunkOpt) | MIT | Licensed | yes | - |
 | `cleanswing-1.20-1.8.jar` | Clean Swing Through Grass | LGPL-3.0 | Licensed | yes | - |
 | `cosmeticarmorreworked-1.20.1-v1a.jar` | Cosmetic Armor Reworked | MMPL-1.0.1 | Licensed | yes | - |
+| `create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` | Create: Integrated Farming (1.20.1 Forge port by SkyTekx) | LGPL-3.0-or-later (Create and Farmer's Delight parts MIT) | Licensed | yes, once master holds its source | 1.21.1 NeoForge only |
 | `eio_legacy_machines-0.4.9.jar` | EnderIO Legacy Machines | MIT | Licensed | yes | - |
 | `elevatorid-1.20.1-1.9.1-forge.jar` | ElevatorMod (OpenBlocks Elevator) | MIT | Licensed | yes | yes |
 | `emi-1.1.24-skytekx.2+1.20.1+forge.jar` | EMI (JEI bridge fork by SkyTekx) | MIT | Licensed | yes | upstream only |

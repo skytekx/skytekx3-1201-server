@@ -8,6 +8,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -25,8 +26,9 @@ public class RelocatorObeliskManager extends ObeliskManager<RelocatorObeliskBloc
         return level.getCapability(ObeliskManagerAttacher.RELOCATOR_OBELISK_MANAGER_CAPABILITY);
     }
 
+    // Low priority, so the handler runs after AversionObeliskManager at normal priority and sees its cancellation.
     @SuppressWarnings("unused")
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onSpawnEvent(MobSpawnEvent.FinalizeSpawn event) {
         // Only affects natural spawns. A spawn that an Aversion Obelisk already cancelled stays where it is.
         if (event.getSpawnType() != MobSpawnType.NATURAL || event.isSpawnCancelled()) {

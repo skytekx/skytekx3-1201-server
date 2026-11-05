@@ -45,6 +45,7 @@ public class MachineLang {
     public static final MutableComponent CATEGORY_SOUL_BINDING = REGISTRATE.addLang("gui", EnderIO.loc("category.soul_binding"), "Soul Binding");
     public static final MutableComponent CATEGORY_TANK = REGISTRATE.addLang("gui", EnderIO.loc("category.tank"), "Fluid Tank");
     public static final MutableComponent CATEGORY_SOUL_ENGINE = REGISTRATE.addLang("gui", EnderIO.loc("category.soul_engine"), "Soul Engine");
+    public static final MutableComponent CATEGORY_VAT = REGISTRATE.addLang("gui", EnderIO.loc("category.vat"), "VAT");
 
     // endregion
 
@@ -68,6 +69,8 @@ public class MachineLang {
     public static final Component STORE_1 = REGISTRATE.addLang("gui", EnderIO.loc("button.store_1_level"), "Store 1 level of XP");
     public static final Component STORE_10 = REGISTRATE.addLang("gui", EnderIO.loc("button.store_10_level"), "Store 10 levels of XP");
     public static final Component STORE_ALL = REGISTRATE.addLang("gui", EnderIO.loc("button.store_all_level"), "Store all levels of XP");
+    public static final Component TRANSFER_TANK = REGISTRATE.addLang("gui", EnderIO.loc("button.transfer_tank"), "Transfer tank contents");
+    public static final Component DUMP_TANK = REGISTRATE.addLang("gui", EnderIO.loc("button.dump_tank"), "Void tank contents");
 
     public static void register() {}
 }

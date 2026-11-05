@@ -64,6 +64,23 @@ public class TankAccess {
         return getFluid(handler).isEmpty();
     }
 
+    // Whether the tank takes fluid from outside or gives it out, as its layout says (from 1cb2e1420).
+    public boolean canInsert(MachineBlockEntity machine) {
+        return canInsert(machine.getFluidHandler());
+    }
+
+    public boolean canInsert(MachineFluidHandler handler) {
+        return handler.getLayout().canInsert(index);
+    }
+
+    public boolean canExtract(MachineBlockEntity machine) {
+        return canExtract(machine.getFluidHandler());
+    }
+
+    public boolean canExtract(MachineFluidHandler handler) {
+        return handler.getLayout().canExtract(index);
+    }
+
     public int fill(MachineFluidHandler handler, FluidStack stack, IFluidHandler.FluidAction action) {
         return handler.fill(stack, action);
     }

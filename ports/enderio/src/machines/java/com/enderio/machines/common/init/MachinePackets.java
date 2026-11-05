@@ -4,6 +4,8 @@ import com.enderio.core.common.network.CoreNetwork;
 import com.enderio.machines.common.network.PoweredSpawnerSoulPacket;
 import com.enderio.machines.common.network.SoulEngineSoulPacket;
 import com.enderio.machines.common.network.UpdateCrafterTemplatePacket;
+import com.enderio.machines.common.network.VatDumpTankPacket;
+import com.enderio.machines.common.network.VatMoveTankPacket;
 import com.enderio.machines.common.souldata.EngineSoul;
 import com.enderio.machines.common.souldata.SpawnerSoul;
 
@@ -17,5 +19,9 @@ public class MachinePackets {
         CoreNetwork.registerPacket(new UpdateCrafterTemplatePacket.Handler(), UpdateCrafterTemplatePacket.class);
         CoreNetwork.registerPacket(new PoweredSpawnerSoulPacket.Handler(), PoweredSpawnerSoulPacket.class);
         CoreNetwork.registerPacket(new SoulEngineSoulPacket.Handler(), SoulEngineSoulPacket.class);
+
+        // SkyTekx: backported packets, appended so the ids above keep their order.
+        CoreNetwork.registerPacket(new VatMoveTankPacket.Handler(), VatMoveTankPacket.class);
+        CoreNetwork.registerPacket(new VatDumpTankPacket.Handler(), VatDumpTankPacket.class);
     }
 }

@@ -1,6 +1,11 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.146'
+    // Same plugin versions as ../skytekx-defixes, so the Forge and Minecraft caches are shared and a
+    // rebuild cannot pick a newer plugin release with other reobf or refmap output. Librarian has no
+    // release, only this snapshot.
+    id 'net.neoforged.gradle' version '6.0.21'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.2.0.7-dev-SNAPSHOT'
+    id 'org.spongepowered.mixin' version '0.7.38'
 }
 
 version = mod_version
@@ -10,63 +15,133 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-repositories {
-    mavenCentral()
-    maven { url = 'https://modmaven.dev/' }
-}
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
 
-neoForge {
-    version = neoforge_version
+    copyIdeResources = true
 
     runs {
-        client {
-            client()
-            gameDirectory = project.file('run/client')
-        }
-        server {
-            server()
-            gameDirectory = project.file('run/server')
-            programArgument '--nogui'
-        }
-    }
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
-    mods {
-        mekanism_extra_modules {
-            sourceSet sourceSets.main
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            workingDirectory project.file('run/client')
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            args '--nogui'
         }
     }
+}
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+// Compile dependencies: the exact files that the pack's modrinth.index.json ships, fetched from the
+// Modrinth CDN and checked against their SHA-1. None of them is bundled or committed. Draconic
+// Evolution, Brandon's Core and CodeChicken Lib are only needed so the mixin annotation processor can
+// see the optional Draconic Evolution target class.
+// Modrinth CDN layout: https://cdn.modrinth.com/data/<project>/versions/<version>/<file>.jar
+// Coordinates here: <project>:<file>:<version>.
+def packJars = [
+        [name: 'Mekanism', coord: "${mek_project}:${mek_file}:${mek_cdn_version}", sha1: mek_sha1],
+        [name: 'Draconic Evolution', coord: "${de_project}:${de_file}:${de_cdn_version}", sha1: de_sha1],
+        [name: "Brandon's Core", coord: "${bc_project}:${bc_file}:${bc_cdn_version}", sha1: bc_sha1],
+        [name: 'CodeChicken Lib', coord: "${ccl_project}:${ccl_file}:${ccl_cdn_version}", sha1: ccl_sha1],
+]
+
+repositories {
+    ivy {
+        name = 'Modrinth CDN'
+        url = 'https://cdn.modrinth.com/data/'
+        patternLayout {
+            artifact '[organisation]/versions/[revision]/[artifact].[ext]'
+        }
+        metadataSources { artifact() }
+        content {
+            packJars.each { includeGroup it.coord.split(':')[0] }
+        }
+    }
+}
+
+configurations {
+    // the raw (not deobfuscated) pack jars, only used to check their SHA-1
+    packJarsRaw { transitive = false }
 }
 
 dependencies {
-    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-    runtimeOnly "mekanism:Mekanism:${mekanism_version}"
-    runtimeOnly "mekanism:Mekanism:${mekanism_version}:tools"
+    minecraft "net.neoforged:forge:${minecraft_version}-${neo_version}"
+
+    packJars.each {
+        compileOnly fg.deobf(it.coord)
+        packJarsRaw it.coord
+    }
+
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 }
+
+def verifyPackJars = tasks.register('verifyPackJars') {
+    description = 'Checks that the compile dependencies are byte identical to the jars of modrinth.index.json.'
+    inputs.files(configurations.packJarsRaw)
+    doLast {
+        def artifacts = configurations.packJarsRaw.resolvedConfiguration.resolvedArtifacts
+        packJars.each { jar ->
+            def (group, module, cdnVersion) = jar.coord.split(':')
+            def artifact = artifacts.find { it.moduleVersion.id.group == group && it.moduleVersion.id.name == module }
+            if (artifact == null) {
+                throw new GradleException("${jar.name}: ${module}.jar was not resolved")
+            }
+            def sha1 = java.security.MessageDigest.getInstance('SHA-1').digest(artifact.file.bytes).encodeHex().toString()
+            if (sha1 != jar.sha1) {
+                throw new GradleException("${jar.name}: ${module}.jar has SHA-1 ${sha1}, expected ${jar.sha1} (gradle.properties)")
+            }
+            logger.lifecycle("${jar.name}: ${module}.jar (Modrinth ${group}/${cdnVersion}) SHA-1 ${sha1} OK")
+        }
+    }
+}
+
+tasks.named('compileJava') { dependsOn verifyPackJars }
 
 tasks.withType(ProcessResources).configureEach {
     def replaceProperties = [
             minecraft_version: minecraft_version,
-            neoforge_version: neoforge_version,
-            mod_id: mod_id,
-            mod_name: mod_name,
-            mod_license: mod_license,
-            mod_version: mod_version,
-            mod_description: mod_description
+            mod_id           : mod_id,
+            mod_name         : mod_name,
+            mod_license      : mod_license,
+            mod_version      : mod_version,
+            mod_description  : mod_description,
+            mekanism_range   : mekanism_range,
+            de_range         : de_range,
     ]
     inputs.properties replaceProperties
-    filesMatching(['META-INF/neoforge.mods.toml']) {
+    filesMatching(['META-INF/mods.toml']) {
         expand replaceProperties
     }
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
+    // byte reproducible jar, so the SHA-1 in modrinth-permissions/ can be checked against a rebuild
     preserveFileTimestamps = false
     reproducibleFileOrder = true
 }
 
-jar {
+tasks.named('jar', Jar).configure {
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
@@ -78,4 +153,10 @@ jar {
                 'MixinConfigs'            : 'mekanism_extra_modules.mixins.json'
         ])
     }
+
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }

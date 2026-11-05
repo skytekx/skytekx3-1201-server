@@ -47,3 +47,26 @@ this repository's history (`git log -- ports/mekanism-extra-modules`).
 - The Draconic Evolution integration is one mixin with two `@Redirect` injections into
   `LaserBeamPhase.serverTick`. It copies no Draconic Evolution code, and the port keeps it that
   way, because Draconic Evolution uses the CoFH "Don't Be a Jerk" license.
+
+## Build changes
+
+Upstream builds with NeoForge ModDevGradle 2.0.146 on Java 21. The port replaces that build with
+the ForgeGradle setup of `../skytekx-defixes`, so both share the Forge and Minecraft caches. All
+build changes are dated 2026-11-05.
+
+| File | Change |
+|---|---|
+| File `build.gradle` | Rewritten for NeoForged ForgeGradle 6.0.21, Parchment Librarian 1.2.0.7-dev-SNAPSHOT and MixinGradle 0.7.38 on Java 17, with Forge 47.1.70 userdev and Parchment 2023.07.30-1.20.1. The mixin annotation processor writes `mekanism_extra_modules.refmap.json`. Mekanism, Draconic Evolution, Brandon's Core and CodeChicken Lib are `compileOnly` dependencies, fetched from the Modrinth CDN as the exact files of the pack's `modrinth.index.json`, and the task `verifyPackJars` checks their SHA-1 before every compile. None of them is bundled or committed. The jar keeps upstream's `preserveFileTimestamps = false` and `reproducibleFileOrder = true` and is reobfuscated to SRG names. |
+| File `settings.gradle` | Plugin repositories of NeoForged, Parchment and Sponge, and the Foojay toolchain resolver. The project name stays `mekanism-extra-modules`. |
+| File `gradle.properties` | Minecraft 1.20.1, Forge, Parchment and Mixin versions, the version `0.1.0-beta.3-skytekx.1`, the `mods.toml` version ranges and the Modrinth coordinates and SHA-1 of the four compile jars. Upstream's mod id, name, license, group and description stay. |
+| Files `gradlew`, `gradlew.bat`, `gradle/wrapper/` | Added. Upstream has no wrapper. These are the copies every port in this repository uses (wrapper jar SHA-256 `33ad4583fd7ee156f533778736fa1b4940bd83b433934d1cc4e9f608e99a6a89`), and `distributionSha256Sum` pins the official Gradle 8.2.1 all zip. |
+| File `.gitignore` | One exception added, so the wrapper jar is tracked despite upstream's `*.jar` rule. |
+| File `src/main/resources/META-INF/mods.toml` | Replaces `neoforge.mods.toml`. Same mod id, license, authors, logo and description. Forge 47 and Minecraft 1.20.1, Mekanism and Mekanism Tools `[10.4.16,10.5)`, Draconic Evolution optional from 3.1.2. The display URL, issue tracker and credits point to this repository, because this is an unofficial build. |
+
+Build check (from this directory):
+
+```
+JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew build -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain -q
+```
+
+The jar is `build/libs/mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar`.

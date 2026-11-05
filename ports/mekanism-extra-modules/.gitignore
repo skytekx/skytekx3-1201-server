@@ -28,3 +28,6 @@ replay_pid*
 build/
 run/
 out/
+
+# SkyTekx port: the Gradle wrapper jar is source, the copy every port in this repository uses
+!gradle/wrapper/gradle-wrapper.jar

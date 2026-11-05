@@ -84,6 +84,8 @@ Modifications
     * Crystal clusters: they grow out of the face they are placed on, need a solid block behind
       them, and drop crystal shards unless broken with silk touch, as on upstream's main branch.
     * Lamps: unlit lamps no longer look lit, and the Lamp Controller faces the player.
+    * Sounds: casings sound like their material, machines like metal and crystal blocks and
+      clusters like amethyst, as on upstream's main branch.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

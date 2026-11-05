@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,7 +29,7 @@ import javax.annotation.Nullable;
 public class BlockBioReactor extends BlockContainerBase {
 
     public BlockBioReactor() {
-        super(ActuallyBlocks.defaultPickProps(2.0F, 10.0F));
+        super(ActuallyBlocks.defaultPickProps(2.0F, 10.0F).sound(SoundType.METAL));
     }
 
     @Nullable

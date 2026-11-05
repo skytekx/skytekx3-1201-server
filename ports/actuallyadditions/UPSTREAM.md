@@ -678,3 +678,17 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     10 (`248011b`, `c09b365`), so the name of the controller loses its `(wip)` label here, as in
     `248011b`. The `runData` output has 16 new and 32 changed files, and all 49 lamp and controller
     files of `src/generated` are byte identical to `main`.
+22. Block sounds: the wood casing sounds like wood and the iron, ender and lava factory casings
+    like metal (`ec7b26c`). The Bio Reactor, coal and oil generators, coffee machine, both
+    crushers, display stand, empowerer, energizer, enervator, farmer, lava factory controller and
+    powered furnace use the metal sound (`43312e2`, #1429), the crystal blocks the amethyst block
+    sound and the clusters the amethyst cluster sound (`48cd171`, #1427). The base gave all of
+    them stone, the clusters glass. The helper `ActuallyBlocks.miscBlockProperties` is a method
+    that returns a fresh `Properties` for each block, as in `a69eaed` (#1441): the base shared one
+    instance, and once a casing sets its sound on it, every block built after it would get that
+    sound too.
+    The vanilla shape tags of this item of the plan (`8d56947`, `e3dd329`, changelog 1.3.8) came
+    with source change 9, and the six files `minecraft:stairs`, `slabs` and `walls` in the block
+    and item tags already match `main`. The one difference left in `minecraft:mineable/pickaxe`,
+    the Fluid Placer (`07c59fb`), comes with the fluid collector and placer fixes. No data file
+    changes, and no block, item, property or NBT key either.

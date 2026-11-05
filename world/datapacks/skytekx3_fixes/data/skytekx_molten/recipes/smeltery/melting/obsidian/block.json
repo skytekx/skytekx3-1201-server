@@ -1,0 +1,17 @@
+{
+  "type": "tconstruct:melting",
+  "conditions": [
+    {
+      "type": "forge:false"
+    }
+  ],
+  "ingredient": {
+    "item": "forbidden_arcanus:processed_obsidian_block"
+  },
+  "result": {
+    "amount": 9000,
+    "fluid": "tconstruct:molten_obsidian"
+  },
+  "temperature": 1000,
+  "time": 398
+}

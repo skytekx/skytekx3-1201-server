@@ -2,10 +2,10 @@ package com.blakebr0.mysticalautomation.client.screen.widget;
 
 import com.blakebr0.cucumber.client.screen.button.IconButton;
 import com.blakebr0.mysticalautomation.client.screen.InfuserScreen;
+import com.blakebr0.mysticalautomation.network.NetworkHandler;
 import com.blakebr0.mysticalautomation.network.payload.InfuserSelectIndexPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.function.BooleanSupplier;
 
@@ -25,6 +25,6 @@ public class InfuserSelectedWidget extends IconButton {
     }
 
     private static void onPress(BlockPos pos, int index) {
-        PacketDistributor.sendToServer(new InfuserSelectIndexPayload(pos, index));
+        NetworkHandler.INSTANCE.sendToServer(new InfuserSelectIndexPayload(pos, index));
     }
 }

@@ -9,50 +9,67 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class MysticalCompat {
     public static final class Items {
-        public static final DeferredHolder<Item, Item> INFERIUM_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:inferium_essence"));
-        public static final DeferredHolder<Item, Item> PRUDENTIUM_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:prudentium_essence"));
-        public static final DeferredHolder<Item, Item> TERTIUM_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:tertium_essence"));
-        public static final DeferredHolder<Item, Item> IMPERIUM_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:imperium_essence"));
-        public static final DeferredHolder<Item, Item> SUPREMIUM_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:supremium_essence"));
+        public static final RegistryObject<Item> INFERIUM_ESSENCE = item("mysticalagriculture:inferium_essence");
+        public static final RegistryObject<Item> PRUDENTIUM_ESSENCE = item("mysticalagriculture:prudentium_essence");
+        public static final RegistryObject<Item> TERTIUM_ESSENCE = item("mysticalagriculture:tertium_essence");
+        public static final RegistryObject<Item> IMPERIUM_ESSENCE = item("mysticalagriculture:imperium_essence");
+        public static final RegistryObject<Item> SUPREMIUM_ESSENCE = item("mysticalagriculture:supremium_essence");
 
-        public static final DeferredHolder<Item, Item> INFUSION_CRYSTAL = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:infusion_crystal"));
-        public static final DeferredHolder<Item, Item> MASTER_INFUSION_CRYSTAL = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:master_infusion_crystal"));
+        public static final RegistryObject<Item> INFUSION_CRYSTAL = item("mysticalagriculture:infusion_crystal");
+        public static final RegistryObject<Item> MASTER_INFUSION_CRYSTAL = item("mysticalagriculture:master_infusion_crystal");
 
-        public static final DeferredHolder<Item, Item> FERTILIZED_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagriculture:fertilized_essence"));
+        public static final RegistryObject<Item> FERTILIZED_ESSENCE = item("mysticalagriculture:fertilized_essence");
 
-        public static final DeferredHolder<Item, Item> INSANIUM_ESSENCE = DeferredHolder.create(Registries.ITEM.location(), ResourceLocation.parse("mysticalagradditions:insanium_essence"));
+        public static final RegistryObject<Item> INSANIUM_ESSENCE = item("mysticalagradditions:insanium_essence");
+
+        private static RegistryObject<Item> item(String id) {
+            return RegistryObject.create(new ResourceLocation(id), ForgeRegistries.ITEMS);
+        }
     }
 
     public static final class RecipeTypes {
-        public static final DeferredHolder<RecipeType<?>, RecipeType<IInfusionRecipe>> INFUSION = DeferredHolder.create(Registries.RECIPE_TYPE.location(), ResourceLocation.parse("mysticalagriculture:infusion"));
-        public static final DeferredHolder<RecipeType<?>, RecipeType<IAwakeningRecipe>> AWAKENING = DeferredHolder.create(Registries.RECIPE_TYPE.location(), ResourceLocation.parse("mysticalagriculture:awakening"));
-        public static final DeferredHolder<RecipeType<?>, RecipeType<IEnchanterRecipe>> ENCHANTER = DeferredHolder.create(Registries.RECIPE_TYPE.location(), ResourceLocation.parse("mysticalagriculture:enchanter"));
+        public static final RegistryObject<RecipeType<IInfusionRecipe>> INFUSION = recipeType("mysticalagriculture:infusion");
+        public static final RegistryObject<RecipeType<IAwakeningRecipe>> AWAKENING = recipeType("mysticalagriculture:awakening");
+        public static final RegistryObject<RecipeType<IEnchanterRecipe>> ENCHANTER = recipeType("mysticalagriculture:enchanter");
+
+        // SkyTekx port: a typed lookup by id, the Forge form of upstream's DeferredHolder.create
+        private static <T extends RecipeType<?>> RegistryObject<T> recipeType(String id) {
+            return RegistryObject.create(new ResourceLocation(id), Registries.RECIPE_TYPE, "mysticalautomation");
+        }
     }
 
     public static final class Tooltips {
-        public static final Tooltip CHANCE = new Tooltip("tooltip.mysticalagriculture.chance");
+        // SkyTekx port: Mystical Agriculture 8 has these three tooltips, Mystical Agriculture 7 does not, so the keys
+        // and their translations live in this mod's lang files
+        public static final Tooltip CHANCE = new Tooltip("tooltip.mysticalautomation.chance");
         public static final Tooltip MACHINE_AREA = new Tooltip("tooltip.mysticalagriculture.machine_area");
         public static final Tooltip MACHINE_SPEED = new Tooltip("tooltip.mysticalagriculture.machine_speed");
         public static final Tooltip MACHINE_FUEL_RATE = new Tooltip("tooltip.mysticalagriculture.machine_fuel_rate");
         public static final Tooltip MACHINE_FUEL_CAPACITY = new Tooltip("tooltip.mysticalagriculture.machine_fuel_capacity");
-        public static final Tooltip MACHINE_FUEL_USAGE = new Tooltip("tooltip.mysticalagriculture.machine_fuel_usage");
-        public static final Tooltip MACHINE_SCAN_FUEL_USAGE = new Tooltip("tooltip.mysticalagriculture.machine_scan_fuel_usage");
+        public static final Tooltip MACHINE_FUEL_USAGE = new Tooltip("tooltip.mysticalautomation.machine_fuel_usage");
+        public static final Tooltip MACHINE_SCAN_FUEL_USAGE = new Tooltip("tooltip.mysticalautomation.machine_scan_fuel_usage");
+    }
+
+    // SkyTekx port: ItemStack#is(Holder) of 1.21 for a Forge RegistryObject, false while the item does not exist
+    public static boolean is(ItemStack stack, RegistryObject<Item> item) {
+        return item.isPresent() && stack.is(item.get());
     }
 
     public static boolean isEssence(ItemStack stack) {
-        return stack.is(Items.INFERIUM_ESSENCE)
-                || stack.is(Items.PRUDENTIUM_ESSENCE)
-                || stack.is(Items.TERTIUM_ESSENCE)
-                || stack.is(Items.IMPERIUM_ESSENCE)
-                || stack.is(Items.SUPREMIUM_ESSENCE)
-                || (Items.INSANIUM_ESSENCE.isBound() && stack.is(Items.INSANIUM_ESSENCE));
+        return is(stack, Items.INFERIUM_ESSENCE)
+                || is(stack, Items.PRUDENTIUM_ESSENCE)
+                || is(stack, Items.TERTIUM_ESSENCE)
+                || is(stack, Items.IMPERIUM_ESSENCE)
+                || is(stack, Items.SUPREMIUM_ESSENCE)
+                || is(stack, Items.INSANIUM_ESSENCE);
     }
 
     public static boolean isInfusionCrystal(ItemStack stack) {
-        return stack.is(Items.INFUSION_CRYSTAL) || stack.is(Items.MASTER_INFUSION_CRYSTAL);
+        return is(stack, Items.INFUSION_CRYSTAL) || is(stack, Items.MASTER_INFUSION_CRYSTAL);
     }
 }

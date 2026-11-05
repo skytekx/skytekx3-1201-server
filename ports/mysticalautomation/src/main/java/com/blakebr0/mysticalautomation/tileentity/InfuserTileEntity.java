@@ -3,23 +3,21 @@ package com.blakebr0.mysticalautomation.tileentity;
 import com.blakebr0.cucumber.energy.DynamicEnergyStorage;
 import com.blakebr0.cucumber.helper.StackHelper;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
-import com.blakebr0.cucumber.inventory.OnContentsChangedFunction;
-import com.blakebr0.cucumber.inventory.SidedInventoryWrapper;
-import com.blakebr0.cucumber.tileentity.BaseInventoryTileEntity;
-import com.blakebr0.cucumber.util.ContainerDataBuilder;
-import com.blakebr0.mysticalagriculture.api.machine.IUpgradeableMachine;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeTier;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
+import com.blakebr0.mysticalagriculture.util.IUpgradeableMachine;
+import com.blakebr0.mysticalagriculture.util.MachineUpgradeTier;
 import com.blakebr0.mysticalautomation.block.InfuserBlock;
 import com.blakebr0.mysticalautomation.compat.MysticalCompat;
 import com.blakebr0.mysticalautomation.container.InfuserContainer;
 import com.blakebr0.mysticalautomation.init.ModTileEntities;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
 import com.blakebr0.mysticalautomation.util.EssenceTier;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -29,14 +27,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.common.ForgeHooks;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.stream.IntStream;
 
-public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuProvider, IUpgradeableMachine {
+public class InfuserTileEntity extends BaseMachineTileEntity implements MenuProvider, IUpgradeableMachine {
     private static final int INFUSION_CRYSTAL_SLOT = 0;
     private static final int[] INPUT_SLOTS = IntStream.rangeClosed(1, 6).toArray();
     private static final int FUEL_SLOT = 7;
@@ -48,9 +45,8 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
     public static final int FUEL_CAPACITY = 80000;
 
     private final BaseItemStackHandler inventory;
-    private final MachineUpgradeItemStackHandler upgradeInventory;
+    private final UpgradeItemStackHandler upgradeInventory;
     private final DynamicEnergyStorage energy;
-    private final SidedInventoryWrapper[] sidedInventoryWrappers;
 
     private final ContainerData dataAccess;
 
@@ -64,10 +60,9 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
 
     public InfuserTileEntity(BlockPos pos, BlockState state) {
         super(ModTileEntities.INFUSER.get(), pos, state);
-        this.inventory = createInventoryHandler((slot -> this.setChanged()));
-        this.upgradeInventory = new MachineUpgradeItemStackHandler();
+        this.inventory = createInventoryHandler(this::setChanged);
+        this.upgradeInventory = new UpgradeItemStackHandler();
         this.energy = new DynamicEnergyStorage(FUEL_CAPACITY, this::setChangedFast);
-        this.sidedInventoryWrappers = SidedInventoryWrapper.create(this.inventory, List.of(Direction.UP, Direction.DOWN, Direction.NORTH), this::canInsertStackSided, null);
 
         this.dataAccess = ContainerDataBuilder.builder()
                 .sync(this.energy::getEnergyStored, this.energy::setEnergyStored)
@@ -97,26 +92,26 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
     }
 
     @Override
-    public MachineUpgradeItemStackHandler getUpgradeInventory() {
+    public UpgradeItemStackHandler getUpgradeInventory() {
         return this.upgradeInventory;
     }
 
     @Override
-    public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
-        super.loadAdditional(tag, lookup);
+    public void load(CompoundTag tag) {
+        super.load(tag);
 
         this.progress = tag.getInt("Progress");
         this.progressingIndex = tag.getInt("ProgressingIndex");
         this.selectedIndex = tag.getInt("SelectedIndex");
         this.fuelLeft = tag.getInt("FuelLeft");
         this.fuelItemValue = tag.getInt("FuelItemValue");
-        this.energy.deserializeNBT(lookup, tag.get("Energy"));
-        this.upgradeInventory.deserializeNBT(lookup, tag.getCompound("UpgradeInventory"));
+        loadEnergy(this.energy, tag);
+        this.upgradeInventory.deserializeNBT(tag.getCompound("UpgradeInventory"));
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
-        super.saveAdditional(tag, lookup);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
 
         tag.putInt("Progress", this.progress);
         tag.putInt("ProgressingIndex", this.progressingIndex);
@@ -124,7 +119,7 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
         tag.putInt("FuelLeft", this.fuelLeft);
         tag.putInt("FuelItemValue", this.fuelItemValue);
         tag.putInt("Energy", this.energy.getEnergyStored());
-        tag.put("UpgradeInventory", this.upgradeInventory.serializeNBT(lookup));
+        tag.put("UpgradeInventory", this.upgradeInventory.serializeNBT());
     }
 
     @Override
@@ -137,7 +132,7 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
             var fuel = tile.inventory.getStackInSlot(FUEL_SLOT);
 
             if (tile.fuelLeft <= 0 && !fuel.isEmpty()) {
-                tile.fuelItemValue = fuel.getBurnTime(null);
+                tile.fuelItemValue = ForgeHooks.getBurnTime(fuel, null);
 
                 if (tile.fuelItemValue > 0) {
                     tile.fuelLeft = tile.fuelItemValue *= FUEL_TICK_MULTIPLIER;
@@ -167,7 +162,7 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
             if (tier == null) {
                 tile.energy.resetMaxEnergyStorage();
             } else {
-                tile.energy.setMaxEnergyStorage(tier.getFuelCapacity(FUEL_CAPACITY));
+                tile.energy.setMaxEnergyStorage(MachineUpgrades.getFuelCapacity(tier, FUEL_CAPACITY));
             }
 
             tile.setChangedFast();
@@ -231,7 +226,7 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
         return createInventoryHandler(null);
     }
 
-    public static BaseItemStackHandler createInventoryHandler(@Nullable OnContentsChangedFunction onContentsChanged) {
+    public static BaseItemStackHandler createInventoryHandler(@Nullable Runnable onContentsChanged) {
         return BaseItemStackHandler.create(9, onContentsChanged, handler -> {
             for (var slot : INPUT_SLOTS) {
                 handler.addSlotLimit(slot, 512);
@@ -239,12 +234,12 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
 
             handler.setCanInsert((slot, stack) -> switch (slot) {
                 case 0 -> MysticalCompat.isInfusionCrystal(stack);
-                case 1 -> stack.is(MysticalCompat.Items.INFERIUM_ESSENCE);
-                case 2 -> stack.is(MysticalCompat.Items.PRUDENTIUM_ESSENCE);
-                case 3 -> stack.is(MysticalCompat.Items.TERTIUM_ESSENCE);
-                case 4 -> stack.is(MysticalCompat.Items.IMPERIUM_ESSENCE);
-                case 5 -> stack.is(MysticalCompat.Items.SUPREMIUM_ESSENCE);
-                case 6 -> MysticalCompat.Items.INSANIUM_ESSENCE.isBound() && stack.is(MysticalCompat.Items.INSANIUM_ESSENCE);
+                case 1 -> MysticalCompat.is(stack, MysticalCompat.Items.INFERIUM_ESSENCE);
+                case 2 -> MysticalCompat.is(stack, MysticalCompat.Items.PRUDENTIUM_ESSENCE);
+                case 3 -> MysticalCompat.is(stack, MysticalCompat.Items.TERTIUM_ESSENCE);
+                case 4 -> MysticalCompat.is(stack, MysticalCompat.Items.IMPERIUM_ESSENCE);
+                case 5 -> MysticalCompat.is(stack, MysticalCompat.Items.SUPREMIUM_ESSENCE);
+                case 6 -> MysticalCompat.is(stack, MysticalCompat.Items.INSANIUM_ESSENCE);
                 default -> true;
             });
 
@@ -255,6 +250,7 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
         });
     }
 
+    @Override
     public DynamicEnergyStorage getEnergy() {
         return this.energy;
     }
@@ -263,19 +259,11 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
         return this.selectedIndex;
     }
 
-    public IItemHandler getSidedInventory(@Nullable Direction direction) {
-        return switch (direction) {
-            case UP -> this.sidedInventoryWrappers[0];
-            case DOWN -> this.sidedInventoryWrappers[1];
-            case null, default -> this.sidedInventoryWrappers[2];
-        };
-    }
-
     public void setSelectedIndex(int index) {
         if (index == this.selectedIndex)
             return;
 
-        this.selectedIndex = Math.clamp(index, 0, INPUT_SLOTS.length - 1);
+        this.selectedIndex = Mth.clamp(index, 0, INPUT_SLOTS.length - 1);
 
         if (index <= this.progressingIndex)
             this.progress = 0;
@@ -292,11 +280,11 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
     }
 
     private int getOperationTime() {
-        return this.tier == null ? OPERATION_TIME : this.tier.getOperationTime(OPERATION_TIME);
+        return this.tier == null ? OPERATION_TIME : MachineUpgrades.getOperationTime(this.tier, OPERATION_TIME);
     }
 
     private int getFuelUsage() {
-        return this.tier == null ? FUEL_USAGE : this.tier.getFuelUsage(FUEL_USAGE);
+        return this.tier == null ? FUEL_USAGE : MachineUpgrades.getFuelUsage(this.tier, FUEL_USAGE);
     }
 
     private int getNextProgressingIndex() {
@@ -318,7 +306,8 @@ public class InfuserTileEntity extends BaseInventoryTileEntity implements MenuPr
         return -1;
     }
 
-    private boolean canInsertStackSided(int slot, ItemStack stack, @Nullable Direction direction) {
+    @Override
+    protected boolean canInsertStackSided(int slot, ItemStack stack, @Nullable Direction direction) {
         if (direction == null)
             return true;
         if (slot == INFUSION_CRYSTAL_SLOT && direction == Direction.UP)

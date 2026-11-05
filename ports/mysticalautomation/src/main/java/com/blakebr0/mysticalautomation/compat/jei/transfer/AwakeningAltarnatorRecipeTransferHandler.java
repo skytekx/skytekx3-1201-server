@@ -5,6 +5,7 @@ import com.blakebr0.mysticalautomation.compat.jei.JeiCompat;
 import com.blakebr0.mysticalautomation.container.AwakeningAltarnatorContainer;
 import com.blakebr0.mysticalautomation.container.slot.FakeSlot;
 import com.blakebr0.mysticalautomation.init.ModMenuTypes;
+import com.blakebr0.mysticalautomation.network.NetworkHandler;
 import com.blakebr0.mysticalautomation.network.payload.SetFakeRecipeSlotPayload;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -14,7 +15,6 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Optional;
 
@@ -47,7 +47,7 @@ public class AwakeningAltarnatorRecipeTransferHandler implements IRecipeTransfer
                 if (slot instanceof FakeSlot) {
                     var stack = views.get(index).getDisplayedItemStack().orElse(ItemStack.EMPTY);
 
-                    PacketDistributor.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
+                    NetworkHandler.INSTANCE.sendToServer(new SetFakeRecipeSlotPayload(slot.index, stack));
 
                     index++;
                 }

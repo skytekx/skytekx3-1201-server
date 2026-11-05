@@ -1,19 +1,19 @@
 package com.blakebr0.mysticalautomation.container;
 
 import com.blakebr0.cucumber.container.BaseContainerMenu;
-import com.blakebr0.cucumber.crafting.ShapelessCraftingInput;
 import com.blakebr0.cucumber.helper.StackHelper;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
 import com.blakebr0.cucumber.inventory.slot.BaseItemStackHandlerSlot;
-import com.blakebr0.cucumber.util.QuickMover;
-import com.blakebr0.mysticalagriculture.api.machine.IMachineUpgrade;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
-import com.blakebr0.mysticalautomation.compat.MysticalCompat;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
 import com.blakebr0.mysticalautomation.container.slot.FakeSlot;
 import com.blakebr0.mysticalautomation.container.slot.HiddenSlot;
 import com.blakebr0.mysticalautomation.init.ModMenuTypes;
 import com.blakebr0.mysticalautomation.tileentity.EnchanternatorTileEntity;
 import com.blakebr0.mysticalautomation.util.IFakeRecipeContainer;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.EnchanterRecipes;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
+import com.blakebr0.mysticalautomation.util.QuickMover;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -24,9 +24,9 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.List;
 
@@ -38,10 +38,10 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
     private final Level level;
 
     public EnchanternatorContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, EnchanternatorTileEntity.createInventoryHandler(), EnchanternatorTileEntity.createRecipeInventoryHandler(), new MachineUpgradeItemStackHandler(), new SimpleContainerData(7), buffer.readBlockPos());
+        this(id, playerInventory, EnchanternatorTileEntity.createInventoryHandler(), EnchanternatorTileEntity.createRecipeInventoryHandler(), new UpgradeItemStackHandler(), new SimpleContainerData(ContainerDataBuilder.slots(7)), buffer.readBlockPos());
     }
 
-    public EnchanternatorContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, BaseItemStackHandler recipeInventory, MachineUpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
+    public EnchanternatorContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, BaseItemStackHandler recipeInventory, UpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
         super(ModMenuTypes.ENCHANTERNATOR.get(), id, pos);
         this.data = data;
         this.matrix = recipeInventory;
@@ -81,9 +81,9 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
         this.result = this.addSlot(new HiddenSlot(new ResultContainer(), 0, 0)); // recipe result
 
         this.mover.after(9)
-                .add((slot, stack, player) -> stack.getItem() instanceof IMachineUpgrade, 0, 1) // machine upgrade
+                .add((slot, stack, player) -> MachineUpgrades.isUpgrade(stack), 0, 1) // machine upgrade
                 .add((slot, stack, player) -> this.isRecipeInput(stack), 1, 3) // inputs
-                .add((slot, stack, player) -> stack.getBurnTime(null) > 0, 4, 1) // fuel
+                .add((slot, stack, player) -> ForgeHooks.getBurnTime(stack, null) > 0, 4, 1) // fuel
                 .add((slot, stack, player) -> slot < this.slots.size() - 10, this.slots.size() - 10, 9) // hotbar
                 .add((slot, stack, player) -> slot >= this.slots.size() - 10, this.slots.size() - 37, 27); // inventory
         this.mover.fallback(9, 36);
@@ -153,31 +153,31 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
     }
 
     public int getEnergyStored() {
-        return this.data.get(0);
+        return ContainerDataBuilder.get(this.data, 0);
     }
 
     public int getMaxEnergyStored() {
-        return this.data.get(1);
+        return ContainerDataBuilder.get(this.data, 1);
     }
 
     public int getFuelLeft() {
-        return this.data.get(2);
+        return ContainerDataBuilder.get(this.data, 2);
     }
 
     public int getFuelItemValue() {
-        return this.data.get(3);
+        return ContainerDataBuilder.get(this.data, 3);
     }
 
     public int getProgress() {
-        return this.data.get(4);
+        return ContainerDataBuilder.get(this.data, 4);
     }
 
     public int getOperationTime() {
-        return this.data.get(5);
+        return ContainerDataBuilder.get(this.data, 5);
     }
 
     public int getSelectedLevel() {
-        return this.data.get(6);
+        return ContainerDataBuilder.get(this.data, 6);
     }
 
     private void onRecipeChanged() {
@@ -189,9 +189,10 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
                 this.matrix.getStackInSlot(2)
         );
 
-        var input = new ShapelessCraftingInput(items);
-        var recipe = this.level.getRecipeManager().getRecipeFor(MysticalCompat.RecipeTypes.ENCHANTER.get(), input, this.level).map(RecipeHolder::value).orElse(null);
-        var item = recipe == null ? ItemStack.EMPTY : recipe.assemble(input, this.level.registryAccess());
+        // SkyTekx port: Mystical Agriculture 7 has no RecipeInput, EnchanterRecipes finds and assembles the recipe the
+        // way Mystical Agriculture 8 does
+        var recipe = EnchanterRecipes.find(this.level, items.get(0), items.get(1), items.get(2));
+        var item = recipe == null ? ItemStack.EMPTY : EnchanterRecipes.assemble(recipe, items, this.level.registryAccess(), EnchanterRecipes.getMaxResultEnchantmentLevel(recipe, items));
 
         this.result.set(item);
     }

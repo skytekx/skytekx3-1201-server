@@ -3,12 +3,13 @@ package com.blakebr0.mysticalautomation.container;
 import com.blakebr0.cucumber.container.BaseContainerMenu;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
 import com.blakebr0.cucumber.inventory.slot.BaseItemStackHandlerSlot;
-import com.blakebr0.cucumber.util.QuickMover;
-import com.blakebr0.mysticalagriculture.api.machine.IMachineUpgrade;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
 import com.blakebr0.mysticalautomation.init.ModMenuTypes;
 import com.blakebr0.mysticalautomation.tileentity.FarmerTileEntity;
 import com.blakebr0.mysticalautomation.util.RecipeIngredientCache;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
+import com.blakebr0.mysticalautomation.util.QuickMover;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,17 +18,18 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class FarmerContainer extends BaseContainerMenu {
     private final ContainerData data;
     private final QuickMover mover;
 
     public FarmerContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, FarmerTileEntity.createInventoryHandler(), new MachineUpgradeItemStackHandler(), new SimpleContainerData(9), buffer.readBlockPos());
+        this(id, playerInventory, FarmerTileEntity.createInventoryHandler(), new UpgradeItemStackHandler(), new SimpleContainerData(ContainerDataBuilder.slots(9)), buffer.readBlockPos());
     }
 
-    public FarmerContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, MachineUpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
+    public FarmerContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, UpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
         super(ModMenuTypes.FARMER.get(), id, pos);
         this.data = data;
         this.mover = new QuickMover(this::moveItemStackTo);
@@ -60,11 +62,11 @@ public class FarmerContainer extends BaseContainerMenu {
         }
 
         this.mover.after(14)
-                .add((slot, stack, player) -> stack.getItem() instanceof IMachineUpgrade, 0, 1) // machine upgrade
+                .add((slot, stack, player) -> MachineUpgrades.isUpgrade(stack), 0, 1) // machine upgrade
                 .add((slot, stack, player) -> RecipeIngredientCache.INSTANCE.isValidInput(RecipeIngredientCache.Key.FARMER_SEEDS, stack), 1, 1) // input - seed
                 .add((slot, stack, player) -> RecipeIngredientCache.INSTANCE.isValidInput(RecipeIngredientCache.Key.FARMER_SOIL, stack), 2, 1) // input - soil
                 .add((slot, stack, player) -> RecipeIngredientCache.INSTANCE.isValidInput(RecipeIngredientCache.Key.FARMER_CRUX, stack), 3, 1) // input - crux
-                .add((slot, stack, player) -> stack.getBurnTime(null) > 0, 4, 1) // fuel
+                .add((slot, stack, player) -> ForgeHooks.getBurnTime(stack, null) > 0, 4, 1) // fuel
                 .add((slot, stack, player) -> slot < this.slots.size() - 9, this.slots.size() - 9, 9) // hotbar
                 .add((slot, stack, player) -> slot >= this.slots.size() - 9, this.slots.size() - 36, 27); // inventory
         this.mover.fallback(14, 36);
@@ -102,38 +104,38 @@ public class FarmerContainer extends BaseContainerMenu {
     }
 
     public int getEnergyStored() {
-        return this.data.get(0);
+        return ContainerDataBuilder.get(this.data, 0);
     }
 
     public int getMaxEnergyStored() {
-        return this.data.get(1);
+        return ContainerDataBuilder.get(this.data, 1);
     }
 
     public int getFuelLeft() {
-        return this.data.get(2);
+        return ContainerDataBuilder.get(this.data, 2);
     }
 
     public int getFuelItemValue() {
-        return this.data.get(3);
+        return ContainerDataBuilder.get(this.data, 3);
     }
 
     public int getProgress() {
-        return this.data.get(4);
+        return ContainerDataBuilder.get(this.data, 4);
     }
 
     public int getOperationTime() {
-        return this.data.get(5);
+        return ContainerDataBuilder.get(this.data, 5);
     }
 
     public int getStages() {
-        return this.data.get(6);
+        return ContainerDataBuilder.get(this.data, 6);
     }
 
     public int getStageProgress() {
-        return this.data.get(7);
+        return ContainerDataBuilder.get(this.data, 7);
     }
 
     public int getMaxStageProgress() {
-        return this.data.get(8);
+        return ContainerDataBuilder.get(this.data, 8);
     }
 }

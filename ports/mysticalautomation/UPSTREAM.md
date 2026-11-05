@@ -90,3 +90,90 @@ place with SRG names. That jar is the one to ship.
   47 or newer, Minecraft 1.20.1, Cucumber 7.0.16 up to 8 and Mystical Agriculture 7.0.24 up to 8,
   each loaded before this mod.
 - Ignored files: the fork's `.gitignore` also ignores `*.log` and `.mixin.out`.
+
+## Port to Forge 1.20.1
+
+The port keeps upstream's packages, class names, registry ids, NBT keys, slot layouts, machine numbers
+and recipe ids. Lines that differ from upstream carry a `SkyTekx port` comment that names the reason.
+
+### API translation
+
+| Upstream (NeoForge 1.21.1) | Port (Forge 47, Cucumber 7.0.16, Mystical Agriculture 7.0.24) |
+|---|---|
+| `DeferredRegister` with `DeferredHolder` | Forge `DeferredRegister` with `RegistryObject` |
+| Block capabilities in `RegisterCapabilityHandler` | `BaseMachineTileEntity#getCapability` with `LazyOptional`s, the same sides (UP, DOWN, every other side like NORTH) |
+| `CustomPacketPayload` and `StreamCodec`, registrar version "1" | A `SimpleChannel` `mysticalautomation:main` with protocol version "1", strict on both sides |
+| `RegisterMenuScreensEvent` | `MenuScreens.register` in `FMLClientSetupEvent`, registered on the client dist only |
+| `IContainerFactory` menus, `Player#openMenu(provider, pos)` | `IForgeMenuType.create` and `NetworkHooks.openScreen` |
+| `ModConfigSpec`, config type STARTUP | `ForgeConfigSpec`, config type COMMON, same file name `mysticalautomation-common.toml` |
+| `useItemOn`, `ItemInteractionResult` | `Block#use`, `InteractionResult` |
+| `loadAdditional` and `saveAdditional` with `HolderLookup.Provider` | `load` and `saveAdditional` without it. A missing `Energy` tag leaves the energy at 0 instead of throwing |
+| `Item.TooltipContext` | `BlockGetter`, the tooltip method marked `@OnlyIn(Dist.CLIENT)` as in Mystical Agriculture 7 |
+| `ItemStack#getBurnTime`, `Math.clamp` | `ForgeHooks#getBurnTime`, `Mth#clamp` |
+| `ResourceLocation.fromNamespaceAndPath`, `DeferredHolder.create` lookups | `new ResourceLocation`, `RegistryObject.create` lookups |
+| `RecipeHolder`, `RecipeInput`, `CraftingInput` | Recipes that carry their id, `Container` inputs. The Crafter matches vanilla crafting recipes through `inventory/RecipeGrid`, a `CraftingContainer` view of its ghost grid |
+| Codec and StreamCodec of `FarmerRecipe` | `RecipeSerializer#fromJson`, `fromNetwork` and `toNetwork`. The JSON keys stay upstream's |
+
+### Mystical Agriculture 7 and Cucumber 7 in place of 8
+
+- Machine upgrades: the machines implement Mystical Agriculture 7's `util.IUpgradeableMachine` and
+  keep its `container.inventory.UpgradeItemStackHandler`, so the Machine Upgrades of 7.0.24 apply to
+  them with a right click and fit their upgrade slot. Mystical Agriculture 8 moved these classes to
+  `api.machine` and added `MachineUpgradeTier#getOperationTime`, `getFuelUsage` and
+  `getFuelCapacity`. The port scales the base values in `util/MachineUpgrades` the way Mystical
+  Agriculture 7's own Reprocessor does. No Mystical Agriculture 8 code is copied.
+- Altar recipes: Mystical Agriculture 7's `IInfusionRecipe` and `IAwakeningRecipe` have no
+  `getAltarIngredient`. Their `getIngredients` already start with the altar ingredient, the list that
+  upstream builds from both methods, so the Altarnators count their inputs from it unchanged. The
+  ghost grid goes to the recipe as a nine slot container with the altar item in slot 0, which
+  Mystical Agriculture 7 tests before it matches the rest in any order.
+- Enchanter recipes: Mystical Agriculture 7's `IEnchanterRecipe` lacks `getCount`,
+  `getMaxResultEnchantmentLevel` and the `assemble` and `getRemainingItems` variants with a level, and
+  its recipes match their two ingredients in a fixed order. `util/EnchanterRecipes` rebuilds these
+  from `getIngredientCounts` and the recipe's own `assemble`, and looks the recipe up with the two
+  ingredients in either order, as version 8 matches them.
+- Cucumber 8 classes that Cucumber 7 lacks: `QuickMover` (copied unchanged to
+  `com.blakebr0.mysticalautomation.util`), `ContainerDataBuilder` (see below), `CachedRecipe` for any
+  input type (`util/CachedRecipe`, since Cucumber 7's takes only `Recipe<Container>`),
+  `SidedInventoryWrapper` (Cucumber 7's `SidedItemStackHandlerWrapper` takes its place), the Clearable
+  part of `BaseInventoryTileEntity` with `clearAdditional` (`tileentity/BaseMachineTileEntity`),
+  `StackHelper#shrinkAndRetainContainer` (a private copy in the Enchanternator), `FuelWidget` and
+  `ProgressArrowWidget` (see below) and `RecipeManagerLoadedEvent`. The ingredient cache of the
+  Farmer slots is built on `TagsUpdatedEvent` with the cause `SERVER_DATA_LOAD`, as Mystical
+  Agriculture 7 builds its own, from the recipe manager that Cucumber's `RecipeHelper` took from the
+  same reload. The copies live in this mod's packages, because Forge's module layer rejects packages
+  split across two jars. `LICENSE-Cucumber` carries their MIT notice.
+- Tooltips: Mystical Agriculture 7 has no `tooltip.mysticalagriculture.chance`,
+  `machine_fuel_usage` or `machine_scan_fuel_usage`. The port uses the keys
+  `tooltip.mysticalautomation.chance`, `machine_fuel_usage` and `machine_scan_fuel_usage` with the
+  texts of Mystical Agriculture 8 in every language file of this mod. `LICENSE-MysticalAgriculture`
+  carries the MIT notice for these strings.
+- Dynamic Farmer recipes: Mystical Agriculture 7's API has no `getConfigValues`, so the chance of
+  Fertilized Essence comes from its config value `FERTILIZED_ESSENCE_DROP_CHANCE` directly. Cucumber
+  7's `RecipeManagerLoadingEvent` adds the recipes, as upstream.
+
+### Minecraft 1.20.1 limits
+
+- Container data: 1.20.1 sends container data slots as shorts (`ClientboundContainerSetDataPacket`
+  writes `writeShort`, checked in the Forge 47.4.0 jar), and Forge 47 has no NeoForge style payload
+  for larger values. Energy, capacity and fuel of the machines exceed 32767, so the port's
+  `ContainerDataBuilder` sends every value as two 16 bit halves, and the menus join them again.
+- Fuel and arrow widgets: Cucumber 8 draws them from its widgets texture, whose flame and arrow sprites
+  are pixel copies of the vanilla furnace sprites (compared with the vanilla 1.20.1 `furnace.png`,
+  no pixel differs in the lit flame and the full arrow). Cucumber 7's widgets texture has neither.
+  The GUI backgrounds of this mod already show the unlit flame and the empty arrow (no pixel differs
+  from Cucumber 8's empty sprites), so the port's widgets draw only the lit part, straight from the
+  vanilla furnace texture at runtime. No vanilla texture is copied into the jar. Cucumber 7's energy
+  bar takes an `IEnergyStorage`, which `EnergyStorageView` builds from the synced values, and the
+  port makes it unclickable, as Cucumber 8 does.
+- Farmer input: a 1.21 `CraftingInput` drops empty rows at its end, so upstream compares its size
+  with the number of ingredients. The 1.20.1 container keeps the three slots, so `FarmerRecipe`
+  counts the filled ones. It also reports `isSpecial`, which keeps the Farmer recipes out of the
+  vanilla recipe book, which has no category for them and would log a warning for each.
+
+### Left out
+
+- CraftTweaker integration (`compat/crafttweaker/FarmerCrafting.java`) and the CraftTweaker test
+  scripts and test datapack under `src/test`. CraftTweaker is not in the pack, the build runs no
+  game tests, and the test datapack is in the 1.21 format. Datapacks and KubeJS (`event.custom`) add
+  Farmer recipes with the JSON form above.

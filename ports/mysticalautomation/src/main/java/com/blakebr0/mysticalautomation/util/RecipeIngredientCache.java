@@ -1,19 +1,19 @@
 package com.blakebr0.mysticalautomation.util;
 
-import com.blakebr0.cucumber.event.RecipeManagerLoadedEvent;
 import com.blakebr0.cucumber.helper.RecipeHelper;
 import com.blakebr0.mysticalautomation.MysticalAutomation;
 import com.blakebr0.mysticalautomation.init.ModRecipeTypes;
+import com.blakebr0.mysticalautomation.network.NetworkHandler;
 import com.blakebr0.mysticalautomation.network.payload.ReloadIngredientCachePayload;
 import com.google.common.base.Stopwatch;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,19 +39,24 @@ public final class RecipeIngredientCache {
 
         // send the new caches to the client
         if (player != null) {
-            PacketDistributor.sendToPlayer(player, payload);
+            NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), payload);
         } else {
-            PacketDistributor.sendToAllPlayers(payload);
+            NetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), payload);
         }
     }
 
+    // SkyTekx port: Cucumber 7 has no RecipeManagerLoadedEvent. As Mystical Agriculture 7 does for its own
+    // ingredient cache, the cache is built once the tags of the new server data are bound, from the recipe manager
+    // that Cucumber's RecipeHelper took from the same reload
     @SubscribeEvent
-    public void onRecipeManagerLoaded(RecipeManagerLoadedEvent event) {
+    public void onTagsUpdated(TagsUpdatedEvent event) {
+        if (event.getUpdateCause() != TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD)
+            return;
+
         var stopwatch = Stopwatch.createStarted();
-        var manager = event.getRecipeManager();
 
         this.caches.clear();
-        this.cacheFarmerRecipes(manager);
+        this.cacheFarmerRecipes();
 
         MysticalAutomation.LOGGER.info("Recipe ingredient caching done in {} ms", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS));
     }
@@ -67,14 +72,17 @@ public final class RecipeIngredientCache {
         return cache != null && cache.stream().anyMatch(i -> i.test(stack));
     }
 
-    private void cacheFarmerRecipes(RecipeManager manager) {
+    private void cacheFarmerRecipes() {
         this.caches.put(Key.FARMER_SEEDS, new HashMap<>());
         this.caches.put(Key.FARMER_SOIL, new HashMap<>());
         this.caches.put(Key.FARMER_CRUX, new HashMap<>());
 
-        var recipes = RecipeHelper.byType(manager, ModRecipeTypes.FARMER.get());
+        if (RecipeHelper.getRecipeManager() == null)
+            return;
+
+        var recipes = RecipeHelper.getRecipes(ModRecipeTypes.FARMER.get()).values();
         for (var recipe : recipes) {
-            var ingredients = recipe.value().getIngredients();
+            var ingredients = recipe.getIngredients();
             for (var i = 0; i < 3; i++) {
                 var ingredient = ingredients.get(i);
                 var items = new HashSet<>();

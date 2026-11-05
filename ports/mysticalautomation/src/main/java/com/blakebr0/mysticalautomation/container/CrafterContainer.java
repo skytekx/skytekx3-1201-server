@@ -4,14 +4,16 @@ import com.blakebr0.cucumber.container.BaseContainerMenu;
 import com.blakebr0.cucumber.helper.StackHelper;
 import com.blakebr0.cucumber.inventory.BaseItemStackHandler;
 import com.blakebr0.cucumber.inventory.slot.BaseItemStackHandlerSlot;
-import com.blakebr0.cucumber.util.QuickMover;
-import com.blakebr0.mysticalagriculture.api.machine.IMachineUpgrade;
-import com.blakebr0.mysticalagriculture.api.machine.MachineUpgradeItemStackHandler;
+import com.blakebr0.mysticalagriculture.container.inventory.UpgradeItemStackHandler;
 import com.blakebr0.mysticalautomation.container.slot.FakeSlot;
 import com.blakebr0.mysticalautomation.container.slot.HiddenSlot;
 import com.blakebr0.mysticalautomation.init.ModMenuTypes;
+import com.blakebr0.mysticalautomation.inventory.RecipeGrid;
 import com.blakebr0.mysticalautomation.tileentity.CrafterTileEntity;
 import com.blakebr0.mysticalautomation.util.IFakeRecipeContainer;
+import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.MachineUpgrades;
+import com.blakebr0.mysticalautomation.util.QuickMover;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,10 +24,10 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class CrafterContainer extends BaseContainerMenu implements IFakeRecipeContainer {
     private final ContainerData data;
@@ -35,10 +37,10 @@ public class CrafterContainer extends BaseContainerMenu implements IFakeRecipeCo
     private final Level level;
 
     public CrafterContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, CrafterTileEntity.createInventoryHandler(), CrafterTileEntity.createRecipeInventoryHandler(), new MachineUpgradeItemStackHandler(), new SimpleContainerData(6), buffer.readBlockPos());
+        this(id, playerInventory, CrafterTileEntity.createInventoryHandler(), CrafterTileEntity.createRecipeInventoryHandler(), new UpgradeItemStackHandler(), new SimpleContainerData(ContainerDataBuilder.slots(6)), buffer.readBlockPos());
     }
 
-    public CrafterContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, BaseItemStackHandler recipeInventory, MachineUpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
+    public CrafterContainer(int id, Inventory playerInventory, BaseItemStackHandler inventory, BaseItemStackHandler recipeInventory, UpgradeItemStackHandler upgradeInventory, ContainerData data, BlockPos pos) {
         super(ModMenuTypes.CRAFTER.get(), id, pos);
         this.data = data;
         this.matrix = recipeInventory;
@@ -80,9 +82,9 @@ public class CrafterContainer extends BaseContainerMenu implements IFakeRecipeCo
         this.result = this.addSlot(new HiddenSlot(new ResultContainer(), 0, 0)); // recipe result
 
         this.mover.after(21)
-                .add((slot, stack, player) -> stack.getItem() instanceof IMachineUpgrade, 0, 1) // machine upgrade
+                .add((slot, stack, player) -> MachineUpgrades.isUpgrade(stack), 0, 1) // machine upgrade
                 .add((slot, stack, player) -> this.isRecipeInput(stack), 1, 9) // inputs
-                .add((slot, stack, player) -> stack.getBurnTime(null) > 0, 10, 1) // fuel
+                .add((slot, stack, player) -> ForgeHooks.getBurnTime(stack, null) > 0, 10, 1) // fuel
                 .add((slot, stack, player) -> slot < this.slots.size() - 10, this.slots.size() - 10, 9) // hotbar
                 .add((slot, stack, player) -> slot >= this.slots.size() - 10, this.slots.size() - 37, 27); // inventory
         this.mover.fallback(21, 36);
@@ -152,32 +154,33 @@ public class CrafterContainer extends BaseContainerMenu implements IFakeRecipeCo
     }
 
     public int getEnergyStored() {
-        return this.data.get(0);
+        return ContainerDataBuilder.get(this.data, 0);
     }
 
     public int getMaxEnergyStored() {
-        return this.data.get(1);
+        return ContainerDataBuilder.get(this.data, 1);
     }
 
     public int getFuelLeft() {
-        return this.data.get(2);
+        return ContainerDataBuilder.get(this.data, 2);
     }
 
     public int getFuelItemValue() {
-        return this.data.get(3);
+        return ContainerDataBuilder.get(this.data, 3);
     }
 
     public int getProgress() {
-        return this.data.get(4);
+        return ContainerDataBuilder.get(this.data, 4);
     }
 
     public int getOperationTime() {
-        return this.data.get(5);
+        return ContainerDataBuilder.get(this.data, 5);
     }
 
     private void onRecipeChanged() {
-        var input = this.matrix.toCraftingInput(3, 3);
-        var recipe = this.level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, this.level).map(RecipeHolder::value).orElse(null);
+        // SkyTekx port: a CraftingContainer view of the grid for the 1.21 CraftingInput
+        var input = new RecipeGrid(this.matrix, 3, 3);
+        var recipe = this.level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, this.level).orElse(null);
         var item = recipe == null ? ItemStack.EMPTY : recipe.assemble(input, this.level.registryAccess());
 
         this.result.set(item);

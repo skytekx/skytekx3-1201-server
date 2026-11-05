@@ -97,6 +97,14 @@ public class ConduitBlockEntity extends EnderBlockEntity {
     private final ConduitBundle bundle;
     @UseOnly(LogicalSide.CLIENT) private ConduitBundle clientBundle;
 
+    /**
+     * The facade state the client saw at the last sync. The server of 1.20.1 sends a light change alone only to players at the edge of
+     * their view distance (ChunkHolder.broadcastChanges), so the client checks the light itself when the facade changes.
+     */
+    @UseOnly(LogicalSide.CLIENT)
+    @Nullable
+    private BlockState lastClientFacade;
+
     private UpdateState checkConnection = UpdateState.NONE;
 
     /**
@@ -128,6 +136,12 @@ public class ConduitBlockEntity extends EnderBlockEntity {
                 addClientFacade(level.dimension(), worldPosition, facadeState.get());
             } else {
                 removeClientFacade(level.dimension(), worldPosition);
+            }
+
+            @Nullable BlockState facade = facadeState.orElse(null);
+            if (facade != lastClientFacade) {
+                lastClientFacade = facade;
+                level.getLightEngine().checkBlock(worldPosition);
             }
         }
     }

@@ -5,6 +5,7 @@ import com.enderio.api.conduit.facade.FacadeType;
 import com.enderio.base.common.config.BaseConfig;
 import com.enderio.base.common.init.EIOCapabilities;
 import com.enderio.base.common.tag.EIOTags;
+import com.enderio.conduits.client.ConduitBlockClientExtensions;
 import com.enderio.conduits.common.conduit.ConduitBlockItem;
 import com.enderio.conduits.common.conduit.ConduitBundle;
 import com.enderio.conduits.common.conduit.ConduitGraphObject;
@@ -40,6 +41,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -67,12 +69,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber
 public class ConduitBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
@@ -178,6 +182,11 @@ public class ConduitBlock extends Block implements EntityBlock, SimpleWaterlogge
         }
 
         return super.getOcclusionShape(state, level, pos);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientBlockExtensions> consumer) {
+        consumer.accept(ConduitBlockClientExtensions.INSTANCE);
     }
 
     private static boolean areFacadesVisible(CollisionContext context) {
@@ -689,12 +698,27 @@ public class ConduitBlock extends Block implements EntityBlock, SimpleWaterlogge
         if (conduit != null) {
             Optional<BlockState> facadeState = conduit.getBundle().getFacadeState();
             if (facadeState.isPresent()) {
-                // The light of the facade's state alone, so the facade block reads nothing from this position off the main thread.
-                return facadeState.get().getLightEmission();
+                return getFacadeLight(facadeState.get());
             }
         }
 
         return super.getLightEmission(state, level, pos);
+    }
+
+    /**
+     * The light of the facade's state alone. Blocks such as enlightened fused quartz emit through the position aware getLightEmission and
+     * set no light level in their properties, so ask that one too, but against an empty world, so the facade block reads nothing from the
+     * level off the main thread.
+     */
+    private static int getFacadeLight(BlockState facade) {
+        int light = facade.getLightEmission();
+        try {
+            light = Math.max(light, facade.getLightEmission(EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
+        } catch (RuntimeException e) {
+            // A block that expects its own block entity there keeps the light of its properties, on the light thread too.
+        }
+
+        return light;
     }
 
     @Override
@@ -730,6 +754,20 @@ public class ConduitBlock extends Block implements EntityBlock, SimpleWaterlogge
         }
 
         return resistance;
+    }
+
+    /**
+     * A hardened facade also keeps the wither and the ender dragon from breaking the bundle, so its tooltip line "resists breaking" holds
+     * for them. The mining time stays that of the conduit, as upstream.
+     */
+    @Override
+    public boolean canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
+        if (level.getExistingBlockEntity(pos) instanceof ConduitBlockEntity conduit
+            && conduit.getBundle().getFacadeType().map(FacadeType::isBlastResistant).orElse(false)) {
+            return false;
+        }
+
+        return super.canEntityDestroy(state, level, pos, entity);
     }
 
     @Override

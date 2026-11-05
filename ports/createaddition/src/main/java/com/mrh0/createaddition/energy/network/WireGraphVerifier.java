@@ -18,6 +18,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -100,8 +101,16 @@ final class WireGraphVerifier {
 			long chunk = readQueue.dequeueLong();
 			if (!waitingForDisk.containsKey(chunk) || !readsInFlight.add(chunk)) continue;
 			// Reads the chunk as saved (or queued for saving) without loading it or adding a ticket.
-			level.getChunkSource().chunkMap.read(new ChunkPos(chunk))
-					.whenCompleteAsync((tag, error) -> onRead(chunk, tag, error), level.getServer());
+			MinecraftServer server = level.getServer();
+			level.getChunkSource().chunkMap.read(new ChunkPos(chunk)).whenCompleteAsync((tag, error) -> {
+				/*
+				 * SkyTekx: once the server is stopped, MinecraftServer.execute runs a task inline on the
+				 * calling thread, here the IO worker, while the server thread saves the graph. Drop such
+				 * a late answer: the graph is closing, and the next boot checks the position again.
+				 */
+				if (!server.isSameThread()) return;
+				onRead(chunk, tag, error);
+			}, server);
 		}
 	}
 
@@ -169,12 +178,12 @@ final class WireGraphVerifier {
 		}
 
 		/*
-		 * SkyTekx: only a complete saved chunk counts as an answer. Below 2.1.6, skytekx-compat lets
-		 * IOWorker.loadAsync hand out the very tag that waits for its write, and a chunk load on a worker
-		 * can put and remove __context in that tag while it is read here. A lookup that misses there
-		 * would mark a real wire node missing, and pruneDanglingWires would then cut the wire at its
-		 * loaded end. A tag without the full status or without its block entity list is left
-		 * unresolved instead, so the graph keeps what it knows.
+		 * SkyTekx: only a complete saved chunk counts as an answer. Vanilla 1.20.1 IOWorker.loadAsync
+		 * hands out the very tag that waits for its write (skytekx-compat 2.1.6 hands out a copy, older
+		 * versions do not), and a chunk load on a worker can put and remove __context in that tag while
+		 * it is read here. A lookup that misses there would mark a real wire node missing, and
+		 * pruneDanglingWires would then cut the wire at its loaded end. A tag without the full status or
+		 * without its block entity list is left unresolved instead, so the graph keeps what it knows.
 		 */
 		boolean isReadable() {
 			return !tag.contains("Level", Tag.TAG_COMPOUND)

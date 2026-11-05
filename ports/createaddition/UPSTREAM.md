@@ -241,9 +241,13 @@ its item here, and the NOTICE in the jar sums them up.
     field `instances`, which AllTheLeaks 1.1.1 links. The translation to 1.20.1 uses
     `DimensionDataStorage.computeIfAbsent(load, create, name)`, `SavedData.save(CompoundTag)`,
     `TickEvent.LevelTickEvent` in phase `START` and the Forge 47 `ChunkEvent.Load` of a `LevelChunk`.
-    No Sable code is ported. One local change: the verifier accepts a saved chunk as an answer only
-    with the status `minecraft:full` and a `block_entities` list, and a lookup that throws leaves the
-    position unresolved. A misread tag can then never mark a real wire end missing.
+    No Sable code is ported. Two local changes in the verifier. It accepts a saved chunk as an answer
+    only with the status `minecraft:full` and a `block_entities` list, and a lookup that throws leaves
+    the position unresolved, so a misread tag can never mark a real wire end missing. It also drops
+    the answer of a chunk read that does not arrive on the server thread. Once the server is stopped,
+    `MinecraftServer.execute` runs a task inline on the calling thread (`scheduleExecutables` is false
+    after `isStopped`), so a read that completes during `/stop` would change the graph on the IO worker
+    while the server thread saves it. The next boot checks such a position again.
 15. Command: `commands/WireGraphCommand.java` of `126ed38` adds `/cca_wires stats`, `verify` and
     `rebuild` at permission level 2, registered in `CreateAddition.onRegisterCommandEvent` next to
     `CCApiCommand`. Each action works on the graph of the dimension the command runs in.
@@ -268,12 +272,12 @@ its item here, and the NOTICE in the jar sums them up.
 19. Connector capability retry: the 1.20.1 form of `d239617` ("Connector cache logic"). Upstream moved
     the connector's neighbour lookup to NeoForge's `BlockCapabilityCache`, which has no Forge 1.20.1
     counterpart. The fork keeps its `LazyOptional` with the invalidation listener, and
-    `AbstractConnectorBlockEntity.lazyTick` looks the neighbour up again every 10 ticks while the
-    connector has no external storage and the neighbour's chunk is loaded. Before, a connector whose
-    first lookup found no storage stayed without it until a block update. On Forge 1.20.1 the
-    neighbour of a ticking connector is always in a chunk at full level, and `getBlockEntity` waits
-    for it, so in practice this is a neighbour whose block entity or capability is not ready at the
-    first lookup (found by the migration test).
+    `AbstractConnectorBlockEntity.lazyTick` looks the neighbour up again every 10 ticks while a
+    connector in push or pull mode has no external storage and the neighbour's chunk is loaded. Before,
+    a connector whose first lookup found no storage stayed without it until a block update. On Forge
+    1.20.1 the neighbour of a ticking connector is always in a chunk at full level, and `getBlockEntity`
+    waits for it, so in practice this is a neighbour whose block entity or capability is not ready at
+    the first lookup (found by the migration test).
 20. Graph check at load (local change, found by the migration test): `WireGraph.load` also queues every
     saved node for a check against the world (`verifyAll`), not only the far ends the graph has never
     seen. Upstream trusts its save until a node's chunk loads. On a test world that went back to 1.3.3

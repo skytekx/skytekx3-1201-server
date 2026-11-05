@@ -297,13 +297,15 @@ public abstract class AbstractConnectorBlockEntity extends SmartBlockEntity impl
 	 * stays empty when the neighbour had no block entity or no energy capability yet at the last
 	 * lookup (a block entity that sets up its capability later, or a chunk that was not loaded), and
 	 * nothing sends a neighbour update to try again. So while there is no external storage, look
-	 * again every lazy tick (10 ticks, only in push and pull mode), and only if the neighbour's chunk
-	 * is loaded, so this never loads a chunk. The invalidation listener stays.
+	 * again every lazy tick (10 ticks, only in push and pull mode, the only modes that use it), and
+	 * only if the neighbour's chunk is loaded, so this never loads a chunk. The invalidation listener
+	 * stays.
 	 */
 	@Override
 	public void lazyTick() {
 		super.lazyTick();
 		if (level == null || level.isClientSide() || external.isPresent()) return;
+		if (!getMode().isActive()) return;
 		if (!level.isLoaded(worldPosition.relative(getBlockState().getValue(AbstractConnectorBlock.FACING)))) return;
 		updateExternalEnergyStorage();
 	}

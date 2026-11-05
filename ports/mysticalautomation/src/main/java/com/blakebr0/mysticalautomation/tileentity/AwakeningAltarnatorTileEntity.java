@@ -13,6 +13,7 @@ import com.blakebr0.mysticalautomation.container.AwakeningAltarnatorContainer;
 import com.blakebr0.mysticalautomation.init.ModTileEntities;
 import com.blakebr0.mysticalautomation.util.CachedRecipe;
 import com.blakebr0.mysticalautomation.util.ContainerDataBuilder;
+import com.blakebr0.mysticalautomation.util.GhostGridInputs;
 import com.blakebr0.mysticalautomation.util.MachineUpgrades;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +34,6 @@ import net.minecraftforge.common.ForgeHooks;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class AwakeningAltarnatorTileEntity extends BaseMachineTileEntity implements MenuProvider, IUpgradeableMachine {
@@ -179,11 +180,11 @@ public class AwakeningAltarnatorTileEntity extends BaseMachineTileEntity impleme
             if (recipe != null) {
                 var inputs = tile.getInputResult(recipe);
                 if (inputs.hasAll) {
-                    var inventory = tile.toCraftingInput();
-                    var result = recipe.assemble(inventory, level.registryAccess());
+                    // SkyTekx: the result comes from the items taken (getInputResult), not from the ghost grid
+                    var result = recipe.assemble(inputs.craftingInput, level.registryAccess());
                     var output = tile.inventory.getStackInSlot(OUTPUT_SLOT);
 
-                    if (StackHelper.canCombineStacks(result, output)) {
+                    if (!result.isEmpty() && StackHelper.canCombineStacks(result, output)) {
                         tile.isRunning = true;
                         tile.progress++;
                         tile.energy.extractEnergy(tile.getFuelUsage(), false);
@@ -287,11 +288,6 @@ public class AwakeningAltarnatorTileEntity extends BaseMachineTileEntity impleme
 
     private InputResult getInputResult(IAwakeningRecipe recipe) {
         var amounts = new int[INPUT_SLOTS.length];
-        var remaining = new int[INPUT_SLOTS.length];
-
-        for (int i = 0; i < INPUT_SLOTS.length; i++) {
-            remaining[i] = this.inventory.getStackInSlot(INPUT_SLOTS[i]).getCount();
-        }
 
         // SkyTekx port: Mystical Agriculture 7's AwakeningRecipe#getIngredients already starts with the altar
         // ingredient, followed by essences and pedestal items in turn, the list upstream builds from
@@ -299,9 +295,14 @@ public class AwakeningAltarnatorTileEntity extends BaseMachineTileEntity impleme
         var ingredients = recipe.getIngredients();
 
         var essences = recipe.getEssences();
-        var required = 0;
+        var needs = new int[INPUT_SLOTS.length];
         var essence = 0;
 
+        // SkyTekx: upstream tested the real inputs with Ingredient#test, which ignores NBT, and assembled the result
+        // from the ghost grid, so an enchanted ghost on the altar slot over a plain input gave enchanted output with
+        // the recipes that transfer NBT. Each ingredient now claims the ghost slot that shows it, the one at its own
+        // index first, and gives that slot its count. Every filled ghost slot then takes real items that equal it,
+        // item and NBT, and the result comes from copies of the items taken (GhostGridInputs)
         for (int i = 0; i < ingredients.size(); i++) {
             var ingredient = ingredients.get(i);
             if (ingredient.isEmpty())
@@ -315,20 +316,46 @@ public class AwakeningAltarnatorTileEntity extends BaseMachineTileEntity impleme
                 essence++;
             }
 
-            required += amount;
+            var slot = this.findGhostSlot(ingredient, i, needs);
+            if (slot < 0)
+                return new InputResult(false, amounts, null);
 
-            for (int j = 0; j < INPUT_SLOTS.length; j++) {
-                var slot = INPUT_SLOTS[j];
-                var stack = this.inventory.getStackInSlot(slot);
-                if (remaining[j] >= amount && ingredient.test(stack)) {
-                    remaining[j] -= amount;
-                    amounts[j] += amount;
-                    break;
-                }
-            }
+            needs[slot] = amount;
         }
 
-        return new InputResult(Arrays.stream(amounts).sum() == required, amounts);
+        // a filled ghost slot that no ingredient claimed would take nothing, so the grid does not fit the recipe
+        for (int p = 0; p < needs.length; p++) {
+            if (needs[p] == 0 && !this.recipeInventory.getStackInSlot(p).isEmpty())
+                return new InputResult(false, amounts, null);
+        }
+
+        var taken = GhostGridInputs.take(this.inventory, INPUT_SLOTS, this.recipeInventory, needs);
+        if (!taken.hasAll())
+            return new InputResult(false, taken.amounts(), null);
+
+        var input = taken.taken().asRecipeWrapper();
+        if (!recipe.matches(input, this.level))
+            return new InputResult(false, taken.amounts(), null);
+
+        return new InputResult(true, taken.amounts(), input);
+    }
+
+    // SkyTekx: the ghost slot for an ingredient, the one at the ingredient's index when it shows the ingredient (the
+    // layout of the JEI recipe transfer), else the first free one that does, -1 for none
+    private int findGhostSlot(Ingredient ingredient, int index, int[] needs) {
+        if (index < needs.length && needs[index] == 0) {
+            var ghost = this.recipeInventory.getStackInSlot(index);
+            if (!ghost.isEmpty() && ingredient.test(ghost))
+                return index;
+        }
+
+        for (int p = 0; p < needs.length; p++) {
+            var ghost = this.recipeInventory.getStackInSlot(p);
+            if (needs[p] == 0 && !ghost.isEmpty() && ingredient.test(ghost))
+                return p;
+        }
+
+        return -1;
     }
 
     @Override
@@ -343,5 +370,5 @@ public class AwakeningAltarnatorTileEntity extends BaseMachineTileEntity impleme
         return false;
     }
 
-    private record InputResult(boolean hasAll, int[] amounts) { }
+    private record InputResult(boolean hasAll, int[] amounts, @Nullable Container craftingInput) { }
 }

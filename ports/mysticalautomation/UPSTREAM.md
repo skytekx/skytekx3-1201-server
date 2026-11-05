@@ -247,6 +247,25 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
   second check is upstream's own fix `7a481dc` of the 26.1 line ("Fix Crafter working if there are
   no required inputs from input display"), which the 1.21 line never got. Special recipes keep items
   back through `getRemainingItems`, which the Crafter does not use, so they stay out entirely.
+- Ghost grids and NBT: the Crafter and both Altarnators tested their real inputs only with
+  `Ingredient#test`, which ignores NBT, and assembled the result from the ghost grid. The check that
+  a real input equals its ghost ran only when the item went in. A player could set a plain ghost,
+  insert the plain item and then put an enchanted or otherwise augmented copy into the ghost slot,
+  and every recipe that copies NBT onto its result gave new output with the ghost's NBT. With
+  `transfer_nbt` set, Mystical Agriculture 7.0.24 has 75 `cucumber:shaped_transfer_damage` gear
+  recipes, 16 awakening and 2 infusion recipes, and Mystical Agradditions 7.0.12 one awakening
+  recipe (counted in their jars), next to upgrade recipes of other pack mods that copy data such
+  as contents. The test server of 2026-11-05 showed it: plain Inferium Leggings and a ghost with
+  Protection IV gave Prudentium Leggings with Protection IV and used up the plain pair.
+  Upstream has the same design. Now `util/GhostGridInputs` lets every filled ghost slot take real
+  items that equal it, item and NBT (`StackHelper#areStacksEqual`), counts a real input only while it
+  still equals the ghost of its own slot, and hands copies of the items taken, in the layout of the
+  ghost grid, to `Recipe#matches` and `Recipe#assemble`. As upstream, the items for one ghost slot
+  may come from any input slot that holds them, so one stack in the first slot, the one a hopper
+  fills first, still feeds the whole grid. The Awakening Altarnator gives each ingredient the ghost
+  slot that shows it, the one at the ingredient's index first, and asks that slot for the essence
+  count. Unlike upstream, a ghost grid with two variants of one tag (oak and birch planks for any
+  planks) takes each variant as shown. A result that comes out empty takes nothing.
 
 ### Left out
 

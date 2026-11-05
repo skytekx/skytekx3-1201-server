@@ -82,15 +82,26 @@ and ran a full build, whose `-all` jar has the SHA-1 `b1420e5029db8eca1f46c7962b
 compat scan still finds 0 missing symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks. A
 dev `runServer` with two temporary test classes, never committed, reached `Done` and passed 66 of 66
 checks (workflow scratchpad, `bp2/enderio/b5int/runserver-int.log`). Nobody has joined with a client
-or loaded a copy of the live world yet, see the end of [Filters](#filters). The other content bundles
-are not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
+or loaded a copy of the live world yet, see the end of [Filters](#filters).
+
+The obelisks are the second bundle of the machine lane, done in 75fc204 (the obelisk framework),
+d31b90a (the inhibitor), ca6d3c8 (the relocator), 831c82c (the attractor) and 21ed590 (review fixes).
+The integration compiled every source set with no new warning. The porter's `runData` changed nothing
+beyond the new obelisk files and the lang keys, and its full build gave an `-all` jar with the SHA-1
+`ce74a4420b683b12c2d67c6ce893f61621eedabc`, for which the compat scan finds 0 missing symbols for
+EnderIO Legacy Machines, Exchangers and AllTheLeaks. Two dev `runServer` boots with a temporary test
+class, never committed, reached `Done` and passed 47 checks with no failure, the second one on the
+saved world with all four obelisks (workflow scratchpad, `bp2/enderio/b3/runserver8.log` line 5967 and
+`runserver9.log` line 5512). Nobody has joined with a client or run the Arclight tests yet, see the
+end of [Obelisks](#obelisks). The other content bundles are not ported yet. The pack still ships the
+6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Fork infrastructure (`eio-b0-fork-bootstrap`) | Network protocol bump, JSON data maps for 1.20.1, optional Curios support | 10 | The vendored base | Done in 4ed49f3, 99c8d43, ea14a7e and 18ad520. The vendor, version and license work of the old feature `fork-bootstrap` is done in 971a11e, 474be5c and ed6cbaa |
 | Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Done in e7f5882, 9ba17c7, 5c6ee6e, 959252f, adec8f3, 82a2e85, 839e3be and 260c7bb |
 | Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Done in 4e72ae0, 0d2f09e and 0c1d913 |
-| Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Planned |
+| Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Done in 75fc204, d31b90a, ca6d3c8, 831c82c and 21ed590 |
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Planned |
 | Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Done in d956a04, 1b8b443, e24735f and 1a3a27b |
 | Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Planned |
@@ -319,6 +330,44 @@ client.
 - The attractor obelisk (461cf0511, 65fe4d639, ef97d54da, d061a0bb6) pulls filtered mobs and skips
   bosses unless the config allows them. Its fake player is created on the first server tick, never on
   load, because a load time creation crashed next to Flux Networks upstream (ef97d54da).
+- The framework of 75fc204 makes `ObeliskBlockEntity` generic over the obelisk class with an abstract
+  manager hook, a max range that can scale with the capacitor, a per tick upkeep scaled by the range
+  and the new machine state `NO_ENTITY_FILTER` (461cf0511). A new server to client data slot syncs the
+  max range and sits before the range slot, which shifts the runtime slot indices of the aversion
+  obelisk. Its saved data keeps the 6.x keys.
+- The inhibitor and the relocator have a max range of 16 times the capacitor level, the attractor 8
+  times. The range starts unset and grows to the max on the first server tick, without `setChanged`
+  (4dd6e5e09). Each new obelisk stores 64000 FE and draws up to 20 FE per tick while active. These are
+  the 8.x defaults in the new config sections `energy.inhibitor`, `energy.relocator`,
+  `energy.attractor` and `obelisks` (d31b90a, ca6d3c8, 831c82c).
+- The relocator and the attractor need a soul filter and show the No Soul Filter state without one. A
+  placed obelisk refreshes that state in `load`, since a placed item loads its inventory after
+  `setLevel` (21ed590).
+- The relocator subscribes to `FinalizeSpawn` at low priority, so it runs after the aversion handler
+  and leaves a spawn alone that an Aversion Obelisk cancelled (21ed590). It posts an
+  `EntityTeleportEvent` for the new spot, so an inhibitor can veto it.
+- The relocator recipe of 8.x is prismarine on top of an Aversion Obelisk, a plain shaped recipe. It
+  takes an Aversion Obelisk item with its stored capacitor and soul filter and destroys both, as
+  upstream does. Players take the capacitor and the filter out before they craft it.
+- The attractor gets its fake player from `FakePlayerFactory` with a UUID made from its position and
+  the name `[EnderIO Attractor]`, since 6.x machines have no owner. Mobs let go of it when the block
+  is removed (831c82c).
+
+The bundle is done in 75fc204, d31b90a, ca6d3c8, 831c82c and 21ed590. The temporary test of the
+porter covered the separate manager capabilities, a range that follows an inserted capacitor, the
+upkeep, the energy that the aversion obelisk now pays per cancelled spawn, the lookup at negative
+coordinates, pearls, chorus fruit and ender teleports cancelled in range with `/tp` and
+`/spreadplayers` exempt, a natural zombie moved next to a relocator, a slime that targets the
+attractor's fake player, and a second boot of the saved world with all four obelisks (workflow
+scratchpad, `bp2/enderio/b3/runserver9.log` lines 5504 to 5512).
+
+Nobody has tested these yet. No client joined, so the three screens, the upkeep line, the faded soul
+filter in an empty slot, the range buttons as real packets and the floating items are open. The
+Arclight tests are open too: `/home` and `/tpa` of EssentialsX inside an inhibitor range, the Bukkit
+`EntityTargetEvent` that a mob fires when it targets the attractor's fake player, and an attractor
+next to a Flux Networks point across a chunk reload, since Flux Networks is not in the dev
+environment. Two upstream behaviours stay as they are. Mobs keep the fake player as their target when
+the attractor only goes inactive, and the relocation spot is not checked for collisions.
 
 ### Charger and keybinds
 
@@ -653,6 +702,11 @@ production Arclight.
 
 - The inhibitor obelisk cancels Forge's `EntityTeleportEvent`. Nobody has checked whether Bukkit
   plugin teleports post that event, so `/home` and `/tpa` of EssentialsX need a test inside a range.
+  They run through `CraftPlayer.teleport` and very likely bypass the Forge event, as `/tp` does on
+  purpose. If the test confirms that, the page records it as a known limit, and no code change is
+  needed.
+- When a mob targets the attractor's fake player, Arclight fires a Bukkit `EntityTargetEvent` for it.
+  Nobody has tested that.
 - The relocator obelisk sets the position of a fresh mob with `moveTo`. In `FinalizeSpawn` the mob is
   not in the level yet, and Arclight wraps `teleportTo` in its Bukkit teleport handling.
 - The wireless charger writes to player inventory stacks, throttled by `chargeInterval`.
@@ -731,7 +785,9 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
 - Server and clients update together. The protocol "1.0-skytekx.1" and the new registry entries make
   Forge refuse a client of an older pack at login.
 - The first boot writes the new config keys, such as `chargeInterval`, the obelisk ranges,
-  `attractor_pull_bosses` and the particle switch. Forge appends missing keys and keeps old values.
+  `attractorAttractBosses` and the particle switch. The tracked `config/enderio/machines-common.toml`
+  lacks the sections `energy.inhibitor`, `energy.relocator`, `energy.attractor` and `obelisks`, so
+  Forge corrects it with a WARN at the first boot. Forge appends missing keys and keeps old values.
   The regenerated `config/enderio/*.toml` files are committed. The `"Spawn Type"` stays `ENTITYTYPE`.
   Config files change only while the java process is gone.
 - A test on a copy of the live world with the production Arclight jar comes before the deploy. It loads
@@ -743,6 +799,7 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   the jar swap.
 - Players learn that the travel staff and electromagnet keys are unbound and sit under the Ender IO
   category of the controls, that the inhibitor obelisk blocks pearls and other teleports in its range,
+  that the capacitor and the soul filter come out of an Aversion Obelisk before it becomes a relocator,
   and that the Vat now makes nutrient distillation for the Killer Joe.
 
 ## History

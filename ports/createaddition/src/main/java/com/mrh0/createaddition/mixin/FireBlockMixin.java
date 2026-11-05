@@ -1,0 +1,122 @@
+package com.mrh0.createaddition.mixin;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.mrh0.createaddition.index.CATags;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.FireBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+// SkyTekx: backport of upstream 0d13505 and 18388a0 (1.21.1 line). A vanilla target, so this mixin
+// is remapped through createaddition.refmap.json. The Forge methods canCatchFire, tryCatchFire,
+// BlockState.isFlammable, BlockState.getFlammability and BlockState.isFireSource have no SRG name
+// and keep their names in production: the two injectors into Forge methods set remap = false, and
+// the isFireSource target in tick stays unmapped (a warning of the annotation processor). The
+// 1.21.1 line's NeoForge checkBurnOut is Forge 47's tryCatchFire with the same descriptor. The tag
+// checks go through CATags.Fluids.ignites, which also counts a flowing fluid by its source.
+@Mixin(FireBlock.class)
+public class FireBlockMixin {
+    // SkyTekx: canCatchFire and BlockState.isFlammable are Forge methods without an SRG name, so
+    // this injector is not remapped (the annotation processor rejects an unmapped target method).
+    @WrapOperation(
+            method = "canCatchFire(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
+            remap = false,
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;isFlammable(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z"
+            )
+    )
+    private static boolean igniteFluid(BlockState instance, BlockGetter level, BlockPos blockPos, Direction direction, Operation<Boolean> original) {
+        boolean isFlammableBlock = original.call(instance, level, blockPos, direction);
+        if (isFlammableBlock) {
+            return true;
+        }
+
+        FluidState fluidState = level.getFluidState(blockPos);
+        return CATags.Fluids.ignites(fluidState);
+    }
+
+    @ModifyExpressionValue(
+            method = "getIgniteOdds(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)I",
+            at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(II)I")
+    )
+    private int considerFluidFireSpreadSpeed(int igniteOdd, LevelReader level, BlockPos origin, @Local Direction direction) {
+        BlockPos fluidPos = origin.relative(direction);
+
+        FluidState fluidState = level.getFluidState(fluidPos);
+        if (fluidState.isEmpty()) {
+            return igniteOdd;
+        }
+        if (!CATags.Fluids.ignites(fluidState)) {
+            return igniteOdd;
+        }
+        int fireSpeed = 75;
+        if (level instanceof Level weatherLevel) {
+            if (weatherLevel.isRainingAt(fluidPos)) {
+                fireSpeed = 100;
+            }
+        }
+
+        return Math.max(igniteOdd, fireSpeed);
+    }
+
+    // SkyTekx: tryCatchFire (NeoForge's checkBurnOut) and BlockState.getFlammability are Forge
+    // methods without an SRG name, so this injector is not remapped either.
+    @ModifyExpressionValue(
+            method = "tryCatchFire(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ILnet/minecraft/util/RandomSource;ILnet/minecraft/core/Direction;)V",
+            remap = false,
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getFlammability(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)I")
+    )
+    private int considerFluidFlammability(int original, Level level, BlockPos pos) {
+        FluidState fluidState = level.getFluidState(pos);
+        if (fluidState.isEmpty()) {
+            return original;
+        }
+
+        if (!CATags.Fluids.ignites(fluidState)) {
+            return original;
+        }
+
+        int flammability = 250;
+        if (level.isRainingAt(pos)) {
+            flammability = 300;
+        }
+
+        return Math.max(original, flammability);
+    }
+
+    @ModifyExpressionValue(
+            method = "tick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isFireSource(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z")
+    )
+    private boolean keepFire(
+            boolean original,
+            @Local(argsOnly = true) ServerLevel level,
+            @Local(argsOnly = true) BlockPos pos
+    ) {
+        if (original) {
+            return true;
+        }
+
+        return Direction.Plane.HORIZONTAL.stream().anyMatch(direction -> {
+            BlockPos fluidPos = pos.relative(direction);
+            FluidState fluid = level.getFluidState(fluidPos);
+
+            if (fluid.isEmpty()) {
+                return false;
+            }
+
+            return CATags.Fluids.ignites(fluid);
+        });
+    }
+}

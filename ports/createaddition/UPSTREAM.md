@@ -53,8 +53,8 @@ The snapshot builds unchanged on Java 17 with its own toolchain: ForgeGradle 6.0
 userdev, Parchment 2023.06.26-1.20.1, Gradle 8.1.1, Create 6.0.8-289 (slim), Ponder 1.0.91, Flywheel
 1.0.5, Registrate MC1.20-1.3.3, JEI 15.20.0.106 and CC:Tweaked (CurseMaven file 4740605). All
 repositories in `build.gradle` still resolve. The compiler settings are upstream's (javac defaults,
-no `-Werror`; the 36 compiler warnings are upstream's). The changes below only make the build
-reproducible and mark the jar as a modified build.
+no `-Werror`; the 36 compiler warnings of the base are upstream's). The changes below only make the
+build reproducible and mark the jar as a modified build.
 
 Build check (from this directory):
 
@@ -66,9 +66,11 @@ The jar: `./gradlew build` (same flags) writes
 `build/libs/createaddition-<minecraft_version>-<mod_version>.jar`, today
 `createaddition-1.20.1-1.7.3-skytekx.1.jar`, which `reobfJar` rewrites in place. That slim reobf jar
 is the jar to ship, as upstream ships the plain jar. The `-all.jar` that `jarJar` makes next to it
-(with MixinExtras 0.4.1 nested) is not shipped: upstream's release jar does not nest it either, the
-mod's code does not use MixinExtras, and in the pack Create 6.0.8 already nests mixinextras-forge
-0.4.1 while Forge resolves the newer 0.5.5 that another mod brings.
+(with MixinExtras 0.4.1 nested) is not shipped: upstream's release jar does not nest it either, and
+in the pack Create 6.0.8 already nests mixinextras-forge 0.4.1 while Forge resolves the newer 0.5.5
+that another mod brings. The fire and fluid mixins of the ignitable fluids (source change 13) use
+MixinExtras, and `@WrapMethod` needs 0.4.0 or later. The slim jar can rely on Create for it, because
+`mods.toml` makes Create a mandatory dependency.
 
 1. Gradle wrapper: `gradlew`, `gradlew.bat` and `gradle/wrapper/gradle-wrapper.jar` are the copies
    that every other port in this repository uses (wrapper jar SHA-256 `33ad4583...`, the official
@@ -189,3 +191,34 @@ its item here, and the NOTICE in the jar sums them up.
     `minecraft:mineable/hoe`, and the chocolate and honey cakes `create:brittle` and
     `farmersdelight:mineable/knife`. All of them are hand written, since the base commits no
     datagen output.
+13. Ignitable fluids: upstream `0d13505`, `18388a0`, `6af9b4f`, `f224bb4`, `eb5eff3` and `afcd352`.
+    Fluids in the fluid tag `forge:ignites` catch fire like a flammable block. Four new mixins in
+    `mixin/` carry it: `BaseFireBlockMixin` lets fire be placed into such a fluid, `FireBlockMixin`
+    makes `canCatchFire` accept it, raises the ignite odds next to it to at least 75 (100 in rain)
+    and its flammability in `tryCatchFire` to at least 250 (300 in rain) and keeps a fire burning
+    next to it, `FlowingFluidMixin` stops it from flowing sideways into fire and, when it falls into
+    a fire while `doFireTick` is on, sets fire to the free blocks beside that spot, and
+    `FireBlockInvoker` gives that code `FireBlock.getStateForPlacement(BlockGetter, BlockPos)`. The
+    tag is `data/forge/tags/fluids/ignites.json`, hand written since the fork has no datagen. It
+    names `#forge:biofuel`, `creosote`, `crude_oil`, `plantoil`, `ethanol`, `gasoline`, `diesel` and
+    `biodiesel` as optional tags where upstream names the same `c:` tags. `index/CATags.java` holds
+    the `TagKey`, which upstream keeps in its datagen class `CATagRegister`, and one local change:
+    every tag check of the mixins goes through `CATags.Fluids.ignites`, which also counts a flowing
+    fluid whose source fluid is in the tag. Upstream checks the fluid alone, but Immersive
+    Engineering 10.2.0 lists only `immersiveengineering:creosote` in `forge:creosote` (and only the
+    source fluids in `forge:plantoil`, `forge:ethanol` and `forge:biodiesel`), so flowing creosote
+    would flow into fire and falling creosote would not spread it. The lang key is
+    `tag.fluid.forge.ignites` in `en_us` and `ko_kr`, as upstream's `tag.fluid.c.ignites`. NeoForge's
+    `checkBurnOut` is Forge 47's `tryCatchFire` with the same descriptor, and the other targets keep
+    their names. `createaddition.mixins.json` gains `"refmap": "createaddition.refmap.json"`, which
+    `build.gradle` already had the annotation processor write (it was empty, since the three Create
+    mixins use `remap = false`). The refmap maps the vanilla targets to their SRG names
+    (`canBePlacedAt` `m_49255_`, `isAir` `m_60795_`, `tick` `m_213897_`, `getIgniteOdds` `m_221156_`,
+    `getStateForPlacement` `m_53470_`, `canSpreadTo` `m_75977_`, `spreadTo` `m_6364_`,
+    `LevelAccessor.setBlock` `m_7731_`), the names that javap shows in the Forge 47.4.18 server jars
+    (`forge-1.20.1-47.4.18-server.jar` and `server-1.20.1-20230612.114412-srg.jar`). The Forge
+    methods have no SRG name: the two injectors into `canCatchFire` and `tryCatchFire` set
+    `remap = false`, because the annotation processor fails the build on an unmapped target method,
+    and the `isFireSource` call in `tick` stays an unmapped `@At` target, which the processor only
+    warns about. Seed oil and bioethanol keep their `minecraft:water` tag, which upstream `ced6d21`
+    drops.

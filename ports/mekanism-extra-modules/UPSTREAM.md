@@ -89,3 +89,13 @@ row says otherwise.
 | Classes `service.ChaosCompatService`, `config.ExtraModulesConfig`, `mixin.ExtraModulesMixinPlugin` | Forge packages: `ModList`, `ForgeConfigSpec` and `LoadingModList`. Same config file, keys, defaults and ranges. |
 | Class `mixin.LaserBeamPhaseMixin` | Still two `@Redirect` injections, on `Player.setHealth` and `Player.die` in `LaserBeamPhase.serverTick`. The two call targets are Minecraft methods, which Forge 1.20.1 runs under SRG names, so their `@At` sets `remap = true` and the refmap maps them to `m_21153_` and `m_6667_`. The method name `serverTick` stays unmapped. Checked against the bytecode of Draconic Evolution 3.1.2.621. |
 | File `mekanism_extra_modules.mixins.json` | Java 17 compatibility level, the refmap, `defaultRequire` 1 so a changed target shows up as an error in the log, and `@Overwrite` forbidden. The config stays not required and keeps upstream's plugin, which skips the mixin without Draconic Evolution. |
+
+## Data changes
+
+All data changes are dated 2026-11-05. Models, textures and the 30 language files stay unchanged,
+because their 1.21.1 format is the same in 1.20.1.
+
+| File | Change |
+|---|---|
+| Folder `data/mekanism_extra_modules/recipes/` | The three shaped recipes move from the 1.21 folder `recipe/` to the 1.20.1 folder `recipes/`, and the result names its item with `item` instead of `id`. Patterns, results and the Mekanism item inputs (Energy Tablet, Laser Dissipation Unit, Phase Guard Unit, Totem of Undying) stay. The circuit, alloy and obsidian inputs use the forge tags that Mekanism 10.4 itself declares and uses in its own module recipes (`forge:circuits/ultimate`, `forge:alloys/ultimate`, `forge:alloys/elite`, `forge:obsidian`), so AlmostUnified and other mods that fill those tags work with them. Each tag holds exactly the Mekanism item upstream names (checked in `Mekanism-1.20.1-10.4.16.80.jar`). |
+| File `pack.mcmeta` | Pack format 15 (Minecraft 1.20.1) instead of 48. |

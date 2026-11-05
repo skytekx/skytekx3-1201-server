@@ -36,14 +36,14 @@ not exist yet.
 
 ## Status on 2026-11-05
 
-The vendored base (d8d06f5), the reproducible Java 17 build (28bde03) and the license files in the jar
-(c276dbd) are on the branch `claude/twilight-forest-port-mods-j2owbq`. No feature is ported yet. The
-version still has the wrong form, see [Baseline](#baseline). The pack still ships the Modrinth jar
-1.3.3, and no boot has run the fork.
+The vendored base (d8d06f5), the reproducible Java 17 build (28bde03), the license files in the jar
+(c276dbd) and the baseline bundle are on the branch `claude/twilight-forest-port-mods-j2owbq`. No
+feature is ported yet. The pack still ships the Modrinth jar 1.3.3, and no boot has run the fork, so
+the boot and login checks of the baseline wait for the [release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
-| Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Partly done in d8d06f5, 28bde03 and c276dbd. The version fix, the config keys and the protocol bump are open |
+| Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in d7d4fad, 35706d8, 0611ece and ecf5303 on top of d8d06f5, 28bde03 and c276dbd. The boot and login checks belong to the release |
 | Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Planned |
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Planned |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Planned |
@@ -78,32 +78,41 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 
 ### Baseline
 
-- The version fix sets `mod_version = 1.7.3-skytekx.1` and restores upstream's
-  `version = "${minecraft_version}-${mod_version}"` in `build.gradle`. Today the branch builds
-  `createaddition-1.7.3-1.20.1-skytekx.1.jar` (`gradle.properties:9`, `build.gradle:31-32`), and Maven's
-  `ComparableVersion` sorts that below the shipped `1.20.1-1.3.3`, as `UPSTREAM.md:89` notes. The new
-  form `1.20.1-1.7.3-skytekx.1` sorts above 1.3.3, stays outside the AllTheLeaks gate
-  `[1.20.1-1.0.0b,1.20.1-1.2.3]` and follows the other forks of the pack, such as
-  `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`.
-- The same commit updates `NOTICE` line 21, item 4 of `UPSTREAM.md` and the comment in
+- The version fix (d7d4fad) set `mod_version = 1.7.3-skytekx.1` (`gradle.properties:9`) and
+  restored upstream's `version = "${minecraft_version}-${mod_version}"` (`build.gradle:33`). The
+  branch now builds `createaddition-1.20.1-1.7.3-skytekx.1.jar`. Its manifest says
+  `Implementation-Version: 1.20.1-1.7.3-skytekx.1`, the version that Forge shows through the
+  `${file.jarVersion}` of `mods.toml`. Maven's `ComparableVersion` sorts it above the shipped
+  `1.20.1-1.3.3` and outside the AllTheLeaks gate `[1.20.1-1.0.0b,1.20.1-1.2.3]`. The form follows
+  the other forks of the pack, such as `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar`. The
+  older form is in [History](#history).
+- The same commit updated `NOTICE`, item 4 of the build changes in `UPSTREAM.md` and the comment in
   `build.gradle`, and cites the base in `UPSTREAM.md:10` by its PR number only.
+- Two clean builds of ecf5303 give the same slim jar with SHA-1
+  `7671e5a93338228bbb7f01d55ba9fbb32508e239`. Later bundles change it.
 - The shipped jar is the slim reobf jar. The `-all` jar of `jarJar.enable()` (`build.gradle:22`) only
   adds a nested MixinExtras. Create 6.0.8 nests mixinextras-forge 0.4.1, and the pack resolves 0.5.5
   (debug log of the Forge pack boot on 2026-11-04 in the workflow scratchpad, line 1115, "Selected
   file mixinextras-forge-0.5.5.jar").
-- All new config keys land in one commit in `config/Config.java`, the spec of
+- All 11 new config keys landed in one commit (35706d8) in `config/Config.java`, the spec of
   `createaddition-common.toml`. They are `wires.connector_network_internal_buffer` (80000, 393c51f),
   a section `liquid_blaze_burner` with a tank of 4000 mB and a heat capacity of 10000 (5935afa), a
   section `electric_pump` with `pump_rpm_range` 256, `pump_fe_at_max_rpm` 120, `pump_max_input` 5000
   and `pump_capacity` 5000 (6cbf853, 9dd1b46), and the amulet and capacitor keys (5c2b9ea, b0b8bc9,
-  4414193). The servo reuses the `electric_motor` keys.
+  4414193). The servo reuses the `electric_motor` keys. Nothing reads them yet. Each later bundle
+  wires its own keys. Loading the tracked `config/createaddition-common.toml` through
+  `Config.loadConfig` outside a boot kept its 41 values and appended the 11 keys.
 - Every config value is read lazily inside a method or supplier. Forge 47 throws an
   `IllegalStateException` when a value is read before the common config loads, and upstream 5935afa
   does exactly that in a static field initialiser.
-- The network channel `createaddition:main` registers `ObservePacket` as id 0 and
-  `EnergyNetworkPacket` as id 1 under protocol "1" (`CreateAddition.java:63-67`, `125-126`). The port
-  adds `TimeRemainingPacket` as id 2 (54cf0c9) and raises the protocol to "2", so an old client gets a
-  clean refusal at login instead of a desync.
+- The network channel `createaddition:main` registered `ObservePacket` as id 0 and
+  `EnergyNetworkPacket` as id 1 under protocol "1". Commit 0611ece raised the protocol to "2"
+  (`CreateAddition.java:68`) and named the ids `PACKET_OBSERVE`, `PACKET_ENERGY_NETWORK` and
+  `PACKET_TIME_REMAINING` (`CreateAddition.java:79-81`), so an old client gets a clean refusal at
+  login instead of a desync. Id 2 is only reserved. The `TimeRemainingPacket` of 54cf0c9 lands with
+  the goggle timers in the [small fixes](#small-fixes).
+- The `NOTICE` in the jar and the section Source changes of `UPSTREAM.md` list the config keys and
+  the protocol bump (ecf5303).
 
 ### Connector rework
 
@@ -256,6 +265,17 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - Full pack boots on Forge 47.4.18 and on the production Arclight must meet the
   [boot baseline](../server/logs-and-crashes.md#boot-error-baseline), parse every charging recipe and
   show every CC&A mixin applied with `-Dmixin.debug.export`.
+- The Forge mod list of that boot shows `createaddition` as `1.20.1-1.7.3-skytekx.1`. Only the
+  manifest and the `${file.jarVersion}` of `mods.toml` were checked in the baseline.
+- A stock 1.3.3 pack client logs in to the fork server, and a fork client logs in to a 1.3.3 server.
+  Both logins must end with `Connection closed - mismatched mod channel list`, and the mismatch
+  screen must name `createaddition:main` (Forge 47 `HandshakeHandler`, the protocol bump of
+  0611ece). No client was available for the baseline.
+- The first fork boot appends the 11 new keys to `config/createaddition-common.toml` and keeps its
+  41 old values. Upstream's `Config.loadConfig` writes the file with `WritingMode.REPLACE`
+  (`Config.java:304`), so the key order inside the sections changes. Commit the rewritten file
+  while the server is stopped and before `tools/build_mrpack.py`, which takes every override from
+  git HEAD.
 - The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
 
 ## Excluded
@@ -453,6 +473,14 @@ Planned, not shipped.
 - The mod's ambient sounds play while Create's ambient sounds are on.
 - Barbed wire can be waterlogged and wrenched.
 - Stress values show in the tooltips.
+
+## History
+
+- Commit 28bde03 first versioned the fork as `1.7.3-1.20.1-skytekx.1` with `version = mod_version`
+  and built `createaddition-1.7.3-1.20.1-skytekx.1.jar`. Maven's `ComparableVersion` sorts that
+  below the shipped `1.20.1-1.3.3` (7 is less than 20), so a dependent range in upstream's form such
+  as `[1.20.1-1.2.0,)` would reject it. The version fix d7d4fad replaced it before any jar with that
+  version shipped.
 
 Related: [Mod set](mod-set.md), [Twilight Forest backport](twilightforest-backport.md),
 [AlmostUnified](almostunified.md), [Arclight](../server/arclight.md),

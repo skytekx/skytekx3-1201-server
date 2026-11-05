@@ -26,8 +26,11 @@ public class MachineItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(MachineTags.Items.SEEDS).addTag(Tags.Items.SEEDS);
-        tag(MachineTags.Items.CROPS).addTag(Tags.Items.CROPS);
+        // 8.x points these at the NeoForge 1.21.1 tags c:seeds and c:crops. Forge 47's forge:seeds and forge:crops
+        // lack some of their vanilla members, so the items that only the c: tags hold are listed here. Without sugar
+        // cane the 0.5 factor of the vat_reagent data map for #enderio:crops could never apply.
+        tag(MachineTags.Items.SEEDS).addTag(Tags.Items.SEEDS).add(Items.TORCHFLOWER_SEEDS);
+        tag(MachineTags.Items.CROPS).addTag(Tags.Items.CROPS).add(Items.CACTUS, Items.COCOA_BEANS, Items.MELON, Items.PUMPKIN, Items.SUGAR_CANE);
 
         tag(MachineTags.Items.CLOUD_COLD).add(Items.SNOW, Items.SNOW_BLOCK, Items.SNOWBALL, Items.ICE, Items.PACKED_ICE, Items.BLUE_ICE);
         tag(MachineTags.Items.EXPLOSIVES).add(Items.TNT, Items.FIREWORK_STAR, Items.FIREWORK_ROCKET, Items.FIRE_CHARGE, Items.GUNPOWDER);

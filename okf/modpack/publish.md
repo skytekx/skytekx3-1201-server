@@ -210,13 +210,15 @@ first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
 with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with Extreme Reactors
 2.0.97, ZeroCore 2.1.48 and the LittleTiles build of c5694e16 bundled (see
 [mod set](mod-set.md#bundled-jars)), with the Apotheosis bosses of Iron's Apothic Invaders and three
-Twilight Delight recipes (see [KubeJS](kubejs.md)) and with the nine mods of 2026-11-04, five addons of
-Applied Energistics 2 and Cyclic among them (see [mod set](mod-set.md#additions-of-2026-11-04)). Its
+Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine mods of 2026-11-04, five addons of
+Applied Energistics 2 and Cyclic among them (see [mod set](mod-set.md#additions-of-2026-11-04)), and
+with Bygone Nether, whose tag repair in the fixes pack also needs that pack at the end of the pack
+order (see [mod set](mod-set.md#bygone-nether)). Its
 row should record whether a fresh install and the
 update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
 Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server,
-whether the machines of the new mods work there and whether the Draconic Evolution fixes work in a
-client. Its deploy has to move the fixes pack to the end of the
+whether the machines of the new mods work there, whether the Draconic Evolution fixes work in a
+client and whether the mobs and structures of Bygone Nether render there. Its deploy has to move the fixes pack to the end of the
 pack order, see [boot fixes](../content/boot-fixes.md#load-order).
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the

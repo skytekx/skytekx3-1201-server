@@ -844,5 +844,14 @@ logs stay on the Mac and are not in the repo.
   repo) reached `Done` with 0 FATAL lines and the same 3 ERROR lines and 11 log signatures as the boot
   `wavea-forge` before it.
 
+## 2026-11-05: Bygone Nether
+
+- Bygone Nether 1.3.2 joined the index (61adc700) in place of Eternal Nether, which only exists for
+  NeoForge 1.21.1. It brings three Nether structures, eight mobs, withered blackstone and soul stone,
+  and bastions in basalt deltas, and it turns mined blackstone into Cobbled Blackstone. Its tag file
+  broke the Quark tag `quark:wraith_spawnable`, which the fixes pack repairs (b1aaaa99). Forge and
+  Arclight test servers generated its structures in the Nether without an error, see
+  [Mod set](modpack/mod-set.md#bygone-nether).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

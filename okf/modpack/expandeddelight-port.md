@@ -1,7 +1,7 @@
 ---
 type: Mod
 title: Expanded Delight port
-description: The Forge 1.20.1 port of Expanded Delight 0.1.4 for NeoForge 1.21.1 that the pack bundles, what it adds, which upstream files stay out for license reasons, how its tags meet Farmer's Delight, Pam's Food Core and Mekanism, the worldgen and Skylands check, the test of 2026-11-05 and the operator steps.
+description: The Forge 1.20.1 port of Expanded Delight 0.1.4 for NeoForge 1.21.1 that the pack bundles, what it adds, which upstream files stay out for license reasons, the fixes of the port and of its review, how its tags meet Farmer's Delight, Pam's Food Core and Mekanism, the worldgen and Skylands check, the tests of 2026-11-05 on Forge and Arclight and the operator steps.
 tags: [modpack, mods, expandeddelight, farmersdelight, port]
 timestamp: 2026-11-05
 ---
@@ -16,7 +16,7 @@ the newest NeoForge line to Forge 1.20.1, built from `ports/expandeddelight/`.
 
 | Property | Value |
 |---|---|
-| Jar | File [local-mods/expandeddelight-0.1.4-skytekx.1.jar](../../local-mods/expandeddelight-0.1.4-skytekx.1.jar), 485,909 bytes, SHA-1 `3e156033dbf6a5a09d199960614776023e15e69a` (fc1c482) |
+| Jar | File [local-mods/expandeddelight-0.1.4-skytekx.1.jar](../../local-mods/expandeddelight-0.1.4-skytekx.1.jar), 486,426 bytes, SHA-1 `45b288dd96173e620db5a6d1065250a96b584949` since d93682b, the build of 4f8db0a with the review fixes. The first bundled build of fc1c482 had 485,909 bytes and SHA-1 `3e156033dbf6a5a09d199960614776023e15e69a` |
 | Mod | The id stays `expandeddelight`, the version is `0.1.4-skytekx.1` and the authors field names the original author |
 | Upstream | Branch `1.21-neo` of github.com/ianm1647/expandeddelight at `ea826400654702587e86c9e94544bfd74f065083` (2026-08-25, 0.1.4). The 1.20 branch at `8d8fe44d` served as the reference for the 1.20.1 game API |
 | Needs | Farmer's Delight 1.20.1-1.3.4 or newer, which the index has (`modrinth.index.json`) |
@@ -81,11 +81,21 @@ with its reason. In short:
   `ports/expandeddelight/tools/convert_data_to_1_20_1.py`, and the c: tags became forge: tags.
 - Upstream's mixin into `Goat#mobInteract` is gone. The port cancels Forge's interaction event when it
   milks a goat, so no mixin touches a class that Bukkit patches on Arclight. Log stripping goes
-  through Forge's tool modification event and cranberries plant through a vanilla
-  `PlaceOnWaterBlockItem`, so Bukkit sees both as normal block changes.
+  through Forge's tool modification event, so the axe's own path does the work (sound, damage,
+  statistics, axis). On Arclight no Bukkit event covers axe stripping at all, since the pack's
+  `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` has no mixin into `AxeItem` (review of
+  2026-11-05, javadoc fixed in 1b6f804). Cranberries plant through a vanilla
+  `PlaceOnWaterBlockItem`, so Bukkit's `BlockPlaceEvent` covers them.
 - Upstream bugs are fixed: crops that named themselves as seed, a juicer drink taken by hand that was
   neither saved nor synced, a chest boat that lost its items at every save, and the crushing mallet,
   whose stack size 1.20.1 refuses.
+- The review of 2026-11-05 added four fixes over upstream. The juicer registers its default state
+  in the constructor that the registry uses (fd8d5de), so `/setblock`, `/fill` and mods that place
+  `defaultBlockState()` no longer make a waterlogged juicer. Seven language keys that showed raw got
+  English names (b224edc): the cranberry jelly sandwich, the root advancement, the two boats and the
+  two wall signs. Hoppers and pipes on the sides put only valid containers into the juicer's
+  container slot (1fc8ba0), the rule of shift clicking in the menu. The peanut joined `forge:nuts`
+  (4f8db0a).
 - Upstream's overrides of Farmer's Delight's dough and melon juice recipes stay out. The pack edits
   no recipes of other mods per mod, and on 1.20.1 those recipes have other ids.
 
@@ -95,7 +105,9 @@ The port puts its items into the forge: tags that Farmer's Delight 1.20.1 and Pa
 Food Core read: `forge:cheese`, `forge:milk` (goat milk), `forge:vegetables` (asparagus, sweet potato
 and chili pepper), `forge:cookies`, `forge:crops/*`, `forge:dusts/salt` and `forge:ores/salt`. Pam's
 recipes ask for `forge:cheese` seven times and `forge:milk` eleven times (counted in the recipes of
-`pamhc2foodcore-1.20.4-1.0.5.jar`), so they take the new cheese and goat milk without glue.
+`pamhc2foodcore-1.20.4-1.0.5.jar`), so they take the new cheese and goat milk without glue. Since
+4f8db0a the parent tag `forge:nuts` holds `#forge:nuts/peanut`, so Pam's cooking oil recipe
+`cookingoilitem_x2_nuts` takes peanuts next to its sunflower seeds.
 
 Since 4b3774b two more layers tie it to the pack.
 
@@ -129,6 +141,9 @@ terrain only.
 
 ## Test of 2026-11-05
 
+These are the tests of the port with the first jar of fc1c482. The integration tests of the rebuilt
+jar follow in [integration test](#integration-test).
+
 A plain Forge 47.4.18 server with the jar, Farmer's Delight 1.20.1-1.3.4, JEI 15.74.0.233, KubeJS
 2001.6.5 with Rhino and Architectury, all as the files of the index, `-Xmx3G`. The test server and its
 logs stay in the session's scratch directory.
@@ -161,21 +176,58 @@ logs stay in the session's scratch directory.
   Mekanism salt. Its only ERROR lines were two of Mekanism about the ethene of Mekanism Generators,
   which that test lacked.
 
-Not verified: a boot on Arclight with the full pack, a client (the juicer screen, its recipe book,
-JEI, the boat, sign and tooltip rendering) and the hand interactions that need a player: milking a
-goat, filling and emptying a cask, planting cranberries and stripping logs.
+## Integration test
+
+The jar of d93682b (SHA-1 `45b288dd`) on the same plain Forge 47.4.18 server, with Farmer's Delight,
+JEI, KubeJS with Rhino and Architectury, Mekanism 10.4.16.80, Pam's Food Core 1.0.5, AlmostUnified
+0.11.0 and the pack's tag glue, `-Xmx3G`. The logs stay in the session's scratch directory
+(`bp2/nm/expandeddelight/server/console-int.log`).
+
+- The boot reached `Done` in 9.0 s with 0 ERROR and 0 FATAL lines and stopped over RCON with exit
+  code 0.
+- The command `setblock 0 200 0 expandeddelight:juicer` gave a juicer that passed
+  `execute if block 0 200 0 expandeddelight:juicer[facing=north,waterlogged=false]`.
+- A hopper west of the juicer, facing it with four apples and three glass bottles, handed over the
+  bottles into slot 3 and kept its apples. A hopper above it handed two apples into slot 0.
+- A KubeJS check logged `forge:nuts=[expandeddelight:peanut, pamhc2foodcore:sunflowerseedsitem]`.
+
+An Arclight copy with the repo's hardened `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` (SHA-1
+`70b44a84`) and the same mods and scripts, `-Xmx3G`, no plugin
+(`bp2/nm/expandeddelight/arcserver/console-int.log`):
+
+- The boot reached `Done` in 68.5 s with 0 ERROR and 0 FATAL lines and no failed mixin, KubeJS
+  loaded 6 of 6 scripts with 0 errors, and the server stopped over RCON with exit code 0.
+- The juicer from `/setblock` passed the same state check. Hoppers fed it two apples and two sugar
+  from above and glass bottles from the side, the side hopper kept its four apples, and the hopper
+  below received an apple juice, with `expandeddelight:juicing/apple_juice` counted in
+  `RecipesUsed`.
+- The tag check logged the same `forge:nuts` content.
+
+Not verified: a boot with the full pack, a client (the juicer screen, its recipe book, JEI, the boat,
+sign and tooltip rendering, and the seven new names) and the hand interactions that need a player:
+milking a goat, filling and emptying a cask, planting cranberries and stripping logs.
 
 ## Operator notes
 
-- Server and clients update together, the mod is required on both sides.
-- While the java process is gone, copy `local-mods/expandeddelight-0.1.4-skytekx.1.jar` into the
-  server's `mods/`. Farmer's Delight is there already.
+The owner mirrors the server by hand, and the mod goes live with the next pack, because clients
+without it cannot join.
+
+- Server and clients update together, the mod is required on both sides. Clients need the same jar,
+  which the next pack brings them.
+- Stop the server over RCON and wait until the java process is gone. Then copy
+  `local-mods/expandeddelight-0.1.4-skytekx.1.jar` into the server's `mods/` by hand and check its
+  SHA-1 against `45b288dd96173e620db5a6d1065250a96b584949`. Farmer's Delight 1.20.1-1.3.4 is there
+  already. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/` from the build machine.
 - The first boot writes `config/expandeddelight-common.toml` with the recipe book switch of the juicer.
   Commit it before `tools/build_mrpack.py`, which takes overrides from git HEAD.
 - The tag glue and the salt material come with git (`kubejs/server_scripts/tag_fixes.js`,
   `config/almostunified/unify.json`). A `/reload` applies the tags, AlmostUnified needs a restart.
 - A clean boot keeps the accepted baseline of ERROR lines, see
   [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline).
+- The cinnamon trees, wild crops, cranberries and salt ore only generate in chunks that do not exist
+  yet, so players find them beyond the explored area. A pregen with Chunky places them ahead of time.
+- Before a public pack, merge and push the branch with `ports/expandeddelight/` to master and fetch,
+  see [publish](publish.md).
 
-Related: [mod set](mod-set.md#bundled-jars), [AlmostUnified](almostunified.md), [KubeJS](kubejs.md),
-[publish](publish.md).
+Related: [NeoForge ports](neoforge-ports.md#expanded-delight), [mod set](mod-set.md#bundled-jars),
+[AlmostUnified](almostunified.md), [KubeJS](kubejs.md), [publish](publish.md).

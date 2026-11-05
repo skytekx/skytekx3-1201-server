@@ -1,0 +1,47 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+# SkyTekx: upstream's license, unchanged. The jar carries it as LICENSE_mysticalautomation together with
+# NOTICE_mysticalautomation, which says what this modified build changes
+license="MIT"
+# SkyTekx: bugs of this unofficial 1.20.1 build are ours, not upstream's
+issueTrackerURL="https://github.com/skytekx/skytekx3-1201-server/issues"
+
+[[mods]]
+    modId="mysticalautomation"
+    version="${mod_version}"
+    displayName="Mystical Automation"
+    # SkyTekx: upstream's updateJSONURL (api.blakesmods.com, 1.21 updates) is gone, since its versions
+    # are not builds for this Minecraft version
+    displayURL="https://blakesmods.com/mystical-automation"
+    credits="Unofficial Forge 1.20.1 port by SkyTekx (the ts4.party community), not made, supported or endorsed by the upstream author. Source: ports/mysticalautomation in https://github.com/skytekx/skytekx3-1201-server"
+    authors="BlakeBr0"
+    description='''
+    Adds machines for automating different aspects of Mystical Agriculture!
+
+    Unofficial, modified build for Forge 1.20.1. See NOTICE_mysticalautomation in the jar.
+    '''
+
+    [[dependencies.mysticalautomation]]
+        modId="forge"
+        mandatory=true
+        versionRange="[47,)"
+        ordering="NONE"
+        side="BOTH"
+    [[dependencies.mysticalautomation]]
+        modId="minecraft"
+        mandatory=true
+        versionRange="[1.20.1,1.20.2)"
+        ordering="NONE"
+        side="BOTH"
+    [[dependencies.mysticalautomation]]
+        modId="cucumber"
+        mandatory=true
+        versionRange="[${cucumber_version},8)"
+        ordering="AFTER"
+        side="BOTH"
+    [[dependencies.mysticalautomation]]
+        modId="mysticalagriculture"
+        mandatory=true
+        versionRange="[${mysticalagriculture_version},8)"
+        ordering="AFTER"
+        side="BOTH"

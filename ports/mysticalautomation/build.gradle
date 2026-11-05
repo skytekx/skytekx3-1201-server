@@ -1,151 +1,141 @@
 plugins {
-    id 'java-library'
     id 'eclipse'
     id 'idea'
-    id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.83'
+    // SkyTekx: upstream builds with NeoForge ModDevGradle 2.0.83 for NeoForge 21.1. The 1.20.1 port uses
+    // ForgeGradle and Librarian, pinned to the versions that ../actuallyadditions and ../enderio use, so
+    // a new plugin release cannot change the build
+    id 'net.minecraftforge.gradle' version '6.0.54'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.2.0.7-dev-SNAPSHOT'
 }
 
-version = '1.21.1-1.0.8'
+// SkyTekx: upstream's version form '<minecraft>-<mod>', so the jar is
+// MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar
+version = "${minecraft_version}-${mod_version}"
 group = 'com.blakebr0.mysticalautomation'
 
 base {
     archivesName = 'MysticalAutomation'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                mysticalautomation {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+        }
+
+        server {
+            args '--nogui'
+        }
+    }
+}
 
 repositories {
     maven { url 'https://maven.blakesmods.com' }
     maven { url 'https://maven.blamejared.com' }
-    maven {
-        url 'https://cursemaven.com'
-        content {
-            includeGroup 'curse.maven'
-        }
-    }
-    mavenLocal()
-}
-
-tasks.register('syncTestDatapacks', Sync) {
-    if (file('run/saves').exists()) {
-        file('run/saves').eachDir { dir ->
-            project.sync {
-                from 'src/test/resources/datapacks'
-                into file(dir.path + '/datapacks')
-            }
-        }
-    }
-
-    project.sync {
-        from 'src/test/resources/datapacks'
-        into file('run/world/datapacks')
-    }
-}
-
-tasks.register('syncTestScripts', Sync) {
-    from 'src/test/resources/scripts'
-    into 'run/scripts'
-}
-
-neoForge {
-    version = neo_version
-
-    parchment {
-        mappingsVersion = parchment_mappings_version
-        minecraftVersion = parchment_minecraft_version
-    }
-
-    runs {
-        client {
-            client()
-        }
-
-        server {
-            server()
-        }
-
-        gameTestServer {
-            type = "gameTestServer"
-        }
-
-        data {
-            data()
-
-            // programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-        }
-
-        configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-            systemProperty 'terminal.jline', 'true'
-            logLevel = org.slf4j.event.Level.DEBUG
-            ideName = "MysticalAutomation - ${it.ideName.get()}"
-            taskBefore tasks.named('syncTestDatapacks')
-            taskBefore tasks.named('syncTestScripts')
-        }
-    }
-
-    mods {
-        mysticalautomation {
-            sourceSet(sourceSets.main)
-        }
-    }
 }
 
 configurations {
-    runtimeClasspath.extendsFrom localRuntime
+    // SkyTekx: the raw (not deobfuscated) jars of the pack, only used to check their SHA-1
+    packJarsRaw { transitive = false }
 }
+
+// SkyTekx: the dependencies are the exact builds of the pack's modrinth.index.json
+def packJars = [
+        [name: 'Cucumber', coord: "com.blakebr0.cucumber:Cucumber:${cucumber_version}", sha1: cucumber_sha1],
+        [name: 'Mystical Agriculture', coord: "com.blakebr0.mysticalagriculture:MysticalAgriculture:${mysticalagriculture_version}", sha1: mysticalagriculture_sha1],
+        [name: 'Mystical Agradditions', coord: "com.blakebr0.mysticalagradditions:MysticalAgradditions:${mysticalagradditions_version}", sha1: mysticalagradditions_sha1],
+]
 
 dependencies {
-    implementation "com.blakebr0.cucumber:Cucumber:${cucumber_version}"
-    implementation "com.blakebr0.mysticalagriculture:MysticalAgriculture:${mysticalagriculture_version}"
-    implementation "com.blakebr0.mysticalagradditions:MysticalAgradditions:${mysticalagradditions_version}"
-    implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${crafttweaker_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    runtimeOnly "curse.maven:jade-324717:${jade_version}"
-    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
-    runtimeOnly "mezz.jei:jei-${jei_mc_version}-neoforge:${jei_version}"
+    packJars.each {
+        implementation fg.deobf(it.coord)
+        packJarsRaw it.coord
+    }
 
-    compileOnly "mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${jei_mc_version}-neoforge-api:${jei_version}"
+    compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge-api:${jei_version}")
 }
+
+def verifyPackJars = tasks.register('verifyPackJars') {
+    description = 'Checks that the compile dependencies are byte identical to the jars of modrinth.index.json.'
+    inputs.files(configurations.packJarsRaw)
+    doLast {
+        def artifacts = configurations.packJarsRaw.resolvedConfiguration.resolvedArtifacts
+        packJars.each { jar ->
+            def (group, module, ver) = jar.coord.split(':')
+            def artifact = artifacts.find { it.moduleVersion.id.group == group && it.moduleVersion.id.name == module }
+            if (artifact == null) {
+                throw new GradleException("${jar.name}: ${module} ${ver} was not resolved")
+            }
+            def sha1 = java.security.MessageDigest.getInstance('SHA-1').digest(artifact.file.bytes).encodeHex().toString()
+            if (sha1 != jar.sha1) {
+                throw new GradleException("${jar.name}: ${module} ${ver} has SHA-1 ${sha1}, expected ${jar.sha1} (gradle.properties)")
+            }
+            logger.info("${jar.name}: ${module} ${ver} SHA-1 ${sha1} OK")
+        }
+    }
+}
+
+tasks.named('compileJava') { dependsOn verifyPackJars }
 
 tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
-            mod_version                  : version.split('-').last(),
+            mod_version                  : mod_version,
             cucumber_version             : cucumber_version.split('-').last(),
             mysticalagriculture_version  : mysticalagriculture_version.split('-').last(),
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/neoforge.mods.toml']) {
+    filesMatching(['META-INF/mods.toml']) {
         expand replaceProperties
     }
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact jar
-        }
+tasks.named('jar', Jar).configure {
+    // SkyTekx: byte-reproducible jar (no file timestamps, fixed entry order, no build timestamp in the
+    // manifest), so a rebuild of the same commit can be checked against the SHA-1 in modrinth-permissions/
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    // SkyTekx: MIT asks for the license text in every copy, and upstream jars carry none. The NOTICE
+    // says that this is a modified, unofficial build and where its source is
+    from('LICENSE') {
+        rename { 'LICENSE_mysticalautomation' }
+    }
+    from('NOTICE') {
+        rename { 'NOTICE_mysticalautomation' }
+    }
+    manifest {
+        attributes([
+                'Specification-Title'   : 'mysticalautomation',
+                'Specification-Version' : '1',
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.version,
+                'Implementation-Vendor' : 'Mystical Automation (modified build: SkyTekx)',
+        ])
     }
 
-    repositories {
-        maven {
-            url = 'https://maven.blakesmods.com'
-
-            credentials {
-                username = System.getenv('BLAKESMODS_MAVEN_USERNAME')
-                password = System.getenv('BLAKESMODS_MAVEN_PASSWORD')
-            }
-
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-    }
+    finalizedBy 'reobfJar'
 }
 
 tasks.withType(JavaCompile).configureEach {

@@ -99,3 +99,91 @@ rewrites in place. That jar is the one to ship.
    points at this directory as the source. `FARMERS_DELIGHT_LICENSE.txt` stays next to the textures it
    covers.
 10. `.gitignore`: also ignores `classes/`, `mcmodsrepo/`, `.mixin.out/` and logs.
+11. `reobf.jar.libraries` also gets the compile classpath of every integration source set. reobfJar maps a
+    call to an inherited vanilla method through the class hierarchy of its owner, and without the
+    integration targets the calls of `TomatoHarvestBehaviour` and `FlaxHarvestBehaviour` to
+    `CropBlock#getAge` and its siblings kept their Mojang names. The first test boot crashed there with a
+    `NoSuchMethodError` (commit 3b2fabcc).
+
+## Source changes
+
+The port keeps every registry id, block state, NBT key, config key and data file name of 1.4.3. The
+items below are what differs from upstream, with the reason.
+
+1. Entry points: Forge 47 loads one `@Mod` class per mod id, while NeoForge also constructs the
+   `@Mod(dist = CLIENT)` class `CIFClient`, the data class `CIFData` and one class per integration.
+   `CIFCommon` now constructs them: `CIFClient.init` through `DistExecutor`, `CIFData` while data
+   generation runs, and the integration entry points by class name, since they live in their own
+   source sets. Each integration still checks that its mod is loaded.
+2. Capabilities: Forge 47 has no `RegisterCapabilitiesEvent`. The roost and the vacuum harvester return
+   their output handler from `getCapability` on the sides that upstream registers (every side but the
+   roost's front, every side but the harvester's bottom) and invalidate it in `invalidate()`. The
+   Farmer's Delight basket gets the behaviour provider of Create: Dragons Plus through
+   `AttachCapabilitiesEvent`, built once per basket on the first query. `BasketBehaviourProvider` hands
+   every other capability on to the basket, because Create 6.0.8's `DirectBeltInputBehaviour` inserts
+   through the capability of its own block entity, which is the provider here.
+3. Data maps: the synced data maps `create_integrated_farming:chicken_food` for items and fluids become
+   `ChickenFoodMap` (new). It reads `data/create_integrated_farming/data_maps/item/chicken_food.json` and
+   `.../fluid/chicken_food.json` from every data pack in pack order in the NeoForge format (`values` keyed
+   by ids and `#tags`, `replace`, `remove`, later entries win) on each reload, and resolves tags when
+   asked. The new `ChickenFoodSyncPacket` sends the resolved maps to clients at every data pack sync, as
+   NeoForge syncs the two maps, so that feeding by hand is predicted on the client.
+4. Network: a `SimpleChannel` `create_integrated_farming:main` with protocol `1` replaces the payload
+   registrar. Message 0 is the roosting display snapshot, message 1 the chicken food maps, both from the
+   server to the client. The display records encode on `FriendlyByteBuf` through a small `BufCodec` (new)
+   in place of `StreamCodec`.
+5. Blocks: `Block#use` replaces `useItemOn` and `useWithoutItem`. A `PASS` from the item step falls
+   through to the main hand step, as `PASS_TO_DEFAULT_BLOCK_INTERACTION` does on 1.21.1. The block codecs
+   go, the methods that 1.20.1 declares public become public, and `isPathfindable` takes the 1.20.1
+   arguments. The roosts hold the empty roost as a `Supplier<Block>`, since the `BlockEntry` of
+   Registrate for 1.20.1 is no `Holder`.
+6. Loot: loot tables are named by `ResourceLocation` and come from the `LootDataManager`. The roosting
+   display parser writes a table to JSON with the Gson of `LootDataType.TABLE` and reads nested tables
+   from `name`, the 1.20.1 field, as well as `value`.
+7. Fishing: the catch delay uses the Lure level (5 seconds per level, as 1.21.1's time reduction), the
+   catch luck the Luck of the Sea level, and the loot parameters `KILLER_ENTITY` and
+   `DIRECT_KILLER_ENTITY`. The catch delay and catch chance draw from the random source of the level,
+   since 1.20.1 entities keep theirs protected. `Math.ceilDiv` (Java 18) becomes `Mth.positiveCeilDiv`.
+8. Harvesting: `CustomHarvestBehaviour#harvestBlock` follows Create 6.0.8's `destroyBlockAs`, which drops
+   the experience of the `BlockEvent.BreakEvent` instead of NeoForge's `BlockDropsEvent`. The enchantments
+   of Create Enchantable Machinery come from the NBT list `Enchantments`. `collectOrDropItem` of Create
+   6.0.10 is `dropItem` in 6.0.8, which also puts the item into the contraption storage first.
+9. Mixins: the five mixins into Create's own methods set `remap = false`. `SeatBlockMixin` maps
+   `updateEntityAfterFallOn` (a vanilla override, `m_5548_`) through the refmap
+   `create_integrated_farming.refmap.json` and checks leashes on `Mob`, since 1.20.1 has no `Leashable`.
+   No mixin targets a Minecraft class, so Arclight's patches do not meet them. The access transformer
+   uses SRG names. `UniversalConditionalMixinPlugin` goes with the integration mixin configs that used it.
+10. Client: `VacuumHarvesterMovementBehaviour#renderInContraption` and `#createVisual` carry
+    `@OnlyIn(Dist.CLIENT)`, as Create's interface does, so that a dedicated server strips them.
+11. Data files: recipes, loot tables, advancements and tags move to `recipes/`, `loot_tables/`,
+    `advancements/` and `tags/blocks|items/`. Recipe results use `item`, the wooden rod ingredient
+    `forge:rods/wooden`, load conditions the `forge:` types under `conditions`, and the advancements get
+    the `minecraft:recipes/root` parent. The chicken food maps use the 1.20.1 uniform int provider form.
+    The item map names the new tag `create_integrated_farming:chicken_food` with the six chicken foods of
+    1.20.1 (`Chicken.FOOD_ITEMS`), the fluid map `#forge:plantoil`. The block atlas file goes, because
+    it only served the removed roosts.
+12. Lava Fishing Net drops: Forge 1.20.1 loot tables have no load conditions, and a table that names the
+    net's item fails to load with an error while the block is not registered. The conditional loot table
+    goes, and `LavaFishingNetBlock#getDrops` drops the block under the same `survives_explosion` rule.
+13. Chicken food remainder (local fix): the roost drops a copy of the `using_converts_to` stack of the
+    chicken food map. Upstream hands the shared stack to `Containers.dropItemStack`, which empties it, so
+    only the first feeding returned it.
+14. Lava Fishing (local addition): upstream registers the Lava Fishing Net only with Nether Depths
+    Upgrade, Tide, Starcatcher or Confluence, none of which the pack carries. The new `lavafishing`
+    source set lets Lava Fishing 1.2.1 (mod id `lavafishing`) fill the net, after upstream's Nether Depths
+    Upgrade integration: its catch provider rolls `lavafishing:gameplay/fishing/nether/fishing` in the
+    Nether and `lavafishing:gameplay/fishing/lava/fishing` elsewhere, the nets capture the entities of
+    the `lavafishing` namespace, and the Ponder scene shows the Quartz Fish. Lava Fishing also enables the
+    block, its recipe and its advancement. It is referenced by registry names only.
+15. Twilight Delight: the Ponder scene names the Huge Lily Pad and Huge Water Lily by registry id instead
+    of `TFItems`, so the source set needs no compile dependency on the Twilight Forest fork. The depot is
+    emptied with `setHeldItem(ItemStack.EMPTY)`, since 1.20.1's depot has no `clearContent`.
+
+## Left out
+
+| Part | Reason |
+|---|---|
+| The integration source sets for Atmospheric, Autumnity, Confluence, Cook's Collection, Corn Delight, Crabber's Delight, Create Enchantable Machinery, Cultural Delights, Delight o' Flight, Ender's Delight, Environmental, Festive Delight, Haunted Harvest, Hearth and Harvest, My Nether's Delight, Neapolitan, Nether Depths Upgrade, Jaden's Nether Expansion, Nether's Exoticism, Sable, Starcatcher, Tide, Untitled Duck Mod, Upgrade Aquatic, Vanilla Backport and Windswept | The SkyTekx pack carries none of these mods. Their 1.20.1 builds, where any exist, have other APIs, and nothing could test them. Their source stays in the git history (commit 6e33465f) |
+| The duck, goose, turkey and warm or cold chicken roosts | They belong to the removed integrations (Untitled Duck Mod, Environmental, Confluence, Autumnity and Vanilla Backport). The warm and cold chickens are 1.21.5 content |
+| The datagen output of the port | The datagen classes compile against Registrate MC1.20-1.3.3 and Create: Dragons Plus 1.11.9, but nobody ran them. The files under `src/generated/` are upstream's output, converted by hand (source change 11). A datagen run would rewrite them and is not verified to give the same files |
+| Spotless | See build change 3 |

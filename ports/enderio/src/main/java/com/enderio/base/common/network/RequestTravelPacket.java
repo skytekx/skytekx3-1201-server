@@ -61,7 +61,8 @@ public class RequestTravelPacket implements Packet {
         static void handle(NetworkEvent.Context context, BlockPos pos) {
             var player = context.getSender();
 
-            if (player == null) {
+            // SkyTekx: a dead player jumps nowhere, as the two key packets of 565ef4c3e already check.
+            if (player == null || !player.isAlive()) {
                 return;
             }
 

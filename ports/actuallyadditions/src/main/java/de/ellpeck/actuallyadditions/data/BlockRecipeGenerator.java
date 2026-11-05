@@ -2,8 +2,10 @@ package de.ellpeck.actuallyadditions.data;
 
 import com.google.gson.JsonObject;
 import de.ellpeck.actuallyadditions.api.ActuallyTags;
+import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
+import de.ellpeck.actuallyadditions.registration.AABlockReg;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -11,8 +13,12 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
@@ -91,68 +97,106 @@ public class BlockRecipeGenerator extends RecipeProvider {
             .define('D', ActuallyTags.Items.DRILLS)
             .save(consumer);
 
+        // Player Interface
+        Recipe.shaped(ActuallyBlocks.PLAYER_INTERFACE.getItem())
+            .pattern("CWC", "ECE", "CAC")
+            .define('C', ActuallyBlocks.ENDER_CASING.getItem())
+            .define('W', Items.WITHER_SKELETON_SKULL)
+            .define('E', ActuallyItems.EMPOWERED_DIAMATINE_CRYSTAL.get())
+            .define('A', ActuallyItems.ADVANCED_COIL.get())
+            .save(consumer);
+
+        //Black Quartz stonecutting
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_PILLAR.getItem(), ActuallyBlocks.BLACK_QUARTZ.get());
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_BRICK.getItem(), ActuallyBlocks.BLACK_QUARTZ.get());
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.CHISELED_BLACK_QUARTZ.getItem(), ActuallyBlocks.BLACK_QUARTZ.get());
+
+        // Smooth Black Quartz Smelting
+        Recipe.smeltingResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get(), ActuallyBlocks.BLACK_QUARTZ.get());
+
         //Black Quartz Wall
-        Recipe.wall(ActuallyBlocks.BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), consumer);
+        Recipe.wall(ActuallyBlocks.BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ.get());
 
         //Black Quartz Slab
-        Recipe.slab(ActuallyBlocks.BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), consumer);
+        Recipe.slab(ActuallyBlocks.BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ.get(), 2);
 
         //Black Quartz Stairs
-        Recipe.stairs(ActuallyBlocks.BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), consumer);
+        Recipe.stairs(ActuallyBlocks.BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ.get());
 
         //Smooth Black Quartz Wall
         Recipe.wall(ActuallyBlocks.SMOOTH_BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.SMOOTH_BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get());
 
         //Smooth Black Quartz Slab
         Recipe.slab(ActuallyBlocks.SMOOTH_BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.SMOOTH_BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get(), 2);
 
         //Smooth Black Quartz Stairs
         Recipe.stairs(ActuallyBlocks.SMOOTH_BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.SMOOTH_BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.SMOOTH_BLACK_QUARTZ.get());
 
         //Black Quartz Brick Wall
         Recipe.wall(ActuallyBlocks.BLACK_QUARTZ_BRICK_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ_BRICK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_BRICK_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ_BRICK.get());
 
         //Black Quartz Brick Slab
         Recipe.slab(ActuallyBlocks.BLACK_QUARTZ_BRICK_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ_BRICK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_BRICK_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ_BRICK.get(), 2);
 
         //Black Quartz Brick Stairs
         Recipe.stairs(ActuallyBlocks.BLACK_QUARTZ_BRICK_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ_BRICK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_BRICK_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ_BRICK.get());
 
         //Pillar Black Quartz Wall
         Recipe.wall(ActuallyBlocks.BLACK_QUARTZ_PILLAR_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_PILLAR_WALL.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get());
 
         //Pillar Black Quartz Slab
         Recipe.slab(ActuallyBlocks.BLACK_QUARTZ_PILLAR_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_PILLAR_SLAB.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), 2);
 
         //Pillar Black Quartz Stairs
         Recipe.stairs(ActuallyBlocks.BLACK_QUARTZ_PILLAR_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.BLACK_QUARTZ_PILLAR_STAIR.getItem(), ActuallyBlocks.BLACK_QUARTZ_PILLAR.get());
 
         //Chiseled Black Quartz Wall
         Recipe.wall(ActuallyBlocks.CHISELED_BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.CHISELED_BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.CHISELED_BLACK_QUARTZ_WALL.getItem(), ActuallyBlocks.CHISELED_BLACK_QUARTZ.get());
 
         //Chiseled Black Quartz Slab
         Recipe.slab(ActuallyBlocks.CHISELED_BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.CHISELED_BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.CHISELED_BLACK_QUARTZ_SLAB.getItem(), ActuallyBlocks.CHISELED_BLACK_QUARTZ.get(), 2);
 
         //Chiseled Black Quartz Stairs
         Recipe.stairs(ActuallyBlocks.CHISELED_BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.CHISELED_BLACK_QUARTZ.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.CHISELED_BLACK_QUARTZ_STAIR.getItem(), ActuallyBlocks.CHISELED_BLACK_QUARTZ.get());
 
         //Ethetic White Wall
         Recipe.wall(ActuallyBlocks.ETHETIC_WHITE_WALL.getItem(), ActuallyBlocks.ETHETIC_WHITE_BLOCK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.ETHETIC_WHITE_WALL.getItem(), ActuallyBlocks.ETHETIC_WHITE_BLOCK.get());
 
         //Ethetic White Slab
         Recipe.slab(ActuallyBlocks.ETHETIC_WHITE_SLAB.getItem(), ActuallyBlocks.ETHETIC_WHITE_BLOCK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.ETHETIC_WHITE_SLAB.getItem(), ActuallyBlocks.ETHETIC_WHITE_BLOCK.get(), 2);
 
         //Ethetic White Stairs
         Recipe.stairs(ActuallyBlocks.ETHETIC_WHITE_STAIRS.getItem(), ActuallyBlocks.ETHETIC_WHITE_BLOCK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.ETHETIC_WHITE_STAIRS.getItem(), ActuallyBlocks.ETHETIC_WHITE_BLOCK.get());
 
         // Ethetic Green Wall
         Recipe.wall(ActuallyBlocks.ETHETIC_GREEN_WALL.getItem(), ActuallyBlocks.ETHETIC_GREEN_BLOCK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.ETHETIC_GREEN_WALL.getItem(), ActuallyBlocks.ETHETIC_GREEN_BLOCK.get());
 
         // Ethetic Green Slab
         Recipe.slab(ActuallyBlocks.ETHETIC_GREEN_SLAB.getItem(), ActuallyBlocks.ETHETIC_GREEN_BLOCK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.ETHETIC_GREEN_SLAB.getItem(), ActuallyBlocks.ETHETIC_GREEN_BLOCK.get(), 2);
 
         // Ethetic Green Stairs
         Recipe.stairs(ActuallyBlocks.ETHETIC_GREEN_STAIRS.getItem(), ActuallyBlocks.ETHETIC_GREEN_BLOCK.get(), consumer);
+        Recipe.stonecutterResultFromBase(consumer, RecipeCategory.DECORATIONS, ActuallyBlocks.ETHETIC_GREEN_STAIRS.getItem(), ActuallyBlocks.ETHETIC_GREEN_BLOCK.get());
 
         // Atomic Reconstructor
         Recipe.shaped(ActuallyBlocks.ATOMIC_RECONSTRUCTOR.getItem())
@@ -228,8 +272,320 @@ public class BlockRecipeGenerator extends RecipeProvider {
             .define('S', ActuallyItems.EMPOWERED_DIAMATINE_CRYSTAL.get())
             .save(consumer);
 
+        //Coffee Maker
+        Recipe.shaped(ActuallyBlocks.COFFEE_MACHINE.getItem())
+            .pattern(" C ", " I ", "XVX")
+            .define('C', ActuallyItems.COFFEE_BEANS.get())
+            .define('I', ActuallyBlocks.IRON_CASING.getItem())
+            .define('X', ActuallyItems.BASIC_COIL.get())
+            .define('V', ActuallyItems.VOID_CRYSTAL.get())
+            .save(consumer);
+
+        //Canola Press
+        Recipe.shaped(ActuallyBlocks.CANOLA_PRESS.getItem())
+            .pattern("CEC","CXC","CAC")
+            .define('C', Tags.Items.COBBLESTONE)
+            .define('E', ActuallyItems.ENORI_CRYSTAL.get())
+            .define('X', ActuallyItems.CANOLA.get())
+            .define('A', ActuallyItems.ADVANCED_COIL.get())
+            .save(consumer);
+
+        //Fermenting Barrel
+        Recipe.shaped(ActuallyBlocks.FERMENTING_BARREL.getItem())
+            .pattern("LAL","LCL","LWL")
+            .define('L', ItemTags.LOGS)
+            .define('A', ActuallyItems.ENORI_CRYSTAL.get())
+            .define('C', ActuallyItems.CANOLA.get())
+            .define('W', ActuallyBlocks.WOOD_CASING.getItem())
+            .save(consumer);
+
+        //Oil Generator
+        Recipe.shaped(ActuallyBlocks.OIL_GENERATOR.getItem())
+            .pattern("CIC","CAC","CIC")
+            .define('C', Tags.Items.COBBLESTONE)
+            .define('A', ActuallyItems.CANOLA.get())
+            .define('I', ActuallyBlocks.IRON_CASING.getItem())
+            .save(consumer);
+
+        //Coal generator.
+        Recipe.shaped(ActuallyBlocks.COAL_GENERATOR.getItem())
+            .pattern("CIC","CAC","CIC")
+            .define('C', Tags.Items.COBBLESTONE)
+            .define('A', Items.COAL)
+            .define('I', ActuallyBlocks.IRON_CASING.getItem())
+            .save(consumer);
+
+        // Auto breaker.
+        Recipe.shaped(ActuallyBlocks.BREAKER.getItem())
+            .pattern("CCC","CXV","CCC")
+            .define('C', Tags.Items.COBBLESTONE)
+            .define('V', ActuallyItems.VOID_CRYSTAL.get())
+            .define('X', ActuallyItems.BASIC_COIL.get())
+            .save(consumer);
+
+        // Auto placer.
+        Recipe.shaped(ActuallyBlocks.PLACER.getItem())
+            .pattern("CCC", "CXP", "CCC")
+            .define('C', Tags.Items.COBBLESTONE)
+            .define('P', ActuallyItems.PALIS_CRYSTAL.get())
+            .define('X', ActuallyItems.BASIC_COIL.get())
+            .save(consumer);
+
+        // Dropper
+        Recipe.shaped(ActuallyBlocks.DROPPER.getItem())
+            .pattern("CPC", "CDA", "CPC")
+            .define('C', Tags.Items.COBBLESTONE)
+            .define('P', ActuallyItems.PALIS_CRYSTAL.get())
+            .define('D', Items.DROPPER)
+            .define('A', ActuallyItems.ADVANCED_COIL.get())
+            .save(consumer);
+
+        // Fluid Placer
+        Recipe.shaped(ActuallyBlocks.FLUID_PLACER.getItem())
+            .pattern("BPB")
+            .define('B', Items.BUCKET)
+            .define('P', ActuallyBlocks.PLACER.get())
+            .save(consumer);
+
+        // Fluid Collector
+        Recipe.shaped(ActuallyBlocks.FLUID_COLLECTOR.getItem())
+            .pattern("BFB")
+            .define('B', Items.BUCKET)
+            .define('F', ActuallyBlocks.BREAKER.get())
+            .save(consumer);
+
+        // Phantom Placer
+        Recipe.shapeless(ActuallyBlocks.PHANTOM_PLACER.get())
+                .ingredients(ActuallyBlocks.PLACER.get(), ActuallyBlocks.PHANTOM_ITEMFACE.get())
+                .save(consumer);
+
+        // Phantom Breaker
+        Recipe.shapeless(ActuallyBlocks.PHANTOM_BREAKER.get())
+                .ingredients(ActuallyBlocks.BREAKER.get(), ActuallyBlocks.PHANTOM_ITEMFACE.get())
+                .save(consumer);
+
+        // Powered furnace.
+        Recipe.shaped(ActuallyBlocks.POWERED_FURNACE.getItem())
+                .pattern("EXC", "FIF", "CXE")
+                .define('E', ActuallyItems.ENORI_CRYSTAL.get())
+                .define('X', ActuallyItems.BASIC_COIL.get())
+                .define('C', Tags.Items.COBBLESTONE)
+                .define('F', Items.FURNACE)
+                .define('I', ActuallyBlocks.IRON_CASING.getItem())
+                .save(consumer);
+
+        // Greenhouse glass
+        Recipe.shaped(ActuallyBlocks.GREENHOUSE_GLASS.getItem(), 2)
+                .pattern("GSG", "SES", "GSG")
+                .define('G', Tags.Items.GLASS)
+                .define('S', ItemTags.SAPLINGS)
+                .define('E', ActuallyItems.EMPOWERED_PALIS_CRYSTAL.get())
+                .save(consumer);
+
+        // Block of Black Quartz
+        Recipe.shaped(ActuallyBlocks.BLACK_QUARTZ.getItem())
+                .pattern("BB", "BB")
+                .define('B', ActuallyItems.BLACK_QUARTZ.get())
+                .save(consumer);
+
+        // Pillar of Black Quartz
+        Recipe.shaped(ActuallyBlocks.BLACK_QUARTZ_PILLAR.getItem())
+                .pattern("B", "B")
+                .define('B', ActuallyItems.BLACK_QUARTZ.get())
+                .save(consumer);
+
+        // Chiseled Block of Black Quartz
+        Recipe.shaped(ActuallyBlocks.CHISELED_BLACK_QUARTZ.getItem(), 2)
+                .pattern("B", "B")
+                .define('B', ActuallyBlocks.BLACK_QUARTZ.getItem())
+                .save(consumer);
+
+        // Lava Factory Controller
+        Recipe.shaped(ActuallyBlocks.LAVA_FACTORY_CONTROLLER.getItem())
+                .pattern("ACA", "EAE", "BBB")
+                .define('B', Items.LAVA_BUCKET)
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .define('E', ActuallyBlocks.EMPOWERED_ENORI_CRYSTAL.get())
+                .define('C', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Lava Casing
+        Recipe.shaped(ActuallyBlocks.LAVA_FACTORY_CASING.getItem(), 4)
+                .pattern("ECE")
+                .define('E', ActuallyBlocks.ENORI_CRYSTAL.get())
+                .define('C', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Ranged Collector
+        Recipe.shaped(ActuallyBlocks.RANGED_COLLECTOR.getItem())
+                .pattern(" V ", "EHE", " C ")
+                .define('V', ActuallyItems.VOID_CRYSTAL.get())
+                .define('E', Tags.Items.ENDER_PEARLS)
+                .define('H', Items.HOPPER)
+                .define('C', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Crusher
+        Recipe.shaped(ActuallyBlocks.CRUSHER.getItem())
+                .pattern("RFC", "BIB", "CFR")
+                .define('R', ActuallyItems.RESTONIA_CRYSTAL.get())
+                .define('F', Items.FLINT)
+                .define('C', Tags.Items.COBBLESTONE)
+                .define('I', ActuallyBlocks.IRON_CASING.get())
+                .define('B', ActuallyItems.BASIC_COIL.get())
+                .save(consumer);
+
+        // Double Crusher
+        Recipe.shaped(ActuallyBlocks.CRUSHER_DOUBLE.getItem())
+                .pattern("SAS", "CIC", "SAS")
+                .define('S', Tags.Items.COBBLESTONE)
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .define('C', ActuallyBlocks.CRUSHER.get())
+                .define('I', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Energizer
+        Recipe.shaped(ActuallyBlocks.ENERGIZER.getItem())
+                .pattern("R R", "AIA", "R R")
+                .define('R', ActuallyItems.RESTONIA_CRYSTAL.get())
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .define('I', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Enervator
+        Recipe.shaped(ActuallyBlocks.ENERVATOR.getItem())
+                .pattern(" R ", "AIA", " R ")
+                .define('R', ActuallyItems.RESTONIA_CRYSTAL.get())
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .define('I', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Leaf-eating Generator
+        Recipe.shaped(ActuallyBlocks.LEAF_GENERATOR.getItem())
+                .pattern("CIC", "ELE", "CAC")
+                .define('C', ActuallyItems.ENORI_CRYSTAL.get())
+                .define('I', ActuallyBlocks.IRON_CASING.get())
+                .define('E', ActuallyBlocks.EMPOWERED_RESTONIA_CRYSTAL.get())
+                .define('L', ItemTags.LEAVES)
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .save(consumer);
+
+        // Phantom Itemface
+        Recipe.shaped(ActuallyBlocks.PHANTOM_ITEMFACE.getItem())
+                .pattern(" C ", "MEM", " A ")
+                .define('C', Tags.Items.CHESTS_WOODEN)
+                .define('M', Items.PHANTOM_MEMBRANE)
+                .define('E', ActuallyBlocks.ENDER_CASING.get())
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .save(consumer);
+
+        // Phantom Liquiface
+        Recipe.shaped(ActuallyBlocks.PHANTOM_LIQUIFACE.getItem())
+                .pattern("BIB")
+                .define('B', Items.BUCKET)
+                .define('I', ActuallyBlocks.PHANTOM_ITEMFACE.get())
+                .save(consumer);
+
+        // Phantom Energyface
+        Recipe.shaped(ActuallyBlocks.PHANTOM_ENERGYFACE.getItem())
+                .pattern(" R ", "RIR", " R ")
+                .define('R', ActuallyItems.EMPOWERED_RESTONIA_CRYSTAL.get())
+                .define('I', ActuallyBlocks.PHANTOM_ITEMFACE.get())
+                .save(consumer);
+
+        // Phantom Redstoneface
+        Recipe.shaped(ActuallyBlocks.PHANTOM_REDSTONEFACE.getItem())
+                .pattern("DRD", "RIR", "DRD")
+                .define('D', Tags.Items.DUSTS_REDSTONE)
+                .define('R', ActuallyItems.EMPOWERED_RESTONIA_CRYSTAL.get())
+                .define('I', ActuallyBlocks.PHANTOM_ITEMFACE.get())
+                .save(consumer);
+
+        // Phantom Booster
+        Recipe.shaped(ActuallyBlocks.PHANTOM_BOOSTER.getItem())
+                .pattern("RDR", "DCD", "RDR")
+                .define('D', ActuallyItems.DIAMATINE_CRYSTAL.get())
+                .define('R', ActuallyItems.RESTONIA_CRYSTAL.get())
+                .define('C', ActuallyBlocks.ENDER_CASING.getItem())
+                .save(consumer);
+
+        // Automatic Feeder
+        Recipe.shaped(ActuallyBlocks.FEEDER.getItem())
+                .pattern("PGP", "BCB", "PGP")
+                .define('P', ItemTags.PLANKS)
+                .define('G', Items.GOLDEN_CARROT)
+                .define('B', ActuallyItems.BASIC_COIL.get())
+                .define('C', ActuallyBlocks.WOOD_CASING.getItem())
+                .save(consumer);
+
+        // Bio Reactor
+        Recipe.shaped(ActuallyBlocks.BIOREACTOR.getItem())
+                .pattern("EIE", "ESE", "EIE")
+                .define('E', ActuallyItems.EMPOWERED_ENORI_CRYSTAL.get())
+                .define('I', ActuallyBlocks.IRON_CASING.getItem())
+                .define('S', ItemTags.SAPLINGS)
+                .save(consumer);
+
+        // Heat Collector
+        Recipe.shaped(ActuallyBlocks.HEAT_COLLECTOR.getItem())
+                .pattern("IRI", "AEA", "ICI")
+                .define('I', Items.IRON_BARS)
+                .define('R', Items.REPEATER)
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .define('E', ActuallyItems.ENORI_CRYSTAL.get())
+                .define('C', ActuallyBlocks.IRON_CASING.get())
+                .save(consumer);
+
+        // Long-Range Breaker
+        Recipe.shaped(ActuallyBlocks.LONG_RANGE_BREAKER.getItem())
+                .pattern("AAA", " V ")
+                .define('A', ActuallyBlocks.BREAKER.get())
+                .define('V', ActuallyItems.VOID_CRYSTAL.get())
+                .save(consumer);
+
+        // Experience Solidifier
+        Recipe.shaped(ActuallyBlocks.XP_SOLIDIFIER.getItem())
+                .pattern("SSS", "EAE", "SSS")
+                .define('S', Items.EXPERIENCE_BOTTLE)
+                .define('E', ActuallyBlocks.EMPOWERED_DIAMATINE_CRYSTAL.getItem())
+                .define('A', ActuallyItems.ADVANCED_COIL.get())
+                .save(consumer);
 
 
+        //Lamps
+        Lamp(consumer, ActuallyBlocks.LAMP_WHITE, Items.WHITE_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_ORANGE, Items.ORANGE_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_MAGENTA, Items.MAGENTA_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_LIGHT_BLUE, Items.LIGHT_BLUE_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_YELLOW, Items.YELLOW_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_LIME, Items.LIME_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_PINK, Items.PINK_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_GRAY, Items.GRAY_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_LIGHT_GRAY, Items.LIGHT_GRAY_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_CYAN, Items.CYAN_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_PURPLE, Items.PURPLE_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_BLUE, Items.BLUE_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_BROWN, Items.BROWN_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_GREEN, Items.GREEN_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_RED, Items.RED_DYE);
+        Lamp(consumer, ActuallyBlocks.LAMP_BLACK, Items.BLACK_DYE);
+
+        //Lamp Controller, any lamp surrounded by restonia crystals
+        Recipe.shaped(ActuallyBlocks.LAMP_CONTROLLER.getItem(), 4)
+                .pattern("RRR", "RLR", "RRR")
+                .define('R', ActuallyItems.RESTONIA_CRYSTAL.get())
+                .define('L', ActuallyTags.Items.LAMPS)
+                .save(consumer);
+    }
+
+    public void Lamp(Consumer<FinishedRecipe> consumer, AABlockReg<?, ?, ?> lamp, ItemLike dye) {
+        Recipe.shaped(lamp.getItem(), 6)
+                .pattern("GCG", "DBD", "GCG")
+                .define('G', Items.GLOWSTONE)
+                .define('C', ActuallyItems.PALIS_CRYSTAL.get())
+                .define('D', dye)
+                .define('B', ActuallyItems.BLACK_QUARTZ.get())
+                .save(consumer);
     }
 
     @Override
@@ -257,15 +613,32 @@ public class BlockRecipeGenerator extends RecipeProvider {
         }
 
         public static void stairs(ItemLike result, ItemLike resource, Consumer<FinishedRecipe> consumer) {
-            Recipe.shaped(result).patternSingleKey('Q', resource, "Q  ", "QQ ", "QQQ").save(consumer);
+            Recipe.shaped(result, 4).patternSingleKey('Q', resource, "Q  ", "QQ ", "QQQ").save(consumer);
         }
 
         public static void wall(ItemLike result, ItemLike resource, Consumer<FinishedRecipe> consumer) {
-            Recipe.shaped(result).patternSingleKey('Q', resource, "QQQ", "QQQ").save(consumer);
+            Recipe.shaped(result, 6).patternSingleKey('Q', resource, "QQQ", "QQQ").save(consumer);
         }
 
         public static void slab(ItemLike result, ItemLike resource, Consumer<FinishedRecipe> consumer) {
-            Recipe.shaped(result).patternSingleKey('Q', resource, "QQQ").save(consumer);
+            Recipe.shaped(result, 6).patternSingleKey('Q', resource, "QQQ").save(consumer);
+        }
+
+        // SkyTekx: the vanilla helpers of 1.20.1 save under the minecraft namespace, so these keep the mod's one as main does
+        protected static void stonecutterResultFromBase(Consumer<FinishedRecipe> consumer, RecipeCategory category, ItemLike result, ItemLike material) {
+            stonecutterResultFromBase(consumer, category, result, material, 1);
+        }
+
+        protected static void stonecutterResultFromBase(Consumer<FinishedRecipe> consumer, RecipeCategory category, ItemLike result, ItemLike material, int resultCount) {
+            SingleItemRecipeBuilder.stonecutting(Ingredient.of(material), category, result, resultCount)
+                    .unlockedBy(getHasName(material), has(material))
+                    .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, getConversionRecipeName(result, material) + "_stonecutting"));
+        }
+
+        protected static void smeltingResultFromBase(Consumer<FinishedRecipe> consumer, RecipeCategory category, ItemLike result, ItemLike material) {
+            SimpleCookingRecipeBuilder.smelting(Ingredient.of(material), category, result, 0.1F, 200)
+                    .unlockedBy(getHasName(material), has(material))
+                    .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, getSmeltingRecipeName(result)));
         }
 
         private static class Shapeless extends ShapelessRecipeBuilder {

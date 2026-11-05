@@ -48,6 +48,9 @@ Modifications
     * Tags: black quartz, its ore and block, the crystal blocks, the four crops and their seeds,
       the rice slimeball, stairs, slabs, walls and the AIOTs carry the forge: and vanilla tags of
       upstream's newer lines, with each c: tag of upstream's main branch mapped to its Forge name.
+    * Recipes: the machines, lamps and blocks that had no recipe can be crafted as on upstream's
+      main branch, crystal blocks compress and decompress, black quartz ore smelts, and walls,
+      slabs and stairs give the vanilla amounts and have stonecutter recipes.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

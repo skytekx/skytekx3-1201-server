@@ -340,3 +340,30 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    yet (the worm change of `e37019a` comes with the worm fixes), and the Curios `charm` tag and the
    banner pattern tags come with their features. Every `forge:` file matches the generated file of
    the 1.20.4 line byte for byte.
+10. Recipes: the two recipe generators carry the crafting, smelting and stonecutting recipes of
+    `main` for every block and item the base registers, which adds 111 files to the 299 of the
+    base. They are 33 machine recipes, among them the generators, crushers, breakers, placers,
+    phantom faces and boosters, the Feeder, Bio Reactor, Heat Collector, Energizer, Enervator,
+    Experience Solidifier (with experience bottles, `9492973`), Greenhouse Glass, Lava Factory and
+    Player Interface (`2040c68`, `1e32301`, `ae6695a`, `5a921e1`, `7c7a095`, `8abfa24`,
+    `b69847d`, `3f35689`, `b68cfec`, `cad5721`, `9d76fad` and the recipe parts of `5182ac8`,
+    `7bcebe6`, `adc276e`, `6886aca`, `8419cc6`, `17d8dcc` and `ccfb8d1`). Then the black quartz
+    block, pillar and chiseled block (`e8df077`), smooth black quartz by smelting (`40012ae`), the
+    sixteen lamps and the lamp controller (the recipe parts of `248011b` and `c09b365`), the 24
+    compress and decompress recipes of the six crystal and six empowered crystal blocks
+    (`8f73813`), the ring and rice dough (`2040c68`), rice paper (`cf80d17`), the Ender Star
+    (`1440baa`), sticky pistons and slime blocks from any `forge:slimeballs` (`06ef714`,
+    `f524ecc`), rice dough smelted to bread (`c29830a`) and black quartz ore smelted and blasted
+    (`d1f77f3`). Walls, slabs and stairs give 6, 6 and 4 as vanilla does, and 24 stonecutter
+    recipes cut them and the black quartz variants from their block. The black quartz wall, slab
+    and stairs are made from the black quartz block instead of the pillar, whose own wall, slab
+    and stairs used the same pattern (`d0f8c24`, `fc63fa0`, #1465). The stonecutting and smelting
+    helpers save under the mod's namespace, since the vanilla helpers of 1.20.1 use `minecraft`.
+    The invisibility upgrade keeps the base's `forge:glass/black` instead of the black stained
+    glass that the 1.21 port of `main` switched to. Not here are the drill dye recipes (they need
+    the keep data shapeless recipe of the drill fixes), the reset recipes of the machines that
+    keep their contents, the Item Tag, the banner patterns and the compat recipes, which come with
+    their features. Apart from those, the folder holds every top level, compress and decompress
+    file of `main`, and each one matches its file on `main` except for the 1.20.1 form (the
+    stonecutting count at the top, `forge:conditional` around the tiny coal recipes, the
+    `forge:nbt` ingredient of the Lens of the Killer).

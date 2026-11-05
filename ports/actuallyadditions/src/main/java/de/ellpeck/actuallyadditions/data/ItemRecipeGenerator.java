@@ -15,11 +15,13 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
@@ -185,12 +187,12 @@ public class ItemRecipeGenerator extends RecipeProvider {
             .define('S', ActuallyItems.ENORI_CRYSTAL.get()).save(consumer);
 
 
-/*        //Rice Recipes
+        //Rice Recipes
         Recipe.shaped(Items.PAPER, 3)
             .pattern("R  ")
             .pattern(" R ")
             .pattern("  R")
-            .define('R', TheFoods.RICE).save(consumer); //TODO foods need worked on still.*/
+            .define('R', ActuallyItems.RICE.get()).save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "rice_paper"));
 
         Recipe.shaped(ActuallyItems.RICE_SLIMEBALL.get())
             .requiresBook()
@@ -339,6 +341,11 @@ public class ItemRecipeGenerator extends RecipeProvider {
             .define('A', ActuallyItems.BASIC_COIL.get())
             .define('R', ActuallyItems.ENORI_CRYSTAL.get()).save(consumer);
 
+        //Ender Star
+        Recipe.shapeless(ActuallyItems.ENDER_STAR.get())
+                .ingredients(Items.NETHER_STAR, Items.DRAGON_BREATH, ActuallyItems.BLACK_QUARTZ.get(), Items.PRISMARINE_SHARD)
+                .save(consumer);
+
         //Bat Wings
         Recipe.shaped(ActuallyItems.WINGS_OF_THE_BATS.get())
             .pattern("WNW")
@@ -469,6 +476,19 @@ public class ItemRecipeGenerator extends RecipeProvider {
                 .requires(ActuallyItems.RICE.get())
                 .save(consumer);
 
+        //Rice Dough
+        Recipe.shapeless(ActuallyItems.RICE_DOUGH.get(), 2)
+                .requires(ActuallyItems.RICE.get(), 3)
+                .save(consumer);
+
+        //Ring, glow stone dust in the middle, iron in the corners, gold in the cardinals.
+        Recipe.shaped(ActuallyItems.RING.get())
+                .pattern("IGI", "GDG", "IGI")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('G', Tags.Items.INGOTS_GOLD)
+                .define('D', Tags.Items.DUSTS_GLOWSTONE)
+                .save(consumer);
+
         //Cup
         Recipe.shaped(ActuallyItems.EMPTY_CUP.get())
                 .pattern("S S", "SCS", "SSS")
@@ -493,6 +513,19 @@ public class ItemRecipeGenerator extends RecipeProvider {
                 .define('I', Items.IRON_HELMET)
                 .save(consumer);
 
+        // Sticky Piston from tagged slime balls
+        Recipe.shaped(Items.STICKY_PISTON)
+                .pattern("R", "P")
+                .define('R', Tags.Items.SLIMEBALLS)
+                .define('P', Items.PISTON)
+                .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "tagged_sticky_piston"));
+
+        // Slime block from tagged balls
+        Recipe.shaped(Items.SLIME_BLOCK)
+                .pattern("RRR", "RRR", "RRR")
+                .define('R', Tags.Items.SLIMEBALLS)
+                .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "tagged_slime_block"));
+
         //Shards
         addShard(consumer, ActuallyItems.VOID_CRYSTAL_SHARD, ActuallyItems.VOID_CRYSTAL);
         addShard(consumer, ActuallyItems.ENORI_CRYSTAL_SHARD, ActuallyItems.ENORI_CRYSTAL);
@@ -500,6 +533,22 @@ public class ItemRecipeGenerator extends RecipeProvider {
         addShard(consumer, ActuallyItems.PALIS_CRYSTAL_SHARD, ActuallyItems.PALIS_CRYSTAL);
         addShard(consumer, ActuallyItems.DIAMATINE_CRYSTAL_SHARD, ActuallyItems.DIAMATINE_CRYSTAL);
         addShard(consumer, ActuallyItems.EMERADIC_CRYSTAL_SHARD, ActuallyItems.EMERADIC_CRYSTAL);
+
+        //Crystal Blocks
+        addCrystalBlock(consumer, ActuallyBlocks.VOID_CRYSTAL.getItem(), ActuallyItems.VOID_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.ENORI_CRYSTAL.getItem(), ActuallyItems.ENORI_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.RESTONIA_CRYSTAL.getItem(), ActuallyItems.RESTONIA_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.PALIS_CRYSTAL.getItem(), ActuallyItems.PALIS_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.DIAMATINE_CRYSTAL.getItem(), ActuallyItems.DIAMATINE_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.EMERADIC_CRYSTAL.getItem(), ActuallyItems.EMERADIC_CRYSTAL);
+
+        //Empowered Crystal Blocks
+        addCrystalBlock(consumer, ActuallyBlocks.EMPOWERED_VOID_CRYSTAL.getItem(), ActuallyItems.EMPOWERED_VOID_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.EMPOWERED_ENORI_CRYSTAL.getItem(), ActuallyItems.EMPOWERED_ENORI_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.EMPOWERED_RESTONIA_CRYSTAL.getItem(), ActuallyItems.EMPOWERED_RESTONIA_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.EMPOWERED_PALIS_CRYSTAL.getItem(), ActuallyItems.EMPOWERED_PALIS_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.EMPOWERED_DIAMATINE_CRYSTAL.getItem(), ActuallyItems.EMPOWERED_DIAMATINE_CRYSTAL);
+        addCrystalBlock(consumer, ActuallyBlocks.EMPOWERED_EMERADIC_CRYSTAL.getItem(), ActuallyItems.EMPOWERED_EMERADIC_CRYSTAL);
 
 
         //        //Quartz
@@ -514,6 +563,18 @@ public class ItemRecipeGenerator extends RecipeProvider {
         //        GameRegistry.addSmelting(new ItemStack(InitItems.itemDust, 1, TheDusts.QUARTZ_BLACK.ordinal()), new ItemStack(InitItems.itemMisc, 1, TheMiscItems.QUARTZ.ordinal()), 1F);
         //        GameRegistry.addSmelting(new ItemStack(InitItems.itemDust, 1, TheDusts.QUARTZ.ordinal()), new ItemStack(Items.QUARTZ), 1F);
         //        GameRegistry.addSmelting(new ItemStack(InitItems.itemDust, 1, TheDusts.COAL.ordinal()), new ItemStack(Items.COAL), 1F);
+
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ActuallyItems.RICE_DOUGH.get()), RecipeCategory.FOOD, Items.BREAD, 0.35F, 200)
+            .unlockedBy("", has(Items.AIR))
+            .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "rice_dough_smelting"));
+
+        // Black Quartz Ore
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ActuallyBlocks.BLACK_QUARTZ_ORE.getItem()), RecipeCategory.MISC, ActuallyItems.BLACK_QUARTZ.get(), 0.7F, 200)
+            .unlockedBy("", has(Items.AIR))
+            .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "black_quartz_ore_smelting"));
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(ActuallyBlocks.BLACK_QUARTZ_ORE.getItem()), RecipeCategory.MISC, ActuallyItems.BLACK_QUARTZ.get(), 0.7F, 100)
+            .unlockedBy("", has(Items.AIR))
+            .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "black_quartz_ore_blasting"));
     }
 
     protected void generatePaxels(Consumer<FinishedRecipe> consumer) {
@@ -545,17 +606,22 @@ public class ItemRecipeGenerator extends RecipeProvider {
             .save(consumer);
     }
 
-    public static void decompress(Consumer<FinishedRecipe> consumer, RegistryObject<Item> output, RegistryObject<Item> input) {
-        ResourceLocation key = ForgeRegistries.ITEMS.getKey(output.get());
-        Recipe.shapeless(output.get(), 9).requires(input.get()).save(consumer, new ResourceLocation(key.getNamespace(), "decompress/" + key.getPath()));
+    public static void decompress(Consumer<FinishedRecipe> consumer, ItemLike output, ItemLike input) {
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(output.asItem());
+        Recipe.shapeless(output, 9).requires(input).save(consumer, new ResourceLocation(key.getNamespace(), "decompress/" + key.getPath()));
     }
-    public static void compress(Consumer<FinishedRecipe> consumer, RegistryObject<Item> output, RegistryObject<Item> input) {
-        ResourceLocation key = ForgeRegistries.ITEMS.getKey(output.get());
-        Recipe.shaped(output.get()).pattern("xxx","xxx", "xxx").define('x', input.get()).save(consumer, new ResourceLocation(key.getNamespace(), "compress/" + key.getPath()));
+    public static void compress(Consumer<FinishedRecipe> consumer, ItemLike output, ItemLike input) {
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(output.asItem());
+        Recipe.shaped(output).pattern("xxx","xxx", "xxx").define('x', input).save(consumer, new ResourceLocation(key.getNamespace(), "compress/" + key.getPath()));
     }
     public static void addShard(Consumer<FinishedRecipe> consumer, RegistryObject<Item> shard, RegistryObject<Item> crystal) {
-        compress(consumer, crystal, shard);
-        decompress(consumer, shard, crystal);
+        compress(consumer, crystal.get(), shard.get());
+        decompress(consumer, shard.get(), crystal.get());
+    }
+
+    public static void addCrystalBlock(Consumer<FinishedRecipe> consumer, ItemLike block, RegistryObject<Item> crystal) {
+        compress(consumer, block, crystal.get());
+        decompress(consumer, crystal.get(), block);
     }
 
     @Override

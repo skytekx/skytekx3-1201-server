@@ -1,0 +1,14 @@
+{
+  "type": "enderio:vat_fermenting",
+  "input": {
+    "amount": 1000,
+    "tag": "minecraft:water"
+  },
+  "left_reagent": "enderio:prismarine",
+  "output": {
+    "amount": 1000,
+    "fluid": "enderio:cloud_seed"
+  },
+  "right_reagent": "enderio:cloud_cold",
+  "ticks": 400
+}

@@ -1,0 +1,14 @@
+{
+  "type": "enderio:vat_fermenting",
+  "input": {
+    "amount": 4000,
+    "fluid": "enderio:nutrient_distillation"
+  },
+  "left_reagent": "forge:dusts/grains_of_pizeallity",
+  "output": {
+    "amount": 1000,
+    "fluid": "enderio:dew_of_the_void"
+  },
+  "right_reagent": "forge:dusts/grains_of_the_end",
+  "ticks": 400
+}

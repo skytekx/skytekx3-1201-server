@@ -1,0 +1,14 @@
+{
+  "type": "enderio:vat_fermenting",
+  "input": {
+    "amount": 1000,
+    "fluid": "enderio:hootch"
+  },
+  "left_reagent": "enderio:blaze_powder",
+  "output": {
+    "amount": 1000,
+    "fluid": "enderio:fire_water"
+  },
+  "right_reagent": "forge:dusts/redstone",
+  "ticks": 400
+}

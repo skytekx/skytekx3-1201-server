@@ -383,5 +383,20 @@ public class MachineRecipeProvider extends RecipeProvider {
             .pattern("ICI")
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(EIOBlocks.ENDERMAN_HEAD).build()))
             .save(finishedRecipeConsumer);
+
+        // SkyTekx: the Vat recipe of 8.x (6bc3ec343), with forge tags for the c: tags.
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.VAT.get())
+            .define('S', EIOTags.Items.INGOTS_DARK_STEEL)
+            .define('B', Items.BARREL)
+            .define('A', EIOTags.Items.INGOTS_CONDUCTIVE_ALLOY)
+            .define('C', EIOBlocks.VOID_CHASSIS)
+            .define('M', EIOTags.Items.GEARS_IRON)
+            .define('R', EIOTags.Items.INGOTS_REDSTONE_ALLOY)
+            .pattern("SBS")
+            .pattern("ACA")
+            .pattern("MRM")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(Items.BARREL).build()))
+            .save(finishedRecipeConsumer);
     }
 }

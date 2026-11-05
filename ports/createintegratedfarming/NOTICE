@@ -31,9 +31,12 @@ Modifications
     the 1.20.1 enchantment and loot parameter forms. The Create mixins target Create classes only.
   - Data: the data files use the 1.20.1 folder names and formats, forge: tags (forge:rods/wooden,
     forge:plantoil) and the new item tag create_integrated_farming:chicken_food with the chicken
-    foods of 1.20.1. The Lava Fishing Net drops itself in code, since 1.20.1 loot tables have no
+    foods of 1.20.1. The chicken food maps take using_converts_to in the 1.21.1 object form and as
+    a plain item id. The Lava Fishing Net drops itself in code, since 1.20.1 loot tables have no
     load conditions.
-  - Fix: the chicken roost drops a copy of the chicken food remainder, so every feeding returns it.
+  - Fixes: the chicken roost drops a copy of the chicken food remainder, so every feeding returns
+    it. The recipe advancements name the crafting recipe ids, so they unlock the recipes. The roost
+    Ponder scene stores its egg as a 1.20.1 item stack.
   - Addition: Lava Fishing (mod id lavafishing) provides the catches of the Lava Fishing Net and
     enables it, in the way the upstream Nether Depths Upgrade integration does.
   - Removed: the integrations of 26 mods that the SkyTekx pack does not carry, with their duck,
@@ -43,7 +46,7 @@ Modifications
   The complete change history is the git history of the ports/createintegratedfarming directory of
   https://github.com/skytekx/skytekx3-1201-server
   That directory is the Corresponding Source of this jar: the exact source of a given jar is that
-  directory at the commit that added the jar to local-mods/, and it builds the same jar again
+  directory at the commit that last changed the jar in local-mods/, and it builds the same jar again
   (see ports/createintegratedfarming/UPSTREAM.md). UPSTREAM.md lists every change.
 
 Licenses

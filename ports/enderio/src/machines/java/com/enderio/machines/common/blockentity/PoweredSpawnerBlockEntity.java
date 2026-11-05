@@ -5,16 +5,19 @@ import com.enderio.api.capability.StoredEntityData;
 import com.enderio.api.capacitor.CapacitorModifier;
 import com.enderio.api.capacitor.QuadraticScalable;
 import com.enderio.api.io.energy.EnergyIOMode;
+import com.enderio.base.common.init.EIOItems;
 import com.enderio.core.common.network.slot.BooleanNetworkDataSlot;
 import com.enderio.core.common.network.slot.EnumNetworkDataSlot;
 import com.enderio.core.common.network.slot.ResourceLocationNetworkDataSlot;
 import com.enderio.machines.common.MachineNBTKeys;
 import com.enderio.machines.common.blockentity.base.PoweredMachineBlockEntity;
 import com.enderio.machines.common.blockentity.task.IMachineTask;
+import com.enderio.machines.common.blockentity.task.SpawnerCaptureTask;
 import com.enderio.machines.common.blockentity.task.SpawnerMachineTask;
 import com.enderio.machines.common.blockentity.task.host.MachineTaskHost;
 import com.enderio.machines.common.config.MachinesConfig;
 import com.enderio.machines.common.io.item.MachineInventoryLayout;
+import com.enderio.machines.common.io.item.SingleSlotAccess;
 import com.enderio.machines.common.lang.MachineLang;
 import com.enderio.machines.common.menu.PoweredSpawnerMenu;
 import net.minecraft.core.BlockPos;
@@ -34,12 +37,20 @@ import java.util.Optional;
 //       But there's not enough time before alpha, so just porting as-is.
 public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
 
+    // SkyTekx: the capture mode slots of 8.x (a90e5c512), after the capacitor slot.
+    public static final SingleSlotAccess INPUT = new SingleSlotAccess();
+    public static final SingleSlotAccess OUTPUT = new SingleSlotAccess();
+
     public static final QuadraticScalable CAPACITY = new QuadraticScalable(CapacitorModifier.ENERGY_CAPACITY, MachinesConfig.COMMON.ENERGY.POWERED_SPAWNER_CAPACITY);
     public static final QuadraticScalable USAGE = new QuadraticScalable(CapacitorModifier.ENERGY_USE, MachinesConfig.COMMON.ENERGY.POWERED_SPAWNER_USAGE);
     public static final ResourceLocation NO_MOB = EnderIO.loc("no_mob");
     private StoredEntityData entityData = StoredEntityData.empty();
     private SpawnerBlockedReason reason = SpawnerBlockedReason.NONE;
     private final MachineTaskHost taskHost;
+
+    // SkyTekx: the mode of 8.x (a90e5c512), saved under the optional key SpawnerMode. Without the key it is SPAWN.
+    private PoweredSpawnerMode mode = PoweredSpawnerMode.SPAWN;
+    private final EnumNetworkDataSlot<PoweredSpawnerMode> modeDataSlot;
 
 
     public PoweredSpawnerBlockEntity(BlockEntityType type, BlockPos worldPosition, BlockState blockState) {
@@ -62,13 +73,49 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
 
             @Override
             protected @Nullable IMachineTask loadTask(CompoundTag nbt) {
-                SpawnerMachineTask task = createTask();
-                task.deserializeNBT(nbt);
+                IMachineTask task = createTask();
+                if (task != null) {
+                    task.deserializeNBT(nbt);
+                }
                 return task;
             }
         };
 
+        // The screen changes the mode. The enum slot refuses an unknown ordinal, and the setter refuses null.
+        modeDataSlot = new EnumNetworkDataSlot<>(PoweredSpawnerMode.class, this::getMode, this::applyMode);
+        addClientDataSlot(modeDataSlot);
+
         updateMachineState(new MachineState(MachineStateType.ERROR, this.reason.component), false);
+    }
+
+    public PoweredSpawnerMode getMode() {
+        return mode;
+    }
+
+    /**
+     * Set the mode. On the client this asks the server to change it.
+     */
+    public void setMode(PoweredSpawnerMode mode) {
+        if (level != null && level.isClientSide()) {
+            clientUpdateSlot(modeDataSlot, mode);
+        } else {
+            applyMode(mode);
+        }
+    }
+
+    private void applyMode(@Nullable PoweredSpawnerMode mode) {
+        if (mode == null || mode == this.mode) {
+            return;
+        }
+
+        this.mode = mode;
+
+        // The client only takes the value that the server synced.
+        if (level != null && !level.isClientSide()) {
+            // The running task sees the new mode and completes, then the next tick starts a task of the new mode.
+            taskHost.newTaskAvailable();
+            setChanged();
+        }
     }
 
     @Nullable
@@ -96,7 +143,15 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
 
     @Override
     public MachineInventoryLayout createInventoryLayout() {
-        return MachineInventoryLayout.builder().capacitor().build();
+        // SkyTekx: the input and output slots of capture mode go after the capacitor slot, so the capacitor of an
+        // existing spawner stays in slot 0. MachineInventory sizes itself from this layout and ignores the saved size.
+        return MachineInventoryLayout.builder()
+            .capacitor()
+            .inputSlot((i, stack) -> stack.is(EIOItems.EMPTY_SOUL_VIAL.get()))
+            .slotAccess(INPUT)
+            .outputSlot()
+            .slotAccess(OUTPUT)
+            .build();
     }
 
     @Override
@@ -128,7 +183,23 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
         return canAct() && hasEnergy() && taskHost.hasTask();
     }
 
-    private SpawnerMachineTask createTask() {
+    @Nullable
+    private IMachineTask createTask() {
+        // A new task starts without the reason of the last one, which may belong to the other mode.
+        setReason(SpawnerBlockedReason.NONE);
+
+        if (mode == PoweredSpawnerMode.CAPTURE) {
+            if (!SpawnerCaptureTask.hasEmptyVial(this)) {
+                setReason(SpawnerBlockedReason.INPUT_EMPTY);
+                return null;
+            }
+
+            // A capture task that cannot run (unknown or blacklisted soul, occupied output) has set the reason. The
+            // spawner holds no task until its inventory or mode changes.
+            SpawnerCaptureTask task = new SpawnerCaptureTask(this, this.getEnergyStorage(), this.getEntityType());
+            return task.isCompleted() ? null : task;
+        }
+
         return new SpawnerMachineTask(this, this.getEnergyStorage(), this.getEntityType());
     }
 
@@ -147,8 +218,15 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
     }
 
     public void setReason(SpawnerBlockedReason reason) {
-        updateMachineState(new MachineState(MachineStateType.ERROR, this.reason.component), false);
-        updateMachineState(new MachineState(MachineStateType.ERROR, reason.component), true);
+        // SkyTekx: NONE is no error. Before a90e5c512 a successful spawn showed an error state named NONE.
+        if (this.reason != SpawnerBlockedReason.NONE) {
+            updateMachineState(new MachineState(MachineStateType.ERROR, this.reason.component), false);
+        }
+
+        if (reason != SpawnerBlockedReason.NONE) {
+            updateMachineState(new MachineState(MachineStateType.ERROR, reason.component), true);
+        }
+
         this.reason = reason;
     }
 
@@ -158,6 +236,9 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
     public void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
         pTag.put(MachineNBTKeys.ENTITY_STORAGE, entityData.serializeNBT());
+        if (mode != PoweredSpawnerMode.SPAWN) {
+            pTag.putString(MachineNBTKeys.SPAWNER_MODE, mode.getSerializedName());
+        }
         taskHost.save(pTag);
     }
 
@@ -165,6 +246,11 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
     public void load(CompoundTag pTag) {
         super.load(pTag);
         entityData.deserializeNBT(pTag.getCompound(MachineNBTKeys.ENTITY_STORAGE));
+
+        // The mode decides which task loads, so read it first. A spawner saved before the mode existed stays in SPAWN.
+        PoweredSpawnerMode savedMode = PoweredSpawnerMode.byName(pTag.getString(MachineNBTKeys.SPAWNER_MODE));
+        mode = savedMode != null ? savedMode : PoweredSpawnerMode.SPAWN;
+
         taskHost.load(pTag);
     }
 
@@ -176,6 +262,9 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
         UNKNOWN_MOB(MachineLang.UNKNOWN),
         OTHER_MOD(MachineLang.OTHER_MOD),
         DISABLED(MachineLang.DISABLED),
+        // SkyTekx: the capture mode reasons of 8.x (a90e5c512).
+        INPUT_EMPTY(MachineLang.TOOLTIP_INPUT_EMPTY),
+        OUTPUT_FULL(MachineLang.TOOLTIP_OUTPUT_FULL),
         NONE(Component.literal("NONE"));
 
         private final MutableComponent component;

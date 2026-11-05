@@ -19,6 +19,7 @@ import com.enderio.machines.common.lang.MachineLang;
 import com.enderio.machines.common.menu.EnchanterMenu;
 import com.enderio.machines.common.menu.GhostMachineSlot;
 import com.enderio.machines.common.menu.MachineSlot;
+import com.enderio.machines.common.menu.PoweredSpawnerMenu;
 import com.enderio.machines.common.menu.PreviewMachineSlot;
 import com.enderio.machines.common.tag.MachineTags;
 import com.enderio.machines.common.travel.AnchorTravelTarget;
@@ -90,6 +91,7 @@ public class EIOMachines {
         InterModComms.sendTo("inventorysorter", "slotblacklist", GhostMachineSlot.class::getName);
         InterModComms.sendTo("inventorysorter", "slotblacklist", PreviewMachineSlot.class::getName);
         InterModComms.sendTo("inventorysorter", "slotblacklist", EnchanterMenu.EnchanterOutputMachineSlot.class::getName);
+        InterModComms.sendTo("inventorysorter", "slotblacklist", PoweredSpawnerMenu.SpawnerSlot.class::getName);
     }
 
     @SubscribeEvent

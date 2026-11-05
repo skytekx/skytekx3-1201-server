@@ -19,6 +19,7 @@ import com.enderio.base.common.init.EIORecipes;
 import com.enderio.base.common.integrations.EnderIOSelfIntegration;
 import com.enderio.base.common.item.tool.SoulVialItem;
 import com.enderio.base.common.lang.EIOLang;
+import com.enderio.base.common.menu.EntityFilterSlot;
 import com.enderio.base.common.network.EIONetwork;
 import com.enderio.base.common.tag.EIOTags;
 import com.enderio.base.data.EIODataProvider;
@@ -186,5 +187,6 @@ public class EnderIO {
     public static void sendIMC(InterModEnqueueEvent event) {
         InterModComms.sendTo("inventorysorter", "slotblacklist", ItemFilterSlot.class::getName);
         InterModComms.sendTo("inventorysorter", "slotblacklist", FluidFilterSlot.class::getName);
+        InterModComms.sendTo("inventorysorter", "slotblacklist", EntityFilterSlot.class::getName);
     }
 }

@@ -297,9 +297,16 @@ its item here, and the NOTICE in the jar sums them up.
     keep the one sided shape, and the unused `block_old.json` and `item_old.json` are gone. The
     models use CC&A's own textures and refer to `create:block/axis` and `create:block/axis_top`,
     and no texture changes. The mechanical crafting recipe takes a second row of andesite alloy
-    instead of the Capacitor. Block state, NBT and the speed requirement `MEDIUM` stay. An
-    alternator whose back face touches a kinetic block of another network joins that network on
-    its next update, and a speed conflict there breaks a block as in any Create network.
+    instead of the Capacitor. Block state, NBT and the speed requirement `MEDIUM` stay. A placed
+    alternator whose back face touches a shaft of another kinetic network joins that network on
+    the first server tick after its chunk loads, with no player action. Create 6.0.8 sets
+    `updateSpeed` in the `KineticBlockEntity` constructor, and the first `tick` runs
+    `attachKinetics`, `RotationPropagator.handleAdded` and `propagateNewSource`. That breaks a
+    block with drops when the two networks turn in opposite directions or too fast, and lets the
+    faster network overpower the slower one otherwise. On a test world saved by 1.3.3 the first
+    fork boot dropped an alternator that had a counter rotating shaft behind it and raised one
+    with a faster shaft behind it from 16 to 32 RPM. The read-only `tools/alternator_scan.py` of
+    the pack repository lists such alternators in a world before the upgrade.
 22. Capacitor as an FE item: upstream `5c2b9ea` and `51e4a38`. The new `item/CapacitorItem`
     stores up to `capacitor_capacity` FE and moves at most `capacitor_charge_rate` FE per call. It
     shows a light blue bar (`0x00BFFF`) and the stored energy in its tooltip through

@@ -56,6 +56,10 @@ public class ElectricMotorPeripheral implements IPeripheral {
     	// NaN or an infinity would reach the Create network (upstream 9dd1b46).
     	if (!Double.isFinite(rpm))
     		throw new LuaException("Speed must be a finite number.");
+    	// Clamp before the cast to float, so that a finite value beyond the float range still means
+    	// full speed instead of an infinity that setRPM rejects.
+    	int range = Config.ELECTRIC_MOTOR_RPM_RANGE.get();
+    	rpm = Math.max(-range, Math.min(range, rpm));
     	if ((float) rpm == getSpeed())
     		return;
     	if(tileEntity != null) {

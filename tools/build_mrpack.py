@@ -98,8 +98,9 @@ OVERRIDES = [
     ("skylands-datapack-forge", "world/datapacks/skytekx3_skylands_forge"),
     ("world/datapacks/skytekx3_fixes", "world/datapacks/skytekx3_fixes"),
     ("local-mods", "mods"),
-    # What bundled jars must travel with: the sources of LGPL ports, the license text of MIT jars
-    # that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux Networks, Extreme Reactors 2)
+    # What bundled jars must travel with: the sources of LGPL ports and of the LittleTiles build, the
+    # license text of MIT jars that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux
+    # Networks, Extreme Reactors 2)
     # and the license texts of the parts of Ender IO 6.2.18 with their NOTICE.
     ("licenses", "licenses"),
 ]

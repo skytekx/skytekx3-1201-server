@@ -342,3 +342,24 @@ its item here, and the NOTICE in the jar sums them up.
     block state `powered` is true. The state and its model are in the base. Light is part of the
     saved chunk, so a coil saved as powered keeps its old light until it toggles. The Sable parts
     of `5490949` stay out (inventory, excluded `sable-aeronautics-compat`).
+25. Charging in Sequenced Assembly: upstream `b070742` (release 1.7.2). The charging recipe is now a
+    Create processing recipe that implements `IAssemblyRecipe`, as upstream `715895e` made it,
+    because Create 6.0.8 takes only such recipes as steps (`SequencedRecipe.fromJson`) and casts
+    their serializer to `ProcessingRecipeSerializer` for the recipe sync. The serializer
+    `ChargingRecipeSerializer` reads the JSON form of the 1.20.1 line (`input`, `result`,
+    `maxChargeRate`) as well as Create's form (`ingredients`, `results`, `max_charge_rate`), in any
+    mix, as the rolling serializer of the base already does for KubeJS. The serializer id and the
+    recipe type stay `createaddition:charging`, `energy` stays required, and a recipe without a max
+    charge rate is still limited only by the coil's own rate (upstream makes the key required). The
+    Tesla Coil asks `SequencedAssemblyRecipe.getRecipe` for a charging step before the plain
+    charging recipes, compares the cached stack by item and tags, since every step carries the same
+    transitional item, looks the step up again when the charge is complete and puts out
+    `rollResults()`. A Sequenced Assembly tooltip names a step of 10000 FE "Charge 10.0K⚡ with Tesla
+    Coil" (the new en_us key `createaddition.recipe.charging.sequence`), and JEI draws it as a
+    powered coil (`ChargingAssemblySubCategory`). The recipe hands that class to Create only through
+    a lazy supplier, and `getDescriptionForAssembly` is client only, as in Create, so the dedicated
+    server never loads them. The recipe sync now sends Create's processing format with the energy
+    and the rate after it. Protocol 2 of item 2 already keeps 1.3.3 clients off, and no fork jar
+    with the old format was shipped. The public fields `ingredient`, `output` and `id` of the old
+    class give way to `getIngredient()`, `getResultItem()` and Create's `getId()`, and `find` gains
+    an overload that takes the stack. No pack jar links any of them.

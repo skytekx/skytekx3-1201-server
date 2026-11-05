@@ -19,6 +19,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -229,9 +230,10 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 
 	private boolean chargeRecipe(ItemStack stack, TransportedItemStack transported, TransportedItemStackHandlerBehaviour handler) {
 		if(this.getLevel() == null) return false;
-		if(!inputInv.getStackInSlot(0).is(stack.getItem())) {
+		// Compare the tags too, every sequenced assembly step uses the same transitional item (upstream b070742).
+		if(!ItemStack.isSameItemSameTags(inputInv.getStackInSlot(0), stack)) {
 			inputInv.setStackInSlot(0, stack);
-			recipeCache = find(new RecipeWrapper(inputInv), this.getLevel());
+			recipeCache = find(stack, new RecipeWrapper(inputInv), this.getLevel());
 			chargeAccumulator = 0;
 			Arrays.fill(chargeRateHistory, 0);
 			chargeRateIndex = 0;
@@ -245,12 +247,17 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 			if (chargeRateSamples < chargeRateHistory.length) chargeRateSamples++;
 			chargeAccumulator += energyRemoved;
 			if(chargeAccumulator >= recipe.getEnergy()) {
+				// Sequenced assembly steps are shared recipe instances whose next result is bound to the
+				// last stack looked up, possibly by another machine, so look it up again for this stack.
+				recipe = find(stack, new RecipeWrapper(inputInv), this.getLevel()).orElse(recipe);
 				TransportedItemStack remainingStack = transported.copy();
-				TransportedItemStack result = transported.copy();
-				result.stack = recipe.getResultItem(this.getLevel().registryAccess()).copy();
 				remainingStack.stack.shrink(1);
 				List<TransportedItemStack> outList = new ArrayList<>();
-				outList.add(result);
+				for(ItemStack out : recipe.rollResults()) {
+					TransportedItemStack result = transported.copy();
+					result.stack = out;
+					outList.add(result);
+				}
 				handler.handleProcessingOnItem(transported, TransportedItemStackHandlerBehaviour.TransportedResult.convertToAndLeaveHeld(outList, remainingStack));
 				chargeAccumulator = 0;
 				if (Config.AUDIO_ENABLED.get()) level.playSound(null, worldPosition, CASounds.LITTLE_ZAP.get(), SoundSource.BLOCKS, 0.1f, 1f);
@@ -260,8 +267,16 @@ public class TeslaCoilBlockEntity extends BaseElectricBlockEntity implements IHa
 		return false;
 	}
 
-	public Optional<ChargingRecipe> find(RecipeWrapper wrapper, Level world) {
+	// A charging step of a sequenced assembly comes first, then the plain charging recipes (upstream b070742).
+	public Optional<ChargingRecipe> find(ItemStack stack, RecipeWrapper wrapper, Level world) {
+		Optional<ChargingRecipe> assemblyRecipe =
+				SequencedAssemblyRecipe.getRecipe(world, stack, CARecipes.CHARGING_TYPE.get(), ChargingRecipe.class);
+		if(assemblyRecipe.isPresent()) return assemblyRecipe;
 		return world.getRecipeManager().getRecipeFor(CARecipes.CHARGING_TYPE.get(), wrapper, world);
+	}
+
+	public Optional<ChargingRecipe> find(RecipeWrapper wrapper, Level world) {
+		return find(wrapper.getItem(0), wrapper, world);
 	}
 
 	// The charge time left comes from the server as a TimeRemainingPacket, -1 while the coil gets no energy

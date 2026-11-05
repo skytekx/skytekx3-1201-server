@@ -3,7 +3,7 @@
 	
 	"pattern":
 	[" WW",
-	 "EEW",
+	 "EZW",
 	 "GE "],
 	"key":
 	{
@@ -15,9 +15,13 @@
 		{
 			"tag": "forge:ingots/electrum"
 		},
+		"Z":
+		{
+			"tag": "forge:plates/zinc"
+		},
 		"G":
 		{
-			"tag": "forge:gems/emerald"
+			"tag": "forge:dusts/diamond"
 		}
 	},
 	"result":{

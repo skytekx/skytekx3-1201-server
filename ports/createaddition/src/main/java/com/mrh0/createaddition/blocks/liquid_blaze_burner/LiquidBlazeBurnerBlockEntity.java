@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.index.CAItems;
 import com.mrh0.createaddition.index.CARecipes;
 import com.mrh0.createaddition.network.IObserveTileEntity;
@@ -59,7 +60,16 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IObserveTileEntity {
-	public static final int MAX_HEAT_CAPACITY = 10000;
+	// The heat and tank capacities come from the config section liquid_blaze_burner (upstream 5935afa). Upstream
+	// reads the heat capacity in a static field initialiser, which throws when the class loads before the common
+	// config, so both are read when they are needed.
+	public static int getMaxHeatCapacity() {
+		return Config.LIQUID_BLAZE_BURNER_MAX_HEAT_CAPACITY.get();
+	}
+
+	public static int getMaxLiquidCapacity() {
+		return Config.LIQUID_BLAZE_BURNER_MAX_LIQUID_CAPACITY.get();
+	}
 
 	protected FuelType activeFuel;
 	protected int remainingBurnTime;
@@ -105,7 +115,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
     }
 
 	protected SmartFluidTank createInventory() {
-		SmartFluidTank fluidTank = new SmartFluidTank(4000, this::update);
+		SmartFluidTank fluidTank = new SmartFluidTank(getMaxLiquidCapacity(), this::update);
 		fluidTank.setValidator(stack -> find(stack, level).isPresent());
 		return fluidTank;
 	}
@@ -149,10 +159,15 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if(recipeCache.isEmpty()) return;
 
 		if(tankInventory.getFluidAmount() < 100) return;
-		if(remainingBurnTime > MAX_HEAT_CAPACITY) return;
-		
-		remainingBurnTime += recipeCache.get().getBurnTime() / 10;
-		activeFuel = recipeCache.get().isSuperheated() ? FuelType.SPECIAL : FuelType.NORMAL;
+		if(remainingBurnTime > getMaxHeatCapacity()) return;
+
+		// A switch between normal and superheated fuel starts the new fuel's time instead of adding to the time
+		// of the old one, so a little superheated fuel no longer burns off a full tank of heat (upstream 0a92b74).
+		LiquidBurningRecipe recipe = recipeCache.get();
+		int burnTime = recipe.getBurnTime() / 10;
+		FuelType fuelType = recipe.isSuperheated() ? FuelType.SPECIAL : FuelType.NORMAL;
+		remainingBurnTime = activeFuel == fuelType ? remainingBurnTime + burnTime : burnTime;
+		activeFuel = fuelType;
 		
 		tankInventory.drain(100, FluidAction.EXECUTE);
 
@@ -204,7 +219,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 
 		if (activeFuel == FuelType.SPECIAL) {
 			activeFuel = FuelType.NORMAL;
-			remainingBurnTime = MAX_HEAT_CAPACITY / 2;
+			remainingBurnTime = getMaxHeatCapacity() / 2;
 		} else activeFuel = FuelType.NONE;
 
 		updateBlockState();
@@ -320,8 +335,9 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 		if (activeFuel == FuelType.SPECIAL && remainingBurnTime > 20) return false;
 
 		if (newFuel == activeFuel) {
-			if (remainingBurnTime + newBurnTime > MAX_HEAT_CAPACITY && !forceOverflow) return false;
-			newBurnTime = Mth.clamp(remainingBurnTime + newBurnTime, 0, MAX_HEAT_CAPACITY);
+			int maxHeatCapacity = getMaxHeatCapacity();
+			if (remainingBurnTime + newBurnTime > maxHeatCapacity && !forceOverflow) return false;
+			newBurnTime = Mth.clamp(remainingBurnTime + newBurnTime, 0, maxHeatCapacity);
 		}
 
 		if (simulate) return true;
@@ -384,7 +400,7 @@ public class LiquidBlazeBurnerBlockEntity extends SmartBlockEntity implements IH
 			level = BlazeBurnerBlock.HeatLevel.SEETHING;
 			break;
 		case NORMAL:
-			boolean lowPercent = (double) remainingBurnTime / MAX_HEAT_CAPACITY < 0.0125;
+			boolean lowPercent = (double) remainingBurnTime / getMaxHeatCapacity() < 0.0125;
 			level = lowPercent ? BlazeBurnerBlock.HeatLevel.FADING : BlazeBurnerBlock.HeatLevel.KINDLED;
 			break;
 		default:

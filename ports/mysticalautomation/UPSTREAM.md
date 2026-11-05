@@ -138,7 +138,7 @@ and recipe ids. Lines that differ from upstream carry a `SkyTekx port` comment t
   ingredients in either order, as version 8 matches them. It hands the counts to the recipe in a
   `RecipeWrapper` over an `ItemStackHandler`, since a vanilla `SimpleContainer` caps every stack at 64
   and Mystical Agriculture 7 reads the level from those counts (a first version did that and enchanted
-  at level 1, fixed in `f774dfe`).
+  at level 1, fixed in `ad96c23`).
 - Cucumber 8 classes that Cucumber 7 lacks: `QuickMover` (copied unchanged to
   `com.blakebr0.mysticalautomation.util`), `ContainerDataBuilder` (see below), `CachedRecipe` for any
   input type (`util/CachedRecipe`, since Cucumber 7's takes only `Recipe<Container>`),
@@ -282,10 +282,15 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
 
 ## Jar and tests
 
-The jar of `f774dfe` is `MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar`, SHA-1
-`d2891fe346f5f6878789385e45742c6583a8d7c7`, 308953 bytes, the same from two clean builds. It holds
-99 classes, upstream's assets with the added translations, the converted data, `pack.mcmeta`,
-`META-INF/mods.toml` and the four license and notice files.
+The jar of `b4fda97` is `MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar`, SHA-1
+`585446d50038e4f254c2fb2b012b616495ff5ed0`, 312817 bytes, the same from two clean builds. It holds
+101 classes, upstream's assets with the added translations, the converted data, `pack.mcmeta`,
+`META-INF/mods.toml` and the four license and notice files. The first bundled jar, of `ad96c23`, had
+SHA-1 `d2891fe346f5f6878789385e45742c6583a8d7c7` (308953 bytes) and lacked the fixes of the Crafter,
+the Altarnators and the Farmer (`50aaaed`, `e80e47f`, `b4fda97`).
+
+The tests below ran with the first jar. The tests of the integration on the same day, with the jar of
+`b4fda97` on the same two test copies, follow after them.
 
 Tests of 2026-11-05 on a plain Forge 47.4.18 server with this jar, Cucumber 7.0.16, Mystical
 Agriculture 7.0.24, Mystical Agradditions 7.0.12, JEI 15.74.0.233 and Patchouli 85 (the files of the
@@ -316,6 +321,31 @@ A second test copy on the hardened Arclight jar of the pack
 (`arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`) with the same mods reached `Done`, ran the
 Infuser with its hoppers, the Crafter, a Farmer, the Enchanternator at level 2 and the Fertilizer, whose
 fake player grew eight of nine wheat crops to full age, and stopped with 0 ERROR lines.
+
+Integration tests with the jar of `b4fda97`, on the Forge copy (boot at 07:37 UTC, `Done` with 0
+ERROR and 0 FATAL lines, stop over RCON with exit code 0) and on the Arclight copy (boot at 07:42 UTC,
+the same result). Each machine was placed with `setblock` and an NBT set ghost grid and inventory,
+with coal as fuel and a hopper below it:
+
+- Crafter, special recipes: a ghost of a shulker box with 64 diamond blocks and a red dye gave nothing
+  in more than three minutes on Forge, with empty real inputs and with the same two items as real
+  inputs, which stayed in place, and nothing in 35 seconds with empty real inputs on Arclight. The
+  first jar made three dyed shulker boxes in 28 seconds this way.
+- Crafter, NBT: with the Prudentium Leggings recipe, a ghost of Inferium Leggings with Protection IV
+  over plain real leggings gave nothing and took nothing. Plain ghost and plain leggings gave plain
+  Prudentium Leggings, and enchanted ghost and enchanted leggings gave Prudentium Leggings with
+  Protection IV, both taking their inputs. Arclight gave the same results for the first two.
+- Crafter, buffer: a ghost ring of eight cobblestone over one stack of 64 cobblestone in the first slot
+  gave a furnace and left 56.
+- Awakening Altarnator: a Sharpness V ghost Supremium Sword over a plain one gave nothing. Plain over
+  plain gave an Awakened Supremium Sword and took 40 of each essence from stacks of 64, in the layout
+  of the JEI transfer and in the layout of the altar of Mystical Agriculture (pedestals in slots 1 to
+  4, essences in 5 to 8). Enchanted over enchanted kept Sharpness V on the result.
+- Infusion Altarnator: a renamed ghost Prosperity Seed Base over a plain one gave nothing, plain over
+  plain gave Dirt Seeds.
+- Farmer: a cocoa result of 3 against an output slot of 62 left 64 and 1, not 64 and 3. With every
+  output slot full it kept its progress at 780 and stayed off while its energy rose, and it finished
+  the operation once one slot was free. Arclight gave the same 64 and 1.
 
 Not verified, because no client joined: the screens and widgets, the JEI categories, the recipe
 transfer and ghost slot messages, the full slot counts on a client and the guide book entries.

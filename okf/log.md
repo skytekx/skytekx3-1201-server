@@ -831,6 +831,18 @@ logs stay on the Mac and are not in the repo.
 - The full pack with all of it booted on Arclight in a test copy with 0 FATAL lines and the same 3
   ERROR lines as before the wave, see [Mod set](modpack/mod-set.md#bundled-jars). The server's
   `mods/` gets the new jars only with the deploy of 3.1.3.
+- The review of the wave found four more gaps, fixed in 97ad92a to ab581fd. The fixes datapack gives
+  the Energizer Active FE Power Port of Extreme Reactors 2.0.97 the loot table that the jar lacks, see
+  [Boot fixes](content/boot-fixes.md#gameplay-overrides). The license file of Extreme Reactors 2 carries
+  the MIT notice of Big Reactors, whose code and textures the jar carries over. The record of ZeroCore 2
+  says VERIFY while git hosts its All Rights Reserved jar, see
+  [Open items](open-items.md#owner-decisions). With `--go` the upload script sets the Modrinth project
+  to demonetized and refuses the upload otherwise, see [Publish](modpack/publish.md#release-steps).
+- The branch history was rewritten before any push, so the first draft of SkyTekx DE Fixes is in no
+  commit, see [Draconic Evolution fixes](modpack/draconic-fixes.md#license). A full pack boot on
+  Forge in a test copy with the new loot table (`packboot_mtt.sh`, label `fixa-forge`, not in the
+  repo) reached `Done` with 0 FATAL lines and the same 3 ERROR lines and 11 log signatures as the boot
+  `wavea-forge` before it.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

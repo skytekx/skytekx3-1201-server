@@ -247,3 +247,13 @@ its item here, and the NOTICE in the jar sums them up.
 15. Command: `commands/WireGraphCommand.java` of `126ed38` adds `/cca_wires stats`, `verify` and
     `rebuild` at permission level 2, registered in `CreateAddition.onRegisterCommandEvent` next to
     `CCApiCommand`. Each action works on the graph of the dimension the command runs in.
+16. Wire rendering: the `WireNodeRenderer` part of `126ed38`. The renderer draws off screen, measures
+    the view distance to the nearest part of the wires and draws a wire whose far end the client has
+    not loaded to the centre of that block instead of skipping the rest. On Forge 1.20.1 the block
+    entity owns the render box, and Create 6.0.8 caches it in `CachedRenderBBBlockEntity`, so the
+    connector and relay block entities override `createRenderBoundingBox()` with the box of every wire
+    end (`IWireNode.wireRenderBounds`) and call `invalidateRenderBoundingBox()` whenever their nodes
+    change. For the wire the local player is placing, `ClientEventHandler` stores the start node and
+    the player's box in the common class `energy/HeldWireBounds`, and the client only override of
+    `getRenderBoundingBox()` grows the cached box by it. The block entities never touch `LocalPlayer`
+    or `Minecraft`. The Sable branch of the renderer is not ported.

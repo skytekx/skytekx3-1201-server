@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -610,6 +611,29 @@ public interface IWireNode {
 		LocalNode ln = wn.getConnectionTo(pos2);
 		if (ln == null) return null;
 		return ln.getType();
+	}
+
+	/**
+	 * The render box of a wire node: its own block and every wire end, one block wider on each side
+	 * for the sag. The wires drawn by the node reach far past its block, so the renderer culls by
+	 * this box rather than by the block (upstream 126ed38, WireNodeRenderer#getRenderBoundingBox).
+	 */
+	static AABB wireRenderBounds(IWireNode node) {
+		BlockPos pos = node.getPos();
+		int minX = pos.getX(), minY = pos.getY(), minZ = pos.getZ();
+		int maxX = minX, maxY = minY, maxZ = minZ;
+		for (int i = 0; i < node.getNodeCount(); i++) {
+			BlockPos other = node.getNodePos(i);
+			if (other == null) continue;
+			minX = Math.min(minX, other.getX());
+			minY = Math.min(minY, other.getY());
+			minZ = Math.min(minZ, other.getZ());
+			maxX = Math.max(maxX, other.getX());
+			maxY = Math.max(maxY, other.getY());
+			maxZ = Math.max(maxZ, other.getZ());
+		}
+		// One block of margin covers the sag.
+		return new AABB(minX - 1, minY - 1, minZ - 1, maxX + 2, maxY + 2, maxZ + 2);
 	}
 
 	/**

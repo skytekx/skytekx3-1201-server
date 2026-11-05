@@ -33,6 +33,20 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 	private static final float HANG = 0.5f;
 	private float time = 0f;
 
+	// The wires drawn here reach far past the connector block, so cull by the wires rather than the block.
+	// On Forge 1.20.1 the block entity owns the box that spans them (IWireNode#wireRenderBounds).
+	@Override
+	public boolean shouldRenderOffScreen(T be) {
+		return true;
+	}
+
+	// Measured to the nearest part of the wires, so a long wire doesn't vanish when its connector is far away.
+	@Override
+	public boolean shouldRender(T be, Vec3 cameraPos) {
+		double distance = getViewDistance();
+		return be.getRenderBoundingBox().distanceToSqr(cameraPos) < distance * distance;
+	}
+
 	@Override
 	public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
@@ -47,10 +61,9 @@ public class WireNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 			float oy1 = ((float) d1.y());
 			float oz1 = ((float) d1.z());
 
+			// The other end may be outside the client's loaded chunks; aim at its block centre then.
 			IWireNode wn = te.getWireNode(i);
-			if (wn == null) return;
-
-				Vec3 d2 = wn.getNodeOffset(te.getOtherNodeIndex(i)); // get other
+				Vec3 d2 = wn != null ? wn.getNodeOffset(te.getOtherNodeIndex(i)) : Vec3.ZERO; // get other
 				float ox2 = ((float) d2.x());
 				float oy2 = ((float) d2.y());
 				float oz2 = ((float) d2.z());

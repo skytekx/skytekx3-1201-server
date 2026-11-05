@@ -302,18 +302,44 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 
 ### Charging recipes
 
-- Charging becomes a step of Sequenced Assembly with a JEI sub category that draws a powered Tesla
-  Coil (b070742). Create 6.0.8 only accepts `ProcessingRecipe` steps, so `ChargingRecipe` becomes a
-  `ProcessingRecipe` with a serializer that still reads the old keys `input`, `result`, `energy` and
-  `maxChargeRate`. The base already does the same for rolling.
-- The recipe type and serializer stay `createaddition:charging`. All shipped charging recipes, 21
-  copper steps, channeling and the AE2 charged certus quartz, must still parse at boot. No pack jar,
-  datapack or KubeJS script ships a charging recipe (`kubejs/` has no `createaddition` reference).
-- Six new recipes charge gold into electrum (d2234ce) with `forge:` tag inputs, so a gold sheet or
-  wire that AlmostUnified swapped to another mod still matches. AlmostUnified turns the outputs into
-  Thermal electrum where Thermal has the item (`config/almostunified/unify.json`, `modPriorities`).
-- Nine new recipes deoxidize Create's copper tiles, slabs and stairs (0ca5477, 1f606d3), in the format
-  of the existing files in `data/createaddition/recipes/charging/`.
+- Charging is a step of Sequenced Assembly (b070742, ported in d19a5ef). Create 6.0.8 takes only a
+  `ProcessingRecipe` that implements `IAssemblyRecipe` as a step and casts the step's serializer to
+  `ProcessingRecipeSerializer` for the recipe sync, so `ChargingRecipe` now extends
+  `ProcessingRecipe` as upstream 715895e made it. Its energy and max charge rate travel through
+  `readAdditional` and `writeAdditional`. The serializer reads the old keys `input`, `result` and
+  `maxChargeRate` and Create's keys `ingredients`, `results` and `max_charge_rate` in any mix, as
+  the base does for rolling. The step's tooltip reads "Charge 1.0K⚡ with Tesla Coil" for 1000 FE,
+  and JEI draws it as a powered coil (`ChargingAssemblySubCategory`, a lazy supplier, never loaded
+  on a server).
+- The Tesla Coil asks for a charging step of a Sequenced Assembly before the plain recipes,
+  compares the cached stack by item and tags, looks the step up again when the charge is done and
+  puts out `rollResults()` (`TeslaCoilBlockEntity.java`, `UPSTREAM.md` source change 25).
+- The recipe type and serializer stay `createaddition:charging`, `energy` stays required, and a
+  recipe without a max charge rate is still limited only by the coil's rate. The public fields
+  `ingredient`, `output` and `id` give way to accessors. The compat scan of the jar of c792a68
+  against the 265 jars of `packboot-forge/mods` found no missing class, field or method. No pack
+  jar, datapack or KubeJS script ships a charging recipe besides CC&A itself (`kubejs/` has no
+  `createaddition` reference).
+- Six new recipes charge gold into electrum (d2234ce, ported in 915d9b6) with `forge:` tag inputs,
+  so a gold plate that AlmostUnified gave the player from another mod still matches. AlmostUnified
+  turns the outputs into the item of the first mod in `modPriorities` that has one
+  (`config/almostunified/unify.json`), Thermal's for the ingot, nugget, plate and block. The
+  channeling recipe keeps its 1.20.1 values.
+- Nine new recipes deoxidize Create's copper tiles, tile slabs and tile stairs (c08b593 and
+  0ca5477, ported in c792a68), in the format of the shingle files in
+  `data/createaddition/recipes/charging/` and named after their output.
+- A reduced Forge 47.4.18 test server and the production Arclight jar (safeiter2), each with
+  Create 6.0.8, AE2 15.4.12, AlmostUnified 0.11.0 with the pack's `unify.json` and Thermal
+  Foundation, parsed every charging recipe at boot and after `/reload`. On a depot under a powered
+  coil a datapack Sequenced Assembly of iron with two charging steps in the Create and the old form
+  and two loops gave a diamond, also from a transitional item at step 2 after `/reload`, while a
+  precision mechanism at its deploying step stayed untouched. Weathered copper tiles turned into
+  plain ones, oxidized tile stairs into plain stairs, a weathered tile slab into a plain slab, gold
+  ingots, plates, sheets and blocks into Thermal electrum, gold wire into CC&A electrum wire,
+  certus quartz into charged certus quartz and a Create form test recipe gave its count of 2.
+  Neither server loaded a class of `com.mrh0.createaddition.compat` (`-Xlog:class+load`). Both kept
+  only the ERROR lines of the test setup, the flat world settings and a test recipe without
+  energy, which fails with `Missing energy`.
 
 ### Electric Pump
 
@@ -419,6 +445,10 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   observed block entities. The connector rework or this bundle guards `sendUpdate` with
   `hasChunkAt` and a distance of 64 blocks and limits how often each player may send the packet,
   which needs no protocol change.
+- The charging recipes ran only on reduced test servers without a client. A client must show a
+  charging step of a Sequenced Assembly in JEI and in EMI through its JEI layer, with the powered
+  coil and the step tooltip, and must get the synced recipes with charging steps from the fork
+  server. The full pack boot must parse every charging recipe.
 - The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
 
 ## Excluded
@@ -669,6 +699,8 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The fork keeps the Create mixins and the compat recipes that upstream removed.
 - The Electrum Block fixes are hand written, since the fork has no datagen.
 - The electrify recipes take `forge:` tags as inputs.
+- Charging recipes may still leave out the max charge rate, which upstream requires, and may use
+  the old JSON keys besides Create's.
 - The paper to straw recipe lives at `data/createaddition/recipes/rolling/straw_from_paper.json`, not
   in upstream's `create:rolling/paper`.
 - The ponder schematics are converted to the NBT of 1.20.1.

@@ -18,18 +18,25 @@
 
 package plus.dragons.createintegratedfarming.common.ranching.roost.chicken;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
+import java.util.function.Function;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.item.ItemStack;
 
 public record ChickenFoodItem(IntProvider progress, IntProvider cooldown, Optional<ItemStack> usingConvertsTo) implements ChickenFood {
-    // SkyTekx: 1.20.1 has no ItemStack.SINGLE_ITEM_CODEC, so a single item is an item id, as there
-    private static final Codec<ItemStack> SINGLE_ITEM_CODEC = BuiltInRegistries.ITEM.byNameCodec()
+    // SkyTekx: 1.20.1 has no ItemStack.SINGLE_ITEM_CODEC. This one reads its 1.21.1 form, an object
+    // with the item id under "id", and also a plain item id, and it writes the object form.
+    private static final Codec<ItemStack> SINGLE_ITEM_OBJECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            BuiltInRegistries.ITEM.byNameCodec().fieldOf("id").forGetter(ItemStack::getItem)).apply(instance, ItemStack::new));
+    private static final Codec<ItemStack> SINGLE_ITEM_ID_CODEC = BuiltInRegistries.ITEM.byNameCodec()
             .xmap(ItemStack::new, ItemStack::getItem);
+    private static final Codec<ItemStack> SINGLE_ITEM_CODEC = Codec.either(SINGLE_ITEM_OBJECT_CODEC, SINGLE_ITEM_ID_CODEC)
+            .xmap(either -> either.map(Function.identity(), Function.identity()), stack -> Either.<ItemStack, ItemStack>left(stack));
 
     public static final Codec<ChickenFoodItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             IntProvider.codec(0, 12000).fieldOf("progress").forGetter(ChickenFoodItem::progress),

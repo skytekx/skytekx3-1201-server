@@ -227,12 +227,33 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   afcd352). The tag lists `#forge:biofuel`, creosote, crude oil, plant oil, ethanol, gasoline, diesel
   and biodiesel as optional entries. It is not `c:ignites`.
 - Four mixins go into `BaseFireBlock`, `FireBlock` and `FlowingFluid`. They need a refmap, which the
-  mod has never used: `createaddition.mixins.json` has no `refmap` key, and the built refmap is empty
-  because the three Create mixins use `remap=false`. The Forge targets without SRG names, such as
-  `canCatchFire` and `tryCatchFire`, make the annotation processor warn, which is correct at runtime.
-  The build is not weakened to hide those warnings.
+  mod had never used: `createaddition.mixins.json` had no `refmap` key, and the built refmap was
+  empty because the three Create mixins use `remap=false`. The port adds the key (56f628f). Forge
+  methods without SRG names act in two ways. As the target method of an injector, as `canCatchFire`
+  and `tryCatchFire` are, they fail the annotation processor, so those two injectors set
+  `remap = false`. As an `@At` target, as `isFireSource` in `tick` is, they only make it warn, which
+  is correct at runtime. The build is not weakened to hide either.
 - Upstream's `checkBurnOut` is `tryCatchFire` on Forge 1.20.1 (javap on
   `forge-1.20.1-47.4.18-server.jar`).
+- A flowing fluid counts as igniting when its source fluid is in the tag (`CATags.Fluids.ignites`).
+  Immersive Engineering 10.2.0 tags only its source fluids, and without this the first Arclight test
+  showed flowing creosote running into a fire and falling creosote spreading none. This is a local
+  change.
+- In the pack the tag catches the creosote, plant oil, ethanol and biodiesel of Immersive
+  Engineering, the creosote of Railcraft, the biofuel of Industrial Foregoing, the gasoline and
+  diesel of Thermal Extra and the seed oil and bioethanol of CC&A (scan of `data/forge/tags/fluids/`
+  in the pack jars). No pack jar fills `forge:crude_oil`, and Ad Astra puts its oil in `forge:oil`,
+  which the tag does not name.
+- Tested on Arclight with Create, Immersive Engineering, Supplementaries, Moonlight,
+  NostalgicTweaks, Ad Astra and Thermal Foundation and `-Dmixin.debug.export=true` (test boots of
+  2026-11-05 in the workflow scratchpad). Each of the seven injectors sits once in the exported
+  classes, next to those of Arclight and the other mods. A plain Forge 47.4.18 boot with the same
+  mods shows the same seven. A dispenser with flint and steel lit creosote and seed oil but not
+  honey. Pools of creosote and seed oil with a fire in the middle burned down to 1 and 5 of 25
+  blocks in a minute, a honey pool kept all 25. Sources beside a fire did not flow into it, honey
+  did. Creosote and seed oil that fell into a fire lit the four blocks beside it. In rain the fire
+  in a creosote pool lived on. With `doFireTick` off nothing burned or spread. Supplementaries' own
+  lumisene fire was not tried.
 
 ### Charging recipes
 
@@ -421,7 +442,7 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - The existing world changes its behaviour in four ways. Wires and relays work across unloaded
   chunks. An alternator whose back face touches another kinetic network joins it on its next update,
   and a speed conflict breaks a block, so the live world should be scanned or the players warned.
-  Fire spreads over the oils of Immersive Engineering and Thermal and the fuels of CC&A in loaded
+  Fire spreads over the oils and fuels that [Ignitable fluids](#ignitable-fluids) lists, in loaded
   chunks. Tesla Coils saved as powered keep their old light until they toggle.
 - Existing stacks stay valid: empty capacitors still stack to 64, charged ones do not stack, and
   existing festive wires between two large connectors stay.
@@ -466,6 +487,7 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The WireGraph verifier only trusts full saved chunks, see [Arclight notes](#arclight-notes).
 - The alternator keeps its minimum speed MEDIUM.
 - Ignitable fluids use `forge:ignites`, and seed oil and bioethanol keep their `minecraft:water` tag.
+- A flowing fluid ignites when its source fluid is in `forge:ignites`.
 - The fork keeps the Create mixins and the compat recipes that upstream removed.
 - The Electrum Block fixes are hand written, since the fork has no datagen.
 - The electrify recipes take `forge:` tags as inputs.

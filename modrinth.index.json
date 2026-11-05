@@ -3439,6 +3439,21 @@
         "https://cdn.modrinth.com/data/PEPVViac/versions/HV3K5Aus/AdvancedLootInfo-forge-1.20.1-2.5.0.jar"
       ],
       "fileSize": 677750
+    },
+    {
+      "path": "mods/bygonenether-1.3.2-1.20.x.jar",
+      "hashes": {
+        "sha1": "529e31d2877b87a8bf006f590513a33ab6b73171",
+        "sha512": "9f8e9e091540f3f6eaec5987f131a89498632509aa3f92dd6f1b7e16ed9e725079bc703a5451868a6013ccabfa70f7a7ab100d5a58755dfa0bd78bbeb3dbdf53"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/kt3BLgXB/versions/RA38ax2z/bygonenether-1.3.2-1.20.x.jar"
+      ],
+      "fileSize": 7642613
     }
   ],
   "dependencies": {

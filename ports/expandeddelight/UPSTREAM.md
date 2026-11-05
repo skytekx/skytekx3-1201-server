@@ -211,7 +211,10 @@ upstream keeps it, the datagen output in `src/generated/resources` and the hand 
    `minecraft:axes` for upstream's `minecraft:axes`. The crushing mallet keeps its own tag.
 4. Common tags: upstream's c: tags become forge: tags with the names that Farmer's Delight 1.20.1
    and Pam's HarvestCraft 2 Food Core use, so the crops, cheese, cookies, juices and salt of this
-   mod meet the same tags as theirs. The table is `TAG_MAP` in the script. Three c: tags have no
+   mod meet the same tags as theirs. The table is `TAG_MAP` in the script. The parent tag
+   `forge:nuts` holds `#forge:nuts/peanut`, as the crop, vegetable, juice and jam parents hold their
+   children, so that recipes which ask for any nut, such as the cooking oil of Pam's HarvestCraft 2
+   Food Core, take the peanut. The file is added by hand, upstream has no parent. Three c: tags have no
    1.20.1 convention and are dropped: `c:foods` (a parent of the two cheese tags),
    `c:foods/edible_when_placed` and `c:foods/soup`. The hanging sign recipe names
    `minecraft:chain` instead of `c:chains`, which Forge 1.20.1 does not have.

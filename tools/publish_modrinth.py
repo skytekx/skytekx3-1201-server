@@ -11,6 +11,11 @@ VERSION, and every jar inside it has a modrinth-permissions/<jar>.md with Status
 (tools/mrpack_permissions.py). The version changelog is read from docs/changelog/<VERSION>.md, which
 must exist and not be empty, so a VERSION bump cannot reuse an old changelog. A failed check stops the
 dry run too; there is no override. The dry run prints the changelog it would send.
+
+The CC BY-NC-SA parts of the bundled Ender IO and of the Twilight Forest fork allow no commercial use,
+and Modrinth creates every project as monetized. So --go switches the project to demonetized through
+the API before it uploads a version, reads the status back and refuses the upload unless Modrinth
+reports demonetized or force-demonetized. The dry run only warns, it changes nothing.
 """
 import hashlib, json, os, sys, mimetypes, urllib.request, urllib.error, uuid, zipfile
 
@@ -30,6 +35,7 @@ CHANGELOG = REPO + f"/docs/changelog/{VERSION}.md"
 API = "https://api.modrinth.com/v2"
 UA = "skytekx3-builder/1.0 (skytekx@erebos.xyz)"
 SLUG = "skytekx3"
+DEMONETIZED = ("demonetized", "force-demonetized")
 
 BODY = open(REPO+"/docs/MODPACK_DESCRIPTION.md").read()
 SUMMARY = open(REPO+"/docs/MODPACK_SUMMARY.txt").read().strip()   # Modrinth allows 256 characters
@@ -78,6 +84,22 @@ def req(method, path, headers=None, data=None):
 def get_json(path):
     return json.load(req("GET", path))
 
+def ensure_demonetized(project_id):
+    """Switch the creator rewards of the project off and check that Modrinth took it, or exit."""
+    status = get_json(f"/project/{project_id}").get("monetization_status")
+    if status not in DEMONETIZED:
+        print(f"monetization_status={status!r}, setting it to 'demonetized'")
+        try:
+            req("PATCH", f"/project/{project_id}", headers={"Content-Type": "application/json"},
+                data=json.dumps({"monetization_status": "demonetized"}).encode())
+        except urllib.error.HTTPError as e:
+            sys.exit(f"could not demonetize project {project_id}: {e.code} {e.read().decode()[:400]}")
+        status = get_json(f"/project/{project_id}").get("monetization_status")
+    if status not in DEMONETIZED:
+        sys.exit(f"project {project_id} still reports monetization_status {status!r}, refusing to upload "
+                 "a pack with non-commercial parts (okf/modpack/publish.md)")
+    print("monetization_status:", status)
+
 def multipart(fields, file_field=None, file_path=None):
     """Build multipart/form-data body. fields: dict of name->str. file_field/file_path optional."""
     boundary = "----skytekx3"+uuid.uuid4().hex
@@ -100,12 +122,14 @@ def multipart(fields, file_field=None, file_path=None):
 # 1. who am I + existing project?
 me = get_json("/user")
 print("authed:", me["username"], me["id"])
+monetization = None
 try:
     p = get_json(f"/project/{SLUG}")
     # The CC BY-NC-SA parts of Ender IO and the Twilight Forest fork allow no commercial use, see
     # okf/modpack/publish.md. Print what Modrinth reports, so the release notes can record it.
+    monetization = p.get("monetization_status")
     print("project exists:", p["id"], p["slug"], "status=", p.get("status"),
-          "monetization_status=", p.get("monetization_status"))
+          "monetization_status=", monetization)
     project_id = p["id"]
 except urllib.error.HTTPError as e:
     project_id = None
@@ -120,6 +144,12 @@ if TEXTS:
     sys.exit(0)
 
 if not GO:
+    if not project_id:
+        print("[dry run] WARNING: --go would create the project, and Modrinth creates it monetized. "
+              "--go then sets it to demonetized before the upload and refuses if that fails.")
+    elif monetization not in DEMONETIZED:
+        print(f"[dry run] WARNING: monetization_status is {monetization!r}. --go sets it to "
+              "demonetized before the upload and refuses if Modrinth keeps it.")
     print("\n[dry run] .mrpack:", MRPACK, os.path.getsize(MRPACK))
     print(f"[dry run] changelog from {CHANGELOG}:\n" + CHANGELOG_TEXT + "\n")
     print("[dry run] re-run with --go to create/upload.")
@@ -148,7 +178,10 @@ if not project_id:
     except urllib.error.HTTPError as e:
         print("CREATE FAILED", e.code, e.read().decode()[:600]); sys.exit(1)
 
-# 3. upload version
+# 3. no creator rewards for a pack with non-commercial parts, also for a project created just now
+ensure_demonetized(project_id)
+
+# 4. upload version
 vdata = {
     "name": f"SkyTekx3 {VERSION}",
     "version_number": VERSION,

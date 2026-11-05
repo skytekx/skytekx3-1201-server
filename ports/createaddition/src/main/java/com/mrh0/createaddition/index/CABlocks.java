@@ -21,6 +21,7 @@ import com.mrh0.createaddition.blocks.portable_energy_interface.PortableEnergyIn
 import com.mrh0.createaddition.energy.NodeMovementBehaviour;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlock;
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlock;
+import com.mrh0.createaddition.blocks.electric_pump.ElectricPumpBlock;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
@@ -60,6 +61,16 @@ public class CABlocks {
 			.tag(AllBlockTags.SAFE_NBT.tag) //Dono what this tag means (contraption safe?).
 			.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
 			.onRegister(block -> BlockStressValues.CAPACITIES.register(block, () -> Config.MAX_STRESS.get() / 256f))
+			.item()
+			.transform(customItemModel())
+			.register();
+
+	// Backported from the 1.21.1 line (upstream 6cbf853). The blockstate, models, loot table and the
+	// pickaxe tag are hand written in src/main/resources, since the fork commits no datagen output.
+	public static final BlockEntry<ElectricPumpBlock> ELECTRIC_PUMP = CreateAddition.REGISTRATE.block("electric_pump", ElectricPumpBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
+			.transform(pickaxeOnly())
 			.item()
 			.transform(customItemModel())
 			.register();

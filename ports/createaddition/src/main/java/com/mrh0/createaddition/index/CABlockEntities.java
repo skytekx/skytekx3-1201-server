@@ -9,6 +9,7 @@ import com.mrh0.createaddition.blocks.connector.base.ConnectorRenderer;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlockEntity;
 import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlockEntity;
 import com.mrh0.createaddition.blocks.electric_motor.*;
+import com.mrh0.createaddition.blocks.electric_pump.*;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.*;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBlockEntity;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorRenderer;
@@ -34,6 +35,13 @@ public class CABlockEntities {
 			.renderer(() -> ElectricMotorRenderer::new)
 			.register();
 	
+	public static final BlockEntityEntry<ElectricPumpBlockEntity> ELECTRIC_PUMP = CreateAddition.REGISTRATE
+			.blockEntity("electric_pump", ElectricPumpBlockEntity::new)
+			.visual(() -> ElectricPumpVisual::new)
+			.validBlocks(CABlocks.ELECTRIC_PUMP)
+			.renderer(() -> ElectricPumpRenderer::new)
+			.register();
+
 	public static final BlockEntityEntry<AlternatorBlockEntity> ALTERNATOR = CreateAddition.REGISTRATE
 			.blockEntity("alternator", AlternatorBlockEntity::new)
 			.visual(() -> AlternatorVisual::new, false)

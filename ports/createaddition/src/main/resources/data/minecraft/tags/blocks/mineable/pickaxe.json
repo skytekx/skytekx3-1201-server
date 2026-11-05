@@ -3,6 +3,7 @@
   "values": [
     "createaddition:alternator",
     "createaddition:electric_motor",
+    "createaddition:electric_pump",
     "createaddition:rolling_mill",
     "createaddition:creative_energy",
     "createaddition:connector",

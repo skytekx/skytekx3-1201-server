@@ -43,6 +43,14 @@ No registry id, block state, NBT key or config key changed between 1.3.3 and the
   CC&A between 2021 and 2023, when Create was MIT-licensed as a whole (`Copyright (c) 2019
   simibubi`). Create's assets are All Rights Reserved since Create commit `9dcc21950`
   (2025-09-21): the backport must not copy any Create asset dated 2025-09-21 or later.
+- The Electric Pump that upstream drew in 2026 (source change 28) reuses Create files from before
+  that date. Its block and item models copy the two 12x3x12 flange cuboids, positions and UVs, of
+  Create's `models/block/mechanical_pump/block.json`, and 22.6% of the opaque pixels of its texture
+  match Create's `textures/block/pump.png`. Create 6.0.8 for 1.20.1 ships these files as the git
+  blobs `34cb63e` and `8f3d8f7`, and the Modrinth jar `create-1.20.1-6.0.3.jar` (published
+  2025-03-14, SHA-512 `645e99ae...` as the Modrinth API lists it) already holds both blobs byte for
+  byte. Both blobs therefore date from the time when Create's assets were MIT, and the NOTICE
+  lists them with the other parts derived from Create.
 - Upstream jars carry no LICENSE file. The SkyTekx build adds `LICENSE` and the SkyTekx `NOTICE`
   (what changed, the upstream commits, where the source is, Create's MIT notice for the parts
   derived from Create) to the jar; see build changes 7 and 8.
@@ -382,3 +390,34 @@ its item here, and the NOTICE in the jar sums them up.
     (chiseled copper, bulbs, doors, grates and trapdoors) stay out, and so does the special
     recipe type `createaddition:deoxidizing` of `1f606d3`, which upstream registers no more at
     `658a390`.
+28. Electric Pump: upstream `6cbf853`, `9dd1b46` and the block entity part of `562d383` (release
+    1.7.1). The new block, item and block entity type are `createaddition:electric_pump`.
+    The block `blocks/electric_pump/ElectricPumpBlock` extends Create's `PumpBlock`, so pipes treat
+    it as a pump (`PumpBlock.isPump` is an instanceof check). It adds the state `powered`, which a
+    redstone signal sets and which stops the pump, and a shape with a centre column. It has no shaft
+    or cog, since `hasShaftTowards`, `isSmallCog`, `isLargeCog` and `isDedicatedCogWheel` return
+    false, so no shaft or cogwheel next to it connects. Its block entity extends `PumpBlockEntity`
+    and sets its own speed with a scroll value from 0 to `pump_rpm_range` (32 when placed). It holds
+    `pump_capacity` FE, takes up to `pump_max_input` FE per tick on every side and draws
+    `pump_fe_at_max_rpm` times max(speed, 32) / 256 FE per tick, rounded and at least 1, so 15 FE/t
+    at 32 RPM with the default of 120. It runs while it has that much stored and no signal. It has
+    no kinetic link: `attachKinetics` and `setSource` do nothing, stress and capacity are 0, and
+    `getGeneratedSpeed` returns the pump speed while it runs, so that
+    `KineticBlockEntity.validateKinetics` keeps the speed. The NBT keys are `Active` and `energy`,
+    written by `write` and `writeSafe`. The goggles show the draw at the current speed, and the pump
+    plays the dynamo soundscape while it runs. The renderer `ElectricPumpRenderer` (Flywheel off)
+    and the visual `ElectricPumpVisual` pulse two copies of the partial
+    `CAPartials.ELECTRIC_PUMP_PARTIAL`. The NeoForge capability registration becomes a `LazyOptional`
+    that `getCapability(ForgeCapabilities.ENERGY)` returns for every side, invalidated in
+    `invalidateCaps` and created anew in `reviveCaps`, so a connector drops the storage when the
+    chunk unloads. The `HolderLookup.Provider` parameters of `read`, `write` and `writeSafe` go away.
+    The blockstate with its 6 facing variants, `models/item/electric_pump.json`, the three models in
+    `models/block/electric_pump/` and the 32x32 texture `textures/block/electric_pump/block.png` are
+    upstream's files byte for byte, the first two from its generated resources. The mechanical
+    crafting recipe (dried kelp, a mechanical pump, two copper spools and a capacitor) and the loot
+    table are upstream's generated files in the folders `recipes/` and `loot_tables/`, the recipe
+    with `acceptMirrored` and `item` in place of `accept_mirrored` and `id`. The pump joins
+    `minecraft:mineable/pickaxe`, and en_us names it. Two local changes: the goggles write fe/t like
+    those of the other CC&A blocks of this fork, where upstream writes a lightning sign, and a placed
+    pump takes `powered` from its neighbours at once, where upstream waits for the next neighbour
+    update. The ponder scene `electric_pump_flow` of `562d383` belongs to the ponders bundle.

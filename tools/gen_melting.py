@@ -32,8 +32,9 @@ The rules, in short (the full text is on okf/content/melting.md):
   the minimum per fluid over the alternatives of a slot and over the recipes of the item. A casting recipe is a recipe
   whose ingredient is the fluid. Crafting remainders are subtracted, except in a recipe that uses up the container
   whole. A product with a chance counts with its largest count, a product of the Ender IO SAG mill with what the best
-  grinding ball gives, and a sequenced assembly with the count of one result. Items no recipe makes are worth
-  nothing, and so are items that only a loop of their own recipes makes.
+  grinding ball gives, a product of a Thermal machine with the best catalyst and augments, and a sequenced assembly
+  with the count of one result. Items no recipe makes are worth nothing, and so are items that only a loop of their
+  own recipes makes.
 - A water bucket that catches a fish, an axolotl or a tadpole counts as a recipe of the mob bucket, which no recipe
   shows. The mob bucket then holds the iron of its bucket and nothing more.
 - An ingredient that gets a generated recipe counts with what that recipe gives, rounded down to whole mB, so no item
@@ -204,6 +205,17 @@ IN_KEYS = {'ingredient', 'ingredients', 'input', 'inputs', 'iteminput', 'maininp
 OUT_KEYS = {'result', 'results', 'output', 'outputs', 'mainoutput', 'secondaryoutput', 'secondaryoutputs',
             'secondaries', 'itemoutput', 'outputitem', 'outputitems', 'product', 'products', 'byproducts',
             'addedoutput', 'stripped', 'slag', 'ores', 'spoils', 'result1', 'result2', 'result3', 'result4'}
+# The machines of Thermal Series and Thermal Extra (read 2026-11-05 in thermal_core 11.0.6, cofh_core 11.0.2 and
+# ThermalExtra 3.3.3). RecipeJsonUtils.parseItemChance locks an output without a chance and one marked locked. Every
+# other chance c of the item output at index i becomes max(c * catalyst mod * machine mod, min chance) in
+# BaseMachineRecipe and CatalyzedMachineRecipe, with the primary mods at index 0 and the secondary mods after it, and
+# MachineBlockEntity.resolveOutputs gives floor of that for sure and one more stack at the rest. The catalysts are the
+# recipes of the type <machine type>_catalyst. No augment raises the primary mod. The four augment slots of
+# ThermalCoreConfig.machineAugments with the Auxiliary Process Sieve of the Abyssal tier of Thermal Extra (MachineSec
+# 0.15 plus 0.05 per tier, tier 5, additive and not unique) raise the secondary mod to 1 + 4 * 0.4.
+THERMAL_NAMESPACES = {'thermal', 'thermal_extra'}
+THERMAL_MACHINE_MODS = (1.0, 1.0 + 4 * 0.4)
+THERMAL_OUT_KEYS = ('result', 'results', 'output', 'outputs')
 # JSON keys whose fluid references the recipe consumes
 FLUID_IN_KEYS = {'fluid', 'fluidinput', 'inputfluid', 'fluids', 'fluid_input'}
 # Keys in an IN_KEYS list that hold one ingredient each. Under a singular key a list is a list of alternatives.
@@ -454,6 +466,20 @@ class JsonReader:
                 g, c = js.get('grinding'), js.get('chance')
                 if isinstance(g, (int, float)) and isinstance(c, (int, float)) and g > 0 and c > 0:
                     self.balls.append((float(g), float(c)))
+        # The catalysts of the Thermal machines per machine type, as (primary mod, secondary mod, min chance) with
+        # the defaults of MachineCatalystSerializer, and the empty catalyst slot first
+        self.catalysts = collections.defaultdict(lambda: [(1.0, 1.0, 0.0)])
+        for js in dump.json.values():
+            t = js.get('type') if isinstance(js, dict) else None
+            if not (isinstance(t, str) and t.endswith('_catalyst') and ns(t) in THERMAL_NAMESPACES):
+                continue
+            if not self.items_of(js.get('ingredient')):
+                continue
+            mods = []
+            for k, default in (('primary_mod', 1.0), ('secondary_mod', 1.0), ('min_chance', 0.0)):
+                v = js.get(k, default)
+                mods.append(float(v) if isinstance(v, (int, float)) else default)
+            self.catalysts[t[:-len('_catalyst')]].append(tuple(mods))
 
     def items_of(self, node):
         """Item ids an ingredient node matches, or None when it is no item ingredient. An empty tuple is an item
@@ -556,6 +582,38 @@ class JsonReader:
             cnt = cnt * max(1, math.ceil(ch))
         if ids:
             out.append((ids, cnt, exp))
+
+    def thermal_chances(self, rtype, js):
+        """The JSON of a Thermal machine recipe with every unlocked chance raised to what the best catalyst and the
+        best augments give (see THERMAL_MACHINE_MODS). A locked chance stays, and an output that no setup gives goes."""
+        js = dict(js)
+        cats = self.catalysts[rtype]
+        index = 0
+        for key in THERMAL_OUT_KEYS:
+            if key not in js:
+                continue
+            nodes = js[key] if isinstance(js[key], list) else [js[key]]
+            out = []
+            for x in nodes:
+                if not isinstance(x, dict) or 'fluid' in x or not self.items_of(x):
+                    # A fluid, or an empty stack, which parseOutputs leaves out of the item outputs
+                    out.append(x)
+                    continue
+                i, index = index, index + 1
+                ch = x.get('chance')
+                if not isinstance(ch, (int, float)):
+                    out.append(x)
+                    continue
+                y = {k: v for k, v in x.items() if k != 'locked'}
+                if ch < 0 or (ch > 0 and x.get('locked') in (True, 'true')):
+                    y['chance'] = abs(float(ch))
+                else:
+                    m = THERMAL_MACHINE_MODS[0 if i == 0 else 1]
+                    y['chance'] = round(max(max(ch * (p if i == 0 else s) * m, mn) for p, s, mn in cats), 6)
+                if y['chance'] > 0:
+                    out.append(y)
+            js[key] = out if isinstance(js[key], list) else (out[0] if out else [])
+        return js
 
     def take(self, slots, node, count=None):
         """Add the item slot of an ingredient node, or mark the recipe unfillable when the node matches no item."""
@@ -712,6 +770,8 @@ class JsonReader:
                 rolls = [(m if multiply else 1.0, min(1.0, ch * (c if chance else 1.0))) for m, c in self.balls]
                 outs.append((ids, n * max(math.ceil(m - EPS) for m, _ in rolls), n * max(m * q for m, q in rolls)))
             return outs, slots, fluids
+        if ns(rtype) in THERMAL_NAMESPACES:
+            js = self.thermal_chances(rtype, js)
         consume = js.get('consumeingredient', True) is not False
         keep_second = bool(js.get('keepHeldItem'))
         kept_keys = KEPT_KEYS.get(rtype, ())

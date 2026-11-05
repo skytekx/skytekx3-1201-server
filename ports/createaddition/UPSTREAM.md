@@ -262,3 +262,6 @@ its item here, and the NOTICE in the jar sums them up.
     and `Block.use` in `AbstractConnectorBlock` here. A loaded far end lets go at once, an unloaded one
     through the wire graph when it loads. One local check: the far end only drops its wire if that
     wire still leads back to the sheared connector.
+18. Festive wire: `e1cd591` treats festive light wire like copper wire, so it can no longer join two
+    large connectors (`WireConnectResult.REQUIRES_HIGH_CURRENT` in `IWireNode.connect`). The check
+    only runs when a wire is placed, so existing festive wires between large connectors stay.

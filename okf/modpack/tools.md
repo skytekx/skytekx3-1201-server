@@ -37,6 +37,7 @@ the same day that everything that holds a meltable material melts, and were comm
 | After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 160 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
 | After a pregen | Scan, `structure_pieces.py` | 35 | Prints every piece of one structure with its projection and box | Python with numpy | Nothing |
+| Before and after a CC&A upgrade | Scan, `wire_scan.py` | 196 | Lists the Create Crafts & Additions wire nodes of a world, the wires left at one end and how the saved wire graph differs from the world | Python 3 | Nothing, or a JSON file with `--json` |
 
 The Modrinth token and the RCON password live in the ansible vault as `vault_modrinth_pat` and
 `vault_rcon_password`, see [secrets](../server/secrets.md). The RCON password is passed as a command
@@ -224,6 +225,20 @@ older copies.
 
 A clean result has no structure start with a piece below the band, and no floating group except the
 small islands that the terrain places low on purpose.
+
+The scan [wire_scan.py](../../tools/wire_scan.py) came with the
+[Create Crafts & Additions backport](createaddition-backport.md#wire-graph-test) on 2026-11-05. It reads
+the region files of every dimension with the standard library only, also chunks kept in `c.X.Z.mcc`
+files, and lists every connector and redstone relay with its wires. It reports the wire ends whose far
+end does not point back, which the wire graph of the backport cuts at its first check, and with a
+saved graph every vertex of `data/createaddition_wires.dat` that differs from the world. With
+`--json` it writes the node lists, and `--compare` lists every node whose wires changed since such a
+file.
+
+```sh
+tools/wire_scan.py world --json /tmp/wires-before.json
+tools/wire_scan.py world --compare /tmp/wires-before.json
+```
 
 ## Mac mini
 

@@ -156,7 +156,7 @@ Licenses
     are All Rights Reserved from then on). Models that use create: textures only refer to them;
     those textures are not part of this jar.
 
-    Create's notice:
+    Create's notice for the parts above that Create published before 2025-09-21:
 
     MIT License
 
@@ -179,3 +179,9 @@ Licenses
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
+
+    Since Create commit 9dcc21950 (2025-09-21) Create's LICENSE.md puts Create's code under the
+    same MIT License text with the copyright line below. That covers the Create 6 code that the
+    Servo Motor and the Electric Pump ponder scene follow.
+
+    Copyright (c) The Create Team / The Creators of Create

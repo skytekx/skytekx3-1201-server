@@ -24,6 +24,7 @@ and the server runs them on Arclight together with one Bukkit plugin (see
 | [NeoForge ports](neoforge-ports.md) | The mods that only exist for NeoForge 1.21.1 or only on Fabric for 1.20.1 and how each one reaches the Forge pack, starting with Bygone Nether 1.3.2 in place of Eternal Nether and the Mystical Automation port, with source, license conditions, tests and operator steps |
 | [Mystical Automation port](mysticalautomation-port.md) | The Forge 1.20.1 port of the NeoForge only Mystical Automation 1.0.8 in `ports/mysticalautomation/`, its changes against upstream, its tests on Forge and Arclight and its deploy |
 | [Draconic Evolution fixes](draconic-fixes.md) | Why Draconic Evolution stays the stock 1.20.1 build and which upstream fixes the pack's addon SkyTekx DE Fixes applies to it |
+| [Mekanism Extra Modules port](mekanism-extra-modules.md) | The Forge 1.20.1 port of a 1.21.1 addon with three MekaSuit body armor modules, its Mekanism 10.4 adaptation, tests, license and operator steps |
 | [AlmostUnified](almostunified.md) | One item per material across the tech mods, the successor of UniDict |
 | [KubeJS](kubejs.md) | The four server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |
 | [Plugins](plugins.md) | The Bukkit layer on Arclight, which is EssentialsX alone, with its permissions and its metrics |

@@ -109,3 +109,24 @@ mod's code does not use MixinExtras, and in the pack Create 6.0.8 already nests 
    `issueTrackerURL` goes to https://github.com/skytekx/skytekx3-1201-server/issues, since bugs
    of this build are ours; `credits` adds "Modified, unofficial 1.20.1 backport by SkyTekx, not
    supported by MRH0". `authors`, `displayURL`, `displayName` and `description` are unchanged.
+
+## Source changes
+
+These commits change the mod itself on top of the base. Each later commit that ports a feature adds
+its item here, and the NOTICE in the jar sums them up.
+
+1. Config: `config/Config.java` defines the keys of the 1.21.1 `CommonConfig` at `658a390` with
+   upstream's names, sections, comments, defaults and ranges. They are
+   `wires.connector_network_internal_buffer`, the new sections `liquid_blaze_burner` and
+   `electric_pump`, and `amulet_effect_enabled`, `electrum_amulet_charge_rate`,
+   `capacitor_capacity` and `capacitor_charge_rate` in `misc`, 11 keys in all. The one divergence
+   is `liquid_blaze_burner_max_liquid_capacity`, whose default stays 4000 mB, the tank size of the
+   live burners, instead of the 1000 mB of upstream `6cbf853`. Loading an older
+   `createaddition-common.toml` keeps its values and appends the new keys. Nothing reads them yet,
+   and every reader calls `get()` inside a method or supplier, never in a static initialiser.
+2. Network: the channel `createaddition:main` goes from protocol `1` to `2`, and its message ids
+   are the constants `PACKET_OBSERVE` (0), `PACKET_ENERGY_NETWORK` (1) and
+   `PACKET_TIME_REMAINING` (2) in `CreateAddition.java`. Id 2 is reserved for the
+   `TimeRemainingPacket` of the goggle timers (the 1.20.1 form of `54cf0c9`). The channel accepts
+   only its own protocol, so Forge 47 ends a login between this build and an upstream 1.20.1 build
+   such as 1.3.3 with `Connection closed - mismatched mod channel list`.

@@ -71,6 +71,7 @@ Modifications
     then charges the FE item in the other hand and shocks the player, instead of giving Luck and
     Speed below four hearts. It has a new texture, an edit of the mod's own, and its recipe takes
     diamond grit and a zinc plate instead of the emerald.
+    The Tesla Coil gives light level 10 while it is powered.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

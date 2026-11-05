@@ -28,8 +28,24 @@ public class ContainerDrill extends AbstractContainerMenu {
 
     public static final int SLOT_AMOUNT = 5;
 
-    private final ItemStackHandlerAA drillInventory = new ItemStackHandlerAA(SLOT_AMOUNT);
+    // SkyTekx: every change of the upgrade slots is written into the drill right away (see
+    // saveUpgrades), so that no copy of the drill with stale upgrades can exist while the menu is
+    // open. The base wrote them only when the menu closed
+    private final ItemStackHandlerAA drillInventory = new ItemStackHandlerAA(SLOT_AMOUNT) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            ContainerDrill.this.saveUpgrades();
+        }
+    };
     private final Inventory inventory;
+    // SkyTekx: the hotbar slot and the drill stack of the moment the menu opened. The base read and
+    // wrote inventory.getSelected() each time, so a client that switched the selected slot by
+    // packet while the menu was open got the remaining upgrades written into a second drill, while
+    // the first one kept every upgrade the player had taken out
+    private final int selectedSlot;
+    private final ItemStack drillStack;
+    private boolean upgradesLoaded;
 
     public static ContainerDrill fromNetwork(int windowId, Inventory inv, FriendlyByteBuf data) {
         return new ContainerDrill(windowId, inv);
@@ -61,9 +77,24 @@ public class ContainerDrill extends AbstractContainerMenu {
             }
         }
 
-        ItemStack stack = inventory.getSelected();
-        if (StackUtil.isValid(stack) && stack.getItem() instanceof DrillItem) {
-            DrillItem.loadSlotsFromNBT(this.drillInventory, inventory.getSelected());
+        this.selectedSlot = inventory.selected;
+        this.drillStack = inventory.getSelected();
+        if (isDrill(this.drillStack)) {
+            DrillItem.loadSlotsFromNBT(this.drillInventory, this.drillStack);
+        }
+        this.upgradesLoaded = true;
+    }
+
+    private static boolean isDrill(ItemStack stack) {
+        return StackUtil.isValid(stack) && stack.getItem() instanceof DrillItem;
+    }
+
+    /**
+     * Writes the upgrade slots into the drill that the menu was opened with, and only into it.
+     */
+    private void saveUpgrades() {
+        if (this.upgradesLoaded && isDrill(this.drillStack)) {
+            DrillItem.writeSlotsToNBT(this.drillInventory, this.drillStack);
         }
     }
 
@@ -128,15 +159,15 @@ public class ContainerDrill extends AbstractContainerMenu {
 
     @Override
     public void removed(Player player) {
-        ItemStack stack = this.inventory.getSelected();
-        if (StackUtil.isValid(stack) && stack.getItem() instanceof DrillItem) {
-            DrillItem.writeSlotsToNBT(this.drillInventory, this.inventory.getSelected());
-        }
+        this.saveUpgrades();
         super.removed(player);
     }
 
+    // SkyTekx: the menu belongs to one drill in one hotbar slot. Once the selected slot changes or
+    // that slot holds another stack (or none, after the drill was dropped), the server closes the
+    // menu and ignores the clicks of the client
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return this.inventory.selected == this.selectedSlot && this.inventory.getSelected() == this.drillStack && isDrill(this.drillStack);
     }
 }

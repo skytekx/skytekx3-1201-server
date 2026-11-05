@@ -67,6 +67,9 @@ Modifications
     * Network: the server checks every screen packet against its sender (own level, loaded
       block within 8 blocks, own entity id) and only accepts the handlers meant for its side.
       Dropped and failing packets log a WARN that names the player. The protocol version is 5.
+    * Menus: the drill, the Item Filter and the firework box close like the other screens, and
+      the drill writes its upgrades only into the drill it was opened with (a client could
+      duplicate upgrades by switching the hotbar slot while the drill screen was open).
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

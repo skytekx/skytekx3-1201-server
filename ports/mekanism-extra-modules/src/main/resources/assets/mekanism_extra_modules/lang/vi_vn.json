@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Đơn vị bảo vệ pha",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Đơn vị neo hỗn mang",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Đơn vị hồi sinh khẩn cấp",
+  "module.mekanism_extra_modules.phase_guard_unit": "Đơn vị bảo vệ pha",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Đơn vị neo hỗn mang",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Đơn vị hồi sinh khẩn cấp",
+  "description.mekanism_extra_modules.phase_guard_unit": "Tiêu thụ lượng FE có thể cấu hình khi được bật để hủy sát thương nhận vào và sự kiện tử vong.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Yêu cầu Bảo vệ pha đang hoạt động. Bảo vệ khỏi các cách bỏ qua ghi máu bằng tia laser Chaos Guardian của Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Tiêu thụ lượng FE có thể cấu hình khi nhận sát thương chí mạng để hủy cái chết, hồi phục sức khỏe và áp dụng các hiệu ứng sinh tồn có thể cấu hình.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Bảo vệ pha đang hoạt động",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Bảo vệ pha không hoạt động",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Hồi sinh khẩn cấp sẵn sàng",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Hồi sinh khẩn cấp chưa nạp",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Hồi sinh khẩn cấp đã kích hoạt"
+}

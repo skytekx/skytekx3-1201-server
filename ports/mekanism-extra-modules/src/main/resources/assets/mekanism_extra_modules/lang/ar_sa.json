@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "وحدة حارس الطور",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "وحدة مرساة الفوضى",
+  "item.mekanism_extra_modules.emergency_revival_unit": "وحدة الإحياء الطارئ",
+  "module.mekanism_extra_modules.phase_guard_unit": "وحدة حارس الطور",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "وحدة مرساة الفوضى",
+  "module.mekanism_extra_modules.emergency_revival_unit": "وحدة الإحياء الطارئ",
+  "description.mekanism_extra_modules.phase_guard_unit": "تستهلك كمية قابلة للتكوين من طاقة FE أثناء تفعيلها لإلغاء الضرر الوارد وأحداث الموت.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "تتطلب أن يكون حارس الطور نشطا. تحمي من تجاوزات كتابة الصحة بواسطة ليزر حارس الفوضى في Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "تستهلك كمية قابلة للتكوين من طاقة FE عند تلقي ضرر قاتل لإلغاء الموت واستعادة الصحة وتطبيق تأثيرات بقاء قابلة للتكوين.",
+  "hud.mekanism_extra_modules.phase_guard.active": "حارس الطور نشط",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "حارس الطور غير نشط",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "الإحياء الطارئ جاهز",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "الإحياء الطارئ غير مشحون",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "تم تفعيل الإحياء الطارئ"
+}

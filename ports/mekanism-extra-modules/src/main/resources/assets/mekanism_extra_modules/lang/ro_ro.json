@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Unitate gardă de fază",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Unitate ancoră a haosului",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Unitate de reînviere de urgență",
+  "module.mekanism_extra_modules.phase_guard_unit": "Unitate gardă de fază",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Unitate ancoră a haosului",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Unitate de reînviere de urgență",
+  "description.mekanism_extra_modules.phase_guard_unit": "Consumă o cantitate configurabilă de FE cât timp este activată pentru a anula daunele primite și evenimentele de moarte.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Necesită Gardă de Fază activă. Protejează împotriva ocolirilor de scriere a sănătății ale laserului Chaos Guardian din Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Consumă o cantitate configurabilă de FE la daune letale pentru a anula moartea, a restaura sănătatea și a aplica efecte de supraviețuire configurabile.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Gardă de Fază activă",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Gardă de Fază inactivă",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Reînviere de urgență gata",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Reînviere de urgență neîncărcată",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Reînviere de urgență declanșată"
+}

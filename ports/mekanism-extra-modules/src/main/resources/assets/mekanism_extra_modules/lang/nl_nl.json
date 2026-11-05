@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Fasewacht-eenheid",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Chaosanker-eenheid",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Noodherlevingseenheid",
+  "module.mekanism_extra_modules.phase_guard_unit": "Fasewacht-eenheid",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Chaosanker-eenheid",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Noodherlevingseenheid",
+  "description.mekanism_extra_modules.phase_guard_unit": "Verbruikt een configureerbare hoeveelheid FE wanneer ingeschakeld om inkomende schade en doodsgebeurtenissen te annuleren.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Vereist dat Fasewacht actief is. Beschermt tegen health-write-bypasses van de Chaos Guardian-laser van Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Verbruikt een configureerbare hoeveelheid FE bij dodelijke schade om de dood te annuleren, gezondheid te herstellen en configureerbare overlevingseffecten toe te passen.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Fasewacht actief",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Fasewacht inactief",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Noodherleving klaar",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Noodherleving niet opgeladen",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Noodherleving geactiveerd"
+}

@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Fázisvédelmi egység",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Káoszhorgony egység",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Vészhelyzeti újraélesztő egység",
+  "module.mekanism_extra_modules.phase_guard_unit": "Fázisvédelmi egység",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Káoszhorgony egység",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Vészhelyzeti újraélesztő egység",
+  "description.mekanism_extra_modules.phase_guard_unit": "Bekapcsolva konfigurálható mennyiségű FE-t fogyaszt a bejövő sebzés és a halálesemények megszakításához.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Aktív Fázisvédelem szükséges hozzá. Véd a Draconic Evolution Chaos Guardian lézerének életerő-írási megkerülései ellen.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Halálos sebzésnél konfigurálható mennyiségű FE-t fogyaszt a halál megszakításához, az életerő visszaállításához és konfigurálható túlélési hatások alkalmazásához.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Fázisvédelem aktív",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Fázisvédelem inaktív",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Vészhelyzeti újraélesztés készen áll",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Vészhelyzeti újraélesztés nincs feltöltve",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Vészhelyzeti újraélesztés aktiválva"
+}

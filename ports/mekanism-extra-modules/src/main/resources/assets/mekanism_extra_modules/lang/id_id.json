@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Unit Penjaga Fase",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Unit Jangkar Kekacauan",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Unit Kebangkitan Darurat",
+  "module.mekanism_extra_modules.phase_guard_unit": "Unit Penjaga Fase",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Unit Jangkar Kekacauan",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Unit Kebangkitan Darurat",
+  "description.mekanism_extra_modules.phase_guard_unit": "Mengonsumsi sejumlah FE yang dapat dikonfigurasi saat aktif untuk membatalkan kerusakan yang diterima dan peristiwa kematian.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Membutuhkan Penjaga Fase aktif. Melindungi dari bypass penulisan kesehatan laser Chaos Guardian Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Mengonsumsi sejumlah FE yang dapat dikonfigurasi saat menerima kerusakan mematikan untuk membatalkan kematian, memulihkan kesehatan, dan menerapkan efek bertahan hidup yang dapat dikonfigurasi.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Penjaga Fase aktif",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Penjaga Fase tidak aktif",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Kebangkitan Darurat siap",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Kebangkitan Darurat belum terisi",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Kebangkitan Darurat terpicu"
+}

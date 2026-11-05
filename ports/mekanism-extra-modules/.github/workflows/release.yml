@@ -1,0 +1,451 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build release bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      jar_name: ${{ steps.asset.outputs.jar_name }}
+      minecraft_version: ${{ steps.version.outputs.minecraft_version }}
+      mod_version: ${{ steps.version.outputs.mod_version }}
+      release_title: ${{ steps.version.outputs.release_title }}
+      version_type: ${{ steps.version.outputs.version_type }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate release tag
+        id: version
+        shell: bash
+        run: |
+          minecraft_version="$(sed -n 's/^minecraft_version=//p' gradle.properties)"
+          mod_version="$(sed -n 's/^mod_version=//p' gradle.properties)"
+          expected_tag="v${minecraft_version}-${mod_version}"
+
+          if [[ "${GITHUB_REF_NAME}" != "${expected_tag}" ]]; then
+            echo "Expected tag ${expected_tag}, got ${GITHUB_REF_NAME}." >&2
+            exit 1
+          fi
+
+          tag_ref="refs/tags/${GITHUB_REF_NAME}"
+          if ! git cat-file -e "${tag_ref}^{tag}" 2>/dev/null; then
+            echo "Release tag ${GITHUB_REF_NAME} must be an annotated tag." >&2
+            exit 1
+          fi
+          tag_commit="$(git rev-parse "${tag_ref}^{commit}")"
+          checkout_commit="$(git rev-parse HEAD)"
+          if [[ "${tag_commit}" != "${GITHUB_SHA}" || "${checkout_commit}" != "${GITHUB_SHA}" ]]; then
+            echo "Release tag ${GITHUB_REF_NAME} does not resolve to the checked-out release commit ${GITHUB_SHA}." >&2
+            exit 1
+          fi
+
+          case "${mod_version}" in
+            *-alpha.*) version_type="alpha" ;;
+            *-beta.*) version_type="beta" ;;
+            *-*)
+              echo "Unsupported prerelease version: ${mod_version}." >&2
+              exit 1
+              ;;
+            *) version_type="release" ;;
+          esac
+
+          {
+            echo "minecraft_version=${minecraft_version}"
+            echo "mod_version=${mod_version}"
+            echo "release_title=Mekanism: Extra Modules ${mod_version} for Minecraft ${minecraft_version}"
+            echo "version_type=${version_type}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Set up Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@67621b124fd2e251c5e8a0e6e3b91318f2287669 # v6.3.0
+        with:
+          gradle-version: 8.12
+
+      - name: Build
+        run: gradle clean build --no-daemon --stacktrace
+
+      - name: Prepare release asset
+        id: asset
+        shell: bash
+        run: |
+          mapfile -t jars < <(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' ! -name '*-dev.jar' | sort)
+
+          if [[ ${#jars[@]} -ne 1 ]]; then
+            echo "Expected exactly one release jar, found ${#jars[@]}." >&2
+            printf '%s\n' "${jars[@]}" >&2
+            exit 1
+          fi
+
+          release_dir="build/release"
+          jar_name="$(basename "${jars[0]}")"
+          mkdir -p "${release_dir}"
+          cp "${jars[0]}" "${release_dir}/${jar_name}"
+          (cd "${release_dir}" && sha256sum "${jar_name}") > "${release_dir}/${jar_name}.sha256"
+
+          {
+            echo "jar=${release_dir}/${jar_name}"
+            echo "jar_name=${jar_name}"
+            echo "checksum=${release_dir}/${jar_name}.sha256"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Prepare release notes
+        id: notes
+        shell: bash
+        run: |
+          notes_file="build/release/release-notes.md"
+          previous_tag="$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || true)"
+
+          {
+            echo "## Commits"
+            echo
+            # shellcheck disable=SC2016
+            if [[ -n "${previous_tag}" ]]; then
+              git log --first-parent --pretty=format:'- %s (`%h`)' "${previous_tag}..${GITHUB_SHA}"
+            else
+              git log --first-parent --pretty=format:'- %s (`%h`)' "${GITHUB_SHA}"
+            fi
+          } > "${notes_file}"
+
+          echo "file=${notes_file}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload release bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-${{ github.ref_name }}
+          path: build/release/
+          if-no-files-found: error
+          retention-days: 1
+
+  github-release:
+    name: Publish GitHub release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Download release bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-${{ github.ref_name }}
+          path: build/release
+
+      - name: Create or verify GitHub release
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          JAR_NAME: ${{ needs.build.outputs.jar_name }}
+          RELEASE_TITLE: ${{ needs.build.outputs.release_title }}
+          VERSION_TYPE: ${{ needs.build.outputs.version_type }}
+        shell: bash
+        run: |
+          release_jar="build/release/${JAR_NAME}"
+          release_checksum="${release_jar}.sha256"
+          release_notes="build/release/release-notes.md"
+          headers_file="${RUNNER_TEMP}/github-release-headers"
+          error_file="${RUNNER_TEMP}/github-release-error"
+          release_exists=false
+
+          for attempt in 1 2 3; do
+            set +e
+            timeout 30s gh api --include --silent \
+              "repos/${GITHUB_REPOSITORY}/releases/tags/${GITHUB_REF_NAME}" \
+              > "${headers_file}" 2> "${error_file}"
+            request_exit=$?
+            set -e
+
+            http_status=""
+            if [[ -s "${headers_file}" ]]; then
+              read -r _ http_status _ < "${headers_file}" || true
+            fi
+            if [[ ${request_exit} -eq 0 && "${http_status}" == "200" ]]; then
+              release_exists=true
+              break
+            fi
+            if [[ "${http_status}" == "404" ]]; then
+              break
+            fi
+            if [[ ${attempt} -eq 3 ]]; then
+              echo "Unable to determine whether the GitHub release exists (HTTP ${http_status:-unknown})." >&2
+              cat "${error_file}" >&2
+              exit 1
+            fi
+            sleep $((attempt * 2))
+          done
+
+          if [[ "${release_exists}" == "false" ]]; then
+            release_flags=(--verify-tag --generate-notes --notes-file "${release_notes}" --title "${RELEASE_TITLE}")
+            if [[ "${VERSION_TYPE}" != "release" ]]; then
+              release_flags+=(--prerelease)
+            fi
+
+            gh release create "${GITHUB_REF_NAME}" "${release_jar}" "${release_checksum}" "${release_flags[@]}"
+            exit 0
+          fi
+
+          for attempt in 1 2 3; do
+            if release_json="$(timeout 30s gh release view "${GITHUB_REF_NAME}" --json name,isDraft,isPrerelease,assets)"; then
+              break
+            fi
+            if [[ ${attempt} -eq 3 ]]; then
+              echo "Unable to read the existing GitHub release." >&2
+              exit 1
+            fi
+            sleep $((attempt * 2))
+          done
+          expected_prerelease=false
+          if [[ "${VERSION_TYPE}" != "release" ]]; then
+            expected_prerelease=true
+          fi
+
+          if [[ "$(jq -r '.name' <<< "${release_json}")" != "${RELEASE_TITLE}" ]] ||
+             [[ "$(jq -r '.isPrerelease' <<< "${release_json}")" != "${expected_prerelease}" ]]; then
+            echo "Existing GitHub release metadata does not match this tag." >&2
+            exit 1
+          fi
+          release_is_draft="$(jq -r '.isDraft' <<< "${release_json}")"
+
+          download_dir="${RUNNER_TEMP}/existing-release-assets"
+          mkdir -p "${download_dir}"
+          for local_asset in "${release_jar}" "${release_checksum}"; do
+            asset_name="$(basename "${local_asset}")"
+            if jq -e --arg name "${asset_name}" '.assets[] | select(.name == $name)' <<< "${release_json}" >/dev/null; then
+              for attempt in 1 2 3; do
+                rm -f "${download_dir}/${asset_name}"
+                if timeout 60s gh release download "${GITHUB_REF_NAME}" --pattern "${asset_name}" --dir "${download_dir}"; then
+                  break
+                fi
+                if [[ ${attempt} -eq 3 ]]; then
+                  echo "Unable to download existing GitHub release asset ${asset_name}." >&2
+                  exit 1
+                fi
+                sleep $((attempt * 2))
+              done
+              if ! cmp --silent "${local_asset}" "${download_dir}/${asset_name}"; then
+                echo "Existing GitHub release asset ${asset_name} differs from this build." >&2
+                exit 1
+              fi
+            else
+              gh release upload "${GITHUB_REF_NAME}" "${local_asset}"
+            fi
+          done
+
+          if [[ "${release_is_draft}" == "true" ]]; then
+            gh release edit "${GITHUB_REF_NAME}" --draft=false
+          fi
+
+  publish-modrinth:
+    name: Publish to Modrinth
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build, github-release]
+    permissions:
+      statuses: write
+    steps:
+      - name: Download release bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-${{ github.ref_name }}
+          path: build/release
+
+      - name: Check Modrinth publication
+        id: preflight
+        env:
+          JAR_NAME: ${{ needs.build.outputs.jar_name }}
+          MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
+          MOD_VERSION: ${{ needs.build.outputs.mod_version }}
+        shell: bash
+        run: |
+          if [[ -z "${MODRINTH_PROJECT_ID}" ]]; then
+            echo "Repository variable MODRINTH_PROJECT_ID is not configured." >&2
+            exit 1
+          fi
+          response_file="${RUNNER_TEMP}/modrinth-version.json"
+          status_code="$(curl --silent --show-error --output "${response_file}" --write-out '%{http_code}' \
+            --connect-timeout 10 --max-time 30 --retry 2 --retry-delay 2 --retry-max-time 60 --retry-all-errors \
+            --header 'User-Agent: Lumysia/mekanism-extra-modules-release/1.0 (https://github.com/Lumysia/mekanism-extra-modules)' \
+            "https://api.modrinth.com/v2/project/${MODRINTH_PROJECT_ID}/version/${MOD_VERSION}")"
+          if [[ "${status_code}" == "404" ]]; then
+            echo "publish=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          if [[ "${status_code}" != "200" ]]; then
+            echo "Modrinth preflight failed with HTTP ${status_code}." >&2
+            exit 1
+          fi
+
+          local_sha512="$(sha512sum "build/release/${JAR_NAME}" | cut -d ' ' -f 1)"
+          if jq -e --arg hash "${local_sha512}" '.files[] | select(.hashes.sha512 == $hash)' "${response_file}" >/dev/null; then
+            echo "The matching Modrinth version is already published."
+            echo "publish=false" >> "${GITHUB_OUTPUT}"
+            echo "recovered=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "Modrinth version ${MOD_VERSION} exists with a different artifact." >&2
+            exit 1
+          fi
+
+      - name: Publish to Modrinth
+        id: publish
+        if: steps.preflight.outputs.publish == 'true'
+        uses: Kira-NT/mc-publish@52307b03863581dec6b652b83e597aec02ebb075 # v3.3.1
+        with:
+          modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: build/release/${{ needs.build.outputs.jar_name }}
+          name: ${{ needs.build.outputs.release_title }}
+          version: ${{ needs.build.outputs.mod_version }}
+          version-type: ${{ needs.build.outputs.version_type }}
+          changelog-file: build/release/release-notes.md
+          loaders: neoforge
+          environment: client | server
+          game-versions: ${{ needs.build.outputs.minecraft_version }}
+          game-version-filter: none
+          java: 21
+          dependencies: |
+            mekanism(required){modrinth:Ce6I4WUE}
+            mekanism-tools(required){modrinth:tqQpq1lt}
+            draconic-evolution(optional){modrinth:nBqivi8H}
+          retry-attempts: 1
+          fail-mode: fail
+
+      - name: Record Modrinth publication receipt
+        if: steps.publish.outcome == 'success' || steps.preflight.outputs.recovered == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISHED_URL: ${{ steps.publish.outputs.modrinth-url }}
+        shell: bash
+        run: |
+          target_url="${PUBLISHED_URL:-https://modrinth.com/project/${{ vars.MODRINTH_PROJECT_ID }}/versions}"
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state=success \
+            -f context="release/modrinth/${GITHUB_REF_NAME}" \
+            -f description="Published ${GITHUB_REF_NAME} to Modrinth" \
+            -f target_url="${target_url}" >/dev/null
+
+  publish-curseforge:
+    name: Publish to CurseForge
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build, github-release]
+    permissions:
+      statuses: write
+    steps:
+      - name: Download release bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-${{ github.ref_name }}
+          path: build/release
+
+      - name: Check CurseForge publication
+        id: preflight
+        env:
+          CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          JAR_NAME: ${{ needs.build.outputs.jar_name }}
+        shell: bash
+        run: |
+          if [[ -z "${CURSEFORGE_PROJECT_ID}" ]]; then
+            echo "Repository variable CURSEFORGE_PROJECT_ID is not configured." >&2
+            exit 1
+          fi
+          index=0
+          while :; do
+            response_file="${RUNNER_TEMP}/curseforge-files-${index}.json"
+            curl --fail --silent --show-error \
+              --connect-timeout 10 --max-time 30 --retry 2 --retry-delay 2 --retry-max-time 60 --retry-all-errors \
+              "https://www.curseforge.com/api/v1/mods/${CURSEFORGE_PROJECT_ID}/files?index=${index}&pageSize=50" \
+              --output "${response_file}"
+            file_id="$(jq -r --arg name "${JAR_NAME}" '[.data[] | select(.fileName == $name)][0].id // empty' "${response_file}")"
+            if [[ -n "${file_id}" ]]; then
+              published_jar="${RUNNER_TEMP}/${JAR_NAME}"
+              curl --fail --location --silent --show-error \
+                --connect-timeout 10 --max-time 60 --retry 2 --retry-delay 2 --retry-max-time 120 --retry-all-errors \
+                "https://www.curseforge.com/api/v1/mods/${CURSEFORGE_PROJECT_ID}/files/${file_id}/download" \
+                --output "${published_jar}"
+              if cmp --silent "build/release/${JAR_NAME}" "${published_jar}"; then
+                echo "The matching CurseForge file is already published."
+                {
+                  echo "publish=false"
+                  echo "recovered=true"
+                  echo "file_id=${file_id}"
+                } >> "${GITHUB_OUTPUT}"
+                exit 0
+              fi
+
+              echo "CurseForge file ${JAR_NAME} exists with different content." >&2
+              exit 1
+            fi
+
+            page_size="$(jq -r '.pagination.pageSize' "${response_file}")"
+            total_count="$(jq -r '.pagination.totalCount' "${response_file}")"
+            index=$((index + page_size))
+            if (( index >= total_count )); then
+              break
+            fi
+          done
+
+          echo "publish=true" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish to CurseForge
+        id: publish
+        if: steps.preflight.outputs.publish == 'true'
+        uses: Kira-NT/mc-publish@52307b03863581dec6b652b83e597aec02ebb075 # v3.3.1
+        with:
+          curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: build/release/${{ needs.build.outputs.jar_name }}
+          name: ${{ needs.build.outputs.release_title }}
+          version: ${{ needs.build.outputs.mod_version }}
+          version-type: ${{ needs.build.outputs.version_type }}
+          changelog-file: build/release/release-notes.md
+          loaders: neoforge
+          environment: client | server
+          game-versions: ${{ needs.build.outputs.minecraft_version }}
+          game-version-filter: none
+          java: 21
+          dependencies: |
+            mekanism(required){curseforge:268560}
+            mekanism-tools(required){curseforge:268567}
+            draconic-evolution(optional){curseforge:223565}
+          retry-attempts: 1
+          fail-mode: fail
+
+      - name: Record CurseForge publication receipt
+        if: steps.publish.outcome == 'success' || steps.preflight.outputs.recovered == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISHED_URL: ${{ steps.publish.outputs.curseforge-url }}
+          RECOVERED_FILE_ID: ${{ steps.preflight.outputs.file_id }}
+        shell: bash
+        run: |
+          target_url="${PUBLISHED_URL}"
+          if [[ -z "${target_url}" ]]; then
+            target_url="https://www.curseforge.com/api/v1/mods/${{ vars.CURSEFORGE_PROJECT_ID }}/files/${RECOVERED_FILE_ID}/download"
+          fi
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state=success \
+            -f context="release/curseforge/${GITHUB_REF_NAME}" \
+            -f description="Published ${GITHUB_REF_NAME} to CurseForge" \
+            -f target_url="${target_url}" >/dev/null

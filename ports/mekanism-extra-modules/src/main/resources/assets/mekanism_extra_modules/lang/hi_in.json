@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "फेज गार्ड यूनिट",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "केओस एंकर यूनिट",
+  "item.mekanism_extra_modules.emergency_revival_unit": "आपात पुनर्जीवन यूनिट",
+  "module.mekanism_extra_modules.phase_guard_unit": "फेज गार्ड यूनिट",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "केओस एंकर यूनिट",
+  "module.mekanism_extra_modules.emergency_revival_unit": "आपात पुनर्जीवन यूनिट",
+  "description.mekanism_extra_modules.phase_guard_unit": "सक्षम रहने पर आने वाली क्षति और मृत्यु घटनाओं को रद्द करने के लिए विन्यास योग्य मात्रा में FE खर्च करती है।",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "फेज गार्ड सक्रिय होना आवश्यक है। Draconic Evolution के Chaos Guardian लेज़र के स्वास्थ्य-लेखन बायपास से बचाती है।",
+  "description.mekanism_extra_modules.emergency_revival_unit": "घातक क्षति पर मृत्यु रद्द करने, स्वास्थ्य बहाल करने और विन्यास योग्य जीवन-रक्षा प्रभाव लगाने के लिए विन्यास योग्य मात्रा में FE खर्च करती है।",
+  "hud.mekanism_extra_modules.phase_guard.active": "फेज गार्ड सक्रिय",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "फेज गार्ड निष्क्रिय",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "आपात पुनर्जीवन तैयार",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "आपात पुनर्जीवन चार्ज नहीं है",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "आपात पुनर्जीवन सक्रिय हुआ"
+}

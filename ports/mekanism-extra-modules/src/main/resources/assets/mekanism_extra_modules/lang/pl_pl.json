@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Jednostka ochrony fazowej",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Jednostka kotwicy chaosu",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Jednostka awaryjnego wskrzeszenia",
+  "module.mekanism_extra_modules.phase_guard_unit": "Jednostka ochrony fazowej",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Jednostka kotwicy chaosu",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Jednostka awaryjnego wskrzeszenia",
+  "description.mekanism_extra_modules.phase_guard_unit": "Po włączeniu zużywa konfigurowalną ilość FE, aby anulować nadchodzące obrażenia i zdarzenia śmierci.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Wymaga aktywnej ochrony fazowej. Chroni przed obejściami zapisu zdrowia przez laser Chaos Guardiana z Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Przy śmiertelnych obrażeniach zużywa konfigurowalną ilość FE, aby anulować śmierć, przywrócić zdrowie i zastosować konfigurowalne efekty przetrwania.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Ochrona fazowa aktywna",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Ochrona fazowa nieaktywna",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Awaryjne wskrzeszenie gotowe",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Awaryjne wskrzeszenie nienaładowane",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Awaryjne wskrzeszenie aktywowane"
+}

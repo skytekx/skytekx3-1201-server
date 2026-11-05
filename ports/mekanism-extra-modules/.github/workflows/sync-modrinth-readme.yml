@@ -1,0 +1,91 @@
+name: Sync Modrinth README
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-modrinth-readme
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Update Modrinth description
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Update Modrinth project description
+        env:
+          MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        shell: bash
+        run: |
+          set -u
+
+          if [[ -z "${MODRINTH_PROJECT_ID}" ]]; then
+            echo "Repository variable MODRINTH_PROJECT_ID is not configured." >&2
+            exit 1
+          fi
+          if [[ -z "${MODRINTH_TOKEN}" ]]; then
+            echo "Repository secret MODRINTH_TOKEN is not configured." >&2
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          project_id = urllib.parse.quote(os.environ["MODRINTH_PROJECT_ID"], safe="")
+          payload = json.dumps({"body": open("README.md", encoding="utf-8").read()}).encode()
+          request = urllib.request.Request(
+              f"https://api.modrinth.com/v2/project/{project_id}",
+              data=payload,
+              method="PATCH",
+              headers={
+                  "Authorization": os.environ["MODRINTH_TOKEN"],
+                  "Content-Type": "application/json",
+                  "User-Agent": "Lumysia/mekanism-extra-modules-readme-sync/1.0 (https://github.com/Lumysia/mekanism-extra-modules)",
+              },
+          )
+
+          for attempt in range(3):
+              try:
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      if response.status != 204:
+                          print(f"Modrinth README synchronization failed with HTTP {response.status}.", file=sys.stderr)
+                          sys.exit(1)
+                  break
+              except urllib.error.HTTPError as error:
+                  status = error.code
+                  error.close()
+                  if status not in {408, 429} and status < 500:
+                      print(f"Modrinth README synchronization failed with HTTP {status}.", file=sys.stderr)
+                      sys.exit(1)
+              except (urllib.error.URLError, TimeoutError):
+                  status = None
+
+              if attempt == 2:
+                  if status is None:
+                      print("Modrinth README synchronization failed after transient request errors.", file=sys.stderr)
+                  else:
+                      print(f"Modrinth README synchronization failed with HTTP {status}.", file=sys.stderr)
+                  sys.exit(1)
+              time.sleep(attempt + 1)
+          PY

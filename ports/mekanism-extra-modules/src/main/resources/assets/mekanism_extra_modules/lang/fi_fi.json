@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Vaihesuojayksikkö",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Kaaosankkuriyksikkö",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Hätäelvytysyksikkö",
+  "module.mekanism_extra_modules.phase_guard_unit": "Vaihesuojayksikkö",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Kaaosankkuriyksikkö",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Hätäelvytysyksikkö",
+  "description.mekanism_extra_modules.phase_guard_unit": "Kuluttaa määritettävän määrän FE-energiaa ollessaan käytössä ja peruuttaa saapuvan vahingon sekä kuolematapahtumat.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Vaatii aktiivisen vaihesuojan. Suojaa Draconic Evolutionin Chaos Guardianin laserin terveydenkirjoituksen ohituksilta.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Kuluttaa määritettävän määrän FE-energiaa kuolettavan vahingon yhteydessä, peruuttaa kuoleman, palauttaa terveyttä ja antaa määritettäviä selviytymisvaikutuksia.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Vaihesuoja aktiivinen",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Vaihesuoja ei aktiivinen",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Hätäelvytys valmis",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Hätäelvytys lataamaton",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Hätäelvytys laukesi"
+}

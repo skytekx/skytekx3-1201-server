@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Unidad de guardia de fase",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Unidad de ancla del caos",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Unidad de reanimación de emergencia",
+  "module.mekanism_extra_modules.phase_guard_unit": "Unidad de guardia de fase",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Unidad de ancla del caos",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Unidad de reanimación de emergencia",
+  "description.mekanism_extra_modules.phase_guard_unit": "Consume una cantidad configurable de FE mientras está activada para cancelar el daño entrante y los eventos de muerte.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Requiere que Guardia de fase esté activa. Protege contra las omisiones de escritura de salud del láser del Chaos Guardian de Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Consume una cantidad configurable de FE ante daño letal para cancelar la muerte, restaurar salud y aplicar efectos de supervivencia configurables.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Guardia de fase activa",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Guardia de fase inactiva",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Reanimación de emergencia lista",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Reanimación de emergencia sin carga",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Reanimación de emergencia activada"
+}

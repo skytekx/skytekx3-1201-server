@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LUL",
+    "CEC",
+    "LUL"
+  ],
+  "key": {
+    "L": {
+      "item": "mekanism:alloy_reinforced"
+    },
+    "U": {
+      "item": "mekanism:ultimate_control_circuit"
+    },
+    "C": {
+      "item": "mekanism:energy_tablet"
+    },
+    "E": {
+      "item": "mekanism:module_laser_dissipation_unit"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "mekanism_extra_modules:phase_guard_unit"
+  }
+}

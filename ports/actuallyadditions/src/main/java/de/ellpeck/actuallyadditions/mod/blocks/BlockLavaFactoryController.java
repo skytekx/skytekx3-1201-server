@@ -14,6 +14,7 @@ import de.ellpeck.actuallyadditions.mod.blocks.base.DirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityLavaFactoryController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,7 +26,7 @@ import javax.annotation.Nullable;
 public class BlockLavaFactoryController extends DirectionalBlock.Container implements IHudDisplay {
 
     public BlockLavaFactoryController() {
-        super(ActuallyBlocks.defaultPickProps(4.5F, 20.0F));
+        super(ActuallyBlocks.defaultPickProps(4.5F, 20.0F).sound(SoundType.METAL));
     }
 
     @Nullable

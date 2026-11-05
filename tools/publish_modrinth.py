@@ -102,7 +102,10 @@ me = get_json("/user")
 print("authed:", me["username"], me["id"])
 try:
     p = get_json(f"/project/{SLUG}")
-    print("project exists:", p["id"], p["slug"], "status=", p.get("status"))
+    # The CC BY-NC-SA parts of Ender IO and the Twilight Forest fork allow no commercial use, see
+    # okf/modpack/publish.md. Print what Modrinth reports, so the release notes can record it.
+    print("project exists:", p["id"], p["slug"], "status=", p.get("status"),
+          "monetization_status=", p.get("monetization_status"))
     project_id = p["id"]
 except urllib.error.HTTPError as e:
     project_id = None

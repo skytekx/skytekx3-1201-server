@@ -59,6 +59,13 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Owner decisions
 
+- The pack must stay non-commercial, because the Patchouli parts of the bundled Ender IO and the assets
+  of the Twilight Forest fork are CC BY-NC-SA. Nobody has checked whether the Modrinth project
+  `skytekx3` or the owner's account takes part in Modrinth's creator rewards, and no tool refuses an
+  upload for it. Since 2026-11-05 the dry run of `tools/publish_modrinth.py` prints the
+  `monetization_status` of the project. The owner decides whether to switch any rewards off for the project or to
+  move Ender IO to the index, see [Publish](modpack/publish.md#release-steps).
+
 - Mob Grinding Utils 1.1.0 joined `local-mods/` on 2026-11-04 (ee238bea) and is All Rights Reserved,
   with no license in its GitHub repository. It blocks a public pack like the six older blockers, so a
   public pack needs the permission of vadis365 or Flanks255 or a pack without it. See

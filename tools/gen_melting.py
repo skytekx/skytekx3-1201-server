@@ -33,8 +33,8 @@ The rules, in short (the full text is on okf/content/melting.md):
   whose ingredient is the fluid. Crafting remainders are subtracted, except in a recipe that uses up the container
   whole. A product with a chance counts with its largest count, a product of the Ender IO SAG mill with what the best
   grinding ball gives, a product of a Thermal machine with the best catalyst and augments, and a sequenced assembly
-  with the count of one result. Items no recipe makes are worth nothing, and so are items that only a loop of their
-  own recipes makes.
+  with the count of one result. A fluid product takes its content with it. Items no recipe makes are worth
+  nothing, and so are items that only a loop of their own recipes makes.
 - A water bucket that catches a fish, an axolotl or a tadpole counts as a recipe of the mob bucket, which no recipe
   shows. The mob bucket then holds the iron of its bucket and nothing more.
 - An ingredient that gets a generated recipe counts with what that recipe gives, rounded down to whole mB, so no item
@@ -203,7 +203,7 @@ IN_KEYS = {'ingredient', 'ingredients', 'input', 'inputs', 'iteminput', 'maininp
            'primary', 'secondary', 'projectile', 'essences'}
 # JSON keys whose references are products, plus result1, result2 and so on (Statues)
 OUT_KEYS = {'result', 'results', 'output', 'outputs', 'mainoutput', 'secondaryoutput', 'secondaryoutputs',
-            'secondaries', 'itemoutput', 'outputitem', 'outputitems', 'product', 'products', 'byproducts',
+            'secondaries', 'itemoutput', 'outputitem', 'outputitems', 'product', 'products', 'byproduct', 'byproducts',
             'addedoutput', 'stripped', 'slag', 'ores', 'spoils', 'result1', 'result2', 'result3', 'result4'}
 # The machines of Thermal Series and Thermal Extra (read 2026-11-05 in thermal_core 11.0.6, cofh_core 11.0.2 and
 # ThermalExtra 3.3.3). RecipeJsonUtils.parseItemChance locks an output without a chance and one marked locked. Every
@@ -216,8 +216,8 @@ OUT_KEYS = {'result', 'results', 'output', 'outputs', 'mainoutput', 'secondaryou
 THERMAL_NAMESPACES = {'thermal', 'thermal_extra'}
 THERMAL_MACHINE_MODS = (1.0, 1.0 + 4 * 0.4)
 THERMAL_OUT_KEYS = ('result', 'results', 'output', 'outputs')
-# JSON keys whose fluid references the recipe consumes
-FLUID_IN_KEYS = {'fluid', 'fluidinput', 'inputfluid', 'fluids', 'fluid_input'}
+# JSON keys whose fluid references the recipe consumes, with mix of the Cyclic solidifier
+FLUID_IN_KEYS = {'fluid', 'fluidinput', 'inputfluid', 'fluids', 'fluid_input', 'mix'}
 # Keys in an IN_KEYS list that hold one ingredient each. Under a singular key a list is a list of alternatives.
 LIST_OF_SLOTS = {'ingredients', 'inputs', 'input', 'materials', 'pedestalitems', 'inputitems', 'additives', 'items',
                  'components', 'secondary', 'essences'}
@@ -340,7 +340,8 @@ def still(fid):
 
 
 class Fluids:
-    """Groups fluids that share a forge:molten_* tag, so that the Tinkers and the addon copies of a metal are one."""
+    """Groups fluids that share a forge:molten_* tag or forge:ender, so that the Tinkers and the addon copies of a metal
+    are one, and so are molten ender and the resonant ender of Thermal (250 mB per pearl in both)."""
 
     def __init__(self, dump, recipes):
         parent = {}
@@ -352,7 +353,7 @@ class Fluids:
             return x
 
         for tag, ids in dump.fluid_tags.items():
-            if not tag.startswith('forge:molten_'):
+            if not (tag.startswith('forge:molten_') or tag == 'forge:ender'):
                 continue
             st = sorted({still(i) for i in ids})
             for o in st[1:]:
@@ -456,8 +457,10 @@ class JsonReader:
     def __init__(self, dump):
         self.dump = dump
         self.unknown_keys = collections.Counter()
-        # Set by read() when an item ingredient of the recipe matches no item, such as an empty tag
+        # Set by read() when an item ingredient of the recipe matches no item, such as an empty tag, and to the fluid
+        # products of the recipe
         self.unfillable = False
+        self.fluid_outs = []
         # The grinding balls of the Ender IO SAG mill and the empty ball slot, as (output multiplier, chance
         # multiplier). In GrindingBallRecipe, grinding is getOutputMultiplier and chance is getBonusMultiplier.
         self.balls = [(1.0, 1.0)]
@@ -641,9 +644,11 @@ class JsonReader:
     def read(self, rtype, js):
         """(products, item slots, fluid slots) of a recipe JSON. A slot is (item ids, count).
 
-        It sets unfillable when an item ingredient matches no item, so that the recipe is left out.
+        It sets unfillable when an item ingredient matches no item, so that the recipe is left out, and fluid_outs to
+        the fluid products as (fluid ids, amount).
         """
         self.unfillable = False
+        self.fluid_outs = []
         outs, slots, fluids = [], [], []
         if rtype == 'minecraft:smithing_transform':
             # The template counts as nothing, as in the Tinkers melting of netherite gear and the lead's horse armor
@@ -772,6 +777,23 @@ class JsonReader:
             return outs, slots, fluids
         if ns(rtype) in THERMAL_NAMESPACES:
             js = self.thermal_chances(rtype, js)
+        if rtype == 'cyclic:crusher' and isinstance(js.get('bonus'), dict):
+            # The Cyclic crusher adds its bonus once (TileCrusher, read 2026-11-05): always at percent 1 or from 100 on,
+            # else when nextInt(100) is below percent, with 1 plus nextInt(count) items of a stack above one
+            js = dict(js)
+            bonus = js.pop('bonus')
+            p = js.get('percent', 0)
+            ids = self.items_of(bonus)
+            if ids and isinstance(p, (int, float)) and p > 0:
+                n = self.count_of(bonus)
+                ch = 1.0 if p == 1 or p >= 100 else p / 100.0
+                outs.append((ids, n, ch * (n + 1) / 2))
+        if rtype == 'enderio:tank' and js.get('is_emptying') is True:
+            # The tank of Ender IO empties the input into its tank, so the fluid is a product
+            f = self.fluid_of(js.get('fluid'))
+            if f:
+                self.fluid_outs.append(f)
+            js = {k: v for k, v in js.items() if k != 'fluid'}
         consume = js.get('consumeingredient', True) is not False
         keep_second = bool(js.get('keepHeldItem'))
         kept_keys = KEPT_KEYS.get(rtype, ())
@@ -784,6 +806,10 @@ class JsonReader:
                 if isinstance(val, str) and isinstance(n, (int, float)) and n > 1:
                     # A plain result id with its count beside it (Refurbished Furniture slicing)
                     outs[before:] = [(ids, float(n), float(n)) for ids, _, _ in outs[before:]]
+                for x in (val if isinstance(val, list) else [val]):
+                    f = self.fluid_of(x) if isinstance(x, dict) else None
+                    if f:
+                        self.fluid_outs.append(f)
             elif lk in IN_KEYS:
                 nodes = val if (isinstance(val, list) and lk in LIST_OF_SLOTS) else [val]
                 for idx, x in enumerate(nodes):
@@ -828,14 +854,17 @@ class JsonReader:
 
 
 class Prod:
-    """One product of one recipe: count is the largest number a craft can give, ecount the expected one."""
-    __slots__ = ('rid', 'rtype', 'out', 'count', 'slots', 'fluids', 'others', 'zero', 'source', 'ecount', 'eothers')
+    """One product of one recipe: count is the largest number a craft can give, ecount the expected one. fouts is the
+    content of the fluid products of the recipe, which leaves with them."""
+    __slots__ = ('rid', 'rtype', 'out', 'count', 'slots', 'fluids', 'others', 'zero', 'source', 'ecount', 'eothers',
+                 'fouts')
 
     def __init__(self, rid, rtype, out, count, slots, fluids, others, source):
         self.rid, self.rtype, self.out, self.count = rid, rtype, out, count
         self.slots, self.fluids, self.others, self.source = slots, fluids, others, source
         self.ecount, self.eothers = count, others
         self.zero = False
+        self.fouts = {}
 
 
 def conditions_hold(dump, mods, conds):
@@ -990,6 +1019,10 @@ class World:
             if not outs:
                 continue
             fslots = [[self.fvec(f, a) for f in ids] for ids, a in fluids if ids]
+            # The fluid products take their content with them, the most that any of their fluids holds
+            fouts = {}
+            for ids, a in self.reader.fluid_outs:
+                fouts = vadd(fouts, max((self.fvec(f, a) for f in ids), key=lambda v: sum(v.values()), default={}))
             if not (slots or fslots) and e.get('ing') and not (set(js) - CODE_KEYS):
                 # A recipe defined in code (Blue Skies tools, Fairy Lights): its JSON holds only the type, and the
                 # parsed ingredients are the crafting grid
@@ -1008,6 +1041,7 @@ class World:
             for i, cnt in merged.items():
                 others = [(o, c2) for o, c2 in merged.items() if o != i]
                 p = Prod(e['id'], t, i, cnt, slots, fslots, others, 'json')
+                p.fouts = fouts
                 p.ecount = expected[i]
                 p.eothers = [(o, expected[o]) for o, _ in others]
                 if not known_inputs:
@@ -1243,6 +1277,7 @@ class World:
 
     def _share(self, p, total, expected):
         count = p.ecount if expected else p.count
+        total = vsub(total, p.fouts)
         for o, cnt in (p.eothers if expected else p.others):
             if o in self.melts:
                 total = vsub(total, self.known_max(o), cnt)
@@ -1630,6 +1665,9 @@ def summary(worlds, files, findings):
         lines.append('  Products of recipes that take only inputs the machine keeps, which get nothing from them: %d (%s)'
                      % (sum(w.free.values()), ', '.join('%s %d' % kv for kv in w.free.most_common(8))))
         lines.append('  Fluids left out: ' + ', '.join(w.fl.excluded_seen))
+        unknown = w.reader.unknown_keys
+        lines.append('  JSON keys the reader does not know, which it counts as nothing: %d (%s)' % (
+            sum(unknown.values()), ', '.join('%s %d' % kv for kv in unknown.most_common(12))))
         lines.append('  Overrides of the fixes pack in use: %d' % len(w.overrides))
     both = sum(1 for k in files if not k.endswith('_molten.json')
                and 'forge:not' not in json.dumps(files[k].get('conditions', [])))

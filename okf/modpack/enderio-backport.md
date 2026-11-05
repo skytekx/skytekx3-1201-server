@@ -73,8 +73,17 @@ nothing beyond the two tag files of bef7784, and ran a full build, whose `-all` 
 EnderIO Legacy Machines, Exchangers and AllTheLeaks. A dev `runServer` with a temporary test class,
 never committed, reached `Done` and passed 38 of 38 checks (workflow scratchpad,
 `bp2/enderio/b2int/runserver-int.log`). Nobody has joined with a client yet, see the end of
-[Vat](#vat). The other content bundles are not ported yet. The pack still ships the 6.2.18-beta jar,
-and no pack boot has run the fork.
+[Vat](#vat).
+
+The filters are the first bundle of the conduit and filter lane, done in 8281651 (big filters and the
+damage mode), 711e904 (the limited filter), 4ae8f65 (tooltips and slot names) and ddc96c8 (review
+fixes). The integration compiled every source set, ran `runData`, which changed no generated file,
+and ran a full build, whose `-all` jar has the SHA-1 `b1420e5029db8eca1f46c7962b5f54485e05c26d`. The
+compat scan still finds 0 missing symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks. A
+dev `runServer` with two temporary test classes, never committed, reached `Done` and passed 66 of 66
+checks (workflow scratchpad, `bp2/enderio/b5int/runserver-int.log`). Nobody has joined with a client
+or loaded a copy of the live world yet, see the end of [Filters](#filters). The other content bundles
+are not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -83,7 +92,7 @@ and no pack boot has run the fork.
 | Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Done in e7e29bd, a175998 and bef7784 |
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Planned |
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Planned |
-| Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Planned |
+| Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Done in 8281651, 711e904, 4ae8f65 and ddc96c8 |
 | Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Planned |
 | Conduit facades (`eio-b7-conduit-facades`) | Four facade items on the 6.x conduit bundle, AE2 facades as conduit facades | 32 | Conduit improvements | Planned |
 | Powered spawner (`eio-b8-powered-spawner`) | Capture mode and the Mind Killer | 23 | Fix pack, charger and keybinds | Planned |
@@ -332,14 +341,65 @@ client.
   `IsNbt`, `IsInverted` and `ItemEntries`. Ender IO 8.0 enlarged all filters, and the fork does not
   follow that.
 - New are `enderio:big_item_filter` and `enderio:big_advanced_item_filter` with 36 slots each and the
-  recipes of a829f16dd. The advanced filters gain a damage mode (ignore, damaged, undamaged) as a 6.x
-  cycle button.
-- The new `enderio:limited_item_filter` (1a85694c2, f0b62d322, 292bd84ed) keeps a count per entry.
-  Item conduits clamp what they move to that count through a new additive API interface
-  `LimitingItemStackFilter`. EnderIO Legacy Machines only calls `test()`, so its Farming Station and
-  Killer Joe treat the limited filter as a plain whitelist.
+  recipes of a829f16dd. They reuse the menu type `enderio:item_filter`, which sizes its slots from the
+  held filter, with the 8.x layout of 4 rows of 9 (8281651). The big item filter has no NBT mode, and
+  its capability ignores an `IsNbt` key.
+- The advanced and the big advanced filter gain a damage mode with all eleven modes of the 8.x
+  `DamageFilterMode`, from ignore to not damageable, as a 6.x cycle button (8281651,
+  `DamageFilterMode.java:13-24`). The mode sits in the optional key `DamageMode`. A missing or unknown
+  value reads as ignore, and setting ignore removes the key again (`ItemFilterCapability.java:135-160`).
+  As in 8.x, a stack outside the damage mode fails on allow and deny lists alike. The button sends the
+  vanilla container button packet with the ids 16 to 26 (`ItemFilterMenu.java:31`), so no packet of
+  the mod changes.
+- The new `enderio:limited_item_filter` (1a85694c2, f0b62d322, 292bd84ed) keeps a stock level of at
+  most one stack in each of its 18 entries and opens the new menu `enderio:limited_item_filter`
+  (711e904). Item conduits clamp what they move to that level through a new additive API interface
+  `LimitingItemStackFilter` (`ItemConduitTicker.java:65` and `103`). The vacuum chest takes in only the
+  allowance and leaves the rest on the ground (`VacuumChestBlockEntity.java:77`), see
+  [Local divergences](#local-divergences).
+- The Farming Station of EnderIO Legacy Machines only calls `ItemStackFilter.test`, so it treats the
+  limited filter as a plain allow list. Its Killer Joe takes soul filters only (`EntityFilter`), which
+  this bundle leaves unchanged apart from the tooltip (`javap` of
+  `local-mods/eio_legacy_machines-0.4.9.jar`, `FarmingStationFilterUtil.passes` and
+  `KillerJoeBlockEntity.isEntityFilter`).
+- The class `LimitedItemFilterSlot` joins the Inventory Sorter blacklist (`EnderIO.java:192`), because
+  Inventory Sorter matches the exact class name and `ItemFilterSlot` does not cover its subclass.
 - Filter items show their entries in a tooltip like a bundle (824d70feb, 0c79259d9, ba8618f6f), and
-  unconfigured filters say so. The tooltip classes register on the client only.
+  unconfigured filters say so with the hint "Use to configure", since a 6.x filter opens on a plain use
+  and not while crouching as in 8.x. The tooltip classes register on
+  `RegisterClientTooltipComponentFactoriesEvent` in the client setup only (`ClientSetup.java:68`). The
+  tooltips read the filter of a copy, so hovering never writes NBT into the stack it shows.
+- Empty filter slots of the conduit screen and the vacuum chest name their purpose through the new
+  `ConduitType.getSlotTooltip` (`ConduitType.java:61`) and overrides of `renderTooltip`, which leave the
+  `MachineScreen` members that EnderIO Legacy Machines links untouched (4ae8f65).
+- No filter opens its menu from the off hand any more. Every filter menu reads its stack from the main
+  hand, so an off hand use with another item in the main hand threw in the menu constructor on the
+  server thread. The item filters got the guard in 8281651 and 711e904, and the fluid, soul and
+  redstone filters, which had the bug since 6.x, got it in ddc96c8.
+
+The bundle is done in 8281651, 711e904, 4ae8f65 and ddc96c8. Two temporary test classes of the
+integration ran in a dev server with Curios and AE2 on the classpath. They checked the sizes and NBT
+toggles of the five item filters, the damage mode key with an unknown value, the stock level cap and
+the transfer limits of the limited filter, the hover text and tooltip images of eight filters on the
+dedicated server with no change to the stack, and the off hand guard of five kinds of filter next to
+their menu from the main hand. In six item conduit rows between two chests a limited extract filter
+left 10 of 20 cobblestone, a limited insert filter stopped the target at 5, both on one conduit left
+23 of 30 and moved 7, the big filter moved only its entry at index 30, the damage mode moved only the
+damaged sword, and a basic 6.x filter moved only its item. Each row held its result 200 ticks later,
+and a conduit filter kept its damage mode through the bundle NBT. Three vacuum chests took 3 of 10
+cobblestone through a limited filter and left 7 on the ground, counted 2 cobblestone already inside,
+and kept the 6.x behaviour of a basic filter. All 66 checks passed (workflow scratchpad,
+`bp2/enderio/b5int/runserver-int.log`, test classes in `bp2/enderio/b5int/harness/`). The run shows
+only the two dev ERROR lines of the earlier runs, the client mixin of Athena on the dev classpath and
+the empty `layers` key of the dev `server.properties`.
+
+Nobody has tested these yet. No world copy was loaded, so existing filters in the conduits and vacuum
+chests of the live world are unverified, though the test kept the 6.x NBT keys and the bundle NBT
+round trip. No client joined, so the screens of the big and limited filters, the damage mode button
+as a real packet, the count editing in the limited filter slots, the look of the tooltips and the slot
+names, and Inventory Sorter on the new filter slots are open. The Farming Station of EnderIO Legacy
+Machines with the new filters was not run, because the dev environment cannot load the production jar
+of that mod. Its evidence is the call to `ItemStackFilter.test` and the compat scan.
 
 ### Conduit improvements
 
@@ -560,14 +620,17 @@ Already in the 6.x base, so no work (same file):
   `big_advanced_item_filter`, `limited_item_filter` and the four conduit facades, and the recipe type
   `enderio:vat_fermenting`. The Vat also registers the block entity type and the menu `enderio:vat`
   and the recipe serializer `enderio:vat_fermenting` (e7e29bd). Its saved data uses the 6.x keys
-  `Fluid`, `Items` and the task keys of the other crafting machines.
+  `Fluid`, `Items` and the task keys of the other crafting machines. The limited filter registers the
+  menu `enderio:limited_item_filter`, and the big filters reuse the menu `enderio:item_filter`
+  (8281651, 711e904).
 - Two level capabilities are new, `enderio:inhibitor_obelisk_manager_capability` and
   `enderio:relocator_obelisk_manager_capability`. The obelisk managers live at runtime only and are
   rebuilt on load.
 - The new NBT keys are optional, with a default that matches today's behaviour. They are `DamageMode`
-  on filters (ignore), `Priority` on energy and fluid conduit sides (0), `StrongSides` on redstone
-  conduits (0), `FacadeProvider` on conduit bundles (none), `SpawnerMode` on powered spawners (spawn)
-  and the persistent entity tag `enderio:movable`.
+  on the advanced, big advanced and limited item filters (ignore, written only for another mode),
+  `Priority` on energy and fluid conduit sides (0), `StrongSides` on redstone conduits (0),
+  `FacadeProvider` on conduit bundles (none), `SpawnerMode` on powered spawners (spawn) and the
+  persistent entity tag `enderio:movable`.
 - The powered spawner gains two inventory slots after the capacitor. That is safe only because
   f9e1806c sizes `MachineInventory` from the slot layout and ignores the saved `Size` key, so no code
   may read `Size` again.
@@ -624,6 +687,13 @@ These differ from upstream on purpose and must survive a re-sync.
 - The fork ships no size for the Curios `charm` slot.
 - The basic and advanced item filters keep 5 and 10 slots.
 - The damage mode of the filters is a 6.x cycle button.
+- The vacuum chest with a limited filter takes in only the allowance and leaves the rest of an item
+  stack on the ground. Upstream's 292bd84ed sets the entity to the remainder of the limited stack and
+  discards it when that is empty, which deletes the items above the limit.
+- The big item filter ignores an `IsNbt` key, where 8.x warns with `not_allowed_component_match`.
+- The limited filter has no erase recipe, since no 6.x filter has one. Upstream has
+  `erase_limited_item_filter`.
+- The hint of an empty filter says "Use to configure", because a 6.x filter opens on a plain use.
 - Data maps run through the fork's own reload listener in upstream's JSON format.
 - The charger charges every `chargeInterval` ticks, 5 by default.
 - The packet validation with the reach test of the menus, the hardened item push of

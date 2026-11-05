@@ -19,8 +19,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class SpawnerMachineTask implements IPoweredMachineTask {
@@ -196,6 +199,9 @@ public class SpawnerMachineTask implements IPoweredMachineTask {
                     case COPY -> {
                         entity = EntityType.loadEntityRecursive(blockEntity.getEntityData().getEntityTag(), level, entity1 -> {
                             entity1.moveTo(x, y, z, entity1.getYRot(), entity1.getXRot());
+                            // SkyTekx: a fresh UUID for each copy (84bfe2477). With the stored UUID only the first copy
+                            // could join the level, tryAddFreshEntityWithPassengers refuses a UUID that is in use.
+                            entity1.setUUID(UUID.randomUUID());
                             return entity1;
                         });
                     }
@@ -215,11 +221,17 @@ public class SpawnerMachineTask implements IPoweredMachineTask {
                 }
 
                 if (entity instanceof Mob mob) { // based on vanilla spawner
+                    // SkyTekx: the Mind Killer of 84bfe2477. The mob gets no AI, and the tag lets tickNoAIMobs move it.
+                    if (blockEntity.hasMindKiller()) {
+                        mob.setNoAi(true);
+                        mob.getPersistentData().putBoolean(MOVABLE_KEY, true);
+                    }
                     MobSpawnEvent.FinalizeSpawn event = ForgeEventFactory.onFinalizeSpawnSpawner(mob, level, level.getCurrentDifficultyAt(pos), null,  blockEntity.getEntityData().getEntityTag(), null);
                     if (event == null || event.isSpawnCancelled()) {
                         blockEntity.setReason(PoweredSpawnerBlockEntity.SpawnerBlockedReason.OTHER_MOD);
                         continue;
-                    } else {
+                    } else if (spawnType != SpawnType.COPY) {
+                        // SkyTekx: an exact copy keeps its equipment and data, so it skips finalizeSpawn (84bfe2477).
                         ForgeEventFactory.onFinalizeSpawn(mob, level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
                     }
                 }
@@ -269,6 +281,29 @@ public class SpawnerMachineTask implements IPoweredMachineTask {
     @SubscribeEvent
     static void reloadTags(TagsUpdatedEvent event) {
         reload = !reload;
+    }
+
+    /**
+     * SkyTekx: the persistent data key of a mob from a spawner with a Mind Killer (84bfe2477).
+     */
+    public static final String MOVABLE_KEY = "enderio:movable";
+
+    /**
+     * SkyTekx: a mob without AI does not move at all, so it would neither fall nor be pushed into a grinder. For the
+     * mobs of a Mind Killer spawner this runs the movement step with the AI switched on for a moment. 84bfe2477 does
+     * this on the NeoForge EntityTickEvent.Pre, the Forge 47 equivalent is LivingTickEvent at the start of
+     * LivingEntity.tick.
+     */
+    //Credit to Shadows-of-Fire for providing this workaround https://github.com/Shadows-of-Fire/Apothic-Spawners/blob/1.21/src/main/java/dev/shadowsoffire/apothic_spawners/ASEvents.java#L120
+    @SubscribeEvent
+    static void tickNoAIMobs(LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() instanceof Mob mob) {
+            if (!mob.level().isClientSide() && mob.isNoAi() && mob.getPersistentData().getBoolean(MOVABLE_KEY)) {
+                mob.setNoAi(false);
+                mob.travel(new Vec3(mob.xxa, mob.yya, mob.zza));
+                mob.setNoAi(true);
+            }
+        }
     }
 
     // TODO: Might want to move this to its own file in future.

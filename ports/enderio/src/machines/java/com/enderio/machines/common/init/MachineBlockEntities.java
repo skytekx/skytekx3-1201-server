@@ -12,6 +12,7 @@ import com.enderio.machines.common.blockentity.DrainBlockEntity;
 import com.enderio.machines.common.blockentity.EnchanterBlockEntity;
 import com.enderio.machines.common.blockentity.FluidTankBlockEntity;
 import com.enderio.machines.common.blockentity.ImpulseHopperBlockEntity;
+import com.enderio.machines.common.blockentity.MindKillerBlockEntity;
 import com.enderio.machines.common.blockentity.PaintedTravelAnchorBlockEntity;
 import com.enderio.machines.common.blockentity.PaintingMachineBlockEntity;
 import com.enderio.machines.common.blockentity.PoweredSpawnerBlockEntity;
@@ -124,6 +125,7 @@ public class MachineBlockEntities {
     public static final BlockEntityEntry<RelocatorObeliskBlockEntity> RELOCATOR_OBELISK = register("relocator_obelisk", RelocatorObeliskBlockEntity::new, MachineBlocks.RELOCATOR_OBELISK);
     public static final BlockEntityEntry<AttractorObeliskBlockEntity> ATTRACTOR_OBELISK = register("attractor_obelisk", AttractorObeliskBlockEntity::new, MachineBlocks.ATTRACTOR_OBELISK);
     public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER = register("wireless_charger", WirelessChargerBlockEntity::new, MachineBlocks.WIRELESS_CHARGER);
+    public static final BlockEntityEntry<MindKillerBlockEntity> MIND_KILLER = register("mind_killer", MindKillerBlockEntity::new, MachineBlocks.MIND_KILLER);
 
     @SafeVarargs
     private static <B extends BlockEntity> BlockEntityEntry<B> register(String name, BlockEntityBuilder.BlockEntityFactory<B> beFactory,

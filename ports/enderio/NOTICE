@@ -60,6 +60,14 @@ Licenses
     FluidUtils) and the temp-file save of com.enderio.conduits.common.network.ConduitSavedData
     (a copy of MekanismSavedData's system). META-INF/licenses/enderio/Mekanism-MIT.txt
 
+  - Apothic Spawners by Shadows-of-Fire, https://github.com/Shadows-of-Fire/Apothic-Spawners:
+    the movement step for mobs without AI in
+    com.enderio.machines.common.blockentity.task.SpawnerMachineTask.tickNoAIMobs, which Ender IO
+    8.x took from Apothic Spawners' ASEvents with credit (84bfe2477) and SkyTekx moved to the
+    Forge 1.20.1 LivingTickEvent. Apotheosis 7.4.8 for 1.20.1 by the same author has the same
+    handler (SpawnerModule.tickDumbMobs) and declares the MIT License in its mods.toml. The
+    license of Apothic Spawners itself was not checked for this build.
+
   Libraries bundled in META-INF/jarjar/ (unmodified jars, as resolved by the upstream build):
 
   - Registrate MC1.20-1.3.11 by tterrag and contributors, Mozilla Public License 2.0,

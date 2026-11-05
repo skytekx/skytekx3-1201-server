@@ -20,6 +20,7 @@ import com.enderio.machines.common.io.item.MachineInventoryLayout;
 import com.enderio.machines.common.io.item.SingleSlotAccess;
 import com.enderio.machines.common.lang.MachineLang;
 import com.enderio.machines.common.menu.PoweredSpawnerMenu;
+import com.enderio.machines.common.tag.MachineTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -28,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +53,11 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
     // SkyTekx: the mode of 8.x (a90e5c512), saved under the optional key SpawnerMode. Without the key it is SPAWN.
     private PoweredSpawnerMode mode = PoweredSpawnerMode.SPAWN;
     private final EnumNetworkDataSlot<PoweredSpawnerMode> modeDataSlot;
+
+    // SkyTekx: whether a Mind Killer sits on top (84bfe2477). Upstream reads it in onLoad. That is the chunk load hazard
+    // of 4dd6e5e09, so it is read on the first server tick and on a change of the block above.
+    private boolean mindKiller = false;
+    private boolean needsMindKillerCheck = true;
 
 
     public PoweredSpawnerBlockEntity(BlockEntityType type, BlockPos worldPosition, BlockState blockState) {
@@ -126,6 +133,11 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
 
     @Override
     public void serverTick() {
+        if (needsMindKillerCheck) {
+            needsMindKillerCheck = false;
+            updateMindKiller();
+        }
+
         super.serverTick();
 
         if (canAct()) {
@@ -137,6 +149,28 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
     public void onLoad() {
         super.onLoad();
         taskHost.onLevelReady();
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
+        super.neighborChanged(state, level, pos, neighbor);
+        if (this.level != null && !this.level.isClientSide() && worldPosition.above().equals(neighbor)) {
+            // A Mind Killer was placed on top or taken away.
+            updateMindKiller();
+        }
+    }
+
+    private void updateMindKiller() {
+        if (level != null) {
+            mindKiller = level.getBlockState(worldPosition.above()).is(MachineTags.Blocks.MIND_KILLER);
+        }
+    }
+
+    /**
+     * Whether the spawned mobs get no AI, because a Mind Killer sits on top.
+     */
+    public boolean hasMindKiller() {
+        return mindKiller;
     }
 
     // region Inventory

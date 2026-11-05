@@ -9,6 +9,7 @@ import com.enderio.core.data.model.EIOModel;
 import com.enderio.machines.common.MachineNBTKeys;
 import com.enderio.machines.common.block.CapacitorBankBlock;
 import com.enderio.machines.common.block.MachineBlock;
+import com.enderio.machines.common.block.MindKillerBlock;
 import com.enderio.machines.common.block.PaintedTravelAnchorBlock;
 import com.enderio.machines.common.block.ProgressMachineBlock;
 import com.enderio.machines.common.block.SolarPanelBlock;
@@ -301,6 +302,17 @@ public class MachineBlocks {
         .register();
 
     public static final BlockEntry<WirelessAntennaBlock> WIRELESS_CHARGER_ANTENNA_ADVANCED = wirelessAntenna("wireless_charger_antenna_advanced", "Vibrant Wireless Antenna")
+        .register();
+
+    // SkyTekx: the Mind Killer of 8.x (84bfe2477). On top of a powered spawner it makes the spawned mobs NoAI.
+    public static final BlockEntry<MindKillerBlock> MIND_KILLER = REGISTRATE
+        .block("mind_killer", MindKillerBlock::new)
+        .properties(props -> props.strength(2.5f, 8).isViewBlocking((pState, pLevel, pPos) -> false).noOcclusion())
+        .tag(BlockTags.NEEDS_IRON_TOOL, BlockTags.MINEABLE_WITH_PICKAXE, MachineTags.Blocks.MIND_KILLER)
+        .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().getExistingFile(EnderIO.loc("block/" + ctx.getName()))))
+        .item()
+        .tab(EIOCreativeTabs.MACHINES)
+        .build()
         .register();
 
     //used when single methods needs to be overridden in the block class

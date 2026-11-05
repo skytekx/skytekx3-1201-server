@@ -38,6 +38,7 @@ public class MachinesClientSetup {
         event.registerBlockEntityRenderer(MachineBlockEntities.INHIBITOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, Items.ENDER_PEARL));
         event.registerBlockEntityRenderer(MachineBlockEntities.RELOCATOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, Items.PRISMARINE));
         event.registerBlockEntityRenderer(MachineBlockEntities.ATTRACTOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, EIOItems.ELECTROMAGNET.get()));
+        event.registerBlockEntityRenderer(MachineBlockEntities.MIND_KILLER.get(), (ctx) -> new ObeliskBER<>(ctx, Items.ZOMBIE_HEAD));
         for (BlockEntityEntry<CapacitorBankBlockEntity> value : MachineBlockEntities.CAPACITOR_BANKS.values()) {
             event.registerBlockEntityRenderer(value.get(), CapacitorBankBER::new);
         }

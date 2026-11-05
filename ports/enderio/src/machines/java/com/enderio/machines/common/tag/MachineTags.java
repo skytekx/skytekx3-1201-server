@@ -57,6 +57,9 @@ public class MachineTags {
 
         public static final TagKey<Block> RANGE_EXTENDER = create("range_extender");
 
+        // SkyTekx: a block of this tag on top of a powered spawner makes it spawn mobs without AI (84bfe2477).
+        public static final TagKey<Block> MIND_KILLER = create("mind_killer");
+
         private static TagKey<Block> create(String name) {
             return BlockTags.create(EnderIO.loc(name));
         }

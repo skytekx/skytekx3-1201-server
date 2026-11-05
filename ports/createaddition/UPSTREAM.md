@@ -70,7 +70,11 @@ is the jar to ship, as upstream ships the plain jar. The `-all.jar` that `jarJar
 in the pack Create 6.0.8 already nests mixinextras-forge 0.4.1 while Forge resolves the newer 0.5.5
 that another mod brings. The fire and fluid mixins of the ignitable fluids (source change 13) use
 MixinExtras, and `@WrapMethod` needs 0.4.0 or later. The slim jar can rely on Create for it, because
-`mods.toml` makes Create a mandatory dependency.
+`mods.toml` makes Create a mandatory dependency with the range `[6.0.3,)`. Every Create jar in that
+range nests it: the Modrinth jars `create-1.20.1-6.0.3.jar` to `create-1.20.1-6.0.8.jar` each list
+`io.github.llamalad7:mixinextras-forge` 0.4.1 with the range `[0.4.1,)` in
+`META-INF/jarjar/metadata.json` (checked on 2026-11-05 against the files and SHA-512 hashes of the
+Modrinth API).
 
 1. Gradle wrapper: `gradlew`, `gradlew.bat` and `gradle/wrapper/gradle-wrapper.jar` are the copies
    that every other port in this repository uses (wrapper jar SHA-256 `33ad4583...`, the official
@@ -194,9 +198,9 @@ its item here, and the NOTICE in the jar sums them up.
 13. Ignitable fluids: upstream `0d13505`, `18388a0`, `6af9b4f`, `f224bb4`, `eb5eff3` and `afcd352`.
     Fluids in the fluid tag `forge:ignites` catch fire like a flammable block. Four new mixins in
     `mixin/` carry it: `BaseFireBlockMixin` lets fire be placed into such a fluid, `FireBlockMixin`
-    makes `canCatchFire` accept it, raises the ignite odds next to it to at least 75 (100 in rain)
-    and its flammability in `tryCatchFire` to at least 250 (300 in rain) and keeps a fire burning
-    next to it, `FlowingFluidMixin` stops it from flowing sideways into fire and, when it falls into
+    makes `canCatchFire` accept it, raises the ignite odds next to it to at least 75 and its
+    flammability in `tryCatchFire` to at least 250 and keeps a fire burning next to it,
+    `FlowingFluidMixin` stops it from flowing sideways into fire and, when it falls into
     a fire while `doFireTick` is on, sets fire to the free blocks beside that spot, and
     `FireBlockInvoker` gives that code `FireBlock.getStateForPlacement(BlockGetter, BlockPos)`. The
     tag is `data/forge/tags/fluids/ignites.json`, hand written since the fork has no datagen. It
@@ -221,4 +225,9 @@ its item here, and the NOTICE in the jar sums them up.
     `remap = false`, because the annotation processor fails the build on an unmapped target method,
     and the `isFireSource` call in `tick` stays an unmapped `@At` target, which the processor only
     warns about. Seed oil and bioethanol keep their `minecraft:water` tag, which upstream `ced6d21`
-    drops.
+    drops. Upstream's rain values, ignite odds of 100 and a flammability of 300, are kept as code
+    but never apply at a fluid block. Both branches ask `Level.isRainingAt` at the fluid's own
+    position, and the `MOTION_BLOCKING` heightmap counts every block with a fluid state, so its top
+    lies one block above the fluid and `isRainingAt` returns false there. Fire beside such a fluid
+    survives rain through `keepFire`, which makes the fluid count as a fire source in
+    `FireBlock.tick`, so `tick` neither puts the fire out in rain nor lets it burn out.

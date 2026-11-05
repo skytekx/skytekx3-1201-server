@@ -15,6 +15,13 @@ ServerEvents.recipes(event => {
     B: 'minecraft:book'
   }).id('skytekx3:bookshelf_any_plank')
 
+  // Draconic Evolution 3.1.2.621 asks for a Chaotic Core in the Chaotic Shield Capacity module, where an
+  // Awakened Core was meant. Upstream fixed the recipe on its 1.21 branch in commit 0c85f0d9, which never
+  // reached 1.20.1. The pack swaps the one ingredient here instead of shipping a copy of the recipe file,
+  // see okf/modpack/draconic-fixes.md.
+  event.replaceInput({ id: 'draconicevolution:modules/item_chaotic_shield_capacity' },
+    'draconicevolution:chaotic_core', 'draconicevolution:awakened_core')
+
   // One item per material (2026-11-04). Two iron ingots on top of each other made 4 Immersive
   // Engineering rods or 2 Thermal Extra rods, and Polymorph offered both. Almost Unified turns both
   // results into the same rod, so the Thermal Extra recipe goes and the grid gives 4.

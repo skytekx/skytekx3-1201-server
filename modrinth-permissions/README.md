@@ -6,6 +6,7 @@ file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
 Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
+`local-mods/`, and the counts at the top were recounted on 2026-11-05. **Verify the blockers yourself before trusting them.**
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
@@ -19,7 +20,7 @@ Researched automatically across the 40 bundled mods of that time. The table belo
 
 ## BLOCKERS (resolve before publishing)
 
-Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight and Alternative Twilight (Remastered) carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (b5972f3), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here.
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered) and SkyTekx DE Fixes carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (b5972f3), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here.
 
 These cannot legally be bundled in a public modpack as-is:
 
@@ -90,6 +91,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar` | Simply Jetpacks 2 (guide book patched by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
 | `skytekx-compat-2.1.3.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
+| `skytekx_defixes-1.0.0.jar` | SkyTekx DE Fixes (addon with fixes after Draconic Evolution 1.21, needs DE 3.1.2.621) | MIT for own code, portions LicenseRef-CoFH-Dont-Be-a-Jerk | Licensed | yes | - |
 | `skytekx-molten-1.0.0.jar` | SkyTekx Molten | MIT | Licensed | yes | - |
 | `spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` | Spiced Twilight (1.20.1 backport by SkyTekx) | LGPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `traverse-forge-7.0.12.jar` | Traverse Reforged | LGPL-3.0-only | Licensed | yes | - |

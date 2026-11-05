@@ -1,0 +1,299 @@
+{
+ "plan": {
+  "bundles": [
+   {
+    "name": "cca-baseline",
+    "ids": [
+     "fork-baseline-and-metadata",
+     "config-additions",
+     "network-protocol-bump"
+    ],
+    "title": "Shared infrastructure: version fix on the vendored fork, config keys, packet ids",
+    "hours": 4.5,
+    "deps": [],
+    "spec": "[fork-baseline-and-metadata, 1.5 h] Already on the branch: the vendored base 42b6f2d (78f4f06), the reproducible Java 17 build (7286996) and LICENSE_createaddition plus NOTICE_createaddition with Create's MIT notice for the RollingMill code, CAShapes and the measured Create-derived textures (f11c10b). The commits already use the allowed types. Remaining work is one fix(createaddition) commit for the version.\n- The branch builds createaddition-1.7.3-1.20.1-skytekx.1.jar with Implementation-Version 1.7.3-1.20.1-skytekx.1 (gradle.properties:9, build.gradle:31-32 'version = mod_version'). Maven ComparableVersion sorts that below the shipped 1.20.1-1.3.3 (7 < 20), as UPSTREAM.md:89 itself notes, so a dependent range in upstream's form such as [1.20.1-1.2.0,) would reject it.\n- Set mod_version = 1.7.3-skytekx.1 and restore upstream's version = \"${minecraft_version}-${mod_version}\". The jar becomes createaddition-1.20.1-1.7.3-skytekx.1.jar and Forge reports 1.20.1-1.7.3-skytekx.1. That is above 1.20.1-1.3.3 and outside the AllTheLeaks gate [1.20.1-1.0.0b,1.20.1-1.2.3]. It also matches the pack's other forks, which keep upstream's form plus -skytekx.N (twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar).\n- Update NOTICE:21, UPSTREAM.md item 4 (lines 83-89) and the build.gradle comment. While editing UPSTREAM.md, cite the base by PR number rather than the quoted PR title that names a contributor (UPSTREAM.md:10).\n- Ship build/libs/createaddition-1.20.1-1.7.3-skytekx.1.jar, the reobf slim jar. The -all jar from jarJar.enable() (build.gradle:22) only adds a nested MixinExtras and is not shipped. Create 6.0.8 nests mixinextras-forge 0.4.1 (its META-INF/jarjar) and the pack resolves 0.5.5 (packboot-forge debug.log, 'Selected file mixinextras-forge-0.5.5.jar').\nTest: compileJava and build. The manifest says Implementation-Version 1.20.1-1.7.3-skytekx.1, the jar still holds LICENSE_createaddition and NOTICE_createaddition, two clean builds give one SHA-1, and the Forge mod list shows 1.20.1-1.7.3-skytekx.1.\n[config-additions, 1.5 h] Add every new key in one commit to the 1.20.1 config/Config.java (ForgeConfigSpec, createaddition-common.toml):\n- wires.connector_network_internal_buffer=80000 (min 80000, 393c51f, used by EnergyNetwork.getMaxBuff)\n- new [liquid_blaze_burner] section: liquid_blaze_burner_max_liquid_capacity=4000 (min 100) and liquid_blaze_burner_max_heat_capacity=10000 (5935afa). Keep 4000, not the 1000 that 6cbf853 set silently: 1.20.1 hard-codes 4000 (LiquidBlazeBurnerBlockEntity:108) and existing burners may hold more than 1000 mB.\n- new [electric_pump] section: pump_rpm_range=256, pump_fe_at_max_rpm=120 (9dd1b46 lowered 240 to 120), pump_max_input=5000, pump_capacity=5000 (6cbf853)\n- misc: amulet_effect_enabled=true, electrum_amulet_charge_rate=2, capacitor_capacity=5000 (min 1), capacitor_charge_rate=500 (min 1) (5c2b9ea, b0b8bc9, 4414193)\nSkip compatibility.docking_connector_capacity. The servo reuses the [electric_motor] keys. Read every value lazily, inside methods or suppliers. Never initialise a static field or Item.Properties from ConfigValue.get(): Forge 47 throws IllegalStateException when a value is read before the common config loads, and upstream 5935afa does exactly that ('public static int MAX_HEAT_CAPACITY = ...get()'). Savegame: additive, Forge appends missing keys and keeps old values. Test: the tracked config/createaddition-common.toml keeps its values and gains the keys on the first boot.\n[network-protocol-bump, 1.5 h] SimpleChannel createaddition:main has ObservePacket id 0 and EnergyNetworkPacket id 1 with PROTOCOL \"1\" (CreateAddition.java:63-67, 125-126). Reserve id 2 for TimeRemainingPacket (1.21 TimeRemainingPacketPayload, 54cf0c9) and bump PROTOCOL to \"2\". The packet class lands in cca-phase1-fixes. The bump also turns the new charging recipe network format and the new registry entries into a clean login refusal instead of a desync, so server and pack must update together. Test: a stock 1.3.3 client gets a clean mismatch disconnect."
+   },
+   {
+    "name": "cca-wiregraph",
+    "ids": [
+     "wiregraph-core",
+     "wiregraph-command",
+     "wiregraph-live-world-migration",
+     "connector-wire-render-culling",
+     "connector-shears-cut-wires",
+     "festive-wire-low-current",
+     "connector-external-cap-recheck"
+    ],
+    "title": "Phase 1: WireGraph connector rework, command, migration and Arclight IO tests, connector extras",
+    "hours": 34.5,
+    "deps": [
+     "cca-baseline"
+    ],
+    "spec": "[wiregraph-core, 19 h] Upstream 126ed38 (+1275/-181), plus 393c51f (buffer config) and the 9dd1b46 EnergyNetwork tidy-ups.\n- New classes in energy/network: WireGraph (SavedData 'createaddition_wires' per dimension, WeakHashMap per ServerLevel, skips wrapped or simulated levels through server.getLevel(dimension) != level), WireGraphVerifier, WireVertex, WireSlot, PortKey, WireNodeKind (CONNECTOR, or RELAY with nodes 0 to 3 as input port and 4 to 7 as output port). WireNodeKind maps the BE ids connector, small_light_connector, large_connector and redstone_relay, which are identical on both branches (CABlockEntities).\n- Rework EnergyNetwork: drop the world and visitor code, add members/absorb/restore. getMaxBuff uses the config buffer.\n- IWireNode: getWireNode never loads chunks (WireGraph.findLoadedNode on servers). Today level.getBlockEntity on the server thread loads remote chunks synchronously. getWireNodeFrom keeps cached nodes only while valid and no longer deletes wires whose far end is unloaded. connect/disconnect/getTypeOfConnection use the loaded lookup. Add getWireNodeKind/getPort, isNodeIndeciesConnected becomes port-based, awakeNetwork uses WireGraph.getNetwork. EnergyMeterBlockEntity (blocks/energy_meter, unregistered dead code) also implements IWireNode: adapt it as upstream did so it compiles.\n- AbstractConnectorBlockEntity and RedstoneRelayBlockEntity: nodeChanged on wire edits and on read when not clientPacket (level is still null during chunk load, so that call is a no-op there), onLoad -> nodeLoaded, invalidate -> nodeUnloaded, remove -> nodeRemoved. Create 6.0.8 SmartBlockEntity has onChunkUnloaded, invalidate and remove (javap), so the hooks map one to one. remove drops the wire when the other end is unloaded. awakeNetwork runs every server tick before the mode check. Relay: getWireNodeKind RELAY, setBlockState hook for POWERED, throughput and demand read from the graph, which ticks relays as bridges even while unloaded.\n- GameEvents: TickEvent.LevelTickEvent phase START on server levels -> WireGraph.tick, ChunkEvent.Load with ServerLevel and LevelChunk -> chunkLoaded, LevelEvent.Unload -> levelUnloaded. Remove the EnergyNetworkManager LevelEvent.Load hook.\n- Keep a deprecated empty EnergyNetworkManager with 'public static Map<LevelAccessor, EnergyNetworkManager> instances = new WeakHashMap<>()'. AllTheLeaks 1.1.1 UntrackedIssue001 links that field (getstatic, Ljava/util/Map;). It is version-gated off, but the stub is cheap insurance.\n- Port no Sable code (SABLE_ACTIVE, SableUtil, sub-level checks).\n- Local hardening (deviation, keep): in WireGraphVerifier.resolve accept a saved tag as an answer only when it has Status 'minecraft:full' and a block_entities list. Otherwise mark the position unresolved, never missing. The pack bundles skytekx-compat 2.1.3 (local-mods/), whose IOWorker.loadAsync hands out the queued tag itself while ChunkStorage.upgradeChunkTag can put and remove __context on a worker (okf/content/compat-mod.md, section on chunk tags waiting for their write). A misread would reach markMissing, and pruneDanglingWires then calls removeNode on the loaded end, which deletes a real wire. The Mac mini runs 2.1.6, which hands out a copy.\nTranslation:\n- SavedData.Factory -> DimensionDataStorage.computeIfAbsent(load fn, ctor, name), save(tag, registries) -> save(tag), HolderLookup params dropped.\n- Forge 47.4.18 posts ChunkEvent.Load for the LevelChunk from ChunkMap.protoChunkToFullChunk's main-thread lambda (javap m_214854_). Ignore ProtoChunk events. Do not rely on BlockEntity.onLoad having run when ChunkEvent.Load arrives (Forge defers onLoad through Level.addFreshBlockEntities, check with javap): keep upstream's chunk.getBlockEntities() and getBlockEntityNbt checks in onChunkLoaded.\n- chunkMap.read = ChunkStorage.read (public, verified in the srg jar) -> IOWorker.loadAsync returns the raw tag future. ServerChunkCache.chunkMap is public. PalettedContainer.codecRW, BlockEntity.getPosFromTag and ServerChunkCache.getChunkNow exist in 1.20.1.\n- Keep LazyOptional instead of BlockCapabilityCache. Java 17.\nSavegame (migration): the additive .dat holds Version, Vertices[Pos,Kind,Powered,Slots[Index,Other,OtherIndex,Type]] and Buffers[Pos,Port,In,Out]. LocalNode NBT (nodes/id/other/type/x/y/z, plus legacy node0..7) is identical on both branches, so on the first boot the graph builds itself from loaded BEs and walks every wire's far end through saved chunk NBT. Network buffers, in memory only in 1.3.3, start empty and persist from then on. Reverting to 1.3.3 ignores the file, but a later re-upgrade trusts the stale graph for unloaded chunks. The rollback procedure therefore deletes data/createaddition_wires.dat in every dimension folder, or runs /cca_wires rebuild in each dimension after the re-upgrade. Behaviour change: relays and wires work across unloaded chunks and never load chunks.\nArclight (medium): the verifier only reads the tag, on the server thread (whenCompleteAsync on the server executor). Arclight 1.0.6 has no mixin on IOWorker, its ChunkMapMixin only redirects upgradeChunkTag, and S&R only injects at IOWorker.store HEAD, before the tag is queued.\n[wiregraph-command, 1.5 h] WireGraphCommand from 126ed38. The command is /cca_wires stats|verify|rebuild (op 2), not /wiregraph. Register it in CreateAddition's RegisterCommandsEvent next to CCApiCommand. Test it via mcrcon on Arclight.\n[wiregraph-live-world-migration, 6.5 h] On a COPY of the live world, with the production arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar:\n1. Boot with skytekx-compat 2.1.6, run cca_wires stats and verify, walk each network until 'chunks waiting' drains to 0 and energy flows.\n2. Chunky radius 500 around a network: no CME, no 'Failed to store chunk', no 'Could not read chunk ... to check wire nodes'.\n3. forceload remove, then move away and back, and toggle relays while unloaded.\n4. Restart: buffers restored and no wire lost. Compare every connector's node list with the 1.3.3 copy, for example with a region-file scan in the style of tools/void_scan.py.\n5. Repeat 1 to 3 with skytekx-compat 2.1.3, the jar the pack bundles.\n6. Boot 1.3.3 on the copy: wires intact. Boot the fork again, run /cca_wires rebuild and check that the networks match the world.\nFix findings here.\n[connector-wire-render-culling, 4 h] 126ed38 WireNodeRenderer: the bounding box spans every wire end (+1 block, plus the player while placing a wire), distance-based shouldRender, shouldRenderOffScreen, draw to the block centre when the far end is not loaded on the client.\nTranslation: Create 6.0.8 SmartBlockEntity extends CachedRenderBBBlockEntity, which caches getRenderBoundingBox (javap). Override createRenderBoundingBox() on the connector and relay BEs with the wire-spanning box, and call invalidateRenderBoundingBox() on the client whenever the nodes change (read with clientPacket, node add or remove). For the wire the local player is placing, override getRenderBoundingBox() to grow the cached box to the player's box only while a client-side flag says this connector is the held spool's start. Set that flag from the client handler (the ClientEventHandler.clientRenderHeldWire path), and never reference LocalPlayer or Minecraft in the BE class. Vanilla 1.20.1 BlockEntityRenderer has shouldRenderOffScreen, getViewDistance and shouldRender(T, Vec3), and Forge frustum-culls even global renderers by getRenderBoundingBox, so the renderer part ports as is. Check AABB.distanceToSqr(Vec3). Replace SableUtil.nodeWireOffsetRelativeTo with Vec3.atCenterOf(remotePos).add(remoteOffset). Keep the 1.20.1 VertexConsumer calls.\n[connector-shears-cut-wires, 1.5 h] 3abfa39: shears on a connector remove all its wires (drops unless creative, sheep shear sound). useItemOn -> 1.20.1 Block.use(state, level, pos, player, hand, hit) in AbstractConnectorBlock.\n[festive-wire-low-current, 0.5 h] e1cd591: IWireNode.connect returns REQUIRES_HIGH_CURRENT for FESTIVE as well as COPPER. Only checked at connect time, existing festive wires stay.\n[connector-external-cap-recheck, 1.5 h] 1.20.1 form of d239617 'Connector cache logic'. updateExternalEnergyStorage (AbstractConnectorBlockEntity:375-395) sets LazyOptional.empty() when the neighbour chunk is unloaded or has no BE and never retries, because a chunk load causes no neighborChanged. Retry in lazyTick (SmartBlockEntity lazy tick, every 10 ticks) while external is not present, guarded by level.isLoaded, and keep the invalidation listener. Test: a connector on a chunk border pushing into a machine whose chunk loads later."
+   },
+   {
+    "name": "cca-phase1-fixes",
+    "ids": [
+     "modular-accumulator-fixes",
+     "liquid-blaze-burner-fixes-and-config",
+     "goggle-time-remaining-tooltips",
+     "client-sound-fixes",
+     "kinetic-stress-tooltips",
+     "death-message-lang-keys",
+     "cc-peripheral-hardening",
+     "barbed-wire-waterlog-wrench",
+     "misc-data-fixes",
+     "electrum-block-and-tag-fixes"
+    ],
+    "title": "Phase 1: small fixes (accumulator, Liquid Blaze Burner, goggles, sounds, stress tooltips, CC hardening, barbed wire, data, electrum block)",
+    "hours": 21.5,
+    "deps": [
+     "cca-baseline"
+    ],
+    "spec": "[modular-accumulator-fixes, 3 h]\n- f6dd767 StackOverflowError: handlerForCapability recursed when getControllerBE()==this. 1.20.1 has the same code at ModularAccumulatorBlockEntity:347-350. Guard controllerBE != this, and (local) stop after a few hops so a two-block controller cycle cannot recurse either.\n- 4ae8f91: goggles observe getController() and the controller calls sendDataImmediately.\n- 9dd1b46: writeSafe puts Size/Height (schematics).\n- 9dd1b46: ModularAccumulatorBlockItem does not auto-join while a Symmetry Wand is in the hotbar.\nNo NBT changes. Test: a 3x3x5 multiblock with goggles on non-controller blocks, a schematic print, the symmetry wand.\n[liquid-blaze-burner-fixes-and-config, 4 h]\n- 5935afa: tank and heat capacity come from config (defaults 4000/10000). Replace the static final MAX_HEAT_CAPACITY (LiquidBlazeBurnerBlockEntity:62, used at 152, 207, 323, 324, 387) with a static method that reads the config. Do not copy upstream's static field initialiser, which reads the config at class load. The tank capacity is read in createInventory (BE construction, after config load).\n- 0a92b74: switching normal and superheated fuel resets remainingBurnTime instead of adding to it.\n- de9d7e7: recipe lookup with a 1000 mB probe. Port only if Create 1.20.1 FluidIngredient amount semantics reproduce the bug.\n- 9adb5b0: LiquidBlazeBurnerRenderer must not keep the VertexConsumers from lines 92-93 across another getBuffer call. Fetch each buffer right before its use.\nAlready in the base: biofuel 24000, blaze cake 3200, straw for schematicannon, FluidUtil container refuel.\n[goggle-time-remaining-tooltips, 5 h]\n- 54cf0c9: goggle 'Liquid Blaze Burner Info / Burn Time Remaining' and 'Tesla Coil Info / Charge Time Remaining'. The server answers ObservePacket with the new TimeRemainingPacket (id 2). Handle it client-side through DistExecutor as EnergyNetworkPacket does.\n- 7cb0ef9: 20-sample average charge rate, infinity sign when starved, poweredTimer only when energyRemoved>0.\n- Lang keys tooltip.liquid_burning.*, tooltip.charging.*, tooltip.alternator.info, Util.formatTime.\nTest: no client classes load on a dedicated server.\n[client-sound-fixes, 1 h] 1.20.1 CASoundScapes.tick sets 'disable = AllConfigs.client().enableAmbientSounds.get()' without the negation (CASoundScapes.java:73-75), so with Create's ambient sounds on every CC&A soundscape is cut. The 1.21 code (a68965a) negates it. Also port f83f9fd, the null-level guard.\n[kinetic-stress-tooltips, 2.5 h] f3091d0, without its alternator speed change:\n- BlockStressValues registrations via onRegister in CABlocks: motor setGeneratorSpeed(256, true) and CAPACITIES MAX_STRESS/256, alternator IMPACTS MAX_STRESS/256, rolling mill IMPACTS ROLLING_MILL_STRESS. Read the config lazily inside the suppliers. The BEs keep their own calculateStressApplied and calculateAddedStressCapacity (RollingMillBlockEntity:298-302), so network stress does not change, only the item and goggle tooltips.\n- The tooltip modifier factory with KineticStats already exists in the 1.20.1 static block (CreateAddition.java:70-73), so no setTooltipModifierFactory change is needed.\n- ElectricMotorBlockEntity.getStressConfigKey returns CABlocks.ELECTRIC_MOTOR instead of AllBlocks.WATER_WHEEL (ElectricMotorBlockEntity:125-126). The alternator goggle tooltip calls super.addToGoggleTooltip.\n- Keep AlternatorBlock.getMinimumRequiredSpeedLevel MEDIUM, see the excluded alternator-speed-requirement-removal.\n- Keep create:safe_nbt.\n[death-message-lang-keys, 0.5 h] The damage types use message_id createaddition.barbed_wire and createaddition.tesla_coil, but the 1.20.1 lang has 'attack.death.createaddition.*' (en_us.json:312-317 and 5 other locales). Rename to 'death.attack.createaddition.*' (+ .player) in every locale.\n[cc-peripheral-hardening, 1.5 h]\n- 9dd1b46: ElectricMotorPeripheral setSpeed/rotate/translate throw LuaException on NaN or infinity, and ElectricMotorBlockEntity ignores non-finite rpm. Today any player with a computer can push NaN into a Create network.\n- 393c51f: DigitalAdapterPeripheral returns floats instead of ints. Owner decision: script-visible change, default port.\n[barbed-wire-waterlog-wrench, 1.5 h]\n- 7a66e82: SimpleWaterloggedBlock with WATERLOGGED, fluid state, placement, skylight, water ticks in updateShape. The blockstate JSON must cover waterlogged (a variants key without it matches both).\n- a44784e: implements IWrenchable.\nSavegame: additive state, missing properties load as the default false. The model and texture are already in the base (identical blobs).\n[misc-data-fixes, 1.5 h]\n- 043b22e: girder_base.json particle create:block/chute_block (missing in 6.0.8) -> create:block/industrial_iron_block.\n- ced6d21: a second rolling recipe, paper -> straw, as data/createaddition/recipes/rolling/straw_from_paper.json in the 1.20.1 rolling JSON format ('input', 'result' with 'item'). Keep the bamboo recipe rolling/straw.json. Upstream datagen filed the new one as create:rolling/paper, do not copy that namespace.\n- 7a66e82: bioethanol and seed oil buckets into forge:buckets (data/forge/tags/items/buckets.json).\n- Spool recipe: 24 per craft, forge:plates/iron + forge:rods/iron instead of forge:nuggets/iron (7cb0ef9, 9dd1b46). Owner decision: balance.\nUse forge: tags and the 1.20.1 recipes/ folder with 'item' results.\n[electrum-block-and-tag-fixes, 1 h] The 1.3.3 jar and the base ship no loot table for createaddition:electrum_block and leave it out of minecraft:mineable/pickaxe (checked in the shipped jar), so a mined Electrum Block (gold block properties, requiresCorrectToolForDrops) drops nothing and mines slowly. 1.21 fixed this through datagen (a7382cc, 5c44881). Hand-write loot_tables/blocks/electrum_block.json (survives_explosion, as biomass_pellet_block.json), add electrum_block to mineable/pickaxe, minecraft:needs_iron_tool and minecraft:beacon_base_blocks, and add data/forge/tags/blocks/storage_blocks/electrum.json plus the forge:storage_blocks parent block tag. From the same datagen also add rolling_mill to mineable/axe (1.21 uses axeOrPickaxe), biomass_pellet_block to mineable/hoe, and chocolate_cake and honey_cake to create:brittle and farmersdelight:mineable/knife (Farmer's Delight 1.3.4 is in the pack). All additive tags, the item tag forge:storage_blocks/electrum that AlmostUnified uses is unchanged. Savegame: none. Test: an iron pickaxe mines an Electrum Block and it drops itself, a beacon accepts it."
+   },
+   {
+    "name": "cca-160-rework",
+    "ids": [
+     "alternator-double-shaft",
+     "capacitor-fe-item",
+     "electrum-amulet-rework",
+     "tesla-coil-light-and-powered-state"
+    ],
+    "title": "Phase 2: 1.6.0 alternator, capacitor, amulet and tesla changes",
+    "hours": 12.5,
+    "deps": [
+     "cca-baseline",
+     "cca-phase1-fixes"
+    ],
+    "spec": "[alternator-double-shaft, 4 h] 7cb0ef9 + 5c2b9ea.\n- hasShaftTowards accepts both faces on the FACING axis, shape tweak.\n- AlternatorRenderer draws two SHAFT_HALF when there is no visualization. New AlternatorVisual (2 RotatingInstances, Flywheel 1.0 API as in Create 6.0.8) registered in CABlockEntities.\n- New models alternator/block.json, block_half_shaft.json, item.json, item_half_shaft.json (drop *_old). They reference only CC&A textures and create:block/axis and axis_top. The 1.6.0 'alternator retexture' is model-only, no PNG changed between the branches.\n- Mechanical crafting: the Capacitor is replaced by a second andesite alloy row.\nSavegame (behaviour change): an alternator whose back face touches another network's kinetic block joins it on the next update, and a speed conflict pops a block. Warn players or scan the live world before rollout. Test: chain motor -> alternator -> shaft -> alternator with Flywheel on and off.\n[capacitor-fe-item, 4.5 h] 5c2b9ea, 51e4a38.\n- CapacitorItem with an FE capability: capacity capacitor_capacity, transfer capacitor_charge_rate, bar colour 0x00BFFF, tooltip via Util.getTextComponent.\n- Translation: CUSTOM_DATA -> stack NBT key 'energy'. At 0 remove the key and call setTag(null) when the tag is then empty, so empty capacitors stack with old ones (an empty {} tag does not stack with no tag). RegisterCapabilitiesEvent.registerItem -> Item.initCapabilities returning a plain ICapabilityProvider (not serializable, the storage reads and writes the stack tag) for ForgeCapabilities.ENERGY. getMaxStackSize(ItemStack) via IForgeItem.\n- Local fix (energy dupe): upstream's CapacitorEnergyStorage charges a whole stack as one item, the stack then exceeds its max of 1 and splits into several charged capacitors. receiveEnergy and extractEnergy return 0 unless stack.getCount() == 1. That covers Tesla Coil depots, other mods' chargers and the amulet.\n- Savegame-safe deviation: max 64 when empty (the 1.20.1 default, upstream's 16 would oversize existing stacks), 1 when charged. Owner decision.\n- Test: charge and discharge, a stack of 64 on a Tesla Coil depot is not charged, crafting with a charged capacitor, old stacks unchanged.\n[electrum-amulet-rework, 3 h] 5c2b9ea, b0b8bc9, 4414193.\n- Held in either hand, the amulet randomly (1/300 per tick) charges the FE item in the other hand by 300 x rate, applies Shocking for 40 ticks and plays little_zap. amulet_effect_enabled turns it off.\n- Replaces the 1.20.1 Luck and Speed below 4 hearts. This is a player-visible removal, list it in the changelog. Keep the class name ElectrumAmulet and Rarity.UNCOMMON.\n- New 16x16 item/electrum_amulet.png: a 90% edit of CC&A's own texture, texcmp shows no Create overlap.\n- Recipe: forge:dusts/diamond (CC&A diamond_grit) + forge:plates/zinc instead of the emerald, pattern ' WW','EZW','GE ', new tooltip summary.\n- Translation: getCapability(ForgeCapabilities.ENERGY).\n[tesla-coil-light-and-powered-state, 1 h] 5490949: lightLevel 10 while POWERED (the state and model exist in 1.20.1). Coils saved with powered=true keep their saved light data until they toggle."
+   },
+   {
+    "name": "cca-ignitable-fluids",
+    "ids": [
+     "ignitable-fluids"
+    ],
+    "title": "Phase 2: ignitable fluids by forge:ignites tag (4 vanilla mixins, refmap infrastructure)",
+    "hours": 6.5,
+    "deps": [
+     "cca-baseline"
+    ],
+    "spec": "[ignitable-fluids, 6.5 h] Upstream 0d13505, 18388a0, 6af9b4f, f224bb4, eb5eff3, afcd352.\nMixins:\n- BaseFireBlockMixin: WrapOperation on isAir in canBePlacedAt.\n- FireBlockMixin: canCatchFire wrap, getIgniteOdds Math.max MEV (75, or 100 in rain), flammability MEV (250/300), tick isFireSource MEV keeps fire next to igniting fluid.\n- FireBlockInvoker: getStateForPlacement(BlockGetter, BlockPos).\n- FlowingFluidMixin: WrapMethod canSpreadTo (no sideways flow into fire), WrapOperation setBlock in spreadTo (falling fluid spreads fire, honours doFireTick).\nMixin infrastructure: createaddition.mixins.json has no 'refmap' key and the built refmap is empty ({\"mappings\":{},\"data\":{}}) because the three Create mixins use remap=false. Add \"refmap\": \"createaddition.refmap.json\" (build.gradle already runs the AP through mixin { add sourceSets.main, \"createaddition.refmap.json\" }) and list the 4 new mixins. Check that the built refmap carries m_ names for getIgniteOdds, tick, canBePlacedAt, canSpreadTo, spreadTo and the invoker target. The Forge-added targets (canCatchFire, tryCatchFire, isFlammable, getFlammability, isFireSource) have no SRG names, so the AP warns and keeps them, which is correct at runtime. Do not weaken the build to silence those warnings.\nTag: data/forge/tags/fluids/ignites.json with optional #forge:biofuel, creosote, crude_oil, plantoil, ethanol, gasoline, diesel, biodiesel. Not c:ignites. The base already fills forge:biofuel (bioethanol) and forge:plantoil (seed oil). Lang key tag.fluid.forge.ignites. TagKey holder in a common Java class.\nTranslation:\n- 1.21 checkBurnOut(Level,BlockPos,int,RandomSource,int,Direction) is Forge 1.20.1 tryCatchFire (verified with javap on forge-1.20.1-47.4.18-server.jar, which also has canCatchFire(BlockGetter,BlockPos,Direction)). getIgniteOdds, isFireSource, getFlammability, canBePlacedAt, canSpreadTo/spreadTo and getStateForPlacement keep their names.\n- Vanilla targets need remap=true and the refmap (production is SRG). Keep remap=false only for the Create mixins.\n- MixinExtras: WrapMethod needs 0.4+. The slim jar nests nothing, Create 6.0.8 nests mixinextras-forge 0.4.1 and the pack resolves 0.5.5.\nSavegame (behaviour change): no ids. Fire now spreads over IE creosote/biodiesel/plantoil/ethanol, Thermal crude oil and CC&A fluids in loaded chunks. Keep 1.20.1's minecraft:water tagging of seed oil and bioethanol.\nArclight (low-medium): Arclight redirects setBlock/removeBlock in FireBlock.tick, injects in tryCatchFire, overwrites only BaseFireBlock.inPortalDimension, redirects canSpreadTo inside spread (WrapMethod still applies) and redirects Level.setBlock in the fluid tick, not the LevelAccessor.setBlock in spreadTo (javap of Arclight's FlowingFluidMixin, FireBlockMixin, BaseFireBlockMixin). The falling-fluid fire spread calls LevelAccessor.setBlock directly, so no Bukkit BlockIgniteEvent fires for it and a protection plugin could not cancel it (plugins/ holds none today). Pack mixins on the same classes are all chainable: Supplementaries, Moonlight, NostalgicTweaks, Ad Astra.\nTest: fire over a creosote pool, rain, doFireTick off, an Arclight boot with -Dmixin.debug.export shows every injector applied, Supplementaries fire still works."
+   },
+   {
+    "name": "cca-charging-sequenced-assembly",
+    "ids": [
+     "charging-sequenced-assembly",
+     "electrify-gold-charging-recipes",
+     "deoxidize-create-copper-tiles"
+    ],
+    "title": "Phase 2: Charging in Sequenced Assembly, electrify and Create copper tile charging recipes",
+    "hours": 10.5,
+    "deps": [
+     "cca-baseline",
+     "cca-phase1-fixes"
+    ],
+    "spec": "[charging-sequenced-assembly, 9 h] b070742.\n- ChargingRecipe implements IAssemblyRecipe: getDescriptionForAssembly 'Charge %1$s⚡ with Tesla Coil' (lang key recipe.charging.sequence), addRequiredMachines Tesla Coil, getJEISubCategory -> new ChargingAssemblySubCategory (draws a powered coil, AnimatedKinetics, modelled on the base's RollingMillAssemblySubCategory).\n- TeslaCoilBlockEntity.find first tries SequencedAssemblyRecipe.getRecipe(level, stack, CHARGING_TYPE, ChargingRecipe.class). Compare the cached stack with ItemStack.isSameItemSameTags, because every SA step shares one transitional item. Re-resolve on completion and output rollResults().\nBlocker: 1.20.1 ChargingRecipe is a plain Recipe<RecipeWrapper> with a CARecipeSerializer. Create 6.0.8 SequencedRecipe.fromJson (javap) accepts only ProcessingRecipe+IAssemblyRecipe and casts the serializer to ProcessingRecipeSerializer, and SequencedAssemblyRecipe.getRecipe(Level, ItemStack, RecipeType<R>, Class<R>) requires R extends ProcessingRecipe. So convert ChargingRecipe to ProcessingRecipe<RecipeWrapper> with energy and maxChargeRate in readAdditional/writeAdditional (JSON and buffer), getMaxInputCount 1 and getMaxOutputCount 1. Use a ProcessingRecipeSerializer subclass that reads both the legacy keys (input/result/energy/maxChargeRate) and the Create keys (ingredients/results/energy/max_charge_rate). The base already does this for rolling: copy RollingRecipe + SequencedAssemblyRollingRecipeSerializer. Adapt ChargingCategory, CreateAdditionJEI and every field user.\nOther translation: RecipeHolder -> plain recipe, rollResults() without RandomSource, getFirst -> get(0). The JEI subcategory stays a lazy supplier and is never touched on the server.\nSavegame: none. The serializer id and type stay createaddition:charging. All shipped charging JSONs (21 copper deoxidising, channeling, compat/ae2 charged certus quartz) must still parse, check the boot log. No pack jar, datapack or KubeJS script ships charging recipes (kubejs/server_scripts has no createaddition reference). The network format changes, which the protocol bump covers.\nTest: a datapack SA with a charging step on belt + coil, JEI and EMI (via the JEI layer) show it, /reload, dedicated server.\n[electrify-gold-charging-recipes, 1 h] d2234ce: six legacy-format charging JSONs, max rate 360:\n- gold ingot -> electrum_ingot, 36000\n- gold nugget -> electrum_nugget, 4000\n- gold block -> electrum_block, 324000\n- gold rod -> electrum_rod, 18000\n- golden sheet -> electrum_sheet, 36000\n- gold wire -> electrum_wire, 18000\nUse forge: tag inputs (forge:ingots/gold, nuggets/gold, storage_blocks/gold, rods/gold, plates/gold, wires/gold) instead of upstream's item inputs, so a gold sheet or wire that AlmostUnified swapped to another mod still matches. Not ported: the channeling change, 1.20.1 keeps its own 10000000/1000. Owner decision: electrum without silver. AlmostUnified turns the outputs into Thermal electrum where Thermal has the item (modPriorities in config/almostunified/unify.json).\n[deoxidize-create-copper-tiles, 0.5 h] 0ca5477/1f606d3: 1.21 also deoxidizes Create's copper tiles. The base covers vanilla copper, cut copper, cut slabs and stairs and Create shingles for all three steps (data/createaddition/recipes/charging/*.json), but not create:copper_tiles, copper_tile_slab and copper_tile_stairs, which Create 6.0.8 has. Add the 9 legacy-format recipes (oxidized -> weathered -> exposed -> plain, energy 4000, maxChargeRate 200), named after their output like the base files (copper_tiles.json, exposed_copper_tiles.json, weathered_copper_tiles.json and the slab and stairs forms). Test: a weathered tile on a Tesla Coil depot turns into an exposed tile."
+   },
+   {
+    "name": "cca-electric-pump",
+    "ids": [
+     "electric-pump"
+    ],
+    "title": "Phase 2: Electric Pump",
+    "hours": 11,
+    "deps": [
+     "cca-baseline",
+     "cca-phase1-fixes"
+    ],
+    "spec": "[electric-pump, 11 h] Upstream 6cbf853, 9dd1b46, 562d383 (BE part).\n- ElectricPumpBlock extends Create PumpBlock: adds POWERED (redstone stops it) and a centre-column shape. Create 6.0.8 PumpBlock implements SimpleWaterloggedBlock and ICogWheel (javap): keep upstream's overrides hasShaftTowards false, isSmallCog/isLargeCog/isDedicatedCogWheel false, hideStressImpact true, and getBlockEntityType/newBlockEntity returning CC&A's type.\n- ElectricPumpBlockEntity extends PumpBlockEntity: own speed ScrollValueBehaviour 0..pump_rpm_range (initial value 32), FE buffer pump_capacity/pump_max_input, consumption pump_fe_at_max_rpm x max(|speed|,32)/256, at least 1.\n- No kinetic link: attachKinetics/setSource are no-ops, zero stress and capacity, getGeneratedSpeed returns the pump speed while active so KineticBlockEntity.validateKinetics keeps it.\n- Goggle consumption line, DYNAMO ambient sound, NBT Active + energy in write and writeSafe (SmartBlockEntity.writeSafe(CompoundTag) in 6.0.8).\n- ElectricPumpRenderer and ElectricPumpVisual (pulsing partials), CAPartials entry.\nAll Create APIs exist in 6.0.8 1.20.1 (javap). PumpBlock.isPump is instanceof-based, so pipes see it as a pump.\nTranslation:\n- registerBlockEntity capability -> getCapability(ForgeCapabilities.ENERGY) with a LazyOptional, invalidated in invalidateCaps.\n- Drop the HolderLookup params.\n- Resources: 1.21's generated blockstates/electric_pump.json (6 facing variants) and models/item/electric_pump.json are CC&A's own files in a format 1.20.1 reads, copy them. Copy models/block/electric_pump/{block,block_pump_partial,item}.json and textures/block/electric_pump/block.png (32x32). Translate recipes/mechanical_crafting/electric_pump.json (dried kelp, mechanical pump, 2 copper spools, capacitor, 'acceptMirrored', 'item' results, forge: tags) and loot_tables/blocks/electric_pump.json (folder loot_table -> loot_tables). Add it to mineable/pickaxe and the lang.\n- Pump and servo both add entries to CABlocks, CABlockEntities, CAPartials, CAPonders, mineable/pickaxe.json and en_us.json: integrate them one after the other.\nNew ids: block, item and BE type createaddition:electric_pump. Savegame: additive.\nLicence: the block and item models reuse the two 12x3x12 flange cuboids of create:block/mechanical_pump/block.json (blob 34cb63e in Create 6.0.8). The release bundle checks that blob's date.\nTest: tank -> pump -> tank at the set speed, redstone stop, FE drain matches the goggles, wrench reverse, mixed with a mechanical pump, a cogwheel next to it does not connect, Flywheel on and off, texcmp on block.png."
+   },
+   {
+    "name": "cca-servo-motor",
+    "ids": [
+     "servo-motor",
+     "servo-cc-peripheral"
+    ],
+    "title": "Phase 2: Electric Servo Motor + CC:Tweaked peripheral",
+    "hours": 18,
+    "deps": [
+     "cca-baseline",
+     "cca-phase1-fixes"
+    ],
+    "spec": "[servo-motor, 14 h] Upstream a8a51a2, 84c7b2c, 89f01b9, 9dd1b46, a1b6da6.\n- ServoMotorBlock: DirectionalKineticBlock + IBE + TransformableBlock, FACING, POWERED, ROLL 0-3. The wrench rolls it, rotate/mirror/transform keep getTop.\n- ServoMotorBlockEntity extends MechanicalBearingBlockEntity. Redstone on the top side drives towards Max Angle, on the opposite side towards Min Angle, the signals are summed.\n- Speed via KineticScrollValueBehaviour. The Max and Min ServoAngleLimit behaviours each have their own BehaviourType, netId and NBT key, and movementMode is replaced by ServoMovementMode, so the scroll behaviours coexist.\n- Assembles a BearingContraption, FE buffer from the electric_motor config, non-finite rpm guard, the 1.7.2 direction fix for north/west/down.\n- ServoMotorRenderer (BearingRenderer) and ServoMotorVisual.\n- Resources: 1.21's generated blockstates/servo_motor.json (24 facing x roll variants) and models/block/servo_motor/block_rolled.json and models/item/servo_motor.json are format-compatible, copy them with models/block/servo_motor/{block,item}.json and textures/block/servo_motor/block.png (32x32). Translate the shapeless recipe (mechanical bearing + electric motor + electron tube, 'item' result) and the loot table, add the pickaxe tag and lang.\n6.0.8 1.20.1 MechanicalBearingBlockEntity has the same protected fields and methods (movementMode, movedContraption, angle, running, assembleNextTick, lastException), and netId, BehaviourType, DirectionalExtenderScrollOptionSlot, ValueSettingsBoard, ValueSettingsFormatter and TransformableBlock exist (javap). No pack mixin targets the bearing classes.\nTranslation: BlockEntityBehaviour write/read drop HolderLookup, useItemOn -> use()/IWrenchable, capability via getCapability with a LazyOptional, Java 17.\nNew ids: block, item and BE type createaddition:servo_motor. NBT: MaxAngle, MinAngle, TargetAngle, servo_active, energy. Savegame: additive.\nTest: lever rig with a door contraption, 6 facings x 4 rolls, move by contraption or schematic, save and reload mid-rotation, Flywheel on and off, texcmp.\n[servo-cc-peripheral, 4 h] 84c7b2c/9dd1b46: ServoMotorPeripheral with getSpeed/setSpeed, getAngle, get/setTargetAngle, get/setMinAngle, get/setMaxAngle, isAssembled, assemble, disassemble and getEnergyConsumption. Non-finite input raises LuaException. Register it in Peripherals and expose it through getCapability when CC_ACTIVE (CC:Tweaked 1.120.2 in the pack has the same API). Update COMPUTERCRAFT.md. Test: Lua calls, a server without CC:T boots."
+   },
+   {
+    "name": "cca-ponders-and-translations",
+    "ids": [
+     "new-ponders",
+     "translations-merge"
+    ],
+    "title": "Phase 2: new ponders (with 1.20.1 NBT conversion) and translation merge",
+    "hours": 9,
+    "deps": [
+     "cca-wiregraph",
+     "cca-electric-pump",
+     "cca-servo-motor",
+     "cca-charging-sequenced-assembly",
+     "cca-ignitable-fluids",
+     "cca-160-rework"
+    ],
+    "spec": "[new-ponders, 7 h]\n- 562d383 electric_pump_flow, d0993a0 connector, connector_remove and servo_motor scenes in PonderScenes.\n- CAPonders storyboards: pump (also under AllCreatePonderTags.FLUIDS), the 3 connectors, servo with AllCreatePonderTags.MOVEMENT_ANCHOR.\n- Copy ponder/connector.nbt, electric_pump_flow.nbt and servo.nbt. They are CC&A's own 5x5x5 and 6x5x5 builds and share only the vanilla snow and white concrete floor with Create's schematics (checked against Create 6.0.8 mechanical_pump and mechanical_bearing ponders).\n- NBT conversion: the files are DataVersion 3955, rewrite it to 3465. They also carry 1.20.5+ NBT: LastKnownPos and Controller are int arrays (NbtUtils.writeBlockPos since 1.20.5), while 1.20.1 reads them with NbtUtils.readBlockPos(getCompound(...)) (ModularAccumulatorBlockEntity:378-381, Create 6.0.8 FluidTankBlockEntity.read), which yields 0,0,0 and breaks the tank and accumulator multiblocks in the scene. Rewrite every int-array LastKnownPos and Controller into an {X,Y,Z} compound (both create:fluid_tank and the modular_accumulator in electric_pump_flow.nbt, the modular_accumulator in servo.nbt), with a small standard-library Python NBT rewriter kept in the scratchpad tools folder and run with python -I, or rebuild the scenes on 1.20.1 with a structure block. Owner keys (UUID int arrays) can stay. Checked: every palette block exists in 1.20.1 or is ported, the connector 'nodes' format is identical, TankContent is empty, there are no entities.\n- Ponder lang keys createaddition.ponder.*.\n- 8c4c64d: remove CAPonderPlugin.onPonderLevelRestore's duplicate PonderWorldBlockEntityFix.fixControllerBlockEntities call.\nTest: open every new ponder on a client, tanks and accumulators render as multiblocks.\n[translations-merge, 2 h] Add the 41 new en_us keys:\n- blocks electric_pump and servo_motor\n- tooltips and recipe.charging.sequence\n- ponders\n- death.attack.* keys\n- tag.fluid.forge.ignites (renamed from c)\n- the amulet summary\nTake the translated values for those keys only from the 1.21.1 zh_cn, ru_ru, pt_br, ja_jp, es_es/es_mx, fr_fr and ko_kr files (3e49327 key fix). Keep the 1.20.1-only locales and keys. Validate the JSON."
+   },
+   {
+    "name": "cca-pack-release",
+    "ids": [
+     "pack-wiring-and-release"
+    ],
+    "title": "Release: pack wiring, licence and model checks, compat scan, Arclight boot, rollout, docs",
+    "hours": 8.5,
+    "deps": [
+     "cca-wiregraph",
+     "cca-phase1-fixes",
+     "cca-160-rework",
+     "cca-ignitable-fluids",
+     "cca-charging-sequenced-assembly",
+     "cca-electric-pump",
+     "cca-servo-motor",
+     "cca-ponders-and-translations"
+    ],
+    "spec": "[pack-wiring-and-release, 8.5 h]\n- Build createaddition-1.20.1-1.7.3-skytekx.1.jar (the slim reobf jar in build/libs, not the -all jar) into local-mods/ and drop the modrinth.index.json createaddition 1.3.3 entry (modrinth.index.json:954-964) in one chore(mods) commit. On the server mirror it by hand while the java process is gone: remove mods/createaddition-1.20.1-1.3.3.jar and copy the fork jar into mods/.\n- Add modrinth-permissions/<jar>.md (MIT, MRH0, unofficial build, NOTICE, SHA-1 of the reproducible build) and copy LICENSE plus the Create MIT notice to licenses/ (named like licenses/FluxNetworks-1.20.1-7.2.1.15-LICENSE.txt). The Pixabay sounds stay inside the jar only.\n- Refresh config/createaddition-common.toml from a boot and commit it before tools/build_mrpack.py, which takes overrides from git HEAD.\n- Licence checks: re-run /tmp/claude-0/-home-user-skytekx3-1201-server/b8d056e1-624d-50f6-b93c-43ffe737fcb9/scratchpad/bp2/license-createaddition/scripts/texcmp.py on electric_pump/block.png, servo_motor/block.png, item/electrum_amulet.png and the barbed wire texture (new since 1.3.3 through 7ce2204), against Create 6.0.8 and Create 6.0.10 (1.21.1) assets. The preliminary run against 6.0.8 found none at or above 25%. Also compare model geometry: electric_pump/block.json and item.json reuse the two 12x3x12 flange cuboids of create:block/mechanical_pump/block.json (blob 34cb63e). Confirm with git log --find-object=34cb63e in a Create clone that the blob predates 2025-09-21 and add the pump model to NOTICE's Create-derived list, or redraw the flanges. The other new models share at most one trivial cuboid with any Create model (checked).\n- Binary-compat scan of all pack jars with an adapted /tmp/claude-0/-home-user-skytekx3-1201-server/b8d056e1-624d-50f6-b93c-43ffe737fcb9/scratchpad/compat/tfcompat.py (prefix com/mrh0/createaddition/). Expected result: only AllTheLeaks -> EnergyNetworkManager.instances, which the stub satisfies. No pack mod declares a createaddition dependency range.\n- Full-pack boot on Forge 47.4.18 and on the production Arclight: Done, 0 FATAL, no crash report, no watchdog, only the 2 accepted ERROR lines, every charging JSON parses, and -Dmixin.debug.export shows the CC&A mixins applied.\n- Run the in-world checklist from all bundles.\n- Rollout: the protocol bump and the new registry entries need every player on the new pack version together with the server. Announce the alternator double shaft, the amulet change and the fire behaviour of oils. Deploy only after wiregraph-live-world-migration has passed, and keep the WireGraph rollback step (delete data/createaddition_wires.dat in every dimension folder, or /cca_wires rebuild after a re-upgrade).\n- Docs (docs(okf)): okf/modpack/createaddition-backport.md (plan, status, local divergences: version form, LBB 4000 mB default, capacitor stack 64 and single-item charging, verifier hardening, alternator speed requirement kept, forge:ignites, kept mixins and water tag, electrum block fixes, player changelog), the mod-set.md row, ports/createaddition-backport-inventory.json (copy of this inventory) and ports/createaddition-backport-carryover.json. Follow the docs rules: front matter type/title/description/tags/timestamp, no dashes as punctuation, no semicolons, no person names, credit the community as ts4.party, cite commits and files."
+   }
+  ],
+  "excluded": [
+   {
+    "id": "sable-aeronautics-compat",
+    "reason": "Out of scope. Covers a58a938/e1f3f50 (Aeronautics docking connector, compat/simulated, DockingConnectorBEMixin, docking_connector_capacity) and b1a9674, plus the Sable parts of 9dd1b46 and 5490949: compat/sable/*, VanillaSubLevelBERenderMixin, LiquidBlazeBurnerSubLevelRenderer, the SABLE_ACTIVE branches and the 1.5.11 Aeronautics crash fix. Sable and Aeronautics exist only for NeoForge 1.21.1."
+   },
+   {
+    "id": "neoforge-port-churn",
+    "reason": "Pure port churn, about 180 commits from 23d5509 to 1ebd90c (2025-03-20 to 2025-07-16) plus later API follow-ups: capabilities, payloads, MapCodec params, ResourceLocation, DeferredHolder, the VertexConsumer renames, class renames (AbstractElectricBlockEntity, CALang, the *Item renames), PEI movement rewrite, CALang goggle builder and the ⚡ unit string. These are translated where a ported feature needs them, never ported on their own."
+   },
+   {
+    "id": "neoforge-datagen",
+    "reason": "The 1.21 datagen providers and src/generated output are not ported. The 1.20.1 tree hand-writes every resource and commits no datagen output (src/generated holds only .cache), so new files are written by hand. 1.21's generated blockstates and block or item models are CC&A's own files in a format 1.20.1 reads and may be copied, recipes, loot tables and tags need translating (folder names, forge: tags, 'item' results, forge:mod_loaded conditions). Nothing to reconcile at the ship stage."
+   },
+   {
+    "id": "c-common-tags",
+    "reason": "1.21 c: tags (3e8a818, a95515d, 29db159, c:ignites): AlmostUnified relies on forge: tags, so the port keeps forge: tags."
+   },
+   {
+    "id": "wire-spool-stacking-fix",
+    "reason": "42fe46d fixes a 1.21-only Data Component bug. 1.20.1 WireSpool already calls setTag(null) (WireSpool.java:89, 107). Verify only."
+   },
+   {
+    "id": "pei-capability-invalidate",
+    "reason": "9c6dc1a is NeoForge-specific. 1.20.1 already invalidates the old LazyOptional in startTransferringTo/stopTransferring (PortableEnergyInterfaceBlockEntity:33-50). Verify on a train only."
+   },
+   {
+    "id": "connector-cache-blockcapabilitycache",
+    "reason": "d239617 is the NeoForge BlockCapabilityCache cleanup. Its 1.20.1 equivalent is ported as connector-external-cap-recheck."
+   },
+   {
+    "id": "recycling-recipe-conflict",
+    "reason": "e3fc63e: 1.20.1 already ships data/create/recipes/crushing/*_recycling.json."
+   },
+   {
+    "id": "tesla-coil-damage-type",
+    "reason": "Part of 7a66e82, already in the 1.20.1 base as 22546fb."
+   },
+   {
+    "id": "biofuel-and-blaze-cake-burn-times",
+    "reason": "b453db8, bcea84e and f5da39c: 1.20.1 already has 24000 and 3200."
+   },
+   {
+    "id": "liquid-blaze-burner-fluid-container-rewrite",
+    "reason": "3ec4663 is a NeoForge rewrite. 1.20.1 uses FluidUtil.tryEmptyContainerAndStow. Verify only."
+   },
+   {
+    "id": "liquid-blaze-burner-capacity-default-1000",
+    "reason": "6cbf853 silently changes the tank default from 4000 to 1000 mB, a savegame and behaviour change. The port keeps 4000."
+   },
+   {
+    "id": "liquid-blaze-burner-flywheel-visual",
+    "reason": "c6d4e98/db34ece fixed the 1.21 port's rendering, the 1.20.1 BER works."
+   },
+   {
+    "id": "electric-motor-visual",
+    "reason": "ElectricMotorVisual (5c2b9ea) is dead code upstream and never registered."
+   },
+   {
+    "id": "stator-block-stub",
+    "reason": "7cb0ef9 adds an empty class."
+   },
+   {
+    "id": "contraption-and-speed-controller-mixin-removal",
+    "reason": "ca6785a and 3d442fd remove mixins that 1.20.1 Create 6.0.8 and the Digital Adapter still need. Keep the 1.20.1 mixins."
+   },
+   {
+    "id": "compat-recipe-removals",
+    "reason": "ced6d21 and affbdd8 remove IE/TConstruct compat recipes because those mods were missing on 1.21. 1.20.1 keeps them."
+   },
+   {
+    "id": "mekanism-heater-compat-test",
+    "reason": "affbdd8 adds it and 32323d8 removes it again: no net change."
+   },
+   {
+    "id": "seed-oil-bioethanol-water-tag-removal",
+    "reason": "ced6d21 changes the physics of fluids already in the world and is not needed by ignitable-fluids. Owner may revisit."
+   },
+   {
+    "id": "safe-nbt-tag-removal",
+    "reason": "7a66e82 drops the tag, but Create 6.0.8 for 1.20.1 still uses create:safe_nbt."
+   },
+   {
+    "id": "modular-accumulator-collision-shape-removal",
+    "reason": "9dd1b46 removes it without explanation and with no player-visible fix."
+   },
+   {
+    "id": "creative-tab-search-only",
+    "reason": "ced6d21: cosmetic."
+   },
+   {
+    "id": "liquid-burning-recipe-codec-crash",
+    "reason": "46018f8 fixes the NeoForge SizedFluidIngredient codec, it does not apply to 1.20.1."
+   },
+   {
+    "id": "port-era-neoforge-fixes",
+    "reason": "19df542, d79e333, 6457b96, 8207188, e9727ae, 7489814, f3a4751, a150f60, c9ef28b, 5eace6f, 2270916, the ced6d21 relay writeSafe fix and the ced6d21 small_light_connector blockstate rewrite repair bugs the NeoForge port or its datagen introduced. Arm-interaction categories c10800c/7f08dae/8a9524f are already in 1.20.1 as 34cb284."
+   },
+   {
+    "id": "debug-ponder-scene",
+    "reason": "691cafb and DebugScenes are dev-only. The real fix, 8c4c64d, is ported in new-ponders."
+   },
+   {
+    "id": "build-and-repo-tooling",
+    "reason": "MDG/Gradle/NeoForge/Create bumps, lang_validator.py, README/CHANGELOG, templates and the icon move have no player effect."
+   },
+   {
+    "id": "cosmetic-lang-changes",
+    "reason": "The 'Diamond Grit Sand Paper' rename and wording churn. Only the keys of ported features are merged."
+   },
+   {
+    "id": "vanilla-1-20-5-content",
+    "reason": "None of the ported features needs 1.20.5+ vanilla content. Data Components, HolderLookup, RecipeHolder and ItemInteractionResult are API churn handled by the translation rules."
+   },
+   {
+    "id": "alternator-speed-requirement-removal",
+    "reason": "f3091d0 ('stress tooltip') also comments out AlternatorBlock.getMinimumRequiredSpeedLevel (MEDIUM) without a changelog line, so upstream alternators produce energy below 30 RPM. A balance change, not a fix. The port keeps MEDIUM (AlternatorBlock.java:77-79). Owner may revisit."
+   },
+   {
+    "id": "deoxidize-1-20-3-copper-blocks",
+    "reason": "0ca5477/1f606d3/40b1de2 also deoxidize chiseled copper, copper doors, trapdoors, bulbs and grates, which only exist since vanilla 1.20.3. The 1.20.1-valid part, Create copper tiles, is ported as deoxidize-create-copper-tiles. All other copper and shingle steps are already in the base."
+   },
+   {
+    "id": "tool-tier-incorrect-for-tags",
+    "reason": "The 1.21 datagen writes minecraft:incorrect_for_wooden_tool, incorrect_for_stone_tool and incorrect_for_gold_tool, tags that exist since 1.20.5. 1.20.1 uses needs_iron_tool, which electrum-block-and-tag-fixes adds."
+   },
+   {
+    "id": "connector-and-accumulator-recipe-tag-merge",
+    "reason": "1.21 replaces the separate gold and electrum recipes of the large connector and accumulator with the item tags large_connector_usable_rods and modular_accumulator_usable_wires (crafting/connector.json, large_connector.json, modular_accumulator.json). Same results, no player gain, and recipe ids would change."
+   },
+   {
+    "id": "cake-empty-loot-and-food-tags",
+    "reason": "The empty cake loot tables (random_sequence only) and the forge:foods/edible_when_placed and storage_blocks/biomass and bio tags from 1.21 datagen change nothing for players."
+   }
+  ]
+ },
+ "critic_notes": "I reviewed the inventory against upstream (230 commits only on 1.21.1, and the 1.21.1 data tree compared file by file with 1.20.1) and against the vendored base on the branch. This is the corrected inventory: 34 features, 10 bundles, 136.5 h. No bundle is over 40 h. I did not write to the repo.\n\n**Changes that matter**\n1. **The version is still wrong on the branch.** It builds createaddition-1.7.3-1.20.1-skytekx.1.jar (gradle.properties:9, build.gradle:31-32), and that sorts below the shipped 1.20.1-1.3.3, as UPSTREAM.md:89 itself admits. The setup stage already did the vendor, build and licence work (78f4f06, 7286996, f11c10b), so cca-baseline shrinks from 7 h to 4.5 h. Its first item is now one fix commit to 1.20.1-1.7.3-skytekx.1. That is upstream's form plus -skytekx.N, which is how the pack's other forks are named.\n2. **Two features were missing.**\n   - electrum-block-and-tag-fixes: the 1.3.3 jar ships no loot table for the Electrum Block and leaves it out of mineable/pickaxe, so a mined block drops nothing. 1.21 fixed this through datagen (a7382cc).\n   - deoxidize-create-copper-tiles: 9 Tesla Coil recipes for Create's copper tiles, the only 1.20.1-valid part of the new 1.21 deoxidizing set.\n3. **Spec bugs that would have broken a blind port.**\n   - Ponders: the new 1.21 schematics store LastKnownPos and Controller as int arrays. 1.20.1 reads them as compounds (ModularAccumulatorBlockEntity:378-381, Create FluidTankBlockEntity), so the tanks and accumulators in the scenes would break. Changing the DataVersion alone is not enough.\n   - Capacitor: upstream charges a whole stack as one item, which dupes energy. The fix is to charge only when the stack count is 1, and to clear the tag when it is empty so old stacks still stack.\n   - Liquid Blaze Burner: upstream reads the config in a static field initialiser, which throws on Forge 47. Read all config values lazily.\n   - Mixins: createaddition.mixins.json has no refmap key and the refmap is empty. The vanilla fire mixins need it.\n   - Wire rendering: Create's CachedRenderBBBlockEntity caches the bounding box. The port has to override createRenderBoundingBox and invalidate it, and keep LocalPlayer out of the block entity.\n   - Stress tooltips: the tooltip factory already exists at CreateAddition.java:70-73. f3091d0 also quietly drops the alternator's MEDIUM speed requirement. I moved that to the excluded list as an owner decision and the port keeps MEDIUM.\n   - Paper to straw (ced6d21) is an extra recipe next to the bamboo one, not a replacement.\n   - Electrify recipes now take forge: tag inputs, so they still match after AlmostUnified swaps items.\n   - The jar to ship is the slim reobf jar. MixinExtras comes from Create 6.0.8, which nests 0.4.1, and the pack resolves 0.5.5.\n4. **WireGraph savegame and Arclight.** The pack bundles skytekx-compat 2.1.3, which hands out the queued chunk tag itself. A misread there can lead the verifier to delete a real wire through markMissing and pruneDanglingWires.\n   - I added a guard: a saved chunk only counts as an answer if it is a full chunk with a block_entities list, otherwise the position stays unresolved.\n   - The migration test now runs with both 2.1.3 and 2.1.6.\n   - I added a rollback step: delete createaddition_wires.dat in every dimension, or run /cca_wires rebuild after re-upgrading, because a stale graph is trusted.\n   - EnergyMeterBlockEntity also implements IWireNode and must be adapted so the build compiles.\n   - The falling-fluid fire spread fires no Bukkit BlockIgniteEvent. I checked Arclight's FireBlock, BaseFireBlock and FlowingFluid mixins with javap and they do not conflict.\n5. **Dependencies.** cca-charging-sequenced-assembly no longer depends on cca-160-rework: they share no files beyond what cca-phase1-fixes already orders, so the two can run in parallel. The pump and servo bundles both edit CABlocks, CABlockEntities, CAPartials, CAPonders, the pickaxe tag and en_us, so integrate them one after the other.\n6. **Licence.**\n   - The electric pump models reuse the two flange cuboids of Create's mechanical_pump/block.json (blob 34cb63e). Its date must be checked against 2025-09-21 before release.\n   - The barbed wire texture, new since 1.3.3, joins the texcmp list.\n   - The new ponder schematics share only the vanilla floor with Create's.\n   - 1.21's generated blockstates and models for the pump and servo can be copied as they are.\n\n**Checked and unchanged**\n- WireNodeKind block entity ids and the LocalNode NBT are the same on both branches, so the world migrates on its own.\n- AllTheLeaks links only EnergyNetworkManager.instances, behind the version gate [1.20.1-1.0.0b,1.20.1-1.2.3].\n- No KubeJS script or datapack touches createaddition.\n- All Create 6.0.8 APIs the port needs exist (javap): MechanicalBearingBlockEntity fields, PumpBlock, IAssemblyRecipe, SequencedAssemblySubCategory, TransformableBlock.\n- The PEI fix and the wire spool fix are already in the base.\n- The new config keys match 1.21's CommonConfig.\n\nScratch work is in /tmp/claude-0/-home-user-skytekx3-1201-server/b8d056e1-624d-50f6-b93c-43ffe737fcb9/scratchpad/cca-critic: the d20.txt and d21.txt data lists, nbtcmp.py, and the Create model and ponder extracts."
+}

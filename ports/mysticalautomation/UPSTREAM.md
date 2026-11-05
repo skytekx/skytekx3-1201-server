@@ -166,6 +166,15 @@ and recipe ids. Lines that differ from upstream carry a `SkyTekx port` comment t
   vanilla furnace texture at runtime. No vanilla texture is copied into the jar. Cucumber 7's energy
   bar takes an `IEnergyStorage`, which `EnergyStorageView` builds from the synced values, and the
   port makes it unclickable, as Cucumber 8 does.
+- Slot counts: 1.20.1 writes the count of a slot stack as a byte (`FriendlyByteBuf#writeItemStack`
+  calls `writeByte`, checked in the Forge 47.4.0 jar), 1.21 as a VarInt. The input slots of the
+  Infuser and the Enchanternator hold up to 512 items, and a count above 127 would reach the client as
+  a negative or wrong number, so the slot would look empty. Their menus wrap the vanilla
+  `ContainerSynchronizer` (`container/LargeStackSynchronizer`), which sends such a slot again with its
+  full count (`SyncSlotCountPayload`) right after the vanilla packet. The client handler sits in
+  `client/ClientPayloadHandlers`, which a dedicated server never loads. Hoppers and pipes still fill
+  these slots to 64 only, as upstream, since Forge's `ItemStackHandler` caps automated insertion at
+  the item's stack size.
 - Farmer input: a 1.21 `CraftingInput` drops empty rows at its end, so upstream compares its size
   with the number of ingredients. The 1.20.1 container keeps the three slots, so `FarmerRecipe`
   counts the filled ones. It also reports `isSpecial`, which keeps the Farmer recipes out of the

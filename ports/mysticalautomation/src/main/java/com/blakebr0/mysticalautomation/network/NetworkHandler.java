@@ -5,6 +5,7 @@ import com.blakebr0.mysticalautomation.network.payload.EnchanternatorSelectLevel
 import com.blakebr0.mysticalautomation.network.payload.InfuserSelectIndexPayload;
 import com.blakebr0.mysticalautomation.network.payload.ReloadIngredientCachePayload;
 import com.blakebr0.mysticalautomation.network.payload.SetFakeRecipeSlotPayload;
+import com.blakebr0.mysticalautomation.network.payload.SyncSlotCountPayload;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -47,6 +48,11 @@ public final class NetworkHandler {
                 .encoder(SetFakeRecipeSlotPayload::write)
                 .decoder(SetFakeRecipeSlotPayload::read)
                 .consumerMainThread(SetFakeRecipeSlotPayload::handleServer)
+                .add();
+        INSTANCE.messageBuilder(SyncSlotCountPayload.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncSlotCountPayload::write)
+                .decoder(SyncSlotCountPayload::read)
+                .consumerMainThread(SyncSlotCountPayload::handleClient)
                 .add();
     }
 }

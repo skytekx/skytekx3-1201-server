@@ -10,18 +10,18 @@ import com.enderio.machines.common.config.MachinesConfig;
 import com.enderio.machines.common.io.item.MachineInventoryLayout;
 import com.enderio.machines.common.menu.AversionObeliskMenu;
 import com.enderio.machines.common.obelisk.AversionObeliskManager;
+import com.enderio.machines.common.obelisk.IObeliskManagerCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class AversionObeliskBlockEntity extends ObeliskBlockEntity {
+public class AversionObeliskBlockEntity extends ObeliskBlockEntity<AversionObeliskBlockEntity> {
     private static final QuadraticScalable ENERGY_CAPACITY = new QuadraticScalable(CapacitorModifier.ENERGY_CAPACITY, MachinesConfig.COMMON.ENERGY.AVERSION_CAPACITY);
     private static final QuadraticScalable ENERGY_USAGE = new QuadraticScalable(CapacitorModifier.ENERGY_USE, MachinesConfig.COMMON.ENERGY.AVERSION_USAGE);
 
@@ -29,38 +29,10 @@ public class AversionObeliskBlockEntity extends ObeliskBlockEntity {
         super(EnergyIOMode.Input, ENERGY_CAPACITY, ENERGY_USAGE, type, worldPosition, blockState);
     }
 
+    // The base class registers, moves and removes the obelisk in this manager.
     @Override
-    public void setLevel(Level level) {
-        super.setLevel(level);
-
-        if (level instanceof ServerLevel serverLevel) {
-            AversionObeliskManager.getManager(serverLevel).ifPresent(obeliskManager -> {
-                obeliskManager.register(this);
-            });
-        }
-    }
-
-    @Override
-    public void setRemoved() {
-        if (level instanceof ServerLevel serverLevel) {
-            AversionObeliskManager.getManager(serverLevel).ifPresent(obeliskManager -> {
-                obeliskManager.unregister(this);
-            });
-        }
-
-        super.setRemoved();
-    }
-
-    @Override
-    protected void updateLocations() {
-        super.updateLocations();
-
-        // Update range in obelisk manager
-        if (level instanceof ServerLevel serverLevel) {
-            AversionObeliskManager.getManager(serverLevel).ifPresent(obeliskManager -> {
-                obeliskManager.update(this);
-            });
-        }
+    protected @Nullable IObeliskManagerCapability<AversionObeliskBlockEntity> getObeliskManager(ServerLevel level) {
+        return AversionObeliskManager.getManager(level).resolve().orElse(null);
     }
 
     @Override
@@ -104,7 +76,8 @@ public class AversionObeliskBlockEntity extends ObeliskBlockEntity {
             int energy = getEnergyStorage().consumeEnergy(cost, true);
             if (energy == cost) {
                 event.setSpawnCancelled(true);
-                getEnergyStorage().consumeEnergy(cost, true);
+                // SkyTekx: the second call simulated as well, so a cancelled spawn never cost energy.
+                getEnergyStorage().consumeEnergy(cost, false);
                 return true;
             }
         }

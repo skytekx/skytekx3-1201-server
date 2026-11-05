@@ -310,6 +310,8 @@
   "gui.enderio.no_source": "The Drain needs a source block under it to work",
   "gui.enderio.nocap.desc": "Insert any capacitor so \n this machine can work!",
   "gui.enderio.nocap.title": "Capacitor Missing",
+  "gui.enderio.obelisk.no_soul_filter": "No Soul Filter Installed",
+  "gui.enderio.obelisk.upkeep_cost": "Upkeep %s µI/t ",
   "gui.enderio.ok": "Ok",
   "gui.enderio.output_full": "There is not enough room for the output",
   "gui.enderio.progress": "Progress %s%%",

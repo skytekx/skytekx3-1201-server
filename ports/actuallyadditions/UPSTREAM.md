@@ -68,3 +68,94 @@ of the snapshot are separate commits in this repository's history
   its authors' permission. That permission does not extend to this fork.
 - Upstream jars carry no LICENSE file. The SkyTekx build adds `LICENSE` and the SkyTekx `NOTICE`
   to the jar, as MIT asks for the notice in every copy.
+
+## What the base contains
+
+These counts come from the registries in the Java sources and from the jar that the build below
+produces. The ids are also cross checked against the blockstates, item models and `en_us.json`.
+
+- It registers 121 blocks (117 through `AABlockReg`, each with its block item and most with a
+  block entity type, plus the four crop blocks), 107 further items, 25 menu types, 9 recipe types,
+  4 sounds, 2 particle types and 1 entity type. The `en_us.json` has 961 keys.
+- The jar holds 398 top level classes, one for every Java file with a live type. Of the 487
+  Java files, 91 are commented out in full, remnants of the 1.12 code: the booklet, achievements,
+  world generation, villages, giant chests, the smiley cloud and older compat code. So the base
+  has no world generation at all (`gen/AAWorldGen` is dead code) and no in game manual.
+- It integrates with JEI only (`compileOnly` API 15.3.0.4). Patchouli and Curios come with the
+  backport. The One Probe and Mekanism appear only as `runtimeOnly` dev run dependencies.
+- The client fetches `specialPeopleStuff.properties` from upstream's `1.16` branch on GitHub for
+  its special renders. The update checker is commented out, so the server makes no network call.
+
+Gaps of the base that the backport has to close, since upstream never released it:
+
+- The block `bio_reactor` has no blockstate, the block `vertical_digger` has no `en_us` name, and
+  the items `booklet` and `crate_keeper` have no item model. Upstream fixed all four on the
+  1.20.4 line.
+- The `pack.mcmeta` still says `pack_format` 6 (the 1.16 value). The data generator cache
+  `src/generated/resources/.cache/` ends up in the jar as 18 `.cache/` entries, as it does
+  upstream.
+
+Registry ids that differ on `main` at `cd9d9c6` (from the same scan of `main`):
+
+- New there: the block `crate_small`, the banner pattern items `book_pattern`, `drill_pattern`,
+  `leaf_blo_pattern` and `phan_con_pattern`, the item `item_tag`, the menus
+  `item_tag_container`, `sack_container` and `void_sack_container`, the recipe type
+  `coffee_ingredient`, the loot modifiers `bat_loot` and `dungeon_loot`, the villager profession
+  and point of interest `engineer`, a biome modifier serializer, a condition codec and an
+  ingredient type. The data components (21 types) are the 1.21 form of item NBT.
+- Gone there: the items `dough` and `paper_cone`, the menu `bag_container` (now
+  `sack_container`) and the recipe type `solid_fuel`. The backport keeps every id of the base
+  and adds the new ones.
+
+## Build changes
+
+The snapshot compiles unchanged on Java 17 against its own toolchain: ForgeGradle 6.0.54 (from
+upstream's range `[6.0,6.2)`), Librarian `1.2.0.7-dev-SNAPSHOT` (from `1.+`), Gradle 8.1.1, Forge
+47.1.3 userdev, Parchment 2023.09.03-1.20.1 and JEI 15.3.0.4 from maven.blamejared.com. All
+repositories in `build.gradle` and `settings.gradle` still resolve. The compiler settings are
+upstream's (javac defaults with UTF-8 sources, no `-Werror`). The task `compileJava` prints only
+the javac notes about deprecated and unchecked operations. The changes below only make the build
+reproducible and mark the jar as a modified build.
+
+Build check (from this directory):
+
+```
+JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew compileJava -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain -q
+```
+
+The jar: `./gradlew build` (same flags) writes
+`build/libs/ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, which `reobfJar` rewrites in place
+with SRG names. That jar is the one to ship. The `-dev`, `-api`, `-sources` and `-javadoc` jars
+next to it are upstream's Maven artifacts and are not shipped.
+
+1. Gradle wrapper: `gradlew`, `gradlew.bat` and `gradle/wrapper/gradle-wrapper.jar` are the copies
+   that the Twilight Forest and Create Crafts & Additions ports use (wrapper jar SHA-256
+   `33ad4583...`). Upstream's `c5a643cf...` is the official Gradle 7.6 wrapper. Both were checked
+   against Gradle's published wrapper checksums for the Create Crafts & Additions port. The file
+   `gradle-wrapper.properties` keeps upstream's Gradle 8.1.1 and adds `distributionSha256Sum`
+   with the official checksum of `gradle-8.1.1-bin.zip`.
+2. Plugins: `net.minecraftforge.gradle` is pinned to `6.0.54` and
+   `org.parchmentmc.librarian.forgegradle` to `1.2.0.7-dev-SNAPSHOT`, the versions that
+   upstream's ranges resolve to today, so that a new plugin release cannot change the build. The
+   Librarian version is the one that `ports/skytekx-defixes` pins too.
+3. Project name: `settings.gradle` sets `rootProject.name = 'actuallyadditions'`, so the
+   project name does not depend on the name of the checkout directory.
+4. Version: `mod_version=1.1.52-skytekx.1`. The script `build.gradle` keeps upstream's
+   `archivesName = "ActuallyAdditions-$game_version"` and `version = "$mod_version"` but no longer
+   appends the Jenkins `BUILD_NUMBER`, so a CI variable cannot change the jar name. The jar is
+   `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, and Forge shows the version
+   `1.1.52-skytekx.1` (`mods.toml` uses `${file.jarVersion}`, the manifest's
+   `Implementation-Version`). The part 1.1.52 names the 1.20.1 branch, and `-skytekx.N` marks the
+   unofficial build. No pack mod declares a dependency range on Actually Additions, and no world
+   has the mod yet, so the number can still change before the first release. If the backport
+   brings the content close to the 1.3.x line, `1.3.26-skytekx.N` would say that more clearly, the
+   way the Create Crafts & Additions fork names the line it backports (`1.20.1-1.7.3-skytekx.1`).
+   That choice belongs to the release.
+5. Reproducible jar: the `jar` task sets `preserveFileTimestamps = false` and
+   `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
+   clean builds of the same commit give the same SHA-1.
+6. Javadoc: the task `javadoc` reads the sources as UTF-8. Upstream's `build` runs it for the
+   javadoc artifact, and under a host locale that is not UTF-8 (POSIX here) it failed on the
+   copyright sign in the API file headers.
+7. Ignored files: the fork's `.gitignore` also ignores `/logs/`, `*.log`, `.mixin.out/` and
+   `mcmodsrepo/`.

@@ -398,6 +398,16 @@ public class MachineRecipeProvider extends RecipeProvider {
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(EIOItems.ENDER_CRYSTAL).build()))
             .save(finishedRecipeConsumer);
 
+        // SkyTekx: the Relocator Obelisk recipe of 8.x (f216165c6), an Aversion Obelisk under prismarine.
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.RELOCATOR_OBELISK.get())
+            .define('P', Items.PRISMARINE)
+            .define('A', MachineBlocks.AVERSION_OBELISK.get())
+            .pattern("P")
+            .pattern("A")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(MachineBlocks.AVERSION_OBELISK.get()).build()))
+            .save(finishedRecipeConsumer);
+
         // SkyTekx: the Vat recipe of 8.x (6bc3ec343), with forge tags for the c: tags.
         ShapedRecipeBuilder
             .shaped(RecipeCategory.MISC, MachineBlocks.VAT.get())

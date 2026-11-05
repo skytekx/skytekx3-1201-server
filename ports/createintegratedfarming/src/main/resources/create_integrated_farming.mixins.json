@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "priority": 1000,
+  "package": "plus.dragons.createintegratedfarming.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "create.BlockBreakingMovementBehaviourMixin",
+    "create.HarvesterMovementBehaviourMixin",
+    "create.SawBlockEntityMixin",
+    "create.SawMovementBehaviourMixin",
+    "create.SeatBlockMixin",
+    "create.TreeCutterMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

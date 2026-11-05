@@ -1,0 +1,65 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "entity/chicken",
+      "prefix": "entity/chicken/"
+    },
+    {
+      "type": "single",
+      "resource": "terra_entity:entity/animal/duck/duck_1"
+    },
+    {
+      "type": "single",
+      "resource": "terra_entity:entity/animal/duck/duck_2"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/duck"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/duck_female"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/duck_campbell"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/duck_pekin"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/goose"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/canadian_goose"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/greylag_goose"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/sus_goose"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/ping_goose"
+    },
+    {
+      "type": "single",
+      "resource": "untitledduckmod:entity/untitled_goose"
+    },
+    {
+      "type": "single",
+      "resource": "environmental:entity/duck/duck"
+    },
+    {
+      "type": "single",
+      "resource": "autumnity:entity/turkey"
+    }
+  ]
+}

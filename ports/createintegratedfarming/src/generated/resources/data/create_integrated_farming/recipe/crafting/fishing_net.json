@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "farmersdelight:safety_net"
+    },
+    "/": {
+      "tag": "c:rods/wooden"
+    },
+    "a": {
+      "item": "create:andesite_alloy"
+    }
+  },
+  "pattern": [
+    "#/",
+    "/a"
+  ],
+  "result": {
+    "count": 2,
+    "id": "create_integrated_farming:fishing_net"
+  }
+}

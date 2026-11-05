@@ -1,0 +1,21 @@
+{
+ "replace": false,
+ "values": [
+  {
+   "id": "minecraft:bastion_remnant",
+   "required": false
+  },
+  {
+   "id": "bygonenether:piglin_manor",
+   "required": false
+  },
+  {
+   "id": "bygonenether:citadel",
+   "required": false
+  },
+  {
+   "id": "bygonenether:catacomb",
+   "required": false
+  }
+ ]
+}

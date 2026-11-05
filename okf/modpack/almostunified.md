@@ -48,14 +48,16 @@ The config lives in [config/almostunified/](../../config/almostunified) (commit 
   `forge:<kind>/{material}`. Since 2026-11-04 it also names `forge:coal_coke`, `forge:silicon` and
   `forge:slag`, tags without a kind that the patterns never reach. Thermal, Immersive Engineering and
   Railcraft each make their own coal coke and slag, and AE2 and Ender IO their own silicon.
-- The list `materials` names 52 materials: aeternium, aluminum, amber, apatite, bitumen, brass,
+- The list `materials` names 53 materials: aeternium, aluminum, amber, apatite, bitumen, brass,
   bronze, charcoal, chrome, cinnabar, coal, coal coke, cobalt, constantan, copper, diamond, electrum,
   elementium, emerald, ender pearl, enderium, fluorite, gold, graphite, invar, iridium, iron,
   knightmetal, lapis, lead, lumium, mithril, netherite, nickel, obsidian, osmium, peridot, platinum,
-  potassium nitrate, quartz, ruby, saltpeter, sapphire, signalum, silver, steel, sulfur, tin, tungsten,
-  uranium, wood and zinc. Ender pearl, knightmetal, quartz, saltpeter and wood joined on 2026-11-04 for
-  the dusts of ender pearl, quartz, saltpeter and wood and the knightmetal ingots and blocks, which two
-  or three mods made each.
+  potassium nitrate, quartz, ruby, salt, saltpeter, sapphire, signalum, silver, steel, sulfur, tin,
+  tungsten, uranium, wood and zinc. Ender pearl, knightmetal, quartz, saltpeter and wood joined on
+  2026-11-04 for the dusts of ender pearl, quartz, saltpeter and wood and the knightmetal ingots and
+  blocks, which two or three mods made each. Salt joined on 2026-11-05 (4b3774b) with the Expanded
+  Delight port, so the salt of that mod and of Pam's Food Core gives way to the Mekanism salt, see
+  [Expanded Delight port](expandeddelight-port.md#pack-fit).
 - The map `priorityOverrides` gives the knightmetal ingots and blocks to Twilight Forest, which would
   lose them to Tinkers' Construct, and silicon to AE2, whose recipes use it most.
 - The map `itemTagInheritance` lets a preferred item take five tags that only its variants had and
@@ -215,12 +217,13 @@ Foregoing recipe take yellorium, and none of them turns it into uranium.
 Extreme Reactors keeps working. Each of its six recipes that ask for the uranium tag has a twin that
 asks for yellorium, and its reactors take yellorium fuel through `forge:ingots/yellorium` as well.
 
+Since 2026-11-04 the pattern is `bigreactors:(?!graphite_).*`. The graphite ingot, dust and block of
+Extreme Reactors take part again and win over those of Tinkers' Reforged, and yellorium stays out.
+
 Extreme Reactors 2.0.97 also lists its deepslate yellorite ore, raw yellorium, the raw yellorium block and
 the yellorium block in the item tags of uranium. Since 2026-11-05 tag_fixes.js takes them out as well.
 Its own recipes name these items directly. A Forge 47.4.18 test boot with Extreme Reactors, ZeroCore,
 Mekanism, Patchouli and KubeJS then listed only Mekanism items in the six uranium tags.
-Since 2026-11-04 the pattern is `bigreactors:(?!graphite_).*`. The graphite ingot, dust and block of
-Extreme Reactors take part again and win over those of Tinkers' Reforged, and yellorium stays out.
 
 ### Limits
 

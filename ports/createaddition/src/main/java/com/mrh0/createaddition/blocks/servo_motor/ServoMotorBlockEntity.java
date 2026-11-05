@@ -5,6 +5,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.mrh0.createaddition.CreateAddition;
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlockEntity;
+import com.mrh0.createaddition.compat.computercraft.Peripherals;
+import com.mrh0.createaddition.compat.computercraft.ServoMotorPeripheral;
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.energy.InternalEnergyStorage;
 import com.mrh0.createaddition.index.CABlocks;
@@ -49,8 +51,9 @@ import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
 // Backported from the 1.21.1 line (upstream a8a51a2, 84c7b2c, 89f01b9, 9dd1b46, a1b6da6). The behaviours
-// write and read without the HolderLookup of 1.21, and the energy capability is a Forge LazyOptional
-// instead of a RegisterCapabilitiesEvent registration.
+// write and read without the HolderLookup of 1.21, and the energy and CC:Tweaked peripheral capabilities
+// are Forge LazyOptionals instead of RegisterCapabilitiesEvent registrations. The peripheral only exists
+// while CC:Tweaked is loaded, so a server without it never loads a CC:Tweaked class.
 public class ServoMotorBlockEntity extends MechanicalBearingBlockEntity {
 
 	static final BehaviourType<ServoMovementMode> MOVEMENT_MODE_TYPE = new BehaviourType<>();
@@ -147,6 +150,7 @@ public class ServoMotorBlockEntity extends MechanicalBearingBlockEntity {
 	protected ServoAngleLimit maxAngle;
 	protected final InternalEnergyStorage energy;
 	private LazyOptional<IEnergyStorage> lazyEnergy;
+	private LazyOptional<ServoMotorPeripheral> lazyPeripheral = null;
 
 	private boolean active = false;
 	private boolean firstTick = true;
@@ -159,6 +163,8 @@ public class ServoMotorBlockEntity extends MechanicalBearingBlockEntity {
 		energy = new InternalEnergyStorage(Config.ELECTRIC_MOTOR_CAPACITY.get(),
 				Config.ELECTRIC_MOTOR_MAX_INPUT.get(), 0);
 		lazyEnergy = LazyOptional.of(() -> energy);
+		if (CreateAddition.CC_ACTIVE)
+			lazyPeripheral = LazyOptional.of(() -> Peripherals.createServoMotorPeripheral(this));
 		setLazyTickRate(20);
 	}
 
@@ -166,6 +172,8 @@ public class ServoMotorBlockEntity extends MechanicalBearingBlockEntity {
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
 		if (cap == ForgeCapabilities.ENERGY)
 			return lazyEnergy.cast();
+		if (CreateAddition.CC_ACTIVE && Peripherals.isPeripheral(cap))
+			return lazyPeripheral.cast();
 		return super.getCapability(cap, side);
 	}
 
@@ -173,6 +181,8 @@ public class ServoMotorBlockEntity extends MechanicalBearingBlockEntity {
 	public void invalidateCaps() {
 		super.invalidateCaps();
 		lazyEnergy.invalidate();
+		if (lazyPeripheral != null)
+			lazyPeripheral.invalidate();
 	}
 
 	// Max angle on the top side, min angle opposite it, movement mode on the remaining two sides.

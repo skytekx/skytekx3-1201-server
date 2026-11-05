@@ -476,3 +476,18 @@ its item here, and the NOTICE in the jar sums them up.
     back at 73.8 degrees, although it had already turned down to 49.8 degrees before the save. The
     goggles show `fe/t` like the fork's Electric Motor instead of the lightning sign of the 1.21.1
     line. The ponder scene and the servo's entries in the ponder tags come with the ponder bundle.
+30. Servo Motor peripheral: upstream `84c7b2c` and `9dd1b46`. With CC:Tweaked loaded, the Servo
+    Motor is a peripheral of the type `servo_motor` with the functions `getSpeed`, `setSpeed`,
+    `getAngle`, `getTargetAngle`, `setTargetAngle`, `getMinAngle`, `setMinAngle`, `getMaxAngle`,
+    `setMaxAngle`, `isAssembled`, `assemble`, `disassemble` and `getEnergyConsumption`, all of them
+    on the main thread. Each setter raises a `LuaException` for a value that is not finite or out of
+    range, and `setSpeed` takes at most the `electric_motor_rpm_range` of the config (256 by
+    default). The class `ServoMotorPeripheral` is upstream's with `Config` for `CommonConfig`. Where
+    1.21 registers it through `RegisterCapabilitiesEvent` in `Peripherals.register`, the block
+    entity hands it out through `getCapability` as a `LazyOptional` made by
+    `Peripherals.createServoMotorPeripheral`, the pattern of the Electric Motor. Only a server with
+    CC:Tweaked creates it, so a server without CC:Tweaked never loads a CC:Tweaked class. The file
+    `COMPUTERCRAFT.md` gains a section Servo Motor, which upstream does not have. The pack's
+    CC:Tweaked 1.120.2 has the same `IPeripheral`, `IComputerAccess`, `LuaFunction`, `LuaException`
+    and `Capabilities.CAPABILITY_PERIPHERAL` as the CC:Tweaked 1.108.1 (CurseMaven file 4740605)
+    that the fork compiles against (javap of both jars).

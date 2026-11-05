@@ -84,8 +84,8 @@ Modifications
     Create's FluidPropagator lets a change to a pipe reach the Electric Pump as it reaches Create's
     own pumps.
   - Servo Motor from the 1.21.1 line: a bearing that turns a contraption to an angle set by
-    redstone on two of its sides and by its Min and Max Angle. It runs on FE and rolls with a
-    wrench.
+    redstone on two of its sides and by its Min and Max Angle. It runs on FE, rolls with a
+    wrench and is a CC:Tweaked peripheral.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

@@ -4,7 +4,7 @@ import com.github.mekanismextramodules.config.ExtraModulesConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 
 public final class ChaosCompatService {
     public static boolean shouldProtectChaosLaser(Player player, DamageSource source) {

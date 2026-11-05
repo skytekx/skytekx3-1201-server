@@ -70,3 +70,22 @@ JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew build -Porg.gradle.java
 ```
 
 The jar is `build/libs/mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar`.
+
+## Source changes
+
+All source changes are dated 2026-11-05. The places where the port had to work differently from
+upstream carry a comment that starts with `SkyTekx port`. The behaviour stays upstream's unless a
+row says otherwise.
+
+| File | Change |
+|---|---|
+| Class `MekanismExtraModules` | Forge 47 entry point: the mod bus from `FMLJavaModLoadingContext`, the server config through `ModLoadingContext`, the game listeners on `MinecraftForge.EVENT_BUS`. |
+| Class `registry.ExtraModuleRegistry` | Forge `DeferredRegister` and `RegistryObject` instead of NeoForge `DeferredHolder`. Mekanism 10.4's builder `ModuleDataBuilder.custom` replaces 10.7's `customInstanced`, and the module item is named through an `IItemProvider`. The creative tab and the IMC to the MekaSuit body armor are upstream's. |
+| Class `registry.ModuleProvider` | New. Mekanism 10.4 takes an `IModuleDataProvider` where 10.7 takes a `Holder<ModuleData<?>>`. This one wraps a module's registry object and takes its id from there, so the module items can be created before the module registry is filled. |
+| Classes `module.PhaseGuardModule`, `module.EmergencyRevivalModule` | The 10.4 signature of `addHUDElements` (module, player, consumer) with the suit stack from the module itself. Energy is a Mekanism `FloatingLong`. |
+| Class `service.EnergyService` | Joules as `FloatingLong`. The module is loaded with `IModuleHelper.load`, and a 10.4 module draws energy from the stack it was loaded from. |
+| Class `service.SuitModuleService` | Module lookups through `IModuleHelper.load` and `IModuleHelper.isEnabled`, because 10.4 has no `IModuleContainer`. Item ids through `ForgeRegistries`. |
+| Class `service.ProtectionService` | Forge 47 events. `TickEvent.PlayerTickEvent` at the end of the server tick replaces `PlayerTickEvent.Post`. Forge 47 has no `EntityInvulnerabilityCheckEvent`, so Phase Guard cancels `LivingAttackEvent` at the highest priority. That event is the first hook of `Player.hurt` and fires after vanilla's own `isInvulnerableTo` check, so no other listener sees the blocked hit. Forge's `LivingDamageEvent` replaces `LivingDamageEvent.Pre`. Mob effects are plain `MobEffect` values in 1.20.1. |
+| Classes `service.ChaosCompatService`, `config.ExtraModulesConfig`, `mixin.ExtraModulesMixinPlugin` | Forge packages: `ModList`, `ForgeConfigSpec` and `LoadingModList`. Same config file, keys, defaults and ranges. |
+| Class `mixin.LaserBeamPhaseMixin` | Still two `@Redirect` injections, on `Player.setHealth` and `Player.die` in `LaserBeamPhase.serverTick`. The two call targets are Minecraft methods, which Forge 1.20.1 runs under SRG names, so their `@At` sets `remap = true` and the refmap maps them to `m_21153_` and `m_6667_`. The method name `serverTick` stays unmapped. Checked against the bytecode of Draconic Evolution 3.1.2.621. |
+| File `mekanism_extra_modules.mixins.json` | Java 17 compatibility level, the refmap, `defaultRequire` 1 so a changed target shows up as an error in the log, and `@Overwrite` forbidden. The config stays not required and keeps upstream's plugin, which skips the mixin without Draconic Evolution. |

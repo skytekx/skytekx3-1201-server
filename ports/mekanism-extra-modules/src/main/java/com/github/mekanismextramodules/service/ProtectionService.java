@@ -3,7 +3,6 @@ package com.github.mekanismextramodules.service;
 import com.github.mekanismextramodules.MekanismExtraModules;
 import com.github.mekanismextramodules.config.ExtraModulesConfig;
 import com.github.mekanismextramodules.data.ExtraModulesPlayerData;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -13,47 +12,58 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.ModList;
 
 public final class ProtectionService {
+    // SkyTekx port: Forge 47 has one PlayerTickEvent with a phase and a side, NeoForge 21 has PlayerTickEvent.Post.
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || event.side != LogicalSide.SERVER) {
+            return;
+        }
+        if (!(event.player instanceof ServerPlayer player)) {
             return;
         }
         updatePhaseGuard(player);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event) {
+    /**
+     * SkyTekx port: Forge 47 has no EntityInvulnerabilityCheckEvent. LivingAttackEvent is the first hook in
+     * {@code Player.hurt}, after vanilla's own {@code isInvulnerableTo} check of {@code ServerPlayer.hurt},
+     * so canceling it at the highest priority makes the player invulnerable before any other listener sees
+     * the hit, as the NeoForge invulnerability check did.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onAttack(LivingAttackEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         if (isPhaseGuardActive(player)) {
-            event.setInvulnerable(true);
-            if (!event.getOriginalInvulnerability()) {
-                if (ExtraModulesConfig.PHASE_SET_INVULNERABLE_TIME.get()) {
-                    player.invulnerableTime = Math.max(player.invulnerableTime, ExtraModulesConfig.PHASE_INVULNERABILITY_TICKS.get());
-                }
-                logProtection("Blocked damage from {}", event.getSource().getMsgId());
+            event.setCanceled(true);
+            if (ExtraModulesConfig.PHASE_SET_INVULNERABLE_TIME.get()) {
+                player.invulnerableTime = Math.max(player.invulnerableTime, ExtraModulesConfig.PHASE_INVULNERABILITY_TICKS.get());
             }
+            logProtection("Blocked damage from {}", event.getSource().getMsgId());
         }
     }
 
+    // SkyTekx port: Forge 47's LivingDamageEvent is NeoForge 21's LivingDamageEvent.Pre, the damage after armor
+    // and absorption, just before health drops.
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onDamagePre(LivingDamageEvent.Pre event) {
+    public static void onDamage(LivingDamageEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         if (isPhaseGuardActive(player)) {
-            event.setNewDamage(0.0F);
+            event.setAmount(0.0F);
             stabilizePhaseGuard(player);
         }
     }
@@ -148,7 +158,7 @@ public final class ProtectionService {
         stabilizeRevival(player);
         if (ExtraModulesConfig.REVIVAL_CURE_HARMFUL_EFFECTS.get()) {
             player.getActiveEffects().stream()
-                    .filter(effect -> effect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
+                    .filter(effect -> effect.getEffect().getCategory() == MobEffectCategory.HARMFUL)
                     .map(MobEffectInstance::getEffect)
                     .toList()
                     .forEach(player::removeEffect);
@@ -191,7 +201,7 @@ public final class ProtectionService {
         player.invulnerableTime = Math.max(player.invulnerableTime, ExtraModulesConfig.REVIVAL_INVULNERABILITY_TICKS.get());
     }
 
-    private static void addEffect(ServerPlayer player, Holder<MobEffect> effect, int duration, int amplifier) {
+    private static void addEffect(ServerPlayer player, MobEffect effect, int duration, int amplifier) {
         if (duration > 0) {
             player.addEffect(new MobEffectInstance(effect, duration, amplifier));
         }

@@ -60,12 +60,25 @@ public class CreateAddition {
 
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(CreateAddition.MODID);
 
-    private static final String PROTOCOL = "1";
+    // SkyTekx: protocol "2" marks the backport. Upstream's 1.20.1 builds up to 1.3.3 use "1" and the
+    // channel accepts only its own version, so a client and a server of different builds get a clean
+    // refusal at login instead of a desync. The backport adds packets, the charging recipe format
+    // and new registry entries, so the server and the pack update together. Bump it again whenever a
+    // packet id, a packet layout or a synced registry changes.
+    private static final String PROTOCOL = "2";
 	public static final SimpleChannel Network = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(MODID, "main"))
             .clientAcceptedVersions(PROTOCOL::equals)
             .serverAcceptedVersions(PROTOCOL::equals)
             .networkProtocolVersion(() -> PROTOCOL)
             .simpleChannel();
+
+    // SkyTekx: message ids of the channel createaddition:main. Ids 0 and 1 are upstream's 1.20.1 ids.
+    // Id 2 is reserved for TimeRemainingPacket, the 1.20.1 form of the 1.21.1 TimeRemainingPacketPayload
+    // (54cf0c9), which answers ObservePacket with the burn and charge time left. Never reuse or
+    // renumber an id. ConsProdSyncPacket stays unregistered, as upstream leaves it.
+    public static final int PACKET_OBSERVE = 0;
+    public static final int PACKET_ENERGY_NETWORK = 1;
+    public static final int PACKET_TIME_REMAINING = 2;
 
     static {
         REGISTRATE.setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
@@ -122,8 +135,8 @@ public class CreateAddition {
     }
 
     public void postInit(FMLLoadCompleteEvent evt) {
-        Network.registerMessage(0, ObservePacket.class, ObservePacket::encode, ObservePacket::decode, ObservePacket::handle);
-        Network.registerMessage(1, EnergyNetworkPacket.class, EnergyNetworkPacket::encode, EnergyNetworkPacket::decode, EnergyNetworkPacket::handle);
+        Network.registerMessage(PACKET_OBSERVE, ObservePacket.class, ObservePacket::encode, ObservePacket::decode, ObservePacket::handle);
+        Network.registerMessage(PACKET_ENERGY_NETWORK, EnergyNetworkPacket.class, EnergyNetworkPacket::encode, EnergyNetworkPacket::decode, EnergyNetworkPacket::handle);
 
         BoilerHeater.REGISTRY.register(CABlocks.LIQUID_BLAZE_BURNER.get(), (level, pos, state) -> {
             BlazeBurnerBlock.HeatLevel value = state.getValue(LiquidBlazeBurnerBlock.HEAT_LEVEL);

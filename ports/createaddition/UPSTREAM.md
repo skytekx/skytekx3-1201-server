@@ -421,3 +421,12 @@ its item here, and the NOTICE in the jar sums them up.
     those of the other CC&A blocks of this fork, where upstream writes a lightning sign, and a placed
     pump takes `powered` from its neighbours at once, where upstream waits for the next neighbour
     update. The ponder scene `electric_pump_flow` of `562d383` belongs to the ponders bundle.
+    One local fix needs a fourth mixin into Create. A change to a pipe makes Create's
+    `FluidPropagator.propagateChangedPipe` wipe the pressure of the whole pipe network and then ask
+    the pumps it meets to spread theirs again, but in Create 6.0.8 for 1.20.1 it only asks a block
+    entity whose block is `AllBlocks.MECHANICAL_PUMP` (javap of the method). A test server showed
+    the Electric Pump keep its own pressure while its pipes had none and no fluid moved, after a
+    flip of the pump and after the pipe at its face was replaced, until its speed changed. The
+    mixin `mixin/FluidPropagatorMixin` wraps that `BlockEntry.has` call with `@WrapOperation` and
+    also accepts the Electric Pump. It sets `remap = false` like the other Create mixins, and
+    Arclight does not patch Create.

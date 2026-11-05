@@ -1,0 +1,35 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="${mod_license}"
+issueTrackerURL="https://github.com/skytekx/skytekx3-1201-server/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+logoFile="logo.png"
+displayURL="https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/expandeddelight"
+authors="${mod_authors}"
+credits="Unofficial, modified Forge 1.20.1 port by SkyTekx of Expanded Delight 0.1.4 for NeoForge 1.21.1 (https://github.com/ianm1647/expandeddelight), not supported by its author. Parts follow Farmer's Delight by vectorwing (MIT). See NOTICE_expandeddelight. Source of this build: https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/expandeddelight"
+description='''${mod_description}'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="farmersdelight"
+    mandatory=true
+    versionRange="[${fd_version},)"
+    ordering="AFTER"
+    side="BOTH"

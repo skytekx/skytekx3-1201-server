@@ -1,0 +1,66 @@
+Expanded Delight, unofficial modified build for Forge 1.20.1
+============================================================
+
+This is an UNOFFICIAL, MODIFIED build of Expanded Delight. Its author does not
+support it. Report problems with it at
+https://github.com/skytekx/skytekx3-1201-server/issues, not upstream.
+
+Original work
+-------------
+  Expanded Delight by ianm1647
+  Source:  https://github.com/ianm1647/expandeddelight
+  Content: branch 1.21-neo @ ea826400654702587e86c9e94544bfd74f065083
+           (2026-08-25, Expanded Delight 0.1.4 for NeoForge 1.21.1)
+  API reference for Minecraft 1.20.1: branch 1.20 @ 8d8fe44d9b4cba54c47f84c5836872a803388cb2
+           (2026-01-14, Expanded Delight 0.4.0 for Fabric 1.20.1)
+
+Modifications
+-------------
+  Modified by SkyTekx in 2026 for the SkyTekx 3 modpack. The build runs on
+  Minecraft 1.20.1 with Forge 47, keeps the mod id expandeddelight and is versioned
+  0.1.4-skytekx.1.
+
+  - The content of 0.1.4 is ported from the NeoForge 1.21.1 API to Forge 1.20.1:
+    data components became item stack NBT, NeoForge capabilities and events became
+    Forge capabilities and events, and the data files use the 1.20.1 folder names,
+    formats and forge: tags.
+  - Bugs of 0.1.4 that this build fixes and the parts it leaves out are listed in
+    UPSTREAM.md in the source directory.
+
+  Source: the directory ports/expandeddelight of
+    https://github.com/skytekx/skytekx3-1201-server
+  The exact source of a given jar is that directory at the commit that added the
+  jar to local-mods/.
+
+Upstream files left out and replaced
+------------------------------------
+  The 1.21-neo branch contains material of Farmer's Respite, which is All Rights
+  Reserved on CurseForge and Modrinth and has no public source. This build leaves
+  it out:
+  - textures/gui/juicer.png and textures/gui/jei/juicer.png, a juicer GUI sheet
+    built on the kettle sheet of Farmer's Respite. The juicer screen uses the
+    author's own textures/gui/juicer_gui.png of the 1.20 branch (commit
+    50e9c102aaa44dedae924ee1dc381af17aaa3d69, 2022) instead.
+  - textures/item/empty_container_slot_bottle.png, a byte copy of a Farmer's
+    Respite icon. The bottle slot needs no icon, the 1.20 sheet draws one.
+  - common/block/entity/container/JuicerMenu.java, decompiled from the KettleMenu
+    of Farmer's Respite. This build has a new JuicerMenu, written from the
+    CookingPotMenu of Farmer's Delight (MIT) with slot positions that match the
+    1.20 sheet.
+  It also leaves out three unused textures that copy other work: the vanilla
+  item/glass_bottle.png and item/sweet_berries.png, and block/rice_bag_bottom.png
+  of Farmer's Delight.
+
+Licenses
+--------
+  - Expanded Delight declares the MIT License (mods.toml of 0.1.4, Modrinth and
+    CurseForge). The author's MIT text, "Copyright (c) 2022 ianm1647", ships as
+    LICENSE-MIT_expandeddelight. The root LICENSE of the 1.20 branch is CC0 1.0
+    Universal and ships unchanged as LICENSE_expandeddelight.
+  - Farmer's Delight by vectorwing, MIT License, "Copyright (c) 2020 vectorwing".
+    Expanded Delight takes art and code from it: the juicer block entity, screen,
+    recipe and menu follow its cooking pot classes, the JEI fermenting sheet is
+    derived from its decomposition sheet, and several textures recolor its art.
+    Its license text ships as LICENSE_farmersdelight.
+  - The NeoForged MDK template files are MIT, "Copyright (c) 2023 NeoForged
+    project", see TEMPLATE_LICENSE_expandeddelight.txt.

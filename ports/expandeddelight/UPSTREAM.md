@@ -1,0 +1,96 @@
+# Upstream: Expanded Delight (Forge 1.20.1 port)
+
+This directory is a plain source snapshot (`git archive`, no nested `.git`) of Expanded Delight, the
+base of the SkyTekx port of its NeoForge 1.21.1 line to Forge 1.20.1. Changes made on top of the
+snapshot are separate commits in this repository's history (`git log -- ports/expandeddelight`).
+
+| Item | Value |
+|---|---|
+| Repository | https://github.com/ianm1647/expandeddelight |
+| Content ref | Branch `1.21-neo` |
+| Commit | `ea826400654702587e86c9e94544bfd74f065083` ("fix workspace") |
+| Commit date | 2026-08-25T14:55:01-05:00 |
+| Upstream version | `mod_version=0.1.4` (Minecraft 1.21.1, NeoForge 21.1.218, Farmer's Delight 1.21.1-1.2.6) |
+| Release | Modrinth version `RTRYPIJp` (0.1.4-neoforge, `expandeddelight-0.1.4.jar`), built from `28d9561714a176eb10ae0c425fcee18ad8e6b3b1` on the same branch |
+| API reference | Branch `1.20` @ `8d8fe44d9b4cba54c47f84c5836872a803388cb2` (2026-01-14, 0.4.0 for Fabric 1.20.1) |
+| Not used | Branch `1.21-rework` @ `5ef645b2f68eb19ab337233932a0912cfd4fa29f` (0.2.0), an emptied restart whose commits say "complete emptiness" and "content cut" |
+
+## Why 1.21-neo
+
+The 1.20 branch is the Fabric line for Minecraft 1.20.1. It has 44 item names, among them the
+mortar and pestle, ground cinnamon and ground salt. The 1.21-neo line has 99 items and adds the
+cinnamon wood set with boats, signs and a cabinet, casks and cheese wheels, goat milk, cranberries,
+peanuts, crates, salt ore and many dishes, so it is the newest complete content set. The 1.20 code
+shows the 1.20.1 shapes of the vanilla API, but it is written for Fabric, so the port takes the
+Forge 1.20.1 forms from Farmer's Delight 1.20.1 instead, which is a required dependency.
+
+## Files left out of the snapshot
+
+Every file in the snapshot is byte identical to `git archive ea82640`, except these seven, which
+never entered git here:
+
+| Upstream file | Why |
+|---|---|
+| File `src/main/resources/assets/expandeddelight/textures/gui/juicer.png` | Built on the kettle sheet of Farmer's Respite (All Rights Reserved), sha1 `2a2bffad` |
+| File `src/main/resources/assets/expandeddelight/textures/gui/jei/juicer.png` | The same file as the one above |
+| File `src/main/resources/assets/expandeddelight/textures/item/empty_container_slot_bottle.png` | Byte identical to the icon of Farmer's Respite since 1.16.5, sha1 `64863cf1` |
+| File `src/main/java/ianm1647/expandeddelight/common/block/entity/container/JuicerMenu.java` | Decompiled from the `KettleMenu` of Farmer's Respite. It keeps an SRG method name and the kettle's slot constants |
+| File `src/main/resources/assets/expandeddelight/textures/item/glass_bottle.png` | Byte copy of the vanilla texture, used by no model |
+| File `src/main/resources/assets/expandeddelight/textures/item/sweet_berries.png` | Pixel copy of the vanilla texture, used by no model |
+| File `src/main/resources/assets/expandeddelight/textures/block/rice_bag_bottom.png` | Byte copy of the Farmer's Delight texture. The cranberry bag model already points at `farmersdelight:block/rice_bag_bottom` |
+
+The license review behind this list compared every texture with Farmer's Delight, Farmer's Respite,
+Brewin' and Chewin', Cultural Delights, Delightful, Pam's HarvestCraft 2, Twilight Delight, Farming
+for Blockheads and vanilla 1.20.1. Croptopia was not compared, because it is not on Modrinth. Code
+provenance was checked in depth only for the juicer.
+
+## License
+
+- Expanded Delight declares MIT: `mod_license=MIT` in `gradle.properties` of 1.21-neo, `license="MIT"`
+  in the mods.toml of the 0.1.4 jar, MIT on Modrinth (project `e9V6wFcR`) and on CurseForge (project
+  620770). Neither 1.21-neo nor 1.21-rework has a LICENSE file.
+- The file `LICENSE-MIT` is the author's own MIT text, `Copyright (c) 2022 ianm1647`, from branch 1.19, commit
+  `6c73c9877dbf59f310630080f11971dba25c8b0b` (2022-06-10). MIT is treated as the governing license,
+  since it has conditions and CC0 has none.
+- The file `LICENSE` is the root LICENSE of branch 1.20 at `8d8fe44`, CC0 1.0 Universal, unchanged. It came in
+  with commit `afa8a30` (2024-09-10) together with the stock Fabric example README.
+- The file `LICENSE_farmersdelight` is the MIT text of Farmer's Delight, `Copyright (c) 2020 vectorwing`, from
+  its branch 1.20 (also the same text on 1.21). Expanded Delight copies or derives Farmer's Delight
+  work: its juicer block entity, screen and recipe follow the cooking pot classes, `jei/fermenting.png`
+  matches 96 percent of the custom pixels of `jei/decomposition.png`, and textures such as
+  `cinnamon_rice`, `cranberry_juice`, `goat_milk_bottle` and the cinnamon cabinet recolor its art.
+- The file `TEMPLATE_LICENSE.txt` is upstream's MIT text for the NeoForged MDK template files. It stays,
+  because `pack.mcmeta` and `.gitattributes` come from that template.
+- The jar carries all four texts and the `NOTICE` of this build: `LICENSE-MIT_expandeddelight`,
+  `LICENSE_expandeddelight`, `LICENSE_farmersdelight`, `TEMPLATE_LICENSE_expandeddelight.txt` and
+  `NOTICE_expandeddelight`.
+- Every commit reachable from 1.21-neo is by the author (25 as ianm1647, 1 as ianmc with the same
+  email). This port takes no translation, tag or recipe from the 1.20 branch, which has about 20
+  outside contributors. The only 1.20 file it uses is the author's juicer GUI sheet.
+
+## Build changes
+
+The snapshot builds with ModDevGradle for NeoForge 1.21.1 on Java 21. The port replaces that setup
+with the one of `../skytekx-defixes`.
+
+1. The Gradle wrapper files `gradlew`, `gradlew.bat` and `gradle/wrapper/` are the copies that the other
+   ports of this repository use (wrapper jar SHA-256 `33ad4583...`, Gradle 8.2.1).
+2. The file `build.gradle` uses ForgeGradle 6.0.21 (`net.neoforged.gradle`), Parchment 2023.07.30-1.20.1,
+   NeoForged Forge 47.1.70 userdev, MixinGradle 0.7.38 and Java 17. Farmer's Delight comes from the
+   Modrinth CDN as the exact file of the pack's `modrinth.index.json`, and `verifyPackJars` checks its
+   SHA-1 before the compile, as do KubeJS, Rhino and Architectury, which are compile only. The JEI
+   API 15.20.0.106 is compile only from maven.blamejared.com.
+3. The file `settings.gradle` sets `rootProject.name = 'expandeddelight'`.
+4. The version is `mod_version=0.1.4-skytekx.1`. The jar is `expandeddelight-0.1.4-skytekx.1.jar`.
+5. The jar is reproducible. The `jar` task sets `preserveFileTimestamps = false` and
+   `reproducibleFileOrder = true`. Two clean builds of the same commit give the same SHA-1.
+6. A new `META-INF/mods.toml` replaces `neoforge.mods.toml`. It requires Forge 47, Minecraft 1.20.1 and
+   Farmer's Delight 1.20.1-1.3.4 or newer, points `issueTrackerURL` and `displayURL` at this
+   repository and credits the author. `enumextensions.json` is gone, Forge 1.20.1 extends enums
+   through `IExtensibleEnum`.
+
+Build check (from this directory):
+
+```
+JAVA_HOME=/opt/jdk17 PATH=/opt/jdk17/bin:$PATH ./gradlew build -Porg.gradle.java.installations.paths=/opt/jdk17 -Dorg.gradle.jvmargs=-Xmx2g --console=plain -q
+```

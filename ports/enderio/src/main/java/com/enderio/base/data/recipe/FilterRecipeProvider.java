@@ -1,6 +1,7 @@
 package com.enderio.base.data.recipe;
 
 import com.enderio.base.common.init.EIOItems;
+import com.enderio.base.common.tag.EIOTags;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -38,6 +39,26 @@ public class FilterRecipeProvider extends RecipeProvider {
             .pattern("PZP")
             .pattern("RPR")
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.Z_LOGIC_CONTROLLER))
+            .save(consumer);
+
+        // SkyTekx: the big filter recipes of Ender IO 8.x (a829f16dd), with the paper or black paper of the 6.x filters.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EIOItems.BIG_ITEM_FILTER.get())
+            .define('P', Ingredient.of(Items.PAPER, EIOItems.BLACK_PAPER))
+            .define('S', EIOItems.SKELETAL_CONTRACTOR)
+            .define('D', EIOTags.Items.DUSTS_OBSIDIAN)
+            .pattern("DPD")
+            .pattern("PSP")
+            .pattern("DPD")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.SKELETAL_CONTRACTOR))
+            .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EIOItems.BIG_ADVANCED_ITEM_FILTER.get())
+            .define('S', Items.SHULKER_SHELL)
+            .define('F', EIOItems.ADVANCED_ITEM_FILTER)
+            .pattern("S")
+            .pattern("F")
+            .pattern("S")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.ADVANCED_ITEM_FILTER))
             .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, EIOItems.BASIC_FLUID_FILTER.get())

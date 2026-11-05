@@ -4,6 +4,7 @@ import com.enderio.EnderIO;
 import com.enderio.api.capacitor.CapacitorModifier;
 import com.enderio.api.misc.ApiLang;
 import com.enderio.base.common.block.glass.GlassLighting;
+import com.enderio.core.common.capability.DamageFilterMode;
 import com.enderio.core.common.util.TooltipUtil;
 import com.tterrag.registrate.Registrate;
 import net.minecraft.network.chat.Component;
@@ -175,6 +176,7 @@ public class EIOLang {
     public static final Component BLACKLIST_FILTER = REGISTRATE.addLang("gui", EnderIO.loc("filter.blacklist"), "BlackList");
     public static final Component NBT_FILTER = REGISTRATE.addLang("gui", EnderIO.loc("filter.nbt"), "Match NBT");
     public static final Component NO_NBT_FILTER = REGISTRATE.addLang("gui", EnderIO.loc("filter.nonbt"), "Ignore NBT");
+    public static final Component DAMAGE_FILTER = REGISTRATE.addLang("gui", EnderIO.loc("filter.damage_filter"), "Damage Filter");
 
     public static final Component IOCONFIG = REGISTRATE.addLang("gui", EnderIO.loc("ioconfig"), "IO Configuration");
     public static final Component TOGGLE_NEIGHBOUR = REGISTRATE.addLang("gui", EnderIO.loc("ioconfig.neighbour"), "Show/Hide Neighbours");
@@ -281,6 +283,29 @@ public class EIOLang {
         }
     }
 
+    // region Damage Filter Modes
+
+    private static void registerDamageFilterModeLang() {
+        for (DamageFilterMode mode : DamageFilterMode.values()) {
+            String english = switch (mode) {
+                case IGNORE -> "Ignore Damage";
+                case UP_TO_25 -> "Up to 25%% Damaged";
+                case MORE_THAN_25 -> "More than 25%% Damaged";
+                case UP_TO_50 -> "Up to 50%% Damaged";
+                case MORE_THAN_50 -> "More than 50%% Damaged";
+                case UP_TO_75 -> "Up to 75%% Damaged";
+                case MORE_THAN_75 -> "More than 75%% Damaged";
+                case NOT_DAMAGED -> "Not Damaged";
+                case ONLY_DAMAGED -> "Only Damaged";
+                case IS_DAMAGEABLE -> "Can Be Damaged";
+                case NOT_DAMAGEABLE -> "Cannot Be Damaged";
+            };
+            REGISTRATE.addRawLang(mode.getTranslationKey(), english);
+        }
+    }
+
+    // endregion
+
     private static String createEnglishPrefix(DyeColor color) {
         StringBuilder builder = new StringBuilder();
         boolean nextUpper = true;
@@ -308,5 +333,6 @@ public class EIOLang {
         ApiLang.REDSTONE_ACTIVE_WITHOUT_SIGNAL = REDSTONE_ACTIVE_WITHOUT_SIGNAL;
 
         registerGlassLang();
+        registerDamageFilterModeLang();
     }
 }

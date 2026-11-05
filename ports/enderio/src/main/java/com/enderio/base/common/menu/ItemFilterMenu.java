@@ -4,6 +4,7 @@ import com.enderio.api.filter.ResourceFilter;
 import com.enderio.base.common.init.EIOCapabilities;
 import com.enderio.base.common.init.EIOMenus;
 import com.enderio.base.common.network.FilterUpdatePacket;
+import com.enderio.core.common.capability.DamageFilterMode;
 import com.enderio.core.common.capability.ItemFilterCapability;
 import com.enderio.core.common.menu.ItemFilterSlot;
 import com.enderio.core.common.network.CoreNetwork;
@@ -23,6 +24,18 @@ import java.util.List;
 
 public class ItemFilterMenu extends AbstractContainerMenu {
 
+    /**
+     * Menu button ids for the damage modes: this id plus the ordinal of the mode. The screen sends them through
+     * the vanilla container button packet, which checks the container id and stillValid on the server.
+     */
+    public static final int DAMAGE_MODE_BUTTON_ID = 16;
+
+    /**
+     * Filters with more slots than this use the 8.x layout of rows of 9 (EnderItemFilterMenu),
+     * smaller ones keep the 6.x layout of rows of 5.
+     */
+    public static final int MAX_SMALL_LAYOUT_SIZE = 10;
+
     private final ItemStack stack;
     private final ItemFilterCapability capability;
 
@@ -40,11 +53,28 @@ public class ItemFilterMenu extends AbstractContainerMenu {
 
         }).orElseThrow(IllegalArgumentException::new);
 
-        for (int i = 0; i < capability.size(); i++) {
-            int pSlot = i;
-            addSlot(new ItemFilterSlot(() -> capability.getEntry(pSlot), stack2 -> capability.setEntry(pSlot, stack2) ,i ,14 + ( i % 5) * 18, 35 + 20 * ( i / 5)));
+        if (isBigLayout(capability.size())) {
+            // 8.x EnderItemFilterMenu: rows of 9 from y 27, the player inventory at 45 + rows * 18.
+            for (int i = 0; i < capability.size(); i++) {
+                int pSlot = i;
+                addSlot(new ItemFilterSlot(() -> capability.getEntry(pSlot), stack2 -> capability.setEntry(pSlot, stack2), i, 14 + (i % 9) * 18, 27 + 18 * (i / 9)));
+            }
+            addInventorySlots(14, 45 + rowCount(capability.size()) * 18, inventory);
+        } else {
+            for (int i = 0; i < capability.size(); i++) {
+                int pSlot = i;
+                addSlot(new ItemFilterSlot(() -> capability.getEntry(pSlot), stack2 -> capability.setEntry(pSlot, stack2) ,i ,14 + ( i % 5) * 18, 35 + 20 * ( i / 5)));
+            }
+            addInventorySlots(14,119, inventory);
         }
-        addInventorySlots(14,119, inventory);
+    }
+
+    public static boolean isBigLayout(int size) {
+        return size > MAX_SMALL_LAYOUT_SIZE;
+    }
+
+    public static int rowCount(int size) {
+        return (size + 8) / 9;
     }
 
     public ItemFilterMenu(int pContainerId, Inventory inventory, ItemStack stack) {
@@ -109,6 +139,19 @@ public class ItemFilterMenu extends AbstractContainerMenu {
     public void setInverted(Boolean inverted) {
         CoreNetwork.sendToServer(new FilterUpdatePacket(capability.isNbt(), inverted));
         capability.setInverted(inverted);
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        int modeId = id - DAMAGE_MODE_BUTTON_ID;
+        if (modeId >= 0 && modeId < DamageFilterMode.values().length) {
+            if (capability.canFilterByDamage()) {
+                capability.setDamageMode(DamageFilterMode.byId(modeId));
+            }
+            return true;
+        }
+
+        return super.clickMenuButton(player, id);
     }
 
     @Override

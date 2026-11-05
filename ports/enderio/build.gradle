@@ -213,6 +213,8 @@ repositories { RepositoryHandler handler ->
     exclusiveRepo(handler, "https://squiddev.cc/maven/", "cc.tweaked")
     exclusiveRepo(handler, 'https://maven.creeperhost.net/', 'com.refinedmods')
     exclusiveRepo(handler, 'https://maven.rover656.dev/releases/', 'dev.gigaherz.graph')
+    // SkyTekx: Curios, an optional dependency of the backported charm slot support
+    exclusiveRepo(handler, 'https://maven.theillusivec4.top/', 'top.theillusivec4.curios')
 
     mavenLocal()
 }
@@ -307,6 +309,10 @@ dependencies {
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cctVersion")
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cctVersion")
     localRuntime(fg.deobf("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cctVersion"))
+
+    // SkyTekx: Curios (optional at runtime), the version that the pack ships
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    localRuntime fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Jetbrains annotations
     compileOnly 'org.jetbrains:annotations:23.0.0'

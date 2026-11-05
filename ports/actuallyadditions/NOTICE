@@ -45,6 +45,9 @@ Modifications
       with cutout, and crushing recipes with one output no longer list an empty second one.
     * Client: the empty ClientRegistryHandler is gone (upstream registered it on the wrong
       event bus and later deleted it).
+    * Tags: black quartz, its ore and block, the crystal blocks, the four crops and their seeds,
+      the rice slimeball, stairs, slabs, walls and the AIOTs carry the forge: and vanilla tags of
+      upstream's newer lines, with each c: tag of upstream's main branch mapped to its Forge name.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

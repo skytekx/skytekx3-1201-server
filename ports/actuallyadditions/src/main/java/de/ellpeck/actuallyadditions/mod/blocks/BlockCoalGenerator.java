@@ -67,15 +67,6 @@ public class BlockCoalGenerator extends DirectionalBlock.Container {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(FACING)) {
-            case EAST:
-                return VoxelShapes.CoalGeneratorShapes.EAST;
-            case SOUTH:
-                return VoxelShapes.CoalGeneratorShapes.SOUTH;
-            case WEST:
-                return VoxelShapes.CoalGeneratorShapes.WEST;
-            default:
-                return VoxelShapes.CoalGeneratorShapes.NORTH;
-        }
+        return VoxelShapes.SIMPLE_GENERATOR_SHAPE;
     }
 }

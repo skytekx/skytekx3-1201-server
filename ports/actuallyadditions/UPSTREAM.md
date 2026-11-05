@@ -630,3 +630,22 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and declares MIT, and neither ref has a separate asset license. Nobody confirmed this with the
     artist. The `runData` output of this change differs from the committed one only in the nine
     crop models and the `.cache` file of the blockstate provider.
+19. Block shapes: `mod/blocks/VoxelShapes.java` is the file of `main` at `cd9d9c6`, and a block
+    overrides `getShape` exactly where `main` does. The retexture models of the crusher, double
+    crusher, energizer, enervator, farmer, feeder, fluid collector and placer, item interface,
+    lamp controller, lava factory controller, leaf generator, long range breaker, player
+    interface, powered furnace, ranged collector, vertical digger and experience solidifier fill
+    the block, so `6686f1f` and `9cf9601` dropped their detailed shapes and these blocks use the
+    full cube. The base still gave them shapes of the old models. The coal and oil generators
+    share `SIMPLE_GENERATOR_SHAPE` (`6686f1f`, `2bea730`), the display stand and the empowerer
+    `SIMPLE_STAND_SHAPE` (`2bea730`), and the Phantom Booster is one 6 by 16 by 6 pillar (`6686f1f`,
+    `2cadd9e`). The canola press, battery box, fermenting barrel, firework box, greenhouse glass,
+    heat collector, hopping item interface, shock suppressor, coffee machine and laser relays get
+    the shapes of their new models (`4721f51`, `9cf9601`). The coffee machine and the laser relays
+    build their other facings from one shape with rotation helpers (`2bb53e5`, `00d2dc6`) instead
+    of hand written copies, which let `a2ab76c` cut the file from 1816 to 354 lines. The nested
+    class `VoxelShapeUtils` holds those helpers. Upstream's comment in the file says they are
+    taken from Mekanism (MIT, commit `46bc2dc` of Mekanism), so the NOTICE carries Mekanism's
+    copyright and permission notice. The class `CrystalClusterShapes` gets its reader with source
+    change 20. Not ported from `6686f1f`: its change to `AllInOneTool.useOn`, which fixes the AIOT
+    till and flatten code of `4d3ba55` that comes with the AIOT fixes.

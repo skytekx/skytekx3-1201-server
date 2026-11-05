@@ -15,14 +15,11 @@ import de.ellpeck.actuallyadditions.mod.tile.TileEntityPlayerInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
@@ -57,10 +54,5 @@ public class BlockPlayerInterface extends BlockContainerBase implements IHudDisp
         }
 
         super.setPlacedBy(world, pos, state, player, stack);
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        return VoxelShapes.PLAYER_INTERFACE_SHAPE;
     }
 }

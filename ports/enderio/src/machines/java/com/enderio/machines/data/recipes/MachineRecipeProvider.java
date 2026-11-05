@@ -470,5 +470,16 @@ public class MachineRecipeProvider extends RecipeProvider {
             .pattern("CEC")
             .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.SENTIENT_ENDER.get()))
             .save(finishedRecipeConsumer);
+
+        // SkyTekx: the Mind Killer of 84bfe2477, with forge tags for the c: tags.
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, MachineBlocks.MIND_KILLER.get())
+            .define('S', EIOTags.Items.INGOTS_SOULARIUM)
+            .define('Z', EIOItems.ZOMBIE_ELECTRODE.get())
+            .define('E', EIOTags.Items.INGOTS_ENERGETIC_ALLOY)
+            .pattern(" Z ")
+            .pattern("SES")
+            .unlockedBy("has_ingredient", InventoryChangeTrigger.TriggerInstance.hasItems(EIOItems.ZOMBIE_ELECTRODE.get()))
+            .save(finishedRecipeConsumer);
     }
 }

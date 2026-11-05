@@ -167,7 +167,9 @@ its item here, and the NOTICE in the jar sums them up.
    damage types ask. The base used `attack.death.createaddition.*` or keys without the namespace.
    Upstream `ced6d21` fixed en_us only.
 9. The Electric Motor peripheral throws a `LuaException` for a non finite speed, angle or
-   distance, and the motor ignores a non finite rpm (`9dd1b46`). The Digital Adapter peripheral
+   distance, and the motor ignores a non finite rpm (`9dd1b46`). Unlike upstream, `setSpeed`
+   clamps the speed to `electric_motor_rpm_range` before the cast to float, so a finite value
+   beyond the float range still means full speed. The Digital Adapter peripheral
    returns floats instead of ints for stress, capacity, speed, pulley and piston distance and the
    bearing angle (`393c51f`), which Lua scripts see.
 10. Barbed wire is waterloggable (`7a66e82`) and wrenchable (`a44784e`). The new block state

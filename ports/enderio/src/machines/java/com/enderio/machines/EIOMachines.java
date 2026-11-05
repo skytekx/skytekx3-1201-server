@@ -24,6 +24,7 @@ import com.enderio.machines.common.travel.AnchorTravelTarget;
 import com.enderio.machines.data.advancements.MachinesAdvancementGenerator;
 import com.enderio.machines.data.recipes.AlloyRecipeProvider;
 import com.enderio.machines.data.recipes.EnchanterRecipeProvider;
+import com.enderio.machines.data.recipes.FermentingRecipeProvider;
 import com.enderio.machines.data.recipes.MachineRecipeProvider;
 import com.enderio.machines.data.recipes.PaintingRecipeProvider;
 import com.enderio.machines.data.recipes.SagMillRecipeProvider;
@@ -32,6 +33,7 @@ import com.enderio.machines.data.recipes.SoulBindingRecipeProvider;
 import com.enderio.machines.data.recipes.TankRecipeProvider;
 import com.enderio.machines.data.souldata.SoulDataProvider;
 import com.enderio.machines.data.tag.MachineEntityTypeTagsProvider;
+import com.enderio.machines.data.tag.MachineItemTagsProvider;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -99,6 +101,7 @@ public class EIOMachines {
         provider.addSubProvider(event.includeServer(), new MachineRecipeProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new AlloyRecipeProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new EnchanterRecipeProvider(packOutput));
+        provider.addSubProvider(event.includeServer(), new FermentingRecipeProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new SagMillRecipeProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new SlicingRecipeProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new SoulBindingRecipeProvider(packOutput));
@@ -106,6 +109,7 @@ public class EIOMachines {
         provider.addSubProvider(event.includeServer(), new PaintingRecipeProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new SoulDataProvider(packOutput));
         provider.addSubProvider(event.includeServer(), new MachineEntityTypeTagsProvider(packOutput, completablefuture, event.getExistingFileHelper()));
+        provider.addSubProvider(event.includeServer(), new MachineItemTagsProvider(packOutput, completablefuture, event.getExistingFileHelper()));
 
         generator.addProvider(true, provider);
         provider.addSubProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput, event.getLookupProvider(), event.getExistingFileHelper(),

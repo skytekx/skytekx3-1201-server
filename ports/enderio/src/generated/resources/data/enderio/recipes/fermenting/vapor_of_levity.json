@@ -1,0 +1,14 @@
+{
+  "type": "enderio:vat_fermenting",
+  "input": {
+    "amount": 1000,
+    "fluid": "enderio:dew_of_the_void"
+  },
+  "left_reagent": "forge:dusts/grains_of_pizeallity",
+  "output": {
+    "amount": 1000,
+    "fluid": "enderio:vapor_of_levity"
+  },
+  "right_reagent": "forge:dusts/grains_of_prescience",
+  "ticks": 400
+}

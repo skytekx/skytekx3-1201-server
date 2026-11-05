@@ -184,6 +184,11 @@ items below are what differs from upstream, with the reason.
 15. Twilight Delight: the Ponder scene names the Huge Lily Pad and Huge Water Lily by registry id instead
     of `TFItems`, so the source set needs no compile dependency on the Twilight Forest fork. The depot is
     emptied with `setHeldItem(ItemStack.EMPTY)`, since 1.20.1's depot has no `clearContent`.
+16. Ponder schematics: the ten schematics keep upstream's DataVersion 3955, and their block palettes only
+    name blocks that exist in 1.20.1. The roost of `ponder/roost/operate.nbt` stored its egg in the
+    1.21.1 item form `{count: 1, Slot: 0, id: "minecraft:egg"}`, which `ItemStack.of` of 1.20.1 reads
+    as an empty stack, because it reads the byte `Count`. That entry is now `{Count: 1b, Slot: 0, id:
+    "minecraft:egg"}`, so the scene shows the egg again. No other schematic holds an item stack.
 
 ## Left out
 

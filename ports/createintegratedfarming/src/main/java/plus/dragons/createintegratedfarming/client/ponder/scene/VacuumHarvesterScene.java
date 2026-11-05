@@ -234,7 +234,7 @@ public class VacuumHarvesterScene {
     }
 
     private static Selection positions(SceneBuildingUtil util, List<BlockPos> positions) {
-        Selection selection = util.select().position(positions.getFirst());
+        Selection selection = util.select().position(positions.get(0));
         for (int i = 1; i < positions.size(); i++)
             selection = selection.add(util.select().position(positions.get(i)));
         return selection;

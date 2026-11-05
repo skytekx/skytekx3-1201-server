@@ -22,7 +22,7 @@ import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.ARM_
 import static vectorwing.farmersdelight.common.registry.ModBlocks.*;
 
 import com.simibubi.create.AllBlocks;
-import net.createmod.catnip.registry.RegisteredObjectsHelper;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,7 +45,7 @@ public class FDPonderPlugin {
 
     private static void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
         PonderTagRegistrationHelper<ItemLike> itemHelper = helper.withKeyFunction(
-                RegisteredObjectsHelper::getKeyOrThrow);
+                CatnipServices.REGISTRIES::getKeyOrThrow);
 
         itemHelper.addToTag(ARM_TARGETS)
                 .add(WOODEN_BASKET.get())

@@ -18,18 +18,39 @@
 
 package plus.dragons.createintegratedfarming.integration.farmersdelight.registry;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import plus.dragons.createdragonsplus.common.behaviours.BehaviourProvider;
 import plus.dragons.createdragonsplus.common.registry.CDPCapabilities;
+import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.integration.farmersdelight.logistics.basket.BasketBehaviourProvider;
-import vectorwing.farmersdelight.common.registry.ModBlockEntityTypes;
+import vectorwing.farmersdelight.common.block.entity.BasketBlockEntity;
 
+// SkyTekx: Forge 47 attaches the behaviour provider capability of Create: Dragons Plus to each basket
+// with AttachCapabilitiesEvent, where NeoForge registers it in RegisterCapabilitiesEvent. The provider
+// is built once per basket, on the first query.
 public class FDBlockEntities {
+    private static final ResourceLocation BASKET_BEHAVIOURS = CIFCommon.asResource("basket_behaviours");
+
     @SubscribeEvent
-    public static void registerCapabilities(final RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                CDPCapabilities.BEHAVIOUR_PROVIDER,
-                ModBlockEntityTypes.BASKET.get(),
-                (be, ignored) -> new BasketBehaviourProvider(be));
+    public static void attachCapabilities(final AttachCapabilitiesEvent<BlockEntity> event) {
+        if (!(event.getObject() instanceof BasketBlockEntity basket))
+            return;
+        LazyOptional<BehaviourProvider> provider = LazyOptional.of(() -> new BasketBehaviourProvider(basket));
+        event.addCapability(BASKET_BEHAVIOURS, new ICapabilityProvider() {
+            @Override
+            public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
+                return capability == CDPCapabilities.BEHAVIOUR_PROVIDER ? provider.cast() : LazyOptional.empty();
+            }
+        });
+        event.addListener(provider::invalidate);
     }
 }

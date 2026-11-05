@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import plus.dragons.createintegratedfarming.api.saw.SawableBlockTags;
 
-@Mixin(value = BlockBreakingMovementBehaviour.class, priority = 2000)
+@Mixin(value = BlockBreakingMovementBehaviour.class, priority = 2000, remap = false)
 public class BlockBreakingMovementBehaviourMixin {
     @Inject(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/foundation/utility/BlockHelper;destroyBlock(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;FLjava/util/function/Consumer;)V"))
     private void createintegratedfarming$handleFragileVerticalPlants(MovementContext context, BlockPos pos, CallbackInfo ci) {

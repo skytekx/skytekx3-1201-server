@@ -24,12 +24,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
+import java.util.function.Supplier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
@@ -46,9 +45,10 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BirdRoostBlock<T extends Animal, B extends AnimalRoostBlockEntity> extends RoostBlock
         implements IBE<B>, RoostCapturable {
-    protected final Holder<Block> empty;
+    // SkyTekx: a supplier, since the BlockEntry of Registrate for 1.20.1 is no Holder
+    protected final Supplier<? extends Block> empty;
 
-    protected BirdRoostBlock(Properties properties, Holder<Block> empty) {
+    protected BirdRoostBlock(Properties properties, Supplier<? extends Block> empty) {
         super(properties);
         this.empty = empty;
     }
@@ -90,29 +90,29 @@ public abstract class BirdRoostBlock<T extends Animal, B extends AnimalRoostBloc
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    protected InteractionResult useItemOn(
             ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hitResult) {
         if (stack.is(Items.LEAD)) {
             if (!level.isClientSide) {
                 T bird = createBird(level);
                 if (bird == null)
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 bird.setAge(0);
                 bird.setPos(pos.getCenter());
                 bird.setLeashedTo(player, true);
                 level.addFreshEntity(bird);
-                level.setBlockAndUpdate(pos, empty.value().withPropertiesOf(state));
+                level.setBlockAndUpdate(pos, empty.get().withPropertiesOf(state));
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return onBlockEntityUseItemOn(level, pos, roost -> {
+        return onBlockEntityUse(level, pos, roost -> {
             if (roost != null && roost.feedItem(stack, false)) {
-                if (!player.hasInfiniteMaterials())
+                if (!player.getAbilities().instabuild)
                     stack.shrink(1);
-                return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             }
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         });
     }
 
@@ -147,19 +147,19 @@ public abstract class BirdRoostBlock<T extends Animal, B extends AnimalRoostBloc
     }
 
     @Override
-    public ItemInteractionResult captureBlock(
+    public InteractionResult captureBlock(
             Level level, BlockState state, BlockPos pos, ItemStack stack, Player player, Entity entity) {
         if (!getBirdClass().isInstance(entity))
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         T bird = getBirdClass().cast(entity);
         if (!canCapture(bird))
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         if (!level.isClientSide) {
             level.setBlockAndUpdate(pos, withPropertiesOf(state));
             bird.playSound(getHurtSound());
             bird.discard();
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
@@ -172,7 +172,7 @@ public abstract class BirdRoostBlock<T extends Animal, B extends AnimalRoostBloc
             return InteractionResult.PASS;
         if (!level.isClientSide) {
             ItemStack filledRoost = new ItemStack(this);
-            if (player.hasInfiniteMaterials()) {
+            if (player.getAbilities().instabuild) {
                 player.getInventory().placeItemBackInInventory(filledRoost);
             } else if (stack.getCount() == 1) {
                 player.setItemInHand(hand, filledRoost);

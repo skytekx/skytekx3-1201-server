@@ -20,10 +20,8 @@ package plus.dragons.createintegratedfarming.common.ranching.roost.display;
 
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -32,7 +30,7 @@ public record RoostingDisplayProfile(
         Supplier<? extends Block> representativeRoost,
         List<Supplier<? extends Block>> equivalentRoosts,
         ItemFeedSource itemFeedSource,
-        ResourceKey<LootTable> productionLootTable,
+        ResourceLocation productionLootTable,
         int minimumProductionTicks,
         int maximumProductionTicks) {
     public RoostingDisplayProfile {

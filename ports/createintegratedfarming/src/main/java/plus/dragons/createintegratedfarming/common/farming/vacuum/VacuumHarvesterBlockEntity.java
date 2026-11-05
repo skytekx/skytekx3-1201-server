@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -36,9 +35,12 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createintegratedfarming.api.harvester.AreaHarvestContext;
 import plus.dragons.createintegratedfarming.config.CIFConfig;
@@ -47,6 +49,8 @@ public class VacuumHarvesterBlockEntity extends KineticBlockEntity {
     private static final int INVENTORY_SIZE = 18;
     private final ItemStackHandler inventory;
     private final IItemHandler outputHandler;
+    // SkyTekx: the Forge capability of the output handler, which upstream registers in CIFBlockEntities
+    private final LazyOptional<IItemHandler> outputCapability;
     private final List<ItemStack> pendingDrops = new ArrayList<>();
     private double chargeProgress;
     private int releaseTicks;
@@ -70,6 +74,20 @@ public class VacuumHarvesterBlockEntity extends KineticBlockEntity {
                 return stack;
             }
         };
+        outputCapability = LazyOptional.of(() -> outputHandler);
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
+        if (capability == ForgeCapabilities.ITEM_HANDLER && getItemHandler(side) != null)
+            return outputCapability.cast();
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        outputCapability.invalidate();
     }
 
     public @Nullable IItemHandler getItemHandler(@Nullable Direction side) {
@@ -218,21 +236,21 @@ public class VacuumHarvesterBlockEntity extends KineticBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
-        tag.put("Inventory", inventory.serializeNBT(registries));
+    protected void write(CompoundTag tag, boolean clientPacket) {
+        super.write(tag, clientPacket);
+        tag.put("Inventory", inventory.serializeNBT());
         tag.putDouble(VacuumHarvesterCycle.CHARGE_PROGRESS, chargeProgress);
         tag.putInt(VacuumHarvesterCycle.RELEASE_TICKS, releaseTicks);
         tag.putBoolean("ChargingBlocked", chargingBlocked);
         ListTag pending = new ListTag();
-        pendingDrops.forEach(stack -> pending.add(stack.save(registries, new CompoundTag())));
+        pendingDrops.forEach(stack -> pending.add(stack.save(new CompoundTag())));
         tag.put("PendingDrops", pending);
     }
 
     @Override
-    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
-        inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+    protected void read(CompoundTag tag, boolean clientPacket) {
+        super.read(tag, clientPacket);
+        inventory.deserializeNBT(tag.getCompound("Inventory"));
         chargeProgress = Mth.clamp(tag.getDouble(VacuumHarvesterCycle.CHARGE_PROGRESS), 0, 1);
         releaseTicks = Mth.clamp(
                 tag.getInt(VacuumHarvesterCycle.RELEASE_TICKS), 0, VacuumHarvesterCycle.RELEASE_DURATION);
@@ -242,7 +260,7 @@ public class VacuumHarvesterBlockEntity extends KineticBlockEntity {
         pendingDrops.clear();
         ListTag pending = tag.getList("PendingDrops", Tag.TAG_COMPOUND);
         for (int i = 0; i < pending.size(); i++) {
-            ItemStack stack = ItemStack.parseOptional(registries, pending.getCompound(i));
+            ItemStack stack = ItemStack.of(pending.getCompound(i));
             if (!stack.isEmpty())
                 pendingDrops.add(stack);
         }

@@ -21,10 +21,9 @@ package plus.dragons.createintegratedfarming.common.registry;
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
 import java.util.function.Supplier;
-import net.minecraft.core.Holder;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.AnimalRoostArmInteractionPoint;
 
@@ -32,18 +31,18 @@ public class CIFArmInteractionPoints {
     private static final DeferredRegister<ArmInteractionPointType> TYPES = DeferredRegister
             .create(CreateRegistries.ARM_INTERACTION_POINT_TYPE, CIFCommon.ID);
 
-    public static final Holder<ArmInteractionPointType> CHICKEN_COOP = TYPES
+    public static final RegistryObject<ArmInteractionPointType> CHICKEN_COOP = TYPES
             .register("chicken_coop", AnimalRoostArmInteractionPoint.Type::new);
 
     public static void register(IEventBus modBus) {
         TYPES.register(modBus);
     }
 
-    public static void register(DeferredHolder<ArmInteractionPointType, ArmInteractionPointType> holder, Supplier<? extends ArmInteractionPointType> supplier) {
+    public static void register(RegistryObject<ArmInteractionPointType> holder, Supplier<? extends ArmInteractionPointType> supplier) {
         TYPES.register(holder.getId().getPath(), supplier);
     }
 
-    public static DeferredHolder<ArmInteractionPointType, ArmInteractionPointType> holder(String name) {
-        return DeferredHolder.create(CreateRegistries.ARM_INTERACTION_POINT_TYPE, CIFCommon.asResource(name));
+    public static RegistryObject<ArmInteractionPointType> holder(String name) {
+        return RegistryObject.create(CIFCommon.asResource(name), CreateRegistries.ARM_INTERACTION_POINT_TYPE, CIFCommon.ID);
     }
 }

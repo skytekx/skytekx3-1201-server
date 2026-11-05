@@ -24,14 +24,15 @@ import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import java.util.ArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import org.jetbrains.annotations.ApiStatus;
 import plus.dragons.createintegratedfarming.config.CIFConfig;
 
@@ -48,12 +49,12 @@ public abstract class AbstractFishingNetMovementBehaviour<T extends AbstractFish
 
     protected void onCaptureEntity(MovementContext context, ServerLevel level, T fishing, LivingEntity entity) {
         if (!entity.isBaby() && level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
-            var lootTable = level.getServer().reloadableRegistries().getLootTable(entity.getLootTable());
+            var lootTable = level.getServer().getLootData().getLootTable(entity.getLootTable());
             var lootParams = fishing.buildCaptureLootContext(context, level, entity);
-            lootTable.getRandomItems(lootParams, entity.getLootTableSeed(), item -> collectOrDropItem(context, item));
+            lootTable.getRandomItems(lootParams, entity.getLootTableSeed(), item -> dropItem(context, item));
             if (CIFConfig.server().fishingNetCapturedCreatureDropExpNugget.get()) {
-                int experience = EventHooks.getExperienceDrop(entity, fishing.player, entity.getExperienceReward(level, entity));
-                collectOrDropItem(context, new ItemStack(AllItems.EXP_NUGGET.get(), Math.ceilDiv(experience, 3)));
+                int experience = ForgeEventFactory.getExperienceDrop(entity, fishing.player, entity.getExperienceReward());
+                dropItem(context, new ItemStack(AllItems.EXP_NUGGET.get(), Mth.positiveCeilDiv(Math.max(experience, 0), 3)));
             }
         }
         entity.discard();
@@ -86,9 +87,9 @@ public abstract class AbstractFishingNetMovementBehaviour<T extends AbstractFish
             if (fishing.canCatch()) {
                 var catchContext = fishing.buildFishingCatchContext(context, level, pos);
                 var loots = new ArrayList<>(FishingNetCatchProviders.getCatch(catchContext));
-                var event = NeoForge.EVENT_BUS.post(new ItemFishedEvent(loots, 0, fishing.getFishingHook()));
-                if (!event.isCanceled()) {
-                    loots.forEach(stack -> collectOrDropItem(context, stack));
+                boolean canceled = MinecraftForge.EVENT_BUS.post(new ItemFishedEvent(loots, 0, fishing.getFishingHook()));
+                if (!canceled) {
+                    loots.forEach(stack -> dropItem(context, stack));
                 }
             }
             fishing.reset(level);

@@ -29,7 +29,7 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.neoforge.NeoForgeTypes;
+import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -46,7 +46,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 import plus.dragons.createintegratedfarming.common.ranching.roost.display.RoostingDisplayRecipe;
 import plus.dragons.createintegratedfarming.common.ranching.roost.display.RoostingDisplayRecipe.FluidFeedDisplay;
 import plus.dragons.createintegratedfarming.common.ranching.roost.display.RoostingDisplayRecipe.IntRange;
@@ -109,7 +109,7 @@ public final class RoostingCategory implements IRecipeCategory<RoostingDisplayRe
                     .setSlotName(FLUID_FEED_SLOT)
                     .setBackground(SLOT, -1, -1)
                     .addIngredients(
-                            NeoForgeTypes.FLUID_STACK,
+                            ForgeTypes.FLUID_STACK,
                             recipe.fluidFeeds().stream()
                                     .map(FluidFeedDisplay::ingredient)
                                     .toList())
@@ -228,7 +228,7 @@ public final class RoostingCategory implements IRecipeCategory<RoostingDisplayRe
     private static void addItemFeedTooltip(
             RoostingDisplayRecipe recipe, IRecipeSlotView view, ITooltipBuilder tooltip) {
         view.getDisplayedItemStack().flatMap(displayed -> recipe.itemFeeds().stream()
-                .filter(feed -> ItemStack.isSameItemSameComponents(displayed, feed.ingredient()))
+                .filter(feed -> ItemStack.isSameItemSameTags(displayed, feed.ingredient()))
                 .findFirst())
                 .ifPresent(feed -> {
                     addFeedingTiming(tooltip, feed.progress(), feed.cooldown());
@@ -243,9 +243,9 @@ public final class RoostingCategory implements IRecipeCategory<RoostingDisplayRe
 
     private static void addFluidFeedTooltip(
             RoostingDisplayRecipe recipe, IRecipeSlotView view, ITooltipBuilder tooltip) {
-        view.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK)
+        view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
                 .flatMap(displayed -> recipe.fluidFeeds().stream()
-                        .filter(feed -> FluidStack.isSameFluidSameComponents(displayed, feed.ingredient()))
+                        .filter(feed -> displayed.isFluidEqual(feed.ingredient()))
                         .findFirst())
                 .ifPresent(feed -> {
                     tooltip.add(Component.translatable("create_integrated_farming.jei.roosting.spout")
@@ -262,7 +262,7 @@ public final class RoostingCategory implements IRecipeCategory<RoostingDisplayRe
             RoostingDisplayRecipe recipe, IRecipeSlotView view, ITooltipBuilder tooltip) {
         view.getDisplayedIngredient(VanillaTypes.ITEM_STACK)
                 .flatMap(displayed -> recipe.outputs().stream()
-                        .filter(output -> ItemStack.isSameItemSameComponents(displayed, output.ingredient()))
+                        .filter(output -> ItemStack.isSameItemSameTags(displayed, output.ingredient()))
                         .findFirst())
                 .ifPresent(output -> {
                     if (recipe.lootStatus() != RoostingDisplayRecipe.LootDisplayStatus.COMPLEX

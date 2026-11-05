@@ -21,16 +21,20 @@ package plus.dragons.createintegratedfarming.common.ranching.roost.chicken;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.item.ItemStack;
 
 public record ChickenFoodItem(IntProvider progress, IntProvider cooldown, Optional<ItemStack> usingConvertsTo) implements ChickenFood {
+    // SkyTekx: 1.20.1 has no ItemStack.SINGLE_ITEM_CODEC, so a single item is an item id, as there
+    private static final Codec<ItemStack> SINGLE_ITEM_CODEC = BuiltInRegistries.ITEM.byNameCodec()
+            .xmap(ItemStack::new, ItemStack::getItem);
 
     public static final Codec<ChickenFoodItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             IntProvider.codec(0, 12000).fieldOf("progress").forGetter(ChickenFoodItem::progress),
             IntProvider.NON_NEGATIVE_CODEC.fieldOf("cooldown").forGetter(ChickenFoodItem::cooldown),
-            ItemStack.SINGLE_ITEM_CODEC.optionalFieldOf("using_converts_to").forGetter(ChickenFoodItem::usingConvertsTo)).apply(instance, ChickenFoodItem::new));
+            SINGLE_ITEM_CODEC.optionalFieldOf("using_converts_to").forGetter(ChickenFoodItem::usingConvertsTo)).apply(instance, ChickenFoodItem::new));
     public int getProgress(RandomSource random) {
         return progress.sample(random);
     }

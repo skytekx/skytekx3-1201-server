@@ -31,6 +31,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createintegratedfarming.api.harvester.AreaHarvestContext;
 import plus.dragons.createintegratedfarming.api.harvester.CustomHarvestBehaviour;
@@ -119,7 +121,7 @@ public class VacuumHarvesterMovementBehaviour implements MovementBehaviour {
                 true,
                 false,
                 CustomHarvestBehaviour.getHarvestTool(context),
-                stack -> collectOrDropItem(context, stack),
+                stack -> dropItem(context, stack),
                 (predicate, amount) -> ItemHelper.extract(storage, predicate, amount, false));
         var result = VacuumHarvesterHarvesting.harvestArea(
                 harvestContext, center, CIFConfig.server().vacuumHarvesterRange.get());
@@ -148,6 +150,8 @@ public class VacuumHarvesterMovementBehaviour implements MovementBehaviour {
         return true;
     }
 
+    // SkyTekx: client only, as in Create's MovementBehaviour, so that a dedicated server strips both methods
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void renderInContraption(
             MovementContext context,
@@ -158,6 +162,7 @@ public class VacuumHarvesterMovementBehaviour implements MovementBehaviour {
             VacuumHarvesterRenderer.renderInContraption(context, renderWorld, matrices, buffers);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Nullable
     @Override
     public ActorVisual createVisual(

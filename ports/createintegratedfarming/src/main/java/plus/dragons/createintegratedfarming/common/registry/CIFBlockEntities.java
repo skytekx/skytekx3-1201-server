@@ -21,10 +21,7 @@ package plus.dragons.createintegratedfarming.common.registry;
 import static plus.dragons.createintegratedfarming.common.CIFCommon.REGISTRATE;
 
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import plus.dragons.createintegratedfarming.client.renderer.VacuumHarvesterRenderer;
 import plus.dragons.createintegratedfarming.client.renderer.VacuumHarvesterVisual;
 import plus.dragons.createintegratedfarming.common.farming.vacuum.VacuumHarvesterBlockEntity;
@@ -42,19 +39,7 @@ public class CIFBlockEntities {
             .renderer(() -> VacuumHarvesterRenderer::new)
             .register();
 
-    public static void register(IEventBus modBus) {
-        modBus.register(CIFBlockEntities.class);
-    }
-
-    @SubscribeEvent
-    public static void registerCapabilities(final RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                ItemHandler.BLOCK,
-                CHICKEN_ROOST.get(),
-                ChickenRoostBlockEntity::getItemHandler);
-        event.registerBlockEntity(
-                ItemHandler.BLOCK,
-                VACUUM_HARVESTER.get(),
-                VacuumHarvesterBlockEntity::getItemHandler);
-    }
+    // SkyTekx: Forge 47 has no RegisterCapabilitiesEvent. The roost and the harvester expose their item
+    // handlers through getCapability, with the same sides as upstream's registerCapabilities.
+    public static void register(IEventBus modBus) {}
 }

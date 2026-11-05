@@ -79,8 +79,9 @@ public abstract class AbstractFishingNetContext<T extends FishingHook> {
 
     @ApiStatus.Internal
     public int getCatchDelay(ServerLevel level) {
-        int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(level, fishingRod, fishingHook) * 20.0F);
-        return (Mth.nextInt(fishingHook.getRandom(), 100, 600) - lureSpeed) *
+        // SkyTekx: 1.20.1 gives the Lure level, worth 5 seconds each, as 1.21.1's time reduction is
+        int lureSpeed = EnchantmentHelper.getFishingSpeedBonus(fishingRod) * 5 * 20;
+        return (Mth.nextInt(level.random, 100, 600) - lureSpeed) *
                 CIFConfig.server().fishingNetCooldownMultiplier.get();
     }
 
@@ -99,8 +100,8 @@ public abstract class AbstractFishingNetContext<T extends FishingHook> {
                 .withParameter(LootContextParams.THIS_ENTITY, entity)
                 .withParameter(LootContextParams.ORIGIN, context.position)
                 .withParameter(LootContextParams.DAMAGE_SOURCE, level.damageSources().playerAttack(player))
-                .withParameter(LootContextParams.ATTACKING_ENTITY, player)
-                .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, fishingHook)
+                .withParameter(LootContextParams.KILLER_ENTITY, player)
+                .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, fishingHook)
                 .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                 .create(LootContextParamSets.ENTITY);
     }
@@ -116,8 +117,8 @@ public abstract class AbstractFishingNetContext<T extends FishingHook> {
                 .withParameter(LootContextParams.ORIGIN, origin)
                 .withParameter(LootContextParams.TOOL, fishingRod)
                 .withParameter(LootContextParams.THIS_ENTITY, fishingHook)
-                .withParameter(LootContextParams.ATTACKING_ENTITY, player)
-                .withLuck(EnchantmentHelper.getFishingLuckBonus(level, fishingRod, player))
+                .withParameter(LootContextParams.KILLER_ENTITY, player)
+                .withLuck(EnchantmentHelper.getFishingLuckBonus(fishingRod))
                 .create(LootContextParamSets.FISHING);
         return new FishingNetCatchContext(
                 level,
@@ -129,14 +130,15 @@ public abstract class AbstractFishingNetContext<T extends FishingHook> {
                 fishingRod,
                 lootParams,
                 openFluid,
-                fishingHook.getRandom());
+                level.random);
     }
 
+    // SkyTekx: the random source of the level, since 1.20.1 entities keep theirs protected
     public boolean canCatch() {
         int maxRecorded = CIFConfig.server().fishingNetMaxRecordedBlocks.get();
         if (maxRecorded == 0)
             return true;
-        return fishingHook.getRandom().nextInt(maxRecorded) < visitedBlocks.size();
+        return fishingHook.level().random.nextInt(maxRecorded) < visitedBlocks.size();
     }
 
     public void invalidate(ServerLevel level) {

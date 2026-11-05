@@ -24,7 +24,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 import plus.dragons.createintegratedfarming.common.registry.CIFBlockSpoutingBehaviours;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
 
@@ -35,7 +35,7 @@ public class FDBlockSpoutingBehaviours {
     }
 
     private static int fillOrganicCompost(Level level, BlockPos pos, SpoutBlockEntity spout, FluidStack fluid, boolean simulate) {
-        if (!fluid.is(FluidTags.WATER))
+        if (!fluid.getFluid().is(FluidTags.WATER))
             return 0;
         if (!simulate && level instanceof ServerLevel) {
             BlockState state = level.getBlockState(pos);

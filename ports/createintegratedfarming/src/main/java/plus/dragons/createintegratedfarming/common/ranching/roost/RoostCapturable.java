@@ -22,7 +22,6 @@ import com.simibubi.create.api.registry.SimpleRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -44,7 +43,8 @@ public interface RoostCapturable {
         return REGISTRY.get(entity.getType());
     }
 
-    ItemInteractionResult captureBlock(Level level, BlockState state, BlockPos pos, ItemStack stack, Player player, Entity entity);
+    // SkyTekx: InteractionResult.PASS stands for 1.21.1's PASS_TO_DEFAULT_BLOCK_INTERACTION
+    InteractionResult captureBlock(Level level, BlockState state, BlockPos pos, ItemStack stack, Player player, Entity entity);
 
     InteractionResult captureItem(Level level, ItemStack stack, InteractionHand hand, Player player, Entity entity);
 }

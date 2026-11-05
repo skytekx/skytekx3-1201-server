@@ -22,13 +22,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import plus.dragons.createintegratedfarming.common.ranching.roost.AnimalRoostBlockEntity;
 import plus.dragons.createintegratedfarming.common.registry.CIFDataMaps;
@@ -36,7 +35,7 @@ import plus.dragons.createintegratedfarming.common.registry.CIFLootTables;
 
 public class ChickenRoostBlockEntity extends AnimalRoostBlockEntity {
     @Override
-    protected ResourceKey<LootTable> productionLootTable() {
+    protected ResourceLocation productionLootTable() {
         return CIFLootTables.CHICKEN_ROOST;
     }
 
@@ -49,7 +48,7 @@ public class ChickenRoostBlockEntity extends AnimalRoostBlockEntity {
         assert level != null;
         if (feedCooldown > 0 || eggTime <= 0)
             return false;
-        var food = stack.getItemHolder().getData(CIFDataMaps.CHICKEN_FOOD_ITEMS);
+        var food = CIFDataMaps.CHICKEN_FOOD_ITEMS.get(level.isClientSide, stack.getItem());
         if (food == null)
             return false;
         if (simulate)

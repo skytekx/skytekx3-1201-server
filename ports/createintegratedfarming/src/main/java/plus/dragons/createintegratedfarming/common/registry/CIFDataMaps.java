@@ -18,61 +18,57 @@
 
 package plus.dragons.createintegratedfarming.common.registry;
 
-import static plus.dragons.createintegratedfarming.common.CIFCommon.REGISTRATE;
-
-import com.tterrag.registrate.providers.ProviderType;
-import com.tterrag.registrate.providers.RegistrateDataMapProvider;
-import java.util.Optional;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.valueproviders.ConstantInt;
-import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
-import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.network.PacketDistributor;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
+import plus.dragons.createintegratedfarming.common.network.CIFPackets;
+import plus.dragons.createintegratedfarming.common.network.ChickenFoodSyncPacket;
 import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.ChickenFoodFluid;
 import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.ChickenFoodItem;
+import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.ChickenFoodMap;
 
+/**
+ * SkyTekx: Forge 47 has no data maps. The two synced data maps of upstream become {@link ChickenFoodMap}s
+ * that read the same files ({@code data/create_integrated_farming/data_maps/item/chicken_food.json} and
+ * {@code .../fluid/chicken_food.json}) on every data pack reload and reach the clients with
+ * {@link ChickenFoodSyncPacket} at each data pack sync. The defaults are data files, not datagen output:
+ * {@code #create_integrated_farming:chicken_food} (the vanilla chicken food of 1.20.1) and
+ * {@code #forge:plantoil}.
+ */
 public class CIFDataMaps {
-    private static final TagKey<Fluid> PLANT_OIL = TagKey.create(
-            Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", "plantoil"));
-
-    public static final DataMapType<Item, ChickenFoodItem> CHICKEN_FOOD_ITEMS = DataMapType
-            .builder(CIFCommon.asResource("chicken_food"), Registries.ITEM, ChickenFoodItem.CODEC)
-            .synced(ChickenFoodItem.CODEC, true)
-            .build();
-    public static final DataMapType<Fluid, ChickenFoodFluid> CHICKEN_FOOD_FLUIDS = DataMapType
-            .builder(CIFCommon.asResource("chicken_food"), Registries.FLUID, ChickenFoodFluid.CODEC)
-            .synced(ChickenFoodFluid.CODEC, true)
-            .build();
+    public static final ChickenFoodMap<Item, ChickenFoodItem> CHICKEN_FOOD_ITEMS = new ChickenFoodMap<>(
+            CIFCommon.asResource("chicken_food"), "item", Registries.ITEM, BuiltInRegistries.ITEM, ChickenFoodItem.CODEC);
+    public static final ChickenFoodMap<Fluid, ChickenFoodFluid> CHICKEN_FOOD_FLUIDS = new ChickenFoodMap<>(
+            CIFCommon.asResource("chicken_food"), "fluid", Registries.FLUID, BuiltInRegistries.FLUID, ChickenFoodFluid.CODEC);
 
     public static void register(IEventBus modBus) {
-        modBus.register(CIFDataMaps.class);
-        REGISTRATE.addDataGenerator(ProviderType.DATA_MAP, CIFDataMaps::generate);
+        MinecraftForge.EVENT_BUS.addListener(CIFDataMaps::addReloadListener);
+        MinecraftForge.EVENT_BUS.addListener(CIFDataMaps::onDatapackSync);
     }
 
-    @SubscribeEvent
-    public static void registerDataMaps(final RegisterDataMapTypesEvent event) {
-        event.register(CHICKEN_FOOD_ITEMS);
-        event.register(CHICKEN_FOOD_FLUIDS);
+    private static void addReloadListener(AddReloadListenerEvent event) {
+        event.addListener((ResourceManagerReloadListener) CIFDataMaps::reload);
     }
 
-    public static void generate(RegistrateDataMapProvider provider) {
-        provider.builder(CHICKEN_FOOD_ITEMS)
-                .add(ItemTags.CHICKEN_FOOD, new ChickenFoodItem(
-                        ConstantInt.of(2400),
-                        UniformInt.of(400, 800),
-                        Optional.empty()), false);
-        provider.builder(CHICKEN_FOOD_FLUIDS)
-                .add(PLANT_OIL, new ChickenFoodFluid(
-                        ConstantInt.of(2400),
-                        UniformInt.of(400, 800),
-                        100), false);
+    private static void reload(ResourceManager manager) {
+        CHICKEN_FOOD_ITEMS.reload(manager);
+        CHICKEN_FOOD_FLUIDS.reload(manager);
+    }
+
+    private static void onDatapackSync(OnDatapackSyncEvent event) {
+        var packet = ChickenFoodSyncPacket.create();
+        if (event.getPlayer() != null)
+            CIFPackets.CHANNEL.send(PacketDistributor.PLAYER.with(event::getPlayer), packet);
+        else
+            CIFPackets.CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 }

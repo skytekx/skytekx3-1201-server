@@ -28,21 +28,20 @@ import static vectorwing.farmersdelight.common.registry.ModItems.CANVAS;
 import static vectorwing.farmersdelight.common.registry.ModItems.SAFETY_NET;
 
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
-import java.util.concurrent.CompletableFuture;
-import net.minecraft.core.HolderLookup.Provider;
+import java.util.function.Consumer;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.neoforged.neoforge.common.Tags;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraftforge.common.Tags;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
 import plus.dragons.createintegratedfarming.integration.ModIntegration;
 
 public class FDRecipeProvider extends RegistrateRecipeProvider {
-    public FDRecipeProvider(PackOutput output, CompletableFuture<Provider> registries) {
-        super(CIFCommon.REGISTRATE, output, registries);
+    public FDRecipeProvider(PackOutput output) {
+        super(CIFCommon.REGISTRATE, output);
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput output) {
+    protected void buildRecipes(Consumer<FinishedRecipe> output) {
         shaped().output(ROOST)
                 .define('#', CANVAS.get())
                 .define('b', BAMBOO)

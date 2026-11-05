@@ -26,10 +26,11 @@ import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import twilightforest.init.TFItems;
+import plus.dragons.createintegratedfarming.integration.ModIntegration;
 
 public class TwilightDelightPonderScenes {
     public static void harvestLilyPads(SceneBuilder builder, SceneBuildingUtil util) {
@@ -86,8 +87,9 @@ public class TwilightDelightPonderScenes {
                 .placeNearTarget()
                 .attachKeyFrame();
         scene.world().setKineticSpeed(util.select().position(armPos), 64);
-        var hugeLilyPadStack = TFItems.HUGE_LILY_PAD.toStack();
-        var hugeWaterLilyStack = TFItems.HUGE_WATER_LILY.toStack();
+        // SkyTekx: the Twilight Forest items by name, so the integration needs no compile dependency
+        var hugeLilyPadStack = new ItemStack(BuiltInRegistries.ITEM.get(ModIntegration.TWILIGHT_FOREST.asResource("huge_lily_pad")));
+        var hugeWaterLilyStack = new ItemStack(BuiltInRegistries.ITEM.get(ModIntegration.TWILIGHT_FOREST.asResource("huge_water_lily")));
         var outputDepot = util.grid().at(2, 2, 0);
 
         scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_INPUT, ItemStack.EMPTY, 0);
@@ -105,7 +107,7 @@ public class TwilightDelightPonderScenes {
         scene.idle(24);
         scene.world().replaceBlocks(util.select().position(4, 2, 3), Blocks.AIR.defaultBlockState(), false);
         scene.world().instructArm(armPos, ArmBlockEntity.Phase.SEARCH_OUTPUTS, hugeWaterLilyStack, -1);
-        scene.world().modifyBlockEntity(outputDepot, DepotBlockEntity.class, DepotBlockEntity::clearContent);
+        scene.world().modifyBlockEntity(outputDepot, DepotBlockEntity.class, depot -> depot.setHeldItem(ItemStack.EMPTY));
         scene.idle(20);
         scene.world().instructArm(armPos, ArmBlockEntity.Phase.MOVE_TO_OUTPUT, hugeWaterLilyStack, 0);
         scene.idle(24);

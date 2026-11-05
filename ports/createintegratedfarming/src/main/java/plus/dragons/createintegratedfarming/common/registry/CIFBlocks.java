@@ -30,14 +30,14 @@ import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.data.loading.DatagenModLoader;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import plus.dragons.createintegratedfarming.common.farming.vacuum.VacuumHarvesterBlock;
 import plus.dragons.createintegratedfarming.common.farming.vacuum.VacuumHarvesterMovementBehaviour;
 import plus.dragons.createintegratedfarming.common.fishing.net.FishingNetBlock;
@@ -65,7 +65,7 @@ public class CIFBlocks {
             .simpleItem()
             .register();
     public static final BlockEntry<Block> LAVA_FISHING_NET = new BlockEntry<>(REGISTRATE,
-            DeferredHolder.create(Registries.BLOCK, REGISTRATE.asResource("lava_fishing_net")));
+            RegistryObject.create(REGISTRATE.asResource("lava_fishing_net"), ForgeRegistries.BLOCKS));
     public static final BlockEntry<RoostBlock> ROOST = REGISTRATE
             .block("roost", RoostBlock::new)
             .properties(prop -> prop.strength(1.5F).sound(SoundType.BAMBOO_WOOD))
@@ -119,7 +119,6 @@ public class CIFBlocks {
                             .noOcclusion();
                     return DatagenModLoader.isRunningDataGen() ? result.noLootTable() : result;
                 })
-                .asOptional()
                 .transform(axeOnly())
                 .tag(AllBlockTags.WINDMILL_SAILS.tag)
                 .blockstate(BlockStateGen.directionalBlockProvider(false))

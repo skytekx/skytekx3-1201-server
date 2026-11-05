@@ -19,9 +19,9 @@
 package plus.dragons.createintegratedfarming.integration;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
-import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
+import net.minecraftforge.common.crafting.conditions.NotCondition;
 
 public enum ModIntegration {
     FARMERS_DELIGHT(Mods.FARMERS_DELIGHT),
@@ -70,7 +70,7 @@ public enum ModIntegration {
     }
 
     public ResourceLocation asResource(String path) {
-        return ResourceLocation.fromNamespaceAndPath(id, path);
+        return new ResourceLocation(id, path);
     }
 
     public ModLoadedCondition condition() {

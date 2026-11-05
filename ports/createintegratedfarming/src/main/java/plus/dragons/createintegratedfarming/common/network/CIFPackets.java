@@ -18,23 +18,36 @@
 
 package plus.dragons.createintegratedfarming.common.network;
 
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+import plus.dragons.createintegratedfarming.common.CIFCommon;
 
+// SkyTekx: a Forge SimpleChannel in place of NeoForge's payload registrar. Both messages go from the
+// server to the client. The channel accepts only its own protocol version, so a client without this
+// build cannot join a server with it and the other way round.
 public final class CIFPackets {
     private static final String PROTOCOL_VERSION = "1";
+    public static final int ROOSTING_DISPLAY_SYNC = 0;
+    public static final int CHICKEN_FOOD_SYNC = 1;
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            CIFCommon.asResource("main"),
+            () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals);
 
     private CIFPackets() {}
 
-    public static void register(IEventBus modBus) {
-        modBus.addListener(CIFPackets::registerPayloads);
-    }
-
-    private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar(PROTOCOL_VERSION)
-                .playToClient(
-                        RoostingDisplayPayload.TYPE,
-                        RoostingDisplayPayload.STREAM_CODEC,
-                        (payload, context) -> RoostingDisplayClientCache.accept(payload.snapshot()));
+    public static void register() {
+        CHANNEL.messageBuilder(RoostingDisplayPayload.class, ROOSTING_DISPLAY_SYNC, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(RoostingDisplayPayload::encode)
+                .decoder(RoostingDisplayPayload::decode)
+                .consumerMainThread((payload, context) -> RoostingDisplayClientCache.accept(payload.snapshot()))
+                .add();
+        CHANNEL.messageBuilder(ChickenFoodSyncPacket.class, CHICKEN_FOOD_SYNC, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ChickenFoodSyncPacket::encode)
+                .decoder(ChickenFoodSyncPacket::decode)
+                .consumerMainThread((packet, context) -> packet.apply())
+                .add();
     }
 }

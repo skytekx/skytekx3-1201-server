@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import plus.dragons.createintegratedfarming.api.saw.SawableBlockTags;
 
-@Mixin(TreeCutter.class)
+@Mixin(value = TreeCutter.class, remap = false)
 public class TreeCutterMixin {
     @ModifyReturnValue(method = "isVerticalPlant", at = @At("TAIL"))
     private static boolean createintegratedfarming$addFragileVerticalPlants(boolean original, BlockState state) {

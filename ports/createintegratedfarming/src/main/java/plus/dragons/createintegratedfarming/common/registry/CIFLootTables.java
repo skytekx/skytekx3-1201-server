@@ -20,8 +20,7 @@ package plus.dragons.createintegratedfarming.common.registry;
 
 import com.tterrag.registrate.providers.loot.RegistrateLootTableProvider;
 import java.util.function.BiConsumer;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -30,14 +29,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
 
 public class CIFLootTables {
-    public static final ResourceKey<LootTable> CHICKEN_ROOST = ResourceKey
-            .create(Registries.LOOT_TABLE, CIFCommon.asResource("gameplay/roost/chicken"));
+    // SkyTekx: 1.20.1 names loot tables by ResourceLocation, not by ResourceKey<LootTable>
+    public static final ResourceLocation CHICKEN_ROOST = CIFCommon.asResource("gameplay/roost/chicken");
 
     public static void generate(RegistrateLootTableProvider provider) {
         provider.addLootAction(LootContextParamSets.BLOCK, CIFLootTables::buildRoostProducts);
     }
 
-    private static void buildRoostProducts(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> lootTables) {
+    private static void buildRoostProducts(BiConsumer<ResourceLocation, LootTable.Builder> lootTables) {
         lootTables.accept(CHICKEN_ROOST, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(Items.EGG))));

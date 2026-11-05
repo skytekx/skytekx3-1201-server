@@ -32,7 +32,7 @@ import plus.dragons.createintegratedfarming.api.harvester.CustomHarvestBehaviour
 import plus.dragons.createintegratedfarming.integration.ModIntegration;
 
 public class LilyPadHarvestBehaviour implements CustomHarvestBehaviour {
-    private static final ResourceLocation LILY_PAD = ResourceLocation.withDefaultNamespace("lily_pad");
+    private static final ResourceLocation LILY_PAD = new ResourceLocation("lily_pad");
     private static final ResourceLocation HUGE_LILY_PAD = ModIntegration.TWILIGHT_FOREST.asResource("huge_lily_pad");
     private static final ResourceLocation HUGE_WATER_LILY = ModIntegration.TWILIGHT_FOREST.asResource("huge_water_lily");
     private static final Map<ResourceLocation, LilyPadType> LILY_PAD_TYPES = Map.of(
@@ -61,7 +61,7 @@ public class LilyPadHarvestBehaviour implements CustomHarvestBehaviour {
                 null,
                 CustomHarvestBehaviour.getHarvestTool(context),
                 1,
-                stack -> behaviour.collectOrDropItem(context, stack));
+                stack -> behaviour.dropItem(context, stack));
     }
 
     private enum LilyPadType {

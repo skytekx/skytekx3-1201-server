@@ -21,7 +21,7 @@ package plus.dragons.createintegratedfarming.common.fishing.net;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.neoforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayer;
 
 public class FishingNetFakePlayer extends FakePlayer {
     public static final GameProfile FISHING_NET_PROFILE = new GameProfile(UUID.fromString("e538508b-ef48-405b-98b4-b99d853fd961"), "Fishing Net");

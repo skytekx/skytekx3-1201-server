@@ -19,22 +19,27 @@
 package plus.dragons.createintegratedfarming.common.registry;
 
 import static plus.dragons.createintegratedfarming.common.CIFCommon.REGISTRATE;
-import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.*;
+import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.CHICKEN_ROOST;
+import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.FISHING_NET;
+import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.LAVA_FISHING_NET;
+import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.ROOST;
+import static plus.dragons.createintegratedfarming.common.registry.CIFBlocks.VACUUM_HARVESTER;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllCreativeModeTabs;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import plus.dragons.createintegratedfarming.common.CIFCommon;
 
 public class CIFCreativeModeTabs {
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister
             .create(Registries.CREATIVE_MODE_TAB, CIFCommon.ID);
-    public static final Holder<CreativeModeTab> BASE = TABS.register("base", CIFCreativeModeTabs::base);
+    public static final RegistryObject<CreativeModeTab> BASE = TABS.register("base",
+            () -> base(CIFCommon.asResource("base")));
 
     public static void register(IEventBus modBus) {
         TABS.register(modBus);
@@ -43,7 +48,7 @@ public class CIFCreativeModeTabs {
     private static CreativeModeTab base(ResourceLocation id) {
         return CreativeModeTab.builder()
                 .title(REGISTRATE.addLang("itemGroup", id, "Create: Integrated Farming"))
-                .withTabsBefore(AllCreativeModeTabs.BASE_CREATIVE_TAB.getId())
+                .withTabsBefore(AllCreativeModeTabs.BASE_CREATIVE_TAB.getKey())
                 .icon(AllBlocks.MECHANICAL_HARVESTER::asStack)
                 .displayItems(CIFCreativeModeTabs::buildBaseContents)
                 .build();
@@ -51,7 +56,8 @@ public class CIFCreativeModeTabs {
 
     private static void buildBaseContents(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
         output.accept(FISHING_NET);
-        LAVA_FISHING_NET.asOptional().ifPresent(output::accept);
+        if (LAVA_FISHING_NET.isPresent())
+            output.accept(LAVA_FISHING_NET);
         output.accept(ROOST);
         output.accept(CHICKEN_ROOST);
         output.accept(VACUUM_HARVESTER);

@@ -20,12 +20,12 @@ package plus.dragons.createintegratedfarming.common.ranching.roost.display;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
+import plus.dragons.createintegratedfarming.common.network.BufCodec;
 
 public record RoostingDisplaySnapshot(int revision, List<RoostingDisplayRecipe> recipes) {
     public static final RoostingDisplaySnapshot EMPTY = new RoostingDisplaySnapshot(-1, List.of());
-    public static final StreamCodec<RegistryFriendlyByteBuf, RoostingDisplaySnapshot> STREAM_CODEC = StreamCodec.ofMember(
+    public static final BufCodec<RoostingDisplaySnapshot> STREAM_CODEC = BufCodec.ofMember(
             RoostingDisplaySnapshot::encode,
             RoostingDisplaySnapshot::decode);
 
@@ -33,13 +33,13 @@ public record RoostingDisplaySnapshot(int revision, List<RoostingDisplayRecipe> 
         recipes = List.copyOf(recipes);
     }
 
-    private void encode(RegistryFriendlyByteBuf buffer) {
+    private void encode(FriendlyByteBuf buffer) {
         buffer.writeVarInt(revision);
         buffer.writeVarInt(recipes.size());
         recipes.forEach(recipe -> RoostingDisplayRecipe.STREAM_CODEC.encode(buffer, recipe));
     }
 
-    private static RoostingDisplaySnapshot decode(RegistryFriendlyByteBuf buffer) {
+    private static RoostingDisplaySnapshot decode(FriendlyByteBuf buffer) {
         int revision = buffer.readVarInt();
         int size = buffer.readVarInt();
         if (size < 0 || size > 256)

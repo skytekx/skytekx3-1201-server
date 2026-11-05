@@ -30,27 +30,29 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 import plus.dragons.createintegratedfarming.common.ranching.roost.chicken.ChickenFood;
 import plus.dragons.createintegratedfarming.common.registry.CIFDataMaps;
@@ -62,6 +64,8 @@ public abstract class AnimalRoostBlockEntity extends SmartBlockEntity implements
 
     protected final ItemStackHandler inventory;
     public final IItemHandler outputHandler;
+    // SkyTekx: the Forge capability of the output handler, which upstream registers in CIFBlockEntities
+    protected final LazyOptional<IItemHandler> outputCapability;
     protected int feedCooldown;
     protected int eggTime;
     protected boolean outputInventoryBlocked;
@@ -82,12 +86,14 @@ public abstract class AnimalRoostBlockEntity extends SmartBlockEntity implements
         return SoundEvents.CHICKEN_EGG;
     }
 
-    protected abstract ResourceKey<LootTable> productionLootTable();
+    protected abstract ResourceLocation productionLootTable();
 
     public int feedFluid(FluidStack fluid, boolean simulate) {
         if (feedCooldown > 0 || eggTime <= 0)
             return 0;
-        var food = fluid.getFluidHolder().getData(CIFDataMaps.CHICKEN_FOOD_FLUIDS);
+        if (level == null)
+            return 0;
+        var food = CIFDataMaps.CHICKEN_FOOD_FLUIDS.get(level.isClientSide, fluid.getFluid());
         if (food == null || fluid.getAmount() < food.amount())
             return 0;
         if (!simulate)
@@ -136,12 +142,26 @@ public abstract class AnimalRoostBlockEntity extends SmartBlockEntity implements
                 return stack;
             }
         };
+        this.outputCapability = LazyOptional.of(() -> outputHandler);
     }
 
     public @Nullable IItemHandler getItemHandler(@Nullable Direction direction) {
         if (direction == getBlockState().getValue(HorizontalDirectionalBlock.FACING))
             return null;
         return outputHandler;
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
+        if (capability == ForgeCapabilities.ITEM_HANDLER && getItemHandler(side) != null)
+            return outputCapability.cast();
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        outputCapability.invalidate();
     }
 
     @Override
@@ -178,7 +198,7 @@ public abstract class AnimalRoostBlockEntity extends SmartBlockEntity implements
             boolean wasBlocked = outputInventoryBlocked;
             boolean inserted = false;
             var remainders = new ArrayList<ItemStack>();
-            var lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(productionLootTable());
+            var lootTable = serverLevel.getServer().getLootData().getLootTable(productionLootTable());
             var lootParams = new LootParams.Builder(serverLevel)
                     .withParameter(LootContextParams.BLOCK_STATE, getBlockState())
                     .withParameter(LootContextParams.ORIGIN, worldPosition.getCenter())
@@ -215,19 +235,19 @@ public abstract class AnimalRoostBlockEntity extends SmartBlockEntity implements
     }
 
     @Override
-    protected void write(CompoundTag tag, Provider registries, boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
-        tag.put("Inventory", inventory.serializeNBT(registries));
+    protected void write(CompoundTag tag, boolean clientPacket) {
+        super.write(tag, clientPacket);
+        tag.put("Inventory", inventory.serializeNBT());
         tag.putInt("EggLayTime", eggTime);
         tag.putInt("FeedCooldown", feedCooldown);
         tag.putBoolean("OutputInventoryBlocked", outputInventoryBlocked);
     }
 
     @Override
-    protected void read(CompoundTag tag, Provider registries, boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
-        inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
-        eggTime = Math.clamp(tag.getInt("EggLayTime"), 0, maximumProductionTicks());
+    protected void read(CompoundTag tag, boolean clientPacket) {
+        super.read(tag, clientPacket);
+        inventory.deserializeNBT(tag.getCompound("Inventory"));
+        eggTime = Mth.clamp(tag.getInt("EggLayTime"), 0, maximumProductionTicks());
         feedCooldown = tag.getInt("FeedCooldown");
         outputInventoryBlocked = tag.getBoolean("OutputInventoryBlocked");
     }

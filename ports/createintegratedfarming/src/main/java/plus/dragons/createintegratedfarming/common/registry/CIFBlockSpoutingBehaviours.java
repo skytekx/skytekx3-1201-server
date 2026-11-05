@@ -26,7 +26,7 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus;
 import plus.dragons.createintegratedfarming.common.ranching.roost.AnimalRoostBlockEntity;
 import plus.dragons.createintegratedfarming.common.ranching.roost.RoostBlock;

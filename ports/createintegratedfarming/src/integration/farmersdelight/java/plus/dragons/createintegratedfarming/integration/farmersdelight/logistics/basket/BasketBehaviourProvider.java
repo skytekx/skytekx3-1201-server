@@ -22,7 +22,12 @@ import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehavi
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import java.util.List;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import plus.dragons.createdragonsplus.common.behaviours.SmartBlockEntityBehaviourProvider;
+import plus.dragons.createdragonsplus.common.registry.CDPCapabilities;
 import vectorwing.farmersdelight.common.block.BasketBlock;
 import vectorwing.farmersdelight.common.block.entity.BasketBlockEntity;
 
@@ -36,6 +41,15 @@ public class BasketBehaviourProvider extends SmartBlockEntityBehaviourProvider<B
         behaviours.add(new DirectBeltInputBehaviour(this)
                 .allowingBeltFunnelsWhen(this::allowsBeltFunnels)
                 .onlyInsertWhen(this::canInsert));
+    }
+
+    // SkyTekx: Create 6.0.8 for 1.20.1 inserts through the capability of the behaviour's own block
+    // entity, which is this wrapper, so it hands every capability but its own to the basket
+    @Override
+    public @NotNull <C> LazyOptional<C> getCapability(@NotNull Capability<C> capability, @Nullable Direction side) {
+        if (capability == CDPCapabilities.BEHAVIOUR_PROVIDER)
+            return super.getCapability(capability, side);
+        return blockEntity.getCapability(capability, side);
     }
 
     protected boolean allowsBeltFunnels() {

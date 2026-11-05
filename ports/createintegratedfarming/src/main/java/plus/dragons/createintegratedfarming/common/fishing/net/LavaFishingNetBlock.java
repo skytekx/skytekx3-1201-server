@@ -29,7 +29,7 @@ import net.createmod.catnip.placement.PlacementOffset;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -63,23 +63,24 @@ public class LavaFishingNetBlock extends WrenchableDirectionalBlock
                 .setValue(FLUID, ContainedFluid.EMPTY));
     }
 
+    // SkyTekx: Block#use of 1.20.1 in place of 1.21.1's useItemOn
     @Override
-    protected ItemInteractionResult useItemOn(
-            ItemStack stack,
+    public InteractionResult use(
             BlockState state,
             Level level,
             BlockPos pos,
             Player player,
             InteractionHand hand,
             BlockHitResult hitResult) {
+        ItemStack stack = player.getItemInHand(hand);
         IPlacementHelper placementHelper = PlacementHelpers.get(PLACEMENT_HELPER_ID);
         if (!player.isShiftKeyDown() && player.mayBuild() && placementHelper.matchesItem(stack)) {
             placementHelper
                     .getOffset(player, level, state, pos, hitResult)
                     .placeInWorld(level, (BlockItem) stack.getItem(), player, hand, hitResult);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class LavaFishingNetBlock extends WrenchableDirectionalBlock
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity living && FishingNetEntityCaptures.canCapture(living))
             entity.makeStuckInBlock(state, new Vec3(0.25, 0.05, 0.25));
     }
@@ -105,12 +106,12 @@ public class LavaFishingNetBlock extends WrenchableDirectionalBlock
     }
 
     @Override
-    protected FluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return fluidState(state);
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,
@@ -170,7 +171,7 @@ public class LavaFishingNetBlock extends WrenchableDirectionalBlock
                     direction -> level.getBlockState(pos.relative(direction)).canBeReplaced());
             if (directions.isEmpty())
                 return PlacementOffset.fail();
-            Direction direction = directions.getFirst();
+            Direction direction = directions.get(0);
             return PlacementOffset.success(pos.relative(direction), placed -> {
                 FluidState fluidState = level.getFluidState(pos.relative(direction));
                 BlockState result = placed.setValue(FACING, state.getValue(FACING));

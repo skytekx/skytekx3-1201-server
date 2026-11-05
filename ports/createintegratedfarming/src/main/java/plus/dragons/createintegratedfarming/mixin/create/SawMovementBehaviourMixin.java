@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import plus.dragons.createintegratedfarming.api.saw.SawableBlockTags;
 
-@Mixin(SawMovementBehaviour.class)
+@Mixin(value = SawMovementBehaviour.class, remap = false)
 public class SawMovementBehaviourMixin {
     @Inject(method = "onBlockBroken", at = @At("HEAD"), cancellable = true)
     private void createintegratedfarming$skipFragileVerticalPlants(MovementContext context, BlockPos pos, BlockState state, CallbackInfo ci) {

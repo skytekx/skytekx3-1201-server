@@ -18,15 +18,14 @@
 
 package plus.dragons.createintegratedfarming.integration.farmersdelight;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
-import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import plus.dragons.createintegratedfarming.common.CIFCommon;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.data.event.GatherDataEvent;
 import plus.dragons.createintegratedfarming.integration.ModIntegration;
 import plus.dragons.createintegratedfarming.integration.farmersdelight.data.FDRecipeProvider;
 import plus.dragons.createintegratedfarming.integration.farmersdelight.ponder.FDPonderPlugin;
@@ -35,12 +34,12 @@ import plus.dragons.createintegratedfarming.integration.farmersdelight.registry.
 import plus.dragons.createintegratedfarming.integration.farmersdelight.registry.FDBlockSpoutingBehaviours;
 import plus.dragons.createintegratedfarming.integration.farmersdelight.registry.FDHarvestBehaviors;
 
-@Mod(CIFCommon.ID)
+// SkyTekx: CIFCommon constructs this entry point, since Forge 47 loads one @Mod class per mod id
 public class FDIntegration {
     public FDIntegration(IEventBus modBus) {
         if (ModIntegration.FARMERS_DELIGHT.enabled()) {
             modBus.register(new Common());
-            modBus.register(FDBlockEntities.class);
+            MinecraftForge.EVENT_BUS.register(FDBlockEntities.class);
             if (FMLLoader.getDist() == Dist.CLIENT)
                 modBus.register(new Client());
         }
@@ -61,10 +60,9 @@ public class FDIntegration {
         @SubscribeEvent
         public void generate(final GatherDataEvent event) {
             var generator = event.getGenerator();
-            var lookupProvider = event.getLookupProvider();
             var output = generator.getPackOutput();
             var server = event.includeServer();
-            generator.addProvider(server, new FDRecipeProvider(output, lookupProvider));
+            generator.addProvider(server, new FDRecipeProvider(output));
         }
     }
 

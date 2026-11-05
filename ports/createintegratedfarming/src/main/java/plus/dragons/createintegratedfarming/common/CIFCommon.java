@@ -25,11 +25,15 @@ import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.data.loading.DatagenModLoader;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import plus.dragons.createdragonsplus.common.CDPRegistrate;
@@ -47,7 +51,9 @@ import plus.dragons.createintegratedfarming.common.registry.CIFCreativeModeTabs;
 import plus.dragons.createintegratedfarming.common.registry.CIFDataMaps;
 import plus.dragons.createintegratedfarming.common.registry.CIFRoostCapturables;
 import plus.dragons.createintegratedfarming.common.registry.CIFRoostingDisplayProfiles;
+import plus.dragons.createintegratedfarming.client.CIFClient;
 import plus.dragons.createintegratedfarming.config.CIFConfig;
+import plus.dragons.createintegratedfarming.data.CIFData;
 
 @Mod(CIFCommon.ID)
 public class CIFCommon {
@@ -57,7 +63,17 @@ public class CIFCommon {
             .setTooltipModifier(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
                     .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
 
-    public CIFCommon(IEventBus modBus, ModContainer modContainer) {
+    // SkyTekx: Forge 47 loads one @Mod class per mod id, while NeoForge also constructs the @Mod classes
+    // of the client, data and integration entry points. This constructor calls them instead. The
+    // integration classes live in their own source sets, so they are looked up by name.
+    private static final String[] INTEGRATIONS = {
+            "plus.dragons.createintegratedfarming.integration.farmersdelight.FDIntegration",
+            "plus.dragons.createintegratedfarming.integration.supplementaries.SupplementariesIntegration",
+            "plus.dragons.createintegratedfarming.integration.twilightdelight.TwilightDelightIntegration"
+    };
+
+    public CIFCommon() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         REGISTRATE.addRawLang("create_integrated_farming.goggles.roost.next_output", "Next output: %s");
         REGISTRATE.addRawLang("create_integrated_farming.goggles.roost.ready", "Ready");
         REGISTRATE.addRawLang(
@@ -111,15 +127,25 @@ public class CIFCommon {
         CIFBlockEntities.register(modBus);
         CIFArmInteractionPoints.register(modBus);
         CIFDataMaps.register(modBus);
-        CIFPackets.register(modBus);
+        CIFPackets.register();
         RoostingDisplaySync.register();
         FishingNetCatchProviders.register(asResource("vanilla"), FishingNetMedium.WATER, context -> context.level()
                 .getServer()
-                .reloadableRegistries()
+                .getLootData()
                 .getLootTable(BuiltInLootTables.FISHING)
                 .getRandomItems(context.lootParams()));
         modBus.register(this);
-        modBus.register(new CIFConfig(modContainer));
+        modBus.register(new CIFConfig(ModLoadingContext.get()));
+        if (DatagenModLoader.isRunningDataGen())
+            new CIFData(modBus);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CIFClient.init(modBus));
+        for (String integration : INTEGRATIONS) {
+            try {
+                Class.forName(integration).getConstructor(IEventBus.class).newInstance(modBus);
+            } catch (ReflectiveOperationException exception) {
+                throw new IllegalStateException("Could not construct " + integration, exception);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -135,6 +161,6 @@ public class CIFCommon {
     }
 
     public static ResourceLocation asResource(String path) {
-        return ResourceLocation.fromNamespaceAndPath(ID, path);
+        return new ResourceLocation(ID, path);
     }
 }

@@ -1,8 +1,8 @@
 ---
 type: Reference
 title: NeoForge ports
-description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether and the Mystical Automation port so far.
-tags: [modpack, mods, ports, neoforge, index, mysticalautomation]
+description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether, the Mystical Automation port and the Mekanism: Extra Modules port so far.
+tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism]
 timestamp: 2026-11-05
 ---
 
@@ -22,6 +22,7 @@ worlds and configs keep working if an upstream build for Forge 1.20.1 replaces i
 |---|---|---|---|---|
 | [Bygone Nether](#bygone-nether) 1.3.2 | Eternal Nether, NeoForge 1.21.1 only | Index entry, no fork | Modrinth version `RA38ax2z`, built from upstream commit cb38a20 | 61adc700, 2026-11-05 |
 | [Mystical Automation](#mystical-automation) 1.0.8-skytekx.1 | Itself, NeoForge 1.21.1 and newer only | Fork in `ports/mysticalautomation/`, jar in `local-mods/` | Branch `1.21` of the upstream repository at 4149601 ("Release 1.0.8") | Commits 3b9e2f7 and 3c92dcb, 2026-11-05 |
+| [Mekanism: Extra Modules](#mekanism-extra-modules) 0.1.0-beta.3-skytekx.1 | Itself, NeoForge 1.21.1 with Mekanism 10.7 only | Fork in `ports/mekanism-extra-modules/`, jar in `local-mods/` | Tag `v1.21.1-0.1.0-beta.3` of the upstream repository at 1548dd6 | Commits 9813e0a to fa64b7f, 2026-11-05 |
 
 ## Bygone Nether
 
@@ -231,5 +232,134 @@ without it cannot join (its network channel refuses a peer without the mod):
 - Before a public pack, merge and push the branch with `ports/mysticalautomation/` to master and fetch,
   see [publish](publish.md).
 
+## Mekanism: Extra Modules
+
+Mekanism: Extra Modules adds three modules for the MekaSuit body armor: Phase Guard, which spends suit
+energy every tick to block all damage and death, Chaos Anchor, which under an active Phase Guard also
+stops the Chaos Guardian laser of Draconic Evolution, and Emergency Revival, which spends suit energy
+to cancel one death like a Totem of Undying. Upstream builds it only for NeoForge 1.21.1 and Mekanism
+10.7, so the pack bundles a port to Forge 1.20.1 and the pack's Mekanism 10.4.16 in
+`ports/mekanism-extra-modules/` (9813e0a to 5739305, the review fixes 33745b0 to e2dabb9, the jar in
+fa64b7f). The full change list and both test rounds are in `ports/mekanism-extra-modules/UPSTREAM.md`,
+and the page [Mekanism Extra Modules port](mekanism-extra-modules.md) has the module costs, the pack
+fit and the config.
+
+### Source and ref
+
+- The base is the tag `v1.21.1-0.1.0-beta.3` of the upstream repository
+  https://github.com/Lumysia/mekanism-extra-modules (annotated tag object 774116e), commit
+  1548dd6f2d41906e845c626895cb35769a33a61e ("chore(release): prepare 0.1.0-beta.3 (#19)", 2026-09-13).
+  It matches the Modrinth version `WRuXXPxB` of the project `TfCrGUbp`. Upstream is a beta with 677
+  downloads (Modrinth API of 2026-11-05).
+- The jar `local-mods/mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar` has SHA-1
+  3c40952af5145c740fe6f8fc90ac191574bb2b2f and 659,044 bytes since fa64b7f, the same from two clean
+  builds with `./gradlew build` on Java 17 (NeoForged ForgeGradle 6.0.21, Forge 47.1.70 userdev, the
+  setup of SkyTekx DE Fixes). The first bundled build of 74bf989, SHA-1
+  ca7f070e3f78405968a6fe93257fe235e4f3e925, lacks the review fixes.
+- It compiles against the Mekanism 10.4.16.80 and Draconic Evolution 3.1.2.621 files of the index,
+  which the build fetches from the Modrinth CDN and checks by SHA-1. It needs Mekanism and Mekanism
+  Tools `[10.4.16,10.5)` and takes Draconic Evolution as an optional dependency pinned to
+  `[3.1.2.621]`.
+
+### What came in and what stayed out
+
+- The whole mod came in with its mod id, registry ids, config keys and the 30 language files. The Java
+  code moved to Forge 47 events, `DeferredRegister` and the module API of Mekanism 10.4, with a wrapper
+  that turns each module's `RegistryObject` into the `IModuleDataProvider` of 10.4 (8284e90).
+- Forge 47 has no `EntityInvulnerabilityCheckEvent`, so Phase Guard cancels `LivingAttackEvent` for
+  `Player.hurt` and, since 33745b0, `LivingHurtEvent` for mods that call `actuallyHurt` directly, both
+  at the highest priority. Before 33745b0 such a direct call still drew MekaSuit energy and used up
+  absorption hearts.
+- The Draconic Evolution mixin keeps upstream's two `@Redirect` injections into
+  `LaserBeamPhase.serverTick` and copies no Draconic Evolution code. It sits next to the
+  `@ModifyConstant` of SkyTekx DE Fixes in the same method. Since a7f22ef the version range pins
+  Draconic Evolution 3.1.2.621, because a changed target would crash the server when the first Chaos
+  Guardian loads the class, which no boot test sees.
+- The recipes moved to `recipes/` and use the forge tags `forge:circuits/ultimate`,
+  `forge:alloys/ultimate`, `forge:alloys/elite` and `forge:obsidian` that Mekanism 10.4 uses itself
+  (1c8bc5a). The mod adds no material, so `config/almostunified/unify.json` needs no change and no
+  KubeJS script is needed.
+- From the later upstream commits the port takes the `/kill` bypass of db62401 (ec037bb). Two fixes are
+  its own: the Phase Guard tick skips a player whose death went through (ff76194, keyed on the death
+  since 0005853), and upstream's agent instruction files stay out (b685363).
+- The port leaves out the config screen of upstream 576425a, which needs NeoForge's
+  `ConfigurationScreen`, the refactors of db62401, which change nothing on 1.20.1, the narrower `/kill`
+  bypass of upstream's branch `fix/phase-guard-kill` (9f51277), which needs MixinExtras and is not on
+  upstream `main`, and the README banner, whose C2PA metadata names an image generation service.
+- The Skylands rules are not touched. The mod has no world generation, no biome tags and no loot.
+
+### License
+
+The code and assets are LGPL-3.0-or-later (upstream `LICENSE`, unchanged since be44c67). The item
+textures and HUD icons are edited copies of Mekanism textures, which are MIT. The conditions of the
+license review of 2026-11-05:
+
+- Keep the LGPL v3 unchanged and ship it with the GPL v3 that it incorporates, in the fork and in the
+  jar (`LICENSE_mekanism_extra_modules`, `LICENSE_mekanism_extra_modules_GPL-3.0`), and keep
+  `license="LGPL-3.0-or-later"` and the author entry in `mods.toml`. The whole modified work stays
+  under LGPL-3.0-or-later, with no further restrictions.
+- Ship Mekanism's MIT notice for the derived textures (`LICENSE_mekanism_extra_modules_Mekanism-MIT`)
+  and name those files in the `NOTICE`.
+- Ship a `NOTICE` that calls the build an unofficial modified build, names the upstream URL and
+  commit, lists the changed files with the date and points to the Corresponding Source in
+  `ports/mekanism-extra-modules` of this repository.
+- Keep the complete source with its Gradle build in `ports/` for as long as the jar is offered. The
+  record `modrinth-permissions/mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar.md` (Status OK) links
+  `tree/master/ports/mekanism-extra-modules`, so `tools/mrpack_permissions.py` refuses a public build
+  until `origin/master` holds the fork and the same jar. The pack also carries
+  `licenses/mekanism_extra_modules-0.1.0-beta.3-skytekx.1-sources.zip`, the git archive of e2dabb9.
+- Copy no Draconic Evolution code into the fork and commit no Draconic Evolution jar, because of its
+  CoFH "Don't Be a Jerk" license. Draconic Evolution stays an index entry.
+- LGPL-3.0 and MIT have no non-commercial clause, so the mod adds no monetization limit. Not verified:
+  a CurseForge listing (CurseForge answered 403) and whether the machine generated banner, which stays
+  out, can carry copyright at all.
+
+### Tests
+
+Evidence of 2026-11-05 from test copies outside the repository, driven over RCON by a scratch harness
+that ticks a server player without a client. The full tables are in
+`ports/mekanism-extra-modules/UPSTREAM.md`.
+
+- The first round, with the jar of 74bf989, booted plain Forge 47.4.18 with and without Draconic
+  Evolution and SkyTekx DE Fixes with 0 ERROR and 0 FATAL lines. Its Arclight copy had no Draconic
+  Evolution, no SkyTekx DE Fixes and no plugin.
+- The second round, with the jar of fa64b7f, booted plain Forge 47.4.18 and the pack's hardened
+  Arclight jar, both with Draconic Evolution 3.1.2.621 and SkyTekx DE Fixes, with 0 ERROR and 0 FATAL
+  lines, and both stopped over RCON with exit code 0. Under Phase Guard a direct `actuallyHurt` left
+  health, absorption hearts and suit energy unchanged, while the same call without it drew 240,000 J
+  or took 6 absorption. A health of 0 without a death came back to 1.0, a `kill()` stayed a death
+  without further energy draw, Emergency Revival fired at lethal damage, and on Arclight
+  `CraftPlayer.setHealth(0)`, the call of EssentialsX's `/kill`, was canceled by Phase Guard or met by
+  Emergency Revival. The exported `LaserBeamPhase` carries the injections of both mods on both
+  servers.
+- A test copy of the jar with the Draconic Evolution range `[3.1.2.620]` stopped the Forge boot at mod
+  loading, so the pin works.
+- Nobody tested a real client, the HUD icons, the module screen, a Chaos Guardian fight, the EssentialsX
+  `/kill` command itself and a boot with EssentialsX or the full pack.
+
+### Operator steps
+
+The owner mirrors the server by hand, and the mod goes live with the next pack, because clients
+without it cannot join (it registers items and Mekanism modules on both sides):
+
+- Stop the server over RCON and wait until the java process is gone.
+- Copy `local-mods/mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar` into the server's `mods/` by
+  hand and check its SHA-1 against the one above. Mekanism, Mekanism Tools and Draconic Evolution
+  3.1.2.621 are there already. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/` from the build
+  machine.
+- Clients need the same jar, which the next pack brings them.
+- Start the server and check the boot against the error baseline. The mod writes
+  `world/serverconfig/mekanism_extra_modules-server.toml`, which Forge rewrites at every stop, so edit
+  it only while the java process is gone.
+- The mod has no world generation, so old and new chunks are the same to it.
+- To remove a player under an active Phase Guard or a powered Emergency Revival, use
+  `/minecraft:kill`. The plain `/kill` of EssentialsX does not get through.
+- A Draconic Evolution update stops the boot until `de_range` in
+  `ports/mekanism-extra-modules/gradle.properties` is widened and the jar rebuilt, after a test copy
+  has loaded `LaserBeamPhase` with the new build.
+- Before a public pack, merge and push the branch with `ports/mekanism-extra-modules/` to master and
+  fetch, see [publish](publish.md).
+
 Related: [Mod set](mod-set.md), [Boot fixes](../content/boot-fixes.md), [Publish](publish.md),
-[Mystical Automation port](mysticalautomation-port.md), [Open items](../open-items.md).
+[Mystical Automation port](mysticalautomation-port.md),
+[Mekanism Extra Modules port](mekanism-extra-modules.md), [Open items](../open-items.md).

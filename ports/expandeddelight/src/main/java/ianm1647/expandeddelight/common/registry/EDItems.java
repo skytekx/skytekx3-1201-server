@@ -215,7 +215,8 @@ public class EDItems {
         SALT_ORE = registerWithTab("salt_ore", () -> new BlockItem(EDBlocks.SALT_ORE.get(), basicItem()));
         DEEPSLATE_SALT_ORE = registerWithTab("deepslate_salt_ore", () -> new BlockItem(EDBlocks.DEEPSLATE_SALT_ORE.get(), basicItem()));
 
-        CRUSHING_MALLET = registerWithTab("crushing_mallet", () -> new Item(basicItem().durability(64).stacksTo(1)));
+        // 1.20.1 refuses stacksTo after durability, which already limits the stack to one
+        CRUSHING_MALLET = registerWithTab("crushing_mallet", () -> new Item(basicItem().durability(64)));
         GLASS_JAR = registerWithTab("glass_jar", () -> new Item(basicItem()));
 
         CINNAMON_STICK = registerWithTab("cinnamon_stick", () -> new Item(basicItem()));

@@ -876,5 +876,22 @@ logs stay on the Mac and are not in the repo.
   variants of AlmostUnified and the cheap ender pearl dust are in
   [Open items](open-items.md#owner-decisions).
 
+## 2026-11-05: SkyTekx DE Fixes
+
+- The owner had asked for a backport of Draconic Evolution. Its 1.21 line brings no content, would
+  break TiCEX and may not be shipped as a modified jar under its license, so the pack keeps the stock
+  3.1.2.621 and gets its own addon SkyTekx DE Fixes 1.0.0 in `ports/skytekx-defixes/` and
+  `local-mods/`. It fixes bugs that the 1.21 branch fixed, among them the crafting dupe of the
+  Draconium Chest and the tier of the Draconic tools, and the F1 bug of Brandon's Core. A test server
+  reproduced the dupe on the stock jar and found it closed with the addon, see
+  [Draconic Evolution fixes](modpack/draconic-fixes.md).
+- The license review of the same day found that a first draft of the addon reproduced about 39 of its
+  70 Java statements from upstream and carried six data files of Draconic Evolution, which may break
+  the 50% clause of its license. The addon was reworked before it reached the public repository, and
+  the draft is in no commit of its history. It closes the chest dupe with a mechanism of its own,
+  leaves out the shift and scroll fix of the Advanced Dislocator, takes the recipe and the tool tags
+  through the KubeJS scripts and has its own death message. The jar reproduces 11 of 32 statements and
+  lists them in its LICENSE.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -20,6 +20,8 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
 | Index entries | 232 since 2026-11-04 (b8cbda3e to 14fc2390), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since 3c3aa05b, after 0156111b to 3c3aa05b added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since 19e712ec, which added Just Enough Resources as a client only entry, and 223 since 2d356b97, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 2b279144, which removed Elenai Dodge 2. Before them, 225 since eadc7a6d, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 1ce3dfc2, which added the GraveStone Mod. The Twilight Forest merge 160438ff left 225. Before it, 215 since 58153d5, all from `cdn.modrinth.com`. Commit 44358a8 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 516f90e took Placeable Items out for 216 and 58153d5 Get It Together Drops for 215. Between d3391bf and 44358a8 there were 216. From 0a20b8c to d3391bf there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
 | Size of the index downloads | 1,018,751,213 bytes since 14fc2390, 1,019,027,444 from 46d4d298 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b8cbda3e, 1,018,089,782 from 3c3aa05b, 1,007,463,556 from 19e712ec with Just Enough Resources, 1,007,187,325 from 2d356b97, 1,007,808,005 from 2b279144, 1,008,110,498 from eadc7a6d, 1,009,232,248 from 1ce3dfc2, 1,008,915,067 from 160438ff, 952,346,929 from 58153d5, 952,354,792 from 516f90e, 952,411,152 from 44358a8, 952,341,086 from d3391bf, 952,759,925 with Nyx, 933,046,213 before commit 0a20b8c | Sum of `fileSize` |
+| Bundled jars | 49 in `local-mods/` since 2026-11-05 with SkyTekx DE Fixes, 48 since Flux Networks (221f71c), 47 since 2026-11-04 (303b8077 and 96278bdb), 45 since 2d356b97, 44 since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
+| Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 | Bundled jars | 49 in `local-mods/` since 2026-11-05 (9f47d1b0, SkyTekx Molten), 48 since 221f71c6 (Flux Networks), 47 since 2026-11-04 (303b8077 and 96278bdb), 45 since 2d356b97, 44 since eadc7a6d, 43 before it, 35 since 782126f, 33 before | Tracked in git |
 | Jars the server loads | 264 in the Mac mini's `mods/` since the deploy of 3.1.3 on 2026-11-05 at 00:46, 251 before it, 252 since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
@@ -168,6 +170,7 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
 | Folder [local-mods/](../../local-mods) | Yes | 49 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx DE Fixes join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since 44358a8, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from 19e712ec to 14fc2390 |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
@@ -246,6 +249,12 @@ counts in the list below are older than the last fourteen of them and were not r
 - Flux Networks 7.2.1.15 joined on 2026-11-04 as a CurseForge file, see
   [Flux Networks](#flux-networks). It is MIT licensed, and the LICENSE of its repository travels in
   `licenses/` because the jar has none.
+- SkyTekx DE Fixes 1.0.0 joined on 2026-11-05. It is the pack's own addon, built from
+  `ports/skytekx-defixes/`, MIT for our code with a few portions under the Draconic Evolution license.
+  It fixes eight bugs of Draconic Evolution and one of Brandon's Core after their 1.21 branches in the
+  stock jars of the index, which stay as they are, and the KubeJS scripts fix two more. It needs
+  exactly Draconic Evolution 3.1.2.621 and Brandon's Core 3.2.1.302 and is required on both sides, see
+  [Draconic Evolution fixes](draconic-fixes.md).
 - SkyTekx Molten 1.0.0 joined on 2026-11-05 (9f47d1b0). The pack's own mod, built from the public repo
   [skytekx/skytekx-molten](https://github.com/skytekx/skytekx-molten) at edec978, adds 70 molten fluids
   with their melting and casting recipes for the ingot materials that Tinkers' Construct does not handle,

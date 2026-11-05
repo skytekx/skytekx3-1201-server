@@ -173,6 +173,20 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.0.7 | 2026-10-31 21:54 | 67,246,343 B | 217 | 35 | Modflared 1.2.0+release.61 as a client only index entry and the server list `client-overrides/servers.dat` with `hex.skytekx.com`, for the Cloudflare Tunnel. Every other file as in 3.0.6. Uploaded at 21:55 as `LRkF99Pz` |
 | 3.1.1 | 2026-11-03 17:37 | 73,371,625 B | 225 | 44 | Private build with `--allow-unpermitted`, sent straight to players and never uploaded, because five bundled jars lack permission. It carries everything since 3.0.7, among it the Twilight Forest backport, Nyx 1.0.1, the minimap at the top right (`config/xaerohud.txt`) and the single Hexbiscus |
 | 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
+
+The next pack is the first with Simply Jetpacks 2 bundled, the first that ships a patched jar (see
+[boot fixes](../content/boot-fixes.md#jar-patches)), the first that keeps Starlight off the clients, the
+first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
+[client](client.md#dropped-items)), and the first with Advanced Loot Info (see
+[mod set](mod-set.md#advanced-loot-info)), with Flux Networks (see [mod set](mod-set.md#flux-networks)),
+with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)) and with the nine mods of
+2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
+[mod set](mod-set.md#additions-of-2026-11-04)). Its row should record whether a fresh install and the
+update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
+Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server,
+whether the machines of the new mods work there and whether the Draconic Evolution fixes work in a
+client. Its deploy has to move the fixes pack to the end of the
+pack order, see [boot fixes](../content/boot-fixes.md#load-order).
 | 3.1.3 | 2026-11-05 00:41 | 75,915,546 B | 232 | 49 | Private build like 3.1.2, sent straight to players. The nine mods of 2026-11-04 with FLib, Advanced Loot Info in the place of Just Enough Resources, Flux Networks, SkyTekx Molten, EMI 1.1.24-skytekx.2, the patched Simply Jetpacks 2, Starlight off the clients, 3D dropped items and no Read Me note of The One Probe |
 
 Pack 3.1.3 is the first with Simply Jetpacks 2 bundled and the first that ships a patched jar (see

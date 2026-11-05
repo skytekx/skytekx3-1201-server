@@ -1,0 +1,12 @@
+// Build workspace of the SkyTekx build of LittleTiles. It compiles the unchanged sources of the
+// upstream checkout that LT_SRC names (CreativeMD/LittleTiles, branch 1.20) against the CreativeCore
+// jar of the pack. No build script of the upstream repository is evaluated.
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'littletiles-skytekx'

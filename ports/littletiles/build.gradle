@@ -1,0 +1,141 @@
+// SkyTekx build of LittleTiles for the SkyTekx 3 modpack. The Java sources and resources come unchanged
+// from the upstream checkout in LT_SRC. This file does what the build.gradle of LittleTiles and the
+// workspace of CreativeMD do for a release jar: ForgeGradle 6 with official mappings, the mixin
+// refmap, MixinExtras as jar-in-jar and the reobfuscated jar. Only the version, the file name, the
+// manifest and three added files (LICENSE_littletiles, LICENSE_littletiles_GPL-3.0, NOTICE_littletiles)
+// differ from upstream.
+// CreativeCore is the jar the pack ships and Embeddium the Modrinth release, both local files.
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.38'
+}
+
+def ltSrc = file(System.getenv('LT_SRC') ?: 'src')
+def ccSrc = file(System.getenv('CC_SRC') ?: 'creativecore-src')
+def localRepo = layout.buildDirectory.dir('local-repo').get().asFile
+
+// Local jars in a one-jar Maven layout, so that fg.deobf can map them: the CreativeCore jar of the pack
+// (CC_JAR) and the Embeddium 0.3.20 release jar of Modrinth (EMBEDDIUM_JAR). Upstream names the git
+// build 0.3.20-git-b21cfd8 of maven.embeddedt.org, which the build machine cannot reach. LittleTiles
+// only compiles against Embeddium, nothing of it goes into the jar.
+def localJar = { String env, String fallback, String path, String name ->
+    def src = file(System.getenv(env) ?: fallback)
+    def dir = new File(localRepo, path)
+    dir.mkdirs()
+    def target = new File(dir, name)
+    if (!target.exists() || target.length() != src.length()) {
+        java.nio.file.Files.copy(src.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+}
+localJar('CC_JAR', 'CreativeCore.jar', "team/creative/creativecore/${creativecore_version}", "creativecore-${creativecore_version}.jar")
+localJar('EMBEDDIUM_JAR', 'embeddium.jar', "org/embeddedt/embeddium-1.20.1/${embeddium_version}", "embeddium-1.20.1-${embeddium_version}.jar")
+
+group = 'team.creative.littletiles'
+version = skytekx_version
+base { archivesName = 'LittleTiles_BETA' }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+jarJar.enable()
+
+repositories {
+    maven { url = localRepo; metadataSources { artifact() } }
+    maven { url = 'https://cursemaven.com'; content { includeGroup 'curse.maven' } }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url = 'https://maven.minecraftforge.net/' }
+    mavenCentral()
+}
+
+sourceSets {
+    // Compile-only types that upstream gets from its workspace and are never shipped: the Fabric
+    // annotations Environment and EnvType from the forge sources of the CreativeCore checkout in CC_SRC
+    // (its own jar leaves them out), and two empty Fabric API interfaces in stubs/java that the
+    // Embeddium WorldSlice implements. Upstream gets those from the dependencies of its Embeddium build.
+    stubs {
+        java {
+            srcDirs = [new File(ccSrc, 'src/forge/java'), file('stubs/java')]
+            include 'net/fabricmc/**'
+        }
+        resources { srcDirs = [] }
+    }
+    // Stub APIs of other mods (CTM, Chisels & Bits), compiled against but not shipped, as upstream.
+    api {
+        java { srcDirs = [new File(ltSrc, 'src/api/java')] }
+        resources { srcDirs = [] }
+    }
+    main {
+        java { srcDirs = [new File(ltSrc, 'src/main/java')] }
+        resources { srcDirs = [new File(ltSrc, 'src/main/resources')] }
+    }
+}
+sourceSets.api.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.main.compileClasspath += sourceSets.api.output + sourceSets.stubs.output
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    minecraftLibrary fg.deobf('curse.maven:oculus-581495:5299671')
+    implementation fg.deobf("org.embeddedt:embeddium-1.20.1:${embeddium_version}")
+    implementation fg.deobf("team.creative:creativecore:${creativecore_version}")
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    compileOnly(annotationProcessor('io.github.llamalad7:mixinextras-common:0.4.1'))
+    implementation(jarJar('io.github.llamalad7:mixinextras-forge:0.4.1')) {
+        jarJar.ranged(it, '[0.4.1,)')
+    }
+}
+
+mixin {
+    add sourceSets.main, 'littletiles.mixins.refmap.json'
+    config 'littletiles.mixins.json'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    inputs.property 'skytekx_version', skytekx_version
+    filesMatching('META-INF/mods.toml') {
+        filter { String line -> line.replace("version=\"${upstream_version}\"", "version=\"${skytekx_version}\"") }
+    }
+}
+
+def manifestAttributes = [
+    'Specification-Title'     : 'LittleTiles',
+    'Specification-Vendor'    : 'CreativeMD',
+    'Specification-Version'   : skytekx_version,
+    'Implementation-Title'    : 'LittleTiles',
+    'Implementation-Version'  : skytekx_version,
+    'Implementation-Vendor'   : 'CreativeMD, built by SkyTekx',
+]
+
+[tasks.named('jar'), tasks.named('jarJar')].each { t ->
+    t.configure {
+        from(new File(ltSrc, 'LICENSE')) { rename { 'LICENSE_littletiles' } }
+        from(file('GPL-3.0.txt')) { rename { 'LICENSE_littletiles_GPL-3.0' } }
+        from(file('NOTICE_littletiles'))
+        manifest.attributes(manifestAttributes)
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
+    }
+}
+
+tasks.named('jarJar') {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    archiveClassifier = ''
+    archiveFileName = "LittleTiles_BETA_v${skytekx_version}_mc${minecraft_version}.jar"
+}
+tasks.named('jar') {
+    archiveClassifier = 'slim'
+}
+
+reobf {
+    jarJar { }
+}
+jar.finalizedBy('reobfJar')
+tasks.named('jarJar') { finalizedBy('reobfJarJar') }

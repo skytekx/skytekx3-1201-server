@@ -169,7 +169,7 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 51 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
+| Folder [local-mods/](../../local-mods) | Yes | 52 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx DE Fixes join them only with the deploy of 3.1.3. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder [local-mods/](../../local-mods) | Yes | 49 jars that are not on Modrinth or were built from source. They ship as `overrides/mods/` |
 | Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
@@ -220,8 +220,8 @@ loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 
-The 51 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
-counts in the list below are older than the last sixteen of them and were not recounted:
+The 52 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+counts in the list below are older than the last seventeen of them and were not recounted:
 The 49 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
 counts in the list below are older than the last fourteen of them and were not recounted:
 
@@ -263,6 +263,16 @@ counts in the list below are older than the last fourteen of them and were not r
   needs ZeroCore 2.1.48. Extreme Reactors declares MIT and its MIT text travels in `licenses/`. ZeroCore
   is All Rights Reserved and rides on the modpack grant of its project description, see
   `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`.
+- LittleTiles 1.6.0-pre161 left the index on 2026-11-05 for 1.6.0-pre161-skytekx.1, a build of the
+  head of the upstream branch `1.20` (c5694e16), 43 commits past that last 1.20.1 release. Those
+  commits backport fixes of the 1.21.1 line and fix a crash on hybrid servers like Arclight when a
+  tile block holds no tiles (32acae1c). The sources are unchanged. The build workspace in
+  [ports/littletiles/](../../ports/littletiles) compiles them against the CreativeCore 2.12.40 jar of
+  the index without the build files of upstream, and two clean builds give the same SHA-1. Of the
+  1,053 classes of the pre161 jar, 910 came out byte identical and the mixin refmap is identical. The
+  LGPL v3, the GPL v3 and a NOTICE that names the upstream commit as the Corresponding Source ride in
+  the jar. A Forge 47.4.18 test server with CreativeCore booted it with 0 ERROR lines and placed and
+  saved its blocks. An Arclight boot is still to come with the full pack.
 - SkyTekx Molten 1.0.0 joined on 2026-11-05 (9f47d1b0). The pack's own mod, built from the public repo
   [skytekx/skytekx-molten](https://github.com/skytekx/skytekx-molten) at edec978, adds 70 molten fluids
   with their melting and casting recipes for the ingot materials that Tinkers' Construct does not handle,

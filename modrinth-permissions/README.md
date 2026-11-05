@@ -5,12 +5,12 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 51 jars of
+Researched automatically across the 40 bundled mods of that time. The table below lists all 52 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-05. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **44** mods are fine to bundle (open license or author allows modpacks).
+- **45** mods are fine to bundle (open license or author allows modpacks).
 Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
 `local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
 
@@ -89,6 +89,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `GunpowderLib-1.20-2.2.jar` | GunpowderLib | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |
 | `infernalmobs-1.20.1.11.jar` | AtomicStryker's Infernal Mobs | Custom License (All Rights Reserved with stated modpack exception) | Special permission | yes | - |
 | `inventorysorter-1.20.1-23.0.11.jar` | Inventory Sorter | GPL-3.0 | Licensed | yes | - |
+| `LittleTiles_BETA_v1.6.0-pre161-skytekx.1_mc1.20.1.jar` | LittleTiles (SkyTekx build of the upstream branch 1.20) | LGPL-3.0-only | Licensed | yes | older builds only |
 | `nvlforcefields-1.20.1-10.jar` | NVL Force Fields | Public Domain | Licensed | yes | - |
 | `nyx-1.20.1-1.0.1.jar` | Nyx (1.20.1 port by SkyTekx) | MIT | Licensed | yes | - |
 | `offlineskins-1.20.1-v1.jar` | OfflineSkins | MIT | Licensed | yes | yes |

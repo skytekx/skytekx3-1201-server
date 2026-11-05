@@ -70,8 +70,12 @@ public class BlockColoredLamp extends BlockBase {
         ItemStack stack = player.getItemInHand(hand);
         //Turning On
         if (hand == InteractionHand.MAIN_HAND && stack.isEmpty()) {
-            world.setBlock(pos, this.defaultBlockState().setValue(LIT, !state.getValue(LIT)), Block.UPDATE_INVISIBLE);
-            return InteractionResult.PASS;
+            // SkyTekx: toggle on the server and send the change to every client. UPDATE_INVISIBLE
+            // alone never reached the other players, who kept the old lit or unlit model
+            if (!world.isClientSide) {
+                world.setBlock(pos, state.setValue(LIT, !state.getValue(LIT)), Block.UPDATE_ALL);
+            }
+            return InteractionResult.sidedSuccess(world.isClientSide);
         }
 
         if (StackUtil.isValid(stack) && stack.getItem() instanceof DyeItem) {

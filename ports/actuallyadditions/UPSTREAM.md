@@ -590,7 +590,7 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     the ones of `main` too, which brings the texture fix of the firework box (`fbdfc2e`) and the
     cull faces of the hopping item interface (`9b6dd7d`, #1401) and of the greenhouse glass
     (`817797a`). Every file in `textures/block/` and `textures/item/` is now byte identical to
-    `main` at `cd9d9c6`. Seven files of `main` stay out: the four banner pattern items
+    `main` at `cd9d9c6`. Eight files of `main` stay out: the four banner pattern items
     (`659779b`, they come with the banner patterns), `item_tag.png` (`79b2084`, it comes with the
     Item Tag filter), and `youtube.png`, `black_quartz_deepslate_ore.png` and the animation file
     of the deleted `double_crusher_rotation_animation.png`, which nothing on `main` uses. The
@@ -615,7 +615,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `textures/models_old/` (20), the three loot tables in `assets/actuallyadditions/loot_tables/`
     (loot tables only load from data packs, and the Engineer house brings the data copy of
     `engineer_house`) and `structures/andrew_period_house.nbt` (DataVersion 819, a 1.12 palette
-    with `block_grinder` and `minecraft:log`). Of the 632 block and item textures of the base, 340
+    with `block_grinder` and `minecraft:log`), and the 1.12 `mcmod.info` at the jar root, which
+    `4ef880a` deleted. Of the 632 block and item textures of the base, 340
     are gone (34 are new and 259 of the 292 kept ones changed). No model, blockstate, particle
     file or Java string names them, and `60ec534` deleted the same files on `main` after the
     retexture had moved them into `unused/` folders. The animation files of the six crystal items
@@ -628,7 +629,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     repository after the relicensing (`9cf9601` is dated 2024-04-03, a month after `33f5541`),
     through the pull requests #1395 and #1396, the Modrinth project lists the artist in its team
     and declares MIT, and neither ref has a separate asset license. Nobody confirmed this with the
-    artist. The `runData` output of this change differs from the committed one only in the nine
+    artist. The credits line in `mods.toml` names the porters and the 1.20+ texture artist with
+    the wording of `4ef880a`, as `main` does. The `runData` output of this change differs from the committed one only in the nine
     crop models and the `.cache` file of the blockstate provider.
 19. Block shapes: `mod/blocks/VoxelShapes.java` is the file of `main` at `cd9d9c6`, and a block
     overrides `getShape` exactly where `main` does. The retexture models of the crusher, double
@@ -673,7 +675,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     state `lit=true` at the second one. The model of the Lamp Controller is the one of `248011b`,
     which turns its front to the top of the model, the side that the rotations of
     `fullyDirectionalBlock` expect, so the controller faces the player who placed it. Before, its
-    front pointed north in the model and ended up on a side or the bottom. The recipes of the
+    front pointed north in the model and ended up on a side or the bottom. A lamp toggled with an
+    empty hand now switches on the server only and sends a block update to every client. The base
+    set the new state on both sides with `UPDATE_INVISIBLE` alone, so the server never sent it and
+    other players kept the old model while the light level changed. Upstream `main` still has
+    that line (`useItemOn`), which the lit and unlit models made visible. The recipes of the
     lamps and the controller and the tag `actuallyadditions:lamps` came with source changes 9 and
     10 (`248011b`, `c09b365`), so the name of the controller loses its `(wip)` label here, as in
     `248011b`. The `runData` output has 16 new and 32 changed files, and all 49 lamp and controller

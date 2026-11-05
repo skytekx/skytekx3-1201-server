@@ -77,13 +77,15 @@ Modifications
       when the box loads, so a crafted packet or save can no longer crash its tick.
     * Assets: the textures and block models of upstream's 1.20+ retexture with four stage crops
       and fixed AIOT sprites, mono machine sounds, and none of the 1.12 leftovers (old
-      blockstates, models, textures, loot tables and a structure) in the jar any more.
+      blockstates, models, textures, loot tables, a structure and mcmod.info) in the jar any
+      more.
     * Block shapes: outlines and collision boxes follow the new models as on upstream's main
       branch, with simple shapes for the generators, stands and the Phantom Booster and full
       blocks for the machines whose models now fill the block.
     * Crystal clusters: they grow out of the face they are placed on, need a solid block behind
       them, and drop crystal shards unless broken with silk touch, as on upstream's main branch.
-    * Lamps: unlit lamps no longer look lit, and the Lamp Controller faces the player.
+    * Lamps: unlit lamps no longer look lit, a lamp toggled by hand changes for every player,
+      and the Lamp Controller faces the player.
     * Sounds: casings sound like their material, machines like metal and crystal blocks and
       clusters like amethyst, as on upstream's main branch.
 

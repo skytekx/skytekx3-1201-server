@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ae2:spatial_anchor"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 16000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 2200
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 477,
+  "time": 654
+}

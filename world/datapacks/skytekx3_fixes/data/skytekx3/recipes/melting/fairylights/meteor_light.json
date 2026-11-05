@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "fairylights"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "fairylights:meteor_light"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 67
+  },
+  "temperature": 800,
+  "time": 52
+}

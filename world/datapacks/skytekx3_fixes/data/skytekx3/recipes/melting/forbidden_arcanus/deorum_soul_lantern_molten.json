@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:deorum_soul_lantern"
+  },
+  "result": {
+    "tag": "forge:molten_deorum",
+    "amount": 80
+  },
+  "temperature": 850,
+  "time": 58
+}

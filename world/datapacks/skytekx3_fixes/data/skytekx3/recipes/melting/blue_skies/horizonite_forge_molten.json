@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "blue_skies"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "blue_skies:horizonite_forge"
+  },
+  "result": {
+    "tag": "forge:molten_horizonite",
+    "amount": 450
+  },
+  "temperature": 1150,
+  "time": 158
+}

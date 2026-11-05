@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "reliquary"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "reliquary:pedestals/light_gray_pedestal"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 20
+    }
+  ],
+  "temperature": 637,
+  "time": 183
+}

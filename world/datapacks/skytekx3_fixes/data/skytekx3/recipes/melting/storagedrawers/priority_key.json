@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "storagedrawers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "storagedrawers:priority_key"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 190
+    }
+  ],
+  "temperature": 800,
+  "time": 120
+}

@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm:black_steel_fence"
+  },
+  "result": {
+    "tag": "forge:molten_black_steel",
+    "amount": 570
+  },
+  "temperature": 950,
+  "time": 163
+}

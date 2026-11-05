@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:deorum_glass_pane"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 375
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_deorum",
+      "amount": 4
+    }
+  ],
+  "temperature": 750,
+  "time": 119
+}

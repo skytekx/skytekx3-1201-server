@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:shellite_machine_speed_augment"
+  },
+  "result": {
+    "tag": "forge:molten_lead",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "fluid": "thermal_extra:shellite",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:soul_infused",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:twinite",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_electrum",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 330,
+  "time": 123
+}

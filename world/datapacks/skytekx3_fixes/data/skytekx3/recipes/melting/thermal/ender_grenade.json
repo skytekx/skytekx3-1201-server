@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:ender_grenade"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 22
+    }
+  ],
+  "temperature": 477,
+  "time": 82
+}

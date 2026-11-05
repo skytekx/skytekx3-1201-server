@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:mycelial_reactor"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 1800
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 360
+    },
+    {
+      "fluid": "tconstruct:molten_debris",
+      "amount": 180
+    }
+  ],
+  "temperature": 1450,
+  "time": 353
+}

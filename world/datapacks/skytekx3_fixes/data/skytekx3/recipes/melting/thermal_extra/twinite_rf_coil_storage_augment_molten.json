@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:twinite_rf_coil_storage_augment"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "fluid": "thermal_extra:soul_infused",
+      "amount": 360
+    },
+    {
+      "fluid": "thermal_extra:twinite",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_silver",
+      "amount": 90
+    }
+  ],
+  "temperature": 700,
+  "time": 114
+}

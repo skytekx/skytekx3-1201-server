@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:flux_drill"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_tin",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 90
+    }
+  ],
+  "temperature": 800,
+  "time": 170
+}

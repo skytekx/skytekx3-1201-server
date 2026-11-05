@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ticex"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ticex:scorched_rf_furnace"
+  },
+  "result": {
+    "fluid": "ticex:molten_reconstruction_core",
+    "amount": 2000
+  },
+  "temperature": 1000,
+  "time": 313
+}

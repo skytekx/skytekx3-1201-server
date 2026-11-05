@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismgenerators:turbine_vent"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 44
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 15
+    }
+  ],
+  "temperature": 950,
+  "time": 92
+}

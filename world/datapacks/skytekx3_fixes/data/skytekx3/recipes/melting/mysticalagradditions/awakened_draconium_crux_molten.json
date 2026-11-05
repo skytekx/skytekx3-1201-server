@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagradditions:awakened_draconium_crux"
+  },
+  "result": {
+    "tag": "forge:molten_draconium_awakened",
+    "amount": 2430
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 900
+    }
+  ],
+  "temperature": 1450,
+  "time": 410
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:melonshelf"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 10
+  },
+  "temperature": 700,
+  "time": 19
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "constructionwand"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "constructionwand:core_destruction"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 1500
+  },
+  "temperature": 1450,
+  "time": 322
+}

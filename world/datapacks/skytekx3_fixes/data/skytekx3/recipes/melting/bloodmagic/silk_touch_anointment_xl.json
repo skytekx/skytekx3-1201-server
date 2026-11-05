@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bloodmagic:silk_touch_anointment_xl"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 100
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 10
+    }
+  ],
+  "temperature": 950,
+  "time": 68
+}

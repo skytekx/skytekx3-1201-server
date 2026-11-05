@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "fairylights"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "fairylights:snowflake_light"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 62
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 22
+    }
+  ],
+  "temperature": 750,
+  "time": 49
+}

@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagriculture:strength_iii_augment"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 2400
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 990
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    }
+  ],
+  "temperature": 637,
+  "time": 283
+}

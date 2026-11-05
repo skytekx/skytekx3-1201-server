@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "botania:alfheim_portal"
+  },
+  "result": {
+    "tag": "forge:molten_terrasteel",
+    "amount": 30
+  },
+  "temperature": 1150,
+  "time": 41
+}

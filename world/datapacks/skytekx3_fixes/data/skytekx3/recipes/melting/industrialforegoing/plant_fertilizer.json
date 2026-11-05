@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:plant_fertilizer"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1260
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 1000
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    }
+  ],
+  "temperature": 800,
+  "time": 225
+}

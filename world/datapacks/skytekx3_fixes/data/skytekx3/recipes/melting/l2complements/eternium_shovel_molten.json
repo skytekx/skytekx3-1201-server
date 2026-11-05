@@ -1,0 +1,30 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "l2complements:eternium_shovel"
+  },
+  "result": {
+    "tag": "forge:molten_eternium",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1400,
+  "time": 78
+}

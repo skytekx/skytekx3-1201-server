@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bloodmagic:hidden_knowledge_anointment_3"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_hellforged",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 195
+}

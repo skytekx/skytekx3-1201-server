@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:engineers_power_glove"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 270
+  },
+  "temperature": 700,
+  "time": 99
+}

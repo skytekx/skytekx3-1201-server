@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:diamond_mining_arrow"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 12
+  },
+  "temperature": 1450,
+  "time": 29
+}

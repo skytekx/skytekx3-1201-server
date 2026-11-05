@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "framedblocks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "framedblocks:framed_fancy_rail"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 33
+  },
+  "temperature": 800,
+  "time": 36
+}

@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:fire_killer"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 220,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 94
+}

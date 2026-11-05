@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "meteors:meteor_summoner_kitty"
+  },
+  "result": {
+    "tag": "forge:molten_meteorite",
+    "amount": 720
+  },
+  "temperature": 950,
+  "time": 183
+}

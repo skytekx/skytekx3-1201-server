@@ -1,0 +1,51 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:hv_exchanger"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 2700
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 2518
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 2160
+    },
+    {
+      "tag": "forge:molten_electrum",
+      "amount": 494
+    },
+    {
+      "tag": "forge:molten_lead",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 268
+    },
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 329
+}

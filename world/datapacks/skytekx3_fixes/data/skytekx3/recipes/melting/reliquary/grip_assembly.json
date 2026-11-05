@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "reliquary"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "reliquary:grip_assembly"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1080
+  },
+  "temperature": 800,
+  "time": 208
+}

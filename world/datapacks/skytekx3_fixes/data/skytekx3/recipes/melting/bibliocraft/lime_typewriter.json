@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bibliocraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bibliocraft:lime_typewriter"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1800
+  },
+  "temperature": 800,
+  "time": 269
+}

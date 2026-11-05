@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:nickel_zinc_battery"
+  },
+  "result": {
+    "tag": "forge:molten_brass",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_zinc",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 270
+    }
+  ],
+  "temperature": 605,
+  "time": 152
+}

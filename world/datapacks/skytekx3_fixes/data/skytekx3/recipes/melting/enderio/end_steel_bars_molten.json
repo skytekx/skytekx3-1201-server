@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:end_steel_bars"
+  },
+  "result": {
+    "tag": "forge:molten_end_steel",
+    "amount": 45
+  },
+  "temperature": 1200,
+  "time": 51
+}

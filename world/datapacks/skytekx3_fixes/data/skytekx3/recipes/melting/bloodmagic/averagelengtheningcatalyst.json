@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bloodmagic:averagelengtheningcatalyst"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 90
+  },
+  "temperature": 500,
+  "time": 50
+}

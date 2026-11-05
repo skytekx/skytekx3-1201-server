@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tf_dnv"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "tf_dnv:composter"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_steeleaf",
+    "amount": 630
+  },
+  "temperature": 934,
+  "time": 170
+}

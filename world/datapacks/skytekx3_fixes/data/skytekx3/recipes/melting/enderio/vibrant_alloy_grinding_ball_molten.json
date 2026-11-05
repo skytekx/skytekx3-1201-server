@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:vibrant_alloy_grinding_ball"
+  },
+  "result": {
+    "tag": "forge:molten_vibrant_alloy",
+    "amount": 18
+  },
+  "temperature": 850,
+  "time": 28
+}

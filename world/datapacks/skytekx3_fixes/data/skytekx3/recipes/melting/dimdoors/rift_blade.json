@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dimdoors"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "dimdoors:rift_blade"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 500,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 477,
+  "time": 116
+}

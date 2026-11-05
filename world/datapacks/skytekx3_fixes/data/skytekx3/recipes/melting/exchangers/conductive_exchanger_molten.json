@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:conductive_exchanger"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper_alloy",
+      "amount": 1260
+    },
+    {
+      "tag": "forge:molten_conductive_alloy",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 120
+    },
+    {
+      "tag": "forge:molten_redstone_alloy",
+      "amount": 80
+    }
+  ],
+  "temperature": 800,
+  "time": 241
+}

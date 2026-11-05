@@ -1,0 +1,18 @@
+{
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "minecraft:recovery_compass"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 800
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    }
+  ],
+  "temperature": 950,
+  "time": 193
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "medievalembroidery"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "medievalembroidery:beige_bricks_slab"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 62
+  },
+  "temperature": 750,
+  "time": 49
+}

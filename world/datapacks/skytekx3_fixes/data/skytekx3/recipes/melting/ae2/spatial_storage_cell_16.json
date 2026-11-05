@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ae2:spatial_storage_cell_16"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 500
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    }
+  ],
+  "temperature": 477,
+  "time": 327
+}

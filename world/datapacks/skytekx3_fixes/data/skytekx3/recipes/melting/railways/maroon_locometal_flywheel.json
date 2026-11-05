@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:maroon_locometal_flywheel"
+  },
+  "result": {
+    "tag": "forge:molten_brass",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 101
+    }
+  ],
+  "temperature": 605,
+  "time": 152
+}

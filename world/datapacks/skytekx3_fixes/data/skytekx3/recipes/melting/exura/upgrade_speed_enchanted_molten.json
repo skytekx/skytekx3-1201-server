@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exura"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exura:upgrade_speed_enchanted"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 281
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_enchanted_metal",
+      "amount": 22
+    }
+  ],
+  "temperature": 700,
+  "time": 101
+}

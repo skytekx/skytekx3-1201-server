@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "galosphere"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "galosphere:glow_flare"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 22
+  },
+  "temperature": 500,
+  "time": 25
+}

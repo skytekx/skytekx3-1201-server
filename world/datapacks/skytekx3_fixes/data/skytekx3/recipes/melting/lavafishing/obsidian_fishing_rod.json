@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "lavafishing"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "lavafishing:obsidian_fishing_rod"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 2000,
+    "unit_size": 10
+  },
+  "temperature": 1000,
+  "time": 313
+}

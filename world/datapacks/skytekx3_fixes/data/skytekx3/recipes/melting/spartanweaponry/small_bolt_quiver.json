@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "spartanweaponry:small_bolt_quiver"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 271
+  },
+  "temperature": 800,
+  "time": 104
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "magistuarmory:steel_chainmail"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 45
+  },
+  "temperature": 950,
+  "time": 46
+}

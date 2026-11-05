@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "decocraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "decocraft:tool_modelswitch"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 90
+  },
+  "temperature": 800,
+  "time": 60
+}

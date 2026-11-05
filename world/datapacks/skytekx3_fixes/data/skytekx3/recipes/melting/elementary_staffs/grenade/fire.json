@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "elementary_staffs"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "elementary_staffs:grenade/fire"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "temperature": 750,
+  "time": 195
+}

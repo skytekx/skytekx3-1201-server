@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:wyvern_chestpiece"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 1620
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 1248
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 900
+    }
+  ],
+  "temperature": 1300,
+  "time": 318
+}

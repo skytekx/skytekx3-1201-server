@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:thermal_exchanger_core_tier1"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 360
+    }
+  ],
+  "temperature": 500,
+  "time": 200
+}

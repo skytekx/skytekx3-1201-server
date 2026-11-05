@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:purple_accented_black_heavy_saddle"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 20
+  },
+  "temperature": 800,
+  "time": 28
+}

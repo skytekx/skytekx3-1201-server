@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:electric_pump"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 360
+    }
+  ],
+  "temperature": 750,
+  "time": 390
+}

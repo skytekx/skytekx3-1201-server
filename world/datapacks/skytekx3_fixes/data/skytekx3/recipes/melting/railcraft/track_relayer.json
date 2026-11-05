@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:track_relayer"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 810
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 600
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    }
+  ],
+  "temperature": 950,
+  "time": 194
+}

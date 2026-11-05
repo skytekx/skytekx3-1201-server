@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:quantum_crafter"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 5130
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 5040
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1080
+    }
+  ],
+  "temperature": 700,
+  "time": 429
+}

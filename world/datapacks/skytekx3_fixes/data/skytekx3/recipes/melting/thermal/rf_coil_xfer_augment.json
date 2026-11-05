@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:rf_coil_xfer_augment"
+  },
+  "result": {
+    "tag": "forge:molten_silver",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180
+    }
+  ],
+  "temperature": 790,
+  "time": 104
+}

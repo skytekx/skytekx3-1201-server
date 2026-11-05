@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:reinforced_door"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 2000
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 990
+    }
+  ],
+  "temperature": 1000,
+  "time": 442
+}

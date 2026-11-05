@@ -1,0 +1,12 @@
+{
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "minecraft:lava_bucket"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 270
+  },
+  "temperature": 800,
+  "time": 104
+}

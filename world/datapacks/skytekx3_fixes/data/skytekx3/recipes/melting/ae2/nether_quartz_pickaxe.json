@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "ae2:nether_quartz_pickaxe"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 300,
+    "unit_size": 25
+  },
+  "temperature": 637,
+  "time": 100
+}

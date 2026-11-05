@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "torchmaster"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "torchmaster:feral_flare_lantern"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 180
+  },
+  "temperature": 700,
+  "time": 80
+}

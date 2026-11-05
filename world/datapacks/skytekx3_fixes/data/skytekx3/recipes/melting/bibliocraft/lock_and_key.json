@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bibliocraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bibliocraft:lock_and_key"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 290
+  },
+  "temperature": 700,
+  "time": 102
+}

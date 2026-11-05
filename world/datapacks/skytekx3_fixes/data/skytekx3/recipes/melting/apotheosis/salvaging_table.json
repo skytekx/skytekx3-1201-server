@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:salvaging_table"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 270
+    }
+  ],
+  "temperature": 800,
+  "time": 170
+}

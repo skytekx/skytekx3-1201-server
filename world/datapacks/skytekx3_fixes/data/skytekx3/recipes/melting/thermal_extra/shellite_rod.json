@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:shellite_rod"
+  },
+  "result": {
+    "tag": "forge:molten_lead",
+    "amount": 22
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 22
+    }
+  ],
+  "temperature": 330,
+  "time": 21
+}

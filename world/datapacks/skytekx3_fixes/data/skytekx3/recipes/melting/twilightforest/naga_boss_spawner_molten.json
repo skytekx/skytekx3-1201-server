@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightforest:naga_boss_spawner"
+  },
+  "result": {
+    "tag": "forge:molten_chaos",
+    "amount": 90
+  },
+  "temperature": 1350,
+  "time": 76
+}

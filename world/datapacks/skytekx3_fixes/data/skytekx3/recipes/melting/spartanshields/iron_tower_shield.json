@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanshields"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanshields:iron_tower_shield"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 540,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 147
+}

@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:gauntlet_of_gattling"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    }
+  ],
+  "temperature": 700,
+  "time": 99
+}

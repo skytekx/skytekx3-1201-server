@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mob_grinding_utils"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mob_grinding_utils:saw_upgrade_beheading"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 940
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 900
+    }
+  ],
+  "temperature": 700,
+  "time": 184
+}

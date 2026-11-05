@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:electric_booster_track"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 12
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 4
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 4
+    }
+  ],
+  "temperature": 637,
+  "time": 20
+}

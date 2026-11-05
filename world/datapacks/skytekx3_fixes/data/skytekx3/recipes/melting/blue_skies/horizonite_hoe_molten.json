@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "blue_skies"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "blue_skies:horizonite_hoe"
+  },
+  "result": {
+    "tag": "forge:molten_horizonite",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 1150,
+  "time": 100
+}

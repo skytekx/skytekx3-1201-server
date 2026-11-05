@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "expatternprovider"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "expatternprovider:wireless_hub"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1250
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 350
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    }
+  ],
+  "temperature": 477,
+  "time": 183
+}

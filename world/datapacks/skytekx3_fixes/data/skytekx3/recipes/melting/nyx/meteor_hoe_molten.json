@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "nyx"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "nyx:meteor_hoe"
+  },
+  "result": {
+    "tag": "forge:molten_meteor",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 1000,
+  "time": 94
+}

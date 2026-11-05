@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:revolver"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 945
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 100
+    }
+  ],
+  "temperature": 950,
+  "time": 210
+}

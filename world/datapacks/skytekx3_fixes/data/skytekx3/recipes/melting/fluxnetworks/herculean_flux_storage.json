@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "fluxnetworks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "fluxnetworks:herculean_flux_storage"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 144000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 8928
+    }
+  ],
+  "temperature": 1000,
+  "time": 2653
+}

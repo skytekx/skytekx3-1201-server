@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:expand_radioactive_waste_barrel"
+  },
+  "result": {
+    "tag": "forge:molten_lead",
+    "amount": 4680
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 1440
+    }
+  ],
+  "temperature": 330,
+  "time": 313
+}

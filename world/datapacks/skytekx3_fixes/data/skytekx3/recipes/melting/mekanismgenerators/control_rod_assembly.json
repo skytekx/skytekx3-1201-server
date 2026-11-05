@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismgenerators:control_rod_assembly"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 90
+    }
+  ],
+  "temperature": 800,
+  "time": 120
+}

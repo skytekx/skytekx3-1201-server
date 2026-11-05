@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:prospector"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100,
+      "unit_size": 25
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

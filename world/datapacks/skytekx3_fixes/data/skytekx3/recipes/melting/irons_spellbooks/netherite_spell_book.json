@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:netherite_spell_book"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

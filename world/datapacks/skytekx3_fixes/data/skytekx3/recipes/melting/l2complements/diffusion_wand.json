@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "l2complements:diffusion_wand"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 200,
+    "unit_size": 25
+  },
+  "temperature": 1450,
+  "time": 118
+}

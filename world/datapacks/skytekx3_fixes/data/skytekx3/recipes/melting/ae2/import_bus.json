@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ae2:import_bus"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 45
+    }
+  ],
+  "temperature": 800,
+  "time": 104
+}

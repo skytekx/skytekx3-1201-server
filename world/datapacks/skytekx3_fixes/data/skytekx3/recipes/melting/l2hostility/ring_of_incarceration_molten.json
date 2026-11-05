@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2hostility"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2hostility:ring_of_incarceration"
+  },
+  "result": {
+    "tag": "forge:molten_chaos",
+    "amount": 90
+  },
+  "temperature": 1350,
+  "time": 76
+}

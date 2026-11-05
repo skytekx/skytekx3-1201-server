@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:golden_katana"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 700,
+  "time": 80
+}

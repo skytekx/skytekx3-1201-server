@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "minecraft:mooshroom_spawn_egg"
+  },
+  "result": {
+    "tag": "forge:molten_totemic_gold",
+    "amount": 360
+  },
+  "temperature": 750,
+  "time": 117
+}

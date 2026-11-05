@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:enchanted_totemic_apple"
+  },
+  "result": {
+    "tag": "forge:molten_totemic_gold",
+    "amount": 3240
+  },
+  "temperature": 750,
+  "time": 351
+}

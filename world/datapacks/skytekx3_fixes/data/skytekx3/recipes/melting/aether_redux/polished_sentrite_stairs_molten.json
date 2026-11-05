@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether_redux"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aether_redux:polished_sentrite_stairs"
+  },
+  "result": {
+    "tag": "forge:molten_sentrite",
+    "amount": 90
+  },
+  "temperature": 900,
+  "time": 63
+}

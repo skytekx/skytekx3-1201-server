@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:eio_exchanger_core_tier2"
+  },
+  "result": {
+    "tag": "forge:molten_energetic_alloy",
+    "amount": 980
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_copper_alloy",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_pulsating_alloy",
+      "amount": 320
+    },
+    {
+      "tag": "forge:molten_redstone_alloy",
+      "amount": 40
+    }
+  ],
+  "temperature": 750,
+  "time": 193
+}

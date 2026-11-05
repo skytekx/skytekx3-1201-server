@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mocreatures"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mocreatures:essencedarkness"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 750,
+  "time": 195
+}

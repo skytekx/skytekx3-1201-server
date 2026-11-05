@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:advanced_item_loader"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 450
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 450
+    }
+  ],
+  "temperature": 800,
+  "time": 134
+}

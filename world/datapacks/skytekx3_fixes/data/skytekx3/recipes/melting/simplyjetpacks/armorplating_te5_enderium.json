@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:armorplating_te5_enderium"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 200
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_enderium",
+      "amount": 150
+    }
+  ],
+  "temperature": 934,
+  "time": 96
+}

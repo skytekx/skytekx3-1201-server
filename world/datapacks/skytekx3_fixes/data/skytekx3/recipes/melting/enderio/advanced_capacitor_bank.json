@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:advanced_capacitor_bank"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 320
+    }
+  ],
+  "temperature": 500,
+  "time": 141
+}

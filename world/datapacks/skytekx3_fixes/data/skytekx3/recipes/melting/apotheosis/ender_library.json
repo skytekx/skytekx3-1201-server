@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:ender_library"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 36000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 1000
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 200
+    }
+  ],
+  "temperature": 1000,
+  "time": 1326
+}

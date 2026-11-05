@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:energetic_photovoltaic_module"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 260
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 180
+    }
+  ],
+  "temperature": 700,
+  "time": 97
+}

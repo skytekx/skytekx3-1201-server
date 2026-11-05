@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:piglin_rune"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_debris",
+    "amount": 270
+  },
+  "temperature": 1175,
+  "time": 124
+}

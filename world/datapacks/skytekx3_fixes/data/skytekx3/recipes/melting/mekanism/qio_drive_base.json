@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:qio_drive_base"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 2160
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 360
+    }
+  ],
+  "temperature": 800,
+  "time": 295
+}

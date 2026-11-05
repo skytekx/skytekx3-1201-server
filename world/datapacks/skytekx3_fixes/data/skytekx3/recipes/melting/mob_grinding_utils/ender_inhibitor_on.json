@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mob_grinding_utils"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mob_grinding_utils:ender_inhibitor_on"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 477,
+  "time": 82
+}

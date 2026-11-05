@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "chipped"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "chipped:tinkering_table"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 390
+}

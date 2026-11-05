@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exura"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exura:ender_generator"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1250
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 1000
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    }
+  ],
+  "temperature": 477,
+  "time": 183
+}

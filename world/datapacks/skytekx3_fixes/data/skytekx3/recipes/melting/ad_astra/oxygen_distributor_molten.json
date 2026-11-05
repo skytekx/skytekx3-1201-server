@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:oxygen_distributor"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 3285
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1620
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_desh",
+      "amount": 180
+    }
+  ],
+  "temperature": 950,
+  "time": 392
+}

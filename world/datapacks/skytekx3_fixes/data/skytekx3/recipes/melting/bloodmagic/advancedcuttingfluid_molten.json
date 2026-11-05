@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bloodmagic"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "bloodmagic:advancedcuttingfluid"
+  },
+  "result": {
+    "tag": "forge:molten_hellforged",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 1250,
+  "time": 74
+}

@@ -1,0 +1,33 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "l2complements:sculkium_sword"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 75,
+      "unit_size": 25
+    }
+  ],
+  "temperature": 500,
+  "time": 50
+}

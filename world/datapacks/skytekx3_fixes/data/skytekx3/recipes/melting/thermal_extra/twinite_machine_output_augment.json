@@ -1,0 +1,47 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:twinite_machine_output_augment"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 468
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_invar",
+      "amount": 180
+    }
+  ],
+  "temperature": 700,
+  "time": 161
+}

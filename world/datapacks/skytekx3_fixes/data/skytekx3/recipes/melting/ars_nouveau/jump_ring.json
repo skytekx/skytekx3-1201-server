@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ars_nouveau"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ars_nouveau:jump_ring"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 80
+  },
+  "temperature": 800,
+  "time": 57
+}

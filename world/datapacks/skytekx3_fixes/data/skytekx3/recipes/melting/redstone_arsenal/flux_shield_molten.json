@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "redstone_arsenal"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "redstone_arsenal:flux_shield"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_flux_infused",
+      "amount": 540
+    }
+  ],
+  "temperature": 1000,
+  "time": 313
+}

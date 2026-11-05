@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismadditions:obsidian_tnt"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 12000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 6000
+    }
+  ],
+  "temperature": 750,
+  "time": 676
+}

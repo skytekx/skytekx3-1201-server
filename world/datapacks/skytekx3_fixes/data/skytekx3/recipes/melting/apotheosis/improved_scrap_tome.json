@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:improved_scrap_tome"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 87
+  },
+  "temperature": 800,
+  "time": 59
+}

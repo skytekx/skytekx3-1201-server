@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "railcraft:cut_firestone"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 1200,
+    "unit_size": 25
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 360,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1450,
+  "time": 288
+}

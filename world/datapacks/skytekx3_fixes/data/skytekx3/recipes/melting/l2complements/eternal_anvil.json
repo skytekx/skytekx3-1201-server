@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:eternal_anvil"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 19530
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 1485
+    }
+  ],
+  "temperature": 800,
+  "time": 886
+}

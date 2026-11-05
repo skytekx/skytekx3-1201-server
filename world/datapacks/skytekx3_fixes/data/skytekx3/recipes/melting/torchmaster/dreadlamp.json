@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "torchmaster"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "torchmaster:dreadlamp"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 5000
+  },
+  "temperature": 1000,
+  "time": 494
+}

@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:generator_item"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 2250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1800
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 20
+    }
+  ],
+  "temperature": 477,
+  "time": 245
+}

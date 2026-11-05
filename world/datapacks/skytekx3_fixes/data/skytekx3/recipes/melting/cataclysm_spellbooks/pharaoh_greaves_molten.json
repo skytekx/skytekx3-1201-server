@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:pharaoh_greaves"
+  },
+  "result": {
+    "tag": "forge:molten_ancient_metal",
+    "amount": 180
+  },
+  "temperature": 1000,
+  "time": 94
+}

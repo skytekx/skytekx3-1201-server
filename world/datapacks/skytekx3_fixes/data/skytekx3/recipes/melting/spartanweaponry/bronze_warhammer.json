@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:bronze_warhammer"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 270,
+    "unit_size": 10
+  },
+  "temperature": 700,
+  "time": 99
+}

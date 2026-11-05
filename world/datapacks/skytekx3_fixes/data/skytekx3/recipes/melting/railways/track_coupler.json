@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:track_coupler"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_brass",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 1000,
+  "time": 111
+}

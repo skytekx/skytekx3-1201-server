@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "botania:floating_entropinnyum"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 200
+  },
+  "temperature": 1450,
+  "time": 118
+}

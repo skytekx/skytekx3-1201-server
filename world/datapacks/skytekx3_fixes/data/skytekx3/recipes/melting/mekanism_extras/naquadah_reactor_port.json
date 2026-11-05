@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:naquadah_reactor_port"
+  },
+  "result": {
+    "tag": "forge:molten_lead",
+    "amount": 810
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 22
+    }
+  ],
+  "temperature": 330,
+  "time": 130
+}

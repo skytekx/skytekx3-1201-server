@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:coil_hv"
+  },
+  "result": {
+    "tag": "forge:molten_aluminum",
+    "amount": 176
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 176
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 425,
+  "time": 66
+}

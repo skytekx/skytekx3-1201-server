@@ -1,0 +1,43 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "ad_astra:jet_suit"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 5800,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 2430,
+      "unit_size": 10
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 1400,
+      "unit_size": 25
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 950,
+  "time": 520
+}

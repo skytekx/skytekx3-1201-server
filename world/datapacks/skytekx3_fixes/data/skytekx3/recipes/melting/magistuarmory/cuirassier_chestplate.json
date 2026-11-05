@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "magistuarmory:cuirassier_chestplate"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 630,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 171
+}

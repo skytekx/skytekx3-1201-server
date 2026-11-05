@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:orange_brass_wrapped_locometal_boiler"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 269
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_brass",
+      "amount": 22
+    }
+  ],
+  "temperature": 800,
+  "time": 104
+}

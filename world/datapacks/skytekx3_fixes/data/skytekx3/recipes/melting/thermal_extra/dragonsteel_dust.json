@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:dragonsteel_dust"
+  },
+  "result": {
+    "tag": "forge:molten_enderium",
+    "amount": 45
+  },
+  "temperature": 1350,
+  "time": 54
+}

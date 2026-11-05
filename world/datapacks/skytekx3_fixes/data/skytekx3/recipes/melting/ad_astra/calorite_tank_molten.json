@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:calorite_tank"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 630
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_calorite",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_desh",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_ostrum",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 405
+    }
+  ],
+  "temperature": 950,
+  "time": 171
+}

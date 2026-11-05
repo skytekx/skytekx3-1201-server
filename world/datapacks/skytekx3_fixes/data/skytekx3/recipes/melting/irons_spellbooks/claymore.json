@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "irons_spellbooks:claymore"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 800,
+  "time": 85
+}

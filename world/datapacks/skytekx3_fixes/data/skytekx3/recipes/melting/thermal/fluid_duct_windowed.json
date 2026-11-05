@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:fluid_duct_windowed"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 125
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_bronze",
+      "amount": 45
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 12
+    }
+  ],
+  "temperature": 1000,
+  "time": 78
+}

@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:steel_flanged_mace"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 270,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 112
+}

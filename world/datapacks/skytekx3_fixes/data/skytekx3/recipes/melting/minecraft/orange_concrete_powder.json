@@ -1,0 +1,12 @@
+{
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "minecraft:orange_concrete_powder"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 500
+  },
+  "temperature": 750,
+  "time": 138
+}

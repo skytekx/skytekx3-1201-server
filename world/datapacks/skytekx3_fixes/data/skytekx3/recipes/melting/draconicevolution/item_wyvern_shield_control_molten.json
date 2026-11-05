@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:item_wyvern_shield_control"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 4050
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 3420
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 1300
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    }
+  ],
+  "temperature": 1300,
+  "time": 502
+}

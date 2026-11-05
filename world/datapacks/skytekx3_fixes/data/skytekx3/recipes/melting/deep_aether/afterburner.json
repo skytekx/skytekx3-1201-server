@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "deep_aether"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "deep_aether:afterburner"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 4000,
+    "unit_size": 10
+  },
+  "temperature": 1000,
+  "time": 442
+}

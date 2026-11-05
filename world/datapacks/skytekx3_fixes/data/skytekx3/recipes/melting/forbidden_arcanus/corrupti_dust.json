@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:corrupti_dust"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 15
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 10
+    }
+  ],
+  "temperature": 1000,
+  "time": 111
+}

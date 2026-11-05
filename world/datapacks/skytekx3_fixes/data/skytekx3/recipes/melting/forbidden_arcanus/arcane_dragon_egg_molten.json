@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:arcane_dragon_egg"
+  },
+  "result": {
+    "tag": "forge:molten_deorum",
+    "amount": 2160
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 1998
+    }
+  ],
+  "temperature": 850,
+  "time": 302
+}

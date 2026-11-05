@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagradditions:insanium_gemstone_block"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 900
+  },
+  "temperature": 1450,
+  "time": 250
+}

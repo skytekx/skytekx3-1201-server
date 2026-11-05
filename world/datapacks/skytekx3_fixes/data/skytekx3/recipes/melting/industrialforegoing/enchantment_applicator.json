@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:enchantment_applicator"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 8910
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 1260
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "fluid": "tconstruct:molten_debris",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 598
+}

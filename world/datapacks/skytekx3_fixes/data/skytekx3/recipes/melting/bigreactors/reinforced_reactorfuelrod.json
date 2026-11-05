@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tinkers_reforged"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:reinforced_reactorfuelrod"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_graphite",
+      "amount": 180
+    }
+  ],
+  "temperature": 950,
+  "time": 130
+}

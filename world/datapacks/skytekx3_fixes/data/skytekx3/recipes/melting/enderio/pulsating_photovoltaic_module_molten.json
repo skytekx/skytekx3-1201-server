@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:pulsating_photovoltaic_module"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 540
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 420
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_energetic_alloy",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_pulsating_alloy",
+      "amount": 180
+    }
+  ],
+  "temperature": 500,
+  "time": 122
+}

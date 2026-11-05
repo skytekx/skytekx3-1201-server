@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "exchangers:iron_exchanger"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 2750,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 810,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 477,
+  "time": 271
+}

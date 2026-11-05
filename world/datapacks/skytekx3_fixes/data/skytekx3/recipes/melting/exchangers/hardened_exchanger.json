@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:hardened_exchanger"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 2880
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 1560
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 990
+    },
+    {
+      "tag": "forge:molten_invar",
+      "amount": 900
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 500,
+  "time": 282
+}

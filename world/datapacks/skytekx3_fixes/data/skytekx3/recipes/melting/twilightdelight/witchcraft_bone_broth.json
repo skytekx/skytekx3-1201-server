@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightdelight:witchcraft_bone_broth"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 100
+  },
+  "temperature": 950,
+  "time": 68
+}

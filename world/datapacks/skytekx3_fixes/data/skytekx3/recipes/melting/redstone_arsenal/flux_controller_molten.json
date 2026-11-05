@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "redstone_arsenal"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "redstone_arsenal:flux_controller"
+  },
+  "result": {
+    "tag": "forge:molten_flux_infused",
+    "amount": 180
+  },
+  "temperature": 800,
+  "time": 85
+}

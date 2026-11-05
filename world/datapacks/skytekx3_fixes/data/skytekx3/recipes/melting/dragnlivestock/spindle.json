@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "dragnlivestock"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "dragnlivestock:spindle"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 20
+  },
+  "temperature": 800,
+  "time": 28
+}

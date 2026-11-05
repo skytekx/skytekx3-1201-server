@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:elite_induction_provider"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 7560
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 4320
+    }
+  ],
+  "temperature": 975,
+  "time": 601
+}

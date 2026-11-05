@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartantwilight"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartantwilight:knightmetal_tomahawk"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_knightmetal",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 1300,
+  "time": 106
+}

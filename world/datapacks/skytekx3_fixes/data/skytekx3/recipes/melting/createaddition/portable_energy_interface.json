@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "createaddition"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "createaddition:portable_energy_interface"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_brass",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 78
+    }
+  ],
+  "temperature": 500,
+  "time": 71
+}

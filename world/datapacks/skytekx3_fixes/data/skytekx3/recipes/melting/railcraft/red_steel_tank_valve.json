@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:red_steel_tank_valve"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 45
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 15
+    }
+  ],
+  "temperature": 950,
+  "time": 46
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:press_packing_3x3_die"
+  },
+  "result": {
+    "tag": "forge:molten_constantan",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_invar",
+      "amount": 180
+    }
+  ],
+  "temperature": 920,
+  "time": 90
+}

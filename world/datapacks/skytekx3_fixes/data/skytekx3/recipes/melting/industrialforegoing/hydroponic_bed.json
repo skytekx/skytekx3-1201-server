@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:hydroponic_bed"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 1080
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 900
+    }
+  ],
+  "temperature": 700,
+  "time": 197
+}

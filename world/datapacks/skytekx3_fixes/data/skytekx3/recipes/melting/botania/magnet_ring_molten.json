@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "botania:magnet_ring"
+  },
+  "result": {
+    "tag": "forge:molten_manasteel",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 850,
+  "time": 175
+}

@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:tyr_helmet"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1660,
+    "unit_size": 10
+  },
+  "temperature": 477,
+  "time": 211
+}

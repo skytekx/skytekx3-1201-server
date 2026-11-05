@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:track_warped"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 20
+  },
+  "temperature": 700,
+  "time": 27
+}

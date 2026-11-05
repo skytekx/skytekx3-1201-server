@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:device_tree_extractor"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 720
+  },
+  "temperature": 800,
+  "time": 170
+}

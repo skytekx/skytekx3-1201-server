@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "framedblocks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "framedblocks:framed_one_way_window"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 500
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 200
+    }
+  ],
+  "temperature": 750,
+  "time": 138
+}

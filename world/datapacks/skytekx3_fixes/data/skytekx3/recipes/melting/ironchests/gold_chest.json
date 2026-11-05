@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ironchests"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ironchests:gold_chest"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    }
+  ],
+  "temperature": 500,
+  "time": 141
+}

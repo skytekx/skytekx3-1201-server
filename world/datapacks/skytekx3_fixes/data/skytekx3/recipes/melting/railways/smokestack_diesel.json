@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:smokestack_diesel"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 540
+  },
+  "temperature": 800,
+  "time": 147
+}

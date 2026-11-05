@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:emerald_rod"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 50
+  },
+  "temperature": 934,
+  "time": 48
+}

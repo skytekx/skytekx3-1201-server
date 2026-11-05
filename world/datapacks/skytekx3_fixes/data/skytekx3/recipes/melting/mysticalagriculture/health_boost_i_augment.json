@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagriculture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagriculture:health_boost_i_augment"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    }
+  ],
+  "temperature": 700,
+  "time": 228
+}

@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "magistuarmory:copper_rondache"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 720,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 500,
+  "time": 141
+}

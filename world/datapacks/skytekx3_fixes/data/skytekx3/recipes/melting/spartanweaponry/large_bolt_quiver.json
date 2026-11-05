@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "spartanweaponry:large_bolt_quiver"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 300
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 271
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 270
+    }
+  ],
+  "temperature": 1450,
+  "time": 144
+}

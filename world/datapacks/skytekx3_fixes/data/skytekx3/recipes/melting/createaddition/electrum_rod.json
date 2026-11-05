@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "createaddition"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "createaddition:electrum_rod"
+  },
+  "result": {
+    "tag": "forge:molten_electrum",
+    "amount": 45
+  },
+  "temperature": 760,
+  "time": 42
+}

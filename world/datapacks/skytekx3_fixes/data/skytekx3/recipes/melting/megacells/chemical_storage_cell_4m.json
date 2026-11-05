@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "megacells:chemical_storage_cell_4m"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 65610
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 88
+    }
+  ],
+  "temperature": 700,
+  "time": 1536
+}

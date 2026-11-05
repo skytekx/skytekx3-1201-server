@@ -1,0 +1,43 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:item_wyvern_energy_link"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 7000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 3250
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 3240
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 1048
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    }
+  ],
+  "temperature": 750,
+  "time": 516
+}

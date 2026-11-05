@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "mysticalagradditions:prudentium_paxel"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 600,
+    "unit_size": 25
+  },
+  "byproducts": [
+    {
+      "fluid": "mysticalagradditions:molten_prudentium",
+      "amount": 540,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1450,
+  "time": 204
+}

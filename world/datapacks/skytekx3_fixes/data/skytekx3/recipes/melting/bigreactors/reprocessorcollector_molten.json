@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:reprocessorcollector"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 2070
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_cyanite",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 288
+}

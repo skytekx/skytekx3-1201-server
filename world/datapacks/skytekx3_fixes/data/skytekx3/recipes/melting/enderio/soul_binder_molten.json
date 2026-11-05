@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:soul_binder"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 1700
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_soularium",
+      "amount": 1210
+    },
+    {
+      "tag": "forge:molten_energetic_alloy",
+      "amount": 800
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 637,
+  "time": 238
+}

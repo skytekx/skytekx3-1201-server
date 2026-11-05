@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:zombie_electrode"
+  },
+  "result": {
+    "tag": "forge:molten_energetic_alloy",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 40
+    }
+  ],
+  "temperature": 750,
+  "time": 83
+}

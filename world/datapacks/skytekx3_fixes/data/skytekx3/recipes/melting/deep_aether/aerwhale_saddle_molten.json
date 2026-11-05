@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "deep_aether"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "deep_aether:aerwhale_saddle"
+  },
+  "result": {
+    "tag": "forge:molten_stratus",
+    "amount": 180
+  },
+  "temperature": 1150,
+  "time": 100
+}

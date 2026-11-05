@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "supplementaries"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "supplementaries:sconce_lever"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 30
+  },
+  "temperature": 800,
+  "time": 35
+}

@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:laser_drill"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 1080
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    }
+  ],
+  "temperature": 700,
+  "time": 197
+}

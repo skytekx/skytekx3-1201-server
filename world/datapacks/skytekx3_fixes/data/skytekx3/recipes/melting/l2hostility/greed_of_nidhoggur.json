@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2hostility"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2hostility:greed_of_nidhoggur"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 11160
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 990
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    }
+  ],
+  "temperature": 800,
+  "time": 670
+}

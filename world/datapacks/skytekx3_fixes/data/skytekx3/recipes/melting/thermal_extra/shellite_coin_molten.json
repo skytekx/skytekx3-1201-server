@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:shellite_coin"
+  },
+  "result": {
+    "fluid": "thermal_extra:shellite",
+    "amount": 10
+  },
+  "temperature": 1000,
+  "time": 22
+}

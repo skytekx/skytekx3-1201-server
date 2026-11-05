@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal_extra"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal_extra:dynamo_frost"
+  },
+  "result": {
+    "tag": "forge:molten_invar",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 200
+    },
+    {
+      "tag": "forge:molten_silver",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 900,
+  "time": 127
+}

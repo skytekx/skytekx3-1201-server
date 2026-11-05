@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:fluid_cell"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 500
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_bronze",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 1000,
+  "time": 156
+}

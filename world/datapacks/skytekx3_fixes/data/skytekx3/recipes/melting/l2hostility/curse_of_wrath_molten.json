@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2hostility"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2hostility:curse_of_wrath"
+  },
+  "result": {
+    "tag": "forge:molten_miracle",
+    "amount": 90
+  },
+  "temperature": 1450,
+  "time": 79
+}

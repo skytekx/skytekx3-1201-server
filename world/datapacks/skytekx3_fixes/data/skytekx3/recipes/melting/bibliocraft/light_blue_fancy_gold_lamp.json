@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bibliocraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bibliocraft:light_blue_fancy_gold_lamp"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 200
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

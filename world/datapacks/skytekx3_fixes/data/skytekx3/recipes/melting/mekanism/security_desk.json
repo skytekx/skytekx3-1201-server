@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:security_desk"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 5000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 900
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    }
+  ],
+  "temperature": 750,
+  "time": 436
+}

@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "appbot"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "appbot:mana_storage_cell_16k"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 810
+  },
+  "temperature": 700,
+  "time": 171
+}

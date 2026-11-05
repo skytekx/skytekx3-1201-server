@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:strap_iron_locomotive_track"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 187
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 2
+    }
+  ],
+  "temperature": 750,
+  "time": 84
+}

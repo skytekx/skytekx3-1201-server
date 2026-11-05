@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:infinite_pressurized_tube"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 125
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 77
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 22
+    }
+  ],
+  "temperature": 750,
+  "time": 69
+}

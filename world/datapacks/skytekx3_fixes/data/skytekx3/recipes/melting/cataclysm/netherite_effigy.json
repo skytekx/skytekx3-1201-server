@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm:netherite_effigy"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90
+    }
+  ],
+  "temperature": 700,
+  "time": 80
+}

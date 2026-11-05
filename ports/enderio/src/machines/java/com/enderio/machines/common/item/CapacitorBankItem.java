@@ -37,28 +37,39 @@ public class CapacitorBankItem extends BlockItem {
             this.capacity = capacity;
         }
 
+        // Every item of a stack shares the one tag, and every bank placed from the stack gets the stored value.
+        // So the stored value counts per item, and a transfer is split evenly across the items of the stack.
+
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
-            if (simulate) {
-                return Math.min(maxReceive, getMaxEnergyStored() - getEnergyStored());
+            int count = container.getCount();
+            if (count <= 0 || maxReceive <= 0) {
+                return 0;
             }
 
             int stored = getEnergyStored();
-            int received = Math.min(maxReceive, getMaxEnergyStored() - stored);
-            setEnergyStored(stored + received);
-            return received;
+            int received = Math.max(0, Math.min(maxReceive / count, getMaxEnergyStored() - stored));
+            if (!simulate && received > 0) {
+                setEnergyStored(stored + received);
+            }
+
+            return received * count;
         }
 
         @Override
         public int extractEnergy(int maxExtract, boolean simulate) {
-            if (simulate) {
-                return Math.min(maxExtract, getEnergyStored());
+            int count = container.getCount();
+            if (count <= 0 || maxExtract <= 0) {
+                return 0;
             }
 
             int stored = getEnergyStored();
-            int extracted = Math.min(maxExtract, stored);
-            setEnergyStored(stored - extracted);
-            return extracted;
+            int extracted = Math.max(0, Math.min(maxExtract / count, stored));
+            if (!simulate && extracted > 0) {
+                setEnergyStored(stored - extracted);
+            }
+
+            return extracted * count;
         }
 
         @Override
@@ -87,7 +98,7 @@ public class CapacitorBankItem extends BlockItem {
                 energyTag = blockEntityTag.getCompound(CoreNBTKeys.ENERGY);
             } else {
                 energyTag = new CompoundTag();
-                nbt.put(CoreNBTKeys.ENERGY, energyTag);
+                blockEntityTag.put(CoreNBTKeys.ENERGY, energyTag);
             }
             energyTag.putInt(CoreNBTKeys.ENERGY_STORED, stored);
         }

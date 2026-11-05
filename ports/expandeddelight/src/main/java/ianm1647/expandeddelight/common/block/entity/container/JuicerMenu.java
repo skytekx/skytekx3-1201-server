@@ -5,7 +5,6 @@ import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
 import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import ianm1647.expandeddelight.common.registry.EDBlocks;
 import ianm1647.expandeddelight.common.registry.EDMenuTypes;
-import ianm1647.expandeddelight.common.tag.EDTags;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -113,7 +112,7 @@ public class JuicerMenu extends RecipeBookMenu<RecipeWrapper>
 					return ItemStack.EMPTY;
 				}
 			} else if (index > INDEX_OUTPUT) {
-				if (slotStack.is(EDTags.VALID_JUICER_CONTAINERS) || slotStack.is(this.tileEntity.getContainer().getItem())) {
+				if (this.tileEntity.acceptsContainer(slotStack)) {
 					if (!this.moveItemStackTo(slotStack, INDEX_CONTAINER, INDEX_OUTPUT, false)) {
 						return ItemStack.EMPTY;
 					}

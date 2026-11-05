@@ -8,6 +8,7 @@ import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import ianm1647.expandeddelight.common.registry.EDBlockEntityTypes;
 import ianm1647.expandeddelight.common.registry.EDItems;
 import ianm1647.expandeddelight.common.registry.EDRecipeTypes;
+import ianm1647.expandeddelight.common.tag.EDTags;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
@@ -70,8 +71,8 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
    public JuicerBlockEntity(BlockPos pos, BlockState state) {
       super(EDBlockEntityTypes.JUICER.get(), pos, state);
-      this.inputHandler = LazyOptional.of(() -> new JuicerItemHandler(this.inventory, Direction.UP));
-      this.outputHandler = LazyOptional.of(() -> new JuicerItemHandler(this.inventory, Direction.DOWN));
+      this.inputHandler = LazyOptional.of(() -> new JuicerItemHandler(this.inventory, Direction.UP, this::acceptsContainer));
+      this.outputHandler = LazyOptional.of(() -> new JuicerItemHandler(this.inventory, Direction.DOWN, this::acceptsContainer));
       this.containerStack = ItemStack.EMPTY;
       this.juicerData = this.createIntArray();
       this.usedRecipeTracker = new Object2IntOpenHashMap<>();
@@ -439,6 +440,11 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
    private boolean doesDrinkHaveContainer(ItemStack stack) {
       return !this.containerStack.isEmpty() || stack.hasCraftingRemainingItem();
+   }
+
+   // the rule of the menu's shift click for the container slot, which the item handler applies to pipes too
+   public boolean acceptsContainer(ItemStack stack) {
+      return stack.is(EDTags.VALID_JUICER_CONTAINERS) || stack.is(this.getContainer().getItem());
    }
 
    public boolean isContainerValid(ItemStack containerItem) {

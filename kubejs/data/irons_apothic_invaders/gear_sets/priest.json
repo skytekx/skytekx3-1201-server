@@ -1,0 +1,59 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 100,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:graybeard_staff"
+      }
+    },
+    {
+      "weight": 5,
+      "stack": {
+        "item": "irons_spellbooks:artificer_cane"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:priest_boots"
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:priest_leggings"
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:priest_chestplate"
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:priest_helmet"
+      }
+    }
+  ],
+  "tags": [
+    "priest"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 60,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:keeper_flamberge"
+      }
+    },
+    {
+      "weight": 1,
+      "stack": {
+        "item": "irons_spellbooks:legionnaire_flamberge"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:diamond_boots",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:diamond_leggings",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:diamond_chestplate",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "minecraft:diamond_helmet",
+        "nbt": {
+          "Enchantments": [
+            {
+              "id": "minecraft:protection",
+              "lvl": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "tags": [
+    "summit_keeper"
+  ]
+}

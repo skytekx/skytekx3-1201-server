@@ -1,0 +1,59 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "weight": 100,
+  "mainhands": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:graybeard_staff"
+      }
+    },
+    {
+      "weight": 1,
+      "stack": {
+        "item": "irons_spellbooks:ice_staff"
+      }
+    }
+  ],
+  "offhands": [],
+  "boots": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cryomancer_boots"
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cryomancer_leggings"
+      }
+    }
+  ],
+  "chestplates": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cryomancer_chestplate"
+      }
+    }
+  ],
+  "helmets": [
+    {
+      "weight": 10,
+      "stack": {
+        "item": "irons_spellbooks:cryomancer_helmet"
+      }
+    }
+  ],
+  "tags": [
+    "cryomancer"
+  ]
+}

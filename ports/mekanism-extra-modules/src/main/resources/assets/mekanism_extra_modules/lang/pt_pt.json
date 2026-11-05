@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Unidade de guarda de fase",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Unidade de âncora do caos",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Unidade de reanimação de emergência",
+  "module.mekanism_extra_modules.phase_guard_unit": "Unidade de guarda de fase",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Unidade de âncora do caos",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Unidade de reanimação de emergência",
+  "description.mekanism_extra_modules.phase_guard_unit": "Consome uma quantidade configurável de FE enquanto está ativada para cancelar o dano recebido e eventos de morte.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Requer que a Guarda de Fase esteja ativa. Protege contra desvios de escrita de vida do laser do Chaos Guardian do Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Consome uma quantidade configurável de FE ao receber dano letal para cancelar a morte, restaurar a vida e aplicar efeitos de sobrevivência configuráveis.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Guarda de Fase ativa",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Guarda de Fase inativa",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Reanimação de emergência pronta",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Reanimação de emergência sem carga",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Reanimação de emergência ativada"
+}

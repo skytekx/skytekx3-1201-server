@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "フェーズガードユニット",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "カオスアンカーユニット",
+  "item.mekanism_extra_modules.emergency_revival_unit": "緊急蘇生ユニット",
+  "module.mekanism_extra_modules.phase_guard_unit": "フェーズガードユニット",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "カオスアンカーユニット",
+  "module.mekanism_extra_modules.emergency_revival_unit": "緊急蘇生ユニット",
+  "description.mekanism_extra_modules.phase_guard_unit": "有効時に設定可能な量の FE を消費し、受けるダメージと死亡イベントを無効化します。",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "フェーズガードが有効である必要があります。Draconic Evolution の Chaos Guardian レーザーによる体力直接書き換えの回避を防ぎます。",
+  "description.mekanism_extra_modules.emergency_revival_unit": "致命的なダメージを受けた際に設定可能な量の FE を消費して死亡を無効化し、体力を回復して設定可能な生存効果を付与します。",
+  "hud.mekanism_extra_modules.phase_guard.active": "フェーズガード有効",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "フェーズガード無効",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "緊急蘇生準備完了",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "緊急蘇生未充電",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "緊急蘇生が発動しました"
+}

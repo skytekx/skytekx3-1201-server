@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Fasskyddsenhet",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Kaosankarenhet",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Nöduppståndelseenhet",
+  "module.mekanism_extra_modules.phase_guard_unit": "Fasskyddsenhet",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Kaosankarenhet",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Nöduppståndelseenhet",
+  "description.mekanism_extra_modules.phase_guard_unit": "Förbrukar en konfigurerbar mängd FE när den är aktiverad för att avbryta inkommande skada och dödshändelser.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Kräver att Fasskydd är aktivt. Skyddar mot hälsoskrivningsförbigångar från Chaos Guardian-lasern i Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Förbrukar en konfigurerbar mängd FE vid dödlig skada för att avbryta döden, återställa hälsa och tillämpa konfigurerbara överlevnadseffekter.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Fasskydd aktivt",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Fasskydd inaktivt",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Nöduppståndelse redo",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Nöduppståndelse oladdad",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Nöduppståndelse utlöst"
+}

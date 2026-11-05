@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Модуль фазовой защиты",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Модуль якоря хаоса",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Модуль экстренного возрождения",
+  "module.mekanism_extra_modules.phase_guard_unit": "Модуль фазовой защиты",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Модуль якоря хаоса",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Модуль экстренного возрождения",
+  "description.mekanism_extra_modules.phase_guard_unit": "Во включённом состоянии потребляет настраиваемое количество FE, отменяя входящий урон и события смерти.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Требует активной фазовой защиты. Защищает от обходов прямой записи здоровья лазером Chaos Guardian из Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "При смертельном уроне потребляет настраиваемое количество FE, отменяет смерть, восстанавливает здоровье и накладывает настраиваемые эффекты выживания.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Фазовая защита активна",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Фазовая защита неактивна",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Экстренное возрождение готово",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Экстренное возрождение не заряжено",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Экстренное возрождение сработало"
+}

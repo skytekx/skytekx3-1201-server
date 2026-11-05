@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TUT",
+    "APA",
+    "TUT"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "U": {
+      "item": "mekanism:ultimate_control_circuit"
+    },
+    "A": {
+      "item": "mekanism:alloy_atomic"
+    },
+    "P": {
+      "item": "mekanism_extra_modules:phase_guard_unit"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "mekanism_extra_modules:emergency_revival_unit"
+  }
+}

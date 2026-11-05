@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "相位護盾單元",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "混沌錨定單元",
+  "item.mekanism_extra_modules.emergency_revival_unit": "緊急復甦單元",
+  "module.mekanism_extra_modules.phase_guard_unit": "相位護盾單元",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "混沌錨定單元",
+  "module.mekanism_extra_modules.emergency_revival_unit": "緊急復甦單元",
+  "description.mekanism_extra_modules.phase_guard_unit": "啟用時消耗可設定數量的 FE，用於抵消受到的傷害和死亡事件。",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "需要相位護盾處於啟用狀態。用於抵抗 Draconic Evolution 混沌守衛者激光繞過常規傷害流程的直接生命寫入。",
+  "description.mekanism_extra_modules.emergency_revival_unit": "受到致命傷害時消耗可設定數量的 FE 以取消死亡、恢復生命，並施加可設定的生存效果。",
+  "hud.mekanism_extra_modules.phase_guard.active": "相位護盾已啟用",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "相位護盾未啟用",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "緊急復甦就緒",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "緊急復甦未充能",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "緊急復甦已觸發"
+}

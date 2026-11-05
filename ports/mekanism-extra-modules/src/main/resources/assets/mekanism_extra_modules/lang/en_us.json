@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Phase Guard Unit",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Chaos Anchor Unit",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Emergency Revival Unit",
+  "module.mekanism_extra_modules.phase_guard_unit": "Phase Guard Unit",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Chaos Anchor Unit",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Emergency Revival Unit",
+  "description.mekanism_extra_modules.phase_guard_unit": "Consumes configurable FE while enabled to cancel incoming damage and death events.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Requires Phase Guard to be active. Protects against Draconic Evolution Chaos Guardian laser health-write bypasses.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Consumes configurable FE on lethal damage to cancel death, restore health, and apply configurable survival effects.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Phase Guard active",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Phase Guard inactive",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Emergency Revival ready",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Emergency Revival uncharged",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Emergency Revival triggered"
+}

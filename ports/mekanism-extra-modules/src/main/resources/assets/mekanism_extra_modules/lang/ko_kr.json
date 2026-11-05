@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "위상 보호 유닛",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "카오스 앵커 유닛",
+  "item.mekanism_extra_modules.emergency_revival_unit": "긴급 부활 유닛",
+  "module.mekanism_extra_modules.phase_guard_unit": "위상 보호 유닛",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "카오스 앵커 유닛",
+  "module.mekanism_extra_modules.emergency_revival_unit": "긴급 부활 유닛",
+  "description.mekanism_extra_modules.phase_guard_unit": "활성화된 동안 설정 가능한 양의 FE를 소모하여 받는 피해와 사망 이벤트를 취소합니다.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "위상 보호가 활성화되어 있어야 합니다. Draconic Evolution의 Chaos Guardian 레이저가 체력을 직접 쓰는 우회 동작을 막습니다.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "치명적인 피해를 받을 때 설정 가능한 양의 FE를 소모하여 사망을 취소하고 체력을 회복하며 설정 가능한 생존 효과를 적용합니다.",
+  "hud.mekanism_extra_modules.phase_guard.active": "위상 보호 활성",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "위상 보호 비활성",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "긴급 부활 준비됨",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "긴급 부활 충전 안 됨",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "긴급 부활 발동"
+}

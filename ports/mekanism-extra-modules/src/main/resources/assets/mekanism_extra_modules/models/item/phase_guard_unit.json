@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mekanism_extra_modules:item/phase_guard_unit"
+  }
+}

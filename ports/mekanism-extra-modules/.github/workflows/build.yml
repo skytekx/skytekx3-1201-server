@@ -1,0 +1,63 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate project syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: 8.12
+
+      - name: Validate JSON resources
+        run: |
+          python -m json.tool src/main/resources/pack.mcmeta >/dev/null
+          find src/main/resources -name '*.json' -print0 | xargs -0 -I{} python -m json.tool {} >/dev/null
+
+      - name: Validate Gradle model
+        run: gradle help --no-daemon --warning-mode all
+
+  build:
+    name: Compile and package
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: 8.12
+
+      - name: Build
+        run: gradle build --no-daemon --stacktrace
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v7
+        with:
+          name: mekanism-extra-modules
+          path: build/libs/*.jar
+          if-no-files-found: error

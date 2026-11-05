@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "ยูนิตป้องกันเฟส",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "ยูนิตสมอเคออส",
+  "item.mekanism_extra_modules.emergency_revival_unit": "ยูนิตชุบชีวิตฉุกเฉิน",
+  "module.mekanism_extra_modules.phase_guard_unit": "ยูนิตป้องกันเฟส",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "ยูนิตสมอเคออส",
+  "module.mekanism_extra_modules.emergency_revival_unit": "ยูนิตชุบชีวิตฉุกเฉิน",
+  "description.mekanism_extra_modules.phase_guard_unit": "ใช้พลังงาน FE ในปริมาณที่กำหนดค่าได้ขณะเปิดใช้งาน เพื่อยกเลิกความเสียหายที่ได้รับและเหตุการณ์การตาย",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "ต้องเปิดใช้งาน Phase Guard อยู่ ป้องกันการข้ามระบบด้วยการเขียนค่าพลังชีวิตโดยตรงจากเลเซอร์ Chaos Guardian ของ Draconic Evolution",
+  "description.mekanism_extra_modules.emergency_revival_unit": "ใช้พลังงาน FE ในปริมาณที่กำหนดค่าได้เมื่อได้รับความเสียหายถึงตาย เพื่อยกเลิกการตาย ฟื้นฟูพลังชีวิต และมอบเอฟเฟกต์เอาตัวรอดที่กำหนดค่าได้",
+  "hud.mekanism_extra_modules.phase_guard.active": "Phase Guard ทำงานอยู่",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Phase Guard ไม่ทำงาน",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Emergency Revival พร้อมใช้งาน",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Emergency Revival ยังไม่มีพลังงาน",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Emergency Revival ทำงานแล้ว"
+}

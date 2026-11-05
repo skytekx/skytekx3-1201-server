@@ -1,0 +1,16 @@
+{
+  "item.mekanism_extra_modules.phase_guard_unit": "Fasevernenhet",
+  "item.mekanism_extra_modules.chaos_anchor_unit": "Kaosankerenhet",
+  "item.mekanism_extra_modules.emergency_revival_unit": "Nødgjenopplivingsenhet",
+  "module.mekanism_extra_modules.phase_guard_unit": "Fasevernenhet",
+  "module.mekanism_extra_modules.chaos_anchor_unit": "Kaosankerenhet",
+  "module.mekanism_extra_modules.emergency_revival_unit": "Nødgjenopplivingsenhet",
+  "description.mekanism_extra_modules.phase_guard_unit": "Bruker en konfigurerbar mengde FE mens den er aktivert for å avbryte innkommende skade og dødshendelser.",
+  "description.mekanism_extra_modules.chaos_anchor_unit": "Krever at fasevern er aktivt. Beskytter mot helse-skriveomgåelser fra Chaos Guardian-laseren i Draconic Evolution.",
+  "description.mekanism_extra_modules.emergency_revival_unit": "Bruker en konfigurerbar mengde FE ved dødelig skade for å avbryte døden, gjenopprette helse og gi konfigurerbare overlevelseseffekter.",
+  "hud.mekanism_extra_modules.phase_guard.active": "Fasevern aktivt",
+  "hud.mekanism_extra_modules.phase_guard.inactive": "Fasevern inaktivt",
+  "hud.mekanism_extra_modules.emergency_revival.ready": "Nødgjenoppliving klar",
+  "hud.mekanism_extra_modules.emergency_revival.no_energy": "Nødgjenoppliving ikke ladet",
+  "message.mekanism_extra_modules.emergency_revival.triggered": "Nødgjenoppliving utløst"
+}

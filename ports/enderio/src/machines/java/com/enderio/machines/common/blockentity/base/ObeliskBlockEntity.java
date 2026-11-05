@@ -16,6 +16,7 @@ import com.enderio.machines.common.io.item.SingleSlotAccess;
 import com.enderio.machines.common.obelisk.IObeliskManagerCapability;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -177,6 +178,17 @@ public abstract class ObeliskBlockEntity<T extends ObeliskBlockEntity<T>> extend
     @Override
     protected void onInventoryContentsChanged(int slot) {
         super.onInventoryContentsChanged(slot);
+        updateFilterState();
+    }
+
+    /**
+     * A placed item loads its NBT after setLevel, and MachineInventory.deserializeNBT calls only onLoad, never
+     * onContentsChanged. Refresh the filter state here, as PoweredMachineBlockEntity.load does for NO_CAPACITOR.
+     * updateMachineState only edits the in memory state set, so this stays safe during a chunk load (4dd6e5e09).
+     */
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
         updateFilterState();
     }
 

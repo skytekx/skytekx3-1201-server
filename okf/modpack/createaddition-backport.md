@@ -48,7 +48,7 @@ baseline and the in game tests of the small fixes and the connector rework wait 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in d7d4fad, 35706d8, 0611ece and ecf5303 on top of d8d06f5, 28bde03 and c276dbd. The boot and login checks belong to the release |
-| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Ported. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release |
+| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Done in ce05082, 9db6834, 30ce6cc, eba2b0d, 9a4cfa1, dec0962 and 788fd47, with the scan tool a1a1500, the test record 823b8db and the review fix e3fd422. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release |
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 010ffd5, 1ad4bf1, 8fb90f8, 0bb10b7, f855f94, 66076fb, 2f39e85, fa15e47, 95a599b, 47f954c and d4ee92e, with the review fix 8224da6. The in game and boot tests belong to the release |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Planned |
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in e0fed53 and 7ee0449, with the review fixes d49e1b0 and 200afee. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
@@ -551,11 +551,13 @@ The world was built with 1.3.3 by `setblock` with node NBT:
 | Broken connector with the far end unloaded | The wire dropped at the broken connector, and the far end let go without a drop when its chunk loaded |
 | Round trip to 1.3.3 | Version 1.3.3 kept every wire and ignored the saved graph. A connector broken under 1.3.3 left the graph stale, see the first finding |
 | Region scan at the end | `tools/wire_scan.py` found no difference between the saved graphs and the region files |
+| Stop right after `Done` | After the review fix e3fd422, a tenth boot with the jar of the integrated branch got `stop` over RCON 0.8 s after `Done`. The server stopped in 12 s with no ERROR or FATAL line, wrote the Overworld's `data/createaddition_wires.dat` at the stop, and its 50 vertices matched the region files |
 
-All nine boots, four of them on 1.3.3, reached `Done` with no ERROR or FATAL line and no crash report.
-The test setup holds no EssentialsX and no Citadel, so the two accepted ERROR lines of the pack do not
-appear. The first fork boot appended the 11 new config keys to the `createaddition-common.toml` that
-1.3.3 had written.
+All ten boots, four of them on 1.3.3, reached `Done` with no ERROR or FATAL line and no crash report.
+One more start before the tenth boot failed to bind its port, which another test server held, and never
+loaded the world. The test setup holds no EssentialsX and no Citadel, so the two accepted ERROR lines
+of the pack do not appear. The first fork boot appended the 11 new config keys to the
+`createaddition-common.toml` that 1.3.3 had written.
 
 Findings:
 

@@ -243,3 +243,30 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    of `specialPeopleStuff.properties` from the `1.16` branch, which last changed in 2021. Only
    the client starts it (`ActuallyAdditionsClient` registers `SpecialRenderInit`), so the server
    still makes no network call.
+6. Config: `mod/config/CommonConfig.java` is the `CommonConfig` of `main` on `ForgeConfigSpec`,
+   36 keys in the sections `other`, `machineSettings`, `worldgenSettings` and `itemsSettings`,
+   with upstream's names, comments, defaults and ranges. New against the base are `doBatDrops`
+   (`b943530`), `farmerConfigurator` (`b66af84`), `leafGeneratorCooldown`,
+   `leafGeneratorCPPerLeaf` and `leafGeneratorArea` (`5182ac8`), `fluidLaserTransferRate`,
+   `verticalDiggerExtraWhitelist` and `verticalDiggerBlacklist` (`1be720f`, `17d8dcc`) and the
+   five switches `generateQuartz`, `generateCanola`, `generateFlax`, `generateCoffee` and
+   `generateRice` (`16cd3a6`, `2ffe78d`). The list `Drill Extra Whitelist` is
+   `drillExtraWhitelist` from the start, as `1be720f` renamed every key with spaces. The base
+   was never released, so no `actuallyadditions-common.toml` with the old name exists. The key
+   `furDropChance` is gone, as in `9c6859c`, since nothing read it. The lists use
+   `defineListAllowEmpty` and the configurator strings `define` without a validator (`e22b161`).
+   The base defined the drill list with an anonymous `ArrayList` subclass as the default, which
+   no loaded value matched, so Forge corrected the file at every load (twice at the second boot
+   of the base jar `c37140ce`, never at the second boot of this change). A new
+   `mod/config/ClientConfig.java` holds `hideEnergyOverlay` (`12527cd`, `9c6859c`), which hides
+   the energy overlay of a looked at block (`ClientEvents`, read on each frame as `e21713e`
+   does). Only the physical client registers it, in the `DistExecutor` branch of the
+   `ActuallyAdditions` constructor. The config reload handler only reads the common config,
+   resolves the farmer configurator too and falls back to air for an id that does not parse
+   (`9c6859c`, `b66af84`). The readers of the other new keys come with their features: the
+   Leaf Generator (`5182ac8`), the Vertical Digger lists (`17d8dcc`), the Fluid Laser Relay
+   (`1f78ecc`), the farmer configurator (`b66af84`), the bat wing drops (`b943530`) and the
+   world generation switches (`16cd3a6`, `2ffe78d`). Until then those blocks keep reading the
+   1.12 enums in `mod/config/values/`, which nothing loads. The translation keys of the built in
+   config screen (`a831cbb`, `1be720f`, `8d01e07`) are not added, because Forge 47 has no such
+   screen.

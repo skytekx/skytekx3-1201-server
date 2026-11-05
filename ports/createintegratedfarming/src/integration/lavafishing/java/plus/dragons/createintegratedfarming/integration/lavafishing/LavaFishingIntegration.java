@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026  SkyTekx
+ * Copyright (C) 2025  DragonsPlus, Copyright (C) 2026  SkyTekx
  * SPDX-License-Identifier: LGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify

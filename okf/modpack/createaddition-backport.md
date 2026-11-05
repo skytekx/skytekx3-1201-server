@@ -240,10 +240,16 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   showed flowing creosote running into a fire and falling creosote spreading none. This is a local
   change.
 - In the pack the tag catches the creosote, plant oil, ethanol and biodiesel of Immersive
-  Engineering, the creosote of Railcraft, the biofuel of Industrial Foregoing, the gasoline and
-  diesel of Thermal Extra and the seed oil and bioethanol of CC&A (scan of `data/forge/tags/fluids/`
-  in the pack jars). No pack jar fills `forge:crude_oil`, and Ad Astra puts its oil in `forge:oil`,
-  which the tag does not name.
+  Engineering, the creosote of Railcraft, the biofuel of Industrial Foregoing, the creosote and crude
+  oil of Thermal (thermal_core 11.0.6.24, nested in Thermal Foundation 11.0.6.70), the gasoline and
+  diesel of Thermal Extra and the seed oil and bioethanol of CC&A. The scan read the eight tag files
+  under `data/forge/tags/fluids/` in the pack jars and in the jars nested under `META-INF/jarjar/`,
+  which Forge loads too. Thermal Foundation lists `thermal_core-1.20.1-11.0.6.24.jar` in its
+  `META-INF/jarjar/metadata.json`, and that jar's `creosote.json` and `crude_oil.json` name
+  `thermal:creosote` and `thermal:crude_oil`. Of the two only the crude oil has a fluid block
+  (`assets/thermal/blockstates/crude_oil_fluid.json`, with no creosote counterpart), so it is the
+  Thermal fluid that can lie in the world and burn there. Ad Astra puts its oil in `forge:oil`, which
+  the tag does not name.
 - Tested on Arclight with Create, Immersive Engineering, Supplementaries, Moonlight,
   NostalgicTweaks, Ad Astra and Thermal Foundation and `-Dmixin.debug.export=true` (test boots of
   2026-11-05 in the workflow scratchpad). Each of the seven injectors sits once in the exported
@@ -442,8 +448,8 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - The existing world changes its behaviour in four ways. Wires and relays work across unloaded
   chunks. An alternator whose back face touches another kinetic network joins it on its next update,
   and a speed conflict breaks a block, so the live world should be scanned or the players warned.
-  Fire spreads over the oils and fuels that [Ignitable fluids](#ignitable-fluids) lists, in loaded
-  chunks. Tesla Coils saved as powered keep their old light until they toggle.
+  Fire spreads over the oils and fuels that [Ignitable fluids](#ignitable-fluids) lists, Thermal
+  crude oil among them, in loaded chunks. Tesla Coils saved as powered keep their old light until they toggle.
 - Existing stacks stay valid: empty capacitors still stack to 64, charged ones do not stack, and
   existing festive wires between two large connectors stay.
 

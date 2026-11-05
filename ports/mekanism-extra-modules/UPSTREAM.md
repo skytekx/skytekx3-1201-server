@@ -99,3 +99,19 @@ because their 1.21.1 format is the same in 1.20.1.
 |---|---|
 | Folder `data/mekanism_extra_modules/recipes/` | The three shaped recipes move from the 1.21 folder `recipe/` to the 1.20.1 folder `recipes/`, and the result names its item with `item` instead of `id`. Patterns, results and the Mekanism item inputs (Energy Tablet, Laser Dissipation Unit, Phase Guard Unit, Totem of Undying) stay. The circuit, alloy and obsidian inputs use the forge tags that Mekanism 10.4 itself declares and uses in its own module recipes (`forge:circuits/ultimate`, `forge:alloys/ultimate`, `forge:alloys/elite`, `forge:obsidian`), so AlmostUnified and other mods that fill those tags work with them. Each tag holds exactly the Mekanism item upstream names (checked in `Mekanism-1.20.1-10.4.16.80.jar`). |
 | File `pack.mcmeta` | Pack format 15 (Minecraft 1.20.1) instead of 48. |
+
+## Later upstream changes
+
+The port takes these changes from upstream commits after the base, dated 2026-11-05 here.
+
+| Upstream commit | What the port takes |
+|---|---|
+| Commit `db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6` (2026-10-27) | Only the `/kill` bypass: Phase Guard and Emergency Revival ignore the damage type `minecraft:generic_kill`, so an operator can still remove a protected player. In 1.20.1 `LivingEntity.kill()` hurts with `genericKill()` (checked in the Forge 47.1.70 userdev jar). The class `service.ProtectionService` changes. |
+
+What the port leaves out of the later upstream commits, and why:
+
+| Upstream commit | Left out | Reason |
+|---|---|---|
+| Commit `576425a` | The config screen and its 30 translated label sets | It uses NeoForge's `ConfigurationScreen`, which Forge 47 lacks. The server config file and its comments stay the way to tune the modules. |
+| Commit `1ce73d3` | Dropping the `strictDraconicOnly` check and option | The check only looks at the death message id. Draconic Evolution 3.1.2.621 names its laser damage type `draconicevolution.guardian_laser` (`data/draconicevolution/damage_type/guardian_laser.json`), which the check accepts, so the base behaves the same. |
+| Commit `db62401` | The `@WrapWithCondition` injections, the `[[mixins]]` entry of `neoforge.mods.toml`, Phase Guard state in memory, the body armor only lookup, the removal of the Mekanism Tools dependency and of the `debug` and `allowMixinProtection` options | The license review of this port keeps upstream's two `@Redirect` injections of the base. Forge 47 reads the `MixinConfigs` manifest entry, so the mixin already loads. The other parts are refactors without a behaviour change on 1.20.1, and the base config keys stay stable. The pack ships Mekanism Tools anyway. |

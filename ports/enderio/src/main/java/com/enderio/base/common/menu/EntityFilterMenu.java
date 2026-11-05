@@ -6,29 +6,28 @@ import com.enderio.base.common.init.EIOCapabilities;
 import com.enderio.base.common.init.EIOMenus;
 import com.enderio.base.common.network.FilterUpdatePacket;
 import com.enderio.core.common.capability.EntityFilterCapability;
-import com.enderio.core.common.capability.ItemFilterCapability;
 import com.enderio.core.common.network.CoreNetwork;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EntityFilterMenu extends AbstractContainerMenu {
+public class EntityFilterMenu extends AbstractFilterMenu {
 
-    private final ItemStack stack;
     private final EntityFilterCapability capability;
 
     public EntityFilterMenu(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory inventory, ItemStack stack) {
-        super(pMenuType, pContainerId);
-        this.stack = stack;
+        this(pMenuType, pContainerId, inventory, FilterAccess.hand(stack));
+    }
+
+    public EntityFilterMenu(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory inventory, FilterAccess access) {
+        super(pMenuType, pContainerId, access);
 
         LazyOptional<ResourceFilter> resourceFilter = stack.getCapability(EIOCapabilities.FILTER);
 
@@ -51,50 +50,12 @@ public class EntityFilterMenu extends AbstractContainerMenu {
         this(EIOMenus.ENTITY_FILTER.get(), pContainerId, inventory, stack);
     }
 
-    public static EntityFilterMenu factory(@Nullable MenuType<EntityFilterMenu> pMenuType, int pContainerId, Inventory inventory, FriendlyByteBuf buf) {
-        return new EntityFilterMenu(EIOMenus.ENTITY_FILTER.get(), pContainerId, inventory, inventory.player.getMainHandItem());
+    public EntityFilterMenu(int pContainerId, Inventory inventory, FilterAccess access) {
+        this(EIOMenus.ENTITY_FILTER.get(), pContainerId, inventory, access);
     }
 
-    @Override
-    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean stillValid(Player pPlayer) {
-        return pPlayer.getMainHandItem().equals(stack);
-    }
-
-    public void addInventorySlots(int xPos, int yPos, Inventory inventory) {
-
-        // The slot that holds the opened filter is locked, so the stack the menu edits cannot be moved or duplicated.
-
-        // Hotbar
-        for (int x = 0; x < 9; x++) {
-            Slot ref = new Slot(inventory, x, xPos + x * 18, yPos + 58) {
-
-                @Override
-                public boolean mayPickup(Player player) {
-                    return !this.getItem().equals(EntityFilterMenu.this.stack);
-                }
-            };
-            this.addSlot(ref);
-        }
-
-        // Inventory
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 9; x++) {
-                Slot ref = new Slot(inventory, x + y * 9 + 9, xPos + x * 18, yPos + y * 18) {
-
-                    @Override
-                    public boolean mayPickup(Player player) {
-                        return !this.getItem().equals(EntityFilterMenu.this.stack);
-                    }
-                };
-                this.addSlot(ref);
-            }
-        }
-
+    public static EntityFilterMenu factory(@Nullable MenuType<EntityFilterMenu> pMenuType, int pContainerId, Inventory inventory, @Nullable FriendlyByteBuf buf) {
+        return new EntityFilterMenu(EIOMenus.ENTITY_FILTER.get(), pContainerId, inventory, FilterAccess.fromNetwork(inventory, buf));
     }
 
     public EntityFilterCapability getFilter() {

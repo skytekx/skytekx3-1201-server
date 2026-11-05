@@ -67,7 +67,7 @@ public class ConduitSlot extends SlotItemHandler {
         return getMaxStackSize();
     }
 
-    private boolean isVisible() {
+    public boolean isVisible() {
         return visibleDirection.get() == visibleForDirection
             && visibleType.get() == visibleForType
             && bundle.getTypes().size() > visibleForType

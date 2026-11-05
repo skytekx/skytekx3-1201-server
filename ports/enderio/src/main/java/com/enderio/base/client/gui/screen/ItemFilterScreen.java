@@ -73,7 +73,7 @@ public class ItemFilterScreen extends EIOScreen<ItemFilterMenu> {
                 addRenderableWidget(new DamageFilterModeButton(getGuiLeft() + 110, getGuiTop() + 36 + 40, filter::getDamageMode, this::setDamageMode));
             }
         }
-        addRenderableWidget(new EIOImageButton(this, getGuiLeft() + 3, getGuiTop() + 3, 16, 16, 0, 0, 0, BACK_TEXTURE, button -> closeContainer()));
+        addRenderableWidget(new EIOImageButton(this, getGuiLeft() + 3, getGuiTop() + 3, 16, 16, 0, 0, 0, BACK_TEXTURE, button -> FilterScreens.back(getMenu())));
     }
 
     private void setDamageMode(DamageFilterMode mode) {

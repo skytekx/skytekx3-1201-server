@@ -1,9 +1,11 @@
 package com.enderio.base.common.network;
 
 import com.enderio.base.common.init.EIOCapabilities;
+import com.enderio.base.common.menu.AbstractFilterMenu;
 import com.enderio.core.common.capability.IFilterCapability;
 import com.enderio.core.common.network.Packet;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -23,8 +25,16 @@ public record FilterUpdatePacket(boolean nbt, boolean inverted) implements Packe
 
     @Override
     public void handle(NetworkEvent.Context context) {
-        ItemStack mainHandItem = context.getSender().getMainHandItem();
-        mainHandItem.getCapability(EIOCapabilities.FILTER)
+        // The filter of the open filter menu, which is the main hand stack or a filter in a conduit slot (Ender IO 8.x
+        // 04e69b8e6). Before, this always changed the main hand, also without an open menu, and it would have changed the main
+        // hand instead of a filter opened from a conduit.
+        ServerPlayer player = context.getSender();
+        if (player == null || !(player.containerMenu instanceof AbstractFilterMenu filterMenu) || !filterMenu.stillValid(player)) {
+            return;
+        }
+
+        ItemStack filterStack = filterMenu.getFilterStack();
+        filterStack.getCapability(EIOCapabilities.FILTER)
             .ifPresent(filter -> {
                 if (filter instanceof IFilterCapability<?> capability) {
                     capability.setNbt(nbt);

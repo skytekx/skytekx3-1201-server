@@ -9,6 +9,7 @@ import com.enderio.conduits.client.gui.conduit.ConduitScreenExtensions;
 import com.enderio.conduits.client.gui.conduit.EnergyConduitScreenExtension;
 import com.enderio.conduits.client.gui.conduit.FluidConduitScreenExtension;
 import com.enderio.conduits.client.gui.conduit.ItemConduitScreenExtension;
+import com.enderio.conduits.client.gui.conduit.RedstoneConduitScreenExtension;
 import com.enderio.conduits.client.model.ConduitGeometry;
 import com.enderio.conduits.client.model.conduit.modifier.ConduitCoreModelModifiers;
 import com.enderio.conduits.client.model.conduit.modifier.FluidConduitCoreModelModifier;
@@ -89,6 +90,7 @@ public class ConduitClientSetup {
         event.register(EIOConduitTypes.FLUID3.get(), () -> FluidConduitScreenExtension.PRIORITY_INSTANCE);
         event.register(EIOConduitTypes.ITEM.get(), ItemConduitScreenExtension::new);
         event.register(EIOConduitTypes.ENERGY.get(), EnergyConduitScreenExtension::new);
+        event.register(EIOConduitTypes.REDSTONE.get(), RedstoneConduitScreenExtension::new);
     }
 
     @SubscribeEvent

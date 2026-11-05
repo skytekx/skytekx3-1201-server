@@ -11,6 +11,7 @@ import com.enderio.conduits.common.conduit.type.energy.EnergyConduitType;
 import com.enderio.conduits.common.conduit.type.fluid.FluidConduitType;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitData.ItemSidedData;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitType;
+import com.enderio.conduits.common.conduit.type.redstone.RedstoneConduitType;
 import com.enderio.conduits.common.init.ConduitLang;
 import com.enderio.conduits.common.network.C2SSyncProbeState;
 import com.enderio.conduits.common.util.InteractionUtil;
@@ -52,8 +53,9 @@ public class ConduitProbeItem extends Item {
     public static final String ROUND_ROBIN = "ROUND_ROBIN";
     public static final String SELF_FEED = "SELF_FEED";
     public static final String PRIORITY = "PRIORITY";
+    public static final String STRONG_SIGNAL = "STRONG_SIGNAL";
 
-    public static final Set<String> BOOL_TAG = Set.of(IS_INSERT, IS_EXTRACT, ROUND_ROBIN, SELF_FEED);
+    public static final Set<String> BOOL_TAG = Set.of(IS_INSERT, IS_EXTRACT, ROUND_ROBIN, SELF_FEED, STRONG_SIGNAL);
     public static final Set<String> COLOR_CONTROL_TAG = Set.of(INSERT_CHANNEL, EXTRACT_CHANNEL, REDSTONE_CHANNEL);
 
     public ConduitProbeItem(Properties properties) {
@@ -143,6 +145,8 @@ public class ConduitProbeItem extends Item {
                     typeTag.putInt(PRIORITY, bundle.getNodeFor(energyConduitType).getConduitData().getPriority(face));
                 } else if (conduit instanceof FluidConduitType fluidConduitType && fluidConduitType.supportsPriority()) {
                     typeTag.putInt(PRIORITY, bundle.getNodeFor(fluidConduitType).getConduitData().getPriority(face));
+                } else if (conduit instanceof RedstoneConduitType redstoneConduitType) {
+                    typeTag.putBoolean(STRONG_SIGNAL, bundle.getNodeFor(redstoneConduitType).getConduitData().isStrong(face));
                 }
             } else {
                 typeTag.putBoolean(IS_INSERT, false);
@@ -210,6 +214,8 @@ public class ConduitProbeItem extends Item {
             } else if (conduit instanceof FluidConduitType fluidConduitType && fluidConduitType.supportsPriority()
                 && typeTag.contains(PRIORITY, Tag.TAG_INT)) {
                 bundle.getNodeFor(fluidConduitType).getConduitData().compute(face).setPriority(typeTag.getInt(PRIORITY));
+            } else if (conduit instanceof RedstoneConduitType redstoneConduitType && typeTag.contains(STRONG_SIGNAL, Tag.TAG_BYTE)) {
+                bundle.getNodeFor(redstoneConduitType).getConduitData().setStrong(face, typeTag.getBoolean(STRONG_SIGNAL));
             }
             pastedConduits.add(conduitKeyToDisplayName(conduitKey).getString());
         });

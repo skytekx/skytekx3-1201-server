@@ -527,6 +527,22 @@ public class ConduitBlock extends Block implements EntityBlock, SimpleWaterlogge
     }
     //@formatter:on
 
+    /**
+     * Ender IO 8.0 (isStrongOutputSignal): an output side set to strong also puts out its signal as a direct signal, so the
+     * block it faces is strongly powered and powers its own neighbours, as a repeater does.
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        if (level.getBlockEntity(pos) instanceof ConduitBlockEntity conduit
+            && conduit.getBundle().getTypes().contains(EIOConduitTypes.REDSTONE.get())) {
+            if (conduit.getBundle().getNodeFor(EIOConduitTypes.REDSTONE.get()).getConduitData().isStrong(direction.getOpposite())) {
+                return getSignal(state, level, pos, direction);
+            }
+        }
+        return 0;
+    }
+
     private int getSignalOutput(DynamicConnectionState dyn, RedstoneConduitData data) {
         return dyn.filterInsert().getCapability(EIOCapabilities.FILTER)
             .filter(filter -> filter instanceof RedstoneInsertFilter)

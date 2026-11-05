@@ -16,6 +16,11 @@ public class ConduitLang {
     public static final Component CONDUIT_EXTRACT = REGISTRATE.addLang("gui", EnderIO.loc("conduit.extract"), "Extract");
     public static final Component CONDUIT_PRIORITY = REGISTRATE.addLang("gui", EnderIO.loc("conduit.priority"), "Priority");
 
+    // Ender IO 8.0 names the toggle gui.enderio.conduit.redstone.strong_signal. The 6.x screen has no room for a label in the
+    // output column, so the box carries its name as a tooltip, in the enabled and disabled style of the item conduit boxes.
+    public static final Component STRONG_SIGNAL_ENABLED = REGISTRATE.addLang("gui", EnderIO.loc("conduit.redstone.strong_signal.enabled"), "Strong Signal Enabled");
+    public static final Component STRONG_SIGNAL_DISABLED = REGISTRATE.addLang("gui", EnderIO.loc("conduit.redstone.strong_signal.disabled"), "Strong Signal Disabled");
+
     public static void register() {
     }
 }

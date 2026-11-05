@@ -19,6 +19,7 @@ import com.enderio.conduits.common.conduit.SlotData;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.connection.StaticConnectionStates;
+import com.enderio.conduits.common.conduit.type.redstone.RedstoneConduitData;
 import com.enderio.conduits.common.init.ConduitCapabilities;
 import com.enderio.conduits.common.menu.ConduitMenu;
 import com.enderio.conduits.common.network.ConduitSavedData;
@@ -369,9 +370,11 @@ public class ConduitBlockEntity extends EnderBlockEntity {
             }
         }
 
+        List<Direction> strongSides = getStrongRedstoneSides(type);
         boolean shouldRemove = bundle.removeType(level, type);
         removeNeighborConnections(type);
         updateShape();
+        updateStrongRedstoneNeighbors(strongSides);
 
         if (level.isClientSide) {
             ConduitBreakParticle.addDestroyEffects(getBlockPos(), type);
@@ -383,10 +386,38 @@ public class ConduitBlockEntity extends EnderBlockEntity {
     public void destroyAllConnections() {
         var typesToRemove = List.copyOf(bundle.getTypes());
         for (var type : typesToRemove) {
+            List<Direction> strongSides = getStrongRedstoneSides(type);
             bundle.removeType(level, type);
             removeNeighborConnections(type);
+            updateStrongRedstoneNeighbors(strongSides);
         }
         updateShape();
+    }
+
+    /**
+     * The sides on which a redstone conduit of this type put out a strong signal at its last tick (Ender IO 8.0 strong power).
+     */
+    private List<Direction> getStrongRedstoneSides(ConduitType<?> type) {
+        if (level == null || level.isClientSide() || !bundle.hasType(type)) {
+            return List.of();
+        }
+
+        @Nullable ConduitGraphObject<?> node = bundle.getNodeForTypeExact(type);
+        if (node == null || !(node.getConduitData() instanceof RedstoneConduitData redstoneData)) {
+            return List.of();
+        }
+
+        return Arrays.stream(Direction.values()).filter(redstoneData::hasStrongOutput).toList();
+    }
+
+    /**
+     * After a redstone conduit is gone, the neighbours of the blocks that it strongly powered must see the signal end. The
+     * ticker does this while the conduit exists, and no tick follows its removal.
+     */
+    private void updateStrongRedstoneNeighbors(List<Direction> strongSides) {
+        for (Direction side : strongSides) {
+            level.updateNeighborsAtExceptFromFacing(getBlockPos().relative(side), getBlockState().getBlock(), side.getOpposite());
+        }
     }
 
     public void dropConnection(DynamicConnectionState dyn) {

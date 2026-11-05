@@ -73,7 +73,7 @@ public class AlloySmelterBlockEntity extends PoweredMachineBlockEntity {
                 mode = m;
                 craftingTaskHost.newTaskAvailable();
             });
-            addDataSlot(modeDataSlot);
+            addClientDataSlot(modeDataSlot);
         } else {
             modeDataSlot = null;
         }

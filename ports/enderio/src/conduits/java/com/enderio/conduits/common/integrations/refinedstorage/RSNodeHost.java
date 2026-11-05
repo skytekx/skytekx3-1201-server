@@ -79,6 +79,11 @@ public class RSNodeHost implements ConduitData<RSNodeHost>, INetworkNodeProxy<RS
     }
 
     @Override
+    public void applyGuiNBT(CompoundTag nbt) {
+        // The conduit screen sends no Refined Storage conduit data. The network node data must never come from a client.
+    }
+
+    @Override
     public void deserializeNBT(CompoundTag nbt) {
         node.read(nbt);
     }

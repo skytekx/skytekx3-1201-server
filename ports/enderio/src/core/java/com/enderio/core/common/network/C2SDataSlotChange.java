@@ -3,7 +3,7 @@ package com.enderio.core.common.network;
 import com.enderio.core.common.blockentity.EnderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -36,11 +36,24 @@ public class C2SDataSlotChange implements Packet {
 
     @Override
     public void handle(NetworkEvent.Context context) {
-        ServerLevel level = context.getSender().serverLevel();
+        ServerPlayer player = context.getSender();
+        if (player == null || updateData == null) {
+            return;
+        }
 
-        BlockEntity be = level.getBlockEntity(pos);
+        // Only a block in reach, and never one in an unloaded chunk.
+        if (!Packet.canAccessBlock(player, pos)) {
+            Packet.logPacketError(context, "changes a data slot at " + pos.toShortString() + ", which is out of reach or not loaded", this);
+            return;
+        }
+
+        BlockEntity be = player.serverLevel().getBlockEntity(pos);
         if (be instanceof EnderBlockEntity enderBlockEntity) {
-            enderBlockEntity.serverHandleBufferChange(updateData);
+            try {
+                enderBlockEntity.serverHandleBufferChange(updateData);
+            } catch (RuntimeException e) {
+                Packet.logPacketError(context, "invalid data slot change at " + pos.toShortString() + ": " + e.getMessage(), this);
+            }
         }
     }
 

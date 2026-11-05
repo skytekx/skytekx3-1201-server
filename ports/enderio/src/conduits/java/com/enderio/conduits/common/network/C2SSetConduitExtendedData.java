@@ -8,7 +8,7 @@ import com.enderio.core.common.network.Packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -34,14 +34,23 @@ public class C2SSetConduitExtendedData implements Packet {
 
     @Override
     public boolean isValid(NetworkEvent.Context context) {
-        return context.getSender() != null && conduitType != null;
+        return context.getSender() != null && conduitType != null && extendedConduitData != null;
     }
 
     @Override
     public void handle(NetworkEvent.Context context) {
-        ServerLevel level = context.getSender().serverLevel();
+        ServerPlayer player = context.getSender();
+        if (player == null) {
+            return;
+        }
 
-        BlockEntity be = level.getBlockEntity(pos);
+        // Only a conduit in reach, and never one in an unloaded chunk.
+        if (!Packet.canAccessBlock(player, pos)) {
+            Packet.logPacketError(context, "changes a conduit at " + pos.toShortString() + ", which is out of reach or not loaded", this);
+            return;
+        }
+
+        BlockEntity be = player.serverLevel().getBlockEntity(pos);
         if (be instanceof ConduitBlockEntity conduitBlockEntity) {
             conduitBlockEntity.handleExtendedDataUpdate(conduitType, extendedConduitData);
         }

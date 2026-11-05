@@ -3,6 +3,7 @@ package com.enderio.conduits.common.conduit.type.item;
 import com.enderio.api.conduit.ConduitData;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
@@ -44,6 +45,20 @@ public class ItemConduitData implements ConduitData<ItemConduitData> {
         for (Direction direction: Direction.values()) {
             if (nbt.contains(direction.name())) {
                 itemSidedData.put(direction, ItemSidedData.fromNbt(nbt.getCompound(direction.name())));
+            }
+        }
+    }
+
+    @Override
+    public void applyGuiNBT(CompoundTag nbt) {
+        // Take only what the conduit screen changes. The round robin index stays the server's, and the priority keeps its range.
+        for (Direction direction: Direction.values()) {
+            if (nbt.contains(direction.name(), Tag.TAG_COMPOUND)) {
+                ItemSidedData fromGui = ItemSidedData.fromNbt(nbt.getCompound(direction.name()));
+                ItemSidedData sidedData = compute(direction);
+                sidedData.isRoundRobin = fromGui.isRoundRobin;
+                sidedData.isSelfFeed = fromGui.isSelfFeed;
+                sidedData.setPriority(fromGui.priority);
             }
         }
     }

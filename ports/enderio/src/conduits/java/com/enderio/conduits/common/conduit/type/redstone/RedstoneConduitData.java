@@ -39,6 +39,11 @@ public class RedstoneConduitData implements ConduitData<RedstoneConduitData> {
     }
 
     @Override
+    public void applyGuiNBT(CompoundTag nbt) {
+        // The conduit screen sends no redstone conduit data, and the signal state is server state.
+    }
+
+    @Override
     public void deserializeNBT(CompoundTag nbt) {
         isActive = nbt.getBoolean(KEY_ACTIVE);
         activeColors.clear();

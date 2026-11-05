@@ -76,6 +76,16 @@ public class RequestTravelPacket implements Packet {
                 player.displayClientMessage(Component.nullToEmpty("ERROR: Destination not a valid target"), true);
                 return;
             }
+
+            // The client picks the target, so check the travel rules of TravelHandler again. A target that takes no teleports,
+            // such as a hidden anchor, can only be reached as an elevator, straight above or below the anchor the player stands on.
+            BlockPos anchorPos = player.blockPosition().below();
+            boolean isElevatorJump = target.get().getPos().getX() == anchorPos.getX() && target.get().getPos().getZ() == anchorPos.getZ();
+            if (!target.get().canTeleportTo() && !(isElevatorJump && target.get().canJumpTo())) {
+                player.displayClientMessage(Component.nullToEmpty("ERROR: Destination not a valid target"), true);
+                return;
+            }
+
             // Eventually change the packet structure to include what teleport method was used so this range can be selected correctly
             int range = Math.max(target.get().getBlock2BlockRange(), target.get().getItem2BlockRange());
             if (pos.distSqr(player.getOnPos()) > range * range) {

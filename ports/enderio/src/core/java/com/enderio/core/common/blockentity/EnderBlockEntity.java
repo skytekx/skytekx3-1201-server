@@ -25,9 +25,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Base block entity class for EnderIO.
@@ -39,6 +42,9 @@ public class EnderBlockEntity extends BlockEntity {
     public static final String INDEX = "Index";
     private boolean isChangedDeferred = true;
     private final List<NetworkDataSlot<?>> dataSlots = new ArrayList<>();
+
+    // The data slots that a client may change, see addClientDataSlot.
+    private final Set<NetworkDataSlot<?>> clientDataSlots = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private final List<Runnable> afterDataSync = new ArrayList<>();
 
@@ -170,8 +176,20 @@ public class EnderBlockEntity extends BlockEntity {
         return buf;
     }
 
+    /**
+     * Add a data slot that the server syncs to the client. The server ignores any change a client sends for it.
+     */
     public void addDataSlot(NetworkDataSlot<?> slot) {
         dataSlots.add(slot);
+    }
+
+    /**
+     * Add a data slot that the server syncs to the client and that the client may change through {@link #clientUpdateSlot},
+     * such as a setting of the block's screen. The value comes from the client, so the slot's setter must check it.
+     */
+    public void addClientDataSlot(NetworkDataSlot<?> slot) {
+        addDataSlot(slot);
+        clientDataSlots.add(slot);
     }
 
     public void addAfterSyncRunnable(Runnable runnable) {
@@ -220,6 +238,10 @@ public class EnderBlockEntity extends BlockEntity {
         }
     }
 
+    /**
+     * Apply a data slot change that a client sent.
+     * @throws IllegalStateException if the buffer is malformed, the index is out of range or the slot does not take client changes.
+     */
     @UseOnly(LogicalSide.SERVER)
     public void serverHandleBufferChange(FriendlyByteBuf buf) {
         int index = -1;
@@ -228,8 +250,22 @@ public class EnderBlockEntity extends BlockEntity {
         } catch (Exception e) {
             throw new IllegalStateException("Invalid buffer was passed over the network to the server.");
         }
-        dataSlots.get(index).fromBuffer(buf);
-        dataSlots.get(index).updateServerCallback();
+
+        if (index < 0 || index >= dataSlots.size()) {
+            throw new IllegalStateException("Data slot index " + index + " does not exist.");
+        }
+
+        NetworkDataSlot<?> slot = dataSlots.get(index);
+        if (!clientDataSlots.contains(slot)) {
+            throw new IllegalStateException("Data slot " + index + " cannot be changed by the client.");
+        }
+
+        try {
+            slot.fromBuffer(buf);
+        } catch (RuntimeException e) {
+            throw new IllegalStateException("Invalid buffer for data slot " + index + " was passed over the network to the server.", e);
+        }
+        slot.updateServerCallback();
     }
 
     // endregion

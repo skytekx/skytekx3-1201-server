@@ -88,6 +88,11 @@ public class AE2InWorldConduitNodeHost implements IInWorldGridNodeHost, ConduitD
     }
 
     @Override
+    public void applyGuiNBT(CompoundTag nbt) {
+        // The conduit screen sends no ME conduit data. The grid node data, such as its owner, must never come from a client.
+    }
+
+    @Override
     public void onCreated(ConduitType<?> type, Level level, BlockPos pos, @Nullable Player player) {
         if (mainNode == null) {
             // required because onCreated() can be called after onRemoved()

@@ -145,7 +145,7 @@ public class SpawnerCaptureTask implements IPoweredMachineTask {
     /**
      * The vial for the bound soul. In ENTITYTYPE mode it holds only the entity type, like the vials of the creative tab,
      * so a soul bound from a mob with a sword, armour or villager trades never copies them. Only COPY mode copies the
-     * whole stored entity, as MobCaptureTask does for MobSpawnMode.COPY.
+     * stored entity, all of it except its UUID, as MobCaptureTask does for MobSpawnMode.COPY.
      */
     private ItemStack createFilledVial() {
         ItemStack vial = EIOItems.FILLED_SOUL_VIAL.get().getDefaultInstance();
@@ -155,6 +155,9 @@ public class SpawnerCaptureTask implements IPoweredMachineTask {
                 // A deep copy, so that the vial never shares a tag with the spawner.
                 StoredEntityData copy = new StoredEntityData();
                 copy.deserializeNBT(blockEntity.getEntityData().serializeNBT().copy());
+                // SkyTekx: drop the stored UUID, as 84bfe2477 gives every COPY spawn a fresh one. The vial releases
+                // through addFreshEntity, which refuses a UUID in use, so a second vial would empty without a mob.
+                copy.getEntityTag().remove("UUID");
                 SoulVialItem.setEntityData(vial, copy);
             }
         }

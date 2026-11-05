@@ -129,7 +129,8 @@ its item here, and the NOTICE in the jar sums them up.
    is `liquid_blaze_burner_max_liquid_capacity`, whose default stays 4000 mB, the tank size of the
    live burners, instead of the 1000 mB of upstream `6cbf853`. Loading an older
    `createaddition-common.toml` keeps its values and appends the new keys. The Liquid Blaze Burner
-   reads its two keys since item 4 and the Capacitor its two since item 22. The other keys wait for
+   reads its two keys since item 4, the Capacitor its two since item 22 and the Electrum Amulet
+   `amulet_effect_enabled` and `electrum_amulet_charge_rate` since item 23. The other keys wait for
    their bundles, and every reader calls `get()` inside a method or supplier, never in a static
    initialiser.
 2. Network: the channel `createaddition:main` goes from protocol `1` to `2`, and its message ids
@@ -315,3 +316,18 @@ its item here, and the NOTICE in the jar sums them up.
     into several charged capacitors and dupes energy, on a Tesla Coil depot, in another mod's
     charger or by the Electrum Amulet. The bar width is capped at full when the capacity in the
     config shrinks below the stored energy.
+23. Electrum Amulet: upstream `5c2b9ea`, `b0b8bc9` and `4414193`. Held in the main or the off hand,
+    the amulet charges the FE item in the other hand with a chance of 1 in 300 per tick by 300 times
+    `electrum_amulet_charge_rate` FE, gives the player Shocking for 40 ticks and plays `little_zap`
+    while `audio_enabled` is on. `amulet_effect_enabled` turns it off. This replaces the Luck and
+    Speed that the base gave below four hearts. The class keeps its 1.20.1 name `ElectrumAmulet`
+    (upstream `ElectrumAmuletItem`) and the rarity `UNCOMMON`, and it asks the stack for
+    `ForgeCapabilities.ENERGY` where upstream asks for `Capabilities.EnergyStorage.ITEM`. The charge
+    is computed in long and capped at `Integer.MAX_VALUE`, so a large rate in the config cannot
+    overflow. `textures/item/electrum_amulet.png` is upstream's new 16x16 texture (blob `263f385`),
+    an edit of CC&A's own amulet texture. The license check `texcmp.py` finds it equal to the old
+    texture in 90 percent of the pixels that either of them covers, and finds no match among the
+    textures of Create 6.0.8. The recipe takes `forge:dusts/diamond` (CC&A's Diamond Grit) and a
+    `forge:plates/zinc` instead of the emerald, in the pattern ` WW`, `EZW`, `GE `. The en_us
+    tooltip summary is upstream's new one. The other 20 locales keep the summary of the old effect
+    until the translations bundle.

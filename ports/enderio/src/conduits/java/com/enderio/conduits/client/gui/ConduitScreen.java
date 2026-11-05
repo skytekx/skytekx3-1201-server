@@ -15,6 +15,7 @@ import com.enderio.api.conduit.SlotType;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
 import com.enderio.conduits.common.conduit.type.energy.EnergyConduitType;
+import com.enderio.conduits.common.conduit.type.fluid.FluidConduitType;
 import com.enderio.conduits.common.conduit.type.item.ItemConduitType;
 import com.enderio.conduits.common.init.ConduitLang;
 import com.enderio.conduits.common.menu.ConduitMenu;
@@ -98,8 +99,8 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
     }
 
     /**
-     * The insert priority of the shown side, for the conduits that have one: item conduits (6.x 37890e67d) and energy
-     * conduits (8.x 57fc40d61).
+     * The insert priority of the shown side, for the conduits that have one: item conduits (6.x 37890e67d), energy
+     * conduits (8.x 57fc40d61) and the pressurized and ender fluid conduits (8.x 6ecc1c788).
      */
     private OptionalInt getInsertPriority() {
         ConduitType<?> conduitType = menu.getConduitType();
@@ -108,6 +109,9 @@ public class ConduitScreen extends EIOScreen<ConduitMenu> {
         }
         if (conduitType instanceof EnergyConduitType energyConduitType) {
             return OptionalInt.of(getBundle().getNodeFor(energyConduitType).getConduitData().getPriority(menu.getDirection()));
+        }
+        if (conduitType instanceof FluidConduitType fluidConduitType && fluidConduitType.supportsPriority()) {
+            return OptionalInt.of(getBundle().getNodeFor(fluidConduitType).getConduitData().getPriority(menu.getDirection()));
         }
         return OptionalInt.empty();
     }

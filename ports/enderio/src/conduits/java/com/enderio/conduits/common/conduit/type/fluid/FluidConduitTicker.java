@@ -16,6 +16,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,10 +25,16 @@ public class FluidConduitTicker extends CapabilityAwareConduitTicker<FluidCondui
 
     private final boolean lockFluids;
     private final int baseFluidRate;
+    private final boolean supportsPriority;
 
     public FluidConduitTicker(boolean lockFluids, int baseFluidRate) {
+        this(lockFluids, baseFluidRate, false);
+    }
+
+    public FluidConduitTicker(boolean lockFluids, int baseFluidRate, boolean supportsPriority) {
         this.lockFluids = lockFluids;
         this.baseFluidRate = baseFluidRate;
+        this.supportsPriority = supportsPriority;
     }
 
     private int getScaledFluidRate(CapabilityConnection extractingConnection) {
@@ -106,6 +114,13 @@ public class FluidConduitTicker extends CapabilityAwareConduitTicker<FluidCondui
         List<CapabilityConnection> extracts,
         ConduitGraph<FluidConduitData> graph,
         ColoredRedstoneProvider coloredRedstoneProvider) {
+
+        if (supportsPriority) {
+            // Ender IO 8.x 6ecc1c788: fill the inserts of a higher priority first. The sort is stable, so inserts of one
+            // priority keep their order.
+            inserts = new ArrayList<>(inserts);
+            inserts.sort(Comparator.comparingInt((CapabilityConnection insert) -> insert.data.castTo(FluidConduitData.class).getPriority(insert.direction)).reversed());
+        }
 
         for (CapabilityConnection extract : extracts) {
             IFluidHandler extractHandler = extract.capability;

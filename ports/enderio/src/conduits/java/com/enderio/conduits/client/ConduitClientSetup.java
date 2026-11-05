@@ -85,8 +85,8 @@ public class ConduitClientSetup {
     @SubscribeEvent
     public static void registerConduitScreenExtensions(RegisterConduitScreenExtensionsEvent event) {
         event.register(EIOConduitTypes.FLUID.get(), () -> FluidConduitScreenExtension.INSTANCE);
-        event.register(EIOConduitTypes.FLUID2.get(), () -> FluidConduitScreenExtension.INSTANCE);
-        event.register(EIOConduitTypes.FLUID3.get(), () -> FluidConduitScreenExtension.INSTANCE);
+        event.register(EIOConduitTypes.FLUID2.get(), () -> FluidConduitScreenExtension.PRIORITY_INSTANCE);
+        event.register(EIOConduitTypes.FLUID3.get(), () -> FluidConduitScreenExtension.PRIORITY_INSTANCE);
         event.register(EIOConduitTypes.ITEM.get(), ItemConduitScreenExtension::new);
         event.register(EIOConduitTypes.ENERGY.get(), EnergyConduitScreenExtension::new);
     }

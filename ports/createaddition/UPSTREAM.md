@@ -270,5 +270,14 @@ its item here, and the NOTICE in the jar sums them up.
     counterpart. The fork keeps its `LazyOptional` with the invalidation listener, and
     `AbstractConnectorBlockEntity.lazyTick` looks the neighbour up again every 10 ticks while the
     connector has no external storage and the neighbour's chunk is loaded. Before, a connector whose
-    neighbour chunk loaded after it, or whose neighbour had no block entity yet, stayed without
-    storage until a block update.
+    first lookup found no storage stayed without it until a block update. On Forge 1.20.1 the
+    neighbour of a ticking connector is always in a chunk at full level, and `getBlockEntity` waits
+    for it, so in practice this is a neighbour whose block entity or capability is not ready at the
+    first lookup (found by the migration test).
+20. Graph check at load (local change, found by the migration test): `WireGraph.load` also queues every
+    saved node for a check against the world (`verifyAll`), not only the far ends the graph has never
+    seen. Upstream trusts its save until a node's chunk loads. On a test world that went back to 1.3.3
+    for one boot, where a connector in an unloaded chunk was broken, the upstream logic kept carrying
+    energy over the missing connector until `/cca_wires rebuild`. With the check the graph matched the
+    world right after the boot. The checks read saved chunks in the background and never load a
+    chunk.

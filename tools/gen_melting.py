@@ -1470,7 +1470,8 @@ def audit(world):
     that recipe takes some of the fluid, the melting gives more of it back and no other fluid is lost on the way
     (melting multiplies it). It is a trade when the recipe pays for the gain with another fluid that the melting does
     not give back, such as tinted glass in a seared tank, which turns amethyst into glass. It is a conversion when the
-    recipe takes only other fluids and a source when it takes nothing that melts, such as an essence or a residue.
+    recipe takes only other fluids that the melting does not give back in full, and a source when it takes nothing
+    that melts, such as an essence or a residue, or when the melting refunds every fluid it takes (refund).
     Ore processing by machines is left out, it is what the ore rates are for.
     """
     val, best, produced = world.solve()
@@ -1500,7 +1501,7 @@ def audit(world):
             for rid, content, mx, kind in world.melts[item]:
                 # An ore compares its base amount, since its inputs count with their base amounts too
                 out = content if kind == 'ore' else mx
-                cls, takes, cap = None, {}, {}
+                cls, takes, cap, refund = None, {}, {}, {}
                 for f, x in sorted(out.items()):
                     inp = carriers.get(f)
                     if inp is None or x <= inp.get(f, 0.0) + 0.5:
@@ -1517,13 +1518,17 @@ def audit(world):
                     cheap = world.evaluate(p, expected=True)
                     if cheap is INF or not any(x > cheap.get(f, 0.0) + 0.5 for f, x in out.items()):
                         continue
-                    cls, takes = ('conversion' if cheap else 'source'), cheap
+                    if cheap and all(out.get(g, 0.0) + 0.5 >= y for g, y in cheap.items()):
+                        # The melting gives back every fluid the recipe takes, so nothing pays for the gain: a source
+                        # with a refund, not a conversion
+                        refund = cheap
+                    cls, takes = ('conversion' if cheap and not refund else 'source'), cheap
                 findings.append({
                     'melting': rid, 'item': item, 'kind': kind, 'recipe': p.rid, 'recipe_type': p.rtype,
                     'class': cls, 'melts': out, 'takes': takes,
                     'known': (KNOWN_DUPES.get(p.rid) or KNOWN_DUPES.get(p.rtype) or KNOWN_DUPES.get(item))
                     if cls == 'dupe' else None,
-                    'cap': cap})
+                    'cap': cap, 'refund': refund})
     return findings
 
 

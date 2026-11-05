@@ -20,4 +20,7 @@ public class MachineNBTKeys extends EIONBTKeys {
     public static final String BURN_DURATION = "BurnDuration";
     public static final String RANGE = "Range";
     public static final String RANGE_VISIBLE = "RangeVisible";
+
+    // SkyTekx: the powered spawner mode of 8.x (a90e5c512). Absent means spawn mode.
+    public static final String SPAWNER_MODE = "SpawnerMode";
 }

@@ -58,6 +58,10 @@ public class MachineLang {
     public static final MutableComponent UNKNOWN = REGISTRATE.addLang("gui", EnderIO.loc("spawner.unknown"), "Unknown mob");
     public static final MutableComponent OTHER_MOD = REGISTRATE.addLang("gui", EnderIO.loc("spawner.other_mod"), "Blocked by another mod");
     public static final MutableComponent DISABLED = REGISTRATE.addLang("gui", EnderIO.loc("spawner.disabled"), "Disabled by config");
+    // SkyTekx: the powered spawner mode of 8.x (a90e5c512), with the upstream keys.
+    public static final Component POWERED_SPAWNER_MODE = REGISTRATE.addLang("gui", EnderIO.loc("powered_spawner.mode"), "Spawner Mode");
+    public static final Component POWERED_SPAWNER_MODE_SPAWN = REGISTRATE.addLang("gui", EnderIO.loc("powered_spawner_mode.spawn"), "Spawn Mobs");
+    public static final Component POWERED_SPAWNER_MODE_CAPTURE = REGISTRATE.addLang("gui", EnderIO.loc("powered_spawner_mode.capture"), "Capture Mobs");
     public static final Component PHOTOVOLTAIC_CELL = REGISTRATE.addLang("tooltip", EnderIO.loc("photovoltaic_cell/main"), "Solar Power!");
     public static final Component PHOTOVOLTAIC_CELL_ADVANCED = REGISTRATE.addLang("tooltip", EnderIO.loc("photovoltaic_cell/advanced"), "Produces Power during daylight hours");
     public static final Component PHOTOVOLTAIC_CELL_ADVANCED2 = REGISTRATE.addLang("tooltip", EnderIO.loc("photovoltaic_cell/advanced2"), "Must have a clear line of sight to the sky");

@@ -1,6 +1,7 @@
 package com.enderio.machines.common.blockentity.task;
 
 import com.enderio.machines.common.blockentity.PoweredSpawnerBlockEntity;
+import com.enderio.machines.common.blockentity.PoweredSpawnerMode;
 import com.enderio.machines.common.config.MachinesConfig;
 import com.enderio.machines.common.io.energy.IMachineEnergyStorage;
 import com.enderio.machines.common.souldata.SpawnerSoul;
@@ -85,7 +86,8 @@ public class SpawnerMachineTask implements IPoweredMachineTask {
 
     @Override
     public boolean isCompleted() {
-        return complete;
+        // SkyTekx: a spawner switched to another mode drops its spawn task, as the PoweredSpawnerTask of 8.x does (a90e5c512).
+        return complete || blockEntity.getMode() != PoweredSpawnerMode.SPAWN;
     }
 
     /**
@@ -117,33 +119,53 @@ public class SpawnerMachineTask implements IPoweredMachineTask {
     }
     
     private void loadSoulData(Optional<ResourceLocation> rl) {
+        SoulSpawnData data = resolveSoulData(blockEntity, rl);
+        if (data != null) {
+            this.entityType = data.entityType();
+            this.energyCost = data.energyCost();
+            this.spawnType = data.spawnType();
+        }
+    }
+
+    /**
+     * SkyTekx: the soul lookup of the spawn task, shared with {@link SpawnerCaptureTask} so that a capture costs what a
+     * spawn costs.
+     *
+     * @return the entity type, energy cost and spawn type of the bound soul, or null after setting the blocked reason
+     * when the soul is unknown or blacklisted.
+     */
+    @Nullable
+    static SoulSpawnData resolveSoulData(PoweredSpawnerBlockEntity blockEntity, Optional<ResourceLocation> rl) {
         if (rl.isEmpty()) {
             blockEntity.setReason(PoweredSpawnerBlockEntity.SpawnerBlockedReason.UNKNOWN_MOB);
-            return;
+            return null;
         }
         Optional<Holder.Reference<EntityType<?>>> optionalEntity = ForgeRegistries.ENTITY_TYPES.getDelegate(rl.get());
         if (optionalEntity.isEmpty() || ! ForgeRegistries.ENTITY_TYPES.getKey(optionalEntity.get().get()).equals(rl.get())) {
             blockEntity.setReason(PoweredSpawnerBlockEntity.SpawnerBlockedReason.UNKNOWN_MOB);
-            return;
+            return null;
         }
         if (optionalEntity.get().get().is(MachineTags.EntityTypes.SPAWNER_BLACKLIST)) {
             blockEntity.setReason(PoweredSpawnerBlockEntity.SpawnerBlockedReason.DISABLED);
-            return;
+            return null;
         }
+        EntityType<?> entityType = optionalEntity.get().get();
         Optional<SpawnerSoul.SoulData> opData = SpawnerSoul.SPAWNER.matches(rl.get());
         if (opData.isEmpty()) { //Fallback
-            this.entityType = optionalEntity.get().get();
-            this.energyCost = 50000;
-            if (entityType.create(this.blockEntity.getLevel()) instanceof LivingEntity entity) { //Are we 100% guaranteed this is a living entity?
-                this.energyCost += entity.getMaxHealth()*50; //TODO actually balance based on health
+            int energyCost = 50000;
+            if (entityType.create(blockEntity.getLevel()) instanceof LivingEntity entity) { //Are we 100% guaranteed this is a living entity?
+                energyCost += entity.getMaxHealth()*50; //TODO actually balance based on health
             }
-            return;
+            return new SoulSpawnData(entityType, energyCost, MachinesConfig.COMMON.SPAWN_TYPE.get());
         }
         SpawnerSoul.SoulData data = opData.get();
-        this.entityType = optionalEntity.get().get();
-        this.energyCost = data.power();
-        this.spawnType = data.spawnType();
+        return new SoulSpawnData(entityType, data.power(), data.spawnType());
     }
+
+    /**
+     * SkyTekx: what {@link #resolveSoulData} found for a bound soul.
+     */
+    record SoulSpawnData(EntityType<? extends Entity> entityType, int energyCost, SpawnType spawnType) {}
 
     public boolean trySpawnEntity(BlockPos pos, ServerLevel level) {
         boolean spawned = false;

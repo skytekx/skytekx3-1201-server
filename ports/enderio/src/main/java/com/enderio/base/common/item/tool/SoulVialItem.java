@@ -221,6 +221,13 @@ public class SoulVialItem extends Item implements IMultiCapabilityItem, IAdvance
         stack.getCapability(EIOCapabilities.ENTITY_STORAGE).ifPresent(storage -> storage.setStoredEntityData(StoredEntityData.of(entity)));
     }
 
+    /**
+     * SkyTekx: store this entity data in a filled vial, as the powered spawner's capture mode does.
+     */
+    public static void setEntityData(ItemStack stack, StoredEntityData entityData) {
+        stack.getCapability(EIOCapabilities.ENTITY_STORAGE).ifPresent(storage -> storage.setStoredEntityData(entityData));
+    }
+
     public static Optional<StoredEntityData> getEntityData(ItemStack stack) {
         return stack.getCapability(EIOCapabilities.ENTITY_STORAGE).map(IEntityStorage::getStoredEntityData);
     }

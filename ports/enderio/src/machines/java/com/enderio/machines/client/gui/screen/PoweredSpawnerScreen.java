@@ -9,6 +9,8 @@ import com.enderio.machines.client.gui.widget.ActiveWidget;
 import com.enderio.machines.client.gui.widget.CapacitorEnergyWidget;
 import com.enderio.machines.client.gui.widget.ProgressWidget;
 import com.enderio.machines.common.blockentity.PoweredSpawnerBlockEntity;
+import com.enderio.machines.common.blockentity.PoweredSpawnerMode;
+import com.enderio.machines.common.lang.MachineLang;
 import com.enderio.machines.common.menu.PoweredSpawnerMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -22,7 +24,12 @@ import java.util.Optional;
 public class PoweredSpawnerScreen extends MachineScreen<PoweredSpawnerMenu> {
 
     public static final ResourceLocation BG_TEXTURE = EnderIO.loc("textures/gui/powered_spawner_spawn.png");
+    // SkyTekx: the capture mode screen. The texture already shipped with 6.x and matches the slots of a90e5c512.
+    public static final ResourceLocation BG_TEXTURE_CAPTURE = EnderIO.loc("textures/gui/powered_spawner_capture.png");
     private static final ResourceLocation RANGE_BUTTON_TEXTURE = EnderIO.loc("textures/gui/icons/range_buttons.png");
+
+    private ProgressWidget spawnProgress;
+    private ProgressWidget captureProgress;
 
     public PoweredSpawnerScreen(PoweredSpawnerMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -41,15 +48,35 @@ public class PoweredSpawnerScreen extends MachineScreen<PoweredSpawnerMenu> {
             () -> menu.getBlockEntity().isRangeVisible(), state -> menu.getBlockEntity().setIsRangeVisible(state),
             () -> menu.getBlockEntity().isRangeVisible() ? EIOLang.HIDE_RANGE : EIOLang.SHOW_RANGE));
 
+        // SkyTekx: the mode button of 8.x (a90e5c512), below the range button like the mode button of the alloy smelter.
+        addRenderableWidget(new EnumIconWidget<>(this, leftPos + imageWidth - 6 - 16, topPos + 6 + 18 * 2, () -> menu.getBlockEntity().getMode(),
+            mode -> menu.getBlockEntity().setMode(mode), MachineLang.POWERED_SPAWNER_MODE));
+
         addRenderableWidget(new ActiveWidget(this, menu.getBlockEntity()::getMachineStates, leftPos + imageWidth - 6 - 16, topPos + 16*4));
 
-        addRenderableOnly(new ProgressWidget.BottomUp(this, () -> menu.getBlockEntity().getSpawnProgress(), getGuiLeft() + 82, getGuiTop() + 38, 14, 14, 176, 0));
+        spawnProgress = addRenderableOnly(new ProgressWidget.BottomUp(this, () -> menu.getBlockEntity().getSpawnProgress(), getGuiLeft() + 82, getGuiTop() + 38, 14, 14, 176, 0));
 
+        // The arrow of the capture texture, between the vial slots.
+        captureProgress = addRenderableOnly(new ProgressWidget.LeftRight(this, () -> menu.getBlockEntity().getSpawnProgress(), getGuiLeft() + 75, getGuiTop() + 43, 24, 16, 176, 14));
+        updateProgressVisibility();
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
+        updateProgressVisibility();
+        super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+    }
+
+    private void updateProgressVisibility() {
+        boolean capture = menu.getBlockEntity().getMode() == PoweredSpawnerMode.CAPTURE;
+        spawnProgress.visible = !capture;
+        captureProgress.visible = capture;
     }
 
     @Override
     public ResourceLocation getBackgroundImage() {
-        return BG_TEXTURE;
+        PoweredSpawnerBlockEntity be = getMenu().getBlockEntity();
+        return be.getMode() == PoweredSpawnerMode.CAPTURE ? BG_TEXTURE_CAPTURE : BG_TEXTURE;
     }
 
     @Override
@@ -69,5 +96,9 @@ public class PoweredSpawnerScreen extends MachineScreen<PoweredSpawnerMenu> {
                 guiGraphics.drawString(font, rl.get().toString(), imageWidth / 2f - font.width(rl.get().toString()) / 2f, 15, 4210752, false);
             }
         }
+
+        // SkyTekx: the name of the mode under the mob, as 8.x shows it (a90e5c512).
+        String modeLabel = getMenu().getBlockEntity().getMode().getTooltip().getString();
+        guiGraphics.drawString(font, modeLabel, imageWidth / 2f - font.width(modeLabel) / 2f, 26, 4210752, false);
     }
 }

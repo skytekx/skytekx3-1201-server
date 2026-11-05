@@ -194,6 +194,18 @@ and recipe ids. Lines that differ from upstream carry a `SkyTekx port` comment t
   `ja_jp` and `pt_br`. Its `zh_cn` has no text for them, so Chinese clients show the English one,
   as they do upstream.
 
+### Fixes over upstream
+
+Upstream 1.0.8 behaves the same in these points on NeoForge. The fixes are SkyTekx's, since the pack
+runs on a public server. Each is marked `SkyTekx:` in the source.
+
+- Payloads: `SetFakeRecipeSlotPayload` set any slot of the open menu to the stack the client sent,
+  and it checked only the upper bound of the index (upstream `9777e82`). A modified client could put
+  any item into the player inventory or a machine input that way. Now only a ghost slot (`FakeSlot`)
+  of a menu that the player may still use takes the stack. `InfuserSelectIndexPayload` and
+  `EnchanternatorSelectLevelPayload` changed the machine at any position the client named, and
+  loaded its chunk to find it. Now only the machine whose menu the player has open takes the change.
+
 ### Left out
 
 - CraftTweaker integration (`compat/crafttweaker/FarmerCrafting.java`) and the CraftTweaker test

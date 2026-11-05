@@ -153,6 +153,9 @@ recipe keys and NBT names unless it says otherwise.
     order: `event.recipes.expandeddelight.juicing(ingredients, result, experience, juicingtime,
     container)`.
 13. The tags in `EDCommonTags` are forge: tags, see the data changes.
+14. The crushing mallet is built with `durability(64)` alone. Minecraft 1.20.1 throws "Unable to have
+    damage AND stack" for upstream's `durability(64).stacksTo(1)`, and the durability already limits
+    the stack to one item.
 
 Fixes of upstream bugs, each small and local:
 

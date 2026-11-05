@@ -12,7 +12,7 @@
 //package de.ellpeck.actuallyadditions.mod.inventory.gui;
 //
 //import de.ellpeck.actuallyadditions.mod.inventory.ContainerGiantChest;
-//import de.ellpeck.actuallyadditions.mod.network.PacketHandlerHelper;
+//import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 //import de.ellpeck.actuallyadditions.mod.tile.TileEntityBase;
 //import de.ellpeck.actuallyadditions.mod.tile.TileEntityGiantChest;
 //import de.ellpeck.actuallyadditions.mod.tile.TileEntityGiantChestLarge;
@@ -59,7 +59,7 @@
 //    @Override
 //    protected void actionPerformed(Button button) throws IOException {
 //        if (button.id >= 0 && button.id < 3) {
-//            PacketHandlerHelper.sendButtonPacket(this.chest, button.id);
+//            PacketHelperClient.sendButtonPacket(this.chest, button.id);
 //        }
 //    }
 //

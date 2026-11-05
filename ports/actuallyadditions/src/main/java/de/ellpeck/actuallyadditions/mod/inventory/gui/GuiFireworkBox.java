@@ -64,7 +64,7 @@ public class GuiFireworkBox extends AbstractContainerScreen<ContainerFireworkBox
     //        if (button instanceof GuiSlider) {
     //            if (!((GuiSlider) button).isMouseDown) {
     //                System.out.println("SETTING VALUE FOR " + id + "!!");
-    //                PacketHandlerHelper.sendNumberPacket(this.tile, value, id);
+    //                PacketHelperClient.sendNumberPacket(this.tile, value, id);
     //            }
     //        }
     //    }

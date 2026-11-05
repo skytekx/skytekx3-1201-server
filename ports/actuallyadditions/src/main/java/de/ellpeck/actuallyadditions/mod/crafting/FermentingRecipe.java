@@ -15,6 +15,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -47,18 +49,23 @@ public class FermentingRecipe implements Recipe<Container> {
         return input.isFluidEqual(this.input) && (output.isEmpty() || output.isFluidEqual(this.output) && input.getAmount() >= this.input.getAmount());
     }
 
+    // SkyTekx: FluidDisplay is a client only screen widget, so its four accessors are client only
+    @OnlyIn(Dist.CLIENT)
     public Optional<FluidDisplay> getInputDisplay() {
         return inputDisplay;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void setInputDisplay(FluidDisplay inputDisplay) {
         this.inputDisplay = Optional.of(inputDisplay);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public Optional<FluidDisplay> getOutputDisplay() {
         return outputDisplay;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void setOutputDisplay(FluidDisplay outputDisplay) {
         this.outputDisplay = Optional.of(outputDisplay);
     }

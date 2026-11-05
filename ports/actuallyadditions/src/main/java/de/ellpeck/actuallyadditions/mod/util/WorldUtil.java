@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -43,6 +44,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -366,8 +368,9 @@ public final class WorldUtil {
             stack.mineBlock(level, state, pos, player);
 
             // send an update to the server, so we get an update back
-
-            ActuallyAdditionsClient.sendBreakPacket(pos);
+            // SkyTekx: through DistExecutor, so that this common class only names the client class
+            // in a lambda that runs on the physical client
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ActuallyAdditionsClient.sendBreakPacket(pos));
             return true;
         }
     }

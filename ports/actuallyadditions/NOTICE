@@ -60,6 +60,10 @@ Modifications
       titles are in title case as on upstream's main branch.
     * JEI: a category for the Lens of the Miner, and the Atomic Reconstructor shows as a
       machine, not as an ingredient, so EMI's recipe tree no longer counts one per craft.
+    * Dedicated server: block overlays, the Engineer's Goggles tick and the clientbound packet
+      handlers live in client only classes, and common classes no longer name client classes
+      outside code that only the physical client runs. Menus of the Item Filter, the drill and
+      the Advanced Laser Relay show their titles.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

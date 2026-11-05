@@ -82,7 +82,7 @@ public class GuiXPSolidifier extends AAScreen<ContainerXPSolidifier> {
 
 //    @Override
 //    public void actionPerformed(Button button) {
-//        PacketHandlerHelper.sendButtonPacket(this.solidifier, button.id);
+//        PacketHelperClient.sendButtonPacket(this.solidifier, button.id);
 //
 //        this.solidifier.onButtonPressed(button.id, Minecraft.getInstance().player);
 //    }

@@ -61,6 +61,7 @@ import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -137,7 +138,7 @@ public class ActuallyAdditionsClient {
         event.registerEntityRenderer(ActuallyAdditions.ENTITY_WORM.get(), RenderWorm::new);
     }
 
-    public static void registerParticleFactories() {
+    public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
         Minecraft.getInstance().particleEngine.register(ActuallyParticles.LASER_ITEM.get(), ParticleLaserItem.Factory::new);
         Minecraft.getInstance().particleEngine.register(ActuallyParticles.BEAM.get(), ParticleBeam.Factory::new);
     }

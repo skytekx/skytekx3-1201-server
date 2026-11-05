@@ -19,7 +19,7 @@
 //import de.ellpeck.actuallyadditions.mod.data.PlayerData;
 //import de.ellpeck.actuallyadditions.mod.data.PlayerData.PlayerSave;
 //import de.ellpeck.actuallyadditions.mod.inventory.gui.TexturedButton;
-//import de.ellpeck.actuallyadditions.mod.network.PacketHandlerHelper;
+//import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 //import de.ellpeck.actuallyadditions.mod.util.StringUtil;
 //import de.ellpeck.actuallyadditions.mod.util.Util;
 //import net.minecraft.client.gui.screen.Screen;
@@ -200,7 +200,7 @@
 //
 //                PlayerSave data = PlayerData.getDataFromPlayer(this.getMinecraft().player);
 //                data.didBookTutorial = true;
-//                PacketHandlerHelper.sendPlayerDataToServer(false, 1);
+//                PacketHelperClient.sendPlayerDataToServer(false, 1);
 //            }
 //        } else {
 //            super.actionPerformed(button);

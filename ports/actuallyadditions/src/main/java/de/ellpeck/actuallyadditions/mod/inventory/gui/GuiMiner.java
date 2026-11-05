@@ -64,6 +64,6 @@ public class GuiMiner extends AAScreen<ContainerMiner> {
 
 //    @Override
 //    public void actionPerformed(Button button) {
-//        PacketHandlerHelper.sendButtonPacket(this.miner, button.id);
+//        PacketHelperClient.sendButtonPacket(this.miner, button.id);
 //    }
 }

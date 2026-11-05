@@ -10,18 +10,14 @@
 
 package de.ellpeck.actuallyadditions.mod.blocks;
 
-import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+/**
+ * Marks a block or item that draws an overlay while the player looks at it.
+ * <p>
+ * SkyTekx: upstream 668f7ffe replaced displayHud(GuiGraphics, Minecraft, ...) by getHud(), which
+ * returns a client only IBlockHud. This interface holds neither, so common classes that implement
+ * it never name a client class and a dedicated server verifies them without loading one. The
+ * overlays live in de.ellpeck.actuallyadditions.mod.blocks.blockhuds, and ClientEvents registers
+ * them in BlockHuds on the physical client.
+ */
 public interface IHudDisplay {
-
-    @OnlyIn(Dist.CLIENT)
-    void displayHud(GuiGraphics guiGraphics, Minecraft minecraft, Player player, ItemStack stack, HitResult rayCast, Window resolution);
-
 }

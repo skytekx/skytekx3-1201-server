@@ -43,7 +43,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -55,7 +54,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -113,9 +111,11 @@ public class ActuallyAdditions {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             // SkyTekx: the client config of upstream 9c6859cd, on the physical client only
             ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
-            eventBus.addListener(this::clientSetup);
+            // SkyTekx: the listeners are ActuallyAdditionsClient's own methods, so this class names
+            // the client class only inside this lambda
+            eventBus.addListener(ActuallyAdditionsClient::setup);
             eventBus.addListener(ActuallyAdditionsClient::setupSpecialRenders);
-            eventBus.addListener(this::particleFactoryRegister);
+            eventBus.addListener(ActuallyAdditionsClient::registerParticleFactories);
         });
         IFarmerBehavior.initBehaviors();
     }
@@ -162,14 +162,6 @@ public class ActuallyAdditions {
         ResourceLocation location = ResourceLocation.tryParse(id);
         Item item = location != null ? ForgeRegistries.ITEMS.getValue(location) : null;
         return item != null ? item : Items.AIR;
-    }
-
-    private void clientSetup(FMLClientSetupEvent event) {
-        ActuallyAdditionsClient.setup(event);
-    }
-
-    private void particleFactoryRegister(RegisterParticleProvidersEvent event) {
-        ActuallyAdditionsClient.registerParticleFactories();
     }
 
     public void serverStarted(ServerStartedEvent event) {

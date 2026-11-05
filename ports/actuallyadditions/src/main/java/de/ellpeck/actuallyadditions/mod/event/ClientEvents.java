@@ -12,8 +12,23 @@ package de.ellpeck.actuallyadditions.mod.event;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import de.ellpeck.actuallyadditions.api.misc.IGoggles;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockAtomicReconstructor;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockLaserRelay;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockLavaFactoryController;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockPhantom;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockPlayerInterface;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockVerticalDigger;
 import de.ellpeck.actuallyadditions.mod.blocks.IHudDisplay;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.BlockHuds;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.IBlockHud;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.LaserRelayHud;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.LavaFactoryControllerHud;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.MinerHud;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.PhantomHud;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.PlayerInterfaceHud;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.ReconstructorHud;
 import de.ellpeck.actuallyadditions.mod.config.ClientConfig;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.data.WorldData;
@@ -21,17 +36,19 @@ import de.ellpeck.actuallyadditions.mod.inventory.gui.EnergyDisplay;
 import de.ellpeck.actuallyadditions.mod.tile.IEnergyDisplay;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityBase;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
+import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,6 +59,9 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.List;
+import java.util.Set;
+
 @OnlyIn(Dist.CLIENT)
 public class ClientEvents {
 
@@ -49,6 +69,17 @@ public class ClientEvents {
     private static final Component ADVANCED_INFO_HEADER_PRE = Component.literal("  -").withStyle(ChatFormatting.GRAY);
 
     private static EnergyDisplay energyDisplay;
+
+    // SkyTekx: the overlays that upstream 668f7ffe moved into client only IBlockHud classes. The
+    // blocks only implement the marker IHudDisplay, so the client registers them here
+    public ClientEvents() {
+        BlockHuds.register(BlockAtomicReconstructor.class, new ReconstructorHud());
+        BlockHuds.register(BlockLaserRelay.class, new LaserRelayHud());
+        BlockHuds.register(BlockLavaFactoryController.class, new LavaFactoryControllerHud());
+        BlockHuds.register(BlockPhantom.class, new PhantomHud());
+        BlockHuds.register(BlockPlayerInterface.class, new PlayerInterfaceHud());
+        BlockHuds.register(BlockVerticalDigger.class, new MinerHud());
+    }
 
     // TODO: [port] the fuck?
     @SubscribeEvent
@@ -59,6 +90,54 @@ public class ClientEvents {
             if (mc.level == null) {
                 WorldData.clear();
             }
+
+            if (mc.player != null) {
+                this.renderEngineerEffect(mc.player);
+            }
+        }
+    }
+
+    // SkyTekx: the client tick of ItemEngineerGoggles, moved here by upstream 844efe42. The base
+    // registered each goggles item on the Forge bus from its common constructor
+    private final Set<Entity> cachedGlowingEntities = new ConcurrentSet<>();
+
+    /**
+     * Renders a special visual effect for entities around the player if the player is wearing goggles that allow them to see spectral mobs.
+     *
+     * @param player The player wearing the goggles.
+     */
+    private void renderEngineerEffect(Player player) {
+        ItemStack face = player.getInventory().armor.get(3);
+        if (!face.isEmpty() && face.getItem() instanceof IGoggles goggles && goggles.displaySpectralMobs()) {
+            double range = 8;
+            AABB aabb = new AABB(player.getX() - range, player.getY() - range, player.getZ() - range, player.getX() + range, player.getY() + range, player.getZ() + range);
+            List<Entity> entities = player.level().getEntitiesOfClass(Entity.class, aabb);
+            if (entities != null && !entities.isEmpty()) {
+                this.cachedGlowingEntities.addAll(entities);
+            }
+
+            if (!this.cachedGlowingEntities.isEmpty()) {
+                for (Entity entity : this.cachedGlowingEntities) {
+                    if (!entity.isAlive() || entity.distanceToSqr(player.getX(), player.getY(), player.getZ()) > range * range) {
+                        entity.setGlowingTag(false);
+
+                        this.cachedGlowingEntities.remove(entity);
+                    } else {
+                        entity.setGlowingTag(true);
+                    }
+                }
+            }
+
+            return;
+        }
+
+        if (!this.cachedGlowingEntities.isEmpty()) {
+            for (Entity entity : this.cachedGlowingEntities) {
+                if (entity.isAlive()) {
+                    entity.setGlowingTag(false);
+                }
+            }
+            this.cachedGlowingEntities.clear();
         }
     }
 
@@ -179,7 +258,10 @@ public class ClientEvents {
 
             if (StackUtil.isValid(stack)) {
                 if (stack.getItem() instanceof IHudDisplay) {
-                    ((IHudDisplay) stack.getItem()).displayHud(guiGraphics, minecraft, player, stack, posHit, event.getWindow());
+                    IBlockHud hud = BlockHuds.get(stack.getItem());
+                    if (hud != null) {
+                        hud.displayHud(guiGraphics, minecraft, player, stack, posHit, event.getWindow());
+                    }
                 }
             }
 
@@ -189,21 +271,26 @@ public class ClientEvents {
                 BlockEntity tileHit = minecraft.level.getBlockEntity(rayCast.getBlockPos());
 
                 if (blockHit instanceof IHudDisplay) {
-                    ((IHudDisplay) blockHit).displayHud(guiGraphics, minecraft, player, stack, posHit, event.getWindow());
+                    IBlockHud hud = BlockHuds.get(blockHit);
+                    if (hud != null) {
+                        hud.displayHud(guiGraphics, minecraft, player, stack, posHit, event.getWindow());
+                    }
                 }
 
                 if (tileHit instanceof TileEntityBase base) {
 	                if (base.isRedstoneToggle()) {
-                        String strg = String.format("%s: %s", I18n.get("info." + ActuallyAdditions.MODID + ".redstoneMode"), ChatFormatting.DARK_RED + I18n.get("info." + ActuallyAdditions.MODID + ".redstoneMode." + (base.isPulseMode
+                        // SkyTekx: Components instead of I18n strings (upstream 3a767e18)
+                        Component component = Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode").append(": ")
+                                .append(Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode." + (base.isPulseMode
                             ? "pulse"
-                            : "deactivation")) + ChatFormatting.RESET);
-                        guiGraphics.drawString(font, strg, (int) (event.getWindow().getGuiScaledWidth() / 2f + 5), (int) (event.getWindow().getGuiScaledHeight() / 2f + 5), 0xFFFFFF);
+                            : "deactivation")).withStyle(ChatFormatting.DARK_RED));
+                        guiGraphics.drawString(font, component, (int) (event.getWindow().getGuiScaledWidth() / 2f + 5), (int) (event.getWindow().getGuiScaledHeight() / 2f + 5), 0xFFFFFF);
 
-                        String expl;
+                        Component expl;
                         if (!stack.isEmpty() && stack.getItem() == CommonConfig.Other.redstoneConfigureItem) {
-                            expl = ChatFormatting.GREEN + I18n.get("info." + ActuallyAdditions.MODID + ".redstoneMode.validItem");
+                            expl = Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode.validItem").withStyle(ChatFormatting.GREEN);
                         } else {
-                                expl = ChatFormatting.GRAY.toString() + ChatFormatting.ITALIC + I18n.get("info." + ActuallyAdditions.MODID + ".redstoneMode.invalidItem", I18n.get(CommonConfig.Other.redstoneConfigureItem.asItem().getDescriptionId()));
+                            expl = Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode.invalidItem", Component.translatable(CommonConfig.Other.redstoneConfigureItem.asItem().getDescriptionId()).getString()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
                         }
                         guiGraphics.drawString(font, expl, (int) (event.getWindow().getGuiScaledWidth() / 2f + 5), (int) (event.getWindow().getGuiScaledHeight() / 2f + 15), 0xFFFFFF);
                     }

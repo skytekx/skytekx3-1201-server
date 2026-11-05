@@ -17,7 +17,6 @@ import de.ellpeck.actuallyadditions.mod.tile.TileEntityLaserRelayItemAdvanced;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -30,6 +29,10 @@ import javax.annotation.Nonnull;
 public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItemWhitelist> {
 
     private static final ResourceLocation RES_LOC = AssetUtil.getGuiLocation("gui_laser_relay_item_whitelist");
+    // SkyTekx: Components instead of I18n strings (upstream 3a767e18). The filter buttons that the
+    // same commit wires up come with the FilterSettingsGui rework of the sacks and filters
+    private final Component inboundText = Component.translatable("info." + ActuallyAdditions.MODID + ".gui.inbound");
+    private final Component outboundText = Component.translatable("info." + ActuallyAdditions.MODID + ".gui.outbound");
     private final TileEntityLaserRelayItemAdvanced tile;
 
     private FilterSettingsGui leftFilter;
@@ -68,7 +71,7 @@ public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItem
 //
 //    @Override
 //    public void actionPerformed(Button button) {
-//        PacketHandlerHelper.sendButtonPacket(this.tile, button.id);
+//        PacketHelperClient.sendButtonPacket(this.tile, button.id);
 //    }
 
     @Override
@@ -88,12 +91,10 @@ public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItem
 
     @Override
     public void renderLabels(@Nonnull GuiGraphics guiGraphics, int x, int y) {
-        AssetUtil.displayNameString(guiGraphics, this.font, this.imageWidth, -10, this.tile);
+        AssetUtil.displayNameString(guiGraphics, this.font, this.imageWidth, -10, this.title.getString());
 
-        String s1 = I18n.get("info." + ActuallyAdditions.MODID + ".gui.inbound");
-        String s2 = I18n.get("info." + ActuallyAdditions.MODID + ".gui.outbound");
-        guiGraphics.drawString(font, s1, 46 - this.font.width(s1) / 2, 80, 0x404040, false);
-        guiGraphics.drawString(font, s2, 131 - this.font.width(s2) / 2, 80, 0x404040, false);
+        guiGraphics.drawString(font, inboundText, 46 - this.font.width(inboundText) / 2, 80, 0x404040, false);
+        guiGraphics.drawString(font, outboundText, 131 - this.font.width(outboundText) / 2, 80, 0x404040, false);
     }
 
     @Override

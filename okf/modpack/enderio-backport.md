@@ -116,8 +116,19 @@ the tags `minecraft:mineable/pickaxe` and `minecraft:needs_iron_tool`. Two dev `
 the porter with temporary test classes, never committed, reached `Done`. The one with Curios passed
 61 of 61 checks and the one without Curios 6 of 6 (workflow scratchpad, `bp2/enderio/b4/runserver1.log`
 line 7346 and `runserver2-nocurios.log` line 5901). Nobody has joined with a client yet, see the end
-of [Charger and keybinds](#charger-and-keybinds). The other content bundles are not ported yet. The
-pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
+of [Charger and keybinds](#charger-and-keybinds).
+
+The conduit facades are the third bundle of the conduit and filter lane, done in 8cc4ac3 (the facade
+items, the bundle and the block), 695e3ac (the rendering), c4008eb (AE2 facades) and 866d7a0 (review
+fix). The integration compiled every source set with no new warning and ran a full build, whose `-all`
+jar has the SHA-1 `bac2945cbfa998463f1ced1eda49c4ec4593ceb6`. The compat scan still finds 0 missing
+symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks. The porter's full build and `runData`
+passed (workflow scratchpad, `bp2/enderio/b7/fullbuild6.log` and `rundata.log`). A dev `runServer` with
+a temporary test class, never committed, passed 65 of 65 checks (`bp2/enderio/b7int/runserver-int.log`
+line 7480), and a dev client under Xvfb with Embeddium passed 20 of 20
+(`bp2/enderio/b7int/runclient5-latest.log` line 561), the first client run of the fork. Nobody has run
+the Arclight tests yet, see the end of [Conduit facades](#conduit-facades). The other content bundles
+are not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -128,7 +139,7 @@ pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Done in d0c5fed, fb2517a and b7a2ce9 |
 | Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Done in d956a04, 1b8b443, e24735f and 1a3a27b |
 | Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Done in 6443f98, 5509705, c6b3ddb, aae79b2 and da9bdda |
-| Conduit facades (`eio-b7-conduit-facades`) | Four facade items on the 6.x conduit bundle, AE2 facades as conduit facades | 32 | Conduit improvements | Planned |
+| Conduit facades (`eio-b7-conduit-facades`) | Four facade items on the 6.x conduit bundle, AE2 facades as conduit facades | 32 | Conduit improvements | Done in 8cc4ac3, 695e3ac, c4008eb and 866d7a0 |
 | Powered spawner (`eio-b8-powered-spawner`) | Capture mode and the Mind Killer | 23 | Fix pack, charger and keybinds | Planned |
 | Visual polish (`eio-b9-visual-polish`) | Connected glass through Athena, machine particles, conduit movement particles | 14 | Powered spawner, conduit facades | Planned |
 
@@ -607,18 +618,80 @@ No Arclight boot has run the new menu flow or two strong conduits that face each
 
 - The fork adds four facade items, `enderio:conduit_facade`, `hardened_conduit_facade`,
   `transparent_conduit_facade` and `transparent_hardened_conduit_facade`, with one facade per bundle
-  in the style of 7.1 (78e627263, 1a14aa55e). The Painting Machine paints them. Hardened facades
-  resist explosions, and transparent ones show the conduits to a player who holds a Yeta wrench or an
-  item of `#enderio:hide_facades` (3c8717b0c).
-- A faced bundle takes the shape, light, friction, sound, explosion resistance and drops of its facade.
-- The ghost pass of 78e627263 renders at `AFTER_TRIPWIRE_BLOCKS`, which Forge 47 has and Embeddium
-  fires. Removing one facade keeps the others of the chunk (3a7275c78, b6c650ebf). The
+  in the style of 7.1 (78e627263, 1a14aa55e), done in 8cc4ac3. The paint is the block id under
+  `BlockEntityTag.Paint`, as on painted blocks, so an unpainted facade cannot be placed. The Painting
+  Machine paints them through four painting recipes. The crafting recipes use the 6.x tag
+  `enderio:clear_glass` and `forge:dusts/obsidian` where 8.x uses `c:` tags.
+- A right click with a painted facade or an AE2 facade covers a bundle that has none and uses up one
+  item outside creative. Only the server changes the bundle and the stack, so a click or a break that a
+  claim or a cancelled event refuses leaves no change on the client (8cc4ac3).
+- A faced bundle is a full block for its shape, collision and occlusion. A player who holds an item of
+  the new tag `#enderio:hide_facades`, the Yeta wrench or the conduit probe, aims at the conduits
+  behind it (7de602e53). Breaking a visible facade takes it off before the conduits, with its own break
+  sound, and so does the wrench used while sneaking. The last conduit drops the facade with it.
+- The bundle takes the light, friction, sound and appearance of its facade (eb53f388b), and pick block
+  gives the facade's block. The light comes from the facade state alone, read from the chunk that the
+  light engine reads, because a server asks from the light thread. Since 866d7a0 the bundle also asks
+  the position aware light of the facade block against an empty world, so enlightened fused quartz and
+  enlightened clear glass, which set no light level in their block properties
+  (`FusedQuartzBlock.java` line 66), light a faced bundle too. The client checks the light itself when
+  the synced facade changes, because a 1.20.1 server sends a light change alone only to players at the
+  edge of their view distance (`ChunkHolder.broadcastChanges`, 866d7a0).
+- A hardened facade raises the explosion resistance to the Ender IO config value
+  `blocks.explosionResistance`, 1200 by default, where 8.x has the flag without a behaviour. Since
+  866d7a0 it also keeps the wither, its skulls and the ender dragon from breaking the bundle. The
+  mining time stays that of the conduit, and a basic facade blown up by an explosion is lost with the
+  conduits, which drop nothing on explosions in 6.x.
+- The bundle model adds the quads of the facade's block in the facade's own render layers and with its
+  model data (695e3ac). A transparent facade hides the conduits, and so does an opaque full block. The
+  facade quads move their tint index below -1, and the new `ConduitFacadeColor` colours them with the
+  facade block's colour at the real position, so a grass facade takes the biome colour.
+- While the local player holds an item of `#enderio:hide_facades`, the model leaves the facades out
+  and `ConduitFacadeRendering` draws them translucent after the tripwire layer (78e627263,
+  3c8717b0c). Removing one facade keeps the others of the section (3a7275c78, b6c650ebf). The
   `AddSectionGeometryEvent` renderer of 397c648f5 does not exist in Forge 47 and stays out.
-- AE2 facade items work as basic facades and drop back as themselves. The fixes ff23e13c4, eb53f388b,
-  7de602e53, bceadbded and ce6d39e8a come along. AE2 cable facades stay untouched.
-- The 6.x code already has a disabled facade path (`ConduitBlock.java:73`, `ENABLE_FACADES = false`)
-  and a per direction map `Facades` in the bundle save (`ConduitBundle.java:375`). The new design
-  replaces both, see [Savegame notes](#savegame-notes).
+- The facade items use the model loader `enderio:facades_item` of 78e627263. A painted facade shows the
+  item model of its paint under the frame `conduit_facade_overlay`.
+- Hit particles of a visible facade use the facade's own state since 866d7a0, so they take its sprite
+  and its colour. Landing and running particles still show the facade's sprite in the conduit channel
+  colour of tint index 0 until the visual polish bundle ports 6ae3dd177, see
+  [Visual polish](#visual-polish). Break particles reach only the breaking player, because the server's
+  `Level.addDestroyBlockEffect` does nothing.
+- An AE2 facade covers a bundle as a basic facade while its texture item is a block item, and it drops
+  back as the same item with its NBT (c4008eb). AE2's own placement asks for an AE2 part host first, so
+  facades on AE2 cable buses stay AE2's. The fixes ff23e13c4, bceadbded and ce6d39e8a need no mixin
+  here.
+- A faced bundle counts as a full block for redstone and mobs, as in 8.x. It conducts redstone power,
+  mobs can spawn on its top and pathing treats it as solid. A 6.x redstone conduit setup changes only
+  once someone covers it, since 6.x never wrote a facade.
+- The 6.x code had a disabled facade path (`ENABLE_FACADES = false`) and a per direction map `Facades`
+  in the bundle save. The new design replaces both, see [Savegame notes](#savegame-notes).
+
+The bundle is done in 8cc4ac3, 695e3ac, c4008eb and 866d7a0. The porter's two dev `runServer` boots
+with a temporary test class, never committed, passed 56 of 56 checks and 6 of 6 after a restart on the
+saved world (workflow scratchpad, `bp2/enderio/b7/runserver4.log` line 5973 and `runserver5.log` line
+5530). They covered the items, tags and recipes, placement by a right click, the shapes for a player
+with and without the wrench, pick block, the saved key and the update tag, the migration of a 6.x
+`Facades` entry, friction, sound, light, a torch that falls when its facade goes, the explosion
+resistance against TNT, drops, the sneaking wrench, a player break and the AE2 facade. The
+integration's boot with the review fix and an extended class passed 65 of 65 checks, among them the
+light of both enlightened facades and the wither check (`bp2/enderio/b7int/runserver-int.log` line 7480).
+
+A dev client under Xvfb with the mapped Embeddium 0.3.20 of the gradle cache, AE2 15.4.12 and JEI
+passed 20 of 20 checks of a temporary class (`bp2/enderio/b7int/runclient5-latest.log` line 561). It
+covered the four facade item models and their render passes, the client light of an enlightened facade
+that goes onto an existing bundle and off again, the client facade list, the ghost pass of the wrench
+and the probe, and a removed facade next to the others that stay. Its screenshots in
+`bp2/enderio/b7int/shots5` show stone, grass, glass, enlightened quartz, AE2 stone brick, red stained
+glass and oak leaf facades over energy, redstone and item conduits, each in its layer and tint, the
+conduits inside the red glass, the held and hotbar facade items with their frame, the full block
+outline and hit particles in the facade colours. The earlier runs of that client found the light and
+particle faults that 866d7a0 fixes.
+
+Nobody has tested these yet. The pack's Embeddium 0.3.31, the crack overlay while mining, ambient
+occlusion next to other blocks and the Painting Machine run end to end on a facade are open. So are
+the Arclight tests of facade placement and removal with EssentialsX or a claim plugin, see
+[Arclight notes](#arclight-notes).
 
 ### Powered spawner
 
@@ -646,7 +719,11 @@ No Arclight boot has run the new menu flow or two strong conduits that face each
   glass would render solid. Without Athena the glass falls back to today's model.
 - Machines show particles while they run (f761802d6, particles only), with a client config switch.
   The sounds of that commit stay out.
-- Walking and landing on a conduit bundle shows conduit or facade particles (6ae3dd177).
+- Walking and landing on a conduit bundle shows conduit or facade particles (6ae3dd177). On a faced
+  bundle they use the facade's state, as upstream's `addLandingEffects` and `addRunningEffects` do,
+  because vanilla particles of the bundle state take the conduit channel colour of tint index 0. Break
+  particles of a facade can go to the other players as the level event 2001, as
+  `Block.spawnDestroyParticles` sends them.
 
 ## Mods that build on it
 
@@ -865,6 +942,9 @@ production Arclight.
   Arclight, so whether its Bukkit inventory events see that open is unverified.
 - A strong redstone side updates the neighbours of the block it faces. Nobody has checked on the
   production server how two strong conduits that face each other through one block update each other.
+- Facades go on and come off through `ConduitBlock.use`, `onDestroyedByPlayer` and the sneaking wrench
+  of `RightClickBlock`, on the server only. Nobody has checked them against EssentialsX or a claim
+  plugin on the production server.
 - The fork adds no mixins, so nothing collides with the Bukkit patches.
 
 ## Local divergences
@@ -911,6 +991,19 @@ These differ from upstream on purpose and must survive a re-sync.
 - A creative player pays no energy for a key jump, as for a use of the staff in 6.x. Upstream's key
   handler always charges the staff (fb2517a).
 - The anchor jump packet ignores dead players. Upstream's 6.x packet has no such check (b7a2ce9).
+- A hardened facade uses the Ender IO explosion resistance config and keeps the wither and the ender
+  dragon from breaking the bundle (8cc4ac3, 866d7a0). Upstream 8.x has the flag without a behaviour.
+- The tag `#enderio:hide_facades` holds the Yeta wrench and the conduit probe. Upstream 8.x also tags
+  its single conduit item, while 6.x has one conduit item per type.
+- Facade quads move their tint index below -1 for `ConduitFacadeColor`, and the bundle model skips the
+  conduit quads behind an opaque full block facade (695e3ac).
+- The facade light also asks the position aware light of the facade block against an empty world, and
+  the client checks the light when the synced facade changes. Hit particles of a visible facade use the
+  facade's state (866d7a0).
+- The facade crafting recipes use `enderio:clear_glass` and `forge:dusts/obsidian` instead of the `c:`
+  tags of 1a14aa55e.
+- Bundles still read the 6.x key `Facades`. A state in it becomes a painted basic facade, and a state
+  that does not decode is skipped where 6.x threw (8cc4ac3).
 - The packet validation with the reach test of the menus, the hardened item push of
   `TransferUtil.moveItems`, the output recheck of the soul binder, the entity filter slot without a
   client level, the energy fix of the aversion obelisk and its position rounding are SkyTekx fixes
@@ -987,7 +1080,9 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
 - Players learn that the travel staff and electromagnet keys are unbound and sit under the Ender IO
   category of the controls, that the inhibitor obelisk blocks pearls and other teleports in its range,
   that the capacitor and the soul filter come out of an Aversion Obelisk before it becomes a relocator,
-  and that the Vat now makes nutrient distillation for the Killer Joe.
+  that the Vat now makes nutrient distillation for the Killer Joe, and that a conduit facade covers a
+  whole bundle, makes it a full block for redstone and mob spawning and shows the conduits again while
+  a Yeta wrench or a conduit probe is held.
 
 ## History
 

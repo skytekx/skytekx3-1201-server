@@ -54,7 +54,8 @@ and a full build, and the compat scan still finds 0 missing symbols for EnderIO 
 Exchangers and AllTheLeaks. Nothing uses the data maps or the Curios helper yet. The data map sync was
 only tested as an encode and decode round trip in one process, since no headless client was at hand,
 so a real client join that shows the values in JEI is still open for the Vat bundle. A dedicated
-`runServer` of the fork without Curios is still open.
+`runServer` of the fork without Curios ran for the charger and the key packets in the charger and
+keybinds bundle (workflow scratchpad, `bp2/enderio/b4/runserver2-nocurios.log`).
 
 The fix pack is done in e7f5882 (fluid tank), 9ba17c7 (capacitor bank items), 5c6ee6e (ghost and
 filter slots), 959252f (machine outputs and IO), adec8f3 (recipe outputs), 82a2e85 (small fixes),
@@ -103,8 +104,20 @@ warning and ran a full build, whose `-all` jar has the SHA-1
 Legacy Machines, Exchangers and AllTheLeaks. The porter's dev `runServer` with a temporary test class,
 never committed, reached `Done` and passed 44 of 44 checks (workflow scratchpad,
 `bp2/enderio/b6/runserver.log` line 5938). Nobody has joined with a client or loaded a copy of the live
-world yet, see the end of [Conduit improvements](#conduit-improvements). The other content bundles are
-not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
+world yet, see the end of [Conduit improvements](#conduit-improvements).
+
+The charger and keybinds are the third bundle of the machine lane, done in d0c5fed (the wireless
+charger and its antennas), fb2517a (the travel staff and electromagnet keys with Curios) and b7a2ce9
+(review fix). The integration compiled every source set with no new warning and ran a full build,
+whose `-all` jar has the SHA-1 `08c27f27f353e5364bad19dd2524385425ab94ff`. The compat scan still
+finds 0 missing symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks. The porter's
+`runData` changed nothing beyond the new charger files, the new lang keys and three entries each in
+the tags `minecraft:mineable/pickaxe` and `minecraft:needs_iron_tool`. Two dev `runServer` boots of
+the porter with temporary test classes, never committed, reached `Done`. The one with Curios passed
+61 of 61 checks and the one without Curios 6 of 6 (workflow scratchpad, `bp2/enderio/b4/runserver1.log`
+line 7346 and `runserver2-nocurios.log` line 5901). Nobody has joined with a client yet, see the end
+of [Charger and keybinds](#charger-and-keybinds). The other content bundles are not ported yet. The
+pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -112,7 +125,7 @@ not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has r
 | Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Done in e7f5882, 9ba17c7, 5c6ee6e, 959252f, adec8f3, 82a2e85, 839e3be and 260c7bb |
 | Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Done in 4e72ae0, 0d2f09e and 0c1d913 |
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Done in 75fc204, d31b90a, ca6d3c8, 831c82c and 21ed590 |
-| Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Planned |
+| Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Done in d0c5fed, fb2517a and b7a2ce9 |
 | Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Done in d956a04, 1b8b443, e24735f and 1a3a27b |
 | Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Done in 6443f98, 5509705, c6b3ddb, aae79b2 and da9bdda |
 | Conduit facades (`eio-b7-conduit-facades`) | Four facade items on the 6.x conduit bundle, AE2 facades as conduit facades | 32 | Conduit improvements | Planned |
@@ -383,16 +396,65 @@ the attractor only goes inactive, and the relocation spot is not checked for col
 
 - The wireless charger (4ad73fff0, e65b3feb0) needs a capacitor and power. It charges the energy items
   in the inventories and Curios slots of the players in its range. The antenna above it adds 16 or 32
-  blocks of range through the data map `range_extender`.
+  blocks of range through the data map `range_extender` and the block tag `enderio:range_extender`.
 - The charger charges every 5 ticks by default with the transfer scaled to match (new config key
-  `chargeInterval`), which bounds the slot sync traffic on a shared server.
-- Upstream computes the range with a block update during load. The fork computes it on load without an
-  update and syncs it on the first server tick, the pattern upstream fixed for obelisks in 4dd6e5e09.
+  `chargeInterval`), which bounds the slot sync traffic on a shared server. It pays its upkeep of 2 FE
+  every tick while active and skips spectators.
+- Upstream reads the block above and calls `sendBlockUpdated` from `onLoad`, the chunk load hazard
+  that upstream fixed for obelisks in 4dd6e5e09. The fork reads the antenna above on the charger's
+  first server tick and on a neighbour change of the block above. It never reads it from `onLoad` or
+  `setLevel`, and it sends no block update. The max range reaches the client through a data slot
+  (d0c5fed, the `needsRangeUpdate` branch of `WirelessChargerBlockEntity.serverTick`).
+- A range sent by a client is clamped to the max range. Placing an antenna moves the range to the new
+  max and removing one clamps the range, as upstream does.
+- One charge hands its budget out item by item and player by player, as upstream does, so the first
+  item of the first player in range can take a whole cycle.
 - The travel staff and the powered dark steel tools no longer flicker while they charge in the hand.
   The electromagnet and the levitation staff already avoid that through `PoweredToggledItem`.
 - New keybinds (565ef4c3e) blink with the travel staff and toggle the electromagnet, also from a
-  Curios slot. The server checks the item, the cooldown and the energy. Both keys ship unbound, see
+  Curios slot. A tap of the travel key blinks. Holding it longer than the client config key
+  `travelKeyHoldDelayTicks` (8 by default) shows the travel anchors in item range and jumps to the
+  targeted one on release. Both keys ship unbound in the Ender IO category of the controls, see
   [Local divergences](#local-divergences).
+- The server never trusts the key packets. It finds the staff itself in a Curios slot or the
+  inventory, checks the cooldown and the energy, computes the blink target from its own copy of the
+  player and pays energy and cooldown as a use of the staff does. A request without a usable staff
+  only gets an error in the action bar. The two key packets ignore spectators and dead players
+  (fb2517a), and since b7a2ce9 the anchor jump packet ignores dead players too.
+- The anchor jump reuses the 6.x `RequestTravelPacket`. Without an anchor under the player it takes a
+  travel item that the server finds, checks the item range of the target and charges the staff after
+  the jump. Elevator jumps still need the anchor below.
+- Both jumps post `EntityTeleportEvent`, so an Inhibitor Obelisk in range blocks them. A blocked blink
+  still pays the energy and the cooldown, as a crouching use of the staff does in 6.x and in 8.x,
+  because `TravelHandler.shortTeleport` reports a jump as soon as a target exists. A blocked anchor
+  jump pays nothing.
+- The two new packets `C2SRequestShortTravel` and `C2SToggleMagnet` are the last ones of `EIOPackets`,
+  so the ids of every machine and conduit packet move up by two. The protocol "1.0-skytekx.1" covers
+  that only while no build of the fork has reached a client, see [Operator notes](#operator-notes).
+- A magnet in a Curios slot pulls items too, because Curios 5.14.1 calls `inventoryTick` for every
+  equipped curio stack (`CuriosEventHandler.tick`, checked with javap and a living tick test in the
+  porter's harness). The fork therefore adds no curio tick.
+
+The bundle is done in d0c5fed, fb2517a and b7a2ce9. The temporary tests of the porter covered a charger
+without a capacitor or power, the clamp of a client range, both antennas and their removal, the charge
+steps of interval times speed and the energy paid for them, a staff in the inventory and a magnet in a
+Curios slot charged for one player, a second player charged only inside the antenna range, a
+spectator left out, the saved range and visibility keys, a blink and an anchor jump with a staff in a
+Curios slot, the cooldown and the energy check, a forged blink without a staff, an inhibitor that
+cancels the key blink, the magnet toggle in a Curios slot and in the inventory, a magnet without
+charge that stays off, a curio magnet that pulls an item on a living tick, and a second boot without
+Curios for the charger, the toggle and the blink (workflow scratchpad, `bp2/enderio/b4/runserver1.log`
+lines 7282 to 7346 and `runserver2-nocurios.log` lines 5893 to 5901). The tests used fake players,
+whose network handler turns `teleportTo` into a no op, so they checked the posted
+`EntityTeleportEvent` and not the movement.
+
+Nobody has tested these yet. No client joined, so the charger screen, the range buttons and the
+visibility toggle as real packets, the range particle colour `C7CC2A`, the antenna models and
+textures, a held staff or dark steel tool that charges without a flicker, the keys in the controls
+screen, the tap and hold detection, the anchors while the key is held and the action bar texts are
+open. The Arclight tests are open too: a charger that writes to the stacks of several real players,
+and the key blink and the anchor jump with EssentialsX, whose `PlayerTeleportEvent` runs through
+`ServerPlayer.teleportTo`.
 
 ### Filters
 
@@ -595,7 +657,7 @@ No Arclight boot has run the new menu flow or two strong conduits that face each
 | Applied Energistics 2 | 15.4.12 (`modrinth.index.json:264`) | ME conduits, and AE2 facades through `AE2Integration` | The ME conduits with the first tick guard, AE2 facades as conduit facades |
 | Mekanism | 10.4.16.80 (`modrinth.index.json:1884`) | Chemical and heat conduits of 6.1 | Unchanged |
 | Spartan Shields | 3.1.1 (`modrinth.index.json:2514`) | Optional dark steel riot shields, with models and textures in its jar | The 6.x dark steel items and the armory stay |
-| Curios | 5.14.1 (`modrinth.index.json:1014`) | Optional `curios` `[5.2.0,)` with the charm tag and the player slot data (ea14a7e, 18ad520). Nothing calls the helper yet | New optional support for the staff and the electromagnet |
+| Curios | 5.14.1 (`modrinth.index.json:1014`) | Optional `curios` `[5.2.0,)` with the charm tag and the player slot data (ea14a7e, 18ad520). The wireless charger and the travel and magnet keys use the helper (d0c5fed, fb2517a) | New optional support for the staff and the electromagnet |
 | Athena | 3.1.2, client only (`modrinth.index.json:354`) | The CTM model of the capacitor bank | Connected glass for clear glass and fused quartz |
 | AllTheLeaks | 1.1.1, `local-mods/` | Mixins into two Ender IO methods with hash checks | Both methods stay untouched |
 | Inventory Sorter | 23.0.11, `local-mods/` | Skips the slot classes Ender IO names in its IMC | New ghost and filter slots join that list |
@@ -742,8 +804,11 @@ Already in the 6.x base, so no work (same file):
   `attractor_obelisk`, `mind_killer`, the wireless charger and its antennas
   `wireless_charger_antenna` and `wireless_charger_antenna_advanced`, the items `big_item_filter`,
   `big_advanced_item_filter`, `limited_item_filter` and the four conduit facades, and the recipe type
-  `enderio:vat_fermenting`. The Vat also registers the block entity type and the menu `enderio:vat`
-  and the recipe serializer `enderio:vat_fermenting` (4e72ae0). Its saved data uses the 6.x keys
+  `enderio:vat_fermenting`. The charger also registers the block entity type and the menu
+  `enderio:wireless_charger` and the block tag `enderio:range_extender`, and it saves its range and
+  visibility under the 6.x keys `Range` and `RangeVisible` (d0c5fed). The Vat also registers the
+  block entity type and the menu `enderio:vat` and the recipe serializer `enderio:vat_fermenting`
+  (4e72ae0). Its saved data uses the 6.x keys
   `Fluid`, `Items` and the task keys of the other crafting machines. The limited filter registers the
   menu `enderio:limited_item_filter`, and the big filters reuse the menu `enderio:item_filter`
   (d956a04, 1b8b443).
@@ -784,7 +849,11 @@ production Arclight.
   Nobody has tested that.
 - The relocator obelisk sets the position of a fresh mob with `moveTo`. In `FinalizeSpawn` the mob is
   not in the level yet, and Arclight wraps `teleportTo` in its Bukkit teleport handling.
-- The wireless charger writes to player inventory stacks, throttled by `chargeInterval`.
+- The wireless charger writes to player inventory stacks, throttled by `chargeInterval`. Nobody has
+  watched it with several real players on Arclight.
+- The key blink and the anchor jump call `ServerPlayer.teleportTo`, which on Arclight very likely fires
+  Bukkit's `PlayerTeleportEvent` as well. A plugin that cancels it leaves the player in place, and a
+  blocked blink still pays as a staff use does. Nobody has tested that with EssentialsX.
 - Capture mode spawns no entity, and the spawn reason of the powered spawner stays `SPAWNER`. A mob
   limit plugin, if one is ever added, needs a check.
 - Before the fix pack any client could change data slots of loaded machines anywhere and the stored
@@ -830,6 +899,18 @@ These differ from upstream on purpose and must survive a re-sync.
 - The hint of an empty filter says "Use to configure", because a 6.x filter opens on a plain use.
 - Data maps run through the fork's own reload listener in upstream's JSON format.
 - The charger charges every `chargeInterval` ticks, 5 by default.
+- The travel and magnet keys `key.enderio.travel_staff` and `key.enderio.toggle_magnet` sit in the 6.x
+  category `keybinding.enderio.category` (`KeyBindings.CATEGORY`) next to the probe key. Upstream's
+  category `keys.categories.enderio` would show a second EnderIO heading in the controls screen. The
+  key names match 8.x, so `options.txt` carries over (fb2517a).
+- The charger reads the antenna above on its first server tick and on a neighbour change, never in
+  `onLoad`, and sends no block update. It skips spectators and walks the players of its level instead
+  of an entity search over its area (d0c5fed).
+- An anchor jump without an anchor under the player checks only the item range of the target.
+  Upstream checks the larger of the block and the item range (fb2517a).
+- A creative player pays no energy for a key jump, as for a use of the staff in 6.x. Upstream's key
+  handler always charges the staff (fb2517a).
+- The anchor jump packet ignores dead players. Upstream's 6.x packet has no such check (b7a2ce9).
 - The packet validation with the reach test of the menus, the hardened item push of
   `TransferUtil.moveItems`, the output recheck of the soul binder, the entity filter slot without a
   client level, the energy fix of the aversion obelisk and its position rounding are SkyTekx fixes
@@ -864,8 +945,6 @@ Nobody has verified these yet (inventory, `critic_notes`, Things nobody has veri
 
 - Whether Bukkit plugin teleports post Forge's `EntityTeleportEvent`, which decides whether the
   inhibitor blocks `/home` and `/tpa`.
-- Whether upstream's electromagnet pulls items from a Curios slot or only toggles there. If it does not
-  pull, the Curios class gets a curio tick that runs the magnet logic.
 - The license of the Apothic Spawners snippet.
 
 The owner may also want the content left out with a small cost: the weather obelisk (about 10 h, with
@@ -886,15 +965,23 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   Forge refuse a client of an older pack at login.
 - The first boot writes the new config keys, such as `chargeInterval`, the obelisk ranges,
   `attractorAttractBosses` and the particle switch. The tracked `config/enderio/machines-common.toml`
-  lacks the sections `energy.inhibitor`, `energy.relocator`, `energy.attractor` and `obelisks`, so
-  Forge corrects it with a WARN at the first boot. Forge appends missing keys and keeps old values.
-  The regenerated `config/enderio/*.toml` files are committed. The `"Spawn Type"` stays `ENTITYTYPE`.
+  lacks the sections `energy.inhibitor`, `energy.relocator`, `energy.attractor`, `obelisks`,
+  `energy.wirelessCharger` and `wirelessCharger`, so Forge corrects it with a WARN at the first boot.
+  Forge appends missing keys and keeps old values. The regenerated `config/enderio/*.toml` files are
+  committed. The `"Spawn Type"` stays `ENTITYTYPE`.
   Config files change only while the java process is gone.
 - A test on a copy of the live world with the production Arclight jar comes before the deploy. It loads
   conduits, tanks, obelisks and spawners, checks the inhibitor against pearls, chorus fruit, `/tp`,
   `/home` and `/tpa`, and reloads an attractor next to a Flux Networks point. The boot keeps the
   baseline of 2 accepted ERROR lines (see
   [logs and crashes](../server/logs-and-crashes.md#boot-error-baseline)).
+- Each client writes the new client keys on its first start, `blocks.wirelessChargerRangeColor` in
+  `machines-client.toml` and `behavior.travelKeyHoldDelayTicks` in `base-client.toml`. The pack tracks
+  no client config of Ender IO.
+- Once a build of the fork has reached clients, every later build whose packet list differs bumps the
+  protocol, for example to "1.0-skytekx.2", and the first item of
+  [Local divergences](#local-divergences) follows. The charger and keybinds moved the packet ids
+  before any release, so "1.0-skytekx.1" still covers them.
 - The server stops over RCON with `save-all flush` and `stop`, and the java process must be gone before
   the jar swap.
 - Players learn that the travel staff and electromagnet keys are unbound and sit under the Ender IO

@@ -370,6 +370,35 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   a renderer, a Flywheel visual, a mechanical crafting recipe and a loot table.
 - Its block and item models reuse the two flange cuboids of Create's
   `create:block/mechanical_pump/block.json`, see [License conditions](#license-conditions).
+- Commit 6c1ab20 ports it (`UPSTREAM.md` source change 28). The draw is `pump_fe_at_max_rpm` times
+  max(speed, 32) / 256 FE per tick, so 15 FE/t at 32 RPM and 120 FE/t at 256 RPM with the default
+  of 120. The buffer holds `pump_capacity` FE and takes `pump_max_input` FE per tick on every side.
+  The block entity saves `Active` and `energy` next to Create's keys. The storage is a Forge
+  `LazyOptional` that `invalidateCaps` drops when the chunk unloads.
+- Two small local changes come with it. The goggles write fe/t as the other CC&A blocks of the fork
+  do, where upstream writes a lightning sign. A placed pump reads the redstone signal of its
+  neighbours at once, where upstream waits for the next neighbour update.
+- Create 6.0.8 for 1.20.1 only wakes Create's own pump after a pipe change. Its
+  `FluidPropagator.propagateChangedPipe` wipes the pressure of the pipe network and asks again only
+  a block entity whose block is `AllBlocks.MECHANICAL_PUMP` (javap, the `BlockEntry.has` call at
+  offset 245). A test server showed the Electric Pump stop moving fluid after a flip and after the
+  pipe at its face was replaced, until its speed changed. Commit 0eeff02 adds the mixin
+  `FluidPropagatorMixin`, which lets the Electric Pump through as well. Upstream has no such fix,
+  and whether the 1.21.1 line of Create has the same check is not verified.
+- Reduced test servers on Forge 47.4.18 and on the production Arclight jar, each with Create 6.0.8
+  and the fork, passed the server side of the test plan with commands. The pump moved water from
+  tank to tank at the set speed, stopped on a redstone block, drew 15 FE/t at 32 RPM, reversed
+  after a flip, kept flowing after the pipe at its face was replaced, ignored a driven cogwheel next
+  to it (no `Source` or `Network` in its NBT, while a mechanical pump in the same spot meshed),
+  worked in series with a mechanical pump and ran on after its chunk unloaded and loaded again. The
+  Forge server also measured 120 FE/t at 256 RPM, saw the pump stop when less than one tick of
+  energy was left and loaded it unchanged after a restart. Its class load log shows no
+  `ElectricPumpRenderer`, `ElectricPumpVisual` or other client class of CC&A. The loot table
+  drops the pump and the block is in `#minecraft:mineable/pickaxe`. One early test line with many
+  NBT edits stopped moving fluid with an Electric and a mechanical pump in series, and three fresh
+  lines in the same setup did not repeat it.
+- The client side has not run: the goggle line, the pulsing partials with Flywheel on and off, the
+  wrench, the recipe in JEI and EMI, and the item model. These belong to the [release](#release).
 
 ### Servo Motor
 
@@ -458,6 +487,11 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   `BaseFireBlock` and `FlowingFluid`, next to those of every other mod, and keep the two accepted
   ERROR lines. Supplementaries' own lumisene fire still needs a test in game, since only the mixin
   export shows that its injectors and these sit on different injection points.
+- The Electric Pump ran only on reduced test servers (6c1ab20, 0eeff02). A client must still show
+  its goggle line with the draw, its two pulsing partials with Flywheel on and with
+  `/flywheel backend off`, the reversal with a wrench, the recipe in JEI and EMI and the item in
+  hand. The full pack boot must show `FluidPropagatorMixin` applied in the exported
+  `FluidPropagator` next to any other mod's mixin there.
 - The server handler of `ObservePacket` calls `getBlockEntity` at any position a client names,
   without a loaded chunk check or a distance check, and only the client keeps its cooldown of 10
   ticks. A modified client could make the live server load or generate chunks anywhere. This
@@ -548,9 +582,13 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   the assets of Create 6.0.8 and Create 6.0.10. A first run against 6.0.8 found no overlap at or above
   25 percent. The run against 6.0.10 has not happened.
 - The pump's block and item models reuse the two 12x3x12 flange cuboids of Create's
-  `mechanical_pump/block.json` (blob 34cb63e in Create 6.0.8). Nobody has checked the date of that blob
-  yet. If `git log --find-object=34cb63e` in a Create clone dates it before 2025-09-21, the pump model
-  joins the Create derived list in `NOTICE`. Otherwise the flanges are redrawn. The other new models
+  `mechanical_pump/block.json` (blob 34cb63e in Create 6.0.8). The Modrinth jar
+  `create-1.20.1-6.0.3.jar`, published on 2025-03-14 and checked against the SHA-512 that the
+  Modrinth API lists, already holds that blob byte for byte, so it dates from before 2025-09-21.
+  The same jar holds Create's `textures/block/pump.png` as blob 8f3d8f7, which `texcmp.py` finds
+  equal in 22.6 percent of the opaque pixels of `electric_pump/block.png`, below the mark of 25
+  percent. Create's 1.21.1 tree has the same texture blob. Commit 6c1ab20 lists both files in the
+  Create derived part of `NOTICE` (`UPSTREAM.md`, License). The other new models
   share at most one trivial cuboid with any Create model.
 
 ## Savegame notes
@@ -627,6 +665,8 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   between chunk saves logged no `ConcurrentModificationException`, no "Failed to store chunk", no
   "Could not read chunk ... to check wire nodes" and no ERROR line. See
   [Wire graph test](#wire-graph-test).
+- The pump's fix mixin goes into Create's `FluidPropagator`, which Arclight does not patch. The
+  export of the Arclight test server shows its wrapper in that class (0eeff02).
 
 ## Wire graph test
 
@@ -741,6 +781,8 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The paper to straw recipe lives at `data/createaddition/recipes/rolling/straw_from_paper.json`, not
   in upstream's `create:rolling/paper`.
 - The ponder schematics are converted to the NBT of 1.20.1.
+- The Electric Pump shows its draw in fe/t and reads the redstone signal when it is placed.
+- A mixin into Create's `FluidPropagator` wakes the Electric Pump after a pipe change.
 
 ## Open owner decisions
 

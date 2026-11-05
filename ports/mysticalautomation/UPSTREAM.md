@@ -237,6 +237,16 @@ runs on a public server. Each is marked `SkyTekx:` in the source.
 - Fertilizer fuel: vanilla bone meal answers `CONSUME` on the server and the fertilizers of Mystical
   Agriculture answer `SUCCESS`. Upstream charged the full fuel usage for `SUCCESS` only, so bone meal
   cost the scan rate. Every use that consumes the item now costs the full fuel usage.
+- Crafter and special recipes: every vanilla `CustomRecipe` of 1.20.1 (shulker box coloring, book
+  cloning, repair, firework rockets, tipped arrows, banner copies and the rest) lists no ingredients
+  and builds its result from the grid. Upstream counted no required input for them, took nothing and
+  assembled the result from the ghost grid, so a ghost of a full shulker box and a dye gave endless
+  dyed shulker boxes with the same contents for fuel alone (seen on the test server of 2026-11-05:
+  three red shulker boxes, each with 64 diamond blocks, in 28 seconds, with empty real inputs). The
+  Crafter now refuses a recipe that is special (`Recipe#isSpecial`) or that requires no input. The
+  second check is upstream's own fix `7a481dc` of the 26.1 line ("Fix Crafter working if there are
+  no required inputs from input display"), which the 1.21 line never got. Special recipes keep items
+  back through `getRemainingItems`, which the Crafter does not use, so they stay out entirely.
 
 ### Left out
 

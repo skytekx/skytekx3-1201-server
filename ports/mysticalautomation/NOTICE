@@ -30,7 +30,9 @@ Modifications
     * Fixes: ghost slot and machine mode messages from clients only act on the open menu and its
       ghost slots, the Enchanternator takes the ingredients of the level it enchants at and the item
       it enchants, the JEI recipe transfer no longer reads past its slot views, and bone meal costs
-      the full fuel usage of the Fertilizer.
+      the full fuel usage of the Fertilizer. The Crafter refuses special recipes and recipes
+      without a required input (the second check after upstream 7a481dc of the 26.1 line), which
+      upstream crafted from ghost items alone.
     * Left out: the CraftTweaker integration and its test scripts.
     * Build: ForgeGradle for Forge 1.20.1 on Java 17, reproducible jar (no file timestamps, fixed
       entry order, no build timestamp in the manifest). mods.toml marks the build as a modified,

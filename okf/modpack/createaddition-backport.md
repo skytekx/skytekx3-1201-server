@@ -37,15 +37,16 @@ not exist yet.
 ## Status on 2026-11-05
 
 The vendored base (78f4f06), the reproducible Java 17 build (7286996), the license files in the jar
-(f11c10b) and the baseline bundle are on the branch `claude/twilight-forest-port-mods-j2owbq`. No
-feature is ported yet. The pack still ships the Modrinth jar 1.3.3, and no boot has run the fork, so
-the boot and login checks of the baseline wait for the [release](#release).
+(f11c10b), the baseline bundle and the small fixes are on the branch
+`claude/twilight-forest-port-mods-j2owbq`. The small fixes are the first ported features. The
+pack still ships the Modrinth jar 1.3.3, and no boot has run the fork, so the boot and login checks
+of the baseline and the in game tests of the small fixes wait for the [release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in 779a060, 946c19c, ea5b3dc and 0f93520 on top of 78f4f06, 7286996 and f11c10b. The boot and login checks belong to the release |
 | Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Planned |
-| Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Planned |
+| Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 68ac009, 1c55181, d200303, 4cea82f, bc65bd1, f084665, ee2e417, 5946e46, 12ac066, e782463 and c0c031d, with the review fix 739b6f8. The in game and boot tests belong to the release |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Planned |
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Planned |
 | Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Planned |
@@ -99,18 +100,20 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   a section `liquid_blaze_burner` with a tank of 4000 mB and a heat capacity of 10000 (5935afa), a
   section `electric_pump` with `pump_rpm_range` 256, `pump_fe_at_max_rpm` 120, `pump_max_input` 5000
   and `pump_capacity` 5000 (6cbf853, 9dd1b46), and the amulet and capacitor keys (5c2b9ea, b0b8bc9,
-  4414193). The servo reuses the `electric_motor` keys. Nothing reads them yet. Each later bundle
-  wires its own keys. Loading the tracked `config/createaddition-common.toml` through
+  4414193). The servo reuses the `electric_motor` keys. The baseline itself read none of them. The
+  Liquid Blaze Burner reads its two keys since 1c55181, and each later bundle wires its own keys.
+  Loading the tracked `config/createaddition-common.toml` through
   `Config.loadConfig` outside a boot kept its 41 values and appended the 11 keys.
 - Every config value is read lazily inside a method or supplier. Forge 47 throws an
   `IllegalStateException` when a value is read before the common config loads, and upstream 5935afa
   does exactly that in a static field initialiser.
 - The network channel `createaddition:main` registered `ObservePacket` as id 0 and
   `EnergyNetworkPacket` as id 1 under protocol "1". Commit ea5b3dc raised the protocol to "2"
-  (`CreateAddition.java:68`) and named the ids `PACKET_OBSERVE`, `PACKET_ENERGY_NETWORK` and
-  `PACKET_TIME_REMAINING` (`CreateAddition.java:79-81`), so an old client gets a clean refusal at
-  login instead of a desync. Id 2 is only reserved. The `TimeRemainingPacket` of 54cf0c9 lands with
-  the goggle timers in the [small fixes](#small-fixes).
+  (`CreateAddition.java:72`) and named the ids `PACKET_OBSERVE`, `PACKET_ENERGY_NETWORK` and
+  `PACKET_TIME_REMAINING` (`CreateAddition.java:83-85`), so an old client gets a clean refusal at
+  login instead of a desync. The baseline only reserved id 2. The `TimeRemainingPacket` of 54cf0c9
+  took it with the goggle timers of the [small fixes](#small-fixes) (d200303), registered for the
+  direction to the client only (`CreateAddition.java:144`). The protocol stays at "2".
 - The `NOTICE` in the jar and the section Source changes of `UPSTREAM.md` list the config keys and
   the protocol bump (0f93520).
 
@@ -142,38 +145,65 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 
 ### Small fixes
 
-- The Modular Accumulator no longer recurses into itself in `handlerForCapability` (f6dd767, same
-  code at `ModularAccumulatorBlockEntity:347-350`). A local hop limit also stops a cycle of two
-  controllers. Goggles show the controller's data (4ae8f91), schematics keep the size, and a Symmetry
-  Wand in the hotbar stops the auto join (9dd1b46).
-- The Liquid Blaze Burner reads its tank and heat capacity from the config (5935afa) through a static
-  method instead of the static final field at `LiquidBlazeBurnerBlockEntity:62`. A fuel switch resets
-  the burn time instead of adding to it (0a92b74). The renderer fetches each buffer right before use
-  (9adb5b0). The probe fix de9d7e7 is ported only if the 1.20.1 `FluidIngredient` shows the bug.
+- The Modular Accumulator no longer recurses into itself in `handlerForCapability` (f6dd767, the
+  same code was at `ModularAccumulatorBlockEntity:347-350` in the base). A local hop limit of four
+  (`MAX_CONTROLLER_HOPS`, `ModularAccumulatorBlockEntity:349-360`) also stops a cycle of two
+  controllers, and a valid multiblock needs one hop. Goggles show the controller's data (4ae8f91),
+  schematics keep the size through `Size` and `Height` in the safe NBT, and a Symmetry Wand in the
+  hotbar stops the auto join (`ModularAccumulatorBlockItem.java:79`, 9dd1b46). Done in 68ac009.
+- The Liquid Blaze Burner reads its tank and heat capacity from
+  `liquid_blaze_burner_max_liquid_capacity` and `liquid_blaze_burner_max_heat_capacity`
+  (`Config.java:272`, `275`, 5935afa). The static methods `getMaxHeatCapacity` and
+  `getMaxLiquidCapacity` (`LiquidBlazeBurnerBlockEntity:71-75`) replace the static final field of
+  the base and read the value when it is needed. A fuel switch resets the burn time instead of
+  adding to it (0a92b74). The renderer fetches each buffer right before use (9adb5b0). Done in
+  1c55181.
+- The probe fix de9d7e7 is not ported. The fluid ingredient of Create 6.0.8 for 1.20.1 compares the
+  fluid and its tag only (`FluidIngredient.testInternal`), so the base never had the bug that the
+  1000 mB probe works around.
 - Goggles show the burn time left on the Liquid Blaze Burner and the charge time left on the Tesla
-  Coil (54cf0c9, 7cb0ef9), through the new packet with id 2. The client side runs through
-  `DistExecutor`, so no client class loads on the dedicated server.
-- The soundscapes play while Create's ambient sounds are on. The 1.20.1 code misses a negation
-  (`CASoundScapes.java:73-75`, fixed upstream in a68965a), and f83f9fd adds a null level guard.
-- Stress values register through `BlockStressValues` so item and goggle tooltips show them (f3091d0).
-  Network stress does not change. The alternator keeps its minimum speed MEDIUM, see
-  [Excluded](#excluded).
-- Death messages by barbed wire and the Tesla Coil now show their text. The 1.20.1 lang has
-  `attack.death.createaddition.*` (`en_us.json:312-317` and five other locales), and the damage types
-  look up `death.attack.createaddition.*`.
-- The CC:Tweaked peripheral of the Electric Motor raises a Lua error on NaN or infinity, and the motor
-  ignores a speed that is not finite (9dd1b46). Today any player with a computer can push NaN into a
-  Create network. The Digital Adapter returns floats instead of integers (393c51f).
-- Barbed wire can be waterlogged (7a66e82) and wrenched (a44784e).
-- Four data fixes come along: the girder particle texture (043b22e), a second straw recipe from
-  paper next to the bamboo one (ced6d21), the bioethanol and seed oil buckets in `forge:buckets`
-  (7a66e82) and a spool recipe that makes 24 from iron plate and iron rod (7cb0ef9, 9dd1b46).
-- A mined Electrum Block drops itself and mines fast with a pickaxe. The 1.3.3 jar and the base ship
-  no loot table for it and leave it out of `minecraft:mineable/pickaxe`. Upstream fixed it through
-  datagen (a7382cc, 5c44881). The fix also adds the block to `minecraft:needs_iron_tool`,
-  `minecraft:beacon_base_blocks` and `forge:storage_blocks/electrum`, the Rolling Mill to the axe tag,
-  the Biomass Pellet Block to the hoe tag and the two cakes to `create:brittle` and
-  `farmersdelight:mineable/knife`.
+  Coil (54cf0c9, 7cb0ef9) through the new `TimeRemainingPacket` with id 2, sent from the server to
+  the client only. The client handler stores the value through `DistExecutor`, so no client class
+  loads on the dedicated server. A static javap check confirmed that, but no boot has. The burner
+  answers an observation with the time packet alone (`LiquidBlazeBurnerBlockEntity:485-487`),
+  because `ObservePacket.sendUpdate` already sends the update packet to the observing player. The
+  JEI Liquid Burning category takes the short format of `Util.formatTime` and shows 20m instead of
+  20 min, as upstream does. Done in d200303.
+- The soundscapes play while Create's ambient sounds are on, through the negation at
+  `CASoundScapes.java:79` (a68965a) and a null level guard (f83f9fd). Done in 4cea82f.
+- Stress values register through `BlockStressValues` (`CABlocks.java:61-78`), so item and goggle
+  tooltips show them (f3091d0). Network stress does not change. The alternator keeps its minimum
+  speed MEDIUM, see [Excluded](#excluded). Done in bc65bd1, which keeps the CRLF line endings of
+  upstream's `CABlocks.java` so that the pump and servo bundles merge without a whole file conflict.
+- Death messages by barbed wire and the Tesla Coil show their text. All 21 locales use the keys
+  `death.attack.createaddition.barbed_wire` and `death.attack.createaddition.tesla_coil` with their
+  `.player` forms (`en_us.json:319-324`), which the damage types look up. The base had
+  `attack.death.createaddition.*` in six locales and keys without the namespace in the other 15.
+  Done in f084665.
+- The CC:Tweaked peripheral of the Electric Motor raises a Lua error on NaN or infinity, and the
+  motor ignores a speed that is not finite (9dd1b46). As a local change the peripheral clamps a
+  finite speed to `electric_motor_rpm_range` before the cast to float
+  (`ElectricMotorPeripheral.java:62`), so a value beyond the float range still means full speed.
+  The Digital Adapter returns floats instead of integers (393c51f). Done in ee2e417 and 739b6f8.
+- Barbed wire can be waterlogged (7a66e82) and wrenched (a44784e). Unlike upstream it schedules a
+  water tick in `updateShape` and takes the waterlogged state also when it is placed without a
+  player (`BarbedWireBlock.java:32-71`). Saved wire loads with `waterlogged=false`. Done in 5946e46.
+- Four data fixes came along: the girder particle texture (043b22e), a second straw recipe from
+  paper next to the bamboo one (ced6d21, filed as `createaddition:rolling/straw_from_paper`), the
+  bioethanol and seed oil buckets in `forge:buckets` (7a66e82) and a spool recipe that makes 24 from
+  iron plate and iron rod (7cb0ef9, 9dd1b46). Done in 12ac066.
+- A mined Electrum Block drops itself and mines fast with a pickaxe. The 1.3.3 jar and the base
+  ship no loot table for it and leave it out of `minecraft:mineable/pickaxe`. Upstream fixed it
+  through datagen (a7382cc, 5c44881). The hand written fix also adds the block to
+  `minecraft:needs_iron_tool`, `minecraft:beacon_base_blocks` and `forge:storage_blocks/electrum`,
+  which the parent block tag `forge:storage_blocks` names as `#forge:storage_blocks/electrum`. It
+  adds the Rolling Mill to the axe tag, the Biomass Pellet Block to the hoe tag and the two cakes to
+  `create:brittle` and `farmersdelight:mineable/knife`. The biomass storage block tags of the 1.21
+  datagen stay out, since the inventory does not list them. Done in e782463.
+- Commit c0c031d lists the ten fixes as items 3 to 12 of the section Source changes in
+  `UPSTREAM.md` and sums them up in the `NOTICE`. An incremental and a clean build of 739b6f8 give
+  the same slim jar with SHA-1 `251b86adafcff4689eb0008ba99a1e305cb85997`, and `compileJava` ends
+  with the same 36 warnings as the build of the porter.
 
 ### Changes of 1.6.0
 
@@ -247,12 +277,16 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   (d0993a0). The schematics are the mod's own builds and share only the vanilla snow and concrete
   floor with Create's schematics.
 - The 1.21 schematics are DataVersion 3955 and store `LastKnownPos` and `Controller` as int arrays.
-  The 1.20.1 code reads them as compounds (`ModularAccumulatorBlockEntity:378-381`, Create's
+  The 1.20.1 code reads them as compounds (`ModularAccumulatorBlockEntity:390-393`, Create's
   `FluidTankBlockEntity`), so the scenes need DataVersion 3465 and compound positions, or the tanks and
   accumulators fall apart.
 - The ponder plugin drops its duplicate call of the controller fix (8c4c64d).
 - The 41 new English keys come with their translations from the 1.21.1 zh_cn, ru_ru, pt_br, ja_jp,
   es_es, es_mx, fr_fr and ko_kr files (3e49327). The locales and keys that only 1.20.1 has stay.
+- The five keys `createaddition.tooltip.liquid_burning.*`, `tooltip.charging.*` and
+  `tooltip.alternator.info` of the small fixes are only in en_us (d200303) and get their translated
+  values here. The death message keys are already renamed in all 21 locales (f084665), so this
+  bundle must not add them again under the old names.
 
 ### Release
 
@@ -261,7 +295,10 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   [Operator notes](#operator-notes).
 - A permission record in `modrinth-permissions/` and the license texts in `licenses/` come with it.
 - A binary compat scan of all pack jars for links into `com/mrh0/createaddition/` is expected to find
-  only AllTheLeaks and `EnergyNetworkManager.instances`. It has not run yet.
+  only AllTheLeaks and `EnergyNetworkManager.instances`. A first scan of the jar of 739b6f8 against
+  the 265 jars of the Forge pack boot of 2026-11-05 (`packboot-forge/mods` in the workflow
+  scratchpad, among them Create 6.0.8, Steam 'n' Rails 1.7.3 and CC:Tweaked 1.120.2) found no
+  missing class, field or method. The scan runs again on the release jar.
 - Full pack boots on Forge 47.4.18 and on the production Arclight must meet the
   [boot baseline](../server/logs-and-crashes.md#boot-error-baseline), parse every charging recipe and
   show every CC&A mixin applied with `-Dmixin.debug.export`.
@@ -276,6 +313,23 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   (`Config.java:304`), so the key order inside the sections changes. Commit the rewritten file
   while the server is stopped and before `tools/build_mrpack.py`, which takes every override from
   git HEAD.
+- The in game tests of the small fixes have not run. On a copy of the live world they are a 3x3x5
+  Modular Accumulator with goggles on parts other than the controller, a schematic print of it at
+  its real size and a Symmetry Wand in the hotbar while placing accumulators. They also cover
+  barbed wire saved by 1.3.3 that loads dry, barbed wire placed in water, turned with a wrench and
+  picked up with a sneak click, an Electrum Block that an iron pickaxe mines and that drops itself,
+  and a beacon on an electrum base.
+- The boot tests of the small fixes have not run either. A dedicated Forge 47.4.18 server and the
+  production Arclight must load no client class (only a static javap check of the new and changed
+  classes ran), and a client must show the burn and charge timers on the goggles, the stress values
+  in the item tooltips and the death messages of barbed wire and the Tesla Coil in chat.
+- The server handler of `ObservePacket` calls `getBlockEntity` at any position a client names,
+  without a loaded chunk check or a distance check, and only the client keeps its cooldown of 10
+  ticks. A modified client could make the live server load or generate chunks anywhere. This
+  predates the fork, but the small fixes add the Tesla Coil and the accumulator controller as
+  observed block entities. The connector rework or this bundle guards `sendUpdate` with
+  `hasChunkAt` and a distance of 64 blocks and limits how often each player may send the packet,
+  which needs no protocol change.
 - The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
 
 ## Excluded
@@ -396,9 +450,15 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 These differ from upstream on purpose and must survive the next upstream sync.
 
 - The version keeps upstream's form `1.20.1-<version>` plus `-skytekx.N`.
-- The Liquid Blaze Burner tank stays at 4000 mB, the hard coded value of 1.20.1
-  (`LiquidBlazeBurnerBlockEntity:108`), not upstream's new 1000.
+- The Liquid Blaze Burner tank stays at 4000 mB, the hard coded value of the 1.20.1 base and now
+  the default of `liquid_blaze_burner_max_liquid_capacity` (`Config.java:272`), not upstream's new
+  1000.
 - Config values are read lazily, never in a static initialiser.
+- The Modular Accumulator stops its capability lookup after four hops.
+- The Electric Motor peripheral clamps a finite speed before the cast to float.
+- Barbed wire schedules a water tick in `updateShape` and takes the waterlogged state also when it
+  is placed without a player.
+- The probe of de9d7e7 is left out, since the 1.20.1 fluid ingredient ignores the amount.
 - An empty Capacitor stacks to 64 as in 1.3.3, because upstream's 16 would oversize existing stacks.
   A charged one stacks to 1.
 - A Capacitor charges and discharges only as a single item. Upstream charges a whole stack as one item,
@@ -451,6 +511,7 @@ Planned, not shipped.
 - Charging steps in Sequenced Assembly, gold to electrum on the Tesla Coil and deoxidizing of Create's
   copper tiles.
 - Goggle timers on the Liquid Blaze Burner and the Tesla Coil.
+- The Rolling Mill rolls paper into straw.
 - Shears that cut all wires of a connector.
 - Ponders for the pump, the servo and the connectors.
 
@@ -464,6 +525,8 @@ Planned, not shipped.
 - The spool recipe makes 24 from iron plate and rod.
 - The Tesla Coil glows while powered.
 - Festive wire no longer joins two large connectors.
+- The Digital Adapter returns fractions to scripts instead of whole numbers.
+- JEI shows the burn time of liquid fuels as 20m instead of 20 min.
 
 ### Fixed for players
 

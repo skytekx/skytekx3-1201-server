@@ -25,6 +25,7 @@ import com.enderio.machines.common.blockentity.TravelAnchorBlockEntity;
 import com.enderio.machines.common.blockentity.VacuumChestBlockEntity;
 import com.enderio.machines.common.blockentity.VatBlockEntity;
 import com.enderio.machines.common.blockentity.WiredChargerBlockEntity;
+import com.enderio.machines.common.blockentity.WirelessChargerBlockEntity;
 import com.enderio.machines.common.blockentity.XPObeliskBlockEntity;
 import com.enderio.machines.common.blockentity.XPVacuumBlockEntity;
 import com.enderio.machines.common.blockentity.capacitorbank.CapacitorBankBlockEntity;
@@ -122,6 +123,7 @@ public class MachineBlockEntities {
     public static final BlockEntityEntry<InhibitorObeliskBlockEntity> INHIBITOR_OBELISK = register("inhibitor_obelisk", InhibitorObeliskBlockEntity::new, MachineBlocks.INHIBITOR_OBELISK);
     public static final BlockEntityEntry<RelocatorObeliskBlockEntity> RELOCATOR_OBELISK = register("relocator_obelisk", RelocatorObeliskBlockEntity::new, MachineBlocks.RELOCATOR_OBELISK);
     public static final BlockEntityEntry<AttractorObeliskBlockEntity> ATTRACTOR_OBELISK = register("attractor_obelisk", AttractorObeliskBlockEntity::new, MachineBlocks.ATTRACTOR_OBELISK);
+    public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER = register("wireless_charger", WirelessChargerBlockEntity::new, MachineBlocks.WIRELESS_CHARGER);
 
     @SafeVarargs
     private static <B extends BlockEntity> BlockEntityEntry<B> register(String name, BlockEntityBuilder.BlockEntityFactory<B> beFactory,

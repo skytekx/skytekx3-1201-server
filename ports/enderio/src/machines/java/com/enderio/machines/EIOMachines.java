@@ -7,6 +7,7 @@ import com.enderio.base.data.EIODataProvider;
 import com.enderio.machines.client.rendering.travel.TravelAnchorRenderer;
 import com.enderio.machines.common.blockentity.solar.SolarPanelTier;
 import com.enderio.machines.common.config.MachinesConfig;
+import com.enderio.machines.common.datamap.RangeExtender;
 import com.enderio.machines.common.datamap.VatReagent;
 import com.enderio.machines.common.init.MachineBlockEntities;
 import com.enderio.machines.common.init.MachineBlocks;
@@ -74,6 +75,7 @@ public class EIOMachines {
         MachineRecipes.register();
         MachineTags.register();
         VatReagent.register();
+        RangeExtender.register();
 
         // Remap
         MinecraftForge.EVENT_BUS.addListener(EIOMachines::missingMappings);

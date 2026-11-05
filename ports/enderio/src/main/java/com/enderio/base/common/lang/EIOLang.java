@@ -177,6 +177,8 @@ public class EIOLang {
 
     public static final MutableComponent ENERGY_AMOUNT = REGISTRATE.addLang("info", EnderIO.loc("energy.amount"), "%s \u00B5I");
     public static final Component RANGE = REGISTRATE.addLang("gui", EnderIO.loc("range"), "Range");
+    // SkyTekx: the Wireless Charger screen of 8.x (4ad73fff0).
+    public static final Component MAX_RANGE = REGISTRATE.addLang("gui", EnderIO.loc("max_range"), "Maximum Range");
     public static final Component SHOW_RANGE = REGISTRATE.addLang("gui", EnderIO.loc("range.show"), "Show Range");
     public static final Component HIDE_RANGE = REGISTRATE.addLang("gui", EnderIO.loc("range.hide"), "Hide Range");
     public static final Component WHITELIST_FILTER = REGISTRATE.addLang("gui", EnderIO.loc("filter.whitelist"), "Whitelist");

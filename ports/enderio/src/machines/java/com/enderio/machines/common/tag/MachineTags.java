@@ -2,16 +2,19 @@ package com.enderio.machines.common.tag;
 
 import com.enderio.EnderIO;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public class MachineTags {
 
     public static void register() {
         EntityTypes.init();
         Items.init();
+        Blocks.init();
     }
 
     public static class EntityTypes {
@@ -44,6 +47,18 @@ public class MachineTags {
 
         private static TagKey<Item> create(String name) {
             return ItemTags.create(EnderIO.loc(name));
+        }
+    }
+
+    // SkyTekx: the blocks that extend the range of a machine below them, such as the Wireless Charger antennas (4ad73fff0).
+    public static class Blocks {
+
+        private static void init() {}
+
+        public static final TagKey<Block> RANGE_EXTENDER = create("range_extender");
+
+        private static TagKey<Block> create(String name) {
+            return BlockTags.create(EnderIO.loc(name));
         }
     }
 }

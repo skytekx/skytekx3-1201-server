@@ -12,6 +12,7 @@ public class MachinesClientBlocksConfig {
     public final ForgeConfigSpec.ConfigValue<String> INHIBITOR_RANGE_COLOR;
     public final ForgeConfigSpec.ConfigValue<String> RELOCATOR_RANGE_COLOR;
     public final ForgeConfigSpec.ConfigValue<String> ATTRACTOR_RANGE_COLOR;
+    public final ForgeConfigSpec.ConfigValue<String> WIRELESS_CHARGER_RANGE_COLOR;
 
     public MachinesClientBlocksConfig(ForgeConfigSpec.Builder builder) {
         builder.push("blocks");
@@ -24,6 +25,7 @@ public class MachinesClientBlocksConfig {
         INHIBITOR_RANGE_COLOR = builder.comment("The color of the range box of the Inhibitor Obelisk").define("inhibitorRangeColor", "8B0000");
         RELOCATOR_RANGE_COLOR = builder.comment("The color of the range box of the Relocator Obelisk").define("relocatorRangeColor", "8B0000");
         ATTRACTOR_RANGE_COLOR = builder.comment("The color of the range box of the Attractor Obelisk").define("attractorRangeColor", "8B0000");
+        WIRELESS_CHARGER_RANGE_COLOR = builder.comment("The color of the range box of the Wireless Charger").define("wirelessChargerRangeColor", "C7CC2A");
         builder.pop();
     }
 }

@@ -24,6 +24,7 @@ import com.enderio.machines.client.gui.screen.TravelAnchorScreen;
 import com.enderio.machines.client.gui.screen.VacuumChestScreen;
 import com.enderio.machines.client.gui.screen.VatScreen;
 import com.enderio.machines.client.gui.screen.WiredChargerScreen;
+import com.enderio.machines.client.gui.screen.WirelessChargerScreen;
 import com.enderio.machines.client.gui.screen.XPObeliskScreen;
 import com.enderio.machines.client.gui.screen.XPVacuumScreen;
 import com.enderio.machines.common.menu.AlloySmelterMenu;
@@ -49,6 +50,7 @@ import com.enderio.machines.common.menu.TravelAnchorMenu;
 import com.enderio.machines.common.menu.VacuumChestMenu;
 import com.enderio.machines.common.menu.VatMenu;
 import com.enderio.machines.common.menu.WiredChargerMenu;
+import com.enderio.machines.common.menu.WirelessChargerMenu;
 import com.enderio.machines.common.menu.XPObeliskMenu;
 import com.enderio.machines.common.menu.XPVacuumMenu;
 import com.tterrag.registrate.Registrate;
@@ -84,6 +86,7 @@ public class MachineMenus {
     public static final MenuEntry<InhibitorObeliskMenu> INHIBITOR_OBELISK = REGISTRATE.menu("inhibitor_obelisk", InhibitorObeliskMenu::factory, () -> InhibitorObeliskScreen::new).register();
     public static final MenuEntry<RelocatorObeliskMenu> RELOCATOR_OBELISK = REGISTRATE.menu("relocator_obelisk", RelocatorObeliskMenu::factory, () -> RelocatorObeliskScreen::new).register();
     public static final MenuEntry<AttractorObeliskMenu> ATTRACTOR_OBELISK = REGISTRATE.menu("attractor_obelisk", AttractorObeliskMenu::factory, () -> AttractorObeliskScreen::new).register();
+    public static final MenuEntry<WirelessChargerMenu> WIRELESS_CHARGER = REGISTRATE.menu("wireless_charger", WirelessChargerMenu::factory, () -> WirelessChargerScreen::new).register();
 
     public static void register() {}
 }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:ingots/conductive_alloy"
+    },
+    "E": {
+      "item": "enderio:ender_resonator"
+    },
+    "V": {
+      "item": "enderio:void_chassis"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CVC",
+    "CEC"
+  ],
+  "result": {
+    "item": "enderio:wireless_charger"
+  },
+  "show_notification": true
+}

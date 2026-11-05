@@ -262,7 +262,10 @@ counts in the list below are older than the last seventeen of them and were not 
   needs ZeroCore 2.1.48. Extreme Reactors declares MIT, and `licenses/` carries its MIT text together
   with the MIT notice of Big Reactors, the 1.7.10 mod whose reactor and turbine code and fuel textures
   it carries over. ZeroCore is All Rights Reserved and rides on the modpack grant of its project
-  description, see `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. The new Energizer Active FE
+  description, see `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. That grant covers the
+  `.mrpack` but forbids reposts on other websites, and git tracks the jar in this public repository, so
+  its record says VERIFY until the owner decides, see [open items](../open-items.md#owner-decisions).
+  The new Energizer Active FE
   Power Port of 2.0.97 has no loot table in the jar, so the fixes datapack gives it one, see
   [Boot fixes](../content/boot-fixes.md#gameplay-overrides).
 - LittleTiles 1.6.0-pre161 left the index on 2026-11-05 for 1.6.0-pre161-skytekx.1, a build of the
@@ -280,6 +283,8 @@ counts in the list below are older than the last seventeen of them and were not 
 Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils
 (`modrinth-permissions/README.md`). They block a public Modrinth listing, see [publish](publish.md).
+ZeroCore 2 has a modpack grant, but its copy in git blocks a public build as well while its record
+says VERIFY.
 
 The full pack of 47c3445, with SkyTekx DE Fixes, Extreme Reactors, ZeroCore, LittleTiles and the data
 of Iron's Apothic Invaders and Twilight Delight, booted on Arclight on 2026-11-05 in a test copy

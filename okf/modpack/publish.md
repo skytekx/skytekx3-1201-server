@@ -80,6 +80,11 @@ builds.
    that does not call the new JEI method, or an EMI build that implements it, then an owner decision
    and a new test. Since 2026-11-03 git ships such an EMI build, the fork from github.com/skytekx/emi
    (1ea5bb29, as 1.1.24-skytekx.2 since 2026-11-04). The new test is still open.
+3. ZeroCore 2.1.48 is All Rights Reserved, and the modpack grant of its author forbids reposts on any
+   website other than CurseForge, Modrinth and the FTB launcher. Git tracks the jar in `local-mods/`
+   since ffc3aa3, so the push of step 2 below would serve it from GitHub. Its record says VERIFY, and
+   the build tools refuse a public pack, until the owner settles it, see
+   [open items](../open-items.md#owner-decisions).
 
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so

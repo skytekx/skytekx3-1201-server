@@ -59,6 +59,18 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Owner decisions
 
+- ZeroCore 2.1.48 in the public repository (2026-11-05). The jar is All Rights Reserved, and the
+  modpack grant of its author forbids reposts on other websites
+  (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). Git tracks it in `local-mods/` since
+  ffc3aa3, which no remote branch held on 2026-11-05, and the release steps push it to master on
+  GitHub. Before that push the owner picks one way: ask the author to allow the copy in the repository,
+  go back to the Modrinth builds 2.0.84 and 2.1.45 and lose the 13 builds of fixes with the new port,
+  or keep the jar out of the public history, which needs a change of `tools/build_mrpack.py` because
+  it reads `local-mods/` from git HEAD only. The MIT jar of Extreme Reactors 2.0.97 may stay in git in
+  any case, but it needs ZeroCore 2.1.48 or newer, so going back to the Modrinth builds takes both.
+  Removing the jar after the push means another history rewrite.
+  Until then the record says VERIFY, so the build tools refuse a public pack, see
+  [Publish](modpack/publish.md#what-blocks-a-release).
 - The pack must stay non-commercial, because the Patchouli parts of the bundled Ender IO and the assets
   of the Twilight Forest fork are CC BY-NC-SA. Nobody has checked whether the Modrinth project
   `skytekx3` or the owner's account takes part in Modrinth's creator rewards, and no tool refuses an

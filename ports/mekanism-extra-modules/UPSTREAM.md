@@ -12,7 +12,7 @@ Modules, the base of the SkyTekx port of the mod from Minecraft 1.21.1 NeoForge 
 | Commit date | 2026-09-13T11:47:15-04:00 |
 | Upstream version | Version `0.1.0-beta.3` in `gradle.properties` (Minecraft 1.21.1, NeoForge 21.1.221, Mekanism 1.21.1-10.7.18.84) |
 | Released | Modrinth project `TfCrGUbp`, version `WRuXXPxB`, file `mekanism_extra_modules-0.1.0-beta.3.jar` (SHA-1 `bb4a133c6ba7eb673e9cc60a9906b3a45762150f`) |
-| Later upstream commits | Commits `576425a` (config screen), `1ce73d3` (Draconic detection) and `db62401` (protection refactor, mixin loading) on `main` up to `db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6` (2026-10-27), with the same license files |
+| Later upstream commits | Commits `576425a` (config screen), `1ce73d3` (Draconic detection) and `db62401` (protection refactor, mixin loading) on `main` up to `db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6` (2026-10-27), with the same license files. Commit `9f5127735dd77cd304a0f63654285df7b3749cd1` (2026-10-27, operator `/kill` only) on the branch `fix/phase-guard-kill`, which `main` did not hold in the clone of 2026-11-05 |
 
 Every file in the snapshot is byte identical to `git archive 1548dd6` of the upstream repository,
 with the exclusions listed below. Changes made on top of the snapshot are separate commits in
@@ -108,7 +108,7 @@ The port takes these changes from upstream commits after the base, dated 2026-11
 
 | Upstream commit | What the port takes |
 |---|---|
-| Commit `db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6` (2026-10-27) | Only the `/kill` bypass: Phase Guard and Emergency Revival ignore the damage type `minecraft:generic_kill`, so an operator can still remove a protected player. In 1.20.1 `LivingEntity.kill()` hurts with `genericKill()` (checked in the Forge 47.1.70 userdev jar). The class `service.ProtectionService` changes. |
+| Commit `db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6` (2026-10-27) | Only the `/kill` bypass: Phase Guard and Emergency Revival ignore the damage type `minecraft:generic_kill`, so an operator can still remove a protected player. In 1.20.1 `LivingEntity.kill()` hurts with `genericKill()` (checked in the Forge 47.1.70 userdev jar). The class `service.ProtectionService` changes. On the pack's Arclight server only the vanilla `/minecraft:kill` takes this path. The plain `/kill` goes to EssentialsX, because `spigot.yml:36` to `:40` replaces only `setblock`, `summon`, `testforblock` and `tellraw` with the vanilla commands. EssentialsX 2.22.0 kills with `setHealth(0)` (`Commandkill.java` line 40 at its tag 2.22.0), and CraftBukkit's `CraftLivingEntity.setHealth` then calls `die(damageSources().generic())` (javap of `common.jar` in the pack's Arclight jar). That source is not `generic_kill`, so Phase Guard and Emergency Revival stop the EssentialsX `/kill` like any other death. The harness ran that `CraftPlayer.setHealth(0)` call on Arclight (tests below). Nobody ran the EssentialsX command itself, and that `/kill` resolves to EssentialsX on the live server follows from the configuration, not from a test. |
 
 What the port leaves out of the later upstream commits, and why:
 
@@ -116,6 +116,7 @@ What the port leaves out of the later upstream commits, and why:
 |---|---|---|
 | Commit `576425a` | The config screen and its 30 translated label sets | It uses NeoForge's `ConfigurationScreen`, which Forge 47 lacks. The server config file and its comments stay the way to tune the modules. |
 | Commit `1ce73d3` | Dropping the `strictDraconicOnly` check and option | The check only looks at the death message id. Draconic Evolution 3.1.2.621 names its laser damage type `draconicevolution.guardian_laser` (`data/draconicevolution/damage_type/guardian_laser.json`), which the check accepts, so the base behaves the same. |
+| Commit `9f51277` on the branch `fix/phase-guard-kill` | The narrower bypass that lets only the vanilla `/kill` command through, a `@WrapOperation` on the `Entity.kill()` call in `KillCommand.kill` that sets a flag for `isCommandKill` | The branch is not on upstream `main`, and `@WrapOperation` needs MixinExtras, which this port does not bundle. The port keeps the wider check of `db62401`, so a mod that calls `kill()` on a player also gets through Phase Guard and Emergency Revival. A later port can set the same flag around that call with a plain `@Redirect`. |
 | Commit `db62401` | The `@WrapWithCondition` injections, the `[[mixins]]` entry of `neoforge.mods.toml`, Phase Guard state in memory, the body armor only lookup, the removal of the Mekanism Tools dependency and of the `debug` and `allowMixinProtection` options | The license review of this port keeps upstream's two `@Redirect` injections of the base. Forge 47 reads the `MixinConfigs` manifest entry, so the mixin already loads. The other parts are refactors without a behaviour change on 1.20.1, and the base config keys stay stable. The pack ships Mekanism Tools anyway. |
 
 ## License files and notice
@@ -137,8 +138,13 @@ vendor as an unofficial SkyTekx build.
 ## Build and test results
 
 The jar `mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar` has SHA-1
-`ca7f070e3f78405968a6fe93257fe235e4f3e925` and 658,607 bytes. A second build from a clean
-`git archive` of this directory in another path gave the same SHA-1 (2026-11-05).
+`3c40952af5145c740fe6f8fc90ac191574bb2b2f` and 659,044 bytes since the review fixes of 2026-11-05
+(the hurt event for direct `actuallyHurt` calls, the real death check of the tick and the pinned
+Draconic Evolution range). A second clean build of the same tree in another path gave the same SHA-1.
+The first bundled build, SHA-1 `ca7f070e3f78405968a6fe93257fe235e4f3e925` with 658,607 bytes, lacks
+these fixes. Its second build from a clean `git archive` in another path also gave the same SHA-1.
+
+### First round, jar ca7f070e
 
 Tests on 2026-11-05, on plain Forge 47.4.18 servers with Java 17, `-Xmx3G`, Mekanism and Mekanism
 Tools 10.4.16.80 and the jar, all three from the files of the pack's `modrinth.index.json`. A scratch
@@ -152,12 +158,41 @@ server does and called the damage paths. RCON ran every check.
 | Registries | Three items of the class `ItemModule` and three Mekanism modules. Each module lists `mekasuit_bodyarmor` as its only supported item, so the IMC reached Mekanism. Phase Guard and Emergency Revival render a HUD element, and all three start disabled. |
 | Items | Each item summoned as an item entity and read back with `data get`. |
 | Recipes | 3 of this mod among 2758 recipes (1198 crafting) without Draconic Evolution, 2937 with it. Each recipe, filled with the first item of each ingredient tag, matched and crafted its result. |
-| Phase Guard | Magic damage of 5 and 1000, void damage and a direct `actuallyHurt` all did nothing while the module was on. It drew 1,250,000 J per tick (500,000 FE). Without the module, magic damage of 5 took 5 health. |
+| Phase Guard | Magic damage of 5 and 1000, void damage and a direct `actuallyHurt` took no health while the module was on. Only health was checked, and the second round found that a direct `actuallyHurt` still drew MekaSuit energy and absorption with this jar. It drew 1,250,000 J per tick (500,000 FE). Without the module, magic damage of 5 took 5 health. |
 | Emergency Revival | Lethal magic damage left the player alive with 4 health, Absorption II, Regeneration II and Fire Resistance, removed Poison and Wither, kept Haste and drew 25,000,000 J (10,000,000 FE). With an empty suit the player died. |
 | Chaos Anchor | Only with Phase Guard active, `protectDirectLaserHealthWrite` and `protectChaosLaser` with the Draconic Evolution damage type `draconicevolution.guardian_laser` returned true. Without Phase Guard, or with a generic damage source, they returned false. |
 | Kill command and dead players | With Phase Guard and Emergency Revival on and keepInventory true, `kill()` killed the player, and over the next 20 ticks its health stayed 0 and the suit energy did not change. |
 | Respawn copy | The clone event copied the mod's player data with the Phase Guard flag cleared. |
 | Client classes | The class load log of the dedicated server shows 37 classes of this mod and none of a client package. |
-| Arclight | The pack's hardened Arclight 1.0.6 jar with the same mods booted with 0 ERROR lines. Phase Guard, Emergency Revival, the kill bypass and the dead player check behaved as above. Arclight's `ServerPlayer.die` calls Forge's `onLivingDeath` before Bukkit's `PlayerDeathEvent`, so a revival never fires that event, and `Player.hurt` fires `LivingAttackEvent` before Bukkit's `EntityDamageEvent`. |
+| Arclight | The pack's hardened Arclight 1.0.6 jar with Mekanism, Mekanism Tools, the harness and this jar only booted with 0 ERROR lines. It had no Draconic Evolution (`draconicevolution=false` in its log), no SkyTekx DE Fixes and no plugin, so this round did not test the mixin or EssentialsX on Arclight. Phase Guard, Emergency Revival, the kill bypass and the dead player check behaved as above. Arclight's `ServerPlayer.die` calls Forge's `onLivingDeath` before Bukkit's `PlayerDeathEvent`, so a revival never fires that event, and `Player.hurt` fires `LivingAttackEvent` before Bukkit's `EntityDamageEvent`. |
 
-Not tested: a real client, the HUD icons and the module screen, and a Chaos Guardian fight.
+### Second round, jar 3c40952a
+
+Tests on 2026-11-05 with the jar of the review fixes, on a plain Forge 47.4.18 server and on the
+pack's hardened Arclight jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` (SHA-1
+`70b44a84cbd18f9ad4a222a4eb4cbf3c66b3ce72`). Both ran Java 17 with `-Xmx3G`, Mekanism and Mekanism
+Tools 10.4.16.80, Draconic Evolution 3.1.2.621, Brandon's Core 3.2.1.302, CodeChicken Lib 4.4.0.528,
+SkyTekx DE Fixes 1.0.0 (the jar of `local-mods/`), the harness and this jar, each with the SHA-1 of
+the pack. No plugin was installed. The gamerules were `keepInventory true` and
+`naturalRegeneration false`, and the harness waited out the 60 ticks of spawn invulnerability of a
+new player before it hurt one.
+
+| Check | Result |
+|---|---|
+| Boot | Forge reached `Done` in 20.3 s and Arclight in 22.1 s, both with 0 ERROR and 0 FATAL lines and with `draconicevolution=true`. Both stopped over RCON with exit code 0. |
+| Direct `actuallyHurt` without Phase Guard | Generic damage of 6 cost no health, because the MekaSuit absorbed it and drew 240,000 J. Magic damage of 6 took 6 of 8 absorption hearts. So the direct path reaches Mekanism's absorption and the absorption hearts. |
+| Direct `actuallyHurt` with Phase Guard | Generic and magic damage of 6 and magic damage of 1000 left health, absorption and suit energy unchanged, on Forge and on Arclight. Arclight's `LivingEntityMixin.damageEntity0`, which runs the `actuallyHurt` of players, calls `ForgeHooks.onLivingHurt` at bytecode offset 19 and returns at 35 when the amount is 0, before `CraftEventFactory.handleLivingEntityDamageEvent` at 339 (javap of `common.jar`), so these hits fire no Bukkit damage event either. |
+| `Player.hurt` with Phase Guard | Magic damage of 5 and generic damage of 1000 returned false and left health unchanged. |
+| Health of 0 without a death | After `setHealth(0)` with Phase Guard on, the next ticks set health back to 1.0 (`minHealth`), as upstream does. Without Phase Guard it stayed 0. |
+| CraftBukkit `setHealth(0)` | On Arclight the harness called `CraftPlayer.setHealth(0)`, the call of EssentialsX's `/kill`. With Phase Guard on, the death was canceled and health stayed 1.0. With Emergency Revival alone, the revival fired with 4 health and drew 25,000,000 J. |
+| Kill and real death | With Phase Guard and Emergency Revival on and powered, `kill()` killed the player. Over the next 2.5 s its health stayed 0 and the suit energy did not change. |
+| Emergency Revival | Lethal magic damage left 4 health, Absorption II, Regeneration II and Fire Resistance, removed Poison and Wither, kept Haste and drew 25,000,000 J, on both servers. |
+| Chaos Anchor | The harness loaded `LaserBeamPhase` with `Class.forName`. On both servers the exported class (`-Dmixin.debug.export=true`, then javap) has the two redirects of this mod and the `@ModifyConstant` of SkyTekx DE Fixes. With Phase Guard on, `protectDirectLaserHealthWrite` and `protectChaosLaser` with `draconicevolution.guardian_laser` returned true, and with a generic source false. |
+| Draconic Evolution range | A test copy of the jar with the range `[3.1.2.620]` stopped the Forge boot at mod loading with "Mod mekanism_extra_modules only supports draconicevolution 3.1.2.620, Currently, draconicevolution is 3.1.2.621". |
+| Client classes | The class load log of the Forge server lists 19 classes of this mod and none of a client package. |
+
+Not tested: a real client, the HUD icons and the module screen, a Chaos Guardian fight, the
+EssentialsX `/kill` command itself (only the CraftBukkit call it makes), a boot with EssentialsX or
+with the full pack, and a creative player under Phase Guard. By the code its blocked hits also
+set `invulnerableTime` and log, because `LivingAttackEvent` fires before the creative check of
+`Player.hurt`. That changes no damage.

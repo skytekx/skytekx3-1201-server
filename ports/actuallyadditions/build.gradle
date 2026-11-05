@@ -22,6 +22,16 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+// SkyTekx: the dev only test mod aadevtest (src/devtest), which drives the server safety tests of
+// the backport from a dev client against a dedicated server. Only the client dev run loads it.
+// The jar task packs sourceSets.main alone, so the mod jar never contains it
+sourceSets {
+    devtest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
 minecraft {
     mappings channel: 'parchment', version: "${parchment_version}-${game_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
@@ -41,6 +51,10 @@ minecraft {
             mods {
                 actuallyadditions {
                     source sourceSets.main
+                }
+                // SkyTekx: the dev only test mod, see sourceSets.devtest
+                aadevtest {
+                    source sourceSets.devtest
                 }
             }
         }

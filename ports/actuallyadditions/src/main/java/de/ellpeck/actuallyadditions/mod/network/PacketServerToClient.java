@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 
@@ -22,6 +23,10 @@ public class PacketServerToClient {
 
     private CompoundTag data;
     private IDataHandler handler;
+    // SkyTekx: what the client read, for the WARN of a dropped packet
+    private int handlerId = -1;
+    @Nullable
+    private String readError;
 
     public PacketServerToClient() {
 
@@ -32,18 +37,17 @@ public class PacketServerToClient {
         this.handler = handler;
     }
 
+    // SkyTekx: only the handlers of PacketHandler's clientbound allow list decode
     public static PacketServerToClient fromBytes(final FriendlyByteBuf buffer) {
+        PacketServerToClient message = new PacketServerToClient();
         try {
-            CompoundTag data = buffer.readNbt();
-
-            int handlerId = buffer.readInt();
-            if (handlerId >= 0 && handlerId < PacketHandler.DATA_HANDLERS.size()) {
-                return new PacketServerToClient(data, PacketHandler.DATA_HANDLERS.get(handlerId));
-            }
+            message.data = buffer.readNbt();
+            message.handlerId = buffer.readInt();
+            message.handler = PacketHandler.clientboundHandler(message.handlerId);
         } catch (Exception e) {
-            ActuallyAdditions.LOGGER.error("Something went wrong trying to receive a client packet!", e);
+            message.readError = e.toString();
         }
-        return new PacketServerToClient();
+        return message;
     }
 
     public static void toBytes(final PacketServerToClient message, FriendlyByteBuf buffer) {
@@ -52,13 +56,15 @@ public class PacketServerToClient {
     }
 
     public static void handle(final PacketServerToClient message, final Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(
-            () -> {
-                if (message.data != null && message.handler != null) {
-                    message.handler.handleData(message.data, ctx.get());
-                }
-            }
-        );
-        ctx.get().setPacketHandled(true);
+        NetworkEvent.Context context = ctx.get();
+        if (message.readError != null) {
+            ActuallyAdditions.LOGGER.warn("Dropped a clientbound packet that could not be read: {}", message.readError);
+        } else if (message.handler == null) {
+            ActuallyAdditions.LOGGER.warn("Dropped a clientbound packet: the handler index {} is not a clientbound handler", message.handlerId);
+        } else if (message.data != null) {
+            PacketHandler.enqueueLogged(context, () -> message.handler.handleData(message.data, context),
+                () -> "clientbound handler " + message.handlerId);
+        }
+        context.setPacketHandled(true);
     }
 }

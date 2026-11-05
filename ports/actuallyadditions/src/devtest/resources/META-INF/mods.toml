@@ -1,0 +1,19 @@
+# SkyTekx: the dev only test mod of the Actually Additions backport. Only the dev runs load it
+# (build.gradle, sourceSets.devtest), the mod jar never contains it
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+[[mods]]
+modId="aadevtest"
+version="0"
+displayName="Actually Additions dev test"
+description='''
+Drives the server safety tests of the SkyTekx backport from a dev client against a dedicated server.
+'''
+
+[[dependencies.aadevtest]]
+    modId="actuallyadditions"
+    mandatory=true
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"

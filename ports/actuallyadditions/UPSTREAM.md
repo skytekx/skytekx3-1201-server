@@ -449,3 +449,45 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     buttons of the whitelist screen in `3a767e18`, which need the `FilterSettingsGui` rework of the
     sacks and filters, and the Curios rule, since the base calls no Curios API (the Crafter on a
     Stick hotkey keeps its calls in a compat class).
+14. Packet hardening: a local deviation, since upstream `main` still trusts the client (its
+    `ServerPayloadHandler.handleButtonToTile` and siblings read the dimension, the position and the
+    player id from the packet). The base took `WorldID`, `X`, `Y`, `Z` and `PlayerID` from the GUI
+    packets, so any client could press buttons on any machine in any dimension as any player, load
+    and generate chunks through `getBlockEntity`, throw a `NullPointerException` with an unknown
+    `WorldID` and a `ClassCastException` with the id of an entity that is no player. Now the sender
+    is the only player, a packet whose `WorldID` or `PlayerID` names another level or another entity
+    is dropped, and the block must sit in a loaded chunk within 8 blocks of the sender, the reach of
+    `TileEntityBase.canPlayerUse` that every machine menu checks in `stillValid`. The distance check
+    runs before any chunk access. Spectators cannot press buttons, as with vanilla container clicks,
+    and a number that is not finite is dropped. The handler list `DATA_HANDLERS` keeps its order and
+    indices, the wire format of the base, but each handler is now registered as serverbound or
+    clientbound (`addServerbound`, `addClientbound`), and `PacketClientToServer` and
+    `PacketServerToClient` only decode the handlers of their direction. The base decoded any index
+    in both directions, so a client could name a clientbound handler, which threw an
+    `AbstractMethodError` on a dedicated server and ran client code with the guest's NBT on a LAN
+    host. The handler `PLAYER_DATA_TO_SERVER` keeps its index 8 but does nothing (the base let any
+    client overwrite the booklet data of any online player by UUID, and `main` reads nothing from it
+    any more). A failing handler logs a WARN that names the player instead of vanishing in the
+    future of `enqueueWork` (`main` disconnects the player instead). Each dropped packet logs one
+    WARN line that names the sender. The `PROTOCOL_VERSION` of the channel `actuallyadditions:main`
+    goes from 4 to 5, so a client of the base is refused at login. Of `9d166ac9` only the split of
+    client and server handlers is taken, its typed payloads are not ported. The value clamps of the
+    reactors stay with their features: the firework box ranges
+    (`TileEntityFireworkBox.onNumberReceived`) and the lower bound of the button id of the XP
+    Solidifier (`TileEntityXPSolidifier.java:208`). The Vertical Digger, the Ranged Collector and
+    the sack menu already ignore unknown button ids. Later handlers (the hotkey of the Crafter on a
+    Stick, the Item Tag filter) go through `addServerbound` without another protocol bump, since no
+    build ships in between. The dev only test mod `aadevtest` in `src/devtest` (a source set that
+    only the client dev run loads, the jar task packs `sourceSets.main` alone) drives these tests
+    from a dev client against a dedicated server, see its class `AADevTestClient`. A test run
+    against the jar of this change on a dedicated Forge 47.4.18 server (with JEI, Patchouli, Curios,
+    The One Probe and Mekanism, the mods of the dev runs) logged one WARN for each crafted packet
+    and kept running: the indices 0, 1, 5, 7, 99 and minus 1, an unreadable packet, a press 20
+    blocks away, one at the unloaded position x and z 29999000, one with the `WorldID` of the
+    Nether, one with the entity id of a pig, one with an unknown and one with an invalid `WorldID`,
+    and the player data of another UUID. The distance check dropped the far positions before any
+    chunk access. The same run placed, right clicked, wrenched and broke the blocks in id order on
+    that server without a `NoClassDefFoundError` or an invalid dist error, up to the Hopping Item
+    Interface: the base lacks its `facing` property, so its first server tick crashes the server
+    (`TileEntityItemInterfaceHopping.java:129`), which the port of the item interfaces fixes. The
+    harness skips it until then.

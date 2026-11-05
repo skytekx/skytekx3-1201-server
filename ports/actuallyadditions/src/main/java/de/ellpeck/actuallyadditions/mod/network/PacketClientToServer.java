@@ -10,17 +10,22 @@
 
 package de.ellpeck.actuallyadditions.mod.network;
 
-import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class PacketClientToServer {
 
     private CompoundTag data;
     private IDataHandler handler;
+    // SkyTekx: what the server read, so that a dropped packet gets one WARN naming its sender
+    private int handlerId = -1;
+    @Nullable
+    private String readError;
 
     public PacketClientToServer() {
 
@@ -31,18 +36,18 @@ public class PacketClientToServer {
         this.handler = handler;
     }
 
+    // SkyTekx: only the handlers of PacketHandler's serverbound allow list decode. The base
+    // accepted any index, also those of the clientbound handlers
     public static PacketClientToServer fromBytes(FriendlyByteBuf buffer) {
+        PacketClientToServer message = new PacketClientToServer();
         try {
-            CompoundTag data = buffer.readNbt();
-
-            int handlerId = buffer.readInt();
-            if (handlerId >= 0 && handlerId < PacketHandler.DATA_HANDLERS.size()) {
-                return new PacketClientToServer(data, PacketHandler.DATA_HANDLERS.get(handlerId));
-            }
+            message.data = buffer.readNbt();
+            message.handlerId = buffer.readInt();
+            message.handler = PacketHandler.serverboundHandler(message.handlerId);
         } catch (Exception e) {
-            ActuallyAdditions.LOGGER.error("Something went wrong trying to receive a server packet!", e);
+            message.readError = e.toString();
         }
-        return new PacketClientToServer();
+        return message;
     }
 
     public static void toBytes(PacketClientToServer message, FriendlyByteBuf buffer) {
@@ -51,11 +56,18 @@ public class PacketClientToServer {
     }
 
     public static void handle(final PacketClientToServer message, final Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork( () -> {
-            if (message.data != null && message.handler != null) {
-                message.handler.handleData(message.data, ctx.get());
-            }
-        });
-        ctx.get().setPacketHandled(true);
+        NetworkEvent.Context context = ctx.get();
+        ServerPlayer sender = context.getSender();
+        if (message.readError != null) {
+            PacketHandler.warnDropped(sender, "serverbound", "it could not be read (" + message.readError + ")");
+        } else if (message.handler == null) {
+            PacketHandler.warnDropped(sender, "serverbound", "the handler index " + message.handlerId + " is not a serverbound handler");
+        } else if (message.data == null) {
+            PacketHandler.warnDropped(sender, "serverbound", "it carries no data for the handler index " + message.handlerId);
+        } else {
+            PacketHandler.enqueueLogged(context, () -> message.handler.handleData(message.data, context),
+                () -> "serverbound handler " + message.handlerId + " for " + PacketHandler.describe(sender));
+        }
+        context.setPacketHandled(true);
     }
 }

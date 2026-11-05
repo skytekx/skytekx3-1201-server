@@ -95,7 +95,7 @@ Gaps of the base that the backport has to close, since upstream never released i
 
 - The block `bio_reactor` has no blockstate, the block `vertical_digger` has no `en_us` name, and
   the items `booklet` and `crate_keeper` have no item model. Upstream fixed all four on the
-  1.20.4 line.
+  1.20.4 line. Source change 7 adds the two item models.
 - The `pack.mcmeta` still says `pack_format` 6 (the 1.16 value). The data generator cache
   `src/generated/resources/.cache/` ends up in the jar as 18 `.cache/` entries, as it does
   upstream. Source changes 2 and 4 close both.
@@ -270,3 +270,25 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    1.12 enums in `mod/config/values/`, which nothing loads. The translation keys of the built in
    config screen (`a831cbb`, `1be720f`, `8d01e07`) are not added, because Forge 47 has no such
    screen.
+7. Data generators: the providers of the base reproduce the committed `src/generated` byte for byte
+   (a `runData` into an empty folder rewrote all 906 files unchanged, only the 18 `.cache` files
+   differ in their time stamp). On top of that, as on the newer lines: the booklet and the Crate
+   Keeper get item models (upstream `3ce5335`, `4876677`), the Crate Keeper with the old texture of
+   `textures/items_old/` copied to `textures/item/crate_keeper.png` as `3ce5335` does. The set
+   `ActuallyItems.SIMPLE_ITEMS` keeps the flat items, which now use `item/generated`, and the new
+   set `ActuallyItems.TOOLS` holds the AIOTs, drills, batteries, rings, leaf blowers, sacks and the
+   other held items, which keep `item/handheld` (`4876677`, 63 item models change their parent).
+   Every crop stage model renders as `minecraft:cutout` (`49ccc20`, `93242df`). The base rendered
+   all 16 of them solid, and the crop textures of each stage stay the base's until the retexture
+   brings the four stage textures of `19afc5f`. A crushing recipe writes its second output only
+   when it has one (the 1.20.1 form of `c1b23b5`), so `crushing/bone_crusher.json` loses its empty
+   `minecraft:air` entry and the serializer reads it with one output, as the 1.3.21 recipes of
+   `main` do. The two recipe builder classes carry the inspection suppression of `a706f37`. Not
+   needed on 1.20.1: `ead1d9b` and the generated part of `4a16be4` (the base already writes
+   `forge:item/bucket` and `forge:fluid_container`, the Forge 47 names), `50407e9` (the 1.20.2
+   `DisplayInfo` with an `Optional` background), `b70c791` (the 1.21 holder lookup of enchantments,
+   1.20.1 uses `Enchantments` directly) and the `FluidAA` part of `a706f37`
+   (`FluidType.initializeClient` is not deprecated in Forge 47). The datagen runs `dcc2220`,
+   `556f4a7`, `a7e2d62` and `88b0775` only refresh the output of their own lines. Each change is in
+   `src/generated` as `runData` writes it, with the `.cache` files of the three providers that
+   changed.

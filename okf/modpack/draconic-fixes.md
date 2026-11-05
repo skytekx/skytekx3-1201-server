@@ -81,7 +81,9 @@ the permission file and the permission README say MIT for our code with portions
 
 The license also says "Maintain a visible repository of your code". The jar, its `mods.toml`, its
 permission file and `NOTICE` point at `tree/master/ports/skytekx-defixes` on GitHub, which holds
-nothing until the branch with `ports/` is on master. The probe that the tests use sits in `ports/skytekx-defixes/probe/`, outside the jar.
+nothing until the branch with `ports/` is on master. Since 8d7f17d `tools/mrpack_permissions.py` refuses
+the jar in a public build or upload until the local `origin/master` holds that directory and this build
+of the jar. The probe that the tests use sits in `ports/skytekx-defixes/probe/`, outside the jar.
 
 ## What the fix pack changes
 
@@ -134,7 +136,7 @@ After a change of the source, rebuild, copy the jar to `local-mods/` and update 
 `modrinth-permissions/skytekx_defixes-1.0.0.jar.md`. The jar's NOTICE names the directory at the commit
 that last changed the jar in `local-mods/` as its exact source. Its permission file, its `mods.toml` and
 its NOTICE point at `tree/master/ports/skytekx-defixes` on GitHub, so the branch that carries `ports/`
-has to be on master before a public upload, see [license](#license).
+has to be on master before a public upload, and the build tools check that, see [license](#license).
 Keep the share of reproduced statements in view with every change, and recount it in `NOTICE`.
 
 ## Tests

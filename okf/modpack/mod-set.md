@@ -190,9 +190,16 @@ version.
   tools accept it. No other jar of the pack, no datapack and no KubeJS script touches that table (scan
   of 2026-11-05). The block `chipped:cobbled_blackstone` of Chipped has the same name but is another
   item.
+- The jar also replaces vanilla client assets for every player: the block models `blackstone.json` and
+  `blackstone_slab.json` and the textures `blackstone.png` and `cracked_nether_bricks.png` under
+  `assets/minecraft/`, plus a source entry for its shield textures in the block atlas. So vanilla
+  blackstone and cracked nether bricks look different in the whole pack. Nobody verified where those
+  two textures come from, and they may be edits of Mojang art that the MIT license of the mod cannot
+  cover. So the jar must stay an index entry and never be bundled.
 - The mod adds no `forge:` material tags, and its netherite scrap nugget is another material than the
-  netherite nuggets of Cyclic, Tinkers' Construct and Thermal. So `config/almostunified/unify.json`
-  needs no change.
+  netherite nuggets of Cyclic and Tinkers' Construct, which Thermal Expansion also presses (only
+  `cyclic:netherite_nugget` and `tconstruct:netherite_nugget` exist in the pack jars, Thermal Expansion
+  ships just the two press recipes). So `config/almostunified/unify.json` needs no change.
 - Its tag file for `quark:wraith_spawnable` names a block that Quark 4.0 lacks, so the whole Quark tag
   failed to load and every boot logged one ERROR more. The fixes pack repairs the tag, see
   [boot fixes](../content/boot-fixes.md#the-override-datapack).
@@ -209,16 +216,23 @@ from its `common.jar`). Curios, Saturn, Repurposed Structures, Cataclysm and YUN
 mix into the same classes, and the classes that the test server exported held the handlers of all of
 them.
 
-Three defects of the jar stay as they are, because none of them logs an ERROR line or breaks the game:
+The basalt mixins read the structure tag `bygonenether:no_basalt`, but the jar ships it under the
+folder `tags/worldgen/configured_structure_feature/` of Minecraft 1.18, which 1.20.1 does not read. So
+the tag was empty and the check never ran. Bastions and the basalt columns and deltas share the step
+`surface_structures`, in which structures are placed before features, so columns and magma deltas grew
+through every bastion in a basalt delta, the biome that the mod adds to the bastion tag. Since 2ac9b02
+the fixes pack carries the tag at `tags/worldgen/structure/no_basalt.json` with the same four entries
+(the bastion, the Piglin Manor, the Citadel and the Catacomb), each optional. Nothing else defines the
+tag, so the pack order does not matter for it. Both mixins already fetched the chunk and the registry
+on every call, and the filled tag adds four structure lookups to each, see [tests](#tests).
 
-- The basalt mixins read the structure tag `bygonenether:no_basalt`, but the jar ships it under the
-  folder `tags/worldgen/configured_structure_feature/` of Minecraft 1.18, which 1.20.1 does not read.
-  The tag is empty, so basalt columns and deltas can still grow into its structures and into bastions
-  in basalt deltas. A copy under `tags/worldgen/structure/` in the fixes pack would switch the check
-  on, at some cost for every basalt column in the Nether. Nobody asked for it.
-- The delta mixin casts the level to `WorldGenRegion` without a check, so a delta feature placed with
-  `/place feature` in a running world would throw. Worldgen always passes a `WorldGenRegion`. Not
-  tried.
+Two defects of the jar stay as they are, because neither logs an ERROR line or breaks the game:
+
+- The delta mixin casts the level to `WorldGenRegion` without a check, before it reads the tag
+  (bytecode offsets 18 to 25 of `NoDeltasInStructuresMixin`), so a delta feature placed into a running
+  `ServerLevel` throws a `ClassCastException`. Worldgen always passes a `WorldGenRegion`, and the
+  pregens on Forge and Arclight passed. Do not run `/place feature` with a delta feature, or any tool
+  that places features into a live level, on the live server. Not tried.
 - The mod never registers the serializer of its two global loot modifiers, which swap its soul stone
   for the one of Infernal Expansion. Each boot logs two WARN lines "Could not decode
   GlobalLootModifier". The pack has no Infernal Expansion, so nothing is lost.
@@ -255,6 +269,25 @@ without an error, and the Catacomb, the Piglin Manor and a placed Citadel held t
 Forge. The entities, the blocks and the bell block entity passed the same checks. It stopped cleanly
 over RCON, without a crash report or a watchdog.
 
+The filled `bygonenether:no_basalt` tag was tested on 2026-11-05 in a second world of each test
+server with the same seed and the same mods. In both, `/locate structure #bygonenether:no_basalt` in
+the Nether found the bastion in the basalt delta at chunk 5,-35, and a region scan counted the blocks
+inside the boxes of its 85 pieces. The scan scripts and the test worlds stay outside the repo.
+
+| Check | Without the tag | With the tag |
+|---|---|---|
+| Forge, Nether pregen of 6,561 chunks | 2:52 | 2:47, 0 ERROR and 0 FATAL lines, no WARN of the basalt mixin |
+| Forge, basalt, magma blocks and lava in the bastion's pieces | 9,800, 136 and 175 | 2,157, 0 and 8. Of the 12,409 blocks that differ, 10,751 are basalt of the columns that became air |
+| Arclight 1.0.6, boot and a pregen of 441 chunks around the bastion | Earlier world, see above | Done after 58.6 s, 0 ERROR and 0 FATAL lines, pregen in 0:24, stop over RCON with java exit 0 |
+| Arclight, basalt, magma blocks and lava in the bastion's pieces | 9,683, 137 and 174 | 2,176, 3 and 8 |
+
+The bastions outside basalt deltas kept the same counts, except for a cluster of 517 blocks of the
+layered stone of Create in a bastion in the nether wastes, which came out differently in the two
+pregens and is no basalt feature. The 2,157 basalt blocks left should be the bastion's own (the same
+template in a soul sand valley holds 1,250) and the basalt ground of the delta, which nobody checked
+block by block. The two pregens of 6,561 chunks ran on a machine that other test servers shared, so
+their times only show that the tag costs nothing visible.
+
 Not tested: the natural spawns of the structures, which need a player close by, the rescue of a
 Piglin Prisoner, the shield, the piglins next to armor with a gold trim, the textures in a client, and
 a boot of the full pack with the mod. See [open items](../open-items.md#not-verified).
@@ -268,18 +301,25 @@ carries it, 3.1.3. The owner mirrors the server by hand:
 2. Download the jar from its CDN link in `modrinth.index.json`, check the SHA-1 above, and put it into
    `mods/` of the server. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/` from the build
    machine.
-3. Deploy the fixes pack with the new file `data/quark/tags/blocks/wraith_spawnable.json`.
+3. Deploy the fixes pack with the new files `data/quark/tags/blocks/wraith_spawnable.json` and
+   `data/bygonenether/tags/worldgen/structure/no_basalt.json`.
 4. Start the server. The first start appends the pack `mod:bygonenether` after the fixes pack, so with
    nobody online run `/datapack disable "file/skytekx3_fixes"` and
    `/datapack enable "file/skytekx3_fixes" last` once, as the deploy of 3.1.3 needs anyway (see
    [boot fixes](../content/boot-fixes.md#load-order)). Then `tools/datapack_order.py world/level.dat`
    should show no mod pack after the fixes pack.
-5. Check the boot against the baseline. No line "Couldn't load tag quark:wraith_spawnable" may remain.
+5. Check the boot against the baseline. No line "Couldn't load tag quark:wraith_spawnable" may remain,
+   and `/execute in minecraft:the_nether run locate structure #bygonenether:no_basalt` should name a
+   bastion or a structure of the mod.
 
-The structures and soul stone blobs only generate in Nether chunks that do not exist yet. The Nether of
-the live world was never pregenerated, so players find them beyond the area that they explored. A
-pregen of the Nether would place them ahead of time, one dimension at a time as usual
-(`chunky world minecraft:the_nether`). The blackstone drop changes at once in every dimension.
+The structures, the bastions in basalt deltas and the soul stone blobs only generate in Nether chunks
+that do not exist yet. The Nether of the live world was never pregenerated. The pregen of the
+Halloween world covered the Skylands to radius 3000 and the Overworld to radius 1500 ([log](../log.md),
+lines 282 to 283), and every later pregen in the log was of the Skylands. So players find the new content beyond the area
+that they explored. A structure whose start lands in a new chunk next to that area is cut off where it
+reaches chunks that already exist. A pregen of the Nether would place them ahead of time, one
+dimension at a time as usual (`chunky world minecraft:the_nether`). The blackstone drop and the
+textures change at once.
 
 ## Owner rulings
 

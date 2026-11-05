@@ -37,8 +37,8 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 244 files, 243 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 107 are
+is tracked: 245 files, 244 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 108 are
 [gameplay overrides](#gameplay-overrides).
 
 | Override | Count | What it replaces |
@@ -127,7 +127,7 @@ every mod pack that loads after the fixes pack, which should be none.
 
 ### Gameplay overrides
 
-Seven groups of files in the pack change the game on purpose:
+Eight groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -219,6 +219,16 @@ Seven groups of files in the pack change the game on purpose:
   Power Port with it, and `/setblock ... destroy` dropped the port. The passive Mekanism fluid port of
   the reinforced reactor has no loot table either, already in 2.0.84, and stays as it is for now,
   because the pack has not tested it with Mekanism.
+- One structure tag at `data/bygonenether/tags/worldgen/structure/no_basalt.json` switches on the
+  basalt guard of Bygone Nether 1.3.2 since 2026-11-05 (2ac9b02). Its two mixins keep basalt columns
+  and deltas out of the bastion, the Piglin Manor, the Citadel and the Catacomb, but the jar ships the
+  tag only under `tags/worldgen/configured_structure_feature/`, the folder of Minecraft 1.18. So the
+  tag was empty, and columns and magma deltas grew through the bastions that the mod lets generate in
+  basalt deltas. The file holds the same four entries, each optional. Nothing else defines the tag, so
+  the pack order does not matter for it. On the Forge test server the bastion in a basalt delta held
+  9,800 basalt, 136 magma blocks and 175 lava inside its pieces without the file and 2,157, 0 and 8
+  with it, at the same pregen speed. Arclight gave nearly the same counts, see
+  [mod set](../modpack/mod-set.md#tests). Only Nether chunks generated after the deploy change.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

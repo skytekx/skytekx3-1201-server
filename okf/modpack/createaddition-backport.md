@@ -38,14 +38,16 @@ not exist yet.
 
 The vendored base (d8d06f5), the reproducible Java 17 build (28bde03), the license files in the jar
 (c276dbd), the baseline bundle, the small fixes, the ignitable fluids, the connector rework, the
-changes of 1.6.0, the charging recipes and the Electric Pump are on the branch
+changes of 1.6.0, the charging recipes, the Electric Pump and the Servo Motor are on the branch
 `claude/twilight-forest-port-mods-j2owbq`. They are the first ported features. The pack still ships
 the Modrinth jar 1.3.3. Only test servers with a reduced mod set have booted the fork: those of the
 ignitable fluids (e0fed53), the [wire graph test](#wire-graph-test) on the production Arclight jar,
-the Forge 47.4.18 tests of the [changes of 1.6.0](#changes-of-160) and the Forge and Arclight tests
-of the [charging recipes](#charging-recipes) and of the [Electric Pump](#electric-pump). The boot
-and login checks of the baseline and the in game tests of the small fixes, the connector rework, the
-changes of 1.6.0, the charging recipes and the Electric Pump wait for the [release](#release).
+the Forge 47.4.18 tests of the [changes of 1.6.0](#changes-of-160) and of the
+[Servo Motor](#servo-motor), and the Forge and Arclight tests of the
+[charging recipes](#charging-recipes) and of the [Electric Pump](#electric-pump). The boot and login
+checks of the baseline and the in game tests of the small fixes, the connector rework, the changes
+of 1.6.0, the charging recipes, the Electric Pump and the Servo Motor wait for the
+[release](#release).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -56,7 +58,7 @@ changes of 1.6.0, the charging recipes and the Electric Pump wait for the [relea
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in e0fed53 and 7ee0449, with the review fixes d49e1b0 and 200afee. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
 | Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Done in fa51d4c, ddb7fc6 and e277ef6, with the test record 2a2b79b and the review fix 353c753. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the belt run and the full pack boot belong to the release |
 | Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Done in 1051eaf and a56b0c4, with the test record 9dc45aa and the review fix 914089f. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the pumps in series in game and the full pack boot belong to the release |
-| Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Planned |
+| Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Done in 3d9bdf0 and e84695f, with the review fix 7571bc4. Tested on a reduced Forge 47.4.18 server with Create 6.0.8, with and without CC:Tweaked 1.120.2. The client tests, the Arclight boot and the full pack boot belong to the release |
 | Ponders and translations (`cca-ponders-and-translations`) | Three new ponder scenes with their NBT converted to 1.20.1, and 41 new lang keys | 9 | Connector rework, the 1.6.0 changes, ignitable fluids, charging, pump, servo | Planned |
 | Release (`cca-pack-release`) | Pack wiring, license and model checks, compat scan, boots on Forge and Arclight, rollout, docs | 8.5 | All other bundles | Planned |
 
@@ -191,8 +193,9 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   Done in 66076fb.
 - The CC:Tweaked peripheral of the Electric Motor raises a Lua error on NaN or infinity, and the
   motor ignores a speed that is not finite (9dd1b46). As a local change the peripheral clamps a
-  finite speed to `electric_motor_rpm_range` before the cast to float
-  (`ElectricMotorPeripheral.java:62`), so a value beyond the float range still means full speed.
+  finite speed to the `motor_rpm_range` of the `[electric_motor]` config section
+  (`Config.java:120-122`) before the cast to float (`ElectricMotorPeripheral.java:62`), so a value
+  beyond the float range still means full speed.
   The Digital Adapter returns floats instead of integers (393c51f). Done in 2f39e85 and 8224da6.
 - Barbed wire can be waterlogged (7a66e82) and wrenched (a44784e). Unlike upstream it schedules a
   water tick in `updateShape` and takes the waterlogged state also when it is placed without a
@@ -434,6 +437,60 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - Its CC:Tweaked peripheral reads and sets speed, angles and limits, assembles and disassembles, and
   raises a Lua error on input that is not finite (84c7b2c, 9dd1b46). CC:Tweaked 1.120.2 in the pack
   has the API. The fork's `COMPUTERCRAFT.md` lists the new methods.
+- Commit 3d9bdf0 ports the block (`UPSTREAM.md` source change 29) and e84695f the peripheral (source
+  change 30). The block entity extends Create's `MechanicalBearingBlockEntity`, whose protected
+  fields and methods are the same in Create 6.0.8 for 1.20.1 (javap). The movement mode and the two
+  limits get their own behaviour types and the NBT keys `RotationMode`, `MaxAngle` and `MinAngle`
+  next to the speed's `ScrollValue`. The servo runs on the `electric_motor` config, so it adds no
+  config key. The block entity hands out the peripheral as a `LazyOptional` that exists only while
+  CC:Tweaked is loaded, so a server without CC:Tweaked loads no CC:Tweaked class.
+- Its texture `servo_motor/block.png` is upstream's file and reuses two Create textures that Create
+  6.0.3 already shipped, see [License conditions](#license-conditions). The review fix 7571bc4 adds
+  them to `NOTICE`.
+- Three local changes come with it, listed under [Local divergences](#local-divergences). The target
+  angle follows a new Min or Max Angle while the redstone signal stays the same, where upstream
+  recomputes it only on a signal change. The block entity marks itself changed while the angle
+  moves, and the setters of the two limits go through `setValue`, so a save keeps the current angle
+  and the limits that a peripheral set. The goggles show the draw in fe/t like the fork's Electric
+  Motor.
+- One trait of upstream stays as it is. A negative angle given to `setTargetAngle` becomes the Min
+  Angle and only moves the servo while the signal is on the Min side, which `COMPUTERCRAFT.md`
+  explains.
+- A reduced test server on Forge 47.4.18 with Create 6.0.8, CC:Tweaked 1.120.2 and the fork passed
+  the server side of the test plan with commands. Its console logs `console-bootA.log` to
+  `console-bootE-nocc.log` and the file `rig-results.txt` lie in `bp2/createaddition/servo/boot/` of
+  the workflow scratchpad. A full signal on the top side turned the contraption to 90 degrees, the
+  block entity and the Stationary Contraption entity both at 89.99987 (`console-bootA.log`).
+- The first restart in the middle of a rotation showed the stale save. The servo had turned down to
+  49.8 degrees before the stop and came back at 73.8 (`console-bootA.log`, `console-bootB.log`).
+  The fixed jar was built before the next boots. A stop right after a reading of 40.2 degrees on
+  the way up brought the servo back still turning up, at 58.8 degrees two seconds after `Done`, and
+  it then reached 90 (`console-bootC.log`, `console-bootD.log`). The limits that the peripheral
+  had set, 150 and 20 degrees, read the same before and after that restart.
+- The Lua checks ran on a computer next to a servo (`world/computercraft/computer/0/out.txt` in the
+  boot folder). The peripheral reported the type `servo_motor`. The setters rejected NaN, infinity
+  and values out of range with the expected messages, `setTargetAngle` with 45 and then 90
+  turned the servo there while the computer gave the signal itself, `assemble` and `disassemble`
+  worked, and `getEnergyConsumption` gave 120 at 64 RPM.
+- A boot without CC:Tweaked (`console-bootE-nocc.log`) ran 24 rigs, one for each of the six facings
+  and four rolls. The script `rigs.py` in `bp2/createaddition/servo/tools/` puts a slime block in
+  front of each servo and a stone on its top side, powers the top side and checks where the stone
+  lands. In all 24 rigs the servo turned the stone by 90 degrees in the same sense relative to its
+  facing and its top and put the slime block back in front (`rig-results.txt`, `rigs.py handed`).
+- Each boot reached `Done` and stopped with java exit 0, with no FATAL line. The only ERROR line is
+  vanilla's `No key layers in MapLike[{}]`, which the flat test world logs at the boots that create
+  a world (A and E). A servo placed with `setblock` and partial NBT without `ScrollValue` starts at
+  speed 0, while one placed from the item starts at 32, so tests that use `setblock` set the speed
+  first.
+- The integration onto the Electric Pump kept the entries of both bundles in `CABlocks`,
+  `CABlockEntities`, `mineable/pickaxe.json` and `en_us.json` in upstream's order, pump before
+  servo, and renumbered the servo's source changes to 29 and 30. The fork compiled with 38 warnings
+  as before, and the compat scan of the jar of 7571bc4 (SHA-1
+  8ce73fc73067f5d5ffbd7ae4a5f71ee1a6663b36) against the 265 jars of the Forge pack boot reported
+  TOTAL MISSING 0.
+- The client side has not run: the wrench roll on all faces, the value boxes, the renderer and the
+  visual, the 24 blockstate variants, the rolled model, the item model, the goggles, a schematic and
+  a move inside a contraption. These and an Arclight boot belong to the [release](#release).
 
 ### Ponders and translations
 
@@ -546,6 +603,19 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   Create's copper tiles back towards plain copper. Before the update those items passed under a
   coil untouched, so belt and depot lines that carry gold or copper tiles under coils, such as
   charging or deoxidizing lines, change their output. Players should check such lines.
+- The Servo Motor ran only on a reduced Forge 47.4.18 server (3d9bdf0, e84695f, 7571bc4). A client
+  must still check the wrench roll on all six faces and the four value boxes, which are the speed,
+  the movement mode and the Max and Min Angle, on the right sides for each roll. It must also show
+  the renderer and the Flywheel visual with Flywheel on and with `/flywheel backend off`, the 24
+  blockstate variants and the rolled model `block_rolled.json` with its root transform, the item
+  model and the goggle line with the draw in fe/t. A lever door rig, a printed schematic of a servo
+  and a servo moved inside a contraption need a test in game too.
+- No Arclight boot has run with the servo. Its blocks and block entities carry little risk, but the
+  full pack boot on the production Arclight must load it and keep the two accepted ERROR lines.
+- Before the release, run `texcmp.py` and `texslide.py` on `servo_motor/block.png` against the
+  Create 6.0.10 assets of the 1.21.1 line, and confirm the copyright line of Create's current MIT
+  code license for the `NOTICE` paragraph on the servo renderer, visual and assembly, which follow
+  Create 6 bearing code.
 - The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
 
 ## Excluded
@@ -606,11 +676,31 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - The bundled jar needs a record in `modrinth-permissions/` (MIT, the upstream author, unofficial build,
   the NOTICE and the SHA-1 of the reproducible build) and the license texts in `licenses/`, named like
   `licenses/FluxNetworks-1.20.1-7.2.1.15-LICENSE.txt`.
-- Before the release, the texture check `bp2/license-createaddition/scripts/texcmp.py` in the workflow
-  scratchpad runs on every texture the port adds: `electric_pump/block.png`, `servo_motor/block.png`,
-  `item/electrum_amulet.png` and the barbed wire texture that came with 7ce2204. It compares them with
-  the assets of Create 6.0.8 and Create 6.0.10. A first run against 6.0.8 found no overlap at or above
-  25 percent. The run against 6.0.10 has not happened.
+- Before the release, two texture checks in `bp2/license-createaddition/scripts/` of the workflow
+  scratchpad run on every texture the port adds: `electric_pump/block.png`, `servo_motor/block.png`,
+  `item/electrum_amulet.png` and the barbed wire texture that came with 7ce2204. They compare them
+  with the assets of Create 6.0.3, 6.0.8 and 6.0.10. The script `texcmp.py` only compares whole
+  images of the same size at the same place. Its first run against 6.0.8 found no overlap at or
+  above 25 percent and missed the Create tiles inside the servo texture. The script `texslide.py`
+  slides every Create texture up to 16x16, and every 16x16 tile of a larger one, in all four
+  rotations and their mirrors over each texture. Its run against `create-1.20.1-6.0.3.jar` and
+  `create-1.20.1-6.0.8.jar` is in `bp2/createaddition/servo-int/texslide-603-608.txt`. The run of
+  both scripts against 6.0.10 has not happened.
+- The servo texture holds Create's `textures/block/bearing_top.png` (blob 1d156fa) as its lower left
+  quarter, with 256 of 256 pixels identical, and its upper left quarter matches 128 of 256 pixels
+  of `textures/block/clockwork_bearing_side.png` (blob e21a7de), with rows 0 to 5 and 14 to 15
+  identical. The item model shows the first on its up face, and the side faces of the block and the
+  item model use the second. Both blobs are in `create-1.20.1-6.0.3.jar`, which Modrinth published
+  on 2025-03-14, and the same in 6.0.8 (git hash of each jar entry), so they date from before
+  2025-09-21 and are MIT. The review fix 7571bc4 lists them in the Create derived part of `NOTICE`
+  in the form of the pump's paragraph, and `UPSTREAM.md` source change 29 records the finding.
+  Other Create textures that match at the same places, such as `cart_assembler_top.png` with 206 of
+  256 pixels, share those pixels with `bearing_top.png` themselves.
+- The sliding check finds Create's `pump.png` in the upper left quarter of the pump texture, with
+  180 of the 228 pixels that are opaque in either image identical. The `NOTICE` already lists that
+  file. No other Create tile goes beyond 23 percent there. The Electrum Amulet texture shares no
+  pixel with any Create texture or tile, and the barbed wire texture at most 1 of 130 (also with
+  `--min-opaque 4`, `texslide-603-608-small.txt`).
 - The pump's block and item models reuse the two 12x3x12 flange cuboids of Create's
   `mechanical_pump/block.json` (blob 34cb63e in Create 6.0.8). The Modrinth jar
   `create-1.20.1-6.0.3.jar`, published on 2025-03-14 and checked against the SHA-512 that the
@@ -813,6 +903,12 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The ponder schematics are converted to the NBT of 1.20.1.
 - The Electric Pump shows its draw in fe/t and reads the redstone signal when it is placed.
 - A mixin into Create's `FluidPropagator` wakes the Electric Pump after a pipe change.
+- The target angle of the Servo Motor follows a new Min or Max Angle while the redstone signal stays
+  the same. Upstream recomputes it only when the signal changes.
+- The Servo Motor marks itself changed while its angle moves, and the setters of its two limits go
+  through `ScrollValueBehaviour.setValue`, so a save keeps the current angle and the limits that a
+  peripheral set.
+- The Servo Motor shows its draw in fe/t on the goggles, like the Electric Motor of the fork.
 
 ## Open owner decisions
 

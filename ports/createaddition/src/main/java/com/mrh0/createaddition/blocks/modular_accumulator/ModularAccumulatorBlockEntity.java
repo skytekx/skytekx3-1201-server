@@ -344,9 +344,21 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		oldCap.invalidate();
 	}
 
+	// A part asks its controller for the storage. A controller position that points back at this block, or two
+	// parts that name each other as controller after a broken save, made this recurse until a StackOverflowError
+	// (upstream f6dd767). The hop limit also ends such a cycle, a valid multiblock needs one hop.
+	private static final int MAX_CONTROLLER_HOPS = 4;
+
 	private InternalEnergyStorage handlerForCapability() {
-		return isController() ? energyStorage
-			: (getControllerBE() != null ? getControllerBE().handlerForCapability() : new InternalEnergyStorage(0, Config.ACCUMULATOR_MAX_INPUT.get(), Config.ACCUMULATOR_MAX_OUTPUT.get()));
+		return handlerForCapability(MAX_CONTROLLER_HOPS);
+	}
+
+	private InternalEnergyStorage handlerForCapability(int hops) {
+		if (isController()) return energyStorage;
+		ModularAccumulatorBlockEntity controllerBE = getControllerBE();
+		if (controllerBE != null && controllerBE != this && hops > 0)
+			return controllerBE.handlerForCapability(hops - 1);
+		return new InternalEnergyStorage(0, Config.ACCUMULATOR_MAX_INPUT.get(), Config.ACCUMULATOR_MAX_OUTPUT.get());
 	}
 
 	@Override
@@ -434,6 +446,17 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 			compound.putBoolean("LazySync", true);
 	}
 
+	// Schematics and blueprints only keep the safe NBT. Without the size a printed multiblock came back as a
+	// controller of 1x1x1 (upstream 9dd1b46).
+	@Override
+	public void writeSafe(CompoundTag compound) {
+		super.writeSafe(compound);
+		if (isController()) {
+			compound.putInt("Size", width);
+			compound.putInt("Height", height);
+		}
+	}
+
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -481,6 +504,8 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 			level.setBlock(getBlockPos(), state, Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_INVISIBLE);
 		}
 		setChanged();
+		// The goggles read the controller, so it syncs its new size at once (upstream 4ae8f91).
+		if (isController()) sendDataImmediately();
 	}
 
 	@Override
@@ -524,7 +549,8 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return false;
 
-		ObservePacket.send(worldPosition, 0);
+		// Observe the controller, which holds the energy of the whole multiblock (upstream 4ae8f91).
+		ObservePacket.send(getController(), 0);
 
 		String spacing = " ";
 		tooltip.add(Component.literal(spacing)

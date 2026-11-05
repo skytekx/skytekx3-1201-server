@@ -22,6 +22,7 @@ import com.mrh0.createaddition.energy.NodeMovementBehaviour;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlock;
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlock;
 import com.mrh0.createaddition.blocks.electric_pump.ElectricPumpBlock;
+import com.mrh0.createaddition.blocks.servo_motor.ServoMotorBlock;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
@@ -71,6 +72,18 @@ public class CABlocks {
 			.initialProperties(SharedProperties::softMetal)
 			.properties(p -> p.noOcclusion())
 			.transform(pickaxeOnly())
+			.item()
+			.transform(customItemModel())
+			.register();
+
+	// The Servo Motor of the 1.21.1 line (upstream a8a51a2, a1b6da6). Its blockstate, models, loot table,
+	// recipe and pickaxe tag are hand written in src/main/resources, since this fork runs no datagen.
+	public static final BlockEntry<ServoMotorBlock> SERVO_MOTOR = CreateAddition.REGISTRATE.block("servo_motor", ServoMotorBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
+			.transform(pickaxeOnly())
+			.onRegister(BlockStressValues.setGeneratorSpeed(256, true))
+			.onRegister(block -> BlockStressValues.CAPACITIES.register(block, () -> Config.MAX_STRESS.get() / 256f))
 			.item()
 			.transform(customItemModel())
 			.register();

@@ -83,6 +83,9 @@ Modifications
     Crafter from dried kelp, a mechanical pump, two copper spools and a capacitor. A mixin into
     Create's FluidPropagator lets a change to a pipe reach the Electric Pump as it reaches Create's
     own pumps.
+  - Servo Motor from the 1.21.1 line: a bearing that turns a contraption to an angle set by
+    redstone on two of its sides and by its Min and Max Angle. It runs on FE and rolls with a
+    wrench.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of
@@ -118,6 +121,10 @@ Licenses
         assets/createaddition/models/block/electric_pump/block.json and item.json.
       * pixels of textures/block/pump.png (git blob 8f3d8f7) in
         assets/createaddition/textures/block/electric_pump/block.png.
+    The Servo Motor of the 1.21.1 line (ServoMotorRenderer, ServoMotorVisual and the contraption
+    assembly in ServoMotorBlockEntity) follows the code of Create 6's BearingRenderer,
+    BearingVisual and MechanicalBearingBlockEntity, which Create's LICENSE.md keeps under the MIT
+    License after 2025-09-21.
     This build adds no Create asset that Create published on or after 2025-09-21 (Create's assets
     are All Rights Reserved from then on). Models that use create: textures only refer to them;
     those textures are not part of this jar.

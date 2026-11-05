@@ -363,3 +363,12 @@ its item here, and the NOTICE in the jar sums them up.
     with the old format was shipped. The public fields `ingredient`, `output` and `id` of the old
     class give way to `getIngredient()`, `getResultItem()` and Create's `getId()`, and `find` gains
     an overload that takes the stack. No pack jar links any of them.
+26. Gold to electrum: six charging recipes turn gold into electrum on the Tesla Coil at a max
+    charge rate of 360 (upstream `d2234ce`), an ingot for 36000 FE, a nugget for 4000, a block for
+    324000, a rod or a wire for 18000 and a sheet for 36000
+    (`recipes/charging/electrify_gold_*.json`). They take the tags `forge:ingots/gold`,
+    `forge:nuggets/gold`, `forge:storage_blocks/gold`, `forge:rods/gold`, `forge:plates/gold` and
+    `forge:wires/gold` where upstream names the items, so that the gold plate of another mod
+    matches too, and use the JSON form of the 1.20.1 line. The same upstream commit lowers
+    `channeling.json` to 1000000 FE at 360, which is not ported. The base keeps its own 10000000
+    FE at 1000 from `f18dd66`.

@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
@@ -34,6 +35,7 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
     private final ContainerData data;
     private final BaseItemStackHandler matrix;
     private final QuickMover mover;
+    private final Player player;
     private final Slot result;
     private final Level level;
 
@@ -46,6 +48,7 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
         this.data = data;
         this.matrix = recipeInventory;
         this.mover = new QuickMover(this::moveItemStackTo);
+        this.player = playerInventory.player;
         this.level = playerInventory.player.level();
 
         this.addSlot(new SlotItemHandler(upgradeInventory, 0, 182, 9));
@@ -93,6 +96,12 @@ public class EnchanternatorContainer extends BaseContainerMenu implements IFakeR
         if (!this.level.isClientSide()) {
             this.onRecipeChanged();
         }
+    }
+
+    // SkyTekx port: the input slots hold up to 512 items, more than a 1.20.1 slot packet can carry
+    @Override
+    public void setSynchronizer(ContainerSynchronizer synchronizer) {
+        super.setSynchronizer(LargeStackSynchronizer.wrap(synchronizer, this.player));
     }
 
     @Override

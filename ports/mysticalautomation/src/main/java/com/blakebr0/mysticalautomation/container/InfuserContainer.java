@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +25,7 @@ import net.minecraftforge.items.SlotItemHandler;
 public class InfuserContainer extends BaseContainerMenu {
     private final ContainerData data;
     private final QuickMover mover;
+    private final Player player;
 
     public InfuserContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
         this(id, playerInventory, InfuserTileEntity.createInventoryHandler(), new UpgradeItemStackHandler(), new SimpleContainerData(ContainerDataBuilder.slots(8)), buffer.readBlockPos());
@@ -33,6 +35,7 @@ public class InfuserContainer extends BaseContainerMenu {
         super(ModMenuTypes.INFUSER.get(), id, pos);
         this.data = data;
         this.mover = new QuickMover(this::moveItemStackTo);
+        this.player = playerInventory.player;
 
         this.addSlot(new SlotItemHandler(upgradeInventory, 0, 192, 9));
 
@@ -72,6 +75,12 @@ public class InfuserContainer extends BaseContainerMenu {
         this.mover.fallback(10, 36);
 
         this.addDataSlots(data);
+    }
+
+    // SkyTekx port: the input slots hold up to 512 items, more than a 1.20.1 slot packet can carry
+    @Override
+    public void setSynchronizer(ContainerSynchronizer synchronizer) {
+        super.setSynchronizer(LargeStackSynchronizer.wrap(synchronizer, this.player));
     }
 
     @Override

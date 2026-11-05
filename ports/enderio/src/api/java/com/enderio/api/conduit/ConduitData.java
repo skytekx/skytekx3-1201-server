@@ -53,6 +53,16 @@ public interface ConduitData<T extends ConduitData<T>> extends INBTSerializable<
         return new CompoundTag();
     }
 
+    /**
+     * Apply the data that a client sent from the conduit screen, as written by {@link #serializeGuiNBT()}.
+     * The tag comes from the client and can hold anything, so override this to take only the fields the screen may change.
+     * The default delegates to {@link #deserializeNBT(CompoundTag)}.
+     */
+    @UseOnly(LogicalSide.SERVER)
+    default void applyGuiNBT(CompoundTag nbt) {
+        deserializeNBT(nbt);
+    }
+
     // endregion
 
     @UseOnly(LogicalSide.CLIENT)

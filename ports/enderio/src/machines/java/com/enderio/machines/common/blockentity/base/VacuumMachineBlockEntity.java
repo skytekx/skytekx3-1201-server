@@ -7,6 +7,7 @@ import com.enderio.core.common.network.slot.BooleanNetworkDataSlot;
 import com.enderio.core.common.network.slot.IntegerNetworkDataSlot;
 import com.enderio.machines.common.io.FixedIOConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
@@ -34,11 +35,12 @@ public abstract class VacuumMachineBlockEntity<T extends Entity> extends Machine
         super(pType, pWorldPosition, pBlockState);
         this.targetClass = targetClass;
 
-        rangeDataSlot = new IntegerNetworkDataSlot(this::getRange, r -> this.range = r);
-        addDataSlot(rangeDataSlot);
+        // The range comes from the client, so clamp it.
+        rangeDataSlot = new IntegerNetworkDataSlot(this::getRange, r -> this.range = Mth.clamp(r, 0, getMaxRange()));
+        addClientDataSlot(rangeDataSlot);
 
         rangeVisibleDataSlot = new BooleanNetworkDataSlot(this::isRangeVisible, b -> this.rangeVisible = b);
-        addDataSlot(rangeVisibleDataSlot);
+        addClientDataSlot(rangeVisibleDataSlot);
     }
 
     @Override

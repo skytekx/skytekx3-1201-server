@@ -28,6 +28,11 @@ import java.util.Optional;
 public class TravelAnchorBlockEntity extends MachineBlockEntity {
 
     public static final SingleSlotAccess GHOST = new SingleSlotAccess();
+
+    /**
+     * The longest name the anchor screen lets a player type.
+     */
+    public static final int MAX_NAME_LENGTH = 50;
     private final StringNetworkDataSlot nameDataSlot;
     private final BooleanNetworkDataSlot visibilityDataSlot;
     private final ResourceLocationNetworkDataSlot iconDataSlot;
@@ -37,13 +42,15 @@ public class TravelAnchorBlockEntity extends MachineBlockEntity {
 
     public TravelAnchorBlockEntity(BlockEntityType<?> type, BlockPos pWorldPosition, BlockState pBlockState) {
         super(type, pWorldPosition, pBlockState);
-        nameDataSlot = new StringNetworkDataSlot(this::getName, name -> getOrCreateTravelTarget().setName(name));
+        // The name comes from the client, so cut it to the length the anchor screen allows.
+        nameDataSlot = new StringNetworkDataSlot(this::getName, name -> getOrCreateTravelTarget().setName(
+            name != null && name.length() > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH) : name));
         visibilityDataSlot = new BooleanNetworkDataSlot(this::getVisibility, vis -> getOrCreateTravelTarget().setVisibility(vis));
         iconDataSlot = new ResourceLocationNetworkDataSlot(() -> ForgeRegistries.ITEMS.getKey(getIcon()),
             loc -> getOrCreateTravelTarget().setIcon(ForgeRegistries.ITEMS.getValue(loc)));
-        addDataSlot(nameDataSlot);
-        addDataSlot(visibilityDataSlot);
-        addDataSlot(iconDataSlot);
+        addClientDataSlot(nameDataSlot);
+        addClientDataSlot(visibilityDataSlot);
+        addClientDataSlot(iconDataSlot);
     }
 
     @Nullable

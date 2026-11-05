@@ -46,7 +46,7 @@ public class PoweredSpawnerBlockEntity extends PoweredMachineBlockEntity {
         super(EnergyIOMode.Input, CAPACITY, USAGE, type, worldPosition, blockState);
 
         rangeVisibleDataSlot = new BooleanNetworkDataSlot(this::isRangeVisible, b -> this.rangeVisible = b);
-        addDataSlot(rangeVisibleDataSlot);
+        addClientDataSlot(rangeVisibleDataSlot);
 
         addDataSlot(new ResourceLocationNetworkDataSlot(() -> this.getEntityType().orElse(NO_MOB), rl -> {
             setEntityType(rl);

@@ -18,6 +18,7 @@ import com.enderio.machines.common.io.item.MachineInventoryLayout;
 import com.enderio.machines.common.menu.DrainMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -56,16 +57,17 @@ public class DrainBlockEntity extends PoweredMachineBlockEntity {
 
         this.range = 5;
 
-        rangeDataSlot = new IntegerNetworkDataSlot(this::getRange, r -> this.range = r) {
+        // The range comes from the client, so clamp it.
+        rangeDataSlot = new IntegerNetworkDataSlot(this::getRange, r -> this.range = Mth.clamp(r, 0, getMaxRange())) {
             @Override
             public void updateServerCallback() {
                 updateLocations();
             }
         };
-        addDataSlot(rangeDataSlot);
+        addClientDataSlot(rangeDataSlot);
 
         rangeVisibleDataSlot = new BooleanNetworkDataSlot(this::isRangeVisible, b -> this.rangeVisible = b);
-        addDataSlot(rangeVisibleDataSlot);
+        addClientDataSlot(rangeVisibleDataSlot);
     }
 
     @Override

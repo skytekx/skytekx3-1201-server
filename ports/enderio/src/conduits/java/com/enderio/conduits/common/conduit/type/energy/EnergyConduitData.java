@@ -40,6 +40,12 @@ public class EnergyConduitData implements ConduitData<EnergyConduitData> {
     }
 
     @Override
+    public void applyGuiNBT(CompoundTag nbt) {
+        // The conduit screen sends no energy conduit data. The stored energy (EnergyStored), the capacity (EnergyMaxStored)
+        // and the round robin indices are server state, and a client must never set them.
+    }
+
+    @Override
     public void deserializeNBT(CompoundTag nbt) {
         energySidedData.clear();
         for (Direction direction: Direction.values()) {

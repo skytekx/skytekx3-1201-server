@@ -12,6 +12,7 @@ import com.enderio.machines.common.io.SidedFixedIOConfig;
 import com.enderio.machines.common.io.item.SingleSlotAccess;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -28,16 +29,17 @@ public abstract class ObeliskBlockEntity extends PoweredMachineBlockEntity {
         super(energyIOMode, capacity, usageRate, type, worldPosition, blockState);
 
         rangeVisibleDataSlot = new BooleanNetworkDataSlot(this::isRangeVisible, b -> this.rangeVisible = b);
-        addDataSlot(rangeVisibleDataSlot);
+        addClientDataSlot(rangeVisibleDataSlot);
         range = 4;
-        rangeDataSlot = new IntegerNetworkDataSlot(this::getRange, r -> this.range = r) {
+        // The range comes from the client, so clamp it.
+        rangeDataSlot = new IntegerNetworkDataSlot(this::getRange, r -> this.range = Mth.clamp(r, 0, getMaxRange())) {
             @Override
             public void updateServerCallback() {
                 updateLocations();
                 setChanged();
             }
         };
-        addDataSlot(rangeDataSlot);
+        addClientDataSlot(rangeDataSlot);
     }
 
     @Override

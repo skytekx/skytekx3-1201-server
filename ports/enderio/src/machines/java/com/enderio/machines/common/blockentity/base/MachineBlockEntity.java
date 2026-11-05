@@ -152,7 +152,7 @@ public abstract class MachineBlockEntity extends EnderBlockEntity implements Men
                 redstoneControl = e;
                 updateRedstone();
             });
-            addDataSlot(redstoneControlDataSlot);
+            addClientDataSlot(redstoneControlDataSlot);
         } else {
             redstoneControlDataSlot = null;
         }
@@ -163,7 +163,7 @@ public abstract class MachineBlockEntity extends EnderBlockEntity implements Men
                 onIOConfigChanged();
             }
         });
-        addDataSlot(ioConfigDataSlot);
+        addClientDataSlot(ioConfigDataSlot);
 
         addDataSlot(new SetNetworkDataSlot<>(this::getMachineStates, l -> states = l, MachineState::toNBT , MachineState::fromNBT, MachineState::toBuffer, MachineState::fromBuffer ));
     }

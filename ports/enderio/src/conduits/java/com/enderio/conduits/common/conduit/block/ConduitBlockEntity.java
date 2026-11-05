@@ -103,11 +103,18 @@ public class ConduitBlockEntity extends EnderBlockEntity {
      */
     @UseOnly(LogicalSide.SERVER)
     public void handleConnectionStateUpdate(Direction direction, ConduitType<?> conduitType, DynamicConnectionState connectionState) {
-        // Sanity check, the client shouldn't do this, but just to make sure there's no confusion.
-        if (bundle.getConnectionState(direction, conduitType) instanceof DynamicConnectionState) {
-            bundle.setConnectionState(direction, conduitType, connectionState);
+        if (!bundle.hasType(conduitType)) {
+            return;
+        }
 
-            pushIOState(direction, bundle.getNodeFor(conduitType), connectionState);
+        // Sanity check, the client shouldn't do this, but just to make sure there's no confusion.
+        if (bundle.getConnectionState(direction, conduitType) instanceof DynamicConnectionState current) {
+            // The filters and the upgrade are real items, which only the slots of the conduit menu may change.
+            // Keep the server's items, so a client can neither create nor delete them through this packet.
+            DynamicConnectionState newState = connectionState.withItems(current);
+            bundle.setConnectionState(direction, conduitType, newState);
+
+            pushIOState(direction, bundle.getNodeFor(conduitType), newState);
         }
 
         updateClient();
@@ -116,8 +123,17 @@ public class ConduitBlockEntity extends EnderBlockEntity {
 
     @UseOnly(LogicalSide.SERVER)
     public void handleExtendedDataUpdate(ConduitType<?> conduitType, CompoundTag compoundTag) {
+        if (!bundle.hasType(conduitType)) {
+            return;
+        }
+
         var node = getBundle().getNodeFor(conduitType);
-        node.getConduitData().deserializeNBT(compoundTag);
+        if (node == null) {
+            return;
+        }
+
+        // Only the fields the conduit screen may change. The full deserializeNBT would let a client set the stored energy.
+        node.getConduitData().applyGuiNBT(compoundTag);
     }
 
     // endregion

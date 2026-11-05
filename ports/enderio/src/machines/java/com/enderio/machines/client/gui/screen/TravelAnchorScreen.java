@@ -4,6 +4,7 @@ import com.enderio.EnderIO;
 import com.enderio.api.misc.Vector2i;
 import com.enderio.base.common.lang.EIOLang;
 import com.enderio.core.client.gui.widgets.ToggleImageButton;
+import com.enderio.machines.common.blockentity.TravelAnchorBlockEntity;
 import com.enderio.machines.common.menu.TravelAnchorMenu;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -27,7 +28,7 @@ public class TravelAnchorScreen extends MachineScreen<TravelAnchorMenu> {
         name.setTextColor(0xFFFFFFFF);
         name.setTextColorUneditable(0xFFFFFFFF);
         name.setBordered(false);
-        name.setMaxLength(50);
+        name.setMaxLength(TravelAnchorBlockEntity.MAX_NAME_LENGTH);
         name.setResponder(getMenu().getBlockEntity()::setName);
         name.setValue(getMenu().getBlockEntity().getName());
         this.addRenderableWidget(name);

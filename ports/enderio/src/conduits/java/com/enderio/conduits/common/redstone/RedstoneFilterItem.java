@@ -56,7 +56,8 @@ public class RedstoneFilterItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        if (pPlayer instanceof ServerPlayer serverPlayer && menu != null) {
+        // The menu edits the main hand stack, so a filter used from the off hand must not open it.
+        if (pPlayer instanceof ServerPlayer serverPlayer && menu != null && pUsedHand == InteractionHand.MAIN_HAND) {
             openMenu(serverPlayer);
         }
         return super.use(pLevel, pPlayer, pUsedHand);

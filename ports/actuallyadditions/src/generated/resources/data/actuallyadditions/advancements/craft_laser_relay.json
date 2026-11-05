@@ -1,0 +1,38 @@
+{
+  "parent": "actuallyadditions:craft_reconstructor",
+  "criteria": {
+    "laser_relay": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "actuallyadditions:laser_relay"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "achievement.actuallyadditions.craftLaserRelay.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "actuallyadditions:laser_relay"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "achievement.actuallyadditions.craftLaserRelay"
+    }
+  },
+  "requirements": [
+    [
+      "laser_relay"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

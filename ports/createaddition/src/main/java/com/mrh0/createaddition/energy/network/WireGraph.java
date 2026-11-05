@@ -583,6 +583,16 @@ public class WireGraph extends SavedData {
 		for (WireVertex vertex : graph.vertices.values())
 			for (WireSlot slot : vertex.slots.values())
 				if (!graph.vertices.containsKey(slot.otherPos())) graph.verifier.request(slot.otherPos());
+		/*
+		 * SkyTekx: also check every saved node against the world once per session. Upstream trusts the
+		 * save until a node's chunk loads, so after a boot of a build without the graph (a rollback to
+		 * 1.3.3), a restored region file or any other change made while the graph was not running, the
+		 * networks keep carrying energy over wires and connectors that no longer exist. The test world
+		 * showed exactly that after a round trip to 1.3.3 until /cca_wires rebuild. The checks read the
+		 * saved chunks in the background like any other unknown node, never load a chunk, and the graph
+		 * keeps working from its save until the answers come in.
+		 */
+		graph.verifyAll();
 		return graph;
 	}
 

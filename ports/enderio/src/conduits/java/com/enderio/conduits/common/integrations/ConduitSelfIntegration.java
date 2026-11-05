@@ -12,7 +12,12 @@ public class ConduitSelfIntegration implements Integration {
     @Override
     public Optional<BlockState> getFacadeOf(ItemStack stack) {
         if (stack.getItem() instanceof IFacadeItem facadeItem) {
-            return Optional.of(facadeItem.getTexture(stack));
+            // An unpainted conduit facade has no texture yet and is no facade.
+            BlockState texture = facadeItem.getTexture(stack);
+            //noinspection ConstantValue
+            if (texture != null && !texture.isAir()) {
+                return Optional.of(texture);
+            }
         }
         return Optional.empty();
     }

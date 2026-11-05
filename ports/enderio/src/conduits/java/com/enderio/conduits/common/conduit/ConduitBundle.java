@@ -4,13 +4,17 @@ import com.enderio.api.UseOnly;
 import com.enderio.api.conduit.ConduitData;
 import com.enderio.api.conduit.ConduitType;
 import com.enderio.api.conduit.SlotType;
+import com.enderio.api.conduit.facade.FacadeType;
 import com.enderio.api.misc.ColorControl;
 import com.enderio.api.misc.RedstoneControl;
+import com.enderio.base.EIONBTKeys;
 import com.enderio.conduits.client.ConduitClientSetup;
 import com.enderio.conduits.common.conduit.block.ConduitBlockEntity;
 import com.enderio.conduits.common.conduit.connection.ConnectionState;
 import com.enderio.conduits.common.conduit.connection.DynamicConnectionState;
 import com.enderio.conduits.common.conduit.connection.StaticConnectionStates;
+import com.enderio.conduits.common.conduit.facades.ConduitFacade;
+import com.enderio.conduits.common.init.ConduitItems;
 import com.enderio.conduits.common.init.EIOConduitTypes;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -22,6 +26,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,6 +36,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +62,18 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
     private final Map<ConduitType<?>, ConduitGraphObject<?>> nodes = new HashMap<>();
     private final BlockPos pos;
 
-    private final Map<Direction, BlockState> facadeTextures = new EnumMap<>(Direction.class);
+    /**
+     * The facade item that covers this bundle (Ender IO 7.1, 78e627263), saved under {@link #KEY_FACADE_PROVIDER}. It is kept even if
+     * it no longer resolves to a facade (a paint or a mod went missing), so the item still drops when the bundle goes.
+     */
+    private ItemStack facadeProvider = ItemStack.EMPTY;
+
+    /**
+     * The facade that {@link #facadeProvider} resolves to. The block light engine of a server reads it from its own thread, so the
+     * main thread replaces it as a whole and never changes it in place.
+     */
+    @Nullable
+    private volatile ConduitFacade facade;
 
     @Nullable
     private Runnable onChangedRunnable;
@@ -258,18 +275,62 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
         return types;
     }
 
-    public boolean hasFacade(Direction direction) {
-        return facadeTextures.containsKey(direction);
+    // region Facades
+
+    /**
+     * @return whether a facade covers this bundle and resolves to a block
+     */
+    public boolean hasFacade() {
+        return facade != null;
     }
 
-    public Optional<BlockState> getFacade(Direction direction) {
-        return Optional.ofNullable(facadeTextures.get(direction));
+    /**
+     * @return whether the bundle stores a facade item, even one that no longer resolves to a block
+     */
+    public boolean hasFacadeProvider() {
+        return !facadeProvider.isEmpty();
     }
 
-    public void setFacade(BlockState facade, Direction direction) {
-        facadeTextures.put(direction, facade);
+    public Optional<ConduitFacade> getFacade() {
+        return Optional.ofNullable(facade);
+    }
+
+    public Optional<BlockState> getFacadeState() {
+        ConduitFacade current = facade;
+        return current == null ? Optional.empty() : Optional.of(current.state());
+    }
+
+    public Optional<FacadeType> getFacadeType() {
+        ConduitFacade current = facade;
+        return current == null ? Optional.empty() : Optional.of(current.type());
+    }
+
+    /**
+     * @return a copy of the stored facade item, or {@link ItemStack#EMPTY}
+     */
+    public ItemStack getFacadeProvider() {
+        return facadeProvider.copy();
+    }
+
+    /**
+     * Store one item of the stack as the facade (ff23e13c4 keeps only one, so a stack in the bundle cannot duplicate items).
+     */
+    public void setFacadeProvider(ItemStack stack) {
+        setFacadeProviderInternal(stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1));
         onChanged();
     }
+
+    public void clearFacade() {
+        setFacadeProviderInternal(ItemStack.EMPTY);
+        onChanged();
+    }
+
+    private void setFacadeProviderInternal(ItemStack stack) {
+        facadeProvider = stack;
+        facade = ConduitFacade.of(stack).orElse(null);
+    }
+
+    // endregion
 
     public void connectTo(Level level, BlockPos pos, Direction direction, ConduitType<?> type, boolean end) {
         connections.get(direction).connectTo(level, pos, getNodeFor(type), direction, type, getTypeIndex(type), end);
@@ -347,7 +408,8 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
 
     @Override
     public int hashCode() {
-        int hash = Objects.hash(connections, types, facadeTextures);
+        // ItemStack has no content hash, so hash the item and its tag. The data slot compares this to decide whether to sync.
+        int hash = Objects.hash(connections, types, facadeProvider.isEmpty() ? null : facadeProvider.getItem(), facadeProvider.getTag());
 
         // Manually hash the map, using hashContents instead of hashCode to avoid breaking the graph.
         for (var entry : nodes.entrySet()) {
@@ -363,7 +425,7 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
         var bundle = new ConduitBundle(() -> {}, pos);
         bundle.types.addAll(types);
         connections.forEach((dir, connection) -> bundle.connections.put(dir, connection.deepCopy()));
-        bundle.facadeTextures.putAll(facadeTextures);
+        bundle.setFacadeProviderInternal(facadeProvider.copy());
         nodes.forEach((type, node) -> bundle.setNodeFor(type, node.deepCopy()));
         return bundle;
     }
@@ -372,7 +434,9 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
 
     private static final String KEY_TYPES = "Types";
     private static final String KEY_CONNECTIONS = "Connections";
+    // The per-side facade map of 6.x, which 6.x wrote but never filled (ConduitBlock.ENABLE_FACADES was false). It is read, never written.
     private static final String KEY_FACADES = "Facades";
+    private static final String KEY_FACADE_PROVIDER = "FacadeProvider";
     private static final String KEY_NODE_TYPE = "NodeType";
     private static final String KEY_NODE_DATA = "NodeData";
     private static final String KEY_NODES = "Nodes";
@@ -391,12 +455,9 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
             connectionsTag.put(dir.getName(), connections.get(dir).serializeNBT());
         }
         tag.put(KEY_CONNECTIONS, connectionsTag);
-        CompoundTag facades = new CompoundTag();
-        for (Map.Entry<Direction, BlockState> entry : facadeTextures.entrySet()) {
-            Tag blockStateTag = BlockState.CODEC.encode(entry.getValue(), NbtOps.INSTANCE, new CompoundTag()).get().left().orElse(new CompoundTag());
-            facades.put(entry.getKey().getName(), blockStateTag);
+        if (!facadeProvider.isEmpty()) {
+            tag.put(KEY_FACADE_PROVIDER, facadeProvider.save(new CompoundTag()));
         }
-        tag.put(KEY_FACADES, facades);
         if (EffectiveSide.get().isServer()) {
             ListTag nodeTag = new ListTag();
             for (var entry : nodes.entrySet()) {
@@ -441,16 +502,10 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
                 connections.get(dir).removeType(invalidTypes.get(i));
             }
         }
-        facadeTextures.clear();
-        CompoundTag facades = nbt.getCompound(KEY_FACADES);
-        for (Direction direction : Direction.values()) {
-            if (facades.contains(direction.getName())) {
-                facadeTextures.put(direction, BlockState.CODEC.decode(NbtOps.INSTANCE, facades.getCompound(direction.getName())).get().left().get().getFirst());
-            }
-        }
-        for (Map.Entry<Direction, BlockState> entry : facadeTextures.entrySet()) {
-            Tag blockStateTag = BlockState.CODEC.encode(entry.getValue(), NbtOps.INSTANCE, new CompoundTag()).get().left().orElse(new CompoundTag());
-            facades.put(entry.getKey().getName(), blockStateTag);
+        if (nbt.contains(KEY_FACADE_PROVIDER, Tag.TAG_COMPOUND)) {
+            setFacadeProviderInternal(ItemStack.of(nbt.getCompound(KEY_FACADE_PROVIDER)));
+        } else {
+            setFacadeProviderInternal(readLegacyFacade(nbt.getCompound(KEY_FACADES)));
         }
         nodes.entrySet().removeIf(entry -> !types.contains(entry.getKey()));
         if (EffectiveSide.get().isServer()) {
@@ -478,6 +533,36 @@ public final class ConduitBundle implements INBTSerializable<CompoundTag> {
                 }
             }
         }
+    }
+
+    /**
+     * A bundle saved by 6.x has an empty Facades map. Should a map ever hold a block, the first one becomes a basic conduit facade painted
+     * with it, so it is kept. A state that does not decode is skipped, where 6.x threw on load.
+     */
+    private static ItemStack readLegacyFacade(CompoundTag facades) {
+        for (Direction direction : Direction.values()) {
+            if (!facades.contains(direction.getName(), Tag.TAG_COMPOUND)) {
+                continue;
+            }
+
+            Optional<BlockState> state = BlockState.CODEC.parse(NbtOps.INSTANCE, facades.getCompound(direction.getName())).result();
+            if (state.isEmpty() || state.get().isAir()) {
+                continue;
+            }
+
+            ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(state.get().getBlock());
+            if (blockId == null) {
+                continue;
+            }
+
+            ItemStack stack = new ItemStack(ConduitItems.CONDUIT_FACADE.get());
+            CompoundTag blockEntityTag = new CompoundTag();
+            blockEntityTag.putString(EIONBTKeys.PAINT, blockId.toString());
+            stack.getOrCreateTag().put(BlockItem.BLOCK_ENTITY_TAG, blockEntityTag);
+            return stack;
+        }
+
+        return ItemStack.EMPTY;
     }
 
     private <T extends ConduitData<T>> void createClientConduitGraphObject(BlockPos pos, ConduitType<T> conduitType) {

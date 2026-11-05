@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "enderio:conduit_facade"
+    },
+    {
+      "tag": "enderio:clear_glass"
+    }
+  ],
+  "result": {
+    "item": "enderio:transparent_conduit_facade"
+  }
+}

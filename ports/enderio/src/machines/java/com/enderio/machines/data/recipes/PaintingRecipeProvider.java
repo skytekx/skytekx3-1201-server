@@ -56,6 +56,23 @@ public class PaintingRecipeProvider extends EnderRecipeProvider {
         build(EIOBlocks.PAINTED_WALL, Ingredient.of(EIOBlocks.PAINTED_WALL), "_frompainted", pFinishedRecipeConsumer);
         build(EIOBlocks.PAINTED_GLOWSTONE, Ingredient.of(EIOBlocks.PAINTED_GLOWSTONE), "_frompainted", pFinishedRecipeConsumer);
         build(MachineBlocks.PAINTED_TRAVEL_ANCHOR, Ingredient.of(MachineBlocks.PAINTED_TRAVEL_ANCHOR), "_frompainted", pFinishedRecipeConsumer);
+
+        // Ender IO 7.1 (78e627263): the painting machine paints conduit facades, painted or not. The conduits module is not on the
+        // classpath of the machines module, so the facades are looked up by id.
+        for (String facade : new String[] { "conduit_facade", "hardened_conduit_facade", "transparent_conduit_facade",
+            "transparent_hardened_conduit_facade" }) {
+            Item facadeItem = getItem(EnderIO.loc(facade));
+            build(facadeItem, Ingredient.of(facadeItem), pFinishedRecipeConsumer);
+        }
+    }
+
+    private static Item getItem(ResourceLocation id) {
+        Item item = ForgeRegistries.ITEMS.getValue(id);
+        if (item == null || item == Items.AIR) {
+            throw new IllegalStateException("Missing item " + id + " for a painting recipe");
+        }
+
+        return item;
     }
 
 

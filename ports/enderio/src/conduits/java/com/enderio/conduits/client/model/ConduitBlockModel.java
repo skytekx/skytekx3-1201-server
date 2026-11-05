@@ -4,7 +4,6 @@ import com.enderio.api.conduit.ConduitType;
 import com.enderio.api.conduit.ConduitData;
 import com.enderio.api.conduit.model.ConduitCoreModelModifier;
 import com.enderio.api.misc.RedstoneControl;
-import com.enderio.base.client.model.PaintingQuadTransformer;
 import com.enderio.conduits.client.model.conduit.modifier.ConduitCoreModelModifiers;
 import com.enderio.conduits.common.Area;
 import com.enderio.conduits.common.conduit.ConduitGraphObject;
@@ -46,7 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.enderio.conduits.client.ConduitClientSetup.BOX;
@@ -54,7 +52,6 @@ import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_CONNECTION;
 import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_CONNECTION_BOX;
 import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_CONNECTOR;
 import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_CORE;
-import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_FACADE;
 import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_IO_IN;
 import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_IO_IN_OUT;
 import static com.enderio.conduits.client.ConduitClientSetup.CONDUIT_IO_OUT;
@@ -127,18 +124,6 @@ public class ConduitBlockModel implements IDynamicBakedModel {
                             }
                         }
                     }
-                }
-
-                Optional<BlockState> facadeOpt = conduitBundle.getFacade(direction);
-                if (facadeOpt.isPresent()) {
-                    BlockState facade = facadeOpt.get();
-                    BakedModel facadeModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(facade);
-                    List<BakedQuad> textureQuads = facadeModel.getQuads(state, preRotation, rand, ModelData.EMPTY, renderType);
-
-                    quads.addAll(rotation
-                        .andThen(new BlockColorQuadDataTransformer(pos, Minecraft.getInstance().level, facade))
-                        .andThen(new PaintingQuadTransformer(facade, renderType))
-                        .process(modelOf(CONDUIT_FACADE).getQuads(state, preRotation, rand, ModelData.EMPTY, renderType)));
                 }
             }
 

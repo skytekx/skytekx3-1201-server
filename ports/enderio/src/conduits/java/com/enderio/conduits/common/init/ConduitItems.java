@@ -3,9 +3,12 @@ package com.enderio.conduits.common.init;
 import com.enderio.EnderIO;
 import com.enderio.api.conduit.ConduitItemFactory;
 import com.enderio.api.conduit.ConduitType;
+import com.enderio.api.conduit.facade.FacadeType;
 import com.enderio.api.filter.ResourceFilter;
 import com.enderio.base.common.init.EIOCreativeTabs;
+import com.enderio.base.common.tag.EIOTags;
 import com.enderio.conduits.common.conduit.upgrade.SpeedUpgradeItem;
+import com.enderio.conduits.common.items.ConduitFacadeItem;
 import com.enderio.conduits.common.items.ConduitProbeItem;
 import com.enderio.conduits.common.redstone.RedstoneANDFilter;
 import com.enderio.conduits.common.redstone.RedstoneCountFilter;
@@ -40,6 +43,16 @@ public class ConduitItems {
     public static final ItemEntry<Item> ENDER_FLUID = createConduitItem(EIOConduitTypes.FLUID3, "ender_fluid");
     public static final ItemEntry<Item> REDSTONE = createConduitItem(EIOConduitTypes.REDSTONE, "redstone");
     public static final ItemEntry<Item> ITEM = createConduitItem(EIOConduitTypes.ITEM, "item");
+
+    // Ender IO 7.1 (78e627263) conduit facades.
+    public static final ItemEntry<ConduitFacadeItem> CONDUIT_FACADE = conduitFacade("conduit_facade", "Conduit Facade", FacadeType.BASIC,
+        "item/conduit_facade");
+    public static final ItemEntry<ConduitFacadeItem> TRANSPARENT_CONDUIT_FACADE = conduitFacade("transparent_conduit_facade",
+        "Transparent Conduit Facade", FacadeType.TRANSPARENT, "item/conduit_facade_transparent");
+    public static final ItemEntry<ConduitFacadeItem> HARDENED_CONDUIT_FACADE = conduitFacade("hardened_conduit_facade",
+        "Hardened Conduit Facade", FacadeType.HARDENED, "item/conduit_facade_hardened");
+    public static final ItemEntry<ConduitFacadeItem> TRANSPARENT_HARDENED_CONDUIT_FACADE = conduitFacade("transparent_hardened_conduit_facade",
+        "Transparent Hardened Conduit Facade", FacadeType.TRANSPARENT_HARDENED, "item/conduit_facade_transparent_hardened");
 
     public static final ItemEntry<SpeedUpgradeItem> EXTRACTION_SPEED_UPGRADE_1 = REGISTRATE
         .item("extraction_speed_upgrade_1", props -> new SpeedUpgradeItem(props, 1))
@@ -109,7 +122,18 @@ public class ConduitItems {
         })
         .tab(EIOCreativeTabs.GEAR)
         .properties(props -> props.stacksTo(1))
+        .tag(EIOTags.Items.HIDE_FACADES)
         .register();
+
+    private static ItemEntry<ConduitFacadeItem> conduitFacade(String name, String englishName, FacadeType type, String texture) {
+        return REGISTRATE
+            .item(name, props -> new ConduitFacadeItem(props, type))
+            .lang(englishName)
+            .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), new ResourceLocation("item/generated"))
+                .texture("layer0", EnderIO.loc(texture)))
+            .tab(EIOCreativeTabs.CONDUITS)
+            .register();
+    }
 
     private static ItemEntry<Item> createConduitItem(Supplier<? extends ConduitType<?>> type, String itemName) {
         return REGISTRATE.item(itemName + "_conduit",

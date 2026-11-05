@@ -81,6 +81,12 @@ public class ConduitBlockEntity extends EnderBlockEntity {
 
     private UpdateState checkConnection = UpdateState.NONE;
 
+    /**
+     * Ender IO 7.1 (eb53f388b) checks the block light of a loaded faced bundle in onLoad. The fork defers that to the first server
+     * tick, as no world access may happen from onLoad (the chunk load deadlock of 4dd6e5e09).
+     */
+    private boolean checkFacadeLight = false;
+
     private final Map<ConduitType<?>, ConduitGraphObject<?>> lazyNodes = new HashMap<>();
     private ListTag lazyNodeNBT = new ListTag();
 
@@ -150,6 +156,7 @@ public class ConduitBlockEntity extends EnderBlockEntity {
     public void onLoad() {
         updateShape();
         if (level instanceof ServerLevel serverLevel) {
+            checkFacadeLight = bundle.hasFacade();
             sync();
             bundle.onLoad(level, getBlockPos());
             for (var entry: lazyNodes.entrySet()) {
@@ -194,6 +201,11 @@ public class ConduitBlockEntity extends EnderBlockEntity {
 
     public void everyTick() {
         if (level != null && !level.isClientSide) {
+            if (checkFacadeLight) {
+                checkFacadeLight = false;
+                level.getLightEngine().checkBlock(worldPosition);
+            }
+
             serverTick();
             checkConnection = checkConnection.next();
             if (checkConnection.isInitialized()) {
@@ -383,8 +395,60 @@ public class ConduitBlockEntity extends EnderBlockEntity {
             ConduitBreakParticle.addDestroyEffects(getBlockPos(), type);
         }
 
+        // The last conduit takes the bundle and its facade with it (Ender IO 7.1, 78e627263).
+        if (shouldRemove && shouldDrop && !level.isClientSide() && bundle.hasFacadeProvider()) {
+            dropItem(bundle.getFacadeProvider());
+        }
+
         return shouldRemove;
     }
+
+    // region Facades
+
+    /**
+     * Cover the bundle with one item of the stack (Ender IO 7.1, 78e627263).
+     */
+    public void setFacadeProvider(ItemStack stack) {
+        int lightBefore = level.getLightEmission(worldPosition);
+        bundle.setFacadeProvider(stack);
+        onFacadeChanged(lightBefore);
+    }
+
+    /**
+     * Take the facade off the bundle and drop its item if asked to. The conduits stay.
+     */
+    public void removeFacade(boolean shouldDrop) {
+        if (!bundle.hasFacadeProvider()) {
+            return;
+        }
+
+        if (shouldDrop && !level.isClientSide()) {
+            dropItem(bundle.getFacadeProvider());
+        }
+
+        int lightBefore = level.getLightEmission(worldPosition);
+        bundle.clearFacade();
+        onFacadeChanged(lightBefore);
+    }
+
+    private void onFacadeChanged(int lightBefore) {
+        updateShape();
+        if (level.isClientSide()) {
+            updateClient();
+        } else {
+            // The bundle turned into a full block or back, so attached torches, dust and redstone read the new shape.
+            BlockState state = getBlockState();
+            level.updateNeighborsAt(worldPosition, state.getBlock());
+            state.updateNeighbourShapes(level, worldPosition, Block.UPDATE_ALL);
+        }
+
+        // Ender IO 7.1 (eb53f388b): the bundle takes the light of its facade.
+        if (lightBefore != level.getLightEmission(worldPosition)) {
+            level.getLightEngine().checkBlock(worldPosition);
+        }
+    }
+
+    // endregion
 
     public void destroyAllConnections() {
         var typesToRemove = List.copyOf(bundle.getTypes());

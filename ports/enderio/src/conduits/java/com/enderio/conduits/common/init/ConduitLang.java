@@ -21,6 +21,12 @@ public class ConduitLang {
     public static final Component STRONG_SIGNAL_ENABLED = REGISTRATE.addLang("gui", EnderIO.loc("conduit.redstone.strong_signal.enabled"), "Strong Signal Enabled");
     public static final Component STRONG_SIGNAL_DISABLED = REGISTRATE.addLang("gui", EnderIO.loc("conduit.redstone.strong_signal.disabled"), "Strong Signal Disabled");
 
+    // Ender IO 7.1 (78e627263) conduit facades.
+    public static final MutableComponent TRANSPARENT_FACADE_TOOLTIP = REGISTRATE.addLang("tooltip", EnderIO.loc("conduit_facade.transparent"),
+        "Transparent: Hides conduits when painted with a translucent block");
+    public static final MutableComponent BLAST_RESIST_FACADE_TOOLTIP = REGISTRATE.addLang("tooltip", EnderIO.loc("conduit_facade.blast_resist"),
+        "Hardened: Resists breaking and explosions");
+
     public static void register() {
     }
 }

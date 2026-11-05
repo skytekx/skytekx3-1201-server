@@ -1,0 +1,25 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "experience": 1.3,
+  "ingredients": [
+    {
+      "tag": "forge:cooked_fishes/salmon"
+    },
+    {
+      "tag": "forge:crops/chili_pepper"
+    },
+    {
+      "tag": "forge:crops/rice"
+    },
+    {
+      "tag": "forge:crops/onion"
+    }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "item": "expandeddelight:chili_pepper_salmon"
+  }
+}

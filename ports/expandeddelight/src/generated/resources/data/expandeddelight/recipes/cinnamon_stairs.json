@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "wooden_stairs",
+  "key": {
+    "i": {
+      "item": "expandeddelight:cinnamon_planks"
+    }
+  },
+  "pattern": [
+    "i  ",
+    "ii ",
+    "iii"
+  ],
+  "result": {
+    "item": "expandeddelight:cinnamon_stairs",
+    "count": 4
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "expandeddelight:salt_rock"
+    }
+  ],
+  "result": [
+    {
+      "item": "expandeddelight:salt",
+      "count": 2
+    },
+    {
+      "item": "expandeddelight:salt",
+      "chance": 0.15
+    }
+  ],
+  "tool": {
+    "tag": "expandeddelight:crushing_tools"
+  }
+}

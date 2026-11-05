@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#forge:is_swamp",
+  "features": "expandeddelight:patch_cranberries",
+  "step": "vegetal_decoration"
+}

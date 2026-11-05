@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "tag": "forge:crops/wheat"
+    },
+    "w": {
+      "item": "minecraft:sugar"
+    }
+  },
+  "pattern": [
+    "cwc"
+  ],
+  "result": {
+    "item": "expandeddelight:sugar_cookie",
+    "count": 8
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "wooden_fence",
+  "key": {
+    "i": {
+      "item": "expandeddelight:cinnamon_planks"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "pattern": [
+    "isi",
+    "isi"
+  ],
+  "result": {
+    "item": "expandeddelight:cinnamon_fence",
+    "count": 3
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "values": [
+    "#forge:crops/asparagus",
+    "#forge:crops/sweet_potato",
+    "#forge:crops/chili_pepper",
+    {
+      "id": "#forge:crops/peanut",
+      "required": false
+    }
+  ]
+}

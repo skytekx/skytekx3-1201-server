@@ -1,0 +1,22 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "item": "expandeddelight:glass_jar"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    {
+      "item": "expandeddelight:cranberries"
+    },
+    {
+      "item": "expandeddelight:cranberries"
+    },
+    {
+      "item": "minecraft:sugar"
+    }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "item": "expandeddelight:cranberry_jelly"
+  }
+}

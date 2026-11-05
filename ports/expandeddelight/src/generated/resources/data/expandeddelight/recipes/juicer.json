@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:barrel"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "pattern": [
+    "iii",
+    " b ",
+    "iii"
+  ],
+  "result": {
+    "item": "expandeddelight:juicer"
+  }
+}

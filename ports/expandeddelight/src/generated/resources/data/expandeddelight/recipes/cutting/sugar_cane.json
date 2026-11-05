@@ -1,0 +1,21 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "minecraft:sugar_cane"
+    }
+  ],
+  "result": [
+    {
+      "item": "minecraft:sugar",
+      "count": 2
+    },
+    {
+      "item": "minecraft:sugar",
+      "chance": 0.15
+    }
+  ],
+  "tool": {
+    "tag": "expandeddelight:crushing_tools"
+  }
+}

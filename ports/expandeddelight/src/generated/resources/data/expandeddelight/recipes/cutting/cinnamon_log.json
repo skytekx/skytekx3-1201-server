@@ -1,0 +1,26 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "expandeddelight:cinnamon_log"
+    }
+  ],
+  "result": [
+    {
+      "item": "expandeddelight:cinnamon_stick",
+      "count": 4
+    },
+    {
+      "item": "expandeddelight:stripped_cinnamon_log"
+    }
+  ],
+  "tool": [
+    {
+      "type": "farmersdelight:tool_action",
+      "action": "axe_dig"
+    },
+    {
+      "tag": "minecraft:axes"
+    }
+  ]
+}

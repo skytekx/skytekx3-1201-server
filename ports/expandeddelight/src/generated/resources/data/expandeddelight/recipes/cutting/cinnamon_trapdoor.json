@@ -1,0 +1,22 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "expandeddelight:cinnamon_trapdoor"
+    }
+  ],
+  "result": [
+    {
+      "item": "expandeddelight:cinnamon_planks"
+    }
+  ],
+  "tool": [
+    {
+      "type": "farmersdelight:tool_action",
+      "action": "axe_dig"
+    },
+    {
+      "tag": "minecraft:axes"
+    }
+  ]
+}

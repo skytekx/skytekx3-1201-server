@@ -1,0 +1,25 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "experience": 0.9,
+  "ingredients": [
+    {
+      "item": "expandeddelight:sweet_potato"
+    },
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "tag": "forge:eggs"
+    },
+    {
+      "item": "minecraft:sugar"
+    }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "item": "expandeddelight:sweet_potato_casserole"
+  }
+}

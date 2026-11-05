@@ -1,0 +1,21 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "minecraft:blaze_rod"
+    }
+  ],
+  "result": [
+    {
+      "item": "minecraft:blaze_powder",
+      "count": 3
+    },
+    {
+      "item": "minecraft:blaze_powder",
+      "chance": 0.15
+    }
+  ],
+  "tool": {
+    "tag": "expandeddelight:crushing_tools"
+  }
+}

@@ -1,5 +1,6 @@
 package com.enderio.base.common.loot;
 
+import com.enderio.api.capacitor.CapacitorModifier;
 import com.enderio.base.common.capacitor.CapacitorUtil;
 import com.enderio.base.common.capacitor.LootCapacitorData;
 import com.enderio.base.common.init.EIOCapabilities;
@@ -14,6 +15,10 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class SetLootCapacitorFunction extends LootItemConditionalFunction {
     private final NumberProvider range;
@@ -33,16 +38,28 @@ public class SetLootCapacitorFunction extends LootItemConditionalFunction {
         stack.getCapability(EIOCapabilities.CAPACITOR).ifPresent(cap -> {
             if (cap instanceof LootCapacitorData lootCap) {
                 lootCap.setBase(range.getFloat(context));
-                lootCap.addNewModifier(CapacitorUtil.getRandomModifier(context.getRandom()), range.getFloat(context));
+                CapacitorModifier first = CapacitorUtil.getRandomModifier(context.getRandom());
+                lootCap.addNewModifier(first, range.getFloat(context));
+
+                // Never pick a modifier twice.
+                Set<CapacitorModifier> chosen = EnumSet.of(first);
 
                 // 15% chance of a secondary modifier
                 if (context.getRandom().nextFloat() < 0.15f) {
-                    lootCap.addModifier(CapacitorUtil.getRandomModifier(context.getRandom()), range.getFloat(context));
+                    Optional<CapacitorModifier> modifier = CapacitorUtil.getRandomModifier(context.getRandom(), chosen);
+                    modifier.ifPresent(m -> {
+                        lootCap.addModifier(m, range.getFloat(context));
+                        chosen.add(m);
+                    });
                 }
 
                 // 2% change of a third
                 if (context.getRandom().nextFloat() < 0.02f) {
-                    lootCap.addModifier(CapacitorUtil.getRandomModifier(context.getRandom()), range.getFloat(context));
+                    Optional<CapacitorModifier> modifier = CapacitorUtil.getRandomModifier(context.getRandom(), chosen);
+                    modifier.ifPresent(m -> {
+                        lootCap.addModifier(m, range.getFloat(context));
+                        chosen.add(m);
+                    });
                 }
             }
         });

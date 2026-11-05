@@ -52,7 +52,9 @@ Licenses
     version 3 or (at your option) any later version. LICENSE.txt in this jar holds the LGPL 3.0 text
     followed by the GNU GPL 3.0 text that it builds on. Every upstream source file keeps its header
     "Copyright (C) 2025 DragonsPlus, SPDX-License-Identifier: LGPL-3.0-or-later", and the files that
-    SkyTekx added carry the same license header with "Copyright (C) 2026 SkyTekx".
+    SkyTekx added carry the same license header with "Copyright (C) 2026 SkyTekx". The three classes
+    of the Lava Fishing integration are modified copies of upstream's Nether Depths Upgrade
+    integration and keep the DragonsPlus line next to the SkyTekx line.
   - Textures from Farmer's Delight (assets/create_integrated_farming/textures/block/farmersdelight/):
     MIT License, Copyright (c) 2020 vectorwing, see FARMERS_DELIGHT_LICENSE.txt next to them.
   - Parts from Create (https://github.com/Creators-of-Create/Create): the method

@@ -174,7 +174,11 @@ items below are what differs from upstream, with the reason.
     Upgrade integration: its catch provider rolls `lavafishing:gameplay/fishing/nether/fishing` in the
     Nether and `lavafishing:gameplay/fishing/lava/fishing` elsewhere, the nets capture the entities of
     the `lavafishing` namespace, and the Ponder scene shows the Quartz Fish. Lava Fishing also enables the
-    block, its recipe and its advancement. It is referenced by registry names only.
+    block, its recipe and its advancement. It is referenced by registry names only. Its three classes
+    `LavaFishingIntegration`, `LavaFishingNetCatchProvider` and `LavaFishingNetPonderExample` are
+    modified copies of upstream's `NDUIntegration`, `NDUFishingNetCatchProvider` and
+    `NDUFishingNetPonderExample`, so their headers keep "Copyright (C) 2025 DragonsPlus" and add the
+    SkyTekx line next to it.
 15. Twilight Delight: the Ponder scene names the Huge Lily Pad and Huge Water Lily by registry id instead
     of `TFItems`, so the source set needs no compile dependency on the Twilight Forest fork. The depot is
     emptied with `setHeldItem(ItemStack.EMPTY)`, since 1.20.1's depot has no `clearContent`.

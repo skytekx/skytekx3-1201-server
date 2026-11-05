@@ -1,50 +1,50 @@
 package com.github.mekanismextramodules.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 
 public final class ExtraModulesConfig {
-    public static final ModConfigSpec SERVER_SPEC;
+    public static final ForgeConfigSpec SERVER_SPEC;
 
-    public static final ModConfigSpec.BooleanValue DEBUG;
-    public static final ModConfigSpec.BooleanValue LOG_PROTECTION_EVENTS;
-    public static final ModConfigSpec.BooleanValue REQUIRE_FULL_MEKASUIT;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> ALLOWED_DIMENSIONS;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> BLOCKED_DIMENSIONS;
+    public static final ForgeConfigSpec.BooleanValue DEBUG;
+    public static final ForgeConfigSpec.BooleanValue LOG_PROTECTION_EVENTS;
+    public static final ForgeConfigSpec.BooleanValue REQUIRE_FULL_MEKASUIT;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ALLOWED_DIMENSIONS;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> BLOCKED_DIMENSIONS;
 
-    public static final ModConfigSpec.BooleanValue PHASE_ENABLED;
-    public static final ModConfigSpec.LongValue PHASE_ENERGY_COST_PER_TICK;
-    public static final ModConfigSpec.BooleanValue PHASE_SET_INVULNERABLE_TIME;
-    public static final ModConfigSpec.IntValue PHASE_INVULNERABILITY_TICKS;
-    public static final ModConfigSpec.DoubleValue PHASE_MIN_HEALTH;
-    public static final ModConfigSpec.BooleanValue PHASE_CLEAR_FIRE;
-    public static final ModConfigSpec.BooleanValue PHASE_RESET_FALL_DISTANCE;
+    public static final ForgeConfigSpec.BooleanValue PHASE_ENABLED;
+    public static final ForgeConfigSpec.LongValue PHASE_ENERGY_COST_PER_TICK;
+    public static final ForgeConfigSpec.BooleanValue PHASE_SET_INVULNERABLE_TIME;
+    public static final ForgeConfigSpec.IntValue PHASE_INVULNERABILITY_TICKS;
+    public static final ForgeConfigSpec.DoubleValue PHASE_MIN_HEALTH;
+    public static final ForgeConfigSpec.BooleanValue PHASE_CLEAR_FIRE;
+    public static final ForgeConfigSpec.BooleanValue PHASE_RESET_FALL_DISTANCE;
 
-    public static final ModConfigSpec.BooleanValue CHAOS_ENABLED;
-    public static final ModConfigSpec.BooleanValue CHAOS_ALLOW_MIXIN_PROTECTION;
-    public static final ModConfigSpec.BooleanValue CHAOS_STRICT_DRACONIC_ONLY;
+    public static final ForgeConfigSpec.BooleanValue CHAOS_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue CHAOS_ALLOW_MIXIN_PROTECTION;
+    public static final ForgeConfigSpec.BooleanValue CHAOS_STRICT_DRACONIC_ONLY;
 
-    public static final ModConfigSpec.BooleanValue REVIVAL_ENABLED;
-    public static final ModConfigSpec.LongValue REVIVAL_ENERGY_COST;
-    public static final ModConfigSpec.DoubleValue REVIVAL_HEALTH;
-    public static final ModConfigSpec.DoubleValue REVIVAL_HEALTH_PERCENTAGE;
-    public static final ModConfigSpec.IntValue REVIVAL_INVULNERABILITY_TICKS;
-    public static final ModConfigSpec.BooleanValue REVIVAL_CLEAR_FIRE;
-    public static final ModConfigSpec.BooleanValue REVIVAL_RESET_FALL_DISTANCE;
-    public static final ModConfigSpec.BooleanValue REVIVAL_CURE_HARMFUL_EFFECTS;
-    public static final ModConfigSpec.BooleanValue REVIVAL_APPLY_TOTEM_EFFECTS;
-    public static final ModConfigSpec.IntValue REVIVAL_REGENERATION_DURATION;
-    public static final ModConfigSpec.IntValue REVIVAL_REGENERATION_AMPLIFIER;
-    public static final ModConfigSpec.IntValue REVIVAL_ABSORPTION_DURATION;
-    public static final ModConfigSpec.IntValue REVIVAL_ABSORPTION_AMPLIFIER;
-    public static final ModConfigSpec.IntValue REVIVAL_FIRE_RESISTANCE_DURATION;
-    public static final ModConfigSpec.IntValue REVIVAL_FIRE_RESISTANCE_AMPLIFIER;
-    public static final ModConfigSpec.BooleanValue REVIVAL_PLAY_TOTEM_ANIMATION;
-    public static final ModConfigSpec.BooleanValue REVIVAL_SHOW_MESSAGE;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_ENABLED;
+    public static final ForgeConfigSpec.LongValue REVIVAL_ENERGY_COST;
+    public static final ForgeConfigSpec.DoubleValue REVIVAL_HEALTH;
+    public static final ForgeConfigSpec.DoubleValue REVIVAL_HEALTH_PERCENTAGE;
+    public static final ForgeConfigSpec.IntValue REVIVAL_INVULNERABILITY_TICKS;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_CLEAR_FIRE;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_RESET_FALL_DISTANCE;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_CURE_HARMFUL_EFFECTS;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_APPLY_TOTEM_EFFECTS;
+    public static final ForgeConfigSpec.IntValue REVIVAL_REGENERATION_DURATION;
+    public static final ForgeConfigSpec.IntValue REVIVAL_REGENERATION_AMPLIFIER;
+    public static final ForgeConfigSpec.IntValue REVIVAL_ABSORPTION_DURATION;
+    public static final ForgeConfigSpec.IntValue REVIVAL_ABSORPTION_AMPLIFIER;
+    public static final ForgeConfigSpec.IntValue REVIVAL_FIRE_RESISTANCE_DURATION;
+    public static final ForgeConfigSpec.IntValue REVIVAL_FIRE_RESISTANCE_AMPLIFIER;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_PLAY_TOTEM_ANIMATION;
+    public static final ForgeConfigSpec.BooleanValue REVIVAL_SHOW_MESSAGE;
 
     static {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         builder.push("general");
         builder.comment("Enables additional diagnostic logging. Leave disabled during normal play.");

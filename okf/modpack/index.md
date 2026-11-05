@@ -10,7 +10,7 @@ timestamp: 2026-11-05
 
 SkyTekx 3 is a Forge 1.20.1 pack. Its versions 3.0.6 and 3.0.7 went up to the Modrinth project on
 2026-10-31, the second with the client mod Modflared for the public address, and the project is still
-a draft (see [publish](publish.md)). Its mods come from the Modrinth index and from 35 bundled jars,
+a draft (see [publish](publish.md)). Its mods come from the Modrinth index and from 52 bundled jars,
 and the server runs them on Arclight together with one Bukkit plugin (see
 [server](../server/index.md)). What was built for the pack itself, such as the Skylands, is under
 [content](../content/index.md).
@@ -21,6 +21,7 @@ and the server runs them on Arclight together with one Bukkit plugin (see
 | [Ender IO backport](enderio-backport.md) | The plan to bring an additive subset of Ender IO 8.2.x onto the vendored 6.x fork in `ports/enderio/`, with its bundles, exclusions, license conditions and savegame rules |
 | [Create Crafts & Additions backport](createaddition-backport.md) | The plan to bring the WireGraph, the fixes and the new content of the 1.7.x line onto the vendored 1.20.1 fork in `ports/createaddition/`, with its bundles, exclusions, license conditions, savegame and operator notes |
 | [Actually Additions backport](actuallyadditions-backport.md) | The plan to make the unreleased 1.20.1 branch of Actually Additions in `ports/actuallyadditions/` release quality and to bring the fixes and content of the newer lines up to 1.3.26 onto it, with its bundles, exclusions, license conditions, savegame, Arclight and operator notes |
+| [NeoForge ports](neoforge-ports.md) | The mods that only exist for NeoForge 1.21.1 or only on Fabric for 1.20.1 and how each one reaches the Forge pack, starting with Bygone Nether 1.3.2 in place of Eternal Nether, with source, license conditions, tests and operator steps |
 | [Draconic Evolution fixes](draconic-fixes.md) | Why Draconic Evolution stays the stock 1.20.1 build and which upstream fixes the pack's addon SkyTekx DE Fixes applies to it |
 | [AlmostUnified](almostunified.md) | One item per material across the tech mods, the successor of UniDict |
 | [KubeJS](kubejs.md) | The four server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |

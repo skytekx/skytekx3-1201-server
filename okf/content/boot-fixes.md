@@ -37,11 +37,8 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 244 files, 243 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 107 are
-[gameplay overrides](#gameplay-overrides).
-is tracked: 9,796 files, 9,795 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,660 are
+is tracked: 9,799 files, 9,798 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,662 are
 [gameplay overrides](#gameplay-overrides), 9,527 of them the generated recipes of [melting](melting.md).
 
 | Override | Count | What it replaces |
@@ -131,8 +128,7 @@ be none.
 
 ### Gameplay overrides
 
-Seven groups of files in the pack change the game on purpose:
-Nine groups of files in the pack change the game on purpose:
+Eleven groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -231,19 +227,6 @@ Nine groups of files in the pack change the game on purpose:
   gave wheat, potatoes and carrots by row, and the scan found 59 such recipes. The pack
   `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
   (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
-  Mac mini at 21:54 and load with its next `/reload` or start.
-- One block loot table at `data/bigreactors/loot_tables/blocks/energizerpowerportfe_active.json` makes
-  the Energizer Active FE Power Port of Extreme Reactors 2.0.97 drop itself since 2026-11-05. The jar
-  registers the block like the passive port but ships no loot table for it, and its loot datagen
-  (`BlockSubProvider`) lists only the passive port, so a mined port vanished with its recipe of four
-  energizer casings, two iron, two lapis and a redstone block. The file is the passive port's table
-  with the item `bigreactors:energizerpowerport_fe_active`, whose id has an underscore before `fe`
-  where the block id has none. The mod ships nothing at this id, so the pack order does not matter.
-  On a Forge 47.4.18 test server with only Extreme Reactors 2.0.97 and ZeroCore 2.1.48, `/loot spawn`
-  with a diamond pickaxe gave 0 items for the active port without the file, and 1 Energizer Active FE
-  Power Port with it, and `/setblock ... destroy` dropped the port. The passive Mekanism fluid port of
-  the reinforced reactor has no loot table either, already in 2.0.84, and stays as it is for now,
-  because the pack has not tested it with Mekanism.
   Mac mini at 21:54 and went live with the restart of 23:10 ("Done" at 23:11:09), whose log has no
   error about them.
 - Two trim materials, `data/tconstruct/trim_material/steel.json` and
@@ -261,6 +244,28 @@ Nine groups of files in the pack change the game on purpose:
   processor, and five loot tables under `loot_tables/blocks/` make an old block drop what its
   replacement drops. The script `tools/replace_blocks.py` converted the world of the Mac mini offline
   at the deploy of 3.1.3 on 2026-11-05, see [Old blocks](old-blocks.md).
+- One block loot table at `data/bigreactors/loot_tables/blocks/energizerpowerportfe_active.json` makes
+  the Energizer Active FE Power Port of Extreme Reactors 2.0.97 drop itself since 2026-11-05. The jar
+  registers the block like the passive port but ships no loot table for it, and its loot datagen
+  (`BlockSubProvider`) lists only the passive port, so a mined port vanished with its recipe of four
+  energizer casings, two iron, two lapis and a redstone block. The file is the passive port's table
+  with the item `bigreactors:energizerpowerport_fe_active`, whose id has an underscore before `fe`
+  where the block id has none. The mod ships nothing at this id, so the pack order does not matter.
+  On a Forge 47.4.18 test server with only Extreme Reactors 2.0.97 and ZeroCore 2.1.48, `/loot spawn`
+  with a diamond pickaxe gave 0 items for the active port without the file, and 1 Energizer Active FE
+  Power Port with it, and `/setblock ... destroy` dropped the port. The passive Mekanism fluid port of
+  the reinforced reactor has no loot table either, already in 2.0.84, and stays as it is for now,
+  because the pack has not tested it with Mekanism.
+- One structure tag at `data/bygonenether/tags/worldgen/structure/no_basalt.json` switches on the
+  basalt guard of Bygone Nether 1.3.2 since 2026-11-05 (1e25cdf). Its two mixins keep basalt columns
+  and deltas out of the bastion, the Piglin Manor, the Citadel and the Catacomb, but the jar ships the
+  tag only under `tags/worldgen/configured_structure_feature/`, the folder of Minecraft 1.18. So the
+  tag was empty, and columns and magma deltas grew through the bastions that the mod lets generate in
+  basalt deltas. The file holds the same four entries, each optional. Nothing else defines the tag, so
+  the pack order does not matter for it. On the Forge test server the bastion in a basalt delta held
+  9,800 basalt, 136 magma blocks and 175 lava inside its pieces without the file and 2,157, 0 and 8
+  with it, at the same pregen speed. Arclight gave nearly the same counts, see
+  [mod set](../modpack/mod-set.md#tests). Only Nether chunks generated after the deploy change.
 
 | | Hexxit Gear 1.0.1 | SkyTekx 2, Hexxit Gear 2.8.2 | Override |
 |---|---|---|---|

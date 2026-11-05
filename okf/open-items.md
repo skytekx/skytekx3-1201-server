@@ -290,8 +290,15 @@ evidence and the page with the details. The rulings behind the first section are
 - Bygone Nether in play. Forge and Arclight test servers generated its structures with their mobs and
   blocks in the Nether, but nobody has seen the natural spawns inside the structures, which need a
   player close by, rescued a Piglin Prisoner, used the Gilded Netherite Shield or seen the mobs in a
-  client, and the full pack has not booted with it. Its basalt check never runs, because its structure
-  tag sits in a folder of Minecraft 1.18, see [Mod set](modpack/mod-set.md#mixins-and-arclight). The
+  client. The test servers only carried the pack mods that it touches. The full pack has not booted
+  with it, so Deep Aether, L2Complements, Dungeons Arise and the rest of the Nether content never ran
+  next to it, and nobody has checked its soul stone biome modifier against all the Nether biome
+  modifiers of the pack for a feature order cycle. Before 3.1.3 ships, the full pack Arclight boot of
+  the integration should run a short Nether pregen and be checked against the error baseline and for
+  a line "Feature order cycle". A scan of all pack jars in the review of 2026-11-05 found no other
+  mixin on the methods of `PiglinAi`, `PiglinBruteAi`, `Player.disableShield`, `BasaltColumnsFeature`
+  or `DeltaFeature` that the mod targets. Its basalt check runs since the fixes pack carries its
+  structure tag (1e25cdf), see [Mod set](modpack/mod-set.md#mixins-and-arclight). The
   deploy has to move the fixes pack to the end of the pack order once, or the repaired Quark tag fails
   again, see [Mod set](modpack/mod-set.md#deploy).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has

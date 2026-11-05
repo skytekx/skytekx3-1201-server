@@ -925,6 +925,12 @@ logs stay on the Mac and are not in the repo.
   broke the Quark tag `quark:wraith_spawnable`, which the fixes pack repairs (eb0619b5). Forge and
   Arclight test servers generated its structures in the Nether without an error, see
   [Mod set](modpack/mod-set.md#bygone-nether).
+- Its basalt guard never ran, because the jar ships its structure tag in the folder of Minecraft 1.18,
+  so basalt columns and magma deltas grew through the bastions in basalt deltas. The fixes pack now
+  carries the tag (1e25cdf). In the bastion at chunk 5,-35 of the test seed the basalt inside the
+  pieces fell from 9,800 to 2,157 blocks on Forge and the magma blocks from 136 to 0, at the same pregen
+  speed, see [Mod set](modpack/mod-set.md#tests). The new page
+  [NeoForge ports](modpack/neoforge-ports.md) sums up the mods that stand in for 1.21.1 only mods.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

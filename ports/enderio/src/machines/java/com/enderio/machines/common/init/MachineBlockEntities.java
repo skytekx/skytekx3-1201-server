@@ -3,6 +3,7 @@ package com.enderio.machines.common.init;
 import com.enderio.EnderIO;
 import com.enderio.machines.common.blockentity.AlloySmelterBlockEntity;
 import com.enderio.machines.common.blockentity.AversionObeliskBlockEntity;
+import com.enderio.machines.common.blockentity.InhibitorObeliskBlockEntity;
 import com.enderio.machines.common.blockentity.CrafterBlockEntity;
 import com.enderio.machines.common.blockentity.CreativePowerBlockEntity;
 import com.enderio.machines.common.blockentity.DrainBlockEntity;
@@ -115,6 +116,8 @@ public class MachineBlockEntities {
     public static final BlockEntityEntry<AversionObeliskBlockEntity> AVERSION_OBELISK = register("aversion_obelisk", AversionObeliskBlockEntity::new, MachineBlocks.AVERSION_OBELISK);
 
     public static final BlockEntityEntry<VatBlockEntity> VAT = register("vat", VatBlockEntity::new, MachineBlocks.VAT);
+
+    public static final BlockEntityEntry<InhibitorObeliskBlockEntity> INHIBITOR_OBELISK = register("inhibitor_obelisk", InhibitorObeliskBlockEntity::new, MachineBlocks.INHIBITOR_OBELISK);
 
     @SafeVarargs
     private static <B extends BlockEntity> BlockEntityEntry<B> register(String name, BlockEntityBuilder.BlockEntityFactory<B> beFactory,

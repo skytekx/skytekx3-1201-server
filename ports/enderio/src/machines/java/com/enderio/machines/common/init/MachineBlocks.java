@@ -248,6 +248,18 @@ public class MachineBlocks {
         .build()
         .register();
 
+    // SkyTekx: backported from 8.x (f216165c6).
+    public static final BlockEntry<MachineBlock> INHIBITOR_OBELISK = REGISTRATE
+        .block("inhibitor_obelisk", props -> new MachineBlock(props, MachineBlockEntities.INHIBITOR_OBELISK, OBELISK_SHAPE))
+        .properties(props -> props.strength(2.5f, 8).isViewBlocking((pState, pLevel, pPos) -> false).noOcclusion())
+        .loot(MachinesLootTable::copyNBT)
+        .tag(BlockTags.NEEDS_IRON_TOOL, BlockTags.MINEABLE_WITH_PICKAXE)
+        .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().getExistingFile(EnderIO.loc("block/" + ctx.getName()))))
+        .item()
+        .tab(EIOCreativeTabs.MACHINES)
+        .build()
+        .register();
+
     // SkyTekx: backported from 8.x (1cb2e1420). A progress machine, but both power states use the one model like upstream.
     public static final BlockEntry<ProgressMachineBlock> VAT = baseMachine(REGISTRATE.block("vat", props -> new ProgressMachineBlock(props, MachineBlockEntities.VAT)),
         MachineModelUtil::machineBlock)

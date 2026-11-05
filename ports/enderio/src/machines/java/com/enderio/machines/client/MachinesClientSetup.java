@@ -11,6 +11,7 @@ import com.enderio.machines.client.rendering.travel.TravelAnchorHud;
 import com.enderio.machines.common.blockentity.capacitorbank.CapacitorBankBlockEntity;
 import com.enderio.machines.common.init.MachineBlockEntities;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -33,6 +34,7 @@ public class MachinesClientSetup {
         event.registerBlockEntityRenderer(MachineBlockEntities.PRESSURIZED_FLUID_TANK.get(), FluidTankBER::new);
         event.registerBlockEntityRenderer(MachineBlockEntities.XP_OBELISK.get(), XPObeliskBER::new);
         event.registerBlockEntityRenderer(MachineBlockEntities.AVERSION_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, EIOBlocks.ENDERMAN_HEAD.asItem()));
+        event.registerBlockEntityRenderer(MachineBlockEntities.INHIBITOR_OBELISK.get(), (ctx) -> new ObeliskBER<>(ctx, Items.ENDER_PEARL));
         for (BlockEntityEntry<CapacitorBankBlockEntity> value : MachineBlockEntities.CAPACITOR_BANKS.values()) {
             event.registerBlockEntityRenderer(value.get(), CapacitorBankBER::new);
         }

@@ -43,6 +43,7 @@ import java.util.Optional;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.commands.CCApiCommand;
+import com.mrh0.createaddition.commands.WireGraphCommand;
 import com.mrh0.createaddition.config.Config;
 import com.mrh0.createaddition.network.EnergyNetworkPacket;
 import com.mrh0.createaddition.network.ObservePacket;
@@ -162,6 +163,7 @@ public class CreateAddition {
     public void onRegisterCommandEvent(RegisterCommandsEvent event) {
     	CommandDispatcher<CommandSourceStack> dispather = event.getDispatcher();
     	CCApiCommand.register(dispather);
+    	WireGraphCommand.register(dispather);
     }
 
     public static ResourceLocation asResource(String path) {

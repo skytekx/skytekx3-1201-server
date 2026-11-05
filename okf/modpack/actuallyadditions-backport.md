@@ -29,7 +29,8 @@ holds the review that corrected the first draft. The review checked that each of
 commits after the fork point 97532ff that is not a merge appears in a bundle spec or an exclusion. A
 second check against the critic's commit list in the workflow scratchpad (`aacritic/all.txt`) found
 none missing in the committed file. The file `ports/actuallyadditions-backport-carryover.json` will
-record what a bundle hands to a later one. It does not exist yet.
+record what a bundle hands to a later one. It does not exist yet, and until the release commits it
+the hand overs collect in the workflow scratchpad (`bp2/actuallyadditions/carryover.json`).
 
 | Property | Value |
 |---|---|
@@ -49,13 +50,44 @@ record what a bundle hands to a later one. It does not exist yet.
 The vendored base (1e786de), the reproducible Java 17 build of 1.1.52-skytekx.1 (1eccbee) and the
 license and notice files in the jar (a6bcde1) are on the branch
 `claude/twilight-forest-port-mods-j2owbq`. Three clean builds of that state gave the jar SHA-1
-`c37140ce60ec6da5ac33ebea66b3f9fa3951f7fd` (`UPSTREAM.md`, build change 5). That jar is the OLD side
-of the savegame test. No feature is ported yet, no boot has run the fork, and the pack does not ship
-it.
+`c37140ce60ec6da5ac33ebea66b3f9fa3951f7fd` (`UPSTREAM.md`, build change 5).
+
+The baseline bundle is done. Its five commits are 4f87826 (fork metadata and the InvTweaks
+removal), 274cd3c (Patchouli, Curios and the Mixin setup), 9470a0d (the common config of `main`
+and the client config), d5023b4 (the data generator fixes) and 5b06e38 (the boot smoke test), with
+the review fix b285862. Two clean builds of 5b06e38 gave the jar SHA-1
+`ba5e48f831da022f7eb45f763f1fdaf4db6e4794`. The review fix changes only a comment in `mods.toml`
+and the text of `UPSTREAM.md`, and two clean builds of b285862 give
+`342af9c288d7afb676105bf16b1466621edfa516` (4527513 bytes), which differs from `ba5e48f8` only in
+`META-INF/mods.toml`.
+
+The base jar `c37140ce` reaches `Done` alone on a dedicated Forge 47.4.18 server with 0 ERROR
+lines, but it does not start in the Arclight pack. Immersive Engineering 10.2.0-183 ships the same
+package `invtweaks.api.container`, and the module layer stops with a `ResolutionException` before
+any mod loads (`UPSTREAM.md`, source change 8). So the OLD side of the savegame test is the base
+a6bcde1 with only `src/main/java/invtweaks/` removed, jar SHA-1
+`237e0fc65275a0204fe7008f144c395207e41205` (4557655 bytes). A copy and its build recipe sit in the
+workflow scratchpad under `bp2/actuallyadditions/old-jar/`.
+
+The Arclight pack boot copy of the workflow scratchpad ran three boots on 2026-11-05 with the
+production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` (`packboot-logs/`, labels
+`aa-ref-arclight`, `aa-old-arclight` and `aa-new-arclight`). The pack without the mod, the pack
+with the OLD jar and the pack with the jar `ba5e48f8` each reached `Done` with 0 FATAL lines, no
+crash report, no watchdog, a clean RCON stop and the same three ERROR signatures. They are the
+AllTheLeaks line of the boot error baseline, a `RuntimeDistCleaner` line for `ModelBakery` and a
+Nostalgic Tweaks line about its backup config, which every boot of the fresh test copy shows. No
+boot logged a Mixin apply failure. The fork logs one WARN that the reference map
+`actuallyadditions.refmap.json` could not be read, because the annotation processor writes it only
+once a mixin exists. It goes away when the Item Tag filter brings the first mixin. The dev client
+of the fork reaches the title screen and writes `actuallyadditions-client.toml`.
+
+No bundle after the baseline has landed, and the pack does not ship the mod yet. Most new config
+keys have no reader yet, because their blocks keep reading the 1.12 enums until their features
+land (`UPSTREAM.md`, source change 6).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
-| Baseline (`aa-baseline`) | Optional dependencies and pack format 15, removal of the bundled InvTweaks annotations, Patchouli and Curios at compile time, the Mixin setup, the port script, the config of `main`, the datagen baseline and the boot smoke test | 16.5 | Nothing | Partly done in 1e786de, 1eccbee and a6bcde1. The rest is open |
+| Baseline (`aa-baseline`) | Optional dependencies and pack format 15, removal of the bundled InvTweaks annotations, Patchouli and Curios at compile time, the Mixin setup, the port script, the config of `main`, the datagen baseline and the boot smoke test | 16.5 | Nothing | Done in 1e786de, 1eccbee and a6bcde1 (setup), 4f87826, 274cd3c, 9470a0d, d5023b4 and 5b06e38, review fix b285862 |
 | Server safety (`aa-server-safety`) | Client classes out of common code, packet validation, menu validity with the drill upgrade dupe, player data sync | 18.5 | Baseline | Planned |
 | Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Planned |
 | Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Planned |
@@ -119,20 +151,24 @@ decide. Nothing in the pack depends on the version, see the property table.
   `PatchouliPages.java:4`, `PageReconstructor.java:10-11`). Curios comes as its API jar.
 - Mixins register through the manifest attribute `MixinConfigs`, the way
   `ports/enderio/build.gradle:342` does, because Forge 47 does not read the `[[mixins]]` block that
-  `main` uses. The config targets Java 17 and Mixin 0.8.5.
+  `main` uses. The config targets Java 17 and Mixin 0.8.5. Its lists stay empty until the Item Tag
+  filter and the goggles bring their mixins, so no refmap is written before that (274cd3c).
 - A port script in the scratchpad rewrites the mechanical NeoForge names, the 1.21 data folder
   names, the recipe keys and the `c:` tags of one upstream commit and applies it with
   `git apply --3way`. Generated files under `src/generated` are never patched from upstream.
-- The common config of `main` (34 keys) replaces the base's 24 keys with upstream's camelCase names
-  from the start, and a new client config holds `hideEnergyOverlay`. Values are read lazily, never
-  in a static initialiser. The built in config screen of a831cbbd is NeoForge only.
+- The common config of `main` (36 keys with its two Vertical Digger lists, 9470a0d) replaces the
+  base's 24 keys with upstream's camelCase names from the start, and a new client config holds
+  `hideEnergyOverlay`. Values are read lazily, never in a static initialiser. The built in config
+  screen of a831cbbd is NeoForge only.
 - The data generators of the base first run untouched, and their diff to the committed
   `src/generated` (335 models, 120 blockstates, 109 recipes) stays in the scratchpad as the
   reference. Then the provider fixes land, among them item models for every item and the crushing
   recipe datagen of c1b23b52.
 - The boot smoke test fixes only what stops a boot. Of the cited commits only f9897f06 applies:
   `mod/ActuallyAdditionsClient.java:97` registers `ClientRegistryHandler`, whose listeners take mod
-  bus events, on the Forge bus.
+  bus events, on the Forge bus. The fork deleted the class as upstream 2e394d9 did, since both
+  listener bodies are commented out (5b06e38). In the pack the InvTweaks removal was the one boot
+  fix the base needed, see the status.
 
 ### Server safety
 
@@ -360,14 +396,14 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 - Excerpts that upstream marks as taken from other mods with permission: the experience formulas of
   Ender IO in `TileEntityXPSolidifier` stay with their credit. The banner helper from Additional
   Banners leaves with the banner patterns bundle, and its `NOTICE` line goes with it. The empty
-  Tinkers' Construct excerpt in `ClientRegistryHandler` leaves if the boot smoke test deletes the
-  class.
+  Tinkers' Construct excerpt left with `ClientRegistryHandler`, which the boot smoke test deleted
+  (5b06e38).
 - The rotation helper in `VoxelShapes` is marked as taken from Mekanism, which is MIT. The comment
   stays, and `NOTICE` gets a Mekanism line with its copyright notice when the file lands.
 - The snapshot already leaves out `RecipeHandler.java`, a commented copy of a class under CC
-  BY-NC-ND 4.0 (`UPSTREAM.md`, Files left out). The baseline may also delete the fully commented
+  BY-NC-ND 4.0 (`UPSTREAM.md`, Files left out). The baseline also deleted the fully commented
   `RecipeHelper.java`, whose header names a third party author and the MIT License without the
-  notice text, and it deletes the InvTweaks annotations of unchecked license.
+  notice text, and the InvTweaks annotations of unchecked license (4f87826).
 - Patchouli, Curios and JEI are compile time dependencies only, and no class of them ships in the
   jar.
 - The release adds a record in `modrinth-permissions/` (MIT, unofficial build, no 1.20.1 file on the
@@ -376,11 +412,12 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 
 ## Savegame notes
 
-- No live world has the mod, so the savegame test is short. OLD is the build of the vendored base
-  (`c37140ce`), or the base plus only its boot fixes if the smoke test needs any, and NEW is the
-  final build. The test places one of every block, fills machines, tanks, relay networks, phantom
-  bindings, sacks, drills and batteries, stops over RCON, swaps the jar and checks that everything
-  loads with its contents.
+- No live world has the mod, so the savegame test is short. OLD is the base a6bcde1 with its one
+  boot fix, the InvTweaks removal, as the jar `237e0fc65275a0204fe7008f144c395207e41205`, because
+  the vendored base build `c37140ce` does not start in the Arclight pack (see the status). NEW is
+  the final build. The test places one of every block, fills machines, tanks, relay networks,
+  phantom bindings, sacks, drills and batteries, stops over RCON, swaps the jar and checks that
+  everything loads with its contents.
 - No registry id, NBT key, block state value or saved data key of the base is renamed or removed.
   The items `dough` and `paper_cone`, the menu `bag_container` and the recipe serializer
   `actuallyadditions:solid_fuel` stay registered. The machine inventories keep the base's slot list.
@@ -457,7 +494,8 @@ These differ from upstream on purpose and must survive the next upstream sync.
   live world gets them in new areas only. Keep `/locate` sweeps off the live server.
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only
   the two accepted ERROR lines, with no new ERROR line of the mod (see
-  [Logs and crashes](../server/logs-and-crashes.md#boot-error-baseline)).
+  [Logs and crashes](../server/logs-and-crashes.md#boot-error-baseline)). Until the first mixin of
+  the fork lands, Mixin also logs one WARN that `actuallyadditions.refmap.json` could not be read.
 - Announce the new mod to the players, with the manual that needs Patchouli and the key bind of the
   Crafting Table On A Stick.
 

@@ -161,11 +161,12 @@ public abstract class CraftingMachineTask<R extends MachineRecipe<C>, C extends 
         // TODO: Handle fluids too.
 
         // See that we can add all the outputs
+        MachineInventory snapshot = inventory.snapshot(outputSlots); // Snapshot for chained simulations.
         for (OutputStack output : outputs) {
             ItemStack item = output.getItem();
 
             for (SingleSlotAccess outputAccess: outputSlots.getAccesses()) {
-                item = outputAccess.insertItem(inventory, item, true);
+                item = outputAccess.insertItem(snapshot, item, false); // Don't simulate, we are using a snapshot copy
             }
 
             // If we fail, say we can't accept these outputs

@@ -1,13 +1,18 @@
 package com.enderio.machines.common.io;
 
 import com.enderio.api.io.IOMode;
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import org.slf4j.Logger;
 
 public class TransferUtil {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     // region Items
 
@@ -25,17 +30,41 @@ public class TransferUtil {
         }
     }
 
+    // Moves one item per call. The target only ever receives what really left the source,
+    // so a source whose real extraction differs from its simulation cannot duplicate items.
     private static void moveItems(IItemHandler from, IItemHandler to) {
         for (int i = 0; i < from.getSlots(); i++) {
-            ItemStack extracted = from.extractItem(i, 1, true);
-            if (!extracted.isEmpty()) {
-                for (int j = 0; j < to.getSlots(); j++) {
-                    ItemStack inserted = to.insertItem(j, extracted, false);
-                    if (inserted.isEmpty()) {
-                        from.extractItem(i, 1, false);
-                        return;
+            ItemStack simulated = from.extractItem(i, 1, true);
+            if (simulated.isEmpty()) {
+                continue;
+            }
+
+            for (int j = 0; j < to.getSlots(); j++) {
+                // Find a slot that takes the item before anything leaves the source.
+                if (!to.insertItem(j, simulated, true).isEmpty()) {
+                    continue;
+                }
+
+                ItemStack extracted = from.extractItem(i, 1, false);
+                if (extracted.isEmpty()) {
+                    return;
+                }
+
+                ItemStack remainder = to.insertItem(j, extracted, false);
+                if (!remainder.isEmpty()) {
+                    // The target refused what its simulation accepted. Try its other slots, then give it back to the source.
+                    remainder = ItemHandlerHelper.insertItem(to, remainder, false);
+                    if (!remainder.isEmpty()) {
+                        remainder = from.insertItem(i, remainder, false);
+                    }
+                    if (!remainder.isEmpty()) {
+                        remainder = ItemHandlerHelper.insertItem(from, remainder, false);
+                    }
+                    if (!remainder.isEmpty()) {
+                        LOGGER.warn("Item transfer lost {}: the target refused it after its simulation accepted it, and the source did not take it back", remainder);
                     }
                 }
+                return;
             }
         }
     }
@@ -73,7 +102,12 @@ public class TransferUtil {
 
         if (canPull) {
             for (int i = 0; i < selfItemHandler.getTanks(); i++) {
-                FluidUtil.tryFluidTransfer(selfItemHandler, otherItemHandler, new FluidStack(selfItemHandler.getFluidInTank(i), maxDrain), true).getAmount();
+                // An empty tank takes any fluid, a filled tank only more of its own.
+                if (selfItemHandler.getFluidInTank(i).isEmpty()) {
+                    FluidUtil.tryFluidTransfer(selfItemHandler, otherItemHandler, maxDrain, true);
+                } else {
+                    FluidUtil.tryFluidTransfer(selfItemHandler, otherItemHandler, new FluidStack(selfItemHandler.getFluidInTank(i), maxDrain), true);
+                }
             }
         }
     }

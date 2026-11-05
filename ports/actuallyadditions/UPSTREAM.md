@@ -220,7 +220,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
 
 1. Optional dependencies: `mods.toml` declares `patchouli` (`[1.20.1-81,)`), `curios` (`[5.0,)`)
    and `jei` (`[15.0,)`), each with `mandatory=false`, ordering `NONE` and side `BOTH`, so Forge
-   checks the version of each one that is present and the mod list names them. Upstream declares
+   checks the version range of each one that is present. That check is their only effect, since
+   the mod list of Forge 47 shows no dependencies (`ModListScreen` of Forge 47.4.0 shows the name,
+   version, credits, authors, URL, child mods, license and description). Upstream declares
    none of the three in `neoforge.mods.toml` on `main`. Only its publish block marks Patchouli
    as required and JEI and Curios as optional on Modrinth and CurseForge (`main`
    `build.gradle:287-289`), and its manual says in chat when Patchouli is missing (`19cfbc92`,

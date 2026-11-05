@@ -31,7 +31,8 @@ Do you want Automation? Wireless Transport? Better Machines? A cup o' Coffee? Ch
 
 # SkyTekx: the integrations of the newer upstream lines. All three stay optional, as upstream
 # has them (only its Modrinth and CurseForge pages mark Patchouli as required). Forge checks the
-# version range of each one that is present, and the mod list names them
+# version range of each one that is present. That is their only effect, since the mod list of
+# Forge 47 shows no dependencies
 [[dependencies.actuallyadditions]]
     modId="patchouli"
     mandatory=false

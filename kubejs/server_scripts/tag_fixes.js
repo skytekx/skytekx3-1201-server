@@ -96,3 +96,30 @@ if (Platform.isLoaded('draconicevolution')) {
     })
   })
 }
+
+// Expanded Delight (local-mods, built from ports/expandeddelight) brings salt, juices and jellies that
+// Pam's HarvestCraft 2 Food Core and Mekanism also have. The recipes of Pam's mod ask for forge:salt,
+// forge:juices/<fruit>juice and forge:jellies/<fruit>jelly, those of Expanded Delight and Mekanism for
+// forge:dusts/salt, and Expanded Delight's sandwiches for forge:jams/<fruit>. With these entries every
+// salt fits every salt recipe and each juice and jelly fits the recipes of the other mod. Almost Unified
+// then makes the Mekanism salt the one salt of the pack (config/almostunified/unify.json), see
+// okf/modpack/expandeddelight-port.md. Each block names items only of mods that are loaded, because one
+// unknown entry would drop the whole tag.
+ServerEvents.tags('item', event => {
+  event.add('forge:salt', '#forge:dusts/salt')
+  if (Platform.isLoaded('pamhc2foodcore')) {
+    event.add('forge:dusts/salt', 'pamhc2foodcore:saltitem')
+  }
+  if (Platform.isLoaded('pamhc2foodcore') && Platform.isLoaded('expandeddelight')) {
+    event.add('forge:juices/applejuice', 'expandeddelight:apple_juice')
+    event.add('forge:juices/sweetberryjuice', 'expandeddelight:sweet_berry_juice')
+    event.add('forge:juices/glowberryjuice', 'expandeddelight:glow_berry_juice')
+    event.add('forge:juices/apple', 'pamhc2foodcore:applejuiceitem')
+    event.add('forge:juices/sweet_berry', 'pamhc2foodcore:sweetberryjuiceitem')
+    event.add('forge:juices/glow_berry', 'pamhc2foodcore:glowberryjuiceitem')
+    event.add('forge:jellies/sweetberryjelly', 'expandeddelight:sweet_berry_jelly')
+    event.add('forge:jellies/glowberryjelly', 'expandeddelight:glow_berry_jelly')
+    event.add('forge:jams/sweet_berry', 'pamhc2foodcore:sweetberryjellyitem')
+    event.add('forge:jams/glow_berry', 'pamhc2foodcore:glowberryjellyitem')
+  }
+})

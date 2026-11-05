@@ -37,9 +37,9 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 9,799 files, 9,798 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,663 are
-[gameplay overrides](#gameplay-overrides), 9,530 of them the generated recipes of [melting](melting.md).
+is tracked: 9,796 files, 9,795 data files plus `pack.mcmeta` (pack format 15). The table lists the 131 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,660 are
+[gameplay overrides](#gameplay-overrides), 9,527 of them the generated recipes of [melting](melting.md).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -178,14 +178,16 @@ Nine groups of files in the pack change the game on purpose:
   log names one of the files. The three files of Forbidden & Arcanus went live at 17:39:10 with another
   `/reload`, after which KubeJS counted 37,023 recipes and the log had no new ERROR line. Nobody melted
   one in game yet.
-- 9,530 generated melting recipes under `data/skytekx3/recipes/melting/` let every armor piece, weapon,
+- 9,527 generated melting recipes under `data/skytekx3/recipes/melting/` let every armor piece, weapon,
   tool and other item that holds a meltable material melt since 2026-11-05, as the owner asked on
   2026-11-04 at 17:35. The script `tools/gen_melting.py` writes them from a dump of a test server, one per
   item with the content of its cheapest recipe, and audits every melting recipe of the pack for dupes. With
   them came 16 files under `data/tconstruct/recipes/smeltery/melting/` that close dupes of Tinkers which the
   audit found, such as the ironwood of the Twilight Forest and the enchanted golden apple, the item tag
   `data/skytekx3/tags/items/melting/not_as_template.json`, which keeps the stratus smithing template of
-  Deep Aether out of the template recipe of Tinkers, and the two files of SkyTekx Molten above. See
+  Deep Aether out of the template recipe of Tinkers, and the two files of SkyTekx Molten above. The
+  ironwood files for the axes, the helmet, the leggings and the shovel use the unit size 5, since Tinkers
+  rounds even a new piece down to whole units and ten does not divide their 135, 225, 315 and 45 mB. See
   [Melting](melting.md).
 - One crafting recipe at `data/exura/recipes/auto_executor.json` makes the Auto Executor of Extra
   Utilities Reborn Again craftable since 2026-11-04. Version 1.2.0-rc10 registers the block with its

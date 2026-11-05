@@ -102,6 +102,14 @@ public class SoulBindingRecipe implements MachineRecipe<SoulBindingRecipe.Contai
         ItemStack vial = SoulBinderBlockEntity.INPUT_SOUL.getItemStack(container);
         List<OutputStack> results = getResultStacks(registryAccess);
         ItemStack result = results.get(0).getItem();
+
+        // A recipe that rebinds an item to a new soul keeps the data of the item, such as the capacitor, the energy
+        // and the IO config of a powered spawner. Only the stored entity is replaced below.
+        ItemStack itemToBind = SoulBinderBlockEntity.INPUT_OTHER.getItemStack(container);
+        if (!itemToBind.isEmpty() && result.is(itemToBind.getItem()) && itemToBind.getTag() != null) {
+            result.setTag(itemToBind.getTag().copy());
+        }
+
         vial.getCapability(EIOCapabilities.ENTITY_STORAGE)
             .ifPresent(inputEntity -> result.getCapability(EIOCapabilities.ENTITY_STORAGE)
                 .ifPresent(resultEntity -> resultEntity.setStoredEntityData(inputEntity.getStoredEntityData())));

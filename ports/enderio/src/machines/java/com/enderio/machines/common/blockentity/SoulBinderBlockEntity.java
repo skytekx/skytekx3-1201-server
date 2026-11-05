@@ -9,6 +9,7 @@ import com.enderio.base.common.init.EIOItems;
 import com.enderio.base.common.tag.EIOTags;
 import com.enderio.base.common.util.ExperienceUtil;
 import com.enderio.core.common.network.slot.IntegerNetworkDataSlot;
+import com.enderio.core.common.recipes.OutputStack;
 import com.enderio.machines.common.blockentity.base.PoweredMachineBlockEntity;
 import com.enderio.machines.common.blockentity.task.PoweredCraftingMachineTask;
 import com.enderio.machines.common.blockentity.task.host.CraftingMachineTaskHost;
@@ -191,6 +192,18 @@ public class SoulBinderBlockEntity extends PoweredMachineBlockEntity {
 
     protected PoweredCraftingMachineTask<SoulBindingRecipe, SoulBindingRecipe.Container> createTask(Level level, SoulBindingRecipe.Container container, @Nullable SoulBindingRecipe recipe) {
         return new PoweredCraftingMachineTask<>(level, getInventoryNN(), getEnergyStorage(), container, OUTPUT, recipe) {
+
+            @Override
+            protected boolean placeOutputs(List<OutputStack> outputs, boolean simulate) {
+                // Build the outputs again from the items that are consumed now. A rebind copies the data of the item it
+                // rebinds, so an item swapped into the input after the task started must not get the data of the first one.
+                SoulBindingRecipe recipe = getRecipe();
+                if (!simulate && recipe != null) {
+                    outputs = recipe.craft(container, level.registryAccess());
+                }
+
+                return super.placeOutputs(outputs, simulate);
+            }
 
             @Override
             protected void consumeInputs(SoulBindingRecipe recipe) {

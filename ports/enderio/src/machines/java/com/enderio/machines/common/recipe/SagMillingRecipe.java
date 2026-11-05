@@ -280,7 +280,7 @@ public class SagMillingRecipe implements MachineRecipe<SagMillingRecipe.Containe
         public record SizedTagOutput(TagKey<Item> itemTag, int count) {
             public ItemStack getItemStack() {
                 return TagUtil.getOptionalItem(itemTag)
-                    .map(ItemStack::new)
+                    .map(item -> new ItemStack(item, count))
                     .orElse(ItemStack.EMPTY);
             }
 

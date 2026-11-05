@@ -1,0 +1,74 @@
+Mekanism: Extra Modules 0.1.0-beta.3-skytekx.1, an unofficial Forge 1.20.1 port
+================================================================================
+
+This jar is an unofficial modified build of Mekanism: Extra Modules. It is not an
+official release, and the upstream project does not support it. Report problems
+with it to https://github.com/skytekx/skytekx3-1201-server/issues, not upstream.
+
+Original work
+-------------
+  Mekanism: Extra Modules, https://github.com/Lumysia/mekanism-extra-modules
+  Tag v1.21.1-0.1.0-beta.3, commit 1548dd6f2d41906e845c626895cb35769a33a61e of
+  2026-09-13, for Minecraft 1.21.1, NeoForge 21.1 and Mekanism 10.7.
+  The mod id mekanism_extra_modules and the author entry of mods.toml are
+  upstream's.
+
+Modifications
+-------------
+  Modified by SkyTekx on 2026-11-05: ported to Minecraft 1.20.1, Forge 47 and
+  Mekanism 10.4.16 for the SkyTekx 3 modpack. Changed files:
+  - build.gradle, settings.gradle, gradle.properties, .gitignore and the Gradle
+    wrapper: a ForgeGradle build on Java 17 in place of NeoForge ModDevGradle.
+  - META-INF/mods.toml replaces META-INF/neoforge.mods.toml.
+  - All Java classes: Forge 47 events, registries and config, and the Mekanism
+    10.4 module API. The new class registry.ModuleProvider adapts module
+    registry objects to Mekanism 10.4.
+  - mixin.LaserBeamPhaseMixin and mekanism_extra_modules.mixins.json: the same
+    two redirects, remapped through a refmap for the SRG names of Forge 1.20.1.
+  - data/mekanism_extra_modules/recipes/ and pack.mcmeta: the 1.20.1 data
+    format, with forge tags for the circuit, alloy and obsidian inputs.
+  - service.ProtectionService: /kill bypasses the protection (taken from
+    upstream commit db624015cc5b3fbd37e7abb41d6f9f8345ad3eb6), and the tick
+    handler skips dead players.
+  - LICENSE kept unchanged. GPL-3.0.txt, Mekanism-MIT.txt, NOTICE and
+    UPSTREAM.md added.
+  The source directory's UPSTREAM.md lists every change with its reason, and the
+  git history of that directory holds each change as its own commit.
+
+License
+-------
+  This build is released, like the original, under the GNU Lesser General
+  Public License version 3 or (at your option) any later version
+  (LGPL-3.0-or-later).
+    LICENSE_mekanism_extra_modules          the GNU LGPL v3 text
+    LICENSE_mekanism_extra_modules_GPL-3.0  the GNU GPL v3 text, whose terms
+                                            the LGPL v3 incorporates
+
+Corresponding Source
+--------------------
+  The complete source of this jar, with the Gradle build that makes it, is the
+  directory ports/mekanism-extra-modules of the SkyTekx 3 repository:
+    https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/mekanism-extra-modules
+  The exact source of a given jar is that directory at the commit that last
+  changed the jar in local-mods/ of the same repository. The SkyTekx 3 modpack
+  also carries a zip of that directory in licenses/. The build is byte
+  reproducible, so a rebuild can be checked against the SHA-1 of the jar.
+
+Mekanism (MIT)
+--------------
+  The three item textures textures/item/chaos_anchor_unit.png,
+  emergency_revival_unit.png and phase_guard_unit.png are edited copies of
+  Mekanism's textures/item/module_base.png. gui/hud/emergency_revival_unit.png
+  is a copy of Mekanism's gui/hud/nutritional_injection_unit.png, and
+  gui/hud/phase_guard_unit.png is a recolor of Mekanism's
+  gui/hud/gravitational_modulation_unit.png. Mekanism
+  (https://github.com/mekanism/Mekanism) is MIT licensed, and its copyright
+  and permission notice is LICENSE_mekanism_extra_modules_Mekanism-MIT. No
+  Mekanism code is copied. The mod only calls the Mekanism API.
+
+Draconic Evolution
+------------------
+  The optional Draconic Evolution integration is one mixin with two redirects
+  into LaserBeamPhase.serverTick of an installed Draconic Evolution. This jar
+  contains no Draconic Evolution code or data, and it does not need Draconic
+  Evolution to load.

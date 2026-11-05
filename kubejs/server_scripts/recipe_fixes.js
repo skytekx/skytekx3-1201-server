@@ -15,6 +15,13 @@ ServerEvents.recipes(event => {
     B: 'minecraft:book'
   }).id('skytekx3:bookshelf_any_plank')
 
+  // Draconic Evolution 3.1.2.621 asks for a Chaotic Core in the Chaotic Shield Capacity module, where an
+  // Awakened Core was meant. Upstream fixed the recipe on its 1.21 branch in commit 0c85f0d9, which never
+  // reached 1.20.1. The pack swaps the one ingredient here instead of shipping a copy of the recipe file,
+  // see okf/modpack/draconic-fixes.md.
+  event.replaceInput({ id: 'draconicevolution:modules/item_chaotic_shield_capacity' },
+    'draconicevolution:chaotic_core', 'draconicevolution:awakened_core')
+
   // ---------------------------------------------------------------------------
   // The following ported the SkyTekx2 intent but reference mods whose ids change
   // on 1.20.1. They are left commented until the mods are in `mods/`; confirm the

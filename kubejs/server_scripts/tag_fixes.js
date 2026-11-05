@@ -72,3 +72,20 @@ ServerEvents.tags('block', event => {
 ServerEvents.tags('item', event => {
   event.add('forge:dyes/yellow', '#forge:dusts/sulfur')
 })
+
+// Draconic Evolution 3.1.2.621 puts none of its tools into the vanilla tool tags, so mods that ask for a
+// pickaxe, an axe, a shovel, a sword or a hoe by tag do not see them. Upstream added the tags on its 1.21
+// branch in commit 4d360c95, which never reached 1.20.1. Both staffs count as the first four tools there,
+// and so they do here, see okf/modpack/draconic-fixes.md.
+if (Platform.isLoaded('draconicevolution')) {
+  ServerEvents.tags('item', event => {
+    let tiers = ['wyvern', 'draconic', 'chaotic']
+    let tools = { pickaxes: 'pickaxe', axes: 'axe', shovels: 'shovel', swords: 'sword', hoes: 'hoe' }
+    Object.keys(tools).forEach(tag => {
+      event.add('minecraft:' + tag, tiers.map(tier => 'draconicevolution:' + tier + '_' + tools[tag]))
+      if (tag != 'hoes') {
+        event.add('minecraft:' + tag, ['draconicevolution:draconic_staff', 'draconicevolution:chaotic_staff'])
+      }
+    })
+  })
+}

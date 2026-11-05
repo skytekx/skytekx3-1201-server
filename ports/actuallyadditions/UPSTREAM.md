@@ -367,3 +367,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     file of `main`, and each one matches its file on `main` except for the 1.20.1 form (the
     stonecutting count at the top, `forge:conditional` around the tiny coal recipes, the
     `forge:nbt` ingredient of the Lens of the Killer).
+11. Advancements: the generator writes the 18 advancements of `main` with the same ids, parents,
+    icons and criteria. The fix of `50407e9` is the 1.20.2 `DisplayInfo` with an `Optional`
+    background and has nothing to do on 1.20.1. The note about an advancement for the underwater
+    treasure chest goes, since that content is gone (`863c2b7`). The eleven advancement titles in
+    `en_us.json` are in title case (`4b3a6a0`, #1457). With the recipes of source change 10 every
+    advancement can be earned. On the base the coal generator, leaf generator, coffee maker,
+    crusher, double crusher and the three phantom faces had no recipe, so eight of the 17 children
+    of the root could not be crafted.

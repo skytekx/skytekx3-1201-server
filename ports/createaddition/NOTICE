@@ -80,7 +80,9 @@ Modifications
     stairs.
   - Electric Pump from the 1.21.1 line: a Create pump that runs on FE at a speed set on the block,
     stops on a redstone signal and connects to no shaft or cog. It is crafted in a Mechanical
-    Crafter from dried kelp, a mechanical pump, two copper spools and a capacitor.
+    Crafter from dried kelp, a mechanical pump, two copper spools and a capacitor. A mixin into
+    Create's FluidPropagator lets a change to a pipe reach the Electric Pump as it reaches Create's
+    own pumps.
   - Content backported from the 1.21.1 line is listed here as it is added.
 
   The complete change history is the git history of the ports/createaddition directory of

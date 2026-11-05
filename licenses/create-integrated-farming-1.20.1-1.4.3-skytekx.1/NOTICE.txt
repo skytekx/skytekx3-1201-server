@@ -1,0 +1,63 @@
+Create: Integrated Farming, modified unofficial SkyTekx build for Forge 1.20.1
+==============================================================================
+
+This is a MODIFIED, UNOFFICIAL version of Create: Integrated Farming. It is not made, supported or
+endorsed by DragonsPlus. Please report problems with this build to SkyTekx
+(https://github.com/skytekx/skytekx3-1201-server/issues), not to the upstream project.
+
+Original work
+-------------
+  Create: Integrated Farming by DragonsPlus
+  Source: https://github.com/DragonsPlusMinecraft/CreateIntegratedFarming
+  Base:   branch 1.21.1/6.0.0-dev @ 1f63780108d1d51f3b2c9ebdf4bb0cd5cb3f5906 (2026-09-21, release 1.4.3,
+          NeoForge 1.21.1)
+
+Modifications
+-------------
+  Modified by SkyTekx in November 2026 for the SkyTekx 3 modpack: ported from NeoForge 1.21.1 to
+  Minecraft 1.20.1 with Forge 47 and Create 6.0.8. The mod id create_integrated_farming stays, and
+  the version is 1.4.3-skytekx.1.
+
+  Summary of the changes:
+  - Build: ForgeGradle 6 on Java 17 instead of ModDevGradle on Java 21, a reproducible jar, and this
+    NOTICE, the license texts and Create's MIT notice inside the jar. The integrations are
+    reobfuscated against the mods they call.
+  - Port: the NeoForge 1.21.1 API is replaced by its Forge 47 counterparts. One @Mod entry point
+    constructs the client, data and integration entry points. The roost, the vacuum harvester and
+    the Farmer's Delight basket use Forge capabilities. The chicken food data maps are read by the
+    mod itself on every data pack reload and sent to clients over the network channel
+    create_integrated_farming:main (protocol 1), which also carries the roosting display data.
+    Blocks use Block#use, loot tables come from the loot data manager, and the fishing nets use
+    the 1.20.1 enchantment and loot parameter forms. The Create mixins target Create classes only.
+  - Data: the data files use the 1.20.1 folder names and formats, forge: tags (forge:rods/wooden,
+    forge:plantoil) and the new item tag create_integrated_farming:chicken_food with the chicken
+    foods of 1.20.1. The Lava Fishing Net drops itself in code, since 1.20.1 loot tables have no
+    load conditions.
+  - Fix: the chicken roost drops a copy of the chicken food remainder, so every feeding returns it.
+  - Addition: Lava Fishing (mod id lavafishing) provides the catches of the Lava Fishing Net and
+    enables it, in the way the upstream Nether Depths Upgrade integration does.
+  - Removed: the integrations of 26 mods that the SkyTekx pack does not carry, with their duck,
+    goose, turkey and warm or cold chicken roosts. Farmer's Delight, Supplementaries and Twilight
+    Delight stay.
+
+  The complete change history is the git history of the ports/createintegratedfarming directory of
+  https://github.com/skytekx/skytekx3-1201-server
+  That directory is the Corresponding Source of this jar: the exact source of a given jar is that
+  directory at the commit that added the jar to local-mods/, and it builds the same jar again
+  (see ports/createintegratedfarming/UPSTREAM.md). UPSTREAM.md lists every change.
+
+Licenses
+--------
+  - Create: Integrated Farming and the SkyTekx changes to it: GNU Lesser General Public License,
+    version 3 or (at your option) any later version. LICENSE.txt in this jar holds the LGPL 3.0 text
+    followed by the GNU GPL 3.0 text that it builds on. Every upstream source file keeps its header
+    "Copyright (C) 2025 DragonsPlus, SPDX-License-Identifier: LGPL-3.0-or-later", and the files that
+    SkyTekx added carry the same license header with "Copyright (C) 2026 SkyTekx".
+  - Textures from Farmer's Delight (assets/create_integrated_farming/textures/block/farmersdelight/):
+    MIT License, Copyright (c) 2020 vectorwing, see FARMERS_DELIGHT_LICENSE.txt next to them.
+  - Parts from Create (https://github.com/Creators-of-Create/Create): the method
+    CustomHarvestBehaviour#harvestBlock adapts Create's BlockHelper#destroyBlockAs, and the texture
+    textures/block/vacuum_harvester.png contains pixel blocks of Create's cam_linkage.png and
+    rotation_speed_controller.png from before 2025-09-21. Both were published under the MIT License,
+    Copyright (c) 2019 simibubi, see LICENSE-CREATE.txt in this jar. This build adds no Create asset
+    that Create published on or after 2025-09-21.

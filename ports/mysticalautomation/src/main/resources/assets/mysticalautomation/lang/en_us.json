@@ -19,6 +19,9 @@
 
   "tooltip.mysticalautomation.stage": "Stage %s / %s",
   "tooltip.mysticalautomation.stages": "%s Stage(s)",
+  "tooltip.mysticalautomation.chance": "%s Chance",
+  "tooltip.mysticalautomation.machine_fuel_usage": "Fuel Usage: %s",
+  "tooltip.mysticalautomation.machine_scan_fuel_usage": "Scan Fuel Usage: %s",
 
   "jei.category.mysticalautomation.farmer": "Farmer",
   "jei.category.mysticalautomation.fertilizer": "Fertilizer",

@@ -1,17 +1,17 @@
 {
   "type": "mysticalautomation:farmer",
   "seeds": {
-    "item": "minecraft:cocoa_beans"
+    "item": "mysticalagriculture:inferium_seeds"
   },
   "soil": {
-    "item": "minecraft:jungle_log"
+    "item": "minecraft:farmland"
   },
   "stages": 7,
   "results": [
     {
       "item": {
-        "id": "minecraft:cocoa_beans",
-        "count": 3
+        "item": "mysticalagriculture:inferium_essence",
+        "count": 1
       },
       "chance": 1.0
     }

@@ -1,23 +1,23 @@
 {
   "type": "mysticalautomation:farmer",
   "seeds": {
-    "item": "minecraft:carrot"
+    "item": "mysticalagriculture:inferium_seeds"
   },
   "soil": {
-    "item": "minecraft:farmland"
+    "item": "mysticalagriculture:tertium_farmland"
   },
   "stages": 7,
   "results": [
     {
       "item": {
-        "id": "minecraft:carrot",
+        "item": "mysticalagriculture:inferium_essence",
         "count": 2
       },
       "chance": 1.0
     },
     {
       "item": {
-        "id": "minecraft:carrot",
+        "item": "mysticalagriculture:inferium_essence",
         "count": 1
       },
       "chance": 0.5

@@ -10,7 +10,7 @@
   "results": [
     {
       "item": {
-        "id": "mysticalagriculture:inferium_essence",
+        "item": "mysticalagriculture:inferium_essence",
         "count": 2
       },
       "chance": 1.0

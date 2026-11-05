@@ -19,6 +19,9 @@
 
   "tooltip.mysticalautomation.stage": "Estágio %s / %s",
   "tooltip.mysticalautomation.stages": "%s Estágio(s)",
+  "tooltip.mysticalautomation.chance": "%s de chance",
+  "tooltip.mysticalautomation.machine_fuel_usage": "Uso do combustível: %s",
+  "tooltip.mysticalautomation.machine_scan_fuel_usage": "Uso de Combustível da Varredura: %s",
 
   "jei.category.mysticalautomation.farmer": "Fazendeiro",
   "jei.category.mysticalautomation.fertilizer": "Fertilizador",

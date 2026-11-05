@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bone_meal",
+    "mysticalagriculture:fertilized_essence",
+    "mysticalagriculture:mystical_fertilizer",
+    {
+      "id": "#forge:fertilizers",
+      "required": false
+    }
+  ]
+}

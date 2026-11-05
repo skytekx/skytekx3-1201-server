@@ -1,7 +1,7 @@
 {
   "type": "mysticalautomation:farmer",
   "seeds": {
-    "item": "minecraft:melon_seeds"
+    "item": "minecraft:carrot"
   },
   "soil": {
     "item": "minecraft:farmland"
@@ -10,24 +10,17 @@
   "results": [
     {
       "item": {
-        "id": "minecraft:melon_slice",
-        "count": 3
+        "item": "minecraft:carrot",
+        "count": 2
       },
       "chance": 1.0
     },
     {
       "item": {
-        "id": "minecraft:melon_slice",
+        "item": "minecraft:carrot",
         "count": 1
       },
       "chance": 0.5
-    },
-    {
-      "item": {
-        "id": "minecraft:melon_slice",
-        "count": 1
-      },
-      "chance": 0.25
     }
   ]
 }

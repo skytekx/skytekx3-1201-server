@@ -47,8 +47,11 @@ import plus.dragons.createintegratedfarming.common.CIFCommon;
  * It reads {@code data/<namespace>/data_maps/<registry>/<name>.json} from every data pack in pack order,
  * in the NeoForge format: an object {@code "values"} whose keys are ids or {@code #tags}, an optional
  * {@code "replace": true} that drops the entries of the packs below, and an optional {@code "remove"}
- * list. Later entries win. The server resolves tags when asked, after the reload has bound them. Clients
- * get the resolved map from {@link plus.dragons.createintegratedfarming.common.network.ChickenFoodSyncPacket}.
+ * list. Later entries win. Each value goes through the codec of its map. For items that is
+ * {@link ChickenFoodItem#CODEC}, which takes {@code using_converts_to} in the 1.21.1 object form
+ * {@code {"id": "minecraft:bowl"}} and as a plain item id. The server resolves tags when asked, after the
+ * reload has bound them. Clients get the resolved map from
+ * {@link plus.dragons.createintegratedfarming.common.network.ChickenFoodSyncPacket}.
  */
 public final class ChickenFoodMap<T, V> {
     private final ResourceLocation file;

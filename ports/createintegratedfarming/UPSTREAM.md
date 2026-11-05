@@ -126,7 +126,9 @@ items below are what differs from upstream, with the reason.
    `ChickenFoodMap` (new). It reads `data/create_integrated_farming/data_maps/item/chicken_food.json` and
    `.../fluid/chicken_food.json` from every data pack in pack order in the NeoForge format (`values` keyed
    by ids and `#tags`, `replace`, `remove`, later entries win) on each reload, and resolves tags when
-   asked. The new `ChickenFoodSyncPacket` sends the resolved maps to clients at every data pack sync, as
+   asked. 1.20.1 has no `ItemStack.SINGLE_ITEM_CODEC`, so `ChickenFoodItem` reads `using_converts_to`
+   in its 1.21.1 object form `{"id": "minecraft:bowl"}` and also as a plain item id, and writes the
+   object form. The new `ChickenFoodSyncPacket` sends the resolved maps to clients at every data pack sync, as
    NeoForge syncs the two maps, so that feeding by hand is predicted on the client.
 4. Network: a `SimpleChannel` `create_integrated_farming:main` with protocol `1` replaces the payload
    registrar. Message 0 is the roosting display snapshot, message 1 the chicken food maps, both from the

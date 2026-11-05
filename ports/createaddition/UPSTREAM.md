@@ -505,15 +505,15 @@ its item here, and the NOTICE in the jar sums them up.
     `connector_remove` and `servo_motor`) and `8c4c64d`. The four scenes, `rotateServo` and
     `turnLever` in `ponder/PonderScenes.java` are upstream's code byte for byte. They pass their
     English texts to `title` and `text` as upstream does, where the scenes of the base pass
-    `CALang.translateDirect`, and Ponder shows the lang key either way. En_us gains the 28 keys
-    `createaddition.ponder.electric_pump_flow.*`, `connector.*`, `connector_remove.*` and
-    `servo_motor.*`. `CAPonders` gives the pump scene to the Electric Pump, both connector scenes to
-    the small, the small light and the large connector, and the servo scene to the Servo Motor. It
-    puts the three connectors and the Servo Motor into the Electric tag and the Servo Motor into
-    Create's Movement Anchor tag. One local change: the Electric Pump also joins the Electric tag,
-    which upstream gives its scene but not the pump, and Create's Fluids tag, where Create lists its
-    own Mechanical Pump, and its scene names both tags. `CAPonderPlugin` no longer overrides
-    `onPonderLevelRestore` (`8c4c64d`). Create's own plugin already runs
+    `CALang.translateDirect`, and Ponder shows the lang key either way. The en_us file gains the 28
+    keys `createaddition.ponder.electric_pump_flow.*`, `connector.*`, `connector_remove.*` and
+    `servo_motor.*`. The class `CAPonders` gives the pump scene to the Electric Pump, both connector
+    scenes to the small, the small light and the large connector, and the servo scene to the Servo
+    Motor. It puts the three connectors and the Servo Motor into the Electric tag and the Servo Motor
+    into Create's Movement Anchor tag. One local change: the Electric Pump also joins the Electric
+    tag, which upstream gives its scene but not the pump, and Create's Fluids tag, where Create lists
+    its own Mechanical Pump, and its scene names both tags. The plugin `CAPonderPlugin` no longer
+    overrides `onPonderLevelRestore` (`8c4c64d`). Create's own plugin already runs
     `PonderWorldBlockEntityFix.fixControllerBlockEntities` on every ponder level (javap of
     `CreatePonderPlugin` in Create 6.0.8 and of `PonderLevel.restore` in Ponder 1.0.91). The fix
     moves each controller by the offset between the saved and the actual position, so the second

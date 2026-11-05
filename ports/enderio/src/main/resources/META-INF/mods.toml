@@ -47,7 +47,8 @@ side="BOTH"
 [[dependencies.enderio]]
 modId="curios"
 mandatory=false
-versionRange="[5.0,)"
+# SkyTekx: 5.2.0 is the first release with CuriosApi.getCuriosInventory(LivingEntity), and 5.2.0-beta builds sort below it
+versionRange="[5.2.0,)"
 ordering="NONE"
 side="BOTH"
 

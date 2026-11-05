@@ -113,4 +113,6 @@ turned off), and the committed datagen output.
 - `licenses/`: the license texts of the third-party code and the bundled libraries
 - in `src/main/resources/META-INF/mods.toml`, the `license` field names all licenses (upstream said
   `CC0`), `issueTrackerURL` points to the SkyTekx repository, and the description says that the
-  build is unofficial. The optional dependency on `curios` `[5.0,)` came with the backport.
+  build is unofficial. The optional dependency on `curios` `[5.2.0,)` came with the backport.
+  Curios 5.2.0 is the first release with `CuriosApi.getCuriosInventory(LivingEntity)`, which
+  `CuriosCompat` calls, and its beta builds sort below it.

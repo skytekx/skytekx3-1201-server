@@ -134,6 +134,12 @@ public final class JsonDataMap<K, V> {
     /**
      * The value of a registry entry on the current logical side: the datapack values on the server, the values the
      * server sent on a client.
+     * <p>
+     * The logical side comes from {@link EffectiveSide}, which reports the server only for threads of the server
+     * thread group. On a physical client, an integrated server worker thread (such as Worker-Main or
+     * Util.backgroundExecutor) therefore reads the synced copy, which is empty until the host player has joined.
+     * Server-only code, such as machine tasks and tick code, should call {@link #getServerValue(Object)} instead, and
+     * keep this method for screens and JEI.
      *
      * @return the value, or null when the entry has none
      */

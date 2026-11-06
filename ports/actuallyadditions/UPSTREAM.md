@@ -921,3 +921,23 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     (`4b55999a`), and the tick uses its own level and position parameters (`323c0756`). The block
     already gives light level 12 while it works, so `bbf42da6` only drops the comment that doubted
     it. No data, NBT key or block state changes.
+32. Coal Generator: it burns anything with a furnace burn time, as `d5757a14` (#1435) does, at
+    `ENERGY_PER_TICK` 20 CF/t for the burn time of the item, which is the rate that each of the six
+    solid fuel recipes of the base gave (32000 CF over 1600 ticks for coal and charcoal, 2000 over
+    100 for a stick, 4000 over 200 for tiny coal, 320000 over 16000 for a coal block and 400000 over
+    20000 for a lava bucket). Burn times come from `ForgeHooks.getBurnTime` with the smelting type,
+    the furnace lookup with Forge's `FurnaceFuelBurnTimeEvent`, so logs, planks, blaze rods and
+    modded fuels work too. On Forge 47 `ItemStack.getBurnTime`, which `main` calls on NeoForge,
+    only returns what an item sets itself, -1 for the vanilla fuels. A lava bucket leaves its empty bucket in the slot (`StackUtil.shrinkForContainer`),
+    which automation may then pull out. Tiny coal and tiny charcoal already burn for 200 ticks on
+    the base through `Item#getBurnTime`, which is what the furnace fuel data map of `3a2f298e`
+    gives them on `main`. A fuel hovered in the screen shows what it generates (the tooltip key
+    `coal_generator_stats` of `d5757a14`), the screen no longer draws its dark background twice
+    (`bb57f309`, #1462), and shift click uses the same burn time check (`a5172ea2`). The generator
+    writes no solid fuel recipes any more, so the six files under `recipes/solid_fuel/` are gone,
+    and the tag change of `9492973a` to the coal block recipe has nothing left to change. Unlike
+    `main`, the recipe type and serializer `actuallyadditions:solid_fuel` and the API list
+    `SOLID_FUEL_RECIPES` stay, unused, so that a data pack that still ships such a recipe loads.
+    Savegame: `BurnTime` and `MaxBurnTime` keep their meaning. The key `currentRecipe` of a
+    burning generator is no longer written and is ignored on load, and the generator finishes the
+    burn at 20 CF/t, the rate it had before.

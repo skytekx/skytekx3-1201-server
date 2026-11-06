@@ -10,9 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.tile;
 
-import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
-import de.ellpeck.actuallyadditions.mod.crafting.SolidFuelRecipe;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerCoalGenerator;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IAcceptor;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IRemover;
@@ -21,12 +19,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,22 +34,31 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityCoalGenerator extends TileEntityInventoryBase implements MenuProvider, ISharingEnergyProvider, IEnergyDisplay {
 
     public final CustomEnergyStorage storage = new CustomEnergyStorage(60000, 0, 80);
     public final LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> this.storage);
+    // SkyTekx: upstream d5757a14 (#1435). Every solid fuel recipe of the base gave 20 CF/t, and the
+    // generator now burns anything with a furnace burn time at that rate
+    public static final int ENERGY_PER_TICK = 20;
     public int maxBurnTime;
     public int currentBurnTime;
     private int lastEnergy;
     private int lastBurnTime;
     private int lastCurrentBurnTime;
     private int lastCompare;
-    private SolidFuelRecipe currentRecipe = null;
 
     public TileEntityCoalGenerator(BlockPos pos, BlockState state) {
         super(ActuallyBlocks.COAL_GENERATOR.getTileEntityType(), pos, state, 1);
+    }
+
+    // SkyTekx: ForgeHooks gives the furnace burn time with Forge's fuel event. On Forge 47
+    // ItemStack.getBurnTime only returns the value an item sets itself, -1 for vanilla fuels
+    private static int getBurnTime(@Nonnull ItemStack stack) {
+        return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -69,8 +76,6 @@ public class TileEntityCoalGenerator extends TileEntityInventoryBase implements 
         if (type != NBTType.SAVE_BLOCK) {
             compound.putInt("BurnTime", this.currentBurnTime);
             compound.putInt("MaxBurnTime", this.maxBurnTime);
-            if (currentRecipe != null)
-                compound.putString("currentRecipe", currentRecipe.getId().toString());
         }
         this.storage.writeToNBT(compound);
         super.writeSyncableNBT(compound, type);
@@ -81,15 +86,6 @@ public class TileEntityCoalGenerator extends TileEntityInventoryBase implements 
         if (type != NBTType.SAVE_BLOCK) {
             this.currentBurnTime = compound.getInt("BurnTime");
             this.maxBurnTime = compound.getInt("MaxBurnTime");
-            if (compound.contains("currentRecipe")) {
-                ResourceLocation id = new ResourceLocation(compound.getString("currentRecipe"));
-                for (SolidFuelRecipe fuelRecipe : ActuallyAdditionsAPI.SOLID_FUEL_RECIPES) {
-                    if (fuelRecipe.getId().equals(id)) {
-                        this.currentRecipe = fuelRecipe;
-                        break;
-                    }
-                }
-            }
         }
         this.storage.readFromNBT(compound);
         super.readSyncableNBT(compound, type);
@@ -107,25 +103,21 @@ public class TileEntityCoalGenerator extends TileEntityInventoryBase implements 
 
             boolean flag = tile.currentBurnTime > 0;
 
-            if (tile.currentBurnTime > 0 && tile.currentRecipe != null) {
+            if (tile.currentBurnTime > 0) {
                 tile.currentBurnTime--;
-                int produce = tile.currentRecipe.getTotalEnergy() / tile.currentRecipe.getBurnTime();
-                if (produce > 0) {
-                    tile.storage.receiveEnergyInternal(produce, false);
-                }
+                tile.storage.receiveEnergyInternal(ENERGY_PER_TICK, false);
             }
 
             if (!tile.isRedstonePowered && tile.currentBurnTime <= 0 && tile.storage.getEnergyStored() < tile.storage.getMaxEnergyStored()) {
                 ItemStack stack = tile.inv.getStackInSlot(0);
                 if (!stack.isEmpty()) {
-                    ActuallyAdditionsAPI.SOLID_FUEL_RECIPES.stream().filter(r -> r.matches(stack)).findFirst().ifPresent(recipe -> {
-                        tile.currentRecipe = recipe;
-                        tile.maxBurnTime = recipe.getBurnTime();
+                    int time = getBurnTime(stack);
+                    if (time > 0) {
+                        tile.maxBurnTime = time;
                         tile.currentBurnTime = tile.maxBurnTime;
                         tile.inv.setStackInSlot(0, StackUtil.shrinkForContainer(stack, 1));
-                    });
-                } else
-                    tile.currentRecipe = null;
+                    }
+                }
             }
 
             if (flag != tile.currentBurnTime > 0 || tile.lastCompare != tile.getComparatorStrength()) {
@@ -149,12 +141,7 @@ public class TileEntityCoalGenerator extends TileEntityInventoryBase implements 
 
     @Override
     public IAcceptor getAcceptor() {
-        return (slot, stack, automation) -> {
-            for (SolidFuelRecipe recipe : ActuallyAdditionsAPI.SOLID_FUEL_RECIPES) {
-                if (recipe.matches(stack))return true;
-            }
-            return false;
-        };
+        return (slot, stack, automation) -> getBurnTime(stack) > 0;
     }
 
     @Override
@@ -163,7 +150,7 @@ public class TileEntityCoalGenerator extends TileEntityInventoryBase implements 
             if (!automation) {
                 return true;
             }
-            return ForgeHooks.getBurnTime(this.inv.getStackInSlot(0), null) <= 0;
+            return getBurnTime(this.inv.getStackInSlot(0)) <= 0;
         };
     }
 

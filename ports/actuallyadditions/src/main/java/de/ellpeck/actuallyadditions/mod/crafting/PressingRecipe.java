@@ -38,6 +38,11 @@ public class PressingRecipe implements Recipe<Container> {
         return input.test(pInv.getItem(0));
     }
 
+    // SkyTekx: upstream 0632253a, for the JEI category
+    public Ingredient getInput() {
+        return this.input;
+    }
+
     @Override
     public boolean isSpecial() {
         return true;

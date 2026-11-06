@@ -129,6 +129,8 @@ Modifications
       JEI category as on upstream's main branch, effects stack without doubling, and a cup gives
       back an empty cup and can no longer be repaired. Milk weakens the effects before it and
       adds two minutes, as in the 1.12 versions, which upstream's main branch dropped.
+    * Canola: JEI shows the pressing recipes of the Canola Press and the progress of the
+      Fermenting Barrel, and shift click into the press works on a client of a server.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

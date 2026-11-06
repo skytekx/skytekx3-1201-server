@@ -76,8 +76,9 @@ evidence and the page with the details. The rulings behind the first section are
   Modrinth project `skytekx3` yet, and Modrinth creates projects as `monetized`. Since 2026-11-05 the
   dry run of `tools/publish_modrinth.py` prints the status and warns unless it is demonetized, and
   `--go` sets the project to `demonetized` through the API and refuses the upload if Modrinth keeps
-  another value. Demonetizing is needed while the Twilight Forest fork is bundled, whatever happens to
-  Ender IO, because moving Ender IO to the index drops only the Patchouli condition. Nobody has run
+  another value. Demonetizing is needed while either fork is bundled. The pack ships a modified Ender IO
+  build (df80207), which must stay bundled, so its Patchouli condition stays as long as it ships, and
+  the Twilight Forest fork sets the same limit. Nobody has run
   `--go` with the check yet, so whether the token may set the field is not verified, see
   [Publish](modpack/publish.md#release-steps).
 
@@ -253,6 +254,14 @@ evidence and the page with the details. The rulings behind the first section are
   generator over all crafting and smithing recipes would cover the rest, with each piece giving back
   what its cheapest recipe takes, and it would also check the recipes of Tinkers for more dupes like
   the one of the vanilla horse armor.
+- A `/setblock`, `/clone` or `/data merge` of an `enderio:conduit` block with a `ConduitBundle`
+  compound leaves the bundle without graph nodes, because its block entity reads the conduit types
+  after `setLevel`. The next capability query of a neighbour crashes the server tick in
+  `ConduitBundle.getNodeFor`, and the bundle cannot be saved. Ender IO 6.2.18-beta and the fork
+  build 6.3.0-skytekx.1 both do it on a test server, while bundles that load with their chunk are
+  fine. A fix would create the missing nodes in `load` or `onLoad`. Until then nobody places
+  bundles with NBT by command. Whether a Create contraption that moves a bundle takes the same path
+  is not verified. See [Ender IO backport](modpack/enderio-backport.md#operator-notes).
 
 ## Not verified
 
@@ -382,6 +391,13 @@ evidence and the page with the details. The rulings behind the first section are
   or its recipe book, seen its JEI categories, its boats, signs and new names, or milked a goat,
   filled a cask, planted cranberries, fed a fox cranberries or stripped a cinnamon log by hand. See [Expanded Delight
   port](modpack/expandeddelight-port.md#integration-test).
+- Ender IO 6.3.0-skytekx.1 in a client and on the live world. A savegame test from 6.2.18-beta, full
+  pack boots on Forge and Arclight and dev self tests passed, but nobody has joined with a client of
+  the pack, seen the Vat recipes in JEI and EMI, opened the screens of the new blocks, used the staff
+  and magnet keys or seen the facades with Embeddium. A copy of the live world on the production
+  Arclight jar is open too, with the inhibitor obelisk against `/home` and `/tpa` of EssentialsX, the
+  attractor next to a Flux Networks point and the wireless charger with several players. See
+  [Ender IO backport](modpack/enderio-backport.md#release).
 
 ## Docs and housekeeping
 

@@ -30,8 +30,9 @@ worlds and configs keep working if an upstream build for Forge 1.20.1 replaces i
 
 All six mods of the table, Create: Dragons Plus included, are in the branch, and the full pack with
 them booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the test copies.
-What remains for each of them is a test in a client, which only the next pack brings, see
-[open items](../open-items.md#not-verified).
+A later Forge boot of 8dbd317 checked the rebuilt jars of Expanded Delight and Create: Integrated
+Farming, see [the boot of the two fixes](#boot-of-the-two-fixes). What remains for each of them is a
+test in a client, which only the next pack brings, see [open items](../open-items.md#not-verified).
 
 | Mod | Mixins applied on Forge and Arclight | Registry ids found on both | Log lines of the mod in the full pack | Still open |
 |---|---|---|---|---|
@@ -81,6 +82,36 @@ from 593db2f, the last full pack boots before the six mods.
 - The first runs also ran the test script with `/kubejs reload server_scripts`, which starts the
   server log of KubeJS anew, so their diff lists the 22 recipe warnings of that log as gone. The
   repeats did not reload, and their KubeJS log matches the baselines.
+
+### Boot of the two fixes
+
+The review after these boots found two data gaps, fixed on 2026-11-06: the Expanded Delight port had
+dropped upstream's cranberries in `minecraft:fox_food` (3df647a, jar ffb40aa), and the roost of Create:
+Integrated Farming refused the seeds that Farmer's Delight and Supplementaries make chicken food
+(f367a36, jar 8dbd317). One more Forge boot `newmods-fix-forge` ran the same harness on a fresh detached
+worktree of 8dbd317 with `PACKBOOT_DONE_ONLY=1`, which skips the forceloaded points: `Done`, then
+`save-all flush` and `stop` over RCON. Besides the two jars, 8dbd317 differs from 052a0e4 in the pack
+by Ender IO 6.3.0-skytekx.1 (de0d78b, b4722b5) and the Create Crafts & Additions fork (ac87ce7,
+b781300).
+
+| Boot | Server | Mixin export | Done after | Mod ids and jars | FATAL, crash, watchdog | ERROR lines | Log signatures | Stop |
+|---|---|---|---|---|---|---|---|---|
+| Fix check `newmods-fix-forge` | Forge 47.4.18 | Off | 38.7 s, 239 s wall | 297 and 271 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+
+- The 3 ERROR lines are the baseline of the test copies. Against `newmods-forge` and
+  `newmods-forge-r2` the boot has no new log signature. It lacks the two signatures of the mixin
+  export, and the 22 recipe warnings of the KubeJS log are back because it did not reload KubeJS.
+  Against the boot `createaddition-forge` of b781300, the commit before the two fixes, it has no new
+  signature either.
+- The mods log the same lines as before: the first write of
+  `create_integrated_farming-server.toml` and of the configs that git does not hold, and the
+  missing tooltip of Advanced Loot Info for `expandeddelight:copy_drink`.
+- The server reached `Done` 22 s later than in `newmods-forge-r2`. The machine ran other test servers
+  and builds at the same time, with a load average of about 11 on 4 CPUs, so the time says nothing
+  about the two jars.
+- This boot ran no RCON check of the two tags. The plain test servers of the two fixes did, see
+  [Expanded Delight port](expandeddelight-port.md#fox-food-test-of-2026-11-06) and
+  [Create Integrated Farming port](createintegratedfarming-port.md#seed-test-of-2026-11-06).
 
 ### How the checks ran
 

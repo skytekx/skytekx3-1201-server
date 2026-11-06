@@ -2,6 +2,9 @@ package de.ellpeck.actuallyadditions.data;
 
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.config.conditions.BoolConfigCondition;
+import de.ellpeck.actuallyadditions.mod.gen.ActuallyBiomeModifiers;
+import de.ellpeck.actuallyadditions.mod.gen.ActuallyConfiguredFeatures;
+import de.ellpeck.actuallyadditions.mod.gen.ActuallyPlacedFeatures;
 import de.ellpeck.actuallyadditions.mod.misc.ActuallyDamageTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -19,6 +22,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -73,6 +77,10 @@ public class ActuallyAdditionsData {
         registryBuilder.add(Registries.DAMAGE_TYPE, (context) -> {
             context.register(ActuallyDamageTypes.ATOMIC_RECONSTRUCTOR, new DamageType("actuallyadditions.atomic_reconstructor", 0.0F));
         });
+        // SkyTekx: the black quartz ore of upstream 02422d65
+        registryBuilder.add(Registries.CONFIGURED_FEATURE, ActuallyConfiguredFeatures::bootstrap);
+        registryBuilder.add(Registries.PLACED_FEATURE, ActuallyPlacedFeatures::bootstrap);
+        registryBuilder.add(ForgeRegistries.Keys.BIOME_MODIFIERS, ActuallyBiomeModifiers::bootstrap);
         // We need the BIOME registry to be present, so we can use a biome tag, doesn't matter that it's empty
         registryBuilder.add(Registries.BIOME, context -> {
         });

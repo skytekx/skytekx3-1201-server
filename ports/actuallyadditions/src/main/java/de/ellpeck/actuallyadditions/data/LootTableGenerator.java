@@ -202,10 +202,9 @@ public class LootTableGenerator extends LootTableProvider {
             this.registerCrystal(ActuallyBlocks.VOID_CRYSTAL_CLUSTER, ActuallyItems.VOID_CRYSTAL_SHARD);
             this.registerCrystal(ActuallyBlocks.EMERADIC_CRYSTAL_CLUSTER, ActuallyItems.EMERADIC_CRYSTAL_SHARD);
 
-            //TODO temp
-            dropSelf(ActuallyBlocks.BLACK_QUARTZ_ORE.get());
-
-            //this.add(ActuallyBlocks.BLACK_QUARTZ_ORE.get(), ore -> droppingItemWithFortune(ore, ActuallyItems.BLACK_QUARTZ.get()));
+            // SkyTekx: upstream abbc1ae9 and 005b3ccc, the ore drops black quartz with the ore fortune bonus
+            // and itself only with silk touch
+            add(ActuallyBlocks.BLACK_QUARTZ_ORE.get(), createOreDrop(ActuallyBlocks.BLACK_QUARTZ_ORE.getBlock(), ActuallyItems.BLACK_QUARTZ.get()));
 
             // SkyTekx: upstream 506d481d (changelog 1.3.11), the drop counts of 1.12. A ripe crop drops
             // between min and min + bonus of its crop and one or two seeds, each with the uniform fortune bonus

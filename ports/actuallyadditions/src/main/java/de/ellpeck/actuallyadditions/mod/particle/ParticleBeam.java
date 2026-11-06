@@ -13,8 +13,10 @@ package de.ellpeck.actuallyadditions.mod.particle;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -22,13 +24,16 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.FastColor;
 
 public class ParticleBeam extends Particle {
-    // SkyTekx: the render type of fb80bf33 with the additive blending of 58b9cbc9. Each beam begins
-    // and ends its own draw in AssetUtil.renderLaserParticle
+    // SkyTekx: the render type of fb80bf33 with the additive blending of 58b9cbc9, the position and
+    // colour format of 7fb62cb8 and the position_color shader of db1bb6e7, which shader packs (Oculus
+    // on 1.20.1) handle. All beams of a frame go into one buffer, which the render type begins and
+    // draws as the 1.21 particle engine does with the buffer that begin returns
     public static final ParticleRenderType LASER_RENDER = new ParticleRenderType() {
 
         @Override
@@ -36,10 +41,13 @@ public class ParticleBeam extends Particle {
             RenderSystem.disableCull();
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         }
 
         @Override
         public void end(Tesselator tesselator) {
+            tesselator.end();
             RenderSystem.enableCull();
             RenderSystem.disableBlend();
             RenderSystem.defaultBlendFunc();

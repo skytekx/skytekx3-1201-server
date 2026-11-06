@@ -25,7 +25,8 @@ public class RenderTypes extends RenderType {
         .setOutputState(MAIN_TARGET)
         .setLightmapState(RenderStateShard.LIGHTMAP)
         .setCullState(RenderStateShard.NO_CULL)
-        // SkyTekx: the block sheet, main target and shader of 8374a4d7. The base set no shader state
-        .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+        // SkyTekx: the block sheet and main target of 8374a4d7 with the position_color shader of
+        // db1bb6e7, which shader packs (Oculus on 1.20.1) handle. The base set no shader state
+        .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
         .createCompositeState(true));
 }

@@ -11,11 +11,8 @@
 package de.ellpeck.actuallyadditions.mod.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.render.RenderTypes;
@@ -25,13 +22,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.NonNullList;
@@ -51,7 +44,6 @@ public final class AssetUtil {
     public static final int MAX_LIGHT_Y = 0xF000F0;
 
     public static final ResourceLocation GUI_INVENTORY_LOCATION = getGuiLocation("gui_inventory");
-    private static final ResourceLocation FORGE_WHITE = new ResourceLocation("forge", "white");
 
     public static ResourceLocation getGuiLocation(String file) {
         return new ResourceLocation(ActuallyAdditions.MODID, "textures/gui/" + file + ".png");
@@ -98,30 +90,23 @@ public final class AssetUtil {
     //        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(state, model, brightness, r, g, b);
     //    }
 
+    // SkyTekx: the item render of b3f87a6f (#1486). It no longer binds the block atlas and changes its
+    // mipmap blur in the middle of the particle pass, which glitched translucent particles nearby
     @OnlyIn(Dist.CLIENT)
     public static void renderItemWithoutScrewingWithColors(ItemStack stack, PoseStack matrices, int combinedOverlay, int combinedLight) {
         if (StackUtil.isValid(stack)) {
             Minecraft mc = Minecraft.getInstance();
             ItemRenderer renderer = mc.getItemRenderer();
-            TextureManager manager = mc.getTextureManager();
             MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
             BakedModel model = renderer.getModel(stack, null, null, 0);
-            manager.bindForSetup(TextureAtlas.LOCATION_BLOCKS); //bind
-            manager.getTexture(TextureAtlas.LOCATION_BLOCKS).setBlurMipmap(false, false);
-//            RenderSystem.enableRescaleNormal();
-            RenderSystem.enableBlend();
-//            RenderSystem.pushMatrix();
             matrices.pushPose();
             model = ForgeHooksClient.handleCameraTransforms(matrices, model, ItemDisplayContext.FIXED, false);
+            RenderSystem.enableBlend();
             renderer.render(stack, ItemDisplayContext.FIXED, false, matrices, bufferSource,
                     combinedOverlay, combinedLight, model);
-//            RenderSystem.popMatrix();
-            matrices.popPose();
-//            RenderSystem.disableRescaleNormal();
             RenderSystem.disableBlend();
-            manager.bindForSetup(TextureAtlas.LOCATION_BLOCKS); //bind
-            manager.getTexture(TextureAtlas.LOCATION_BLOCKS).restoreLastBlurMipmap();
+            matrices.popPose();
             bufferSource.endBatch();
         }
     }
@@ -233,8 +218,9 @@ public final class AssetUtil {
     }*/
 
     // SkyTekx: the laser fixes of 8374a4d7 and the null check of 78258dce. The additive blend now takes
-    // the alpha into the color, the beam samples the white sprite of Forge and the innermost tube
-    // (width 0) is no longer drawn
+    // the alpha into the color and the innermost tube (width 0) is no longer drawn. The colour is
+    // dimmed to 0.4 for the position_color shader of db1bb6e7, and the texture coordinates are gone
+    // with de635bb7, since the format has none
     @OnlyIn(Dist.CLIENT)
     public static void renderLaser(PoseStack matrixStack, MultiBufferSource buffer, float offX, float offY, float offZ, float yaw, float pitch, float length, float rotationTime, int color, float alpha, float beamWidth) {
         Level world = Minecraft.getInstance().level;
@@ -243,9 +229,9 @@ public final class AssetUtil {
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
         int a = (int) (alpha * 255);*/
-        int r = (int)(((color >> 16) & 0xFF) * alpha);
-        int g = (int)(((color >> 8) & 0xFF) * alpha);
-        int b = (int)((color & 0xFF) * alpha);
+        int r = (int)(((color >> 16) & 0xFF) * alpha * 0.4F);
+        int g = (int)(((color >> 8) & 0xFF) * alpha * 0.4F);
+        int b = (int)((color & 0xFF) * alpha * 0.4F);
         int a = 255;
 
         int lightmap = LightTexture.pack(MAX_LIGHT_X, MAX_LIGHT_Y);
@@ -263,35 +249,29 @@ public final class AssetUtil {
 
         Matrix4f matrix = matrixStack.last().pose();
 
-        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(FORGE_WHITE);
-        float minU = sprite.getU0();
-        float maxU = sprite.getU1();
-        float minV = sprite.getV0();
-        float maxV = sprite.getV1();
-
         //Draw laser tube faces
         for (int i = 1; i < 4; i++) {
             float width = beamWidth * (i / 4.0f);
             //top
-            builder.vertex(matrix, -width,  width,    0.0f).color(r, g, b, a).uv(minU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width,  width,    0.0f).color(r, g, b, a).uv(maxU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width,  width, -length).color(r, g, b, a).uv(maxU, minV).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width,  width, -length).color(r, g, b, a).uv(minU, minV).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width,  width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width,  width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width,  width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width,  width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
             //bottom
-            builder.vertex(matrix, -width, -width,    0.0f).color(r, g, b, a).uv(minU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).uv(minU, minV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width, -width, -length).color(r, g, b, a).uv(maxU, minV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width, -width,    0.0f).color(r, g, b, a).uv(maxU, maxV).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, -width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width, -width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
             //left
-            builder.vertex(matrix, -width,  width,    0.0f).color(r, g, b, a).uv(maxU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, -width,    0.0f).color(r, g, b, a).uv(maxU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).uv(minU, minV).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width,  width, -length).color(r, g, b, a).uv(minU, minV).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width,  width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, -width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width,  width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
             //right
-            builder.vertex(matrix,  width,  width,    0.0f).color(r, g, b, a).uv(maxU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width, -width,    0.0f).color(r, g, b, a).uv(maxU, maxV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width, -width, -length).color(r, g, b, a).uv(minU, minV).uv2(lightmap).endVertex();
-            builder.vertex(matrix,  width,  width, -length).color(r, g, b, a).uv(minU, minV).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width,  width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width, -width,    0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix,  width,  width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
         }
 
 
@@ -313,9 +293,11 @@ public final class AssetUtil {
 
     //Thanks to feldim2425 for this.
     //I can't do rendering code. Ever.
-    // SkyTekx: the particle render of fb80bf33. The base wrote to the tesselator without beginning it,
-    // which throws, so no beam particle could render. The format has no texture, so the UVs of
-    // main, which point at the white sprite of Forge, are left out
+    // SkyTekx: the particle render of fb80bf33 in the final form of main: position and colour only
+    // (7fb62cb8, de635bb7), into the buffer that ParticleBeam.LASER_RENDER begins and draws with the
+    // position_color shader (db1bb6e7). The base wrote to the tesselator without beginning it, which
+    // throws, so no beam particle could render. The stray Tesselator.begin that e870e5c4 removes from
+    // the 1.21 code has no place here either
     @OnlyIn(Dist.CLIENT)
     public static void renderLaserParticle(VertexConsumer builder, Camera camera, double firstX, double firstY, double firstZ, double secondX, double secondY, double secondZ, float rotationTime, float a, float beamWidth, float[] color) {
         Level world = Minecraft.getInstance().level;
@@ -328,8 +310,6 @@ public final class AssetUtil {
         Vec3 vec1 = new Vec3(firstX, firstY, firstZ);
         Vec3 vec2 = new Vec3(secondX, secondY, secondZ);
         Vec3 combinedVec = vec2.subtract(vec1);
-
-        int lightmap = LightTexture.pack(MAX_LIGHT_X, MAX_LIGHT_Y);
 
         double roll = rotationTime > 0 ? 360D * (world.getGameTime() % rotationTime / rotationTime) : 0;
         double pitch = Math.toDegrees(Math.atan2(combinedVec.y, Math.sqrt(combinedVec.x * combinedVec.x + combinedVec.z * combinedVec.z)));
@@ -348,35 +328,31 @@ public final class AssetUtil {
 
         Matrix4f matrix = matrixStack.last().pose();
 
-        RenderSystem.setShader(GameRenderer::getPositionColorLightmapShader);
-        Tesselator.getInstance().getBuilder().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_LIGHTMAP);
-
         //Draw laser tube faces
         for (int i = 1; i < 4; i++) {
             float width = beamWidth * (i / 4.0f);
             //top
-            builder.vertex(matrix, -width, width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, width, -length).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, -width, width, -length).color(r, g, b, a).endVertex();
             //bottom
-            builder.vertex(matrix, -width, -width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, -width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, -width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, -width, -length).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, -width, 0.0f).color(r, g, b, a).endVertex();
             //left
-            builder.vertex(matrix, -width, width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, -width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, -width, width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, -width, width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, -width, -width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, -width, -width, -length).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, -width, width, -length).color(r, g, b, a).endVertex();
             //right
-            builder.vertex(matrix, width, width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, -width, 0.0f).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, -width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
-            builder.vertex(matrix, width, width, -length).color(r, g, b, a).uv2(lightmap).endVertex();
+            builder.vertex(matrix, width, width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, -width, 0.0f).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, -width, -length).color(r, g, b, a).endVertex();
+            builder.vertex(matrix, width, width, -length).color(r, g, b, a).endVertex();
         }
         matrixStack.popPose();
-        Tesselator.getInstance().end();
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -12,21 +12,22 @@ package de.ellpeck.actuallyadditions.mod.particle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +35,33 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
 public class ParticleLaserItem extends Particle {
+    // SkyTekx: the own render type of b3f87a6f (#1486). The particle draws its item through the buffer
+    // source of the item renderer and writes nothing into the particle buffer, so it no longer shares
+    // the translucent particle sheet, whose particles glitched next to it. The 1.21 type begins a
+    // buffer that stays empty, so this one only sets the blend and puts the state back at the end
+    public static final ParticleRenderType ITEM_RENDER = new ParticleRenderType() {
+
+        @Override
+        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+            RenderSystem.disableCull();
+            RenderSystem.enableBlend();
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        }
+
+        @Override
+        public void end(Tesselator tesselator) {
+            RenderSystem.enableCull();
+            RenderSystem.disableBlend();
+            RenderSystem.defaultBlendFunc();
+        }
+
+        @Override
+        public String toString() {
+            return "actuallyadditions:item_particle";
+        }
+    };
+
     private final double otherX;
     private final double otherY;
     private final double otherZ;
@@ -71,12 +99,8 @@ public class ParticleLaserItem extends Particle {
 
     @Override
     public void render(VertexConsumer vertexConsumer, Camera renderInfo, float partialTicks) {
-        Minecraft mc = Minecraft.getInstance();
-        MultiBufferSource.BufferSource renderBuffer = mc.renderBuffers().bufferSource();
         Vec3 cam = renderInfo.getPosition();
 
-//        RenderSystem.pushMatrix();
-//        Lighting.turnBackOn();
         PoseStack matrices = new PoseStack();
         matrices.pushPose();
 
@@ -86,29 +110,16 @@ public class ParticleLaserItem extends Particle {
         double boop = Util.getMillis() / 600D;
         matrices.mulPose(Axis.YP.rotationDegrees((float) (boop * 40D % 360)));
 
-//        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F); TODO: See if this is needed
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-        float ageRatio = (float) this.age / (float) this.lifetime;
-        float color = this.yd < 0
-                ? 1F - ageRatio
-                : ageRatio;
-//        RenderSystem.blendColor(color, color, color, color); TODO: See if this is needed
-
         int blockLight = level.getBrightness(LightLayer.BLOCK, BlockPos.containing(x, y, z));
         int skyLight = level.getBrightness(LightLayer.SKY, BlockPos.containing(x, y, z));
         AssetUtil.renderItemWithoutScrewingWithColors(this.stack, matrices, LightTexture.pack(blockLight, skyLight), OverlayTexture.NO_OVERLAY);
 
-//        Lighting.turnOff();
         matrices.popPose();
-//        RenderSystem.popMatrix();
-        renderBuffer.endBatch();
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return ITEM_RENDER;
     }
 
     public static class Factory implements ParticleProvider<LaserItemParticleData> {

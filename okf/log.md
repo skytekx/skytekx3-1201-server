@@ -942,5 +942,30 @@ logs stay on the Mac and are not in the repo.
   the conduit crash by command are on [Open items](open-items.md) (687af66), and the next pack notes
   of [Publish](modpack/publish.md) name the build and its client checks (d8f6c9f).
 
+## 2026-11-06: Create Crafts & Additions 1.20.1-1.7.3-skytekx.1
+
+- The pack swaps the Modrinth file of Create Crafts & Additions 1.3.3 for the backport build
+  1.20.1-1.7.3-skytekx.1 of `ports/createaddition/` (d52d46c, SHA-1
+  `b7355fab1f431ddf186a5c7be2e5a4d4c751983b`). It brings all ten bundles of the plan: the wire graph
+  that carries energy across unloaded chunks with the operator command `/cca_wires`, the small fixes
+  of the 1.21.1 line, fire over oils and fuels, the alternator with two shafts, the FE Capacitor and
+  the new Electrum Amulet, charging in Sequenced Assembly, the Electric Pump, the Servo Motor with
+  its CC:Tweaked peripheral and the new ponders, see [Create Crafts & Additions
+  backport](modpack/createaddition-backport.md#release).
+- Commit 23822fc lets the server answer goggle observations only for loaded blocks near the player,
+  68f66f6 names the holder of Create's current code license in the `NOTICE`, and f6cd870 commits the
+  11 new config keys. The permission record, the license texts and the permission README come with
+  the jar.
+- A world saved by 1.3.3 with machines, wires, a Modular Accumulator and a chest of the mod's items
+  loaded unchanged with the fork on a Forge test server, and its wires moved into the graph with no
+  difference against the region files. Full pack boots on Forge and Arclight reached `Done` with 0
+  FATAL lines and no new log signature against `newmods-forge` and `newmods-arclight`, and the
+  mixins of the fork applied on both. Two more boots charged gold and copper tiles under Tesla
+  Coils, ran the pump between pipes and read 224 unloaded wire nodes back from disk on both loaders.
+- Server and clients must update together, because the channel `createaddition:main` uses protocol
+  "2". The server's `mods/` gets the jar only with the deploy of the next pack, after the alternator
+  scan and the wire test on a copy of the live world and the client checks that the backport page
+  lists.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

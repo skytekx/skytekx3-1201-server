@@ -94,6 +94,10 @@
       "required": false
     },
     {
+      "id": "expandeddelight:cinnamon_planks",
+      "required": false
+    },
+    {
       "id": "forbidden_arcanus:aurum_planks",
       "required": false
     },

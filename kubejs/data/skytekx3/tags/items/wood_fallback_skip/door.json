@@ -102,6 +102,10 @@
       "required": false
     },
     {
+      "id": "expandeddelight:cinnamon_planks",
+      "required": false
+    },
+    {
       "id": "forbidden_arcanus:arcane_edelwood_planks",
       "required": false
     },

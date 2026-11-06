@@ -31,8 +31,11 @@ These come from the session of 2026-11-06 (claude.ai session `016dYAZDqtsLdVqTQQ
 - Quirks and security issues of the ported plugins are fixed during the port, not carried over.
 - Every quirk and every security issue gets its own GitHub issue, and the pull request links all of
   them.
-- The owner asked whether Golem can be licensed under the GNU GPL 2, see [License](#license).
-- Every commit is pushed to `skytekx/golem` as soon as it exists.
+- Golem is licensed under the GNU AGPL 3, written into every source file, see [License](#license).
+- Commits and code follow the Linux kernel style with SPDX license lines, see
+  [Commit and code style](#commit-and-code-style).
+- Every commit is pushed to `skytekx/golem` as soon as it exists, so that no code is lost when a dev
+  environment ends, for example because its usage runs out.
 - Golem keeps its own OKF wiki.
 
 ## Why the game itself stays Java
@@ -109,35 +112,120 @@ bridge mod lives in the same repository as a Gradle subproject.
 
 ## License
 
-The owner wants the GNU GPL 2. Golem takes `GPL-2.0-or-later`, not `GPL-2.0-only`, for these reasons.
+Golem is licensed under the GNU Affero General Public License 3.0 or later, SPDX
+`AGPL-3.0-or-later`, as the owner decided on 2026-11-06 after a comparison with the GPL 2, the GPL 3 and
+the LGPL.
 
-- Aosabi is MIT, but some of its files are Apache-2.0, the code it takes from Pylon in
-  `aosabi-core`, `aosabi-serve`, `aosabi-query` and `aosabi-build` ([Aosabi licensing](https://github.com/netsnek/aosabi/blob/main/Documentation/licensing.md)).
-  Its TLS stack uses `ring`, which is under Apache-2.0 and ISC terms as well. The Free Software
-  Foundation counts Apache-2.0 as compatible with the GPL 3 but not with the GPL 2 only. A Golem binary
-  under `GPL-2.0-only` that links Aosabi would carry a license conflict.
-- Under `GPL-2.0-or-later` the source stays GPL 2 and every combined binary is distributed under the
-  GPL 3, which takes the Apache-2.0 parts.
-- Forge is LGPL-2.1, which the bridge mod may link under either GPL version. LuckPerms is MIT. Neither
-  blocks the choice.
-- EssentialsX is GPL-3.0. Golem does not copy or translate its code. The port is written from the
-  documented behaviour and from tests against the running plugin, so the GPL 3 of EssentialsX does
-  not reach Golem. Arclight and CraftBukkit code is not used either.
+- The AGPL is the only one of them that reaches a server that is run but never distributed. Whoever
+  runs a changed Golem for players must offer those players its source. Under the GPL 2 or 3 the
+  changes could stay private.
+- The AGPL 3 takes Apache-2.0 code, so Aosabi works as it is. Aosabi is MIT, but some of its files
+  are Apache-2.0, the code it takes from Pylon in `aosabi-core`, `aosabi-serve`, `aosabi-query` and
+  `aosabi-build` ([Aosabi licensing](https://github.com/netsnek/aosabi/blob/main/Documentation/licensing.md)),
+  and its TLS stack uses `ring`, which is under Apache-2.0 and ISC terms. A license that is GPL 2 only
+  could not take those parts.
+- Forge is LGPL-2.1 and LuckPerms is MIT. Both may be combined with AGPL code.
+- EssentialsX is GPL-3.0, which is compatible, but Golem still does not copy or translate its code.
+  The port is written from the documented behaviour and from tests against the running plugin.
+  Arclight and CraftBukkit code is not used either.
 - Golem never ships Minecraft. The server jar comes from Mojang's download as today.
+- The "or later" lets Golem move to a later AGPL if the Free Software Foundation ever publishes one.
+  The AGPL 3 of 2007 is the newest version on 2026-11-06.
 
-Every source file carries `SPDX-License-Identifier: GPL-2.0-or-later` on its first line, and
-`LICENSES/` holds the texts of the GPL 2 and of every license a dependency brings. A license check in
-CI, such as `cargo deny`, refuses a dependency whose license is incompatible. This is a reading of the
-licenses and not legal advice.
+Golem follows its own license on the SkyTekx server. The command `/golem source`, the server list text
+and the field `server.source` of the GraphQL API name the repository and the exact commit that runs,
+so every player can get the source of the running version.
+
+The license is written into the code itself.
+
+- The file `LICENSE` holds the full text of the AGPL 3 from gnu.org, unchanged.
+- Every source file names the license on its first line with an SPDX identifier, as the Linux kernel
+  does, and carries no other license text. A file that cannot hold a comment, such as JSON or an
+  image, is covered by an entry in `REUSE.toml`.
+
+```text
+// SPDX-License-Identifier: AGPL-3.0-or-later         Rust, Java, C, JavaScript
+# SPDX-License-Identifier: AGPL-3.0-or-later          TOML, YAML, shell, Python
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->   Markdown outside the wiki
+```
+
+- The `license` field of every `Cargo.toml` and the Gradle build of the bridge mod say
+  `AGPL-3.0-or-later`. The wiki pages carry the same identifier as the key `license` in their front
+  matter.
+- The folder `LICENSES/` holds the text of every license a dependency or a copied file brings, named
+  by its SPDX identifier, and `NOTICE` names each such project.
+- CI runs `reuse lint` so that no file lacks its SPDX line, and `cargo deny` so that no dependency has
+  an incompatible license.
+
+This is a reading of the licenses and not legal advice.
+
+## Commit and code style
+
+Golem follows the Linux kernel's rules for commits and code, from its
+`Documentation/process/submitting-patches.rst` and `Documentation/process/coding-style.rst`.
+
+### Commits
+
+- One logical change per commit. On `main` every commit builds and passes the tests on its own, so
+  that `git bisect` works.
+- The subject names the subsystem and says what the commit does in the imperative, without a period
+  at the end and in about 70 characters at most. Examples are `essentials: refuse negative amounts in
+  pay`, `bridge: queue teleports on the server thread` and `api: add the source field to Server`.
+- A blank line follows, then a body wrapped at 72 columns that explains the problem first, then why
+  this change solves it, then how. The diff already shows what changed.
+- Trailers close the message in the kernel's form.
+
+```text
+essentials: refuse negative amounts in pay
+
+The pay command must never move money from the receiver to the sender.
+Golem parses every amount as whole cents and refuses anything that is
+not above zero before it touches an account.
+
+Closes: https://github.com/skytekx/golem/issues/12
+Signed-off-by: Name <address>
+```
+
+- Every commit carries `Signed-off-by` under the Developer Certificate of Origin. Only a human signs
+  off, so an AI agent never adds the line. The human who reviews the agent's commit signs it off.
+- A fix of an earlier Golem commit carries `Fixes: <first 12 characters of the hash> ("<subject>")`.
+  A commit that solves an issue carries `Closes:` with the issue URL, and `Link:` points to further
+  discussion. `Reported-by`, `Reviewed-by`, `Tested-by` and `Co-developed-by` are used as the kernel
+  uses them.
+- CI checks every subject, the body width and the trailers, and refuses commits without
+  `Signed-off-by`.
+
+### Code
+
+- The first line of every file is its SPDX line, see [License](#license).
+- Rust is formatted with `rustfmt` and passes `clippy` with warnings as errors, as the Rust code of the
+  kernel does. Every `unsafe` block, which the JNI host needs, carries a `// SAFETY:` comment that says
+  why it is sound, as the kernel requires.
+- C, if any is ever needed, follows the kernel coding style with tabs of 8 columns and the kernel's
+  `.clang-format`. The Java of the bridge mod takes the same rules where they fit: tabs, K&R braces,
+  lines of at most 100 columns, short functions and no clever tricks.
+- Comments say why, not what. Names are plain words, not abbreviations.
 
 ## Repository rules
 
 These hold for everyone who works on `skytekx/golem`, human or agent.
 
-- Push every commit as soon as it is made. No commit stays only local, not even for the length of a
-  session, so that a lost machine or container never loses work. Work in progress goes to a branch and
-  is pushed there, and only `main` waits for review.
-- Keep commits granular, one concern per commit, so that pushing each one at once stays readable.
+- Push every commit at once, the same minute it is made. This is the most important rule of the
+  repository. Dev environments end without warning: a cloud container is reclaimed, a session times
+  out, or the usage or credit of an agent runs out in the middle of the work. Whatever is only local at
+  that moment is gone.
+- Commit often, at every step that works or that would hurt to redo, not only at the end of a task.
+  Uncommitted work is lost the same way.
+- Work happens on a personal work branch that is pushed after every commit. On that branch commits
+  may be work in progress that does not build yet. Before a merge into `main` the branch is cleaned
+  into commits of [Commit and code style](#commit-and-code-style), and only then may it be force pushed
+  with `--force-with-lease`, and only on that own branch.
+- If a push fails because of the network, retry it at once and keep retrying with growing pauses. A
+  push that still fails is the first thing to report, before any other work goes on.
+- An agent ends no session and no answer with an unpushed commit or uncommitted changes. Before it
+  stops it checks that `git status` is clean and that `git log @{u}..` is empty.
+- The repository ships an optional `post-commit` hook in `tools/hooks/` that pushes after every
+  commit, for people who want it automatic.
 - Keep the OKF wiki in `okf/` of the Golem repository, in the same Open Knowledge Format as this wiki:
   front matter with `type`, `title`, `description`, `tags` and `timestamp`, an `index.md` with the
   state and a page map, a change log, a decisions page and open items. A change that alters behaviour,
@@ -396,7 +484,6 @@ native code runs in parallel and ends about 8 to 10 months after the start.
 
 ## Open decisions
 
-- Whether the license is `GPL-2.0-or-later` as this page recommends, or another GPL version.
 - Whether `skytekx/golem` is private until the switch, which would let security issues be public
   issues there from the start.
 - Whether a Bukkit layer is ever wanted for plugins beyond the ported ones.

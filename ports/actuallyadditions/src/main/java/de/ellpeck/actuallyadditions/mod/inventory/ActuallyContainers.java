@@ -11,6 +11,9 @@ public class ActuallyContainers {
     public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ActuallyAdditions.MODID);
 
     public static final RegistryObject<MenuType<SackContainer>> BAG_CONTAINER = CONTAINERS.register("bag_container", () -> IForgeMenuType.create(SackContainer::fromNetwork));
+    // SkyTekx: the menu of the Void Sack (87601c1e). Main renamed bag_container to sack_container,
+    // the fork keeps the base's id
+    public static final RegistryObject<MenuType<VoidSackContainer>> VOID_SACK_CONTAINER = CONTAINERS.register("void_sack_container", () -> IForgeMenuType.create(VoidSackContainer::fromNetwork));
     public static final RegistryObject<MenuType<ContainerBioReactor>> BIO_REACTOR_CONTAINER = CONTAINERS.register("bioreactor_container", () -> IForgeMenuType.create(ContainerBioReactor::fromNetwork));
     public static final RegistryObject<MenuType<ContainerBreaker>> BREAKER_CONTAINER = CONTAINERS.register("breaker_container", () -> IForgeMenuType.create(ContainerBreaker::fromNetwork));
     public static final RegistryObject<MenuType<ContainerCanolaPress>> CANOLA_PRESS_CONTAINER = CONTAINERS.register("canola_press_container", () -> IForgeMenuType.create(ContainerCanolaPress::fromNetwork));

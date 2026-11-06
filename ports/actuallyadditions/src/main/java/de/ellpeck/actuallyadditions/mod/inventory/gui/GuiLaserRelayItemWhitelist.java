@@ -13,24 +13,30 @@ package de.ellpeck.actuallyadditions.mod.inventory.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerLaserRelayItemWhitelist;
+import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityLaserRelayItemAdvanced;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItemWhitelist> {
 
     private static final ResourceLocation RES_LOC = AssetUtil.getGuiLocation("gui_laser_relay_item_whitelist");
-    // SkyTekx: Components instead of I18n strings (upstream 3a767e18). The filter buttons that the
-    // same commit wires up come with the FilterSettingsGui rework of the sacks and filters
+    // SkyTekx: Components instead of I18n strings (upstream 3a767e18). The filter and smart buttons
+    // of 3a767e18 send their ids to the relay itself as in f46de7d9, where 3a767e18 sent the filter
+    // ids to the menu, which ignores them, and the base had no buttons at all
     private final Component inboundText = Component.translatable("info." + ActuallyAdditions.MODID + ".gui.inbound");
     private final Component outboundText = Component.translatable("info." + ActuallyAdditions.MODID + ".gui.outbound");
     private final TileEntityLaserRelayItemAdvanced tile;
@@ -60,33 +66,36 @@ public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItem
     public void init() {
         super.init();
 
-//        this.leftFilter = new FilterSettingsGui(this.tile.leftFilter, this.leftPos + 3, this.topPos + 6, this.buttonList);
-//        this.rightFilter = new FilterSettingsGui(this.tile.rightFilter, this.leftPos + 157, this.topPos + 6, this.buttonList);
-//
-//        this.buttonSmartWhitelistLeft = new Buttons.SmallerButton(2, this.leftPos + 3, this.topPos + 79, "S");
-//        this.buttonSmartWhitelistRight = new Buttons.SmallerButton(3, this.leftPos + 157, this.topPos + 79, "S");
-//        this.addButton(this.buttonSmartWhitelistLeft);
-//        this.addButton(this.buttonSmartWhitelistRight);
+        this.leftFilter = new FilterSettingsGui(this.tile.leftFilter, this.leftPos + 3, this.topPos + 6, true, this::addRenderableWidget, id -> PacketHelperClient.sendButtonPacket(this.tile, id), 0);
+        this.rightFilter = new FilterSettingsGui(this.tile.rightFilter, this.leftPos + 157, this.topPos + 6, true, this::addRenderableWidget, id -> PacketHelperClient.sendButtonPacket(this.tile, id), 4);
+
+        this.buttonSmartWhitelistLeft = this.addRenderableWidget(Button.builder(
+                        Component.literal("S"),
+                        (button) ->
+                                PacketHelperClient.sendButtonPacket(this.tile, 8))
+                .bounds(this.leftPos + 3, this.topPos + 79, 16, 16)
+                .build());
+
+        this.buttonSmartWhitelistRight = this.addRenderableWidget(Button.builder(
+                        Component.literal("S"),
+                        (button) ->
+                                PacketHelperClient.sendButtonPacket(this.tile, 9))
+                .bounds(this.leftPos + 157, this.topPos + 79, 16, 16)
+                .build());
     }
-//
-//    @Override
-//    public void actionPerformed(Button button) {
-//        PacketHelperClient.sendButtonPacket(this.tile, button.id);
-//    }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int x, int y, float f) {
-        super.render(guiGraphics, x, y, f);
-//
-//        if (this.buttonSmartWhitelistLeft.isMouseOver() || this.buttonSmartWhitelistRight.isMouseOver()) {
-//            List<String> list = new ArrayList<>();
-//            list.add(TextFormatting.BOLD + StringUtil.localize("info." + ActuallyAdditions.MODID + ".gui.smart"));
-//            list.addAll(this.font.listFormattedStringToWidth(StringUtil.localize("info." + ActuallyAdditions.MODID + ".gui.smartInfo"), 200));
-//            this.drawHoveringText(list, x, y);
-//        }
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.leftFilter.drawHover(guiGraphics, mouseX, mouseY);
+        this.rightFilter.drawHover(guiGraphics, mouseX, mouseY);
 
-        this.leftFilter.drawHover(guiGraphics, x, y);
-        this.rightFilter.drawHover(guiGraphics, x, y);
+        if (this.buttonSmartWhitelistLeft.isMouseOver(mouseX, mouseY) || this.buttonSmartWhitelistRight.isMouseOver(mouseX, mouseY)) {
+            List<FormattedCharSequence> list = new ArrayList<>();
+            list.add(Component.translatable("info." + ActuallyAdditions.MODID + ".gui.smart").withStyle(ChatFormatting.BOLD).getVisualOrderText());
+            list.addAll(this.font.split(Component.translatable("info." + ActuallyAdditions.MODID + ".gui.smartInfo"), 200));
+            guiGraphics.renderTooltip(this.font, list, mouseX, mouseY);
+        }
     }
 
     @Override

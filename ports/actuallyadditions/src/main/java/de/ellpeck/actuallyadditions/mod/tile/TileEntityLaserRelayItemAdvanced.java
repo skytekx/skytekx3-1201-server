@@ -34,8 +34,20 @@ import javax.annotation.Nullable;
 
 public class TileEntityLaserRelayItemAdvanced extends TileEntityLaserRelayItem implements IButtonReactor, MenuProvider {
 
-    public FilterSettings leftFilter = new FilterSettings(12, true, false, false);
-    public FilterSettings rightFilter = new FilterSettings(12, true, false, false);
+    // SkyTekx: a change of a filter slot marks the relay for saving. The base and main mark nothing,
+    // so a filter changed in a chunk where nothing else changed was lost at the next restart
+    public FilterSettings leftFilter = new FilterSettings(12, true, false, false, false) {
+        @Override
+        public void onContentsChanged() {
+            TileEntityLaserRelayItemAdvanced.this.setChanged();
+        }
+    };
+    public FilterSettings rightFilter = new FilterSettings(12, true, false, false, false) {
+        @Override
+        public void onContentsChanged() {
+            TileEntityLaserRelayItemAdvanced.this.setChanged();
+        }
+    };
 
     public TileEntityLaserRelayItemAdvanced(BlockPos pos, BlockState state) {
         super(ActuallyBlocks.LASER_RELAY_ITEM_ADVANCED.getTileEntityType(), pos, state);
@@ -86,15 +98,21 @@ public class TileEntityLaserRelayItemAdvanced extends TileEntityLaserRelayItem i
         this.rightFilter.readFromNBT(compound, "RightFilter");
     }
 
+    // SkyTekx: the button ids of f46de7d9, 0 to 3 for the inbound filter, 4 to 7 for the outbound
+    // one and 8 and 9 for the two smart buttons. The base handed every id to both filters and used
+    // 2 and 3 for the smart buttons, which are also the ids of filter buttons
     @Override
     public void onButtonPressed(int buttonID, Player player) {
-        this.leftFilter.onButtonPressed(buttonID);
-        this.rightFilter.onButtonPressed(buttonID);
-        if (buttonID == 2) {
-            this.addWhitelistSmart(false);
-        } else if (buttonID == 3) {
-            this.addWhitelistSmart(true);
+        switch (buttonID) {
+            case 0, 1, 2, 3 -> this.leftFilter.onButtonPressed(buttonID);
+            case 4, 5, 6, 7 -> this.rightFilter.onButtonPressed(buttonID - 4);
+            case 8 -> this.addWhitelistSmart(false);
+            case 9 -> this.addWhitelistSmart(true);
+            default -> {
+                return;
+            }
         }
+        this.setChanged();
     }
 
     private void addWhitelistSmart(boolean output) {
@@ -117,7 +135,7 @@ public class TileEntityLaserRelayItemAdvanced extends TileEntityLaserRelayItem i
         ItemStack copy = stack.copy();
         copy.setCount(1);
 
-        if (!FilterSettings.check(copy, usedSettings.filterInventory, true, usedSettings.respectNBT, usedSettings.respectMod)) {
+        if (!FilterSettings.check(copy, usedSettings.filterInventory, true, usedSettings.respectMod, usedSettings.matchDamage, usedSettings.matchNBT)) {
             for (int k = 0; k < usedSettings.filterInventory.getSlots(); k++) {
                 ItemStack slot = usedSettings.filterInventory.getStackInSlot(k);
                 if (!slot.isEmpty()) {

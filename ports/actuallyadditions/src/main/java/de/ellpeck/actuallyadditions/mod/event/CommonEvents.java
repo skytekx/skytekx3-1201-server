@@ -17,10 +17,10 @@ import de.ellpeck.actuallyadditions.mod.config.values.ConfigBoolValues;
 import de.ellpeck.actuallyadditions.mod.data.PlayerData;
 import de.ellpeck.actuallyadditions.mod.data.WorldData;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
-import de.ellpeck.actuallyadditions.mod.items.DrillItem;
 import de.ellpeck.actuallyadditions.mod.items.Sack;
 import de.ellpeck.actuallyadditions.mod.network.PacketHelperServer;
-import de.ellpeck.actuallyadditions.mod.tile.FilterSettings;
+import de.ellpeck.actuallyadditions.mod.sack.SackData;
+import de.ellpeck.actuallyadditions.mod.sack.SackManager;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA;
 import de.ellpeck.actuallyadditions.mod.util.ItemUtil;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
@@ -39,6 +39,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Locale;
+import java.util.Optional;
 
 public class CommonEvents {
 
@@ -56,6 +57,16 @@ public class CommonEvents {
 
     }
 
+    // SkyTekx: the sack pickup of main (edccaec7, 6389668b, 669e8437, 521cf822, bc20d82f). A sack with
+    // AutoInsert in a slot other than the selected one takes the items its filter lets through, the
+    // Traveler's Sack into its SackData with that data's filter, the Void Sack into nothing with the
+    // filter in its own NBT. The base read the 1.12 contents and filter from the stack's NBT, wrote
+    // the items back there, where the sack menu never looked, and checked a filter that no menu saved.
+    // Forge 47 calls Player.take for an ALLOW result (ItemEntity.playerTouch), and its packet plays
+    // the pickup sound on the client, so the sound of 669e8437 is not needed here. Arclight overwrites
+    // playerTouch and posts the Bukkit PlayerPickupItemEvent and EntityPickupItemEvent only after this
+    // event, and only for what the inventory can still hold, so a plugin that cancels them does not
+    // stop a sack
     @SubscribeEvent
     public void onItemPickup(EntityItemPickupEvent event) {
         if (event.isCanceled() || event.getResult() == Event.Result.ALLOW) {
@@ -64,63 +75,60 @@ public class CommonEvents {
 
         Player player = event.getEntity();
         ItemEntity item = event.getItem();
-        if (item != null && item.isAlive()) {
+        if (item != null && item.isAlive() && !item.hasPickUpDelay()) {
             ItemStack stack = item.getItem();
-            if (StackUtil.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                     if (i != player.getInventory().selected) {
 
                         ItemStack invStack = player.getInventory().getItem(i);
-                        if (StackUtil.isValid(invStack) && invStack.getItem() instanceof Sack && invStack.hasTag()) {
-                            if (invStack.getOrCreateTag().getBoolean("AutoInsert")) {
-                                boolean changed = false;
+                        if (!invStack.isEmpty() && invStack.getItem() instanceof Sack sack && Sack.isAutoInsert(invStack)) {
+                            boolean changed = false;
 
-                                boolean isVoid = ((Sack) invStack.getItem()).isVoid;
-                                ItemStackHandlerAA inv = new ItemStackHandlerAA(28); //TODO whats going on here
-                                DrillItem.loadSlotsFromNBT(inv, invStack);
+                            if (sack.isVoid) {
+                                if (Sack.readVoidFilter(invStack).check(stack)) {
+                                    stack.setCount(0);
+                                    changed = true;
+                                }
+                            } else {
+                                Optional<SackData> optData = SackManager.get().getData(invStack);
+                                if (optData.isEmpty()) {
+                                    continue;
+                                }
 
-                                FilterSettings filter = new FilterSettings(4, false, false, false);
-                                filter.readFromNBT(invStack.getOrCreateTag(), "Filter");
-                                if (filter.check(stack)) {
-                                    if (isVoid) {
-                                        stack.setCount(0);
-                                        changed = true;
-                                    } else {
-                                        for (int j = 0; j < inv.getSlots(); j++) {
-                                            ItemStack bagStack = inv.getStackInSlot(j);
-                                            if (StackUtil.isValid(bagStack)) {
-                                                if (ItemUtil.canBeStacked(bagStack, stack)) {
-                                                    int maxTransfer = Math.min(stack.getCount(), stack.getMaxStackSize() - bagStack.getCount());
-                                                    if (maxTransfer > 0) {
-                                                        inv.setStackInSlot(j, StackUtil.grow(bagStack, maxTransfer));
-                                                        stack.shrink(maxTransfer);
-                                                        changed = true;
-                                                    }
+                                ItemStackHandlerAA inv = optData.get().getSpecialHandler();
+                                if (optData.get().getFilter().check(stack)) {
+                                    for (int j = 0; j < inv.getSlots(); j++) {
+                                        ItemStack bagStack = inv.getStackInSlot(j);
+                                        if (!bagStack.isEmpty()) {
+                                            if (ItemUtil.canBeStacked(bagStack, stack)) {
+                                                int maxTransfer = Math.min(stack.getCount(), stack.getMaxStackSize() - bagStack.getCount());
+                                                if (maxTransfer > 0) {
+                                                    inv.setStackInSlot(j, StackUtil.grow(bagStack, maxTransfer));
+                                                    stack.shrink(maxTransfer);
+                                                    changed = true;
                                                 }
-                                            } else {
-                                                inv.setStackInSlot(j, stack.copy());
-                                                stack.setCount(0);
-                                                changed = true;
                                             }
+                                        } else {
+                                            inv.setStackInSlot(j, stack.copy());
+                                            stack.setCount(0);
+                                            changed = true;
+                                        }
 
-                                            if (!StackUtil.isValid(stack)) {
-                                                break;
-                                            }
+                                        if (stack.isEmpty()) {
+                                            break;
                                         }
                                     }
                                 }
+                            }
 
-                                if (changed) {
-                                    if (!isVoid) {
-                                        DrillItem.writeSlotsToNBT(inv, invStack);
-                                    }
-                                    event.setResult(Event.Result.ALLOW);
-                                }
+                            if (changed) {
+                                event.setResult(Event.Result.ALLOW);
                             }
                         }
                     }
 
-                    if (!StackUtil.isValid(stack)) {
+                    if (stack.isEmpty()) {
                         break;
                     }
                 }

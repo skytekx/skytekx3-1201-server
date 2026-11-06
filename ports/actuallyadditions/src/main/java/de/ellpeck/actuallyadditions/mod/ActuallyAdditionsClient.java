@@ -45,6 +45,7 @@ import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiPhantomPlacer;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiRangedCollector;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiXPSolidifier;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.SackGui;
+import de.ellpeck.actuallyadditions.mod.inventory.gui.VoidSackGui;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.misc.special.SpecialRenderInit;
 import de.ellpeck.actuallyadditions.mod.particle.ActuallyParticles;
@@ -71,6 +72,7 @@ public class ActuallyAdditionsClient {
 
     public static void setup(FMLClientSetupEvent event) {
         MenuScreens.register(ActuallyContainers.BAG_CONTAINER.get(), SackGui::new);
+        MenuScreens.register(ActuallyContainers.VOID_SACK_CONTAINER.get(), VoidSackGui::new);
         MenuScreens.register(ActuallyContainers.BIO_REACTOR_CONTAINER.get(), GuiBioReactor::new);
         MenuScreens.register(ActuallyContainers.BREAKER_CONTAINER.get(), GuiBreaker::new);
         MenuScreens.register(ActuallyContainers.CANOLA_PRESS_CONTAINER.get(), GuiCanolaPress::new);

@@ -1,6 +1,7 @@
 package de.ellpeck.actuallyadditions.mod.sack;
 
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
+import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +22,10 @@ public class SackManager extends SavedData {
 
     private static final SackManager blankClient = new SackManager();
 
-    private static final HashMap<UUID, SackData> data = new HashMap<>();
+    // SkyTekx: one map for each SackManager. The base kept one static map for all of them, so on a
+    // client that opened a second world the sacks of the first one stayed in the map, and the
+    // second world saved them into its own sack data file
+    private final HashMap<UUID, SackData> data = new HashMap<>();
 
     public SackManager() {
         super();
@@ -62,21 +66,36 @@ public class SackManager extends SavedData {
     }
 
     public LazyOptional<IItemHandler> getCapability(ItemStack stack) {
-        if (stack.getOrCreateTag().contains("UUID")) {
-            UUID uuid = stack.getTag().getUUID("UUID");
-            if (data.containsKey(uuid))
-                return data.get(uuid).getOptional();
+        return getData(stack).map(SackData::getOptional).orElse(LazyOptional.empty());
+    }
+
+    /**
+     * The inventory of the sack this stack names with its NBT key UUID (edccaec7).
+     */
+    public Optional<ItemStackHandlerAA> getHandler(ItemStack stack) {
+        return getData(stack).map(SackData::getSpecialHandler);
+    }
+
+    /**
+     * The data of the sack this stack names with its NBT key UUID (521cf822). Unlike
+     * Sack.getData it creates neither the key nor the data.
+     */
+    public Optional<SackData> getData(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.hasUUID("UUID")) {
+            return getSack(tag.getUUID("UUID"));
         }
 
-        return LazyOptional.empty();
+        return Optional.empty();
     }
 
     public static SackManager load(CompoundTag nbt) {
+        SackManager manager = new SackManager();
         if (nbt.contains("Sacks")) {
             ListTag list = nbt.getList("Sacks", CompoundTag.TAG_COMPOUND);
-            list.forEach((sackNBT) -> SackData.fromNBT((CompoundTag) sackNBT).ifPresent((sack) -> data.put(sack.getUuid(), sack)));
+            list.forEach((sackNBT) -> SackData.fromNBT((CompoundTag) sackNBT).ifPresent((sack) -> manager.data.put(sack.getUuid(), sack)));
         }
-        return new SackManager();
+        return manager;
     }
 
     @Override

@@ -169,6 +169,12 @@ Modifications
       Crafting such a machine alone empties it. A machine marked to stop dropping, as upstream
       marks the machines of its Engineer's House, drops nothing, and the lamps, the Fermenting
       Barrel and the Leaf-Eating Generator drop when broken with any tool.
+    * Sacks and filters: the Traveler's Sack picks items up again and saves its pickup toggle
+      and its filter, the Void Sack has its own screen and destroys what its filter lets
+      through, and both screens close when the sack leaves the hand. Filters match by damage
+      and NBT, a filter taken out of a filter slot goes back to the cursor, and the Advanced Item
+      Laser Relay has working filter and smart buttons and saves its filters. The fluid relay
+      shares a stack among its receivers.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

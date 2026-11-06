@@ -213,7 +213,10 @@ public class TileEntityLaserRelayFluids extends TileEntityLaserRelay {
         }
         //TODO dont send the entire tank at once, gg
         if (totalReceiverAmount > 0 && !relaysThatWork.isEmpty()) {
-            int amountPer = stack.getAmount() / totalReceiverAmount <= 0
+            // SkyTekx: 87601c1e, each receiver gets its share. The base had the test the wrong way round,
+            // so it offered every receiver the whole stack, or nothing at all when there were more
+            // receivers than millibuckets
+            int amountPer = stack.getAmount() / totalReceiverAmount > 0
                 ? stack.getAmount() / totalReceiverAmount
                 : stack.getAmount();
 

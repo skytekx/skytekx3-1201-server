@@ -39,6 +39,24 @@ public final class PacketHelperClient {
         PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(compound, PacketHandler.GUI_BUTTON_TO_TILE_HANDLER));
     }
 
+    /**
+     * SkyTekx: a button of the open menu, such as the sack buttons of 85725a0f, which build this
+     * packet in each screen on main. The server presses it on the sender's open menu while that
+     * menu is still valid (PacketHandler.GUI_BUTTON_TO_CONTAINER_HANDLER).
+     */
+    @OnlyIn(Dist.CLIENT)
+    public static void sendContainerButtonPacket(int buttonId) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) {
+            return;
+        }
+        CompoundTag compound = new CompoundTag();
+        compound.putInt("ButtonID", buttonId);
+        compound.putInt("PlayerID", mc.player.getId());
+        compound.putString("WorldID", mc.level.dimension().location().toString());
+        PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(compound, PacketHandler.GUI_BUTTON_TO_CONTAINER_HANDLER));
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static void sendPlayerDataToServer(boolean log, int type) {
         CompoundTag compound = new CompoundTag();

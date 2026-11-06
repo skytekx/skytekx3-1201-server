@@ -1284,3 +1284,59 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     that shulker boxes take as well. The ship stage should place a tagged crusher and a filled Oil
     Generator as a player on the Arclight test server and check that the energy and the tank come
     back (not verified).
+46. Sacks and filters: the Traveler's Sack picks items up again. A sack with the pickup toggle on
+    in any slot but the selected one takes the items its filter lets through (`edccaec7`,
+    `521cf822`). The base read the 1.12 contents and filter from the stack's NBT, wrote the items
+    back there, where the sack menu never looked, and checked a filter that no menu saved. The
+    sack menu gets its pickup button and the filter buttons of `main` (`85725a0f`, `79c8bcfb`,
+    `38f48247`). The toggle goes into the stack's NBT key `AutoInsert` at once and when the menu
+    closes (`669e8437`), where `main` has the data component `AUTO_INSERT`. The filter of the
+    Traveler's Sack lives in its `SackData` under the key `Filter` next to the inventory
+    (`adce5984`), and a filter toggle marks the sack data for saving, which `main` does not do.
+    The menu keeps the base's id `actuallyadditions:bag_container` (`main` renamed it to
+    `sack_container`). The Void Sack gets its own menu `actuallyadditions:void_sack_container`
+    with a deletion slot and its own screen (`87601c1e`, `6ab2a067`). Its filter and toggle live in
+    the stack's NBT keys `Filter` and `AutoInsert` (`main` has `FILTER_SETTINGS` and
+    `AUTO_INSERT`, `521cf822`, `bc20d82f`), and each change goes into the stack at once, as the
+    drill menu does since source change 15. The base opened no menu for the Void Sack. Both sack
+    menus are bound to the hotbar slot and the stack they opened with, as the drill and the Item
+    Filter are since source change 15, so they close when the slot changes and write only into
+    their own sack. The base returned `true` from `stillValid` and wrote its options into
+    whatever stack was selected when it closed. A sack no longer opens nothing on a block entity:
+    `useOn` passes, as on `main`, which commented out the old emptying into a clicked inventory
+    because it read the contents from the stack's NBT. The `SackManager` keeps its sacks in one
+    map for each world. The base and `main` share one static map, so a client that opened a
+    second world saved the sacks of the first one into the second one's file. Forge 47 calls
+    `Player.take` for an `ALLOW` result of `EntityItemPickupEvent` (`ItemEntity.playerTouch`,
+    javap of the mapped Forge 47.1.3 jar), and its packet plays the pickup sound on the client, so
+    the sound of `669e8437` is not added.
+    The filters match by damage and by NBT (`6389668b`, `9000eb3f`), with the four buttons WH,
+    MO, DM and DA of `main`, and the mod mode compares the mod and the damage only. A filter slot
+    takes its ghost item from the cursor and gives a filter back to the cursor (`85725a0f`,
+    `87601c1e`). The base read the selected hotbar item, so a click with an empty cursor put a
+    copy of the held sack into the slot. The `FilterSettings` NBT keys stay `Whitelist`, `Mod`,
+    `NBT` and `Items` and gain `Damage`. The buttons send `idOffset` plus the ordinal of
+    `FilterSettings.Buttons`, with the NBT button fix of `f46de7d9`, and their tooltips wrap at
+    200 pixels, the width of the 1.12 code, which `main` leaves unwrapped with a TODO. The
+    tooltip of the mod button has the two lines of `bc5dc448`, which the inventory places in the
+    screen fixes of the manual and compat bundle, since it only touches this file and its lang
+    keys. The lang keys of the damage and NBT buttons follow `6389668b`, and the Item Filter,
+    the Traveler's Sack and the Void Sack lose their `(wip)` label.
+    The Advanced Item Laser Relay screen gets its filter buttons, its two smart buttons and the
+    smart tooltip of `3a767e18`, and the buttons go to the relay itself with the ids of
+    `f46de7d9` (changelog 1.3.13): 0 to 3 for the inbound filter, 4 to 7 for the outbound one, 8
+    and 9 for the smart buttons. The base handed every id to both filters and used 2 and 3 for
+    the smart buttons. A filter change and a button press mark the relay for saving, which the
+    base and `main` do not do, so a filter changed in a chunk where nothing else changed was lost
+    at the next restart. The Item Filter title of `3f49a259` was already fixed by source change
+    13. The fluid relay of `87601c1e` gives each receiver its share of the stack. The base had
+    the test the wrong way round, so it offered every receiver the whole stack, or nothing when
+    there were more receivers than millibuckets.
+    On Arclight, which overwrites `ItemEntity.playerTouch`, the Forge event comes first and the
+    Bukkit `PlayerPickupItemEvent` and `EntityPickupItemEvent` follow only for what the
+    inventory can still hold (javap of `ItemEntityMixin` in `common.jar` of
+    `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`). A plugin that cancels the Bukkit
+    pickup therefore does not stop a sack, as with other modded pickups. Savegame: additive. The
+    sack data gains the key `Filter`, the filters gain `Damage`, and a sack keeps its `UUID` and
+    `AutoInsert`. A Traveler's Sack of the base loads with an empty filter, since the base kept
+    its filter in the item NBT, which no menu read. No id changes but the new menu id.

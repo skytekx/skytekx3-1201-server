@@ -12,21 +12,29 @@ package de.ellpeck.actuallyadditions.mod.inventory.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.ellpeck.actuallyadditions.mod.inventory.SackContainer;
+import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
+// SkyTekx: the screen of the Traveler's Sack of main (85725a0f, 79c8bcfb, 38f48247, 87601c1e). The
+// Void Sack has its own VoidSackGui
+@OnlyIn(Dist.CLIENT)
 public class SackGui extends AAScreen<SackContainer> {
     private static final ResourceLocation RES_LOC = AssetUtil.getGuiLocation("gui_bag");
-    private static final ResourceLocation RES_LOC_VOID = AssetUtil.getGuiLocation("gui_void_bag");
 
     private final SackContainer container;
-    private final boolean isVoid;
     private FilterSettingsGui filter;
     private Button buttonAutoInsert;
 
@@ -34,7 +42,6 @@ public class SackGui extends AAScreen<SackContainer> {
         super(container, inventory, title);
         this.imageWidth = 176;
         this.imageHeight = 90 + 86;
-        this.isVoid = false; //TODO fix later
         this.container = container;
     }
 
@@ -42,63 +49,62 @@ public class SackGui extends AAScreen<SackContainer> {
     public void init() {
         super.init();
 
-        this.filter = new FilterSettingsGui(this.container.filter, this.leftPos + 138, this.topPos + 10, this.renderables);
-//
-//        this.buttonAutoInsert = new Button(0, this.leftPos - 21, this.topPos + 8, 20, 20, (this.container.autoInsert
-//            ? TextFormatting.DARK_GREEN
-//            : TextFormatting.RED) + "I");
-        //this.addButton(this.buttonAutoInsert);
+        this.filter = new FilterSettingsGui(this.container.getFilter(), this.leftPos + 137, this.topPos + 10, true, this::addRenderableWidget, this::buttonClicked, 1);
+
+        this.buttonAutoInsert = Button.builder(autoInsertLabel(this.container.autoInsert),
+                (button) -> {
+                    this.container.autoInsert = !this.container.autoInsert;
+                    this.buttonAutoInsert.setMessage(autoInsertLabel(this.container.autoInsert));
+                    this.buttonClicked(0);
+                }).pos(this.leftPos - 21, this.topPos + 8).size(20, 20)
+                .build();
+
+        this.addRenderableWidget(this.buttonAutoInsert);
     }
 
-//    @Override
-//    protected void actionPerformed(Button button) throws IOException {
-//        CompoundNBT data = new CompoundNBT();
-//        data.putInt("ButtonID", button.id);
-//        data.putInt("PlayerID", Minecraft.getInstance().player.getId());
-//        data.putInt("WorldID", Minecraft.getInstance().level.provider.getDimension());
-//        PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(data, PacketHandler.GUI_BUTTON_TO_CONTAINER_HANDLER));
-//    }
+    // The label of main's pickup button, I when on, O when off. Main shows I before the first click
+    static Component autoInsertLabel(boolean autoInsert) {
+        return Component.literal(autoInsert ? "I" : "O").withStyle(autoInsert ? ChatFormatting.DARK_GREEN : ChatFormatting.RED);
+    }
+
+    public void buttonClicked(int id) {
+        PacketHelperClient.sendContainerButtonPacket(id);
+    }
 
     @Override
     public void containerTick() {
         super.containerTick();
         this.filter.tick();
-
-        //this.buttonAutoInsert.displayString = (this.container.autoInsert
-        //    ? TextFormatting.DARK_GREEN
-        //    : TextFormatting.RED) + "I";
     }
-
-/*    @Override
-    public void drawGuiContainerForegroundLayer(int x, int y) {
-        AssetUtil.displayNameString(this.font, this.imageWidth, -10, StringUtil.localize("container." + ActuallyAdditions.MODID + "." + (this.isVoid
-            ? "voidBag"
-            : "bag") + ".name"));
-    }*/
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.filter.drawHover(guiGraphics, mouseX, mouseY);
 
-/*        if (this.buttonAutoInsert.isMouseOver()) {
-            List<String> text = new ArrayList<>();
-            text.add(TextFormatting.BOLD + "Auto-Insert " + (this.container.autoInsert
-                ? "On"
-                : "Off"));
-            text.addAll(this.font.listFormattedStringToWidth("Turn this on to make items that get picked up automatically go into the bag.", 200));
-            text.addAll(this.font.listFormattedStringToWidth(TextFormatting.GRAY + "" + TextFormatting.ITALIC + "Note that this WON'T work when you are holding the bag in your hand.", 200));
-            this.renderToolTip(stack, text, mouseX, mouseY, this.getMinecraft().font);
-        }*/
+        if (this.buttonAutoInsert.isMouseOver(mouseX, mouseY)) {
+            renderAutoInsertTooltip(guiGraphics, this.font, mouseX, mouseY, this.container.autoInsert, "sack");
+        }
+    }
+
+    // The pickup tooltip of main, wrapped at 200 pixels as main's TODO asks. Main says sack in this
+    // screen and bag in the one of the Void Sack
+    static void renderAutoInsertTooltip(GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, boolean autoInsert, String noun) {
+        List<Component> text = new ArrayList<>();
+        text.add(Component.literal("Auto-Insert " + (autoInsert
+            ? "On"
+            : "Off")).withStyle(ChatFormatting.BOLD));
+        text.add(Component.literal("Turn this on to make items that get picked up automatically go into the " + noun + "."));
+        text.add(Component.literal("Note that this WON'T work when you are holding the " + noun + " in your hand.").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
+        guiGraphics.renderTooltip(font, FilterSettingsGui.wrap(font, text), mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
-        RenderSystem.setShaderTexture(0, AssetUtil.GUI_INVENTORY_LOCATION);
         guiGraphics.blit(AssetUtil.GUI_INVENTORY_LOCATION, this.leftPos, this.topPos + 90, 0, 0, 176, 86);
 
-        guiGraphics.blit(this.isVoid ? RES_LOC_VOID : RES_LOC, this.leftPos, this.topPos, 0, 0, 176, 90);
+        guiGraphics.blit(RES_LOC, this.leftPos, this.topPos, 0, 0, 176, 90);
     }
 }

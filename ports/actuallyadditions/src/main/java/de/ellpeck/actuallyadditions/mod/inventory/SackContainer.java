@@ -11,15 +11,14 @@
 package de.ellpeck.actuallyadditions.mod.inventory;
 
 import de.ellpeck.actuallyadditions.api.ActuallyTags;
-import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotDeletion;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotFilter;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotImmovable;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotItemHandlerUnconditioned;
 import de.ellpeck.actuallyadditions.mod.items.Sack;
 import de.ellpeck.actuallyadditions.mod.network.gui.IButtonReactor;
+import de.ellpeck.actuallyadditions.mod.sack.SackManager;
 import de.ellpeck.actuallyadditions.mod.tile.FilterSettings;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -27,43 +26,46 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
 
+// SkyTekx: the menu of the Traveler's Sack of main (85725a0f, 38f48247, 669e8437, adce5984,
+// 521cf822) under the base's menu id actuallyadditions:bag_container. Its filter is the one of the
+// SackData, so filter slot changes save with the sack's inventory, and the pickup toggle goes into
+// the stack's NBT key AutoInsert
 public class SackContainer extends AbstractContainerMenu implements IButtonReactor {
 
-    public final FilterSettings filter = new FilterSettings(4, false, false, false);
+    private final FilterSettings filter;
     private final ItemStackHandlerAA bagInventory;
     private final Inventory inventory;
     public boolean autoInsert;
-    private boolean oldAutoInsert;
+    // SkyTekx: the hotbar slot and the sack stack of the moment the menu opened, as in ContainerDrill
+    // and ContainerFilter. The base returned true from stillValid and wrote its options into whatever
+    // stack was selected when it closed
+    private final int selectedSlot;
+    private final ItemStack sackStack;
 
     public static final int SIZE = 28;
 
     public static SackContainer fromNetwork(int windowId, Inventory inv, FriendlyByteBuf data) {
-        return new SackContainer(windowId, inv, data.readUUID(), new ItemStackHandlerAA(28));
+        data.readUUID();
+        boolean autoInsert = data.readBoolean();
+        return new SackContainer(windowId, inv, new ItemStackHandlerAA(SIZE), autoInsert, new FilterSettings(Sack.FILTER_SLOTS, data.readInt()));
     }
 
-    public SackContainer(int windowId, Inventory playerInventory, UUID uuid, ItemStackHandlerAA handler) {
+    public SackContainer(int windowId, Inventory playerInventory, ItemStackHandlerAA handler, boolean autoInsert, FilterSettings filterIn) {
         super(ActuallyContainers.BAG_CONTAINER.get(), windowId);
 
         this.inventory = playerInventory;
         this.bagInventory = handler;
+        this.filter = filterIn;
+        this.autoInsert = autoInsert;
+        this.selectedSlot = playerInventory.selected;
+        this.sackStack = playerInventory.getSelected();
 
+        // Filter slots
         for (int row = 0; row < 4; row++) {
             this.addSlot(new SlotFilter(this.filter, row, 155, 10 + row * 18));
-        }
-
-        if (false) { // TODO isvoid, move to its own container
-            this.addSlot(new SlotDeletion(this.bagInventory, 0, 64, 65) {
-                @Override
-                public boolean mayPlace(ItemStack stack) {
-                    return SackContainer.this.filter.check(stack);
-                }
-            });
         }
 
         // Sack inventory
@@ -71,7 +73,7 @@ public class SackContainer extends AbstractContainerMenu implements IButtonReact
             for (int col = 0; col < 7; col++) {
                 this.addSlot(new SlotItemHandlerUnconditioned(this.bagInventory, col + row * 7, 10 + col * 18, 10 + row * 18) {
                     @Override
-                    public boolean mayPlace(ItemStack stack) {
+                    public boolean mayPlace(@Nonnull ItemStack stack) {
                         return !stack.is(ActuallyTags.Items.HOLDS_ITEMS) && SackContainer.this.filter.check(stack);
                     }
                 });
@@ -93,62 +95,13 @@ public class SackContainer extends AbstractContainerMenu implements IButtonReact
                 this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 152));
             }
         }
-
-        ItemStack stack = playerInventory.getSelected();
-        if (!stack.isEmpty() && stack.getItem() instanceof Sack) {
-            //DrillItem.loadSlotsFromNBT(this.bagInventory, playerInventory.getSelected());
-            if (stack.hasTag()) {
-                CompoundTag compound = stack.getOrCreateTag();
-                this.filter.readFromNBT(compound, "Filter");
-                this.autoInsert = compound.getBoolean("AutoInsert");
-            }
-        }
     }
 
-    @Override
-    public void broadcastChanges() { // TODO is this needed anymore?
-        super.broadcastChanges();
-
-        if (this.filter.needsUpdateSend() || this.autoInsert != this.oldAutoInsert) {
-            /*
-            for (IContainerListener listener : this.containerListeners) {
-                listener.setContainerData(this, 0, this.filter.isWhitelist
-                    ? 1
-                    : 0);
-                listener.setContainerData(this, 1, this.filter.respectMeta
-                    ? 1
-                    : 0);
-                listener.setContainerData(this, 2, this.filter.respectNBT
-                    ? 1
-                    : 0);
-                listener.setContainerData(this, 3, this.filter.respectOredict);
-                listener.setContainerData(this, 4, this.autoInsert
-                    ? 1
-                    : 0);
-                listener.setContainerData(this, 5, this.filter.respectMod
-                    ? 1
-                    : 0);
-            }
-             */
-            this.filter.updateLasts();
-            this.oldAutoInsert = this.autoInsert;
-        }
+    public FilterSettings getFilter() {
+        return this.filter;
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void setData(int id, int data) {
-        if (id == 0) {
-            this.filter.isWhitelist = data == 1;
-        } else if (id == 1) {
-            this.filter.respectNBT = data == 1;
-        } else if (id == 2) {
-            this.autoInsert = data == 1;
-        } else if (id == 3) {
-            this.filter.respectMod = data == 1;
-        }
-    }
-
+    @Nonnull
     @Override
     public ItemStack quickMoveStack(@Nonnull Player player, int slot) {
         int inventoryStart = this.bagInventory.getSlots() + 4;
@@ -197,7 +150,7 @@ public class SackContainer extends AbstractContainerMenu implements IButtonReact
     }
 
     @Override
-    public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+    public void clicked(int slotId, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull Player player) {
         if (SlotFilter.checkFilter(this, slotId, player)) {
             return; //TODO: Check if this is correct, used to return ItemStack.EMPTY
         } else if (clickTypeIn == ClickType.SWAP && dragType == this.inventory.selected) {
@@ -208,28 +161,35 @@ public class SackContainer extends AbstractContainerMenu implements IButtonReact
     }
 
     @Override
-    public void removed(Player player) {
-        ItemStack stack = this.inventory.getSelected();
-        if (!stack.isEmpty() && stack.getItem() instanceof Sack) {
-            //DrillItem.writeSlotsToNBT(this.bagInventory, this.inventory.getSelected());
-            CompoundTag compound = stack.getOrCreateTag();
-            this.filter.writeToNBT(compound, "Filter");
-            compound.putBoolean("AutoInsert", this.autoInsert);
+    public void removed(@Nonnull Player player) {
+        if (isSack(this.sackStack)) {
+            Sack.setAutoInsert(this.sackStack, this.autoInsert);
         }
         super.removed(player);
     }
 
+    // SkyTekx: valid while the selected hotbar slot still holds the sack it was opened with
     @Override
-    public boolean stillValid(Player player) {
-        return true;
+    public boolean stillValid(@Nonnull Player player) {
+        return this.inventory.selected == this.selectedSlot && this.inventory.getSelected() == this.sackStack && isSack(this.sackStack);
     }
 
+    private static boolean isSack(ItemStack stack) {
+        return !stack.isEmpty() && stack.getItem() instanceof Sack sack && !sack.isVoid;
+    }
+
+    // Button 0 toggles the pickup, the others are the filter buttons of FilterSettingsGui with the
+    // offset 1 (79c8bcfb). The toggle goes into the stack at once (669e8437), and a filter toggle
+    // marks the sack data for saving, since SackData only hears of slot changes
     @Override
     public void onButtonPressed(int buttonID, Player player) {
         if (buttonID == 0) {
             this.autoInsert = !this.autoInsert;
-        } else {
-            //this.filter.onButtonPressed(buttonID); //TODO
+            if (isSack(this.sackStack)) {
+                Sack.setAutoInsert(this.sackStack, this.autoInsert);
+            }
+        } else if (this.filter.onButtonPressed(buttonID - 1)) {
+            SackManager.get().setDirty();
         }
     }
 }

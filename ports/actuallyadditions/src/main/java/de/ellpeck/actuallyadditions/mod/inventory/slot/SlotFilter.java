@@ -13,7 +13,6 @@ package de.ellpeck.actuallyadditions.mod.inventory.slot;
 import de.ellpeck.actuallyadditions.mod.items.ItemFilter;
 import de.ellpeck.actuallyadditions.mod.tile.FilterSettings;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA;
-import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -33,7 +32,7 @@ public class SlotFilter extends SlotItemHandlerUnconditioned {
         if (slotId >= 0 && slotId < container.slots.size()) {
             Slot slot = container.getSlot(slotId);
             if (slot instanceof SlotFilter) {
-                ((SlotFilter) slot).slotClick(player);
+                ((SlotFilter) slot).slotClick(container);
                 return true;
             }
         }
@@ -41,27 +40,31 @@ public class SlotFilter extends SlotItemHandlerUnconditioned {
     }
 
     public static boolean isFilter(ItemStack stack) {
-        return StackUtil.isValid(stack) && stack.getItem() instanceof ItemFilter;
+        return !stack.isEmpty() && stack.getItem() instanceof ItemFilter;
     }
 
-    private void slotClick(Player player) {
-        ItemStack heldStack = player.getInventory().getSelected();
+    // SkyTekx: the ghost item comes from the carried stack of the menu (85725a0f) and a filter taken
+    // out goes back to the cursor (87601c1e). The base read the selected hotbar item, so a click
+    // with an empty cursor put a copy of the held sack into the slot, and a filter taken out went
+    // to the hotbar through setPickedItem, which overwrites the selected item of a full inventory
+    private void slotClick(AbstractContainerMenu container) {
+        ItemStack cursorItem = container.getCarried();
         ItemStack stackInSlot = this.getItem();
 
-        if (StackUtil.isValid(stackInSlot) && !StackUtil.isValid(heldStack)) {
+        if (!stackInSlot.isEmpty() && cursorItem.isEmpty()) {
             if (isFilter(stackInSlot)) {
-                player.getInventory().setPickedItem(stackInSlot);
+                container.setCarried(stackInSlot);
             }
 
             this.set(ItemStack.EMPTY);
-        } else if (StackUtil.isValid(heldStack)) {
+        } else if (!cursorItem.isEmpty()) {
             if (!isFilter(stackInSlot)) {
-                ItemStack s = heldStack.copy();
+                ItemStack s = cursorItem.copy();
                 s.setCount(1);
                 this.set(s);
 
-                if (isFilter(heldStack)) {
-                    heldStack.shrink(1);
+                if (isFilter(cursorItem)) {
+                    cursorItem.shrink(1);
                 }
             }
         }

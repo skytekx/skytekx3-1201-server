@@ -302,7 +302,7 @@ evidence and the page with the details. The rulings behind the first section are
   Placer and the Fluid Collector and the Lava Factory (`ports/actuallyadditions/UPSTREAM.md`, source
   change 60). The sacks pick items up before the Bukkit pickup events, and the Ranged Collector
   takes item entities without the Bukkit `InventoryPickupItemEvent` (source changes 46 and 48). The
-  mod is not in the pack yet. See
+  pack bundles the fork since 0ed346b, and it reaches the server with the next deploy. See
   [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
 
 ## Not verified
@@ -456,6 +456,15 @@ evidence and the page with the details. The rulings behind the first section are
   Arclight jar is open too, with the inhibitor obelisk against `/home` and `/tpa` of EssentialsX, the
   attractor next to a Flux Networks point and the wireless charger with several players. See
   [Ender IO backport](modpack/enderio-backport.md#release).
+- Actually Additions 1.20.1-1.1.52-skytekx.1 in a client, on the pack Arclight with a player and on
+  the live server. A dedicated Forge 47.4.18 server loaded a world saved by the base jar with every item,
+  fluid and energy value, and the full pack booted with the fork on Arclight on 2026-11-06 with no new
+  log signature, but no pack client has joined a server with it. Open are the JEI and EMI
+  categories, the screens, the lasers and particles with Oculus and Embeddium and the tools in a
+  client, and the Bukkit events of the drill, the machines and the magnet rings under the AATest
+  plugin with EssentialsX. The carryover file `ports/actuallyadditions-backport-carryover.json` lists
+  them under `aa-client-test`, `aa-arclight-test` and `aa-live-rollout`, see
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#release-test).
 - Create Crafts & Additions 1.20.1-1.7.3-skytekx.1 in a client and on the live world. A plain Forge
   test server loaded a world saved by 1.3.3 with the fork unchanged, and the full pack booted with it
   on Forge and Arclight on 2026-11-06 and charged, pumped and moved energy over wires there, but no

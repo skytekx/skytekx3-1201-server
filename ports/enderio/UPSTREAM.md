@@ -42,6 +42,9 @@ and the committed datagen output in `src/generated/resources/`. Upstream's `.git
   - **Commoble** (Joseph Bettendorff), MIT: `src/machines/.../souldata/SoulDataReloadListener.java`.
   - **Mekanism** (Aidan C. Brady), MIT: `src/machines/.../io/fluid/IFluidItemInteractive.java` and the
     temp-file save in `src/conduits/.../network/ConduitSavedData.java`.
+  - **Apothic Spawners** (Stormraven Studios, LLC), MIT: the movement step for mobs without AI in
+    `src/machines/.../blockentity/task/SpawnerMachineTask.java` (`tickNoAIMobs`), which Ender IO
+    84bfe2477 took from its `ASEvents` class. The text is `licenses/ApothicSpawners-MIT.txt`.
 - Libraries the build packs into `META-INF/jarjar/`: Registrate (MPL-2.0), GraphLib3 (MIT,
   gigaherz / David Quintana), and GraphLib3's dependencies Guava, failureaccess, listenablefuture,
   Error Prone annotations, JSR 305 (Apache-2.0) and checker-qual (MIT).

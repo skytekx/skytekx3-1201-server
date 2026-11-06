@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="${loader_version}"
 issueTrackerURL="https://github.com/skytekx/skytekx3-1201-server/issues"
-license="The Unlicense (Ender IO); CC BY-NC-SA 3.0 (code adapted from Patchouli, so non-commercial distribution only); MIT (code from Commoble and Mekanism, GraphLib3, checker-qual); MPL-2.0 (Registrate); Apache-2.0 (Guava, Error Prone annotations, JSR 305). Unofficial modified SkyTekx build, see NOTICE_enderio, LICENSE_enderio and META-INF/licenses/enderio/ in the jar"
+license="The Unlicense (Ender IO); CC BY-NC-SA 3.0 (code adapted from Patchouli, so non-commercial distribution only); MIT (code from Commoble, Mekanism and Apothic Spawners, GraphLib3, checker-qual); MPL-2.0 (Registrate); Apache-2.0 (Guava, Error Prone annotations, JSR 305). Unofficial modified SkyTekx build, see NOTICE_enderio, LICENSE_enderio and META-INF/licenses/enderio/ in the jar"
 
 [[mods]]
 modId="enderio"

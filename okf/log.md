@@ -953,5 +953,30 @@ logs stay on the Mac and are not in the repo.
   [NeoForge ports](modpack/neoforge-ports.md#deploy-of-all-six), and the player notes wait in
   `docs/changelog/next.md`.
 
+## 2026-11-06: Ender IO 6.3.0-skytekx.1
+
+- The pack swaps the unmodified Ender IO 6.2.18-beta for the backport build 6.3.0-skytekx.1 of
+  `ports/enderio/` (de0d78b, SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`). It brings nine of the
+  ten bundles of the plan: the fix pack, the Vat, the inhibitor, relocator and attractor obelisks, the
+  wireless charger, the staff and magnet keys with Curios, the big and limited filters, conduit
+  priorities and strong redstone, conduit facades, and the capture mode and Mind Killer of the
+  powered spawner. The visual polish is not ported, see
+  [Ender IO backport](modpack/enderio-backport.md#release).
+- The jar NOTICE sums up the changes (6c7b04f), `mods.toml` names Apothic Spawners among the MIT
+  sources (995b8d1), and the permission record, the license texts and the permission README describe
+  the modified build (2504344). The record no longer says that the Unlicense permits the whole jar
+  without conditions, and the pack stays non-commercial because of the Patchouli parts. The new
+  config keys are in `config/enderio/machines-common.toml` (b4722b5).
+- A world saved by 6.2.18-beta with machines, conduits of all twelve types and EnderIO Legacy Machines
+  loaded unchanged with the new jar on a Forge test server, and the Vat, capture mode, the Mind Killer
+  and a hardened facade worked in it. Full pack boots on Forge and Arclight reached `Done` with 0 FATAL
+  lines, the same 3 ERROR lines and no new log signature against `wavea-forge` and `wavea-arclight`,
+  and the Ender IO mixins applied on both.
+- The test found an old fault of 6.2.18 that the fork keeps: a conduit bundle placed with NBT by
+  `/setblock` or `/clone` crashes the server tick, see
+  [Ender IO backport](modpack/enderio-backport.md#operator-notes). Server and clients must update
+  together, because the network protocol is now "1.0-skytekx.1". The server's `mods/` gets the jar
+  only with the deploy of the next pack, after a test on a copy of the live world.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

@@ -10,7 +10,7 @@ timestamp: 2026-11-06
 
 SkyTekx 3 is a Forge 1.20.1 pack. Its versions 3.0.6 and 3.0.7 went up to the Modrinth project on
 2026-10-31, the second with the client mod Modflared for the public address, and the project is still
-a draft (see [publish](publish.md)). Its mods come from the Modrinth index and from 52 bundled jars,
+a draft (see [publish](publish.md)). Its mods come from the Modrinth index and from 57 bundled jars,
 and the server runs them on Arclight together with one Bukkit plugin (see
 [server](../server/index.md)). What was built for the pack itself, such as the Skylands, is under
 [content](../content/index.md).

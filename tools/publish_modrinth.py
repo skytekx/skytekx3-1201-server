@@ -10,7 +10,9 @@ Before any network call it checks the .mrpack it would upload: the file exists, 
 VERSION, and every jar inside it has a modrinth-permissions/<jar>.md with Status OK
 (tools/mrpack_permissions.py). Every jar that local-mods/ names by a pointer file instead of holding
 it (tools/fetch_local_mods.py) must be inside it, with the size and SHA-1 of the pointer unless
-PACK_RULES of tools/patch_mods.py patch it for the pack. The version changelog is read from
+PACK_RULES of tools/patch_mods.py patch it for the pack, and no commit reachable from HEAD may hold
+such a jar, since a push of that history would repost it (git log --find-object, the patched case
+looks the original bytes up in the download cache). The version changelog is read from
 docs/changelog/<VERSION>.md, which must exist and not be empty, so a VERSION bump cannot reuse an old
 changelog. A failed check stops the dry run too; there is no override. The dry run prints the
 changelog it would send.
@@ -48,7 +50,8 @@ assert len(SUMMARY) <= 256 and "<!--" not in BODY, "summary too long or a commen
 
 def pointer_problems(z):
     """Problems of the jars that local-mods/ names by a pointer file, in the open .mrpack `z`: each one
-    must ship in overrides/mods/, unpatched with the size and SHA-1 of its pointer."""
+    must ship in overrides/mods/, unpatched with the size and SHA-1 of its pointer, and no commit
+    reachable from HEAD may hold it."""
     problems = []
     try:
         pointers = fetch_local_mods.read_dir(os.path.join(REPO, "local-mods"))
@@ -57,12 +60,28 @@ def pointer_problems(z):
     names = set(z.namelist())
     for p in pointers:
         shipped = "overrides/mods/" + patch_mods.pack_jar_name(p["file"])
+        original = None  # The bytes the pointer names, to look for in the git history
         if shipped not in names:
             problems.append(f"{p['file']}, named by its pointer in local-mods/, is not at {shipped}")
         elif shipped == "overrides/mods/" + p["file"]:
-            why = fetch_local_mods.problem(p, z.read(shipped))
+            data = z.read(shipped)
+            why = fetch_local_mods.problem(p, data)
             if why:
                 problems.append(f"{shipped} has {why}")
+            else:
+                original = data
+        if original is None:
+            original = fetch_local_mods.cached(p)
+        if original is None:
+            problems.append(f"no checked copy of {p['file']} to look for in the git history, neither in the "
+                            f"pack nor in the cache {fetch_local_mods.cache_dir()}, run tools/fetch_local_mods.py")
+            continue
+        commits = mrpack_permissions.history_commits(REPO, original)
+        if commits is None:
+            problems.append(f"git log --find-object failed for local-mods/{p['file']}")
+        elif commits:
+            problems.append(f"git history still holds {p['file']} in {' '.join(commits)}, "
+                            "rewrite it before any push")
     return problems
 
 def preflight():
@@ -85,7 +104,7 @@ def preflight():
         print(f"refusing to upload {MRPACK}:")
         for p in problems:
             print("  " + p)
-        sys.exit("resolve the modrinth-permissions/ blockers (see its README) and rebuild")
+        sys.exit("resolve the problems above (the modrinth-permissions/ blockers are in its README) and rebuild")
     print(f"preflight OK: {MRPACK} ({os.path.getsize(MRPACK)//1024} KiB), versionId {VERSION}, "
           f"{len(idx.get('files', []))} index files, {len(jars)} bundled jars, all with permission")
 

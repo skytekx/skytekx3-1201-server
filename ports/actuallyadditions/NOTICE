@@ -11,9 +11,18 @@ Original work
   Source:   https://github.com/Ellpeck/ActuallyAdditions
   Base:     branch 1.20.1 @ 226a439154a8f103424783ad7afc1e33fe59cbd7 (2024-03-04, mod_version
             1.1.52 for Forge 47, never released by upstream)
-  Backport: content to be taken from branch main @ cd9d9c63254f471f966ee51b078afdf47af5f852
+  Backport: content taken from branch main @ cd9d9c63254f471f966ee51b078afdf47af5f852
             (2026-06-19, release 1.3.26 for NeoForge 1.21.1) and from the branches 1.20.4 and
             1.21 in between
+  Content:  parity with upstream 1.3.26 (cd9d9c6) except the exclusions. Left out are the
+            NeoForge API churn (data components, attachments, payloads, data maps), content of
+            Minecraft 1.20.5 and later with the 1.21 enchantment rework, the new machine
+            inventory format, the removed items and the renamed sack menu of the newer lines
+            (this build keeps every id and NBT key of the 1.20.1 base), the unfinished storage
+            crates, the NeoForge config screen, the JEI 19 API and the structure updater of the
+            data generator. Energy stays on Forge Energy.
+            ports/actuallyadditions/UPSTREAM.md and okf/modpack/actuallyadditions-backport.md
+            in the SkyTekx repository list every exclusion with its reason.
 
 Modifications
 -------------
@@ -111,7 +120,8 @@ Modifications
       Engineering, Powah and ElementalCraft when those mods are loaded, without doubling the
       chances on deepslate. Its beam renders as a particle, see Particles and lasers below.
     * Display Stand and Empowerer: the hand swings when an item goes in, and the empowered
-      emeradic crystals ask for short grass instead of tall grass.
+      emeradic crystals ask for short grass instead of tall grass. A data pack empowering recipe
+      without exactly four modifiers is skipped with a log line instead of stopping the server.
     * Greenhouse Glass: it is visible again, with no faces between two panes, and it reaches
       plants below Y 0.
     * Crushers: the Double Crusher works, shift click fills the crushers, their screens show

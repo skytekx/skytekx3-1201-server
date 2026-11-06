@@ -96,7 +96,9 @@ public class AACrops extends CropBlock {
                 }
             }
 
-            world.setBlockAndUpdate(pos, this.defaultBlockState().setValue(AGE, 0));
+            // SkyTekx: keep persistent, so a harvested wild crop stays on its grass. Main replants the
+            // default state, which pops off the grass at the next neighbour update
+            world.setBlockAndUpdate(pos, state.setValue(AGE, 0));
         }
 
         return InteractionResult.sidedSuccess(world.isClientSide);

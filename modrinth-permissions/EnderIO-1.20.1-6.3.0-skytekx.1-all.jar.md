@@ -1,0 +1,30 @@
+# Ender IO (1.20.1 backport build by SkyTekx)
+
+Bundled file: `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar`
+Status: OK (on the conditions below)
+
+## Paste into the Modrinth attribution form
+
+- Permission reason: Licensed
+- Link to work: https://github.com/Team-EnderIO/EnderIO
+- License: Unlicense (Ender IO and the SkyTekx changes), CC BY-NC-SA 3.0 (code from Patchouli), MIT, MPL-2.0 and Apache-2.0 (code from Mekanism, Commoble and Apothic Spawners, bundled libraries)
+- Explanation:
+
+  EnderIO-1.20.1-6.3.0-skytekx.1-all.jar is an unofficial, modified build of Ender IO by Team Ender IO for Minecraft 1.20.1 and Forge 47, made for this pack. It is built from https://github.com/Team-EnderIO/EnderIO, branch 1.20.1 at commit 18ee1b17bf6879298e911fff751204b07f2e4228 (Ender IO 6.2.18-beta plus two later community fixes), with a subset of the features and fixes of the branch 1.21.1 (Ender IO 8.2.x) backported onto it. The mod id stays enderio, and the version carries the suffix -skytekx.1. Ender IO's own code and assets are under the Unlicense, which allows modified copies. Some parts of the jar are under other licenses with conditions. The classes GhostBuffers and GhostRenderLayer and the method initBuffers of IOConfigWidget, and the block rendering of the JEI FireCraftingCategory, come from Patchouli by Vazkii, which is CC BY-NC-SA 3.0, and the build leaves them unchanged. SoulDataReloadListener is MIT code by Commoble, IFluidItemInteractive and the temporary file save of ConduitSavedData are adapted from Mekanism (MIT), and the movement step for mobs without AI of the Mind Killer comes from Apothic Spawners (MIT, Stormraven Studios, LLC) through Ender IO 8.x. META-INF/jarjar bundles GraphLib3 (MIT), Registrate (MPL-2.0), checker-qual (MIT) and Guava with failureaccess, listenablefuture, Error Prone annotations and JSR 305 (Apache-2.0). The jar carries the Unlicense as LICENSE_enderio, a NOTICE_enderio that says it is a modified unofficial build, names the upstream commits and sums up the changes, and every license text in META-INF/licenses/enderio/. The pack ships the same texts with a NOTICE in licenses/EnderIO-1.20.1-6.3.0-skytekx.1/. The complete source of the build is public in this pack's repository under ports/enderio (https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/enderio), and the NOTICE in the jar points there. The pack is free and earns no money, as the non-commercial term of the Patchouli parts requires.
+
+## Conditions
+
+- The pack stays non-commercial because of the Patchouli parts. It must be free of charge, with no paid access, no paywalled or ad-gated download, no Modrinth monetization or creator rewards on the project and no paid server perks. Earning money with the pack would first need a clean rewrite of those parts or permission from Vazkii. The Twilight Forest assets (CC BY-NC-SA 4.0) already set the same limit.
+- The Patchouli parts stay under CC BY-NC-SA 3.0 with their credit. Any later change to them is shared under the same license. Neither the record nor the pack describes the jar as purely Unlicense or CC0.
+- The jar keeps LICENSE_enderio, NOTICE_enderio and META-INF/licenses/enderio/ with the MIT notices of Commoble, Mekanism, Apothic Spawners, GraphLib and checker-qual, the Apache-2.0 text and the MPL-2.0 text. The folder licenses/EnderIO-1.20.1-6.3.0-skytekx.1/ travels with every copy of the pack.
+- Registrate is unmodified, and both NOTICEs name where its Source Code Form is, as MPL-2.0 asks.
+- The build stays marked as unofficial: the suffix -skytekx.N in the version and the file name, the description in mods.toml, the Implementation-Vendor of the manifest and the NOTICE. It is never uploaded to the official Ender IO projects, and its release plugins are removed from the build.
+- The source stays public under ports/enderio for as long as any pack version that ships this jar is offered. `tools/mrpack_permissions.py` refuses the jar until `origin/master` holds `ports/enderio/` and this build in `local-mods/`.
+- The 1.21.1 sounds are not in the jar. Porting them later needs the CC BY-NC 3.0 freesound credit list of their sources in the jar and here.
+
+## Reference
+
+- Redistribution allowed: yes, on the conditions above, once master carries its source
+- On Modrinth: upstream only (https://modrinth.com/mod/enderio, project 49ZofO4f). This modified build is not, so it must be bundled
+- Author: Team Ender IO (Ender IO), backport by SkyTekx. Parts follow Patchouli (CC BY-NC-SA 3.0), Commoble, Mekanism and Apothic Spawners (MIT)
+- Notes: SHA-1 892025b092e4742d4d01ad04d3ae50a10d764da5, 8,471,799 bytes, the `-all` jar of `./gradlew build` in `ports/enderio/` with Java 17 and `LC_ALL=C.UTF-8` (`ports/enderio/UPSTREAM.md`, Building). The jar tasks fix entry dates and order, and a clean build in a fresh checkout and one in the main working tree gave the same SHA-1. Build from a tree without `src/generated/resources/.cache/`, which `runData` leaves behind and `processResources` would pack. The source of this jar is `ports/enderio/` at the commit that last changed the jar in `local-mods/`. A rebase changes the hashes, so the rule names the commit. It replaced the unmodified 6.2.18-beta release (SHA-1 33587f98f2d96507de0e9d2f57f5ab35328ace7d), whose record this file was. The backport plan, its bundles and its tests are on the OKF page `okf/modpack/enderio-backport.md`. The license check of 2026-11-04 refuted the first verdict of no conditions, and an earlier version of this record said that the Unlicense "unconditionally permits" redistribution, which left out the parts above. The Patchouli parts were checked unchanged against the base with git. The jar holds no .ogg files, so the CC BY 3.0 and CC BY-NC 3.0 sound credits of the upstream README do not concern it. EnderIO Legacy Machines 0.4.9 requires enderio [0,) and Exchangers 3.5.1 takes enderio [1.0,), so both accept 6.3.0-skytekx.1, and the compat scan of the linked symbols finds 0 missing for both and for AllTheLeaks. Not published on Modrinth or CurseForge by SkyTekx.

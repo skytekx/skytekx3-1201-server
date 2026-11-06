@@ -100,10 +100,8 @@ OVERRIDES = [
     ("local-mods", "mods"),
     # What bundled jars must travel with: the sources of LGPL ports and of the LittleTiles build, the
     # license text of MIT jars that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux
-    # Networks, Extreme Reactors 2)
-    # and the license texts of the parts of Ender IO 6.2.18 with their NOTICE.
-    # What bundled jars must travel with: the sources of LGPL ports and the license text of MIT jars
-    # that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux Networks, SkyTekx Molten).
+    # Networks, Extreme Reactors 2, SkyTekx Molten)
+    # and the license texts of the parts of the Ender IO build with their NOTICE.
     ("licenses", "licenses"),
 ]
 # The Chunky task records are tracked by mistake and only hold the build machine's pregen state.

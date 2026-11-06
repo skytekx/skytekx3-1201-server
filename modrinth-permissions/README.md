@@ -6,7 +6,7 @@ file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
 Researched automatically across the 40 bundled mods of that time. The table below lists all 56 jars of
-`local-mods/`, and the counts at the top were recounted on 2026-11-05. **Verify the blockers yourself before trusting them.**
+`local-mods/`, and the counts at the top were recounted on 2026-11-06. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
@@ -23,11 +23,11 @@ Researched automatically across the 40 bundled mods of that time. The table belo
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
 - A jar whose file here points its source at `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/<dir>` also fails that check until the local `origin/master` holds `ports/<dir>` and the same build of the jar in `local-mods/`. Merge and push the branch with the source, then fetch, before a public build.
 - A jar that `PACK_RULES` in `tools/patch_mods.py` patches for the pack keeps its upstream name in `local-mods/`, but ships, and has its file here, under the name with the suffix of its rule. For Simply Jetpacks 2 that is `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. Both checks use that shipped name.
-- **4** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
+- **3** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
 
 ## BLOCKERS (resolve before publishing)
 
-Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered), LittleTiles, SkyTekx DE Fixes, Mekanism: Extra Modules and Expanded Delight carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (b5972f3), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here. Mystical Automation is the same kind: its `NOTICE_mysticalautomation` and mods.toml credits name the repo root https://github.com/skytekx/skytekx3-1201-server and the path `ports/mysticalautomation`, so master must hold that directory, and its `tree/master/ports/mysticalautomation` URL is only in its permission file here. Create: Integrated Farming is like Mystical Automation. Its jar NOTICE names the repo root and the path `ports/createintegratedfarming` as the source at the commit that last changed the jar in `local-mods/`, its mods.toml credits hold no URL, and its `tree/master/ports/createintegratedfarming` URL is only in its permission file here. So master must hold that directory and that commit.
+Before any public upload, also merge the branch that carries `ports/` into `master` and push it. The LGPL/GPL source offers of the modified builds point into this repo and do not resolve until then. Spiced Twilight, Alternative Twilight (Remastered), LittleTiles, SkyTekx DE Fixes, Mekanism: Extra Modules and Expanded Delight carry `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/...` in their permission files and in the NOTICE and mods.toml credits baked into their jars; do not change those URLs, they are inside the SHA-pinned jars. For SkyTekx DE Fixes the public source is also a condition of the Draconic Evolution license ("Maintain a visible repository"). The TF fork's jar NOTICE names only the repo root and points at the history of `ports/twilightforest` at the commit that added the jar (b5972f3), so that commit must be on master; its `tree/master/ports/twilightforest` URL is only in its permission file here. Mystical Automation is the same kind: its `NOTICE_mysticalautomation` and mods.toml credits name the repo root https://github.com/skytekx/skytekx3-1201-server and the path `ports/mysticalautomation`, so master must hold that directory, and its `tree/master/ports/mysticalautomation` URL is only in its permission file here. Create: Integrated Farming is like Mystical Automation. Its jar NOTICE names the repo root and the path `ports/createintegratedfarming` as the source at the commit that last changed the jar in `local-mods/`, its mods.toml credits hold no URL, and its `tree/master/ports/createintegratedfarming` URL is only in its permission file here. So master must hold that directory and that commit. Ender IO is the same kind. Its jar NOTICE names the repo root and the path `ports/enderio` as the source at the commit that added the jar to `local-mods/`, and its `tree/master/ports/enderio` URL is only in its permission file here. The jar may only be passed on non-commercially, because of its Patchouli parts.
 
 These cannot legally be bundled in a public modpack as-is:
 
@@ -51,7 +51,6 @@ Two jars have Status VERIFY. Deadly World depends on a CurseForge flag nobody ha
 On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and drop the bundled jar (no attribution needed):
 
 - **ElevatorMod (OpenBlocks Elevator)** (`elevatorid-1.20.1-1.9.1-forge.jar`) — https://modrinth.com/mod/elevatormod
-- **Ender IO** (`EnderIO-1.20.1-6.2.18-beta-all.jar`) — https://modrinth.com/mod/enderio. Bundled, it needs the license texts and the non-commercial condition of its record.
 - **OfflineSkins** (`offlineskins-1.20.1-v1.jar`) — https://modrinth.com/mod/offlineskins
 - **Tumbleweed** (`Tumbleweed-forge-1.20.1-0.5.5.jar`) — https://modrinth.com/mod/tumbleweed
 
@@ -83,7 +82,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `elevatorid-1.20.1-1.9.1-forge.jar` | ElevatorMod (OpenBlocks Elevator) | MIT | Licensed | yes | yes |
 | `emi-1.1.24-skytekx.2+1.20.1+forge.jar` | EMI (JEI bridge fork by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `EnchantingPlus-1.20.1-1.3.0.jar` | Enchanting Plus (Classic) | All Rights Reserved | Special permission | yes | - |
-| `EnderIO-1.20.1-6.2.18-beta-all.jar` | Ender IO | Unlicense (core), CC BY-NC-SA 3.0 (code from Patchouli), MIT, MPL-2.0 and Apache-2.0 (adapted code and bundled libraries) | Licensed | yes, non-commercial only, with the texts in `licenses/EnderIO-1.20.1-6.2.18-beta/` | yes |
+| `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` | Ender IO (1.20.1 backport build by SkyTekx) | Unlicense (core and changes), CC BY-NC-SA 3.0 (code from Patchouli), MIT, MPL-2.0 and Apache-2.0 (adapted code and bundled libraries) | Licensed | yes, non-commercial only, with the texts in `licenses/EnderIO-1.20.1-6.3.0-skytekx.1/`, once master holds its source | upstream only |
 | `Exchangers-1.20.1-3.5.1.jar` | Exchangers | Jacky's Minecraft Mods License (custom) | Special permission | yes | - |
 | `expandeddelight-0.1.4-skytekx.1.jar` | Expanded Delight (1.20.1 Forge port by SkyTekx) | MIT (Farmer's Delight parts MIT) | Licensed | yes, once master holds its source | 1.21.1 and Fabric only |
 | `ExtremeReactors2-1.20.1-2.0.97.jar` | Extreme Reactors 2 | MIT | Licensed | yes | older builds only |

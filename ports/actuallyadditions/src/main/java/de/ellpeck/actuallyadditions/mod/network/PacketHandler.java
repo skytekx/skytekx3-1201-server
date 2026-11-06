@@ -14,6 +14,7 @@ import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.network.gui.IButtonReactor;
 import de.ellpeck.actuallyadditions.mod.network.gui.INumberReactor;
 import de.ellpeck.actuallyadditions.mod.network.gui.IStringReactor;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -36,8 +37,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public final class PacketHandler {
@@ -119,6 +123,18 @@ public final class PacketHandler {
     // stillValid. A packet for a block farther away cannot come from an open screen of it
     private static final double MAX_GUI_DISTANCE_SQ = 64.0D;
 
+    // SkyTekx: at most WARNS_PER_WINDOW WARN lines about the packets of one sender in each window
+    // of WARN_WINDOW_MS, then one line that says the rest is suppressed and, with the next WARN
+    // after the window, one line that counts them. A modified client can send thousands of
+    // crafted packets a second, and neither the pack nor Arclight limits the packet rate, so one
+    // line per packet would let a single client fill the log and the disk. The first packets of
+    // a window keep one line each, which is what the test mod aadevtest checks
+    private static final int WARNS_PER_WINDOW = 20;
+    private static final long WARN_WINDOW_MS = 60_000L;
+    private static final int MAX_WARN_WINDOWS = 256;
+    private static final UUID UNKNOWN_SENDER = new UUID(0L, 0L);
+    private static final Map<UUID, WarnWindow> WARN_WINDOWS = new ConcurrentHashMap<>();
+
     // SkyTekx: 5 since the packet hardening, so that a client of the base (4) is refused at login
     private static final String PROTOCOL_VERSION = Integer.toString(5);
     public static final SimpleChannel THE_NETWORK = NetworkRegistry.newSimpleChannel(
@@ -191,7 +207,7 @@ public final class PacketHandler {
      * base enqueued the work without looking at the returned future, so a failing handler left no
      * trace. Upstream main disconnects the player instead.
      */
-    static void enqueueLogged(NetworkEvent.Context context, Runnable work, Supplier<String> what) {
+    static void enqueueLogged(NetworkEvent.Context context, Runnable work, @Nullable ServerPlayer sender, Supplier<String> what) {
         CompletableFuture<Void> future;
         try {
             future = context.enqueueWork(work);
@@ -199,16 +215,59 @@ public final class PacketHandler {
             future = CompletableFuture.failedFuture(e);
         }
         future.exceptionally(e -> {
-            ActuallyAdditions.LOGGER.warn("The {} failed: {}", what.get(), e.toString());
+            warnLimited(sender, "The {} failed: {}", what.get(), e.toString());
             return null;
         });
     }
 
     /**
-     * Logs one WARN line for a dropped serverbound packet, naming the player who sent it.
+     * Logs one WARN line for a dropped serverbound packet, naming the player who sent it, within
+     * the limit of {@link #warnLimited}.
      */
     static void warnDropped(@Nullable ServerPlayer player, String packet, String reason) {
-        ActuallyAdditions.LOGGER.warn("Dropped the {} packet of {}: {}", packet, describe(player), reason);
+        warnLimited(player, "Dropped the {} packet of {}: {}", packet, describe(player), reason);
+    }
+
+    /**
+     * Logs a WARN about a packet of this sender unless the sender has used up the lines of the
+     * current window. The sender is null on the client, for the packets of the server.
+     */
+    private static void warnLimited(@Nullable ServerPlayer sender, String format, Object... args) {
+        long now = Util.getMillis();
+        if (WARN_WINDOWS.size() > MAX_WARN_WINDOWS) {
+            WARN_WINDOWS.values().removeIf(window -> now - window.start >= WARN_WINDOW_MS);
+        }
+        // The count of this call in its window and the count of the window it closed, both taken
+        // inside compute, which runs atomically for one sender
+        int[] counts = new int[2];
+        WARN_WINDOWS.compute(sender == null ? UNKNOWN_SENDER : sender.getUUID(), (uuid, window) -> {
+            if (window == null || now - window.start >= WARN_WINDOW_MS) {
+                counts[1] = window == null ? 0 : window.seen;
+                window = new WarnWindow(now);
+            }
+            counts[0] = ++window.seen;
+            return window;
+        });
+        if (counts[1] > WARNS_PER_WINDOW) {
+            ActuallyAdditions.LOGGER.warn("Suppressed {} more packet warnings about {} in the {} seconds before", counts[1] - WARNS_PER_WINDOW, describe(sender), WARN_WINDOW_MS / 1000L);
+        }
+        int seen = counts[0];
+        if (seen <= WARNS_PER_WINDOW) {
+            ActuallyAdditions.LOGGER.warn(format, args);
+        } else if (seen == WARNS_PER_WINDOW + 1) {
+            ActuallyAdditions.LOGGER.warn("Suppressing further packet warnings about {} for up to {} seconds", describe(sender), WARN_WINDOW_MS / 1000L);
+        }
+    }
+
+    private static final class WarnWindow {
+
+        final long start;
+        // Only changed inside WARN_WINDOWS.compute
+        int seen;
+
+        WarnWindow(long start) {
+            this.start = start;
+        }
     }
 
     static String describe(@Nullable ServerPlayer player) {

@@ -160,9 +160,11 @@ public class TileEntityLaserRelayItem extends TileEntityLaserRelay {
         return Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.item.extra").append(": ").append(Component.literal(String.valueOf(this.getPriority())).withStyle(ChatFormatting.DARK_RED));
     }
 
+    // SkyTekx: the two lines joined with " - " as upstream cf0349b1 does, since LaserRelayHud draws
+    // the string with one drawString call, which does not break lines
     @Override
     public Component getCompassDisplayString() {
-        return Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.item.display.1").append("\n").append(Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.item.display.2")).withStyle(ChatFormatting.GREEN);
+        return Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.item.display.1").append(" - ").append(Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.item.display.2")).withStyle(ChatFormatting.GREEN);
     }
 
     @Override

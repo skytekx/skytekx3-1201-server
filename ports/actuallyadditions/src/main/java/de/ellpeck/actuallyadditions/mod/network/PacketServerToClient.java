@@ -62,7 +62,7 @@ public class PacketServerToClient {
         } else if (message.handler == null) {
             ActuallyAdditions.LOGGER.warn("Dropped a clientbound packet: the handler index {} is not a clientbound handler", message.handlerId);
         } else if (message.data != null) {
-            PacketHandler.enqueueLogged(context, () -> message.handler.handleData(message.data, context),
+            PacketHandler.enqueueLogged(context, () -> message.handler.handleData(message.data, context), null,
                 () -> "clientbound handler " + message.handlerId);
         }
         context.setPacketHandled(true);

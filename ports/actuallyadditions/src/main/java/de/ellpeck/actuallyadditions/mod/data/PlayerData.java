@@ -25,11 +25,14 @@ public final class PlayerData {
 
     public static PlayerSave getDataFromPlayer(Player player) {
         if (!(player.getCommandSenderWorld() instanceof ServerLevel level)) {
-            // A new copy when another player logs in on this client, so that no data carries over
-            if (clientData == null || !player.getUUID().equals(clientData.id)) {
-                clientData = new PlayerSave(player.getUUID());
+            // SkyTekx: only getClientData, which the sync packet of the local player calls, keys
+            // the client copy. Any other player of the client level, such as a remote player in a
+            // tick event, gets a throwaway copy, so that it cannot replace the synced data of the
+            // local player
+            if (clientData != null && player.getUUID().equals(clientData.id)) {
+                return clientData;
             }
-            return clientData;
+            return new PlayerSave(player.getUUID());
         }
         WorldData worldData = WorldData.get(level);
         ConcurrentHashMap<UUID, PlayerSave> data = worldData.playerSaveData;
@@ -47,6 +50,18 @@ public final class PlayerData {
         data.put(id, save);
         worldData.setDirty();
         return save;
+    }
+
+    /**
+     * SkyTekx: the client copy for the local player with this UUID, a new one when another player
+     * logs in on this client, so that no data carries over. Only the client handler of
+     * SYNC_PLAYER_DATA calls it.
+     */
+    public static PlayerSave getClientData(UUID localPlayer) {
+        if (clientData == null || !localPlayer.equals(clientData.id)) {
+            clientData = new PlayerSave(localPlayer);
+        }
+        return clientData;
     }
 
     public static class PlayerSave {

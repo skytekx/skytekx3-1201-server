@@ -51,6 +51,7 @@ public class ActuallyAdditionsData {
         generator.addProvider(true, new ColorChangeGenerator(packOutput));
         generator.addProvider(true, new EmpoweringRecipeGenerator(packOutput));
         generator.addProvider(true, new CrushingRecipeGenerator(packOutput));
+        generator.addProvider(true, new CoffeeIngredientGenerator(packOutput));
         generator.addProvider(true, new FuelRecipeGenerator(packOutput));
         generator.addProvider(true, new MiscMachineRecipeGenerator(packOutput));
         generator.addProvider(true, new MiningLensGenerator(packOutput));

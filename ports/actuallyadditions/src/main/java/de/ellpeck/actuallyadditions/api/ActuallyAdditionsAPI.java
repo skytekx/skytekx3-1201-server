@@ -20,6 +20,7 @@ import de.ellpeck.actuallyadditions.api.lens.Lens;
 import de.ellpeck.actuallyadditions.api.lens.LensConversion;
 import de.ellpeck.actuallyadditions.api.recipe.CoffeeIngredient;
 import de.ellpeck.actuallyadditions.api.recipe.WeightedOre;
+import de.ellpeck.actuallyadditions.mod.crafting.CoffeeIngredientRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.ColorChangeRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.CrushingRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.EmpowererRecipe;
@@ -62,7 +63,8 @@ public final class ActuallyAdditionsAPI {
      * Farmer behaviors are sorted when first accessed, this will not be done until after loading, but do not add behaviors at runtime.
      */
     public static final List<IFarmerBehavior> FARMER_BEHAVIORS = new ArrayList<>();
-    public static final List<CoffeeIngredient> COFFEE_MACHINE_INGREDIENTS = new ArrayList<>();
+    // SkyTekx: upstream 971fdd65, filled from the recipe type actuallyadditions:coffee_ingredient
+    public static final List<CoffeeIngredientRecipe> COFFEE_MACHINE_INGREDIENTS = new ArrayList<>();
     //    public static final List<CompostRecipe> COMPOST_RECIPES = new ArrayList<>();
     public static final List<IBookletEntry> BOOKLET_ENTRIES = new ArrayList<>();
     //This is added to automatically, you don't need to add anything to this list
@@ -232,9 +234,11 @@ public final class ActuallyAdditionsAPI {
      * Adds an ingredient to the Coffee Machine ingredient list
      *
      * @param ingredient The ingredient to add
+     * @deprecated SkyTekx: as on upstream main this does nothing, coffee ingredients are recipes of
+     * the type actuallyadditions:coffee_ingredient now
      */
+    @Deprecated
     public static void addCoffeeMachineIngredient(CoffeeIngredient ingredient) {
-        COFFEE_MACHINE_INGREDIENTS.add(ingredient);
     }
 
     /**

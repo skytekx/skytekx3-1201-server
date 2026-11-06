@@ -11,112 +11,106 @@
 package de.ellpeck.actuallyadditions.mod.items;
 
 import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
-import de.ellpeck.actuallyadditions.api.recipe.CoffeeIngredient;
-import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
-import de.ellpeck.actuallyadditions.mod.items.base.ItemFoodBase;
-import de.ellpeck.actuallyadditions.mod.util.ItemUtil;
-import net.minecraft.nbt.CompoundTag;
+import de.ellpeck.actuallyadditions.mod.crafting.ActuallyRecipes;
+import de.ellpeck.actuallyadditions.mod.crafting.CoffeeIngredientRecipe;
+import de.ellpeck.actuallyadditions.mod.items.base.ItemBase;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemCoffee extends ItemFoodBase {
+// SkyTekx: the cup of coffee of upstream main on the 1.20.1 item API. The base registered the cup as
+// a plain item, so it could not be drunk, and kept this class unused
+public class ItemCoffee extends ItemBase {
+    private static final FoodProperties FOOD = new FoodProperties.Builder().nutrition(8).saturationMod(5.0F).alwaysEat().build();
 
     public ItemCoffee() {
-        super(8, 5.0F, false); //, name);
-        //this.setMaxDamage(3);
-        //this.setAlwaysEdible();
-        //this.setMaxStackSize(1);
-        //this.setNoRepair();
+        // Three sips per cup, and no repair in a crafting grid or an anvil (upstream e6156bfc, #1512)
+        super(ActuallyItems.defaultProps().food(FOOD).durability(3).setNoRepair());
     }
 
-    public static void initIngredients() {
-        ActuallyAdditionsAPI.addCoffeeMachineIngredient(new MilkIngredient(Ingredient.of(Items.MILK_BUCKET)));
-        //Pam's Soy Milk (For Jemx because he's lactose intolerant. YER HAPPY NAO!?)
-        if (ModList.get().isLoaded("harvestcraft")) {
-            Item item = ItemUtil.getItemFromName("harvestcraft:soymilkitem");
-            if (item != null) {
-                ActuallyAdditionsAPI.addCoffeeMachineIngredient(new MilkIngredient(Ingredient.of(item)));
-            }
-        }
-
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(Items.SUGAR), 4, new PotionEffect(MobEffects.SPEED, 30, 0)));
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(Items.MAGMA_CREAM), 2, new PotionEffect(MobEffects.FIRE_RESISTANCE, 20, 0)));
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(new ItemStack(Items.FISH, 1, 3)), 2, new PotionEffect(MobEffects.WATER_BREATHING, 10, 0)));
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(Items.GOLDEN_CARROT), 2, new PotionEffect(MobEffects.NIGHT_VISION, 30, 0)));
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(Items.GHAST_TEAR), 3, new PotionEffect(MobEffects.REGENERATION, 5, 0)));
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(Items.BLAZE_POWDER), 4, new PotionEffect(MobEffects.STRENGTH, 15, 0)));
-        //ActuallyAdditionsAPI.addCoffeeMachineIngredient(new CoffeeIngredient(Ingredient.of(Items.FERMENTED_SPIDER_EYE), 2, new PotionEffect(MobEffects.INVISIBILITY, 25, 0)));
-    }
-
+    /**
+     * The ingredient for a stack. The server reads the list of the API, which only the server fills,
+     * and a client falls back to the recipes it got from the server.
+     */
     @Nullable
-    public static CoffeeIngredient getIngredientFromStack(ItemStack stack) {
-        for (CoffeeIngredient ingredient : ActuallyAdditionsAPI.COFFEE_MACHINE_INGREDIENTS) {
-            if (ingredient.getInput().test(stack)) {
-                return ingredient;
+    public static CoffeeIngredientRecipe getIngredientRecipeFromStack(ItemStack stack) {
+        for (CoffeeIngredientRecipe recipe : ActuallyAdditionsAPI.COFFEE_MACHINE_INGREDIENTS) {
+            if (recipe.getIngredient().test(stack)) {
+                return recipe;
             }
         }
         return null;
     }
 
-    public static void applyPotionEffectsFromStack(ItemStack stack, LivingEntity player) {/*
-        PotionEffect[] effects = ActuallyAdditionsAPI.methodHandler.getEffectsFromStack(stack);
+    @Nullable
+    public static CoffeeIngredientRecipe getIngredientRecipeFromStack(@Nullable Level level, ItemStack stack) {
+        if (level != null && level.isClientSide) {
+            for (CoffeeIngredientRecipe recipe : level.getRecipeManager().getAllRecipesFor(ActuallyRecipes.Types.COFFEE_INGREDIENT.get())) {
+                if (recipe.getIngredient().test(stack)) {
+                    return recipe;
+                }
+            }
+            return null;
+        }
+        return getIngredientRecipeFromStack(stack);
+    }
+
+    // The cup stores the durations in seconds
+    public static void applyPotionEffectsFromStack(ItemStack stack, LivingEntity player) {
+        MobEffectInstance[] effects = ActuallyAdditionsAPI.methodHandler.getEffectsFromStack(stack);
         if (effects != null && effects.length > 0) {
-            for (PotionEffect effect : effects) {
-                player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() * 20, effect.getAmplifier()));
+            for (MobEffectInstance effect : effects) {
+                player.addEffect(new MobEffectInstance(effect.getEffect(), effect.getDuration() * 20, effect.getAmplifier()));
             }
         }
-        */
     }
 
-    //@Override
-    public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity player) {
+    // SkyTekx: upstream 0d27a4a3 (#1422) reads the effects from the copy, because eating empties the
+    // stack in hand, and gives back an empty cup after the last sip (c2b2cc4d)
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         ItemStack theStack = stack.copy();
-        super.finishUsingItem(stack, world, player);
-        applyPotionEffectsFromStack(stack, player);
-        //theStack.setItemDamage(theStack.getItemDamage() + 1);
-        //if (theStack.getMaxDamage() - theStack.getItemDamage() < 0) {
-        //    return new ItemStack(ActuallyItems.COFFEE_CUP.get());
-        //} else {
-        //    return theStack;
-        //}
-        return ItemStack.EMPTY;
+        super.finishUsingItem(stack, level, livingEntity);
+        if (!level.isClientSide) {
+            applyPotionEffectsFromStack(theStack, livingEntity);
+        }
+        theStack.setDamageValue(theStack.getDamageValue() + 1);
+        if (theStack.getMaxDamage() - theStack.getDamageValue() <= 0) {
+            return new ItemStack(ActuallyItems.EMPTY_CUP.get());
+        } else {
+            return theStack;
+        }
     }
 
-    //@Override
-    //public EnumAction getItemUseAction(ItemStack stack) {
-    //    return EnumAction.DRINK;
-    //}
-
-    @Nullable
     @Override
-    public CompoundTag getShareTag(ItemStack stack) {
-        return super.getShareTag(stack);
+    public UseAnim getUseAnimation(ItemStack pStack) {
+        return UseAnim.DRINK;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    // SkyTekx: upstream d4cc7b07. The cup holds seconds, and the 1.20.1 formatter takes ticks
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level playerIn, List<Component> tooltip, TooltipFlag advanced) {
-        //PotionEffect[] effects = ActuallyAdditionsAPI.methodHandler.getEffectsFromStack(stack);
-        //if (effects != null) {
-        //    for (PotionEffect effect : effects) {
-        //        tooltip.add(StringUtil.localize(effect.getEffectName()) + " " + (effect.getAmplifier() + 1) + ", " + StringUtils.formatTickDuration(effect.getDuration() * 20));
-        //    }
-        //} else {
-        //   tooltip.add(StringUtil.localize("tooltip." + ActuallyAdditions.MODID + ".coffeeCup.noEffect"));
-        //}
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag advanced) {
+        MobEffectInstance[] effects = ActuallyAdditionsAPI.methodHandler.getEffectsFromStack(stack);
+        if (effects != null) {
+            for (MobEffectInstance effect : effects) {
+                tooltip.add(Component.translatable(effect.getDescriptionId())
+                        .append(" " + (effect.getAmplifier() + 1) + ", " + StringUtil.formatTickDuration(effect.getDuration() * 20))
+                        .withStyle(ChatFormatting.GRAY));
+            }
+        } else {
+            tooltip.add(Component.translatable("tooltip.actuallyadditions.coffeeCup.noEffect").withStyle(ChatFormatting.GRAY));
+        }
     }
 
     @Override
@@ -127,39 +121,5 @@ public class ItemCoffee extends ItemFoodBase {
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return false;
-    }
-
-    public static class MilkIngredient extends CoffeeIngredient {
-
-        public MilkIngredient(Ingredient ingredient) {
-            super(ingredient, 0);
-        }
-
-        @Override
-        public boolean effect(ItemStack stack) {
-            //PotionEffect[] effects = ActuallyAdditionsAPI.methodHandler.getEffectsFromStack(stack);
-            //ArrayList<PotionEffect> effectsNew = new ArrayList<>();
-            if (effects != null && effects.length > 0) {
-/*                for (PotionEffect effect : effects) {
-                    if (effect.getAmplifier() > 0) {
-                        effectsNew.add(new PotionEffect(effect.getPotion(), effect.getDuration() + 120, effect.getAmplifier() - 1));
-                    }
-                }
-                stack.setTagCompound(new CompoundNBT());
-                if (effectsNew.size() > 0) {
-                    this.effects = effectsNew.toArray(new PotionEffect[effectsNew.size()]);
-                    ActuallyAdditionsAPI.methodHandler.addEffectToStack(stack, this);
-                }*/
-            }
-            this.effects = null;
-            return true;
-        }
-
-        @Override
-        public String getExtraText() {
-            // SkyTekx: a Component instead of the client only I18n, as upstream 3a767e18 does for the
-            // other strings. This method is common, and getString() resolves the key on the client
-            return Component.translatable("container.nei." + ActuallyAdditions.MODID + ".coffee.extra.milk").getString();
-        }
     }
 }

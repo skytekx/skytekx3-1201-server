@@ -124,6 +124,11 @@ Modifications
       fuel recipe type stays registered for data packs.
     * Generators: the Leaf-Eating Generator follows its config and eats leaves again, and the Bio
       Reactor faces the player, renders its model and shows its energy bar.
+    * Coffee: the Coffee Maker brews drinkable coffee from empty cups, uses its water and
+      takes cups and ingredients from automation. Its ingredients are data driven recipes with a
+      JEI category as on upstream's main branch, effects stack without doubling, and a cup gives
+      back an empty cup and can no longer be repaired. Milk weakens the effects before it and
+      adds two minutes, as in the 1.12 versions, which upstream's main branch dropped.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

@@ -11,9 +11,10 @@
 package de.ellpeck.actuallyadditions.mod.tile;
 
 import de.ellpeck.actuallyadditions.api.ActuallyTags;
-import de.ellpeck.actuallyadditions.api.recipe.CoffeeIngredient;
 import de.ellpeck.actuallyadditions.mod.AASounds;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
+import de.ellpeck.actuallyadditions.mod.crafting.CoffeeIngredientRecipe;
+import de.ellpeck.actuallyadditions.mod.fluids.AATank;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerCoffeeMachine;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.items.ItemCoffee;
@@ -42,7 +43,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,7 +61,7 @@ public class TileEntityCoffeeMachine extends TileEntityInventoryBase implements 
     public final CustomEnergyStorage storage = new CustomEnergyStorage(300000, 250, 0);
     public final LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> this.storage);
 
-    public final FluidTank tank = new FluidTank(4 * FluidType.BUCKET_VOLUME) {
+    public final AATank tank = new AATank(4 * FluidType.BUCKET_VOLUME) {
         @Nonnull
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
@@ -161,12 +161,13 @@ public class TileEntityCoffeeMachine extends TileEntityInventoryBase implements 
 
     @Override
     public IAcceptor getAcceptor() {
-        return (slot, stack, automation) -> !automation || slot >= 3 && ItemCoffee.getIngredientFromStack(stack) != null || slot == SLOT_COFFEE_BEANS && stack.is(ActuallyTags.Items.COFFEE_BEANS) || slot == SLOT_INPUT && stack.getItem() == ActuallyItems.COFFEE_CUP.get();
+        // SkyTekx: upstream 56d730d6, automation inserts empty cups, not full ones
+        return (slot, stack, automation) -> !automation || slot >= 3 && ItemCoffee.getIngredientRecipeFromStack(stack) != null || slot == SLOT_COFFEE_BEANS && stack.is(ActuallyTags.Items.COFFEE_BEANS) || slot == SLOT_INPUT && stack.getItem() == ActuallyItems.EMPTY_CUP.get();
     }
 
     @Override
     public IRemover getRemover() {
-        return (slot, automation) -> !automation || slot == SLOT_OUTPUT || slot >= 3 && slot < this.inv.getSlots() && ItemCoffee.getIngredientFromStack(this.inv.getStackInSlot(slot)) == null;
+        return (slot, automation) -> !automation || slot == SLOT_OUTPUT || slot >= 3 && slot < this.inv.getSlots() && ItemCoffee.getIngredientRecipeFromStack(this.inv.getStackInSlot(slot)) == null;
     }
 
     public void storeCoffee() {
@@ -185,7 +186,8 @@ public class TileEntityCoffeeMachine extends TileEntityInventoryBase implements 
         }
 
         ItemStack input = this.inv.getStackInSlot(SLOT_INPUT);
-        if (StackUtil.isValid(input) && input.getItem() == ActuallyItems.COFFEE_CUP.get() && !StackUtil.isValid(this.inv.getStackInSlot(SLOT_OUTPUT)) && this.coffeeCacheAmount >= CACHE_USE && this.tank.getFluid().getFluid() == Fluids.WATER && this.tank.getFluidAmount() >= WATER_USE) {
+        // SkyTekx: upstream fc20f4a9. The base brewed from full cups into coffee beans
+        if (!input.isEmpty() && input.is(ActuallyItems.EMPTY_CUP.get()) && this.inv.getStackInSlot(SLOT_OUTPUT).isEmpty() && this.coffeeCacheAmount >= CACHE_USE && this.tank.getFluid().getFluid() == Fluids.WATER && this.tank.getFluidAmount() >= WATER_USE) {
             if (this.storage.getEnergyStored() >= ENERGY_USED) {
                 if (this.brewTime % 30 == 0) {
                     this.level.playSound(null, this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), AASounds.COFFEE_MACHINE.get(), SoundSource.BLOCKS, 0.1F, 1.0F);
@@ -195,10 +197,10 @@ public class TileEntityCoffeeMachine extends TileEntityInventoryBase implements 
                 this.storage.extractEnergyInternal(ENERGY_USED, false);
                 if (this.brewTime >= TIME_USED) {
                     this.brewTime = 0;
-                    ItemStack output = new ItemStack(ActuallyItems.COFFEE_BEANS.get());
+                    ItemStack output = new ItemStack(ActuallyItems.COFFEE_CUP.get());
                     for (int i = 3; i < this.inv.getSlots(); i++) {
-                        if (StackUtil.isValid(this.inv.getStackInSlot(i))) {
-                            CoffeeIngredient ingredient = ItemCoffee.getIngredientFromStack(this.inv.getStackInSlot(i));
+                        if (!this.inv.getStackInSlot(i).isEmpty()) {
+                            CoffeeIngredientRecipe ingredient = ItemCoffee.getIngredientRecipeFromStack(this.inv.getStackInSlot(i));
                             if (ingredient != null) {
                                 if (ingredient.effect(output)) {
                                     this.inv.setStackInSlot(i, StackUtil.shrinkForContainer(this.inv.getStackInSlot(i), 1));
@@ -209,7 +211,9 @@ public class TileEntityCoffeeMachine extends TileEntityInventoryBase implements 
                     this.inv.setStackInSlot(SLOT_OUTPUT, output.copy());
                     this.inv.getStackInSlot(SLOT_INPUT).shrink(1);
                     this.coffeeCacheAmount -= CACHE_USE;
-                    this.tank.drain(WATER_USE, IFluidHandler.FluidAction.EXECUTE);
+                    // SkyTekx: upstream 5c4e584a (#1422). The tank refuses every outside drain, so the
+                    // base never used up its water
+                    this.tank.drainInternal(WATER_USE, IFluidHandler.FluidAction.EXECUTE);
                 }
             }
         } else {

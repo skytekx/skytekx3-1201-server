@@ -960,3 +960,41 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     four generated `liquid_fuel` files show. Savegame: the Bio Reactor gains the block state
     property `facing`, and a Bio Reactor placed with the base jar loads facing north, the default
     of `DirectionalBlock.Container`. No NBT key changes.
+34. Coffee Maker and coffee: the ingredients are the recipe type and serializer
+    `actuallyadditions:coffee_ingredient` of `971fdd65`, with the snake case keys `max_amplifier`
+    and `extra_text` of `718494a9`, on the 1.20.1 serializer. The generator writes the nine
+    ingredients of `main`, and the seven with effects match `main` byte for byte. The tagged milk
+    looks at `forge:milk` behind `forge:not` and `forge:tag_empty` inside `forge:conditional`, as
+    `main` does with `c:milk`. The base had none of this. Its ingredients were the API list of
+    `CoffeeIngredient` objects, and `ItemCoffee.initIngredients` added only the milk bucket and a
+    HarvestCraft soy milk, with the effect of milk commented out. The cup was registered as a
+    plain item, so it could not be drunk, and the machine brewed from full cups into coffee
+    beans. Now the API list `COFFEE_MACHINE_INGREDIENTS` holds the recipes (`ResourceReloader`
+    fills it), `ItemCoffee.MilkIngredient` and its client only `getExtraText` are gone (`a22ab366`),
+    and `addCoffeeMachineIngredient` does nothing, as on `main`. The cup is `ItemCoffee` with three
+    sips, the drink animation and no repair (`e6156bfc`, #1512). It applies its effects from the
+    copy of the stack, only on the server, and gives back an empty cup after the last sip
+    (`0d27a4a3`, `c2b2cc4d`, #1422). The tooltip shows the stored seconds right (`d4cc7b07`, with
+    the 1.20.1 `StringUtil.formatTickDuration`, which takes ticks). The cup stores each effect by
+    its registry name under `ID` (`56402e46`), keeps the keys `Counter`, `Duration` and `Amplifier`,
+    and an ingredient that raises an effect no longer wipes the other NBT of the cup or writes the
+    effects twice (`90cecc8e`). The machine brews from empty cups into coffee (`fc20f4a9`), uses up
+    its water through `AATank.drainInternal` (`5c4e584a`, #1422, the tank refuses outside drains),
+    takes empty cups from automation (`56d730d6`, changelog 1.3.16), moves empty cups into the cup
+    slot on shift click (`0a6aa654`) and no longer lets the click through to the held item
+    (`09673dd1`). The ingredient lookups that a client runs, shift click and JEI, use the recipes
+    the client received, since only the server fills the API list. JEI gets the coffee category
+    with the Coffee Maker as catalyst and the click area of `53414c43`, and the old commented
+    category goes (`96992eb8`, `c585fc99`). The extra text is translated (`f58948e7`, #1403), and
+    the three JEI lang keys of `971fdd65` are added. Local divergence: milk works again. On `main`
+    the milk ingredients have no effect, so `effect` returns false, the milk is never used up and
+    the cup stays as it was, although JEI shows "+01:00, -1 Level". The two milk recipes carry the
+    additive key `"milk": true`, which `main` would ignore, and such an ingredient does what the
+    1.12 `MilkIngredient` did: every effect that the slots before it added loses one amplifier and
+    gains 120 seconds, an effect at the lowest amplifier goes, and the milk is used up and leaves
+    its bucket. The JEI line now says "+02:00, -1 Level", which matches those 120 seconds and the
+    manual text of the base. The names lose their `(wip)` label (`0a6aa654`). Not ported:
+    `56322ebc` only adds a TODO about the saturation. Savegame: the item `coffee_cup` keeps its id
+    and becomes a stack of one, so a stack of base cups, which only creative could hold, keeps its
+    count until it is split. The machine keeps its NBT keys. New ids: the recipe type and the
+    recipe serializer `actuallyadditions:coffee_ingredient`.

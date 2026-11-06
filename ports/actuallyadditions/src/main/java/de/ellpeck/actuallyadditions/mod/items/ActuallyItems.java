@@ -36,7 +36,8 @@ public final class ActuallyItems {
 
     // MISC ITEMS
     public static final RegistryObject<Item> CANOLA = ITEMS.register("canola", ItemBase::new);
-    public static final RegistryObject<Item> COFFEE_CUP = ITEMS.register("coffee_cup", ItemBase::new);
+    // SkyTekx: upstream 971fdd65 registers the cup as the drinkable ItemCoffee
+    public static final RegistryObject<Item> COFFEE_CUP = ITEMS.register("coffee_cup", ItemCoffee::new);
     public static final RegistryObject<Item> PAPER_CONE = ITEMS.register("paper_cone", ItemBase::new);
     public static final RegistryObject<Item> DOUGH = ITEMS.register("dough", ItemBase::new);
     public static final RegistryObject<Item> RING = ITEMS.register("ring", ItemBase::new);

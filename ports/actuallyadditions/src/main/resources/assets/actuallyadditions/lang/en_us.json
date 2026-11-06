@@ -168,7 +168,7 @@
   "block.actuallyadditions.dropper": "Automatic Precision Dropper",
   "block.actuallyadditions.ender_casing": "Ender Casing",
   "block.actuallyadditions.flax": "Flax Plant",
-  "block.actuallyadditions.coffee_machine": "Coffee Maker (wip)",
+  "block.actuallyadditions.coffee_machine": "Coffee Maker",
   "block.actuallyadditions.xp_solidifier": "Experience Solidifier (wip)",
   "block.actuallyadditions.leaf_generator": "Leaf-Eating Generator",
   "block.actuallyadditions.long_range_breaker": "Long-Range Breaker",
@@ -303,7 +303,7 @@
   "item.actuallyadditions.netherite_aiot": "Netherite AIOT",
   "item.actuallyadditions.phantom_connector": "Phantom Connector",
   "item.actuallyadditions.empty_cup": "Empty Cup",
-  "item.actuallyadditions.coffee_cup": "Cup with Coffee (wip)",
+  "item.actuallyadditions.coffee_cup": "Cup with Coffee",
   "item.actuallyadditions.coffee_seeds": "Coffee Seeds",
   "item.actuallyadditions.coffee_beans": "Coffee Beans (wip)",
   "item.actuallyadditions.canola_seeds": "Canola Seeds",
@@ -984,6 +984,9 @@
   "booklet.actuallyadditions.chapter.trialsIntro.text.1": "<item>Trials<r> are a set of fun and interesting <imp>challenges<r> that you can use to <imp>get inspiration<r> on what to build next. <n>Once you <imp>complete<r> a <item>Trial<r>, you can <imp>press the button<r> in the bottom right to mark the trial as completed, turning its name in the list green. <n>Since there is <imp>no way to check<r> if a trial is actually completed, <item>Trials<r> are meant as <imp>personal goals<r>. <n><n>To <imp>visit<r> the <item>Trials<r> page, you can click the <imp>bookmark<r> in the <imp>top right<r> corner of the manual GUI.",
   "booklet.actuallyadditions.chapter.trialsIntro.text.2": "Note that <item>Trials<r> are designed in a way that they should be completed with the concepts of <imp>Minecraft<r> and <imp>Actually Additions<r> alone.",
   "_comment": "JEI",
+  "jei.actuallyadditions.coffee.special": "Special Feature",
+  "jei.actuallyadditions.coffee.maxAmount": "Max Amount",
+  "jei.actuallyadditions.coffee.extra.milk": "+02:00, -1 Level",
   "jei.actuallyadditions.mining_lens": "Lens of the Miner",
   "jei.actuallyadditions.mining_lens.weight": "Weight:"
 }

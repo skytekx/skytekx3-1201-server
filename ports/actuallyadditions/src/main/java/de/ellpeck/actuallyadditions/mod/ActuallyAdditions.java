@@ -27,7 +27,6 @@ import de.ellpeck.actuallyadditions.mod.event.CommonEvents;
 import de.ellpeck.actuallyadditions.mod.fluids.InitFluids;
 import de.ellpeck.actuallyadditions.mod.inventory.ActuallyContainers;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
-import de.ellpeck.actuallyadditions.mod.items.ItemCoffee;
 import de.ellpeck.actuallyadditions.mod.items.Worm;
 import de.ellpeck.actuallyadditions.mod.misc.BannerHelper;
 import de.ellpeck.actuallyadditions.mod.misc.DungeonLoot;
@@ -143,7 +142,6 @@ public class ActuallyAdditions {
         BannerHelper.init();
         InitEntities.init(); // todo: [port] replace
         //AAWorldGen gen = new AAWorldGen();
-        ItemCoffee.initIngredients();
         CrusherCrafting.init();
         //LensMining.init();
     }

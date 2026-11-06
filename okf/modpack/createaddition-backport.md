@@ -8,8 +8,9 @@ timestamp: 2026-11-06
 
 # Create Crafts & Additions backport
 
-The pack ships Create Crafts & Additions (CC&A, mod id `createaddition`) 1.3.3 from Modrinth as
-`mods/createaddition-1.20.1-1.3.3.jar` (`modrinth.index.json:954`). Upstream develops the mod on its
+The pack shipped Create Crafts & Additions (CC&A, mod id `createaddition`) 1.3.3 from Modrinth as
+`mods/createaddition-1.20.1-1.3.3.jar` until d52d46c put the fork jar into `local-mods/` in place of
+that index entry on 2026-11-06. Upstream develops the mod on its
 1.21.1 NeoForge line, which reached 1.7.3 on 2026-11-02. This plan backports what works on Minecraft
 1.20.1 with Forge 47 onto a vendored copy of upstream's `1.20.1` branch in `ports/createaddition/`,
 the same way as the [Twilight Forest backport](twilightforest-backport.md). The fork keeps the mod id
@@ -21,8 +22,9 @@ features in 10 bundles, 136.5 h in all, and no bundle is over 40 h. The machine 
 `ports/createaddition-backport-inventory.json`. Its `plan.bundles` holds every feature with its
 upstream commits, translation notes, savegame notes and tests, `plan.excluded` the upstream work left
 out, and `critic_notes` the review that corrected the first draft. The file
-`ports/createaddition-backport-carryover.json` will record what a bundle hands to a later one. It does
-not exist yet.
+`ports/createaddition-backport-carryover.json` records what each bundle handed to a later one, with a
+release note for every item, and under `cca-pack-release` the steps that stay open after the
+release.
 
 | Property | Value |
 |---|---|
@@ -31,37 +33,30 @@ not exist yet.
 | Port source | Branch `1.21.1` at 658a390 (2026-11-02), `mod_version` 1.7.3. Release 1.7.2 came out on 2026-10-01, and the repository has no git tags |
 | Fork | Folder `ports/createaddition/`, Java 17, ForgeGradle 6.0.6, Create 6.0.8 (`UPSTREAM.md`, Build changes) |
 | Target version | Version 1.20.1-1.7.3-skytekx.1 in `createaddition-1.20.1-1.7.3-skytekx.1.jar`, the slim reobf jar from `build/libs/` |
-| Ships as | A jar in `local-mods/` that replaces the Modrinth entry at `modrinth.index.json:954` |
+| Ships as | The jar in `local-mods/` since d52d46c, SHA-1 `b7355fab1f431ddf186a5c7be2e5a4d4c751983b`, 1716104 bytes, in place of the Modrinth entry of 1.3.3 |
 | Build check | The `compileJava` call in `UPSTREAM.md`, run with `/opt/jdk17` and `-Xmx2g` |
 
-## Status on 2026-11-05
+## Status on 2026-11-06
 
-The vendored base (78f4f06), the reproducible Java 17 build (7286996), the license files in the jar
-(f11c10b), the baseline bundle, the small fixes, the ignitable fluids, the connector rework, the
-changes of 1.6.0, the charging recipes, the Electric Pump, the Servo Motor and the ponders and
-translations are on the branch `claude/twilight-forest-port-mods-j2owbq`. They are the first ported
-features. The pack still ships the Modrinth jar 1.3.3. Only test servers with a reduced mod set have
-booted the fork: those of the ignitable fluids (11cd485), the [wire graph test](#wire-graph-test) on
-the production Arclight jar, the Forge 47.4.18 tests of the [changes of 1.6.0](#changes-of-160) and
-of the [Servo Motor](#servo-motor), and the Forge and Arclight tests of the
-[charging recipes](#charging-recipes) and of the [Electric Pump](#electric-pump). Besides them, a dev
-client with Create 6.0.8 opened the new [ponders](#ponders-and-translations). The boot and login
-checks of the baseline, the in game tests of the small fixes, the connector rework, the changes of
-1.6.0, the charging recipes, the Electric Pump and the Servo Motor and a look at the ponders on a pack
-client wait for the [release](#release).
+All ten bundles are on the branch `claude/twilight-forest-port-mods-j2owbq`, and the pack ships the
+fork jar from `local-mods/` since d52d46c. The [release test](#release-test) loaded a world that 1.3.3
+had saved with the fork on a Forge 47.4.18 server, and the full pack booted on Forge 47.4.18 and on
+the production Arclight jar with no new log signature. The server's `mods/` still holds 1.3.3. The fork
+reaches it with the deploy of the next pack, after the live world gates and the client checks under
+[Release](#release). No pack client has run the fork yet.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
-| Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in 779a060, 946c19c, ea5b3dc and 0f93520 on top of 78f4f06, 7286996 and f11c10b. The boot and login checks belong to the release |
-| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Ported, live world test open. Code in 173dee4, 1f9580a, d3a0178, 9699085, 5c08350, a5584ce and 7eb20d9, with the scan tool a3285fc, the test record 0a1cabe and the review fixes c4b5d0d and 7c52b35. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release, which takes them from `ports/createaddition-backport-carryover.json` |
-| Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 68ac009, 1c55181, d200303, 4cea82f, bc65bd1, f084665, ee2e417, 5946e46, 12ac066, e782463 and c0c031d, with the review fix 739b6f8. The in game and boot tests belong to the release |
-| Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Done in a7cbc03, f287b38, c2bbc62 and 36d6c2d, with the review fix b83da4e and the scan tool 7f1364c. Tested on a Forge 47.4.18 server with Create 6.0.8. The in game tests with a client, the Arclight boot and the scan of the live world belong to the release |
-| Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in 11cd485 and f6885dd, with the review fixes fb644ea and a60df19. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
-| Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Done in d19a5ef, 915d9b6 and c792a68, with the test record b091152 and the review fix 434f71a. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the belt run and the full pack boot belong to the release |
-| Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Done in 6c1ab20 and 0eeff02, with the test record 34f5e98 and the review fix dc5074b. Tested on reduced Forge 47.4.18 and Arclight servers, before and after the integration. The client tests, the pumps in series in game and the full pack boot belong to the release |
-| Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Done in c419b23 and 349b759, with the review fix 9e858af. Tested on a reduced Forge 47.4.18 server with Create 6.0.8, with and without CC:Tweaked 1.120.2. The client tests, the Arclight boot and the full pack boot belong to the release |
-| Ponders and translations (`cca-ponders-and-translations`) | Three new ponder scenes with their NBT converted to 1.20.1, and 41 new lang keys | 9 | Connector rework, the 1.6.0 changes, ignitable fluids, charging, pump, servo | Done in 4d84a2f and efde378, with the review fix e4ecab5. The scenes ran in a dev client under Xvfb with Create 6.0.8 and Ponder 1.0.91. The look on a pack client belongs to the release |
-| Release (`cca-pack-release`) | Pack wiring, license and model checks, compat scan, boots on Forge and Arclight, rollout, docs | 8.5 | All other bundles | Planned |
+| Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in 779a060, 946c19c, ea5b3dc and 0f93520 on top of 78f4f06, 7286996 and f11c10b. The release boots show the version 1.20.1-1.7.3-skytekx.1, and the login check with a client is open |
+| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Ported, live world test open. Code in 173dee4, 1f9580a, d3a0178, 9699085, 5c08350, a5584ce and 7eb20d9, with the scan tool a3285fc, the test record 0a1cabe and the review fixes c4b5d0d and 7c52b35. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The release test moved the wires of a world saved by 1.3.3 into the graph and read unloaded wire ends from disk on the full pack boots. The copy of the live world, skytekx-compat 2.1.6 and the client checks stay open in `ports/createaddition-backport-carryover.json` |
+| Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 68ac009, 1c55181, d200303, 4cea82f, bc65bd1, f084665, ee2e417, 5946e46, 12ac066, e782463 and c0c031d, with the review fix 739b6f8. The release boots passed, and the in game tests are open |
+| Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Done in a7cbc03, f287b38, c2bbc62 and 36d6c2d, with the review fix b83da4e and the scan tool 7f1364c. Tested on a Forge 47.4.18 server with Create 6.0.8 and on the release boots. The in game tests with a client and the scan of the live world are open |
+| Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in 11cd485 and f6885dd, with the review fixes fb644ea and a60df19. Tested on reduced Arclight and Forge test servers, and the full pack boots of the release show its mixins applied |
+| Charging recipes (`cca-charging-sequenced-assembly`) | Charging steps in Sequenced Assembly, gold to electrum, Create copper tiles | 10.5 | Baseline, small fixes | Done in d19a5ef, 915d9b6 and c792a68, with the test record b091152 and the review fix 434f71a. Tested on reduced Forge 47.4.18 and Arclight servers, and the full pack boots of the release charged gold and copper tiles on depots. The client tests and the belt run are open |
+| Electric Pump (`cca-electric-pump`) | The new pump block with its renderer, visual and recipe | 11 | Baseline, small fixes | Done in 6c1ab20 and 0eeff02, with the test record 34f5e98 and the review fix dc5074b. Tested on reduced Forge 47.4.18 and Arclight servers, and the full pack boots of the release ran a pump between pipes. The client tests and the pumps in series in game are open |
+| Servo Motor (`cca-servo-motor`) | The Electric Servo Motor and its CC:Tweaked peripheral | 18 | Baseline, small fixes | Done in c419b23 and 349b759, with the review fix 9e858af. Tested on a reduced Forge 47.4.18 server with Create 6.0.8, with and without CC:Tweaked 1.120.2, and on the release boots on Forge and Arclight. The client tests are open |
+| Ponders and translations (`cca-ponders-and-translations`) | Three new ponder scenes with their NBT converted to 1.20.1, and 41 new lang keys | 9 | Connector rework, the 1.6.0 changes, ignitable fluids, charging, pump, servo | Done in 4d84a2f and efde378, with the review fix e4ecab5. The scenes ran in a dev client under Xvfb with Create 6.0.8 and Ponder 1.0.91. The look on a pack client is open |
+| Release (`cca-pack-release`) | Pack wiring, license and model checks, compat scan, boots on Forge and Arclight, rollout, docs | 8.5 | All other bundles | Shipped in 23822fc, 68f66f6, d52d46c and f6cd870 with the release docs. The build, the compat scan, the savegame test from 1.3.3 and the full pack boots on Forge and Arclight passed. The live world gates and the client checks are open |
 
 After the baseline, the connector rework, the small fixes and the ignitable fluids can run in
 parallel. The 1.6.0 changes, the charging recipes, the pump and the servo wait for the small fixes,
@@ -425,7 +420,7 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   holds no client class of CC&A. Neither server logged an ERROR or FATAL line, and each stopped with
   java exit 0.
 - The client side has not run: the goggle line, the pulsing partials with Flywheel on and off, the
-  wrench, the recipe in JEI and EMI, and the item model. These belong to the [release](#release).
+  wrench, the recipe in JEI and EMI, and the item model. These stay open under [Release](#release).
 
 ### Servo Motor
 
@@ -491,7 +486,8 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   TOTAL MISSING 0.
 - The client side has not run: the wrench roll on all faces, the value boxes, the renderer and the
   visual, the 24 blockstate variants, the rolled model, the item model, the goggles, a schematic and
-  a move inside a contraption. These and an Arclight boot belong to the [release](#release).
+  a move inside a contraption. These stay open under [Release](#release). The Arclight boot ran with
+  the [release test](#release-test).
 
 ### Ponders and translations
 
@@ -567,39 +563,50 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 
 ### Release
 
-- One `chore(mods)` commit adds the fork jar to `local-mods/` and drops the Modrinth entry of 1.3.3.
-  The same jar replaces `mods/createaddition-1.20.1-1.3.3.jar` by hand, see
-  [Operator notes](#operator-notes).
-- A permission record in `modrinth-permissions/` and the license texts in `licenses/` come with it.
-- A binary compat scan of all pack jars for links into `com/mrh0/createaddition/` is expected to find
-  only AllTheLeaks and `EnergyNetworkManager.instances`. A first scan of the jar of 739b6f8 against
-  the 265 jars of the Forge pack boot of 2026-11-05 (`packboot-forge/mods` in the workflow
-  scratchpad, among them Create 6.0.8, Steam 'n' Rails 1.7.3 and CC:Tweaked 1.120.2) found no
-  missing class, field or method. The scan runs again on the release jar.
-- Full pack boots on Forge 47.4.18 and on the production Arclight must meet the
-  [boot baseline](../server/logs-and-crashes.md#boot-error-baseline), parse every charging recipe and
-  show every CC&A mixin applied with `-Dmixin.debug.export`.
-- The Forge mod list of that boot shows `createaddition` as `1.20.1-1.7.3-skytekx.1`. Only the
-  manifest and the `${file.jarVersion}` of `mods.toml` were checked in the baseline.
+The release shipped the fork on 2026-11-06 in four commits on top of the ponders bundle.
+
+- Commit 23822fc guards the server handler of `ObservePacket`. The server only answers for a position
+  that `Level.isLoaded` reports loaded and that lies within 64 blocks of the player, and at most once
+  every 5 ticks per player. Before it, a modified client could make the server thread load or
+  generate chunks anywhere through `getBlockEntity`. The flaw predates the fork, and upstream's
+  `ServerPayloadHandler.sendUpdate` at 658a390 has it too. The packet, its id and the protocol stay the
+  same (`UPSTREAM.md` source change 33).
+- Commit 68f66f6 gives the `NOTICE` the copyright line of Create's current MIT code license next to
+  the notice of 2019 and records the license checks of the release in `UPSTREAM.md`, see
+  [License conditions](#license-conditions).
+- Commit d52d46c adds `local-mods/createaddition-1.20.1-1.7.3-skytekx.1.jar`, removes the Modrinth
+  entry of 1.3.3 from `modrinth.index.json`, which holds 230 entries since, and adds
+  `modrinth-permissions/createaddition-1.20.1-1.7.3-skytekx.1.jar.md`,
+  `licenses/createaddition-1.20.1-1.7.3-skytekx.1-LICENSE.txt` and the row of the permission README.
+  That README counts 57 bundled jars, 49 of them fine to bundle.
+- Commit f6cd870 commits the `config/createaddition-common.toml` that the fork writes at its first
+  boot. It keeps the 41 old values in their old order and appends the 11 new keys. The savegame test
+  appended the same keys, and both full pack boots of the release left the tracked file byte for byte
+  as it is.
+- The full `./gradlew build` of the fork with the Java 17 flags of `UPSTREAM.md` gives the slim jar
+  with SHA-1 `b7355fab1f431ddf186a5c7be2e5a4d4c751983b` and 1716104 bytes. The incremental and the clean
+  build of the first release attempt on 2026-11-05 gave the same jar, and the compiler reports the 38
+  warnings of the ponders bundle.
+- The fork has no datagen to run. Its Java code holds no data provider and no `GatherDataEvent`
+  handler, and the 15 files in `src/generated/resources/.cache/` are stale 1.21.1 caches that the
+  vendored base already held (78f4f06).
+- The binary compat scan of the jar against the 271 other jars of the full pack boot, with
+  `ccacompat.py`, the adapted `tfcompat.py` of the workflow scratchpad, found no missing class, field
+  or method. Only AllTheLeaks 1.1.1 links into `com/mrh0/createaddition`, through
+  `EnergyNetworkManager.instances`, which the fork keeps. No pack jar declares a dependency range on
+  `createaddition`, and no KubeJS script or config of the repository names it. Farmer's Delight and
+  the Twilight Forest fork add items to the tags `createaddition:plants` and
+  `createaddition:plant_foods`, which the fork keeps. The jar ships no `c:` tag, so AlmostUnified keeps
+  its `forge:` tags. The 16 client only index jars were not in the scan.
+- The [release test](#release-test) records the savegame test from 1.3.3 and the full pack boots on
+  Forge 47.4.18 and on the production Arclight.
+
+These steps stay open. The carryover file lists each of them under `cca-pack-release`.
+
 - A stock 1.3.3 pack client logs in to the fork server, and a fork client logs in to a 1.3.3 server.
   Both logins must end with `Connection closed - mismatched mod channel list`, and the mismatch
   screen must name `createaddition:main` (Forge 47 `HandshakeHandler`, the protocol bump of
-  ea5b3dc). No client was available for the baseline.
-- The first fork boot appends the 11 new keys to `config/createaddition-common.toml` and keeps its
-  41 old values. Upstream's `Config.loadConfig` writes the file with `WritingMode.REPLACE`
-  (`Config.java:304`), so the key order inside the sections changes. Commit the rewritten file
-  while the server is stopped and before `tools/build_mrpack.py`, which takes every override from
-  git HEAD.
-- The in game tests of the small fixes have not run. On a copy of the live world they are a 3x3x5
-  Modular Accumulator with goggles on parts other than the controller, a schematic print of it at
-  its real size and a Symmetry Wand in the hotbar while placing accumulators. They also cover
-  barbed wire saved by 1.3.3 that loads dry, barbed wire placed in water, turned with a wrench and
-  picked up with a sneak click, an Electrum Block that an iron pickaxe mines and that drops itself,
-  and a beacon on an electrum base.
-- The boot tests of the small fixes have not run either. A dedicated Forge 47.4.18 server and the
-  production Arclight must load no client class (only a static javap check of the new and changed
-  classes ran), and a client must show the burn and charge timers on the goggles, the stress values
-  in the item tooltips and the death messages of barbed wire and the Tesla Coil in chat.
+  ea5b3dc). A fork client must also log in to the fork server.
 - The alternator scan is a rollout gate. Run `tools/alternator_scan.py <world> --json before.json`
   on a copy of the live world with every dimension. Each listed alternator has a kinetic block behind
   it that Create joins to its network on the first server tick after the upgrade (b83da4e). Then
@@ -607,82 +614,55 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   the server and run the scan again with `--compare before.json`. A lower alternator count means
   Create broke one. Before the deploy, fix every listed spot with opposite directions, different
   speeds or a check hint, with a gap or a block that is not kinetic, or tell its owner to.
-- The in game tests of the changes of 1.6.0 have not run, since no client was available. They are the
-  chain of motor, alternator, shaft and alternator with Flywheel on and off (visual and renderer),
-  the Electrum Amulet with a player (a Capacitor charged in the other hand, Shocking, the zap sound,
-  `amulet_effect_enabled` set to false), a capacitor that discharges into a machine that drains item
-  FE, crafting with a charged capacitor, its tooltip and bar on a client, and old capacitor stacks
-  in a copy of the live world that stack with new empty ones. The production Arclight jar with the
-  full pack has not booted these changes either. Only a plain Forge 47.4.18 server with Create 6.0.8
-  ran them.
-- The ignitable fluids ran only on reduced test servers (11cd485). The full pack boot on Arclight
-  must show the seven fire and fluid injectors once each in the exported `FireBlock`,
-  `BaseFireBlock` and `FlowingFluid`, next to those of every other mod, and keep the two accepted
-  ERROR lines. Supplementaries' own lumisene fire still needs a test in game, since only the mixin
-  export shows that its injectors and these sit on different injection points.
-- The Electric Pump ran only on reduced test servers (6c1ab20, 0eeff02). A client must still show
-  its goggle line with the draw, its two pulsing partials with Flywheel on and with
-  `/flywheel backend off`, the reversal with a wrench, the recipe in JEI and EMI and the item in
-  hand. The full pack boot must show `FluidPropagatorMixin` applied in the exported
-  `FluidPropagator` next to any other mod's mixin there. Its wrap sets no `require`, like the other
-  mixins of the fork, so a Create update that drops the wrapped call would only bring the pipe bug
-  back without an error. Repeat that export check after every Create update through
-  `tools/update_mods.py`.
-- In a full pack client world, run an Electric Pump and a Mechanical Pump in series at different
-  speeds, 32 and 256 RPM, in both orders. Toggle redstone on the Electric Pump and check that the
-  flow resumes each time. This test answers the stall of the early test line under
-  [Electric Pump](#electric-pump), and the pump only counts as tested in game after it.
-- The server handler of `ObservePacket` calls `getBlockEntity` at any position a client names,
-  without a loaded chunk check or a distance check, and only the client keeps its cooldown of 10
-  ticks. A modified client could make the live server load or generate chunks anywhere. This
-  predates the fork, but the small fixes add the Tesla Coil and the accumulator controller as
-  observed block entities. The connector rework or this bundle guards `sendUpdate` with
-  `hasChunkAt` and a distance of 64 blocks and limits how often each player may send the packet,
-  which needs no protocol change.
-- The charging recipes ran only on reduced test servers without a client, and the Sequenced
-  Assembly only on a depot. A client must show a charging step of a Sequenced Assembly in JEI and
-  in EMI through its JEI layer, with the powered coil and the step tooltip, and must get the synced
-  recipes with charging steps from the fork server. A Sequenced Assembly with a charging step must
-  also run on a moving belt under a coil.
-- The coil drawing of a charging step needs a look in the JEI Sequenced Assembly category and
-  through EMI's JEI layer on a fork client. The class `ChargingAssemblySubCategory` draws the coil
-  with `FACING` up, while `AnimatedTeslaCoil` of the plain charging category uses down. Both come
-  from upstream as they are, and the blockstates match upstream's, but nobody has seen them drawn.
-- The full pack boot must parse every charging recipe. On that boot a gold wire under a powered
-  coil must come out as Immersive Engineering's `wire_electrum` and a gold rod as CC&A's
-  `electrum_rod`, as the AlmostUnified priorities predict.
-- The release changelog must tell the players that powered Tesla Coils now hold gold items (ingots,
-  nuggets, plates and sheets, rods, wires and blocks) and charge them into electrum, and turn
-  Create's copper tiles back towards plain copper. Before the update those items passed under a
-  coil untouched, so belt and depot lines that carry gold or copper tiles under coils, such as
-  charging or deoxidizing lines, change their output. Players should check such lines.
-- The Servo Motor ran only on a reduced Forge 47.4.18 server (c419b23, 349b759, 9e858af). A client
-  must still check the wrench roll on all six faces and the four value boxes, which are the speed,
-  the movement mode and the Max and Min Angle, on the right sides for each roll. It must also show
-  the renderer and the Flywheel visual with Flywheel on and with `/flywheel backend off`, the 24
-  blockstate variants and the rolled model `block_rolled.json` with its root transform, the item
-  model and the goggle line with the draw in fe/t. A lever door rig, a printed schematic of a servo
-  and a servo moved inside a contraption need a test in game too.
-- No Arclight boot has run with the servo. Its blocks and block entities carry little risk, but the
-  full pack boot on the production Arclight must load it and keep the two accepted ERROR lines.
-- Before the release, run `texcmp.py` and `texslide.py` on `servo_motor/block.png` against the
-  Create 6.0.10 assets of the 1.21.1 line, and confirm the copyright line of Create's current MIT
-  code license for the `NOTICE` paragraph on the servo renderer, visual and assembly, which follow
-  Create 6 bearing code.
-- The new ponders ran only in a dev client. A pack client must open the scenes of the pump, the
-  connectors and the servo, the accumulator scene and Create's Fluid Tank scene with the whole mod
-  set, see [Ponders and translations](#ponders-and-translations).
 - The live world test of the connector rework is a rollout gate as well. Its steps, from the scan
   before the upgrade through the boots with skytekx-compat 2.1.6 and 2.1.3, Chunky, the relay and
-  the restart to the round trip to 1.3.3, and the client checks of the render culling, the shears,
-  the festive wire and `/cca_wires` are listed for this bundle in
-  `ports/createaddition-backport-carryover.json`. The pack ships EntityCulling, which culls block
+  the restart to the round trip to 1.3.3, are listed for the connector rework in
+  `ports/createaddition-backport-carryover.json`.
+- The client checks of the connector rework are the render culling with Embeddium, Oculus and
+  EntityCulling, the wire held in hand, the shears, the festive wire message and the refusal of
+  `/cca_wires` for a player without op level 2. The pack ships EntityCulling, which culls block
   entities on its own. If a pack client hides long wires behind occluders, add the connector, the
   small light connector, the large connector and the redstone relay of `createaddition` to its
   `blockEntityWhitelist` in `config/entityculling.json` and ship that file as an override, since the
   repository holds no EntityCulling config yet.
-- The docs work adds the row in [Mod set](mod-set.md), the entries of this bundle to the carryover
-  file and the final status here.
+- The in game tests of the small fixes run on a copy of the live world. They are a 3x3x5 Modular
+  Accumulator with goggles on parts other than the controller, a schematic print of it at its real
+  size and a Symmetry Wand in the hotbar while placing accumulators. They also cover barbed wire
+  placed in water, turned with a wrench and picked up with a sneak click, and an Electrum Block that
+  an iron pickaxe mines and that drops itself. A client must show the burn and charge timers on the
+  goggles, the stress values in the item tooltips and the death messages of barbed wire and the
+  Tesla Coil in chat.
+- The in game tests of the changes of 1.6.0 are the chain of motor, alternator, shaft and alternator
+  with Flywheel on and off (visual and renderer), the Electrum Amulet with a player (a Capacitor
+  charged in the other hand, Shocking, the zap sound, `amulet_effect_enabled` set to false), a
+  capacitor that discharges into a machine that drains item FE, crafting with a charged capacitor,
+  and its tooltip and bar on a client.
+- Supplementaries' own lumisene fire needs a look in game, since only the mixin export shows that its
+  injectors and those of the ignitable fluids sit on different injection points.
+- A client must show the Electric Pump's goggle line with the draw, its two pulsing partials with
+  Flywheel on and with `/flywheel backend off`, the reversal with a wrench, the recipe in JEI and EMI
+  and the item in hand. In a full pack client world, run an Electric Pump and a Mechanical Pump in
+  series at different speeds, 32 and 256 RPM, in both orders, and toggle redstone on the Electric
+  Pump to check that the flow resumes each time. This answers the stall of the early test line under
+  [Electric Pump](#electric-pump). The wrap of `FluidPropagatorMixin` sets no `require`, like the
+  other mixins of the fork, so a Create update that drops the wrapped call would only bring the pipe
+  bug back without an error. Repeat the export check of the release test after every Create update
+  through `tools/update_mods.py`.
+- A client must show a charging step of a Sequenced Assembly in JEI and in EMI through its JEI
+  layer, with the powered coil and the step tooltip, and must get the synced recipes with charging
+  steps from the fork server. A Sequenced Assembly with a charging step must also run on a moving
+  belt under a coil. The coil drawing of a charging step needs a look too: the class
+  `ChargingAssemblySubCategory` draws the coil with `FACING` up, while `AnimatedTeslaCoil` of the
+  plain charging category uses down. Both come from upstream as they are.
+- A client must check the Servo Motor's wrench roll on all six faces and the four value boxes, which
+  are the speed, the movement mode and the Max and Min Angle, on the right sides for each roll. It
+  must also show the renderer and the Flywheel visual with Flywheel on and with `/flywheel backend
+  off`, the 24 blockstate variants and the rolled model `block_rolled.json` with its root transform,
+  the item model and the goggle line with the draw in fe/t. A lever door rig, a printed schematic of
+  a servo and a servo moved inside a contraption need a test in game too.
+- A pack client must open the scenes of the pump, the connectors and the servo, the accumulator
+  scene and Create's Fluid Tank scene with the whole mod set, see
+  [Ponders and translations](#ponders-and-translations).
 
 ## Excluded
 
@@ -734,24 +714,32 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   (`ports/createaddition/NOTICE`). Each bundle adds its content to that list.
 - Create's MIT notice covers the parts the mod took from Create between 2021 and 2023, while Create was
   MIT as a whole: the output ejection in `RollingMillBlockEntity`, the shape builder `CAShapes` and nine
-  edited textures, all listed in `NOTICE`.
+  edited textures, all listed in `NOTICE`. Since 68f66f6 the `NOTICE` also gives the copyright line of
+  Create's current MIT code license, "Copyright (c) The Create Team / The Creators of Create" (Create's
+  `LICENSE.md` since 9dcc21950), for the servo renderer, visual and assembly and the pump ponder scene,
+  which follow Create 6 code.
 - No Create asset dated 2025-09-21 or later may enter the fork. Create's assets are All Rights Reserved
   since Create commit 9dcc21950 of that day (`UPSTREAM.md`, License).
 - The Pixabay sounds ship inside the jar only, never as loose files in `licenses/`, the pack or the
   repo outside `ports/`.
-- The bundled jar needs a record in `modrinth-permissions/` (MIT, the upstream author, unofficial build,
-  the NOTICE and the SHA-1 of the reproducible build) and the license texts in `licenses/`, named like
-  `licenses/FluxNetworks-1.20.1-7.2.1.15-LICENSE.txt`.
-- Before the release, two texture checks in `bp2/license-createaddition/scripts/` of the workflow
-  scratchpad run on every texture the port adds: `electric_pump/block.png`, `servo_motor/block.png`,
+- The record `modrinth-permissions/createaddition-1.20.1-1.7.3-skytekx.1.jar.md` (d52d46c) gives
+  MIT, the upstream author, the unofficial build, the NOTICE, the SHA-1 and size of the reproducible
+  build and the source in `tree/master/ports/createaddition`. The check
+  `tools/mrpack_permissions.py` therefore refuses a public build until master holds that directory
+  and this jar. The license texts with both Create notices are in
+  `licenses/createaddition-1.20.1-1.7.3-skytekx.1-LICENSE.txt`.
+- Two texture checks in `bp2/license-createaddition/scripts/` of the workflow scratchpad ran on
+  every texture the port adds: `electric_pump/block.png`, `servo_motor/block.png`,
   `item/electrum_amulet.png` and the barbed wire texture that came with 7ce2204. They compare them
   with the assets of Create 6.0.3, 6.0.8 and 6.0.10. The script `texcmp.py` only compares whole
   images of the same size at the same place. Its first run against 6.0.8 found no overlap at or
   above 25 percent and missed the Create tiles inside the servo texture. The script `texslide.py`
   slides every Create texture up to 16x16, and every 16x16 tile of a larger one, in all four
   rotations and their mirrors over each texture. Its run against `create-1.20.1-6.0.3.jar` and
-  `create-1.20.1-6.0.8.jar` is in `bp2/createaddition/servo-int/texslide-603-608.txt`. The run of
-  both scripts against 6.0.10 has not happened.
+  `create-1.20.1-6.0.8.jar` is in `bp2/createaddition/servo-int/texslide-603-608.txt`. At the release
+  both scripts ran against Create 6.0.10 for 1.21.1 too and gave the same matches, and a blob:none clone
+  of Create's repository dated every reused Create file before 2025-09-21 (68f66f6, `UPSTREAM.md`
+  License).
 - The servo texture holds Create's `textures/block/bearing_top.png` (blob 1d156fa) as its lower left
   quarter, with 256 of 256 pixels identical, and its upper left quarter matches 128 of 256 pixels
   of `textures/block/clockwork_bearing_side.png` (blob e21a7de), with rows 0 to 5 and 14 to 15
@@ -860,6 +848,11 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
   [Wire graph test](#wire-graph-test).
 - The pump's fix mixin goes into Create's `FluidPropagator`, which Arclight does not patch. The
   export of the Arclight test server shows its wrapper in that class (0eeff02).
+- The full pack hook boot on the production Arclight jar, with Steam 'n' Rails 1.7.3 and
+  skytekx-compat 2.1.3 of the pack, rebuilt a graph of 320 connectors and read its 224 unloaded nodes
+  back from the saved chunks with no error, and its export shows all eight mixins of the fork applied,
+  see [Release test](#release-test). The copy of the live world and skytekx-compat 2.1.6 have not run
+  yet.
 
 ## Wire graph test
 
@@ -928,6 +921,107 @@ Not covered by this run:
 
 The file `ports/createaddition-backport-carryover.json` hands these open steps to the
 [release](#release), and the status row stays at "Ported, live world test open" until they pass.
+
+## Release test
+
+The release test of 2026-11-06 ran on the build machine with Temurin 17. Its logs, worlds and scripts
+stayed in the workflow scratchpad (`bp2/createaddition/ship/` and the `createaddition-*` files of
+`packboot-logs/`) and are not in the repository.
+
+### Savegame test from 1.3.3
+
+A plain Forge 47.4.18 server with `-Xmx3G`, Create 6.0.8 and CC:Tweaked 1.120.2 first ran the
+Modrinth jar of 1.3.3 (SHA-1 `c7d464c451fdc2979bc29a67d7eec2a30858af12`, as in the index entry that
+d52d46c removed) in a flat world. Commands over RCON built:
+
+- A Creative Energy block feeding an Electric Motor, an alternator on its shaft and a 2x2x2 Modular
+  Accumulator, whose controller got 1,234,567 FE by `data merge`.
+- A Rolling Mill on a Creative Motor that rolled copper ingots into rods, two Tesla Coils, a Liquid
+  Blaze Burner burning bioethanol from its tank, a Portable Energy Interface, a Digital Adapter,
+  barbed wire, an Electrum Block, a Biomass Pellet Block, both cakes and source blocks of seed oil
+  and bioethanol.
+- A connector that pulls from Creative Energy, a powered redstone relay and a connector that pushes
+  into a second Electric Motor, joined by copper wire with node NBT, a festive wire between two large
+  connectors, a gold wire between a light connector and a connector, and an electrum wire pair at X
+  400 and 416, whose chunks were unloaded again after the build.
+- A chest with 27 stacks: capacitors (64 and 5), the Electrum Amulet, all spools, one of them with
+  the NBT of a wire in progress, wires, rods, electrum, sandpaper with damage, biomass, straw, both
+  buckets, baked cake base, Electrum Blocks and connectors.
+
+The world was saved and stopped, and `tools/wire_scan.py` and `tools/alternator_scan.py` scanned the
+copy. Then the fork jar replaced 1.3.3 and the same world booted twice.
+
+| Check | Result |
+|---|---|
+| First fork boot | No ERROR line besides the vanilla line "No key layers" of a flat world, which the 1.3.3 boot logged too. Forge logged the new ids `createaddition:electric_pump` and `createaddition:servo_motor` and corrected the 11 missing config keys to their defaults |
+| Block entities | All 29 recorded block entities kept every NBT key. Only running values moved: the mill kept rolling, the burner kept burning, the motors kept their FE, the accumulator charged on from 1,234,567 to 1,258,267 FE, and the Portable Energy Interface reset its `Powered` flag, which the test had set by hand |
+| Chest | All 27 stacks identical, the spool's wire NBT and the sandpaper damage included |
+| Block states | The saved region files hold the mod's blocks at the same 67 positions with the same states, and barbed wire gained `waterlogged=false` |
+| Wire graph | At the boot `/cca_wires stats` gave 7 nodes, all loaded, in 4 networks. Force loading the chunks at X 400 added the electrum pair, 9 nodes in 5 networks. The motor behind the relay kept running on the wires |
+| Wire scan | After the stop `tools/wire_scan.py --compare` found 9 vertices, 0 differences, 0 gone vertices, 0 nodes not yet discovered and 0 unchecked vertices. The scan before the upgrade had found 0 one sided wire ends and 0 nodes in the old `node0` to `node7` format |
+| Alternator scan | One alternator before and after, 0 with a kinetic block behind it |
+| New content | An Electric Pump and a Servo Motor next to Creative Energy came up active at 32 RPM with FE, and both items went into a chest |
+| Capacitor stacks | A hopper moved a new empty capacitor onto the stack of 5 that 1.3.3 had saved, which became 6. A charged capacitor keeps its tag `energy` at a count of 1 |
+| Second fork boot | The graph loaded 9 nodes, 7 of them loaded and all 9 checked against the saved chunks, in 5 networks. The pump, the servo, the chests and the wired motor were unchanged |
+
+### Full pack boots
+
+All four boots ran on a worktree at f6cd870 with the 271 jars of the server set, `max-tick-time`
+180000 and `-Dmixin.debug.export`, and saved and stopped over RCON. The two full pack boots used
+`packboot_mtt.sh` of the workflow scratchpad and generated chunks in the Overworld, the Twilight Forest
+and the Skylands. The two hook boots used a copy of it that skips the generation and runs
+`hook_ship.sh` (both in `bp2/createaddition/ship/tools/`) after `Done`.
+
+| Boot | Loader | Result |
+|---|---|---|
+| Full pack boot `createaddition-forge` | Forge 47.4.18 | Reached `Done` after 33.2 s, 297 mods, 0 FATAL lines, no crash report, no watchdog, a clean stop after 8 s |
+| Full pack boot `createaddition-arclight` | Arclight `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` | Reached `Done` after 41.6 s, 298 mods, 0 FATAL lines, no crash report, no watchdog, a clean stop after 8 s |
+| Hook boot `createaddition-forge-hook` | Forge 47.4.18 | Reached `Done` after 17.9 s with no generation, then the in world checks below, 0 FATAL lines, no crash report, no watchdog, a clean stop after 4 s |
+| Hook boot `createaddition-arclight-hook` | Arclight, the same jar | Reached `Done` after 22.8 s, then the in world checks below, 0 FATAL lines, no crash report, no watchdog, a clean stop after 6 s |
+
+- All four boots logged the same ERROR lines as `wavea-forge` and `wavea-arclight`: AllTheLeaks, the
+  Nostalgic Tweaks config backup and the `ModelBakery` line of the dist cleaner. They add two
+  `RuntimeDistCleaner` lines for `net/minecraft/client/gui/screens/Screen`, which come with the full
+  mixin export. The boots `newmods-forge` and `newmods-arclight` with the same export and the 1.3.3
+  jar logged them too, and against those two boots `packboot_diff.py` finds no new signature.
+  The test servers hold no EssentialsX, so the Essentials line of the boot baseline does not appear.
+- The mod discovery lists `createaddition` with the version 1.20.1-1.7.3-skytekx.1 on both loaders.
+- The exported `FireBlock`, `BaseFireBlock`, `FlowingFluid`, `Contraption` and
+  `SpeedControllerBlockEntity` carry the mixins of the fork on Forge and on Arclight, next to those
+  of Arclight and the other mods. The hook boots, whose pump met Create pipes, also show
+  `FluidPropagatorMixin` in the exported `FluidPropagator` on both loaders, and their debug logs
+  name all eight mixins of `createaddition.mixins.json`, among them `BlockMovementChecksMixin` in
+  `com.simibubi.create.api.contraption.BlockMovementChecks`.
+- All four boots loaded the recipes with no recipe error of the mod. Create warns that 16 rolling
+  recipes of the mod give a duration, which rolling ignores. The boots of 1.3.3 logged the same for
+  15 of them, and the 16th is the new paper to straw recipe.
+- The forceload commands of the harness, which force 25 Overworld, 145 Twilight Forest and 25
+  Skylands chunks, made one long tick in each boot while the server generated them: 61.3 s on Forge
+  and 68.6 s on Arclight, against 40.9 to 59.7 s in the boots of 2026-11-05 and 2026-11-06 without
+  the fork. The machine ran other builds and test servers at the same time. The first release
+  attempt on 2026-11-05 used the default `max-tick-time` of 60 s, and the watchdog ended three of
+  its Forge boots in that tick. A sampled boot of the fork then timed the four forceload commands at
+  8.8, 6.3, 5.3 and 26.4 s, and none of its 59 thread dumps held a frame of the mod. The long tick
+  is the generation of the forced chunks, and the spread follows the load of the machine.
+- The hook script worked over RCON at X 2000 to 2319 of the Overworld, with the same results on both
+  loaders. Tesla Coils over depots turned a gold wire into Immersive Engineering's `wire_electrum`,
+  a gold rod into `createaddition:electrum_rod`, a gold ingot into `thermal:electrum_ingot` and
+  weathered copper tiles into `create:copper_tiles`, and charged a capacitor to 5000 FE, as the
+  AlmostUnified priorities predict. The coils went back to unpowered once the items were done. An
+  Electric Pump between Create pipes ran at 32 RPM on 4985 FE, a Servo Motor took FE and followed a
+  redstone signal on its top side to a target of 90 degrees, new barbed wire stood with
+  `waterlogged=false`, and a new Electrum Block is in `#minecraft:beacon_base_blocks` and
+  `#minecraft:needs_iron_tool`.
+- One `fill` command placed 320 connectors with wires of one block over 20 chunks, which formed one
+  network. After `save-all flush` the hook removed the force load of the east 17 chunks. The farthest
+  14 of them unloaded, and `/cca_wires stats` gave 320 nodes with 96 loaded. A `/cca_wires rebuild`
+  then walked the 224 unloaded nodes through the saved chunks, which goes through
+  `ChunkStorage.read` and `IOWorker.loadAsync`, back to 320 nodes in one network with 0 chunks
+  waiting. Neither log holds an error of the mod, a "Could not read chunk" or a
+  `ConcurrentModificationException`, and against `newmods-forge` and `newmods-arclight` the hook
+  boots show no new log signature either.
+- The tracked `config/createaddition-common.toml` came out of all four boots byte for byte as it went
+  in.
 
 ## Local divergences
 
@@ -1003,12 +1097,14 @@ The plan ports these with upstream's or the safe default, and the owner may rule
 
 ## Operator notes
 
-- Server and clients update together. The protocol bump and the new registry entries refuse a client
-  of an older pack at login.
+- Server and clients need the same jar. The pack brings it to clients, because `tools/build_mrpack.py`
+  ships `local-mods/` as `overrides/mods/`. The channel `createaddition:main` uses protocol "2" since
+  ea5b3dc, so Forge refuses a client of an older pack on the fork server and a fork client on a 1.3.3
+  server at login. Update the server and the pack together.
 - Mirror the jar by hand while the java process is gone: remove `mods/createaddition-1.20.1-1.3.3.jar`
-  and copy the fork jar from `local-mods/` into `mods/`. Then boot and commit the refreshed
-  `config/createaddition-common.toml` before `tools/build_mrpack.py`, which takes overrides from git
-  HEAD.
+  and copy the fork jar from `local-mods/` into `mods/`. The tracked `config/createaddition-common.toml`
+  already holds the 11 new keys (f6cd870). If the server's copy differs, boot once, stop the server and
+  commit the file before `tools/build_mrpack.py`, which takes overrides from git HEAD.
 - Deploy only after the live world test under [Savegame notes](#savegame-notes) and the alternator
   scan under [Release](#release) have passed, and take a backup of `world/` first.
 - Before and after that test, scan the copy with
@@ -1037,7 +1133,8 @@ The plan ports these with upstream's or the safe default, and the owner may rule
 
 ## Changelog for players
 
-Planned, not shipped.
+The player notes of the next pack are in `docs/changelog/next.md`, section Create Crafts & Additions.
+The lists below are the full record of what changes for players.
 
 ### New for players
 

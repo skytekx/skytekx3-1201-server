@@ -13,12 +13,16 @@ package de.ellpeck.actuallyadditions.mod.tile;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerFilter;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotFilter;
 import de.ellpeck.actuallyadditions.mod.items.DrillItem;
+import de.ellpeck.actuallyadditions.mod.items.ItemTag;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
+import java.util.Optional;
 
 // SkyTekx: the filter of main (85725a0f, 79c8bcfb, 6389668b, 9000eb3f, 669e8437, 521cf822). It
 // matches by item, by mod, by damage and by NBT. The NBT keys stay those of the base (Whitelist,
@@ -90,6 +94,13 @@ public class FilterSettings {
                             if (!filterSlot.isEmpty() && areEqualEnough(filterSlot, stack, mod, damage, nbt)) {
                                 return whitelist;
                             }
+                        }
+                    } else if (slot.getItem() instanceof ItemTag) {
+                        // SkyTekx: an Item Tag matches every item in its tag (6f567725), and one
+                        // without a tag matches nothing
+                        Optional<TagKey<Item>> tag = ItemTag.getTag(slot);
+                        if (tag.isPresent() && stack.is(tag.get())) {
+                            return whitelist;
                         }
                     } else if (areEqualEnough(slot, stack, mod, damage, nbt)) {
                         return whitelist;

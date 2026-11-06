@@ -47,6 +47,9 @@ import java.util.function.Supplier;
 public final class PacketHandler {
 
     public static final List<IDataHandler> DATA_HANDLERS = new ArrayList<>();
+    // SkyTekx: the longest text a menu takes, the cap of the Item Tag (ItemTag.MAX_TAG_LENGTH)
+    private static final int MAX_GUI_TEXT_LENGTH = 256;
+
     // SkyTekx: the four clientbound handlers hand their work to the client only PacketHandlerClient
     // through DistExecutor, as upstream 844efe42 and 8fd9afe8 split them. The base held the client
     // code in anonymous classes here, with @OnlyIn handleData methods that a dedicated server
@@ -95,6 +98,23 @@ public final class PacketHandler {
         ServerPlayer player = guiSender(compound, context, "string to tile");
         if (player != null && guiTarget(compound, player, "string to tile") instanceof IStringReactor reactor) {
             reactor.onTextReceived(compound.getString("Text"), compound.getInt("TextID"), player);
+        }
+    };
+    // SkyTekx: a text for the sender's open menu, for the Item Tag screen of 6f567725, whose tag main
+    // sends in a button packet that its menu ignores. A text longer than MAX_GUI_TEXT_LENGTH is
+    // dropped before the menu sees it, and the menu parses the rest itself
+    public static final IDataHandler GUI_STRING_TO_CONTAINER_HANDLER = (compound, context) -> {
+        ServerPlayer player = guiSender(compound, context, "string to container");
+        if (player != null) {
+            String text = compound.getString("Text");
+            if (text.length() > MAX_GUI_TEXT_LENGTH) {
+                warnDropped(player, "string to container", "its text has " + text.length() + " characters, more than " + MAX_GUI_TEXT_LENGTH);
+                return;
+            }
+            AbstractContainerMenu container = player.containerMenu;
+            if (container instanceof IStringReactor reactor && container.stillValid(player)) {
+                reactor.onTextReceived(text, compound.getInt("TextID"), player);
+            }
         }
     };
     public static final IDataHandler SYNC_PLAYER_DATA = (compound, context) ->
@@ -166,6 +186,9 @@ public final class PacketHandler {
         addServerbound(GUI_BUTTON_TO_CONTAINER_HANDLER);
         addClientbound(LASER_PARTICLE_HANDLER);
         addServerbound(PLAYER_DATA_TO_SERVER);
+        // Indices after the base's nine, added without another protocol bump, since no build with
+        // version 5 has shipped yet
+        addServerbound(GUI_STRING_TO_CONTAINER_HANDLER);
     }
 
     /**

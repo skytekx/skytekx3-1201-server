@@ -107,6 +107,8 @@ public final class ActuallyItems {
     public static final RegistryObject<Item> WORM = ITEMS.register("worm", Worm::new);
     public static final RegistryObject<Item> PLAYER_PROBE = ITEMS.register("player_probe", ItemPlayerProbe::new);
     public static final RegistryObject<Item> FILTER = ITEMS.register("filter", ItemFilter::new);
+    // SkyTekx: the Item Tag of 6f567725, a filter slot item that matches one item tag
+    public static final RegistryObject<Item> ITEM_TAG = ITEMS.register("item_tag", ItemTag::new);
     public static final RegistryObject<Item> WATER_BOWL = ITEMS.register("water_bowl", ItemWaterBowl::new);
     public static final RegistryObject<Item> CRATE_KEEPER = ITEMS.register("crate_keeper", () -> new ItemGeneric(defaultProps().stacksTo(1)));
     public static final RegistryObject<Item> LENS_OF_COLOR = ITEMS.register("lens_of_color", () -> new ItemLens(ActuallyAdditionsAPI.lensColor));
@@ -189,7 +191,7 @@ public final class ActuallyItems {
         // The rest?
         RESTONIA_CRYSTAL_SHARD, PALIS_CRYSTAL_SHARD, DIAMATINE_CRYSTAL_SHARD, VOID_CRYSTAL_SHARD, EMERADIC_CRYSTAL_SHARD,
         ENORI_CRYSTAL_SHARD, ENGINEERS_GOGGLES, ENGINEERS_GOGGLES_ADVANCED, LASER_UPGRADE_RANGE, LASER_UPGRADE_INVISIBILITY,
-        FILTER, PAPER_CONE, DOUGH,
+        FILTER, ITEM_TAG, PAPER_CONE, DOUGH,
         RING, BASIC_COIL, ADVANCED_COIL, RICE_DOUGH, TINY_COAL, TINY_CHARCOAL, RICE_SLIMEBALL, CANOLA, EMPTY_CUP,
         BATS_WING, DRILL_CORE, LENS, ENDER_STAR, CRYSTALLIZED_CANOLA_SEED, EMPOWERED_CANOLA_SEED, LENS_OF_COLOR,
         LENS_OF_DETONATION, LENS_OF_CERTAIN_DEATH, LENS_OF_THE_KILLER, LENS_OF_DISENCHANTING, LENS_OF_THE_MINER,

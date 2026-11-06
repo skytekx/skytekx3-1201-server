@@ -105,10 +105,16 @@ if (Platform.isLoaded('draconicevolution')) {
 // then makes the Mekanism salt the one salt of the pack (config/almostunified/unify.json), see
 // okf/modpack/expandeddelight-port.md. Each block names items only of mods that are loaded, because one
 // unknown entry would drop the whole tag.
+// Medieval Embroidery has a fourth salt in no tag at all, which its 14 recipes name directly. In the salt
+// tag it becomes a variant of the Mekanism salt as well, so its recipes take every salt and give the
+// Mekanism salt, see okf/modpack/almostunified.md.
 ServerEvents.tags('item', event => {
   event.add('forge:salt', '#forge:dusts/salt')
   if (Platform.isLoaded('pamhc2foodcore')) {
     event.add('forge:dusts/salt', 'pamhc2foodcore:saltitem')
+  }
+  if (Platform.isLoaded('medievalembroidery')) {
+    event.add('forge:dusts/salt', 'medievalembroidery:salt')
   }
   if (Platform.isLoaded('pamhc2foodcore') && Platform.isLoaded('expandeddelight')) {
     event.add('forge:juices/applejuice', 'expandeddelight:apple_juice')

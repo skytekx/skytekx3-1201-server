@@ -133,11 +133,11 @@ DROP = {
     "farmersdelight/advancement/recipes/food/wheat_dough_from_eggs.json": "unlocks the dropped override",
     "farmersdelight/recipe/melon_juice.json": "disables a Farmer's Delight recipe",
     "farmersrespite/recipe/brewing/melon_juice_from_water.json": "disables a Farmer's Respite recipe",
-    # vanilla item tags that only exist from Minecraft 1.20.5 on, the 1.20.1 animals read fixed lists
+    # vanilla item tags that only exist from Minecraft 1.20.5 on, the 1.20.1 chicken, parrot and pig read
+    # fixed lists. The fox_food tag stays: vanilla 1.20.1 has it and Fox#isFood reads ItemTags.FOX_FOOD.
     "minecraft/tags/item/chicken_food.json": "no such tag before 1.20.5",
     "minecraft/tags/item/parrot_food.json": "no such tag before 1.20.5",
     "minecraft/tags/item/pig_food.json": "no such tag before 1.20.5",
-    "minecraft/tags/item/fox_food.json": "no such tag before 1.20.5",
 }
 
 FOLDER_RENAMES = [

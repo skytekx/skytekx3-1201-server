@@ -236,8 +236,10 @@ Dropped data, with the reason:
   recipes. The SkyTekx pack edits no recipe of another mod per mod, and Farmer's Delight 1.20.1 has
   other dough recipe ids (`wheat_dough_from_egg`) and a special recipe type, so the files would add
   recipes instead of replacing them.
-- The item tags `minecraft:chicken_food`, `parrot_food`, `pig_food` and `fox_food`, which only
-  exist from Minecraft 1.20.5 on.
+- The item tags `minecraft:chicken_food`, `parrot_food` and `pig_food`, which only exist from
+  Minecraft 1.20.5 on. The 1.20.1 chicken, parrot and pig read fixed lists. The tag
+  `minecraft:fox_food` stays, because vanilla 1.20.1 has it and `Fox#isFood` reads
+  `ItemTags.FOX_FOOD`, so cranberries are fox food as upstream intends.
 - The entry `expandeddelight:add_loot_sniffer_digging` of the global loot modifier list, for which
   upstream has no file.
 - The datagen cache `src/generated/resources/.cache`.

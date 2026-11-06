@@ -966,21 +966,6 @@
       "fileSize": 988334
     },
     {
-      "path": "mods/createaddition-1.20.1-1.3.3.jar",
-      "hashes": {
-        "sha1": "c7d464c451fdc2979bc29a67d7eec2a30858af12",
-        "sha512": "a34f5c3b0226069d2882a3e23ba0e364a78bc5d26983b0cecea8d998718f454d3238ab7c5b4b3ef1749b6f2b26a4e427839c7c32468558fa7a8edb0edc727d10"
-      },
-      "env": {
-        "client": "required",
-        "server": "required"
-      },
-      "downloads": [
-        "https://cdn.modrinth.com/data/kU1G12Nn/versions/9LgyB6Yb/createaddition-1.20.1-1.3.3.jar"
-      ],
-      "fileSize": 1577313
-    },
-    {
       "path": "mods/CreativeCore_FORGE_v2.12.40_mc1.20.1.jar",
       "hashes": {
         "sha1": "f8b65310e0183630dd00c1ade12f9b6ecd243287",

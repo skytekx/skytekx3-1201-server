@@ -1672,6 +1672,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     is now built from every direction but down, the same five values as before. Savegame: the new
     property is additive. A crop of an older world has no saved `persistent`, loads with its age
     and `false` and behaves as before. The Tiny Torch keeps its five facings.
+    The porter's test ran the jar of the six commits of the bundle (SHA-1
+    `82c7e3635a68db9964e8668c524e4dbec6470c1b`, 3193371 bytes, one build of `c2c11f4`) alone on a
+    dedicated Forge 47.4.18 server, and a dev client with a local scenario that is not committed
+    (`bp2/actuallyadditions/wc-tools/devtest-wc.patch` in the workflow scratchpad) against the same
+    jar with JEI, Patchouli, Curios, The One Probe and Mekanism 10.4 on the server. A world saved by
+    the OLD jar with canola at age 5, rice at age 7, flax at age 3, coffee at age 0 and a Tiny Torch
+    facing north loaded with this jar, and all five blocks kept their state, the crops with
+    `persistent` `false`. The client right clicked a ripe canola and a ripe coffee on farmland,
+    which went back to age 0 and gave 4 canola, 1 canola seed and 4 coffee beans, while an unripe
+    canola stayed at age 3. A Tiny Torch used on the bottom face of a stone block, with stone below
+    the free block, stood upright with the facing `up`. A hopper with canola seeds over a composter
+    raised its level. A flax with the flag set on grass survived a stone set next to it, and a flax
+    without it popped off. Not tested: fortune on the drops, the light level and the collision of
+    the torch.
 55. Black quartz ore: the base generates nothing, as `mod/gen/AAWorldGen.java` is commented out
     in full. The ore generates as on `main` (`02422d65`, `97c7a969`, `ec4b79ff`). The configured
     feature `actuallyadditions:ore_black_quartz` is a `minecraft:ore` of size 6 with no discard
@@ -1698,6 +1712,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     the ore. The ore drops black quartz with the ore fortune bonus and itself with silk touch
     (`abbc1ae9`, `005b3ccc`, ticked in `port.MD` as upstream did). The base dropped the ore block,
     marked as temporary. Savegame: the world generation only reaches chunks that do not exist yet.
+    In the test of source change 54 a fresh world of the seed 12345 generated 1556 full chunks
+    around the spawn and five villages (`bp2/actuallyadditions/wc-tools/aascan.py` reads the
+    region files), which held 41775 black quartz ore between Y -30 and 49, most of it between Y 0
+    and 19, about 27 per chunk. With `generateQuartz` and `generateCanola` off, 711 full chunks of
+    the same seed held none. A world with the data pack of `skylands-datapack/` (without its five
+    ChocoCraft biome modifiers, since ChocoCraft was not loaded) generated 225 full chunks of
+    `skytekx3:skylands`. They held 81 ore blocks inside the islands between Y 24 and 49, and
+    `tools/void_scan.py` found no block below Y 24 and none in a `sky_void` column.
 56. Wild crops: patches of ripe canola, flax, coffee and rice generate as on `main` (`16cd3a69`,
     changelog 1.3.6, rice in `2ffe78d6`, changelog 1.3.20), so the four crops and the seeds have a
     source. The base had none, which left the Coffee Maker and the Canola Press of source change 10
@@ -1722,6 +1744,12 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `generateRice` of source change 6. On `main` the rice switch exists but the modifier never
     reads it, so the rice patches ignore it there. Savegame: the world generation only reaches
     chunks that do not exist yet.
+    The 1556 chunks of the test of source change 55 held wild crops with `persistent` set: canola
+    in savanna and savanna plateau, coffee in savanna plateau and at a forest edge, flax in dark
+    forest, birch forest, taiga, snowy taiga, snowy plains and on a frozen river bank, and rice in
+    a taiga next to water. None stood in a desert, since a patch needs grass or dirt below it.
+    With `generateCanola` off, the savanna of that test had no wild canola, and wild flax still
+    generated elsewhere.
 57. Engineer house and villager: the house `actuallyadditions:andrew_period_house` joins the vanilla
     pools `village/plains/houses`, `village/snowy/houses`, `village/savanna/houses` and
     `village/taiga/houses` with the weight 10 and `village/desert/houses` with 50, as a legacy
@@ -1775,6 +1803,19 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     processor list, job site tag and sound entry match `main` byte for byte. Savegame: new ids only,
     the profession, the point of interest type, the sound, the processor list and the loot table.
     Villages generate the house in new chunks only.
+    In the test of source change 54, `/place template` set the house with `StopDrop` 1 on its
+    machines. Breaking its Coffee Maker with `/setblock ... destroy` dropped nothing, while a Coffee
+    Maker set by `/setblock` dropped itself. `/place jigsaw` from `village/desert/houses` placed 15
+    houses, 9 of them the Engineer house, in all four rotations with the machines turned along,
+    and some of the white lamps came out in other colors. Of 15 villages set with
+    `/place structure`, three of each kind, the desert villages held three Engineer houses, the
+    taiga and snowy villages two each, the plains villages one and the savanna villages none. Of
+    the seven natural villages of the seed, one plains and one snowy start held the house. No
+    `Empty or non-existent pool` WARN appeared. The village farms held rice, coffee, canola and
+    flax. An unemployed villager next to a lone Coffee Maker became an Engineer within 90 seconds,
+    its first offers sold black quartz ore and black quartz for emeralds, and the dev client
+    opened its `MerchantScreen` with them. Not tested: the house in a savanna village (none in
+    five) and on the pack's Arclight.
 58. Loot modifiers: bats and chests get the drops of the 1.12 handler again through two global
     loot modifiers of `b9435301`, which replace the base's `mod/misc/DungeonLoot.java`. That class
     was commented out in full and still registered on the Forge bus, as upstream undid in
@@ -1798,6 +1839,12 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and never equal the queried `ResourceLocation`, so its chests get nothing. On 1.20.1 both are
     `ResourceLocation`s and the loot arrives. The `System.out` line of `main` for every drill core
     roll is left out. Savegame: none, the modifiers only act on loot rolled after the update.
+    In the test of source change 54, 25 rolls each of the simple dungeon, abandoned mineshaft and
+    end city tables with `/loot spawn` left item stacks of black quartz, drill cores, Bat Wings,
+    all six crystals and three kinds of crystal blocks, and 40 rolls of the village toolsmith
+    table left 80 stacks and none of the mod. The dev client killed 20 bats with a Looting III
+    sword and collected 28 Bat Wings, and 20 bats with a plain sword gave 1. Not tested: the two
+    switches turned off.
 59. Banner patterns: the four patterns of `659779b1` (changelog 1.3.10 for their 1.21 form) come back
     as entries `actuallyadditions:book`, `drill`, `leaf_blo` and `phan_con` of the banner pattern
     registry of 1.20.1, registered with a `DeferredRegister` on `Registries.BANNER_PATTERN` as on
@@ -1822,3 +1869,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     here, the names of `DyeColor` on 1.20.1, so all sixteen colors have a text. The item models,
     recipes and tags match those of `main` except for the 1.21 recipe result field `id` (here
     `item`). Savegame: new ids only, four items, four banner patterns and four tags.
+    In the test of source change 54 the dev client had the four patterns registered, their banner
+    and shield materials named the sprites `actuallyadditions:entity/banner/<id>` and
+    `actuallyadditions:entity/shield/<id>` of the atlases, and each pattern item tag reached it with
+    its one pattern. A loom with a white banner, red dye and the Drill pattern item offered
+    `actuallyadditions:drill`, and the resulting banner held that pattern with the tooltip `Red
+    Drill Pattern`. Not tested: how a banner or a shield with a pattern looks.

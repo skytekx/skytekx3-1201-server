@@ -882,3 +882,33 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     stop at Y 0. The bone meal check keeps the 1.20.1 signature with the client flag, which
     `06bb77b` drops for 1.20.4. The glass loses its `(wip)` label. Savegame: no key, id or state
     changes.
+30. Crushers: the Double Crusher crushes. Its block was registered as `BlockCrusher(false)`, so it
+    made a plain crusher block entity, and the static ticker of `TileEntityCrusherDouble` only
+    called the base tick, while the crushing ran in the static ticker of `TileEntityCrusher`. As in
+    `ef6e52f8` the crushing now runs in the instance `serverTick`, and the block is
+    `BlockCrusher(true)` with its own title. The screens draw their own background instead of the
+    inventory texture, the auto split button is a vanilla button with a tooltip (`fc7032fa`,
+    `bfaf90b4`), and shift click moves crushable items into the input slots again (the base had the
+    whole `quickMoveStack` commented out). The server checks the recipe list of the API for that,
+    and the client predicts the move with its synced recipe manager, since only the server fills
+    the API list (`ResourceReloader`). The generator writes the 49 crushing recipes of `main`
+    (`ef6e52f8`, `7c91da5a`, #1405) in the 1.20.1 result form with `item`, `count` and `chance`, and
+    each one matches its file on `main` in ingredient, items, counts and chances. The base's single
+    `crushing/bone_crusher` is now `crushing/bone` as on `main`. The serializer takes a missing
+    `chance` as 1.0 and a missing `count` as 1 as the result codec of `main` does (`bb84d539`), and
+    refuses more than two results. Ores crush to two raw ores, iron and deepslate iron with a 20
+    percent chance of raw gold and copper with 5 percent. AlmostUnified keeps those outputs
+    vanilla, because `minecraft` leads its `modPriorities` (`config/almostunified/unify.json:3`).
+    The crusher recipes themselves came with source change 10 (`7bcebe6`). JEI gets the crusher
+    category of `ef6e52f8` with both crushers as catalysts and their click areas (`1bcf011` drops
+    the old commented category). Both crushers share one menu type, so the screen factory
+    `CrusherScreen.create` now builds the `CrusherDoubleScreen` for the double one, whose click
+    area upstream registers but never reaches. The names lose their `(wip)` label, and the auto
+    split tooltip keys are lowercase as in `ef6e52f8`. The Powered Furnace parts of `fc7032fa` and
+    `bfaf90b4` come with its fixes. Savegame: the NBT keys `FirstCrushTime`, `SecondCrushTime`,
+    `IsAutoSplit` and `Items` stay. A Double Crusher placed with the base jar saved an
+    `actuallyadditions:crusher` block entity with three slots. It still loads with its items, but
+    the chunk does not tick it in a `crusher_double` block (`LevelChunk.BoundTickingBlockEntity`
+    checks `BlockEntityType.isValid` and logs one WARN "invalid for ticking"), so it has to be
+    broken and placed again. The base gave the Double Crusher no recipe, so only a creative world
+    can hold one.

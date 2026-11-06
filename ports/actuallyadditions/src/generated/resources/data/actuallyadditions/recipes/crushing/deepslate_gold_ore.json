@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:deepslate_gold_ore"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 2,
+      "item": "minecraft:raw_gold"
+    }
+  ]
+}

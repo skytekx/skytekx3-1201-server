@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:redstone_ore"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 10,
+      "item": "minecraft:redstone"
+    }
+  ]
+}

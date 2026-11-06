@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "actuallyadditions:black_quartz_ore"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 2,
+      "item": "actuallyadditions:black_quartz"
+    }
+  ]
+}

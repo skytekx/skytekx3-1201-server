@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "actuallyadditions:rice"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 2,
+      "item": "minecraft:sugar"
+    }
+  ]
+}

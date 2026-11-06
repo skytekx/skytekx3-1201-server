@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:cobblestone"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 1,
+      "item": "minecraft:sand"
+    }
+  ]
+}

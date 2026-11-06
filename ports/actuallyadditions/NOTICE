@@ -114,6 +114,9 @@ Modifications
       emeradic crystals ask for short grass instead of tall grass.
     * Greenhouse Glass: it is visible again, with no faces between two panes, and it reaches
       plants below Y 0.
+    * Crushers: the Double Crusher works, shift click fills the crushers, their screens show
+      their own background, and the crushing recipes of upstream's main branch, among them the
+      copper and deepslate ores, come with a JEI category.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

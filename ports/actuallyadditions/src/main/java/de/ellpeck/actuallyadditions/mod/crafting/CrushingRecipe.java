@@ -117,6 +117,11 @@ public class CrushingRecipe implements Recipe<Container> {
         return this.input;
     }
 
+    // SkyTekx: the result record of upstream main, used by the data generator
+    public record CrushingResult(ItemStack stack, float chance) {
+        public static final CrushingResult EMPTY = new CrushingResult(ItemStack.EMPTY, 0.0F);
+    }
+
     public static class Serializer implements RecipeSerializer<CrushingRecipe> {
 
         @Override
@@ -124,22 +129,26 @@ public class CrushingRecipe implements Recipe<Container> {
         public CrushingRecipe fromJson(@Nonnull ResourceLocation pRecipeId, @Nonnull JsonObject pJson) {
             Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient"));
 
+            // SkyTekx: as the result codec of upstream main (bb84d539), a recipe has one or two
+            // results, a missing chance means 1.0 and a missing count means 1
             JsonArray resultList = GsonHelper.getAsJsonArray(pJson, "result");
             if (resultList.size() < 1)
                 throw new IllegalStateException(pRecipeId.toString() + ": Recipe must contain at least 1 result item");
+            if (resultList.size() > 2)
+                throw new IllegalStateException(pRecipeId.toString() + ": Too many results for crushing recipe. The maximum is: 2");
 
-            JsonObject result1 = resultList.get(0).getAsJsonObject();
-            int count1 = GsonHelper.getAsInt(result1, "count", 0);
+            JsonObject result1 = GsonHelper.convertToJsonObject(resultList.get(0), "result");
+            int count1 = GsonHelper.getAsInt(result1, "count", 1);
             ItemStack output1 = new ItemStack(GsonHelper.getAsItem(result1, "item"), count1);
-            float chance1 = GsonHelper.getAsFloat(result1, "chance");
+            float chance1 = GsonHelper.getAsFloat(result1, "chance", 1.0f);
 
             ItemStack output2 = ItemStack.EMPTY;
             float chance2 = 1.0f;
             if (resultList.size() > 1) {
-                JsonObject result2 = resultList.get(1).getAsJsonObject();
-                int count2 = GsonHelper.getAsInt(result2, "count", 0);
+                JsonObject result2 = GsonHelper.convertToJsonObject(resultList.get(1), "result");
+                int count2 = GsonHelper.getAsInt(result2, "count", 1);
                 output2 = new ItemStack(GsonHelper.getAsItem(result2, "item"), count2);
-                chance2 = GsonHelper.getAsFloat(result2, "chance");
+                chance2 = GsonHelper.getAsFloat(result2, "chance", 1.0f);
             }
 
             return new CrushingRecipe(pRecipeId, ingredient, output1, chance1, output2, chance2);

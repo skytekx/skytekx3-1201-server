@@ -51,8 +51,8 @@ public class GuiFurnaceDouble extends AAScreen<ContainerFurnaceDouble> {
 
         if (this.buttonAutoSplit.isMouseOver(x, y)) {
             guiGraphics.renderComponentTooltip(font, Collections.singletonList(this.tileFurnace.isAutoSplit
-                ? Component.translatable("info." + ActuallyAdditions.MODID + ".gui.autoSplitItems.on").withStyle(ChatFormatting.BOLD)
-                : Component.translatable("info." + ActuallyAdditions.MODID + ".gui.autoSplitItems.off").withStyle(ChatFormatting.BOLD)), x, y);
+                ? Component.translatable("info." + ActuallyAdditions.MODID + ".gui.autosplititems.on").withStyle(ChatFormatting.BOLD)
+                : Component.translatable("info." + ActuallyAdditions.MODID + ".gui.autosplititems.off").withStyle(ChatFormatting.BOLD)), x, y);
         }
     }
 

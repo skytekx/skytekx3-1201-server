@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:emerald_ore"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 2,
+      "item": "minecraft:emerald"
+    }
+  ]
+}

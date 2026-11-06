@@ -101,85 +101,92 @@ public class TileEntityCrusher extends TileEntityInventoryBase implements IButto
     public static <T extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState state, T t) {
         if (t instanceof TileEntityCrusher tile) {
             tile.serverTick();
+        }
+    }
 
-            if (tile.isDouble && tile.isAutoSplit) {
-                TileEntityPoweredFurnace.autoSplit(tile.inv, SLOT_INPUT_1, SLOT_INPUT_2);
+    // SkyTekx: upstream ef6e52f8. The crushing runs in the instance tick, so the double crusher,
+    // whose static ticker only calls serverTick(), crushes too
+    @Override
+    protected void serverTick() {
+        super.serverTick();
+        if (this.isDouble && this.isAutoSplit) {
+            TileEntityPoweredFurnace.autoSplit(this.inv, SLOT_INPUT_1, SLOT_INPUT_2);
+        }
+
+        boolean crushed = false;
+
+        boolean canCrushOnFirst = this.canCrushOn(SLOT_INPUT_1, SLOT_OUTPUT_1_1, SLOT_OUTPUT_1_2);
+        boolean canCrushOnSecond = false;
+        if (this.isDouble) {
+            canCrushOnSecond = this.canCrushOn(SLOT_INPUT_2, SLOT_OUTPUT_2_1, SLOT_OUTPUT_2_2);
+        }
+
+        boolean shouldPlaySound = false;
+
+        if (canCrushOnFirst) {
+            if (this.storage.getEnergyStored() >= ENERGY_USE) {
+                if (this.firstCrushTime % 20 == 0) {
+                    shouldPlaySound = true;
+                }
+                this.firstCrushTime++;
+                if (this.firstCrushTime >= this.getMaxCrushTime()) {
+                    this.finishCrushing(SLOT_INPUT_1, SLOT_OUTPUT_1_1, SLOT_OUTPUT_1_2);
+                    this.firstCrushTime = 0;
+                }
+                this.storage.extractEnergyInternal(ENERGY_USE, false);
             }
+            crushed = this.storage.getEnergyStored() >= ENERGY_USE;
+        } else {
+            this.firstCrushTime = 0;
+        }
 
-            boolean crushed = false;
-
-            boolean canCrushOnFirst = tile.canCrushOn(SLOT_INPUT_1, SLOT_OUTPUT_1_1, SLOT_OUTPUT_1_2);
-            boolean canCrushOnSecond = false;
-            if (tile.isDouble) {
-                canCrushOnSecond = tile.canCrushOn(SLOT_INPUT_2, SLOT_OUTPUT_2_1, SLOT_OUTPUT_2_2);
-            }
-
-            boolean shouldPlaySound = false;
-
-            if (canCrushOnFirst) {
-                if (tile.storage.getEnergyStored() >= ENERGY_USE) {
-                    if (tile.firstCrushTime % 20 == 0) {
+        if (this.isDouble) {
+            if (canCrushOnSecond) {
+                if (this.storage.getEnergyStored() >= ENERGY_USE) {
+                    if (this.secondCrushTime % 20 == 0) {
                         shouldPlaySound = true;
                     }
-                    tile.firstCrushTime++;
-                    if (tile.firstCrushTime >= tile.getMaxCrushTime()) {
-                        tile.finishCrushing(SLOT_INPUT_1, SLOT_OUTPUT_1_1, SLOT_OUTPUT_1_2);
-                        tile.firstCrushTime = 0;
+                    this.secondCrushTime++;
+                    if (this.secondCrushTime >= this.getMaxCrushTime()) {
+                        this.finishCrushing(SLOT_INPUT_2, SLOT_OUTPUT_2_1, SLOT_OUTPUT_2_2);
+                        this.secondCrushTime = 0;
                     }
-                    tile.storage.extractEnergyInternal(ENERGY_USE, false);
+                    this.storage.extractEnergyInternal(ENERGY_USE, false);
                 }
-                crushed = tile.storage.getEnergyStored() >= ENERGY_USE;
+                crushed = this.storage.getEnergyStored() >= ENERGY_USE;
             } else {
-                tile.firstCrushTime = 0;
+                this.secondCrushTime = 0;
             }
+        }
 
-            if (tile.isDouble) {
-                if (canCrushOnSecond) {
-                    if (tile.storage.getEnergyStored() >= ENERGY_USE) {
-                        if (tile.secondCrushTime % 20 == 0) {
-                            shouldPlaySound = true;
-                        }
-                        tile.secondCrushTime++;
-                        if (tile.secondCrushTime >= tile.getMaxCrushTime()) {
-                            tile.finishCrushing(SLOT_INPUT_2, SLOT_OUTPUT_2_1, SLOT_OUTPUT_2_2);
-                            tile.secondCrushTime = 0;
-                        }
-                        tile.storage.extractEnergyInternal(ENERGY_USE, false);
-                    }
-                    crushed = tile.storage.getEnergyStored() >= ENERGY_USE;
-                } else {
-                    tile.secondCrushTime = 0;
-                }
-            }
+        BlockState state = this.getBlockState();
+        boolean current = state.getValue(BlockStateProperties.LIT);
+        boolean changeTo = current;
+        if (this.lastCrushed != crushed) {
+            changeTo = crushed;
+        }
+        if (this.isRedstonePowered) {
+            changeTo = true;
+        }
+        if (!crushed && !this.isRedstonePowered) {
+            changeTo = false;
+        }
 
-            boolean current = state.getValue(BlockStateProperties.LIT);
-            boolean changeTo = current;
-            if (tile.lastCrushed != crushed) {
-                changeTo = crushed;
-            }
-            if (tile.isRedstonePowered) {
-                changeTo = true;
-            }
-            if (!crushed && !tile.isRedstonePowered) {
-                changeTo = false;
-            }
+        if (changeTo != current) {
+            this.level.setBlockAndUpdate(this.worldPosition, state.setValue(BlockStateProperties.LIT, changeTo));
+        }
 
-            if (changeTo != current) {
-                level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, changeTo));
-            }
+        this.lastCrushed = crushed;
 
-            tile.lastCrushed = crushed;
+        if ((this.lastEnergy != this.storage.getEnergyStored() || this.lastFirstCrush != this.firstCrushTime || this.lastSecondCrush != this.secondCrushTime || this.isAutoSplit != this.lastAutoSplit) && this.sendUpdateWithInterval()) {
+            this.lastEnergy = this.storage.getEnergyStored();
+            this.lastFirstCrush = this.firstCrushTime;
+            this.lastSecondCrush = this.secondCrushTime;
+            this.lastAutoSplit = this.isAutoSplit;
+        }
 
-            if ((tile.lastEnergy != tile.storage.getEnergyStored() || tile.lastFirstCrush != tile.firstCrushTime || tile.lastSecondCrush != tile.secondCrushTime || tile.isAutoSplit != tile.lastAutoSplit) && tile.sendUpdateWithInterval()) {
-                tile.lastEnergy = tile.storage.getEnergyStored();
-                tile.lastFirstCrush = tile.firstCrushTime;
-                tile.lastSecondCrush = tile.secondCrushTime;
-                tile.lastAutoSplit = tile.isAutoSplit;
-            }
-
-            if (shouldPlaySound) {
-                level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AASounds.CRUSHER.get(), SoundSource.BLOCKS, 0.025F, 1.0F);
-            }
+        if (shouldPlaySound) {
+            this.level.playSound(null, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), AASounds.CRUSHER.get(), SoundSource.BLOCKS, 0.025F, 1.0F);
         }
     }
 
@@ -200,7 +207,7 @@ public class TileEntityCrusher extends TileEntityInventoryBase implements IButto
         ItemStack inputStack = this.inv.getStackInSlot(theInput);
         if (!inputStack.isEmpty()) {
             Optional<CrushingRecipe> recipeOpt = getRecipeForInput(inputStack);
-            if (!recipeOpt.isPresent()) {
+            if (recipeOpt.isEmpty()) {
                 return false;
             }
             CrushingRecipe recipe = recipeOpt.get();
@@ -221,7 +228,7 @@ public class TileEntityCrusher extends TileEntityInventoryBase implements IButto
 
     public void finishCrushing(int theInput, int theFirstOutput, int theSecondOutput) {
         Optional<CrushingRecipe> recipeOpt = getRecipeForInput(this.inv.getStackInSlot(theInput));
-        if (!recipeOpt.isPresent()) {
+        if (recipeOpt.isEmpty()) {
             return;
         }
         CrushingRecipe recipe = recipeOpt.get();

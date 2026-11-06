@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:glowstone"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 4,
+      "item": "minecraft:glowstone_dust"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:deepslate_diamond_ore"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 2,
+      "item": "minecraft:diamond"
+    }
+  ]
+}

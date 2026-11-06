@@ -13,6 +13,7 @@ package de.ellpeck.actuallyadditions.mod.misc.apiimpl.farmer;
 import de.ellpeck.actuallyadditions.api.farmer.FarmerResult;
 import de.ellpeck.actuallyadditions.api.farmer.IFarmerBehavior;
 import de.ellpeck.actuallyadditions.api.internal.IFarmer;
+import de.ellpeck.actuallyadditions.mod.util.AAFakePlayers;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,7 +44,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.FakePlayerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,32 +213,35 @@ public class DefaultFarmerBehavior implements IFarmerBehavior {
 
     public static InteractionResult useHoeAt(Level world, BlockPos pos) {
 
-        Player player = FakePlayerFactory.getMinecraft((ServerLevel) world); //TODO we need our own fakeplayer for the mod.
+        // SkyTekx: the mod's own fake player of AAFakePlayers, standing at the soil it tills
+        try (AAFakePlayers.Use use = AAFakePlayers.use((ServerLevel) world, pos.above())) {
+            Player player = use.player();
 
-        ItemStack itemstack = getHoeStack();
+            ItemStack itemstack = getHoeStack();
 
-        if (!player.mayUseItemAt(pos.relative(Direction.UP), Direction.UP, itemstack)) {
-            return InteractionResult.FAIL;
-        } else {
-//            UseOnContext dummyContext = new UseOnContext(world, player, InteractionHand.MAIN_HAND, itemstack, new BlockHitResult(new Vec3(0.5, 0.5, 0.5), Direction.UP, pos, false));
-//            int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(dummyContext);
-//            if (hook != 0) {
-//                return hook > 0
-//                    ? InteractionResult.SUCCESS
-//                    : InteractionResult.FAIL;
-//            } TODO: Fire event for hoe use?
+            if (!player.mayUseItemAt(pos.relative(Direction.UP), Direction.UP, itemstack)) {
+                return InteractionResult.FAIL;
+            } else {
+//                UseOnContext dummyContext = new UseOnContext(world, player, InteractionHand.MAIN_HAND, itemstack, new BlockHitResult(new Vec3(0.5, 0.5, 0.5), Direction.UP, pos, false));
+//                int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(dummyContext);
+//                if (hook != 0) {
+//                    return hook > 0
+//                        ? InteractionResult.SUCCESS
+//                        : InteractionResult.FAIL;
+//                } TODO: Fire event for hoe use?
 
-            if (world.isEmptyBlock(pos.above())) {
-                BlockState state = world.getBlockState(pos);
-                // SkyTekx: till with the hoe item as in b26c47dd (#1522). Forge's getToolModifiedState
-                // asks the block, so modded soil keeps its own farmland, and the tool modification
-                // event is posted. The base set vanilla farmland on every dirt
-                if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH) || state.is(BlockTags.DIRT)) {
-                    UseOnContext context = new UseOnContext(world, player, InteractionHand.MAIN_HAND, itemstack, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
-                    return itemstack.useOn(context);
+                if (world.isEmptyBlock(pos.above())) {
+                    BlockState state = world.getBlockState(pos);
+                    // SkyTekx: till with the hoe item as in b26c47dd (#1522). Forge's getToolModifiedState
+                    // asks the block, so modded soil keeps its own farmland, and the tool modification
+                    // event is posted. The base set vanilla farmland on every dirt
+                    if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH) || state.is(BlockTags.DIRT)) {
+                        UseOnContext context = new UseOnContext(world, player, InteractionHand.MAIN_HAND, itemstack, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
+                        return itemstack.useOn(context);
+                    }
                 }
+                return InteractionResult.PASS;
             }
-            return InteractionResult.PASS;
         }
     }
 }

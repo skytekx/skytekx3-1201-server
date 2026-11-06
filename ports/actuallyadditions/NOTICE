@@ -207,6 +207,13 @@ Modifications
     * Banner patterns: four patterns drawn from the Manual, the Drill, the Leaf Blower and the
       Phantom Connector, with pattern items for the loom crafted from paper, as on upstream's
       main branch, and banner and shield textures in the place 1.20.1 reads them from.
+    * Machines on protected land: the breakers, placers, the Vertical Digger, the Leaf-Eating
+      Generator, the Heat Collector, the Farmer and the lenses of the Atomic Reconstructor act as
+      the fake player [ActuallyAdditions] with a fixed UUID instead of the shared [Minecraft] one.
+      Lens conversions and the redstone of the Placer post block place events and undo a refused
+      change, and the drill no longer posts two break events for the block the player mines. On
+      the Arclight server a machine break no longer leaves a capture behind that swallowed later
+      block drops.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

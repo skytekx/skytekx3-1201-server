@@ -11,16 +11,20 @@
 package de.ellpeck.actuallyadditions.mod.items.lens;
 
 import de.ellpeck.actuallyadditions.api.internal.IAtomicReconstructor;
+import de.ellpeck.actuallyadditions.mod.util.AAFakePlayers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.util.FakePlayerFactory;
 
 public class LensKiller extends LensDeath {
 
     @Override
     protected void onAttacked(LivingEntity entity, IAtomicReconstructor tile) {
         if (!tile.getWorldObject().isClientSide) {
-            entity.hurt(entity.damageSources().playerAttack(FakePlayerFactory.getMinecraft((ServerLevel) tile.getWorldObject())), 20);
+            // SkyTekx: the kill is the named fake player's, standing at the reconstructor, so protection
+            // plugins see who attacks
+            try (AAFakePlayers.Use use = AAFakePlayers.use((ServerLevel) tile.getWorldObject(), tile.getPosition())) {
+                entity.hurt(entity.damageSources().playerAttack(use.player()), 20);
+            }
         }
     }
 

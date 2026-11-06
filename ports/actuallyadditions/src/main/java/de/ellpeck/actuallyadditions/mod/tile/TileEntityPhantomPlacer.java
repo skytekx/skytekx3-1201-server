@@ -178,7 +178,8 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
                 if (theSlot == -1) {
                     return;
                 }
-                this.inv.setStackInSlot(theSlot, WorldUtil.useItemAtSide(WorldUtil.getDirectionBySidesInOrder(this.side), this.level, this.boundPosition, this.inv.getStackInSlot(theSlot)));
+                // SkyTekx: the fake player stands at the Phantom Placer, not at the bound block
+                this.inv.setStackInSlot(theSlot, WorldUtil.useItemAtSide(WorldUtil.getDirectionBySidesInOrder(this.side), this.level, this.boundPosition, this.inv.getStackInSlot(theSlot), this.worldPosition));
             }
         }
     }

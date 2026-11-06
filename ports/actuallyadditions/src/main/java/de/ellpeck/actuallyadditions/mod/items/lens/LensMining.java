@@ -15,7 +15,9 @@ import de.ellpeck.actuallyadditions.api.internal.IAtomicReconstructor;
 import de.ellpeck.actuallyadditions.api.lens.Lens;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.crafting.MiningLensRecipe;
+import de.ellpeck.actuallyadditions.mod.util.AAFakePlayers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -102,12 +104,15 @@ public class LensMining extends Lens {
 
                     ItemStack stack = ore.map(recipe -> recipe.getResultItem(tile.getWorldObject().registryAccess()).copy()).orElse(ItemStack.EMPTY);
 
-                    if (!stack.isEmpty() && stack.getItem() instanceof BlockItem) {
+                    if (!stack.isEmpty() && stack.getItem() instanceof BlockItem && tile.getWorldObject() instanceof ServerLevel level) {
                         Block toPlace = Block.byItem(stack.getItem());
                         BlockState state2Place = toPlace.defaultBlockState();
-                        tile.getWorldObject().setBlock(hitPos, state2Place, 2);
-                        tile.getWorldObject().levelEvent(2001, hitPos, Block.getId(state2Place));
-                        tile.extractEnergy(adaptedUse);
+                        // SkyTekx: the ore is placed by the named fake player at the reconstructor with a
+                        // place event, so protection plugins can refuse it and the stone stays
+                        if (AAFakePlayers.placeBlock(level, tile.getPosition(), hitPos, state2Place, 2, tile.getOrientation().getOpposite(), stack)) {
+                            level.levelEvent(2001, hitPos, Block.getId(state2Place));
+                            tile.extractEnergy(adaptedUse);
+                        }
                     }
                 }
             }

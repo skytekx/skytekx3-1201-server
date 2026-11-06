@@ -17,6 +17,10 @@
   dripstone can multiply, the Fluid Hatch and four new kinds of fan processing: Bulk Coloring, Bulk
   Ending, Bulk Freezing and Bulk Sanding. They turn cobblestone into end stone and packed ice into
   blue ice, among other recipes.
+- Actually Additions adds the Atomic Reconstructor and its lenses, the Empowerer and its crystals,
+  laser relays for energy, items and fluids, canola oil power, crushers, drills, sacks, phantom blocks
+  and many more machines and tools. The pack brings a SkyTekx build, 1.20.1-1.1.52-skytekx.1, with
+  the content of the newer Actually Additions 1.3.26 on 1.20.1.
 
 ## Ender IO
 - Ender IO is now a SkyTekx build, 6.3.0-skytekx.1, with features from the newer Ender IO 8 on top of
@@ -62,6 +66,25 @@
   that dropped nothing, barbed wire that could not be waterlogged or wrenched, and missing death
   messages.
 
+## Actually Additions
+- The manual opens as a Patchouli book. Right click with it in the air or at a block that has no
+  screen of its own.
+- Black quartz ore generates in stone and deepslate, and wild canola, flax, coffee and rice grow in
+  the Overworld. Villages can hold an Engineer house, and its Engineer villager works at the Coffee
+  Maker and trades machines.
+- Machines keep their energy, their fluids and their redstone mode when you break them. Machines in
+  an Engineer house drop nothing.
+- The Item Tag filter holds one item tag, set in its screen or by renaming it in an anvil at no
+  cost, and every filter slot of the mod accepts it.
+- The Crafting Table On A Stick opens with a key bind, unbound at first, under the Actually
+  Additions heading of the controls, also from a Curios charm slot.
+- Canola, coffee, flax and rice grow in the Garden Cloche of Immersive Engineering, and the Mekanism
+  crusher turns a black quartz block into smooth black quartz.
+- Bats drop wings, and nine kinds of vanilla chests, among them desert pyramids, Nether fortresses,
+  End cities and woodland mansions, can hold crystals, drill cores, black quartz and bat wings. Four
+  banner patterns come with their own items.
+- The Wings Of The Bats and the Storage Crate Keeper are still marked (WIP) and do nothing yet.
+
 ## On an existing world
 - The structures, blocks and bastions of Bygone Nether only appear in Nether chunks that nobody has
   visited yet, so look beyond the explored area.
@@ -70,6 +93,9 @@
 - Server and client need all six mods, and the pack brings them. Joining with an older pack fails.
 - Ender IO also needs the same build on server and client, and the pack brings it.
 - Create Crafts & Additions also needs the same build on server and client, and the pack brings it.
+- Actually Additions also needs the same build on server and client, and the pack brings it. Its
+  black quartz ore, wild crops and Engineer houses only appear in Overworld chunks that nobody has
+  visited yet.
 - An alternator with a shaft of another machine behind it joins that machine's network at the
   update. Check alternators whose back touches a shaft, because a speed clash breaks a block.
 - Powered Tesla Coils now change gold items and Create's copper tiles that pass under them. Check

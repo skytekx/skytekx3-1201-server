@@ -7,6 +7,9 @@
 - moves client-only jars out of the server mods/ dir
 - zips the index and the overrides, all read from git HEAD, so edits that are not committed
   (configs rewritten by a server boot, for example) stay out of the pack
+- fetches the jars that local-mods/ names by a pointer file <jar>.fetch.json instead of holding them
+  (tools/fetch_local_mods.py) into a cache outside the tree, checks their size and SHA-1 against the
+  pointer and bundles them exactly like tracked jars. A failed download or check refuses the build
 - patches the bundled jars that tools/patch_mods.py lists in PACK_RULES (patch_mods.py read from git
   HEAD too) and ships each under the file name that pack_jar_name gives it, so local-mods/ keeps the
   pristine jars and players get the bytes the server runs
@@ -36,6 +39,7 @@ if not all(hasattr(patch_mods, f) for f in ("patch_for_pack", "pack_jar_name")):
 # separate name (SkyTekx3-<ver>-UNPERMITTED.mrpack), which publish_modrinth.py never picks up; it also
 # re-checks the jars inside whatever .mrpack it uploads (tools/mrpack_permissions.py).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fetch_local_mods
 import mrpack_permissions
 
 out = REPO+f"/SkyTekx3-{VERSION}.mrpack"
@@ -75,6 +79,25 @@ if twice:
     problems.append("the index lists %s, which PACK_RULES ships patched from local-mods/" % twice)
 if problems:
     sys.exit("modrinth.index.json does not match this build: " + "; ".join(problems))
+
+# --- bundled jars that git names by a pointer instead of holding them (tools/fetch_local_mods.py) ---
+# Their license allows them in the .mrpack but not as a copy in the public repository (ZeroCore 2).
+# The pointers come from git HEAD like every override. Each jar comes from the cache or its URL and
+# must match the size and SHA-1 of its pointer, or the build stops before it moves or writes anything.
+pointed = {}
+for rel in git("ls-tree", "-r", "-z", "--name-only", "HEAD", "--", "local-mods").decode("utf-8").split("\0"):
+    if not rel.endswith(fetch_local_mods.SUFFIX):
+        continue
+    try:
+        p = fetch_local_mods.parse(os.path.basename(rel), git("show", "HEAD:" + rel))
+        name = os.path.dirname(rel) + "/" + p["file"]
+        if git("ls-tree", "--name-only", "HEAD", "--", name).strip():
+            raise fetch_local_mods.PointerError("git tracks %s as well, keep the jar or the pointer" % name)
+        pointed[name] = fetch_local_mods.fetch(p)
+    except fetch_local_mods.PointerError as e:
+        sys.exit("refusing to build: %s: %s" % (rel, e))
+    print("fetched %s for %s (%d bytes, SHA-1 %s, cache %s)" % (p["file"], rel, p["size"], p["sha1"],
+                                                               fetch_local_mods.cache_dir()))
 
 # --- split client-only jars out of the server mods/ dir ---
 clientonly = REPO+"/client-only-mods"
@@ -133,19 +156,22 @@ def servers_dat(entries):
     return out + b"\x00"
 
 # --- the override files, with the PACK_RULES jars patched and renamed, before the .mrpack is written ---
+# The pointed jars join the files of git HEAD under the path a tracked copy would have.
+sources = [(m.name, lambda m=m: tree.extractfile(m).read()) for m in tree.getmembers() if m.isfile()]
+sources += [(rel, lambda data=data: data) for rel, data in pointed.items()]
 entries, renamed = [], []
-for m in sorted((m for m in tree.getmembers() if m.isfile()), key=lambda m: m.name):
-    dst = pack_path(m.name)
+for rel, read in sorted(sources, key=lambda s: s[0]):
+    dst = pack_path(rel)
     if not dst: continue
-    data = tree.extractfile(m).read()
-    if m.name.startswith("local-mods/"):
+    data = read()
+    if rel.startswith("local-mods/"):
         try:
-            name, data = patch_mods.patch_for_pack(os.path.basename(m.name), data)
+            name, data = patch_mods.patch_for_pack(os.path.basename(rel), data)
         except ValueError as e:
             sys.exit(f"PACK_RULES: {e}")
-        if name != os.path.basename(m.name):
+        if name != os.path.basename(rel):
             dst = os.path.dirname(dst) + "/" + name
-            renamed.append(f"{m.name} -> {dst}")
+            renamed.append(f"{rel} -> {dst}")
     entries.append((dst, data))
 shipped = {}
 for dst, _ in entries:
@@ -165,6 +191,7 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         counts[top] = counts.get(top, 0) + 1
     z.writestr("client-overrides/servers.dat", servers_dat(SERVERS))
 print("bundled jars patched by PACK_RULES:", renamed)
+print("bundled jars fetched by pointer:", sorted(pointed))
 print("overrides from git HEAD:", counts)
 print("client-overrides/servers.dat:", SERVERS)
 size = os.path.getsize(out)

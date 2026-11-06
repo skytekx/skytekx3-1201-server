@@ -1082,5 +1082,25 @@ logs stay on the Mac and are not in the repo.
   reached `Done` with 0 FATAL lines, the same 3 ERROR lines as the release boot and no new log
   signature against `actuallyadditions-forge` (d67cb9f).
 
+## 2026-11-06: ZeroCore 2 leaves git
+
+- ZeroCore 2.1.48 is All Rights Reserved, and its author allows it in a modpack but forbids reposts
+  on other websites. Git had tracked its jar in `local-mods/` since d74909e, so a push would have
+  served it from GitHub. Offered three ways on 2026-11-05, keeping the jar out of git (A), going back
+  to the Modrinth builds (B) or asking the author (C), the owner answered "continue", so A was taken
+  as the recommended default. B and C stay possible later, see
+  [Open items](open-items.md#owner-decisions).
+- Git now tracks the pointer `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json` with the URL of
+  CurseForge file 7344725, its SHA-1 and its size, and `.gitignore` ignores the jar path. The URL
+  served the same 1,341,342 bytes as the blob of d74909e. The build script `tools/build_mrpack.py`
+  fetches the jar into a cache outside the tree, checks it and bundles it as before, the new
+  `tools/fetch_local_mods.py` fetches it for a server's `mods/`, and the upload script checks it
+  inside the `.mrpack`. The record says OK, so ZeroCore no longer blocks a public pack, see
+  [Tools](modpack/tools.md#pointed-jars).
+- Test builds of the branch before and after the change held the same 1,063 entries with the same
+  content. A wrong SHA-1, a wrong size and an unreachable URL in the pointer each refused the build.
+  The local commits from d74909e on still hold the jar and have to be rewritten without it before any
+  push, see [Publish](modpack/publish.md#release-steps).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

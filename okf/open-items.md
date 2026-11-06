@@ -54,18 +54,22 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Owner decisions
 
-- ZeroCore 2.1.48 in the public repository (2026-11-05). The jar is All Rights Reserved, and the
-  modpack grant of its author forbids reposts on other websites
-  (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). Git tracks it in `local-mods/` since
-  d74909e, which no remote branch held on 2026-11-05, and the release steps push it to master on
-  GitHub. Before that push the owner picks one way: ask the author to allow the copy in the repository,
-  go back to the Modrinth builds 2.0.84 and 2.1.45 and lose the 13 builds of fixes with the new port,
-  or keep the jar out of the public history, which needs a change of `tools/build_mrpack.py` because
-  it reads `local-mods/` from git HEAD only. The MIT jar of Extreme Reactors 2.0.97 may stay in git in
-  any case, but it needs ZeroCore 2.1.48 or newer, so going back to the Modrinth builds takes both.
-  Removing the jar after the push means another history rewrite.
-  Until then the record says VERIFY, so the build tools refuse a public pack, see
-  [Publish](modpack/publish.md#what-blocks-a-release).
+- ZeroCore 2.1.48 in the public repository, answered. The jar is All Rights Reserved, and the modpack
+  grant of its author forbids reposts on other websites
+  (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). Git tracked it in `local-mods/` from
+  d74909e on, which no remote branch held on 2026-11-05, and the release steps would have pushed it to
+  master on GitHub. On 2026-11-05 the owner was offered three ways: keep the jar out of git and fetch
+  it at build time (A, the recommended default), go back to the Modrinth builds 2.0.84 and 2.1.45 and
+  lose the 13 builds of fixes with the new port (B), or ask the author to allow the copy in the
+  repository (C). The owner answered "continue" (owner's prompt of 2026-11-05, its clock time is not
+  recorded here), so A was taken on 2026-11-06. Git now tracks only the pointer
+  `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, `tools/build_mrpack.py` fetches CurseForge file
+  7344725 at build time and checks its size and SHA-1, and the record says OK, see
+  [Publish](modpack/publish.md#what-blocks-a-release). B and C stay possible later. B takes both mods,
+  because Extreme Reactors 2.0.97, whose MIT jar may stay in git in any case, needs ZeroCore 2.1.48 or
+  newer. A grant from the author under C would let the jar come back into git. Still open: the local
+  commits from d74909e on hold the jar, so they have to be rewritten without it before any push.
+  Removing it after a push means another history rewrite.
 - The pack must stay non-commercial, because the Patchouli parts of the bundled Ender IO and the assets
   of the Twilight Forest fork are CC BY-NC-SA. Nobody has read the `monetization_status` of the
   Modrinth project `skytekx3` yet, and Modrinth creates projects as `monetized`. Since 2026-11-05 the

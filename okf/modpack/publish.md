@@ -4,7 +4,6 @@ title: Publish
 description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
 timestamp: 2026-11-06
-timestamp: 2026-11-05
 ---
 
 # Publish
@@ -82,10 +81,13 @@ builds.
    and a new test. Since 2026-11-03 git ships such an EMI build, the fork from github.com/skytekx/emi
    (eadc7a6d, as 1.1.24-skytekx.2 since 2026-11-04). The new test is still open.
 3. ZeroCore 2.1.48 is All Rights Reserved, and the modpack grant of its author forbids reposts on any
-   website other than CurseForge, Modrinth and the FTB launcher. Git tracks the jar in `local-mods/`
-   since d74909e, so the push of step 2 below would serve it from GitHub. Its record says VERIFY, and
-   the build tools refuse a public pack, until the owner settles it, see
-   [open items](../open-items.md#owner-decisions).
+   website other than CurseForge, Modrinth and the FTB launcher. Git tracked the jar in `local-mods/`
+   from d74909e on, so the push of step 2 below would have served it from GitHub. Resolved for the
+   pack on 2026-11-06 with option A of [open items](../open-items.md#owner-decisions): git holds only
+   the pointer `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, the builder fetches CurseForge
+   file 7344725 and checks its size and SHA-1, and the record says OK
+   (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). The jar itself is still in the local
+   commits from d74909e on, so those commits have to be rewritten without it before that push.
 
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so
@@ -103,27 +105,26 @@ boots had rewritten on disk (3a398b1, the builder reads git HEAD).
 - Every index entry with its client env, from the Modrinth CDN, unpatched. The server runs eleven of
   them patched, which only matters on the server. Since 3.0.7 this includes Modflared, which opens the
   Cloudflare Tunnel to `hex.skytekx.com`, see [client](client.md#mac-mini).
-- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 58,
-  Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO
-  Legacy Machines, Mob Grinding Utils, Flux Networks, SkyTekx DE Fixes, Extreme Reactors 2, ZeroCore 2,
-  the LittleTiles build of c5694e16, the Mystical Automation port, the Mekanism: Extra Modules port,
-  the Expanded Delight port, the Create: Integrated Farming port, the Ender IO backport build
-  6.3.0-skytekx.1 in place of 6.2.18-beta, the Create Crafts & Additions fork 1.20.1-1.7.3-skytekx.1
-  in place of the Modrinth file 1.3.3 and the new Actually Additions fork 1.20.1-1.1.52-skytekx.1
-  (`local-mods/`, 58 jars on 2026-11-06). Under `overrides/licenses/` travel the sources of the
-  Backpack port, of the LittleTiles build and of Mekanism: Extra Modules, the license texts of Simply
-  Jetpacks 2, EnderIO Legacy Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical
-  Automation, Mekanism: Extra Modules and the boss data of Iron's Apothic Invaders, the license texts
-  and the NOTICE of the Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE of the
-  Create: Integrated Farming port, the license texts of the parts of the Ender IO build
+- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2 and 49 in 3.1.3. Since 3.1.3 they
+  include Simply Jetpacks 2, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO Legacy
+  Machines, Mob Grinding Utils, Flux Networks and SkyTekx Molten, with the license texts under
+  `overrides/licenses/`. From the next pack after 3.1.3 on they are 59, with SkyTekx DE Fixes,
+  Extreme Reactors 2, ZeroCore 2, the LittleTiles build of c5694e16, the Mystical Automation port, the
+  Mekanism: Extra Modules port, the Expanded Delight port, the Create: Integrated Farming port, the
+  Ender IO backport build 6.3.0-skytekx.1 in place of 6.2.18-beta, the Create Crafts & Additions fork
+  1.20.1-1.7.3-skytekx.1 in place of the Modrinth file 1.3.3 and the new Actually Additions fork
+  1.20.1-1.1.52-skytekx.1 (`local-mods/`, 58 jars and the pointer file of ZeroCore 2 on 2026-11-06).
+  The builder fetches the ZeroCore jar from its CurseForge file, so it reaches players only inside the
+  `.mrpack`, as its author allows. Under `overrides/licenses/` travel the sources of the Backpack port,
+  of the LittleTiles build and of Mekanism: Extra Modules, the license texts of Simply Jetpacks 2,
+  EnderIO Legacy Machines, Flux Networks, SkyTekx Molten, Extreme Reactors 2, SkyTekx DE Fixes,
+  Mystical Automation, Mekanism: Extra Modules and the boss data of Iron's Apothic Invaders, the
+  license texts and the NOTICE of the Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE
+  of the Create: Integrated Farming port, the license texts of the parts of the Ender IO build
   6.3.0-skytekx.1 with their NOTICE, the MIT text of the Create Crafts & Additions fork with Create's
   two MIT notices, `createaddition-1.20.1-1.7.3-skytekx.1-LICENSE.txt`, and the MIT text of the
   Actually Additions fork with the Mekanism notice,
   `ActuallyAdditions-1.20.1-1.1.52-skytekx.1-LICENSE.txt` (`licenses/` in git).
-- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2 and 49 in 3.1.3. Since 3.1.3 they
-  include Simply Jetpacks 2, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO Legacy
-  Machines, Mob Grinding Utils, Flux Networks and SkyTekx Molten, with the license texts under
-  `overrides/licenses/`.
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
   KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
   FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
@@ -163,13 +164,22 @@ On the build machine, after the blockers are fixed:
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
    write the changelog in `docs/changelog/<VERSION>.md`, starting from `docs/changelog/next.md`. If
    the public address changes, change `SERVERS` in `build_mrpack.py` as well.
-2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Merge the
-   branch that carries `ports/` into master, push it and run `git fetch`. Then build with
-   `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The builder refuses
-   a public pack while a bundled jar points its source at `tree/master/ports/<dir>` on GitHub and the
-   local `origin/master` lacks that directory or that build of the jar in `local-mods/`, and the upload
-   script checks the jars inside the `.mrpack` the same way (`tools/mrpack_permissions.py`). Those
-   source links are the source offers that the licenses of these builds demand.
+2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Before the
+   push, check that no commit to be pushed holds a jar that a pointer file stands for:
+   `git log --oneline origin/master..HEAD -- local-mods/ZeroCore2-1.20.1-2.1.48.jar` has to print
+   nothing. Merge the branch that carries `ports/` into master, push it and run `git fetch`. Then
+   build with `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The
+   builder refuses a public pack while a bundled jar points its source at `tree/master/ports/<dir>` on
+   GitHub and the local `origin/master` lacks that directory or that build of the jar in `local-mods/`,
+   and the upload script checks the jars inside the `.mrpack` the same way
+   (`tools/mrpack_permissions.py`). Those source links are the source offers that the licenses of
+   these builds demand. The builder also downloads every jar that `local-mods/` names by a pointer
+   file, ZeroCore 2 from `mediafilez.forgecdn.net` among them, into `~/.cache/skytekx3/local-mods/`
+   (or `$SKYTEKX3_FETCH_CACHE`), and refuses the build when a download fails or its size or SHA-1
+   differ from the pointer. The upload script refuses a `.mrpack` without that jar or with other
+   bytes, see [tools](tools.md#pointed-jars). A local test build that is never uploaded, while other
+   blockers remain, is `python3 tools/build_mrpack.py --allow-unpermitted`. It writes
+   `SkyTekx3-<version>-UNPERMITTED.mrpack`, which the upload script never picks up.
 3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap, add BrassAmber BattleTowers by
    hand as players do, and join the server with it. On Asahi Linux add the JVM flag from
    [client](client.md#java-and-the-asahi-flag) and join by the Mac mini's LAN address, since Modflared
@@ -215,14 +225,25 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.0.7 | 2026-10-31 21:54 | 67,246,343 B | 217 | 35 | Modflared 1.2.0+release.61 as a client only index entry and the server list `client-overrides/servers.dat` with `hex.skytekx.com`, for the Cloudflare Tunnel. Every other file as in 3.0.6. Uploaded at 21:55 as `LRkF99Pz` |
 | 3.1.1 | 2026-11-03 17:37 | 73,371,625 B | 225 | 44 | Private build with `--allow-unpermitted`, sent straight to players and never uploaded, because five bundled jars lack permission. It carries everything since 3.0.7, among it the Twilight Forest backport, Nyx 1.0.1, the minimap at the top right (`config/xaerohud.txt`) and the single Hexbiscus |
 | 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
+| 3.1.3 | 2026-11-05 00:41 | 75,915,546 B | 232 | 49 | Private build like 3.1.2, sent straight to players. The nine mods of 2026-11-04 with FLib, Advanced Loot Info in the place of Just Enough Resources, Flux Networks, SkyTekx Molten, EMI 1.1.24-skytekx.2, the patched Simply Jetpacks 2, Starlight off the clients, 3D dropped items and no Read Me note of The One Probe |
 
-The next pack is the first with Simply Jetpacks 2 bundled, the first that ships a patched jar (see
-[boot fixes](../content/boot-fixes.md#jar-patches)), the first that keeps Starlight off the clients, the
-first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
-[client](client.md#dropped-items)), and the first with Advanced Loot Info (see
-[mod set](mod-set.md#advanced-loot-info)), with Flux Networks (see [mod set](mod-set.md#flux-networks)),
-with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with Extreme Reactors
-2.0.97, ZeroCore 2.1.48 and the LittleTiles build of c5694e16 bundled (see
+Pack 3.1.3 is the first with Simply Jetpacks 2 bundled and the first that ships a patched jar (see
+[boot fixes](../content/boot-fixes.md#jar-patches)). It is also the first that keeps Starlight off the
+clients, that ships the config of Nostalgic Tweaks with 3D dropped items (see
+[client](client.md#dropped-items)) and the common config of The One Probe with `spawnNote = false`. It
+brings Advanced Loot Info (see [mod set](mod-set.md#advanced-loot-info)), Flux Networks (see
+[mod set](mod-set.md#flux-networks)), SkyTekx Molten and the nine mods of 2026-11-04, five addons of
+Applied Energistics 2 and Cyclic among them (see [mod set](mod-set.md#additions-of-2026-11-04)). No
+client loaded it before it went to the players on 2026-11-05. A static check of its 268 client jars
+found every mandatory dependency of the sides BOTH and CLIENT present in a matching version, apart from
+a nested old copy of L2 Library whose newer standalone jar Forge picks. A fresh install, the update of a
+3.1.2 instance in Prism Launcher and the Modrinth App, a join without Starlight, the loot tabs of
+Advanced Loot Info in EMI and the machines of the new mods are not tested yet. Its deploy moved the
+fixes pack to the end of the pack order, see [boot fixes](../content/boot-fixes.md#pack-order).
+
+Pack 3.1.3 went live without the mods below. The next pack after 3.1.3 is the first with
+SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with Extreme Reactors 2.0.97,
+ZeroCore 2.1.48 and the LittleTiles build of c5694e16 bundled (see
 [mod set](mod-set.md#bundled-jars)), with the Mystical Automation port (see
 [Mystical Automation port](mysticalautomation-port.md)), with the Mekanism: Extra Modules port (see
 [Mekanism Extra Modules port](mekanism-extra-modules.md)), with the Expanded Delight port and the salt
@@ -233,32 +254,29 @@ the Create: Integrated Farming port and its library Create: Dragons Plus 1.11.9 
 backport 1.20.1-1.7.3-skytekx.1 (see [Create Crafts & Additions backport](createaddition-backport.md)),
 with the new Actually Additions fork 1.20.1-1.1.52-skytekx.1 (see
 [Actually Additions backport](actuallyadditions-backport.md)), with the Apotheosis bosses of
-Iron's Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine
-mods of 2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
-[mod set](mod-set.md#additions-of-2026-11-04)), and with Bygone Nether, whose tag repair in the fixes
-pack also needs that pack at the end of the pack order (see [mod set](mod-set.md#bygone-nether)). Its
-row should record whether a fresh install and the update of a 3.1.2 instance were tested in Prism
-Launcher and the Modrinth App, whether a client without Starlight joined, whether the loot tabs of
-Advanced Loot Info in EMI show the loot of the server, whether the machines of the new mods work
-there, whether the screens and JEI categories of Mystical Automation work in a client, whether the
-module screen and HUD of Mekanism: Extra Modules, the juicer screen and boats of Expanded Delight and
-the Ponder scenes and the JEI category Roosting of Create: Integrated Farming work there, whether a
-client joins with the Ender IO network protocol 1.0-skytekx.1 and the update of a 3.1.2 instance
-replaces the 6.2.18-beta jar, since server and client need the same build, whether JEI and EMI show
-the Vat recipes, whether the screens of the Vat, the obelisks and the wireless charger and the staff
-and magnet keys work, whether the conduit facades render with the Embeddium of the pack, whether a
-client joins over the Create Crafts & Additions channel `createaddition:main` with its protocol 2 and
-the update of a 3.1.2 instance drops `createaddition-1.20.1-1.3.3.jar`, whether JEI and EMI show the
-charging steps of Sequenced Assembly, whether the new ponder scenes of the pump, the connectors and
-the servo open, whether a client joins with the Actually Additions protocol 5, whether its manual
-opens as a Patchouli book and JEI and EMI show its categories, whether the Draconic Evolution fixes
-work in a client and whether the mobs and
-structures of Bygone Nether render there. Its deploy has to move the fixes pack to the end of the pack
-order, see [boot fixes](../content/boot-fixes.md#load-order).
+Iron's Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), and with Bygone
+Nether, whose tag repair in the fixes pack also needs that pack at the end of the pack order (see
+[mod set](mod-set.md#bygone-nether)). Its row should record whether a fresh install and the update of
+a 3.1.3 instance were tested in Prism Launcher and the Modrinth App, whether the screens and JEI
+categories of Mystical Automation work in a client, whether the module screen and HUD of Mekanism:
+Extra Modules, the juicer screen and boats of Expanded Delight and the Ponder scenes and the JEI
+category Roosting of Create: Integrated Farming work there, whether a client joins with the Ender IO
+network protocol 1.0-skytekx.1 and the update of a 3.1.3 instance replaces the 6.2.18-beta jar, since
+server and client need the same build, whether JEI and EMI show the Vat recipes, whether the screens
+of the Vat, the obelisks and the wireless charger and the staff and magnet keys work, whether the
+conduit facades render with the Embeddium of the pack, whether a client joins over the Create Crafts &
+Additions channel `createaddition:main` with its protocol 2 and the update of a 3.1.3 instance drops
+`createaddition-1.20.1-1.3.3.jar`, whether JEI and EMI show the charging steps of Sequenced Assembly,
+whether the new ponder scenes of the pump, the connectors and the servo open, whether a client joins
+with the Actually Additions protocol 5, whether its manual opens as a Patchouli book and JEI and EMI
+show its categories, whether the Draconic Evolution fixes work in a client and whether the mobs and
+structures of Bygone Nether render there. The server appends the pack of every mod it sees for the
+first time after the fixes pack, so its deploy has to move the fixes pack to the end of the pack order
+again, as the deploy of 3.1.3 did, see [boot fixes](../content/boot-fixes.md#load-order).
 
 The upload has to go out together with the jar swap of Create Crafts & Additions in the server's
 `mods/`, which still holds 1.3.3. The fork bumped the protocol of `createaddition:main` from 1 to 2
-and accepts no other (`CreateAddition.java:73-77` in `ports/createaddition/`, 0611ece), so a 3.1.2
+and accepts no other (`CreateAddition.java:73-77` in `ports/createaddition/`, 0611ece), so a 3.1.3
 client cannot join the fork server and a client of the next pack cannot join the 1.3.3 server. Both
 wait for the alternator scan and the live world test of the wires on a copy of the live world, the
 rollout gates under [Release](createaddition-backport.md#release) of the backport page.
@@ -280,21 +298,6 @@ test copies, see [NeoForge ports](neoforge-ports.md#status). That boot covers th
 The player notes for these six mods are drafted in `docs/changelog/next.md`. Before the upload, add
 the other changes of the next pack to it, and rename it to `docs/changelog/<VERSION>.md`, the file
 that `tools/publish_modrinth.py` sends as the changelog of the version.
-| 3.1.3 | 2026-11-05 00:41 | 75,915,546 B | 232 | 49 | Private build like 3.1.2, sent straight to players. The nine mods of 2026-11-04 with FLib, Advanced Loot Info in the place of Just Enough Resources, Flux Networks, SkyTekx Molten, EMI 1.1.24-skytekx.2, the patched Simply Jetpacks 2, Starlight off the clients, 3D dropped items and no Read Me note of The One Probe |
-
-Pack 3.1.3 is the first with Simply Jetpacks 2 bundled and the first that ships a patched jar (see
-[boot fixes](../content/boot-fixes.md#jar-patches)). It is also the first that keeps Starlight off the
-clients, that ships the config of Nostalgic Tweaks with 3D dropped items (see
-[client](client.md#dropped-items)) and the common config of The One Probe with `spawnNote = false`. It
-brings Advanced Loot Info (see [mod set](mod-set.md#advanced-loot-info)), Flux Networks (see
-[mod set](mod-set.md#flux-networks)), SkyTekx Molten and the nine mods of 2026-11-04, five addons of
-Applied Energistics 2 and Cyclic among them (see [mod set](mod-set.md#additions-of-2026-11-04)). No
-client loaded it before it went to the players on 2026-11-05. A static check of its 268 client jars
-found every mandatory dependency of the sides BOTH and CLIENT present in a matching version, apart from
-a nested old copy of L2 Library whose newer standalone jar Forge picks. A fresh install, the update of a
-3.1.2 instance in Prism Launcher and the Modrinth App, a join without Starlight, the loot tabs of
-Advanced Loot Info in EMI and the machines of the new mods are not tested yet. Its deploy moved the
-fixes pack to the end of the pack order, see [boot fixes](../content/boot-fixes.md#pack-order).
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

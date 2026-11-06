@@ -4,41 +4,37 @@ title: Tools
 description: The scripts in tools/ in the order they are used, from datapack sync and mod updates through jar patches and the mrpack build to the Modrinth upload and RCON, with what each one really does and where it runs.
 tags: [modpack, tools, build, modrinth]
 timestamp: 2026-11-06
-timestamp: 2026-11-05
 ---
 
 # Tools
 
-The folder [tools/](../../tools) holds the scripts below. Six came from the build sessions of June and
-July 2026. The seventh, `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at
-16:58 whether the installed mods have updates. It was committed at 18:14 (a64f045). Three region
-scans checked the Halloween world on the Mac mini the same evening, and `cf_tunnel.py` sets up the
-Cloudflare Tunnel that made the server public at 21:13. The order script `datapack_order.py`
-followed on 2026-11-04 (c450324) and the wire scan `wire_scan.py` of the Create Crafts & Additions
-backport on 2026-11-05 (a1a1500). Three more live on other pages: the permission check
-`mrpack_permissions.py` on [Publish](publish.md), the alternator scan `alternator_scan.py` on the
-[Create Crafts & Additions backport](createaddition-backport.md#release) and the Arclight rebuild in
-`tools/arclight/` on [Arclight runtime](../server/arclight.md).
-The folder [tools/](../../tools) holds 18 scripts, not counting the Arclight build helpers in
+The folder [tools/](../../tools) holds 21 scripts, not counting the Arclight build helpers in
 `tools/arclight/`. Six came from the build sessions of June and July 2026. The seventh,
 `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58 whether the installed
-mods have updates. It was committed at 18:14 (a64f045). The last three are the region scans that
+mods have updates. It was committed at 18:14 (a64f045). The next three are the region scans that
 checked the Halloween world on the Mac mini the same evening. The eleventh, `cf_tunnel.py`, sets up the
-Cloudflare Tunnel that made the server public at 21:13. The other five came on 2026-11-04: the
-permission check `mrpack_permissions.py` that the build and the upload share, `datapack_order.py`, the
-unify audit `unify_audit.py` with its dump script `unify_audit_dump.js`, and `replace_blocks.py`, after
-the owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere. The last two, the
-melting generator `gen_melting.py` and its dump script `melting_dump.js`, answer the request of 17:35
-the same day that everything that holds a meltable material melts, and were committed on 2026-11-05.
+Cloudflare Tunnel that made the server public at 21:13. Five came on 2026-11-04: the permission check
+`mrpack_permissions.py` that the build and the upload share, `datapack_order.py` (c450324), the unify
+audit `unify_audit.py` with its dump script `unify_audit_dump.js`, and `replace_blocks.py`, after the
+owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere. The melting generator
+`gen_melting.py` and its dump script `melting_dump.js` answer the request of 17:35 the same day that
+everything that holds a meltable material melts, and were committed on 2026-11-05. The wire scan
+`wire_scan.py` (a1a1500) and the alternator scan `alternator_scan.py` (ade8903) of the Create Crafts &
+Additions backport came on 2026-11-05 too, and the alternator scan is described on the
+[Create Crafts & Additions backport](createaddition-backport.md#release). Since 2026-11-06
+`fetch_local_mods.py` fetches the jars that `local-mods/` names by a pointer file, see
+[pointed jars](#pointed-jars). The permission check is described on [Publish](publish.md) and the
+Arclight rebuild in `tools/arclight/` on [Arclight runtime](../server/arclight.md).
 
 | Order | Tool | Lines | Job | Needs | Writes |
 |---|---|---:|---|---|---|
 | 1 | Sync, `sync_skylands_datapack.sh` | 9 | Mirrors the two Skylands datapack sources into the world | The tool rsync | The world copies in `world/datapacks/` |
 | 2 | Update, `update_mods.py` | 151 | Lists or applies newer Modrinth builds of the index entries | Public Modrinth API | The index, `mods/` and `client-only-mods/` |
 | 2 (legacy) | Resolve, `resolve_all.py` | 108 | Resolves a fixed slug list to the newest releases | Modrinth token, the old scratch folder | Jars in `mods/` and a scratch file whose folder no longer exists |
-| 3 | Patch, `patch_mods.py` | 776 | Re-applies the boot fixes inside mod jars and holds `PACK_RULES`, the patches the pack ships too | Python 3 | Jars in `mods/` |
-| 4 | Build, `build_mrpack.py` | 170 | Zips the `.mrpack` from git HEAD with the committed index, patches and renames the `PACK_RULES` jars and adds the server list of the clients | A git checkout | The folder `client-only-mods/` and `SkyTekx3-<version>.mrpack` |
-| 5 | Publish, `publish_modrinth.py` | 127 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
+| 2 (deploy) | Fetch, `fetch_local_mods.py` | 219 | Downloads every jar that `local-mods/` names by a pointer file and checks its size and SHA-1 | Python 3, the download hosts | The jars in `local-mods/` (ignored by git) or in `--dest`, and the cache outside the tree |
+| 3 | Patch, `patch_mods.py` | 777 | Re-applies the boot fixes inside mod jars and holds `PACK_RULES`, the patches the pack ships too | Python 3 | Jars in `mods/` |
+| 4 | Build, `build_mrpack.py` | 199 | Zips the `.mrpack` from git HEAD with the committed index, fetches the pointed jars, patches and renames the `PACK_RULES` jars and adds the server list of the clients | A git checkout, the download hosts of the pointed jars | The folder `client-only-mods/`, `SkyTekx3-<version>.mrpack` and the cache outside the tree |
+| 5 | Publish, `publish_modrinth.py` | 232 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | After a mod joins | Order, `datapack_order.py` | 78 | Prints the datapack order of a saved `level.dat` and the mod packs that load after the fixes pack | Python 3 | Nothing |
 | After the mod set changes | Melting dump, `melting_dump.js` | 347 | Dumps every recipe, item, fluid, tag and mod of a booted test server for the generator, as `kubejs/server_scripts/zz_melting_dump.js` there and never on the live server | KubeJS on a test server | `melting_dump_*.json` in `kubejs/` of that server |
@@ -128,7 +124,7 @@ put new jars into `mods/`. The patches are listed on [boot fixes](../content/boo
 python3 tools/build_mrpack.py
 ```
 
-The script [build_mrpack.py](../../tools/build_mrpack.py) does five things:
+The script [build_mrpack.py](../../tools/build_mrpack.py) does six things:
 
 1. It reads the mod list from the committed index (`git show HEAD:modrinth.index.json`) and ships it
    as committed. It refuses to build when `versionId` or the Forge build differ from `VERSION` and
@@ -150,6 +146,38 @@ The script [build_mrpack.py](../../tools/build_mrpack.py) does five things:
    as `overrides/mods/SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. It refuses a rule that changes
    nothing and two override files at one path, its permission guard checks the shipped names, and
    `licenses/` goes to `overrides/licenses/`.
+6. Since 2026-11-06 it fetches the jars that `local-mods/` names by a pointer file and bundles them
+   like the jars that git holds, see [pointed jars](#pointed-jars).
+
+### Pointed jars
+
+A bundled jar may have a license that allows it inside the `.mrpack` but forbids a copy of its own
+on another website, and a jar in this public repository would be one. Git does not hold such a jar. It
+tracks a pointer file `local-mods/<jar>.fetch.json` in its place with the keys `file`, `url`, `sha1`,
+`size`, `source` and `reason`, and `.gitignore` ignores the jar path. Since 2026-11-06 that is
+ZeroCore 2.1.48, CurseForge file 7344725 on `mediafilez.forgecdn.net` with SHA-1
+`d60df80acecc27e20401065a252773f86b08e9de` and 1,341,342 bytes, see
+[mod set](mod-set.md#bundled-jars).
+
+- The builder reads each pointer from git HEAD, takes the jar from the cache or downloads it there,
+  and bundles it under the path that a tracked copy would have, so `PACK_RULES`, the permission guard
+  and the file list treat it like any bundled jar. The cache is `$SKYTEKX3_FETCH_CACHE`, else
+  `$XDG_CACHE_HOME/skytekx3/local-mods/`, else `~/.cache/skytekx3/local-mods/`, always outside the
+  tree, with one folder per SHA-1.
+- A pointer that does not parse, a failed download, a size or SHA-1 that differs from the pointer and
+  a jar that git tracks next to its pointer stop the build before it moves or writes anything, also
+  with `--allow-unpermitted`.
+- The upload script refuses a `.mrpack` that lacks a pointed jar in `overrides/mods/` or ships it
+  unpatched with other bytes than its pointer names.
+- For a server, `python3 tools/fetch_local_mods.py` puts every pointed jar into `local-mods/` with the
+  same checks and the same cache, and `--dest mods` puts it straight into `mods/`. It writes into
+  `local-mods/` only what git ignores there, and `--check` only lists what is missing.
+
+The test of 2026-11-06 built the pack of the branch before and after the change of ZeroCore 2 with
+`--allow-unpermitted`. Both files held the same 1,063 entries in the same order with the same
+content, ZeroCore 2 included. A pointer with a wrong SHA-1, a wrong size, a missing file on the CDN,
+a host that does not resolve or an `http` URL refused the build, and so did the jar tracked next to
+its pointer. The runs used a scratch copy of the branch and are not in the repo.
 
 Up to 3.0.5 it packed the working tree, not git. The 3.0.5 file therefore holds 14 untracked config
 files, among them `config/avaritia-common.toml` of a removed mod, and the Spark profiler's temporary
@@ -181,6 +209,8 @@ Before that it had kept the changelog of 3.0.4 through 3.0.5. With `--texts` the
 summary and the body of the existing project with the two files and stops. That is how the texts of
 2026-06-27 were replaced on 2026-10-31 at 21:25, and how the section on joining the server reached the
 project at about 21:56.
+Since 2026-11-06 it also refuses a `.mrpack` that lacks a jar which `local-mods/` names by a pointer
+file, or ships it with other bytes, see [pointed jars](#pointed-jars).
 The state of the project and its blockers are on [publish](publish.md).
 
 ## RCON

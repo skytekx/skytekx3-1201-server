@@ -22,7 +22,7 @@ skytekx.com does not point at a game server yet.
 | Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, started through the symlink `arclight.jar` |
 | Java | Java 17. The boots that reached `Done` ran Temurin 17.0.19 on the build machine and 17.0.21 on the Mac mini. The one try with Java 21 failed on a missing mod and was never repeated |
 | Plugins | EssentialsX 2.22.0 |
-| Mods | 230 entries in `modrinth.index.json` plus 58 bundled jars in `local-mods/` (counted 2026-11-06 with the Actually Additions fork), see [Mod set](okf/modpack/mod-set.md) |
+| Mods | 230 entries in `modrinth.index.json` plus 58 bundled jars (counted 2026-11-06 with the Actually Additions fork). Git holds 57 of them in `local-mods/` and since 2026-11-06 names ZeroCore 2 there by a pointer file, see [Mod set](okf/modpack/mod-set.md) |
 | Recipe layers | AlmostUnified for one item per material, Polymorph for grid conflicts, KubeJS for scripts |
 | Recipe viewers | EMI and JEI |
 | Pregen and profiling | Chunky and Spark |
@@ -32,7 +32,7 @@ skytekx.com does not point at a game server yet.
 | Path | What |
 |---|---|
 | File `modrinth.index.json` | The pack manifest with 230 entries, 226 from the Modrinth CDN and 4 from GitHub releases. Git ignores `mods/`, and no script rebuilds it from the index, see [Provide the mods](#provide-the-mods) |
-| Folder `local-mods/` | The 58 jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Actually Additions, Nyx and SkyTekx Compat. Forge does not load this folder, the jars have to be in `mods/` |
+| Folder `local-mods/` | The jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Actually Additions, Nyx and SkyTekx Compat: 57 jars and the pointer file `ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, which names the CurseForge file of a jar whose license forbids a copy in this repository. Forge does not load this folder, the jars have to be in `mods/` |
 | Folder `config/` | Mod configuration, with `config/almostunified/` for material unification |
 | Folder `kubejs/server_scripts/` | The four server scripts `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js` and `combat_1_7.js` |
 | Folder `skylands-datapack/` | Source of the shared Skylands datapack. It only uses vanilla ids and also runs on unmodded Spigot |
@@ -41,7 +41,7 @@ skytekx.com does not point at a game server yet.
 | Symlink `arclight.jar` and folder `patches/` | The hardened Arclight jar with its symlink, both tracked, and the source patch behind it |
 | Folder `modrinth-permissions/` | One file per bundled jar for the Modrinth permission review |
 | Folder `scripts-legacy-reference/` | The CraftTweaker scripts of SkyTekx 2, a read-only reference for the KubeJS port |
-| Folder `tools/` | Eleven scripts for datapack sync, mod updates, jar patches, the pack build, the Modrinth upload, RCON, region scans of the Skylands and the Cloudflare Tunnel, see [Maintenance](#maintenance) |
+| Folder `tools/` | Scripts for datapack sync, mod updates, the fetch of pointed jars, jar patches, the pack build, the Modrinth upload, RCON, region scans of the Skylands and the Cloudflare Tunnel, see [Maintenance](#maintenance) |
 | Folder `docs/` | The recipe port notes `RECIPE_PORT.md` and the Modrinth texts, the body `MODPACK_DESCRIPTION.md` and the summary `MODPACK_SUMMARY.txt` |
 | Folder `okf/` | The project wiki in Open Knowledge Format. Start at [okf/index.md](okf/index.md) |
 | File `AGENTS.md` | Rules and pitfalls for anyone, human or agent, who edits this repo |
@@ -102,12 +102,16 @@ symlink on that jar. A stock Arclight release brings back the crash at shutdown 
 
 ### Provide the mods
 
-Git does not hold `mods/`. Forge loads only `mods/`, and nothing points it at `local-mods/`, so copy
-the bundled jars in, fetch every index file the server needs (`env.server` not `unsupported`) and apply
-the jar patches again.
+Git does not hold `mods/`. Forge loads only `mods/`, and nothing points it at `local-mods/`, so fetch
+the jars that `local-mods/` names by a pointer file, copy the bundled jars in, fetch every index file
+the server needs (`env.server` not `unsupported`) and apply the jar patches again. Git holds no copy of
+a pointed jar, ZeroCore 2 for now, because its license forbids one in this public repository. The
+script `tools/fetch_local_mods.py` downloads it into `local-mods/`, where git ignores it, and stops
+when its size or SHA-1 differ from the pointer.
 
 ```bash
 mkdir -p mods
+python3 tools/fetch_local_mods.py       # the jars that local-mods/ names by a *.fetch.json pointer
 cp local-mods/*.jar mods/
 python3 - <<'EOF'   # fetch each server-side index file that mods/ lacks, sha1-checked
 import hashlib, json, os, urllib.request
@@ -313,7 +317,8 @@ upload. What blocks a public release is on [Publish](okf/modpack/publish.md).
 | Sync, `tools/sync_skylands_datapack.sh` | Mirrors the two Skylands datapack sources into `world/datapacks/` |
 | Update, `tools/update_mods.py` | Lists or applies newer Modrinth builds of the index entries, no token needed |
 | Patch, `tools/patch_mods.py` | Puts the boot fixes back into mod jars in `mods/` |
-| Build, `tools/build_mrpack.py` | Builds the `.mrpack` from the index, the configs, the scripts, the datapacks and `local-mods/` |
+| Fetch, `tools/fetch_local_mods.py` | Downloads the jars that `local-mods/` names by a pointer file and checks their size and SHA-1 |
+| Build, `tools/build_mrpack.py` | Builds the `.mrpack` from the index, the configs, the scripts, the datapacks and `local-mods/`, with the pointed jars fetched and checked |
 | Publish, `tools/publish_modrinth.py` | Uploads the `.mrpack` to Modrinth, only with `--go` |
 | RCON, `tools/rcon.py` | Sends one RCON command, for example `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" list` |
 | Scan, `tools/void_scan.py` | Lists structure starts and blocks below the Skylands islands and in void columns, read only |

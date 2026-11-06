@@ -124,6 +124,25 @@ ServerEvents.recipes(function (event) {
   console.info('MELTDUMP recipe json ' + n)
 })
 
+// RecipeManager.getRecipes() gives every recipe as one collection. Create: Dragons Plus adds the accessor
+// RecipeManagerAccessor.getRecipes() with the same name and no arguments, which returns the map of recipes by type
+// (field recipes), and Rhino may call that one. Such a map is flattened by type and id, which is what the method of
+// the manager returns as well.
+var mdmpArrayList = Java.loadClass('java.util.ArrayList')
+var mdmpRecipeSource = 'collection'
+function mdmpAllRecipes(manager) {
+  var all = manager.getRecipes()
+  if (all.keySet === undefined) {
+    return all
+  }
+  mdmpRecipeSource = 'map by type'
+  var out = new mdmpArrayList()
+  all.values().forEach(function (byId) {
+    out.addAll(byId.values())
+  })
+  return out
+}
+
 function mdmpRecipes() {
   var server = Utils.server
   var access = server.registryAccess()
@@ -139,7 +158,7 @@ function mdmpRecipes() {
     }
     return ingIndex[key]
   }
-  server.getRecipeManager().getRecipes().forEach(function (r) {
+  mdmpAllRecipes(server.getRecipeManager()).forEach(function (r) {
     var e = { id: String(r.getId()), type: String(r.getType()) }
     var res, list, i, k, lists, fl, inner, ids
     try {
@@ -223,8 +242,8 @@ function mdmpRecipes() {
     recipes.push(e)
   })
   mdmpWrite('recipes.json', { ing: ingTable, recipes: recipes })
-  return recipes.length + ' recipes, ' + ingTable.length + ' distinct ingredients, ' + failed + ' unreadable, ' +
-    recipes.filter(function (x) { return x.unfillable }).length + ' unfillable'
+  return recipes.length + ' recipes from the ' + mdmpRecipeSource + ', ' + ingTable.length + ' distinct ingredients, ' +
+    failed + ' unreadable, ' + recipes.filter(function (x) { return x.unfillable }).length + ' unfillable'
 }
 
 function mdmpItems() {

@@ -826,7 +826,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     works.
 27. Atomic Reconstructor and lenses: the renderer of the reconstructor returns when the block at
     its position is no longer a reconstructor (`713568d`), which crashed the client when it read
-    the facing of another block. Every laser of the server is a beam particle now, the
+    the facing of another block. Like upstream it asks the level for that block. The first port
+    asked the block entity for its cached state, which stays a reconstructor while a section that
+    is not rebuilt yet still renders the block entity of a reconstructor that the client has just
+    broken, so breaking one in survival still crashed the client (found by the test of item 45).
+    Every laser of the server is a beam particle now, the
     reconstructor's too (`337fbfb`): the particle has its own render type with additive blending
     (`fb80bf3`, `58b9cbc`), and `AssetUtil.renderLaserParticle` draws the tube. Item 44 replaces
     the format position, colour and lightmap and the begin and end for each beam that this item

@@ -1083,3 +1083,38 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Factory Casing as on `main`, and both names lose their `(wip)` label. The Phantom overlay calls
     the same empty helper and comes with the phantom block fixes. No data, NBT key or block state
     changes.
+41. Laser relays: the render type of the lasers uses the block sheet, the main target and the
+    shader `position_color_tex_lightmap` (`8374a4d`). The base set no shader state at all. The
+    beam takes its alpha into the colour for the additive blend, maps the white sprite of Forge
+    and no longer draws the innermost tube of width 0 (`8374a4d`), and it returns when the client
+    has no level (`78258dc`). The relay renderer draws its lasers up to 32 blocks away
+    (`eb79636`). The infinite render box of that commit is the `getRenderBoundingBox` of
+    `TileEntityLaserRelay` on Forge 1.20.1, which the base already returns, so the commented out
+    copy that upstream `845aaf8` deletes does not exist here. A click on a relay with the relay
+    configure item (a compass by default) returns `SUCCESS` (`99e1663`). A crouching click with
+    it reaches the relay again, since a server listener of `PlayerInteractEvent.RightClickBlock`
+    denies the item and allows the block (`99e1663`), so the priority of an item relay can go
+    down. The listener takes the place of the empty spawner listener of `CommonEvents`, as
+    upstream does, and the item relay reads `isCrouching` instead of `isShiftKeyDown`. The item
+    of the item laser particle rises from the relay that it leaves and falls into the relay that
+    it goes to (`99e1663`). The base drew it the other way round. An energy relay counts a
+    transfer and its loss only when the receiver takes energy in the real call (`9fe3fa1`,
+    changelog 1.3.7). A storage such as the Mekanism energy cube that accepts a simulated
+    transfer and refuses the real one no longer costs the sender the loss for nothing. The fluid
+    relay in input mode pulls at most `fluidLaserTransferRate` mB per tick (default 10000) from
+    each tank next to it (`1f78ecc`), where the base pulled without a limit. Upstream `e870e5c`
+    drops a `Tesselator.begin` that the 1.21 port had added to `renderLaserParticle`, which the
+    1.20.1 code never had, and `8cdd5ac` drops a comment. Savegame: the relay NBT keys `Mode`
+    and `Priority` and the connection data stay the same.
+    The dev client test of this bundle ran the test mod with a local scenario, which is not
+    committed, against the jar of its four commits (SHA-1 `0bf32839`) on a dedicated Forge
+    47.4.18 server with JEI, Patchouli, Curios, The One Probe and Mekanism 10.4. Two energy
+    relays joined with the Laser Wrench carried the 200000 CF of a Single Battery in a Battery
+    Box on one side into a Mekanism basic energy cube on the other side, which ended with 451910
+    J, and the battery ended empty. With `fluidLaserTransferRate` set to 100, an input only
+    fluid relay next to a Mekanism tank with 8000 mB of water moved 1100, 1200 and 1000 mB in
+    three steps of about 10 ticks into the tank behind the second relay. A plain compass click
+    turned the energy relay from `BOTH` to `OUTPUT_ONLY`, and one plain and two crouching clicks
+    left an item relay at priority minus 1. Screenshots of the dev client show the energy, fluid
+    and item lasers. Not tested: a storage that refuses the real transfer (`9fe3fa1`) and the
+    pack's Arclight.

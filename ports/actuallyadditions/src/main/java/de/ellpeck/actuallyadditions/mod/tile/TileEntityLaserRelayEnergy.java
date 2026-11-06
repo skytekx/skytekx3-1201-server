@@ -110,7 +110,6 @@ public class TileEntityLaserRelayEnergy extends TileEntityLaserRelay {
         return transmitted;
     }
 
-    // TODO: [port] this is super hacky, review and fix up 
     @Override
     public LazyOptional<IEnergyStorage> getEnergyStorage(Direction facing) {
         return LazyOptional.of(() -> this.energyStorages[facing == null
@@ -220,8 +219,14 @@ public class TileEntityLaserRelayEnergy extends TileEntityLaserRelay {
                                             deduct = 0;
                                         }
 
-                                        trans += cap.receiveEnergy(theoreticalReceived - deduct, simulate);
-                                        trans += deduct;
+                                        // SkyTekx: 9fe3fa1c. Some storages, such as the Mekanism energy
+                                        // cube, accept a simulated transfer and refuse the real one. The
+                                        // base still counted the loss then and drained the sender for it
+                                        int actual = cap.receiveEnergy(theoreticalReceived - deduct, simulate);
+                                        if (actual > 0) {
+                                            trans += actual;
+                                            trans += deduct;
+                                        }
                                     }
 
                                     return trans;

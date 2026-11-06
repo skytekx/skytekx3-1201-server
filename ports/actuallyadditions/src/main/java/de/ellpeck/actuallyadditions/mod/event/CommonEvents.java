@@ -11,6 +11,7 @@
 package de.ellpeck.actuallyadditions.mod.event;
 
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockLaserRelay;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.config.values.ConfigBoolValues;
 import de.ellpeck.actuallyadditions.mod.data.PlayerData;
@@ -29,11 +30,10 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,14 +42,18 @@ import java.util.Locale;
 
 public class CommonEvents {
 
-    //TODO spawner shards are yeeted right?
+    // SkyTekx: the workaround of 99e16633 in place of the empty spawner break listener. A sneaking
+    // player with an item in hand skips the block, so a crouching compass click never reached the
+    // laser relay and could not lower the priority of an item relay
     @SubscribeEvent
-    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
-        BlockState state = event.getState();
-        if (state != null && state.getBlock() == Blocks.SPAWNER) {
-            // TODO: [port] add back once we've unflattened
-            //            event.getDrops().add(new ItemStack(InitItems.itemMisc, 1, TheMiscItems.SPAWNER_SHARD.ordinal()));
+    public void onBlockRightClick(PlayerInteractEvent.RightClickBlock event) { //Workaround, cant sneak right click a block with an item normally.
+        if (event.getLevel().isClientSide)
+            return;
+        if( (event.getLevel().getBlockState(event.getHitVec().getBlockPos()).getBlock() instanceof BlockLaserRelay) && (event.getItemStack().is(CommonConfig.Other.relayConfigureItem))) {
+            event.setUseItem(Event.Result.DENY);
+            event.setUseBlock(Event.Result.ALLOW);
         }
+
     }
 
     @SubscribeEvent

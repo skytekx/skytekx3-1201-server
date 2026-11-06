@@ -214,6 +214,8 @@ Modifications
       change, and the drill no longer posts two break events for the block the player mines. On
       the Arclight server a machine break no longer leaves a capture behind that swallowed later
       block drops.
+    * Phantom blocks: a phantomface, Phantom Placer or Phantom Breaker no longer loads the chunk of
+      its target or keeps it loaded, whether the target is out of range or in an unloaded chunk.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

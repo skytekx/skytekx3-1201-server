@@ -43,8 +43,11 @@ public class TileEntityPhantomRedstoneface extends TileEntityPhantomface {
         if (t instanceof TileEntityPhantomRedstoneface tile) {
             tile.serverTick();
 
-            if (tile.isBoundThingInRange()) {
-                BlockState boundState = tile.level.getBlockState(tile.boundPosition);
+            // SkyTekx: the signals of a redstone wire read its neighbours through the level and renew
+            // the chunk ticket, so as for the comparator output of TileEntityPhantomface the face only
+            // asks a target whose blocks tick and keeps its last signals otherwise
+            if (tile.isBoundThingInRange() && tile.level.shouldTickBlocksAt(tile.boundPosition)) {
+                BlockState boundState = loadedChunk(tile.level, tile.boundPosition).getBlockState(tile.boundPosition);
                 if (boundState != null) {
                     Block boundBlock = boundState.getBlock();
                     if (boundBlock != null) {

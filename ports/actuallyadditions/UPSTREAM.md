@@ -1954,3 +1954,27 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     stay out of this change. The harvest and planting of the Farmer, the Fluid Placer and Collector
     and the Lava Factory still change blocks without an event.
     Savegame: none. New ids: none.
+61. Phantom blocks and unloaded targets: a phantomface, the Phantom Placer and the Phantom Breaker
+    checked their binding with `Level#getBlockEntity` at the target in every server tick, before
+    the range check, and the face also read the block at the target there. On the server thread
+    both go through `ServerChunkCache#getChunk` with load, which loads a missing chunk and, at each
+    miss of its small cache, adds the one tick `UNKNOWN` ticket of Forge at the FULL level. A face
+    that read its target in every tick therefore kept the target chunk loaded for good. A face out
+    of range, after its booster was taken away or when it was bound with an edited connector far
+    away, kept loading that chunk. The checks now run in the order range, then loaded chunk, then
+    block entity, and every read of the face and the Phantom Placer at its target goes through the
+    loaded chunk itself (`TileEntityPhantomface#loadedChunk`, `ServerChunkCache#getChunkNow`), which
+    neither loads a chunk nor adds a ticket. A target in an unloaded chunk stays bound and is
+    checked again once its chunk is back. The change detection of the face skips the block at an
+    unloaded target, and the identity check of the forwarded block entity (source change 24)
+    treats an unloaded target like a removed one. The comparator output of the face and the
+    signals of the Phantom Redstoneface call into the target block through the level, and a chest
+    or a redstone wire renews the ticket there, so the face only asks a target whose blocks tick
+    (`Level#shouldTickBlocksAt`), which a ticket of its own reads never brings about. Otherwise the
+    comparator reads 0 and the Redstoneface keeps its last signals, as it does out of range. A pipe
+    that moves items or energy through the face still marks the target changed through the level,
+    so a target that is in use stays loaded while things move. The code is the same on `main`
+    (`TileEntityPhantomface.java` lines 141 to 170 and `TileEntityPhantomPlacer.java` lines 141 to
+    193 there), so these are local changes. The Phantom Booster needed no change, the face reads
+    the boosters above it from its own chunk.
+    Savegame: none. New ids: none.

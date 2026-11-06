@@ -15,6 +15,7 @@ import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockPhantom;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -52,6 +54,25 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
         super(type, pos, state, 0);
     }
 
+
+    // SkyTekx: a local change. The phantom blocks read their target through the loaded chunk itself.
+    // Level#getBlockEntity and #getBlockState go through ServerChunkCache#getChunk with load, which
+    // loads a missing chunk and, on every miss of its small cache, adds the one tick UNKNOWN ticket of
+    // Forge at the FULL level. A face that read its target in every tick therefore kept the target
+    // chunk loaded for good, and loaded it again when it was gone. getChunkNow neither loads a chunk
+    // nor adds a ticket, so a target that nothing else keeps loaded can unload
+    @Nullable
+    public static LevelChunk loadedChunk(Level level, BlockPos pos) {
+        return level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+    }
+
+    @Nullable
+    public static BlockEntity loadedBlockEntity(Level level, BlockPos pos) {
+        LevelChunk chunk = loadedChunk(level, pos);
+        return chunk == null
+            ? null
+            : chunk.getBlockEntity(pos, LevelChunk.EntityCreationType.IMMEDIATE);
+    }
 
     public static int upgradeRange(int defaultRange, Level world, BlockPos pos) {
         int newRange = defaultRange;
@@ -108,8 +129,9 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
         }
 
         // SkyTekx: pipes that cached a forwarded handler drop it once the target block entity is gone,
-        // even while nobody asks the face. A removed target needs no look into its chunk
-        if (this.forwardedTarget != null && (this.forwardedTarget.isRemoved() || this.boundPosition == null || this.level.getBlockEntity(this.boundPosition) != this.forwardedTarget)) {
+        // even while nobody asks the face. A removed target needs no look into its chunk, and an
+        // unloaded chunk counts as gone and is not loaded for the look
+        if (this.forwardedTarget != null && (this.forwardedTarget.isRemoved() || this.boundPosition == null || loadedBlockEntity(this.level, this.boundPosition) != this.forwardedTarget)) {
             this.invalidateForwardedCaps();
         }
 
@@ -129,32 +151,58 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
         }
     }
 
+    // SkyTekx: the block at the target only counts while its chunk is loaded, see loadedChunk
     protected boolean doesNeedUpdateSend() {
-        return this.boundPosition != this.boundPosBefore || this.boundPosition != null && this.level.getBlockState(this.boundPosition).getBlock() != this.boundBlockBefore || this.rangeBefore != this.range;
+        return this.boundPosition != this.boundPosBefore || this.boundBlockChanged() || this.rangeBefore != this.range;
+    }
+
+    private boolean boundBlockChanged() {
+        if (this.boundPosition != null) {
+            LevelChunk chunk = loadedChunk(this.level, this.boundPosition);
+            return chunk != null && chunk.getBlockState(this.boundPosition).getBlock() != this.boundBlockBefore;
+        }
+        return false;
     }
 
     protected void onUpdateSent() {
         this.rangeBefore = this.range;
         this.boundPosBefore = this.boundPosition;
-        this.boundBlockBefore = this.boundPosition == null
+        LevelChunk boundChunk = this.boundPosition == null
             ? null
-            : this.level.getBlockState(this.boundPosition).getBlock();
+            : loadedChunk(this.level, this.boundPosition);
+        this.boundBlockBefore = boundChunk == null
+            ? null
+            : boundChunk.getBlockState(this.boundPosition).getBlock();
 
         // SkyTekx: the target, its block or the range changed, so pipes drop what they cached
         this.invalidateForwardedCaps();
 
         if (this.boundPosition != null) {
-            this.level.updateNeighborsAt(this.worldPosition, this.level.getBlockState(this.boundPosition).getBlock());
+            this.level.updateNeighborsAt(this.worldPosition, this.boundBlockBefore != null ? this.boundBlockBefore : this.getBlockState().getBlock());
         }
 
         this.sendUpdate();
         this.setChanged();
     }
 
+    // SkyTekx: a local change. The face looked at the block entity of its target every tick, before
+    // the range check, and Level#getBlockEntity loads a missing chunk on the server thread. A face out
+    // of range, after its booster was taken away or when it was bound from far away, kept the target
+    // chunk loaded and loaded it again each tick. The face now checks itself, then whether the chunk
+    // is loaded, and only then the block entity, both through loadedChunk. A target in an unloaded
+    // chunk stays bound and is checked once the chunk is back
     @Override
     public boolean hasBoundPosition() {
         if (this.boundPosition != null) {
-            if (this.level.getBlockEntity(this.boundPosition) instanceof IPhantomTile || this.getBlockPos().getX() == this.boundPosition.getX() && this.getBlockPos().getY() == this.boundPosition.getY() && this.getBlockPos().getZ() == this.boundPosition.getZ()) {
+            if (this.getBlockPos().equals(this.boundPosition)) {
+                this.boundPosition = null;
+                return false;
+            }
+            LevelChunk chunk = loadedChunk(this.level, this.boundPosition);
+            if (chunk == null) {
+                return true;
+            }
+            if (chunk.getBlockEntity(this.boundPosition, LevelChunk.EntityCreationType.IMMEDIATE) instanceof IPhantomTile) {
                 this.boundPosition = null;
                 return false;
             }
@@ -179,9 +227,10 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
         }
     }
 
+    // SkyTekx: the range first and the chunk second, so a target out of range or unloaded is never read
     @Override
     public boolean isBoundThingInRange() {
-        return this.hasBoundPosition() && this.boundPosition.distSqr(this.getBlockPos()) <= this.range * this.range;
+        return this.boundPosition != null && this.boundPosition.distSqr(this.getBlockPos()) <= this.range * this.range && loadedChunk(this.level, this.boundPosition) != null && this.hasBoundPosition();
     }
 
     @Override
@@ -216,7 +265,7 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
         if (this.isCapabilitySupported(capability) && this.isBoundThingInRange()) {
-            BlockEntity tile = this.level.getBlockEntity(this.getBoundPosition());
+            BlockEntity tile = loadedBlockEntity(this.level, this.getBoundPosition());
             // SkyTekx: handlers of another or a removed block entity are never handed out again
             if (tile != this.forwardedTarget || tile != null && tile.isRemoved()) {
                 this.invalidateForwardedCaps();
@@ -271,13 +320,19 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
         this.invalidateForwardedCaps();
     }
 
+    // SkyTekx: the tick asks this every tick. The output of a chest or a furnace reads its block entity
+    // through the level and so renews the chunk ticket, so the face only asks a target whose blocks
+    // tick, which a ticket of the face's own reads never makes them do
     @Override
     public int getComparatorStrength() {
         if (this.isBoundThingInRange()) {
             BlockPos pos = this.getBoundPosition();
-            BlockState state = this.level.getBlockState(pos);
+            LevelChunk chunk = loadedChunk(this.level, pos);
+            BlockState state = chunk == null
+                ? null
+                : chunk.getBlockState(pos);
 
-            if (state.hasAnalogOutputSignal()) {
+            if (state != null && state.hasAnalogOutputSignal() && this.level.shouldTickBlocksAt(pos)) {
                 return state.getAnalogOutputSignal(this.level, pos);
             }
         }

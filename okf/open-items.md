@@ -285,6 +285,14 @@ evidence and the page with the details. The rulings behind the first section are
 - The systemd unit sets `KillMode=none` and stops through an asynchronous `mcrcon` call, so systemd
   neither waits for the save nor stops a JVM whose RCON stop failed. A synchronous stop is documented as
   an untested candidate. See [Deploy on Debian](server/deploy.md#stopping-and-restarting).
+- The melting folder still comes from the dump of 2026-11-05 at 01:19, apart from the files of Create
+  Crafts & Additions and the moss soup, which follow a dump of the merged tree since 2026-11-06. The full
+  regeneration for the mods of the branch is open. Its run of 2026-11-06 gave 9,701 files and exited with
+  status 1 for three new dupes: the crusher of Actually Additions grinds an iron, golden or diamond horse
+  armor into six raw iron, raw gold or diamonds, and a horse armor takes four ingots or diamonds in the
+  pack. Nobody has tried that in game. The run also drops the melon juice, since the reader counts the
+  `container` key of the Expanded Delight juicer as nothing. See
+  [Melting](content/melting.md#after-the-merge-of-2026-11-06).
 - The legacy resolver `tools/resolve_all.py` ignores the pinned index and resolves a hard-coded slug list
   against the live API, Radium and Better Combat included. Nobody should run it. Remove or rewrite it.
   See [Tools](modpack/tools.md#the-legacy-resolver).

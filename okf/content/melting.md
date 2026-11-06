@@ -1,9 +1,9 @@
 ---
 type: Reference
 title: Melting
-description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,527 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
+description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,526 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
 tags: [content, recipes, tconstruct, datapack, tools]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Melting
@@ -34,7 +34,9 @@ unification, the follow-up of 2026-11-05 and its review (see [fixes of the revie
 The recheck of 2026-11-05 held the folder back from the deploy of 3.1.3 at 00:46 until its three faults were
 fixed. It reached the Mac mini at 03:47 and went live with a `/reload` at 05:45, after which KubeJS found
 46,980 recipes, as on the test server. The recipes are server side, so they need no new pack. The counts below
-come from the dump of 01:19 on the test server of the follow-up.
+come from the dump of 01:19 on the test server of the follow-up. Since the merge of 2026-11-06 the files of
+Create Crafts & Additions follow the recipes of its fork and the moss soup of the Twilight Forest is gone, from a
+dump of the merged tree (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 
 | Count | Without Molten | With Molten |
 |---|---:|---:|
@@ -47,7 +49,7 @@ come from the dump of 01:19 on the test server of the follow-up.
 | Recipes left out because an ingredient matches no item | 4 | 4 |
 | Recipes that take only inputs the machine keeps | 32 | 32 |
 
-The folder holds 9,527 files with 4.0 MB: 6,656 for both cases, 1,209 only without Molten and 1,662 only with
+The folder holds 9,526 files with 4.0 MB: 6,655 for both cases, 1,209 only without Molten and 1,662 only with
 it. With Molten, 1,523 of the generated recipes give at least one of 63 Molten fluids, led by soularium 303,
 manasteel 186, dark steel 162 and draconium 161, and 517 items melt only because Molten is there.
 
@@ -294,6 +296,49 @@ with it, and no new dupe. The generator gives the same 9,527 files from the dump
 01:19. The runs of the review found one more wording fault: the text said that the smeltery gives out the
 byproducts, which only the foundry does (see [runs of the follow-up](#runs-of-the-follow-up)).
 
+## After the merge of 2026-11-06
+
+The merge of master into the port branch on 2026-11-06 (f0d5096) put the fork 1.20.1-1.7.3-skytekx.1 of Create
+Crafts & Additions in the place of 1.3.3 and brought the Twilight Delight recipes of the branch (e26fc06). The folder
+still came from the dump of 01:19, which knew neither, and a review of the merge found files that melt into more
+than the new recipes take. The fork changed three recipes, the alternator, the electrum amulet and the spool, and
+added charging recipes that turn gold into electrum. Against 6.2.18 and 2.0.84, Ender IO 6.3.0-skytekx.1 adds 47
+recipe files and Extreme Reactors 2.0.97 adds 2 and neither changes one, and the 24 recipes of the LittleTiles build
+read the same as JSON.
+
+A Forge test boot of the merged tree at 20:31 with a heap of 9 GB gave a new dump. The boot harness
+starts a fresh world, where the fixes pack loaded after every mod pack, so the two commands of
+[load order](boot-fixes.md#load-order) were not needed. The first boot, with a heap of 5 GB, had run out of memory
+in the reload of the second command. The dump command failed at first with "Cannot find function getId in object
+mekanism:reaction", because Create: Dragons Plus, which comes with the Create: Integrated Farming port, adds an
+accessor `getRecipes()` to the recipe manager that returns the map of recipes by type, and Rhino called it. Since
+30562cb the dump flattens that map. It read 48,199 recipes, 36,506 items, 737 fluids and 300 mods, and
+`gen_melting.py` ran on it in a scratch copy of the tree. Only the files of two cases went into the folder:
+
+| Item | Before | After | Why |
+|---|---|---|---|
+| Alternator | 630 mB copper, 618 mB iron, 90 mB zinc | 720 mB copper, 621 mB iron | The recipe of the fork has four copper spools and no capacitor, so it takes no zinc |
+| Electrum amulet | 405 mB electrum, 100 mB emerald | 315 mB electrum, 100 mB diamond, 90 mB zinc | Two electrum ingots, three electrum wires, a zinc plate and diamond dust |
+| Spool | 11 mB iron | None | Two iron plates and an iron rod make 24 spools, so a spool holds 9.375 mB, below the 10 mB floor |
+| Copper, gold, electrum and festive spools | 11 mB iron beside their metal | 9 mB iron | The new spool |
+| Electric motor, portable energy interface and tesla coil | 78, 78 and 123 mB iron | 72, 76 and 117 mB iron | The new spools |
+| Electrum rod | 45 mB electrum | None | The charging recipe `createaddition:charging/electrify_gold_rod` makes it from a gold rod, which holds no electrum |
+| Electric pump and servo motor | None | 517 mB copper, 90 mB zinc, 18 mB iron, and 630 mB copper, 540 mB brass, 162 mB iron, 100 mB quartz, 90 mB zinc | New items of the fork |
+| Moss soup of the Twilight Forest | 1,000 mB glass | None | The Twilight Delight cooking recipe of the branch makes it from a moss patch and a bowl |
+
+So `createaddition` keeps 24 files in each case, `twilightforest` has 20 without Molten and 29 with it, and the
+folder holds 9,526 files. With the electrum rod the rod of Thermal Extra stops melting as well, since it melted only
+through the tag `forge:rods/electrum` of the generated recipe. The audit of the generated recipes of the run finds
+no dupe in either case. Nobody has melted the changed items in a melter yet.
+
+The rest of the run stays out of the folder until the full regeneration for the mods of the branch has a review of
+its own. It gave 9,701 files: 178 new ones, 129 of them for Actually Additions, and 15 files of other mods that gain
+glass through dragon's breath, which Create: Dragons Plus fills into a glass bottle. It also
+dropped the melon juice of Farmer's Delight, which the juicer of Expanded Delight makes with the glass bottle in its
+`container` key, and the reader counts that key as nothing (`QUIET_KEYS` in `gen_melting.py`). The audit of the run found three new dupes: the
+crusher of Actually Additions grinds an iron, golden or diamond horse armor into six raw iron, raw gold or diamonds,
+and a horse armor takes four ingots or diamonds in the pack. The run exited with status 1 for them.
+
 ## Counts per mod
 
 Generated recipes per item namespace, without and with Molten. Eight of the nine mods of 2026-11-04 and Flux
@@ -305,7 +350,9 @@ fragments to `bloodmagic` and the universal terminal to `ae2wtlib`, and the craf
 and `createaddition` gained three rods (see [sync with the unification](#sync-with-the-unification)). With the
 follow-up `railways` lost the phantom track and `minecraft` gained four mob buckets (see
 [follow-up of 2026-11-05](#follow-up-of-2026-11-05)), and with its review `thermal_extra` lost three ore chunks
-(see [review of the follow-up](#review-of-the-follow-up)).
+(see [review of the follow-up](#review-of-the-follow-up)). After the merge of 2026-11-06 `twilightforest` lost the
+moss soup, and `createaddition` lost the spool and the electrum rod and gained the electric pump and the servo
+motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 
 | Namespace | Without Molten | With Molten |
 |---|---:|---:|
@@ -360,7 +407,7 @@ follow-up `railways` lost the phantom track and `minecraft` gained four mob buck
 | `exura` | 36 | 34 |
 | `l2hostility` | 18 | 36 |
 | `waystones` | 31 | 31 |
-| `twilightforest` | 21 | 30 |
+| `twilightforest` | 20 | 29 |
 | `mekanismgenerators` | 28 | 28 |
 | `framedblocks` | 27 | 27 |
 | `ironchests` | 26 | 26 |
@@ -903,7 +950,7 @@ recipe pages is therefore part of the check after the deploy.
 
 ## One JSON folder or one KubeJS table
 
-The recipes ship as 9,527 JSON files in the fixes pack, which is the default. For the comparison at 19:25 the 9,181
+The recipes ship as 9,526 JSON files in the fixes pack, which is the default. For the comparison at 19:25 the 9,181
 recipes of that time were turned into one KubeJS script of 2.7 MB that adds them with `event.custom`:
 
 | Point | JSON folder | KubeJS table |
@@ -912,7 +959,7 @@ recipes of that time were turned into one KubeJS script of 2.7 MB that adds them
 | Cost at boot | Parsed with the other datapack recipes, no measurable time | 0.19 s to load the script and 95 ms for the table, the KubeJS recipe event took 717 ms against 488 ms to 648 ms with the folder |
 | Molten and mod checks | Forge conditions in each file | Hand written checks in the script |
 | AlmostUnified | Sees and unifies the recipes | Runs before the table and never sees it |
-| Git | 9,527 files under `world/`, added with `git add -f` | One file in `kubejs/server_scripts/` |
+| Git | 9,526 files under `world/`, added with `git add -f` | One file in `kubejs/server_scripts/` |
 | Live server | Copied with the datapack, `/reload` is enough | Needs KubeJS and a reload of the scripts |
 
 Both forms gave all 7,943 recipes of the folder at that time. The JSON folder stays, it needs no script, keeps the

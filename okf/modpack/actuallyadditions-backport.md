@@ -1,14 +1,15 @@
 ---
 type: Plan
 title: Actually Additions backport
-description: How the unreleased 1.20.1 Forge branch of Actually Additions becomes a release for the pack, which fixes and features of the newer NeoForge lines up to 1.3.26 it takes in which bundles and order, which upstream work stays out, and the license, savegame, Arclight and operator rules of the fork.
+description: How the unreleased 1.20.1 Forge branch of Actually Additions became the release 1.1.52-skytekx.1 that the pack bundles, which fixes and features of the newer NeoForge lines up to 1.3.26 it took in which bundles and order, which upstream work stays out, how the release was tested, and the license, savegame, Arclight and operator rules of the fork.
 tags: [modpack, mods, actuallyadditions, backport]
 timestamp: 2026-11-06
 ---
 
 # Actually Additions backport
 
-Actually Additions (mod id `actuallyadditions`) is new to the pack. Upstream never released a build
+Actually Additions (mod id `actuallyadditions`) is new to the pack, which bundles the fork since the
+release of 2026-11-06 (0ed346b). Upstream never released a build
 for Minecraft 1.20.1. Its branch `1.20.1` stopped at 226a439 on 2024-03-04 with `mod_version` 1.1.52
 for Forge 47.1.3, and the mod went on as NeoForge builds for 1.20.4, 1.21 and 1.21.1, up to release
 1.3.26 of 2026-06-19 (`ports/actuallyadditions/UPSTREAM.md`, Upstream table). This plan makes the
@@ -28,9 +29,11 @@ files, the Forge 47 translation, the savegame notes, the new ids and the test. T
 holds the review that corrected the first draft. The review checked that each of the 551 upstream
 commits after the fork point 97532ff that is not a merge appears in a bundle spec or an exclusion. A
 second check against the critic's commit list in the workflow scratchpad (`aacritic/all.txt`) found
-none missing in the committed file. The file `ports/actuallyadditions-backport-carryover.json` will
-record what a bundle hands to a later one. It does not exist yet, and until the release commits it
-the hand overs collect in the workflow scratchpad (`bp2/actuallyadditions/carryover.json`).
+none missing in the committed file. At the release the inventory also took in the 67 features of the
+first draft with their upstream commits, paths and tests, each with the bundle of the final plan,
+and every bundle got its status. The file `ports/actuallyadditions-backport-carryover.json` holds the
+153 items that the porters and integrators handed on, per bundle, and every item handed to the
+release carries a release note there. Its key `aa-ship` lists what stays open after the release.
 
 | Property | Value |
 |---|---|
@@ -39,8 +42,9 @@ the hand overs collect in the workflow scratchpad (`bp2/actuallyadditions/carryo
 | Port source | Branch `main` at cd9d9c63 (2026-06-19), release 1.3.26 for NeoForge 1.21.1 |
 | Intermediate steps | Branch `1.20.4` at 0ebbd811 (1.2.14, NeoForge 20.4) and branch `1.21` at d9b0a714 (1.3.6, NeoForge 21.1). The 1.20.4 port commit 63fbbb33 has the base as its parent and is the reference for every reverse mapping |
 | Fork | Folder `ports/actuallyadditions/`, Java 17, ForgeGradle 6.0.54, Forge 47.1.3 userdev, Parchment 2023.09.03 (`UPSTREAM.md`, Build changes) |
-| Target version | Version 1.1.52-skytekx.1 in `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, the reobf jar from `build/libs/`, see [Version](#version) |
-| Ships as | A new jar in `local-mods/` and `mods/`. The Modrinth project has no 1.20.1 file the index could point at |
+| Version | Version 1.1.52-skytekx.1 in `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, the reobf jar from `build/libs/` with SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb` at ed177d0, see [Version](#version) |
+| Content level | Parity with upstream 1.3.26 (cd9d9c63) except the exclusions, as the NOTICE line `Content` says (ed177d0) |
+| Ships as | The jar in `local-mods/` since 0ed346b, which the `.mrpack` carries under `overrides/mods/`. The server's `mods/` gets it by hand at the deploy. The Modrinth project has no 1.20.1 file the index could point at |
 | Build check | The `compileJava` call in `UPSTREAM.md`, run with `/opt/jdk17` and `-Xmx2g`, with upstream's compiler settings |
 | Integrations | Patchouli 85 (`modrinth.index.json:2169`), Curios 5.14.1 (`modrinth.index.json:1014`), JEI 15.74.0.233 (`modrinth.index.json:1584`) and EMI 1.1.24-skytekx.2 from `local-mods/`, all optional |
 | Dependents | None. Of the 264 `mods.toml` files in the Arclight pack boot copy of the workflow scratchpad (`packboot-arclight/mods/`), none names `actuallyadditions` (scan of 2026-11-05) |
@@ -460,14 +464,30 @@ to the energy overlay and the hotbar under the overlays (carryover `aa-ship`).
 The look at overlays still draw from the `Post` event of the vanilla portal overlay, as upstream
 f1c7b249 does, so a HUD mod that cancels that overlay would hide them. A scan of the 271 jars of the
 Arclight pack boot copy found no class that names the portal overlay together with the `Pre` event
-(`bp2/actuallyadditions/uidc-int-tools/portalscan.py`), while the 16 client only jars of the index
-were not scanned. The Wings Of The Bats and the Storage Crate Keeper keep their `(WIP)` label and
-the recipes of `main`, although neither works on the fork. The release decides whether their
-recipes go, whether `forge:holds_items` gets filled and what to do with the keys of `zh_cn.json`
-that the fork does not use (carryover `aa-ship`).
+(`bp2/actuallyadditions/uidc-int-tools/portalscan.py`), and the release found none in the 16 client
+only jars of the index either. The Wings Of The Bats and the Storage Crate Keeper keep their
+`(WIP)` label and the recipes of `main`, although neither works on the fork. The release kept them
+so, left `forge:holds_items` empty and kept `zh_cn.json` as it is, see
+[Pack integration](#pack-integration).
 
-The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
-keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
+The release is done. Its commits are 40d0122 (the empowering recipe serializer, `UPSTREAM.md`
+source change 70), ed177d0 (the content level in the NOTICE, the version decision and the config
+reader check), 0ed346b (the jar in `local-mods/`, the permission record and the license text),
+1975ce6 (the common config of the first pack boot) and b772868 (the savegame test), followed by the
+docs commits of this page, the mod set, the README, the open items, the inventory and the carryover
+file. Two clean builds of ed177d0 gave the jar SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb`
+(3009728 bytes, 2529 entries), and a `runData` into an empty `src/generated/resources` wrote all 1238
+files unchanged, so the committed generated files match the providers. The savegame test from the
+base jar 237e0fc6 kept every item, fluid and energy value and showed the planned changes, and the
+full pack booted on the pack's Arclight with no new log signature, see [Release test](#release-test).
+Every owning feature reads the new config, and the two readers of the 1.12 enums that are left read
+`false` as on `main` (`UPSTREAM.md`, source change 6).
+
+The jar is not on the live server yet, and no pack client has joined a server with it. The checks
+that the bundles handed to the release and that need a pack client or a player on Arclight are in
+`ports/actuallyadditions-backport-carryover.json` under `aa-client-test` and `aa-arclight-test`, and
+the deploy under `aa-live-rollout`. The carryover notes `aa-ship` in the bundle paragraphs above name
+those checks.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -484,7 +504,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Done in 82954fa, ed5a6dd, 3ee663d, 3ea6f2a and a4700cb, relay capabilities 3af12a2, review fix 0f2da0c |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Done in 06104c9, 0137a04, 02be2bd, 03f016e, 3d78e0c, e7b2e2b and 06b0aa9, review fix a4678ee |
 | Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Done in b20fb45, 6c21c97, bd9ef14, e8f4585, e54f16f and 37c42b5, review fix 1fd242f |
-| Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Planned |
+| Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Done in 40d0122, ed177d0, 0ed346b, 1975ce6 and b772868, with the docs commits after them |
 
 The baseline comes first, then server safety and the data core. The assets wait for the data core,
 because both edit the tag and recipe generators in `data/`. The three machine bundles (processing
@@ -812,9 +832,15 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
 
 ### Release
 
-- The savegame test, the jar in `local-mods/` and `mods/`, the permission record, the license text,
-  the README row, the entry in [Mod set](mod-set.md), the carryover file and the final state of this
-  page.
+- A data pack empowering recipe without exactly four modifiers is skipped with a log line instead of
+  stopping the server, as `main` skips it through its codec (40d0122, `UPSTREAM.md`, source change
+  70). The crushing serializer got the same fix in 1205f84.
+- The NOTICE states the content level, parity with upstream 1.3.26 except the exclusions, and the
+  version stays 1.1.52-skytekx.1 (ed177d0, `UPSTREAM.md`, build change 4).
+- The jar went into `local-mods/` with the permission record and the license text (0ed346b), and the
+  common config of the first pack boot into `config/` (1975ce6). The savegame test and the full pack
+  boot are under [Release test](#release-test). The README, the [Mod set](mod-set.md), the
+  [open items](../open-items.md), the inventory and the carryover file follow the release.
 
 ## Pack integration
 
@@ -846,6 +872,17 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   `skylands-datapack/data/minecraft/tags/worldgen/biome/is_overworld.json`, so they get the ore and
   the rice patches, while no `forge:` climate tag of the canola, flax and coffee patches lists them
   (`UPSTREAM.md`, source change 56). See [Skylands worldgen](../content/skylands-worldgen.md).
+- The tag `forge:holds_items` stays empty, as `c:holds_items` stays empty under NeoForge on `main`,
+  so the sack slots and the sack pickup, which both refuse that tag, still take shulker boxes and
+  other sacks (decision of the release). A sack keeps its items in the saved data of the world and
+  only a UUID on its stack, so a sack inside a shulker box does not grow the stack data.
+- The Wings Of The Bats and the Storage Crate Keeper keep the recipes of `main` and their `(WIP)`
+  label, although the wings never tick and the keeper is a plain item without crates on the fork
+  (decision of the release, `UPSTREAM.md`, source change 67). The Chinese translation is the file of
+  `main` and keeps its unused keys, and the keys that only the fork has fall back to English.
+- Advanced Loot Info logs four WARN lines at the pack boot, because it has no reader for the two loot
+  modifiers and the Engineer trade list, so its loot view leaves out the Bat Wings, the dungeon loot
+  and the Engineer trades (`aa-ship-arclight-latest.log` of the workflow scratchpad).
 - The dungeon loot modifier matches only the nine vanilla chest tables it names, through
   `forge:loot_table_id`, which sees only the queried top level table. Better Dungeons 4.0.4 and
   Better Strongholds 4.0.3 ship chest tables of their own under `data/betterdungeons/loot_tables/`
@@ -903,9 +940,13 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   notice text, and the InvTweaks annotations of unchecked license (4f87826).
 - Patchouli, Curios and JEI are compile time dependencies only, and no class of them ships in the
   jar.
-- The release adds a record in `modrinth-permissions/` (MIT, unofficial build, no 1.20.1 file on the
-  Modrinth project, the project id checked against the Modrinth API) and the MIT text with its
-  copyright line in `licenses/`, named after the jar like the other license files.
+- The record `modrinth-permissions/ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar.md` says OK,
+  Licensed, MIT, and that the Modrinth project `actually-additions` (id `4K7Q3nqd`) has no 1.20.1 file:
+  its 35 files cover 1.7.10 to 1.12.2, 1.20.4 and 1.21.1 (Modrinth API, checked on 2026-11-06). It
+  links the source in `tree/master/ports/actuallyadditions`, so `tools/mrpack_permissions.py` refuses
+  a public build until master holds that directory and this jar. The file
+  `licenses/ActuallyAdditions-1.20.1-1.1.52-skytekx.1-LICENSE.txt` holds the upstream MIT text with its
+  copyright line, the MIT notice of Mekanism and the credit of the Ender IO excerpt (0ed346b).
 
 ## Savegame notes
 
@@ -1135,6 +1176,26 @@ The Player Interface of the base never saved its player, so it had nothing to ke
 a Phantom Energyface or a relay with a pipe or cable over a real unload and the Item Tag anvil rename
 on Arclight (carryover `aa-arclight-test`).
 
+### Full pack boot
+
+The Arclight pack boot copy of the workflow scratchpad booted the worktree at 0ed346b with the
+production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, label `aa-ship-arclight`
+(`packboot-logs/aa-ship-arclight-summary.json`). It loaded 299 mods from 272 jars, reached `Done` in
+17.8 s with 0 FATAL lines, no crash report, no watchdog and a clean RCON stop, and generated the test
+points of the Overworld, the Twilight Forest and the Skylands. Against the boot `createaddition-arclight`
+of b781300 it shows no new log signature, and its three ERROR lines are the AllTheLeaks line of the
+boot error baseline and the `RuntimeDistCleaner` and Nostalgic Tweaks lines that every boot of the
+fresh test copy shows, which has no EssentialsX. The mod adds four WARN lines of Advanced Loot Info,
+which finds no reader for the two loot modifiers and the Engineer trade list, so its loot view leaves
+the Bat Wings, the dungeon loot and the Engineer trades out. The first start wrote
+`config/actuallyadditions-common.toml`, which 1975ce6 commits.
+
+`tools/build_mrpack.py --allow-unpermitted` of 1975ce6 put the jar with the same SHA-1 into
+`overrides/mods/`, the license text into `overrides/licenses/` and the config into
+`overrides/config/` of a private pack with 58 bundled jars. A public build refuses the jar until
+master holds `ports/actuallyadditions/`, as for the other forks. No pack client joined a server yet
+(carryover `aa-client-test`).
+
 ## Local divergences
 
 These differ from upstream on purpose and must survive the next upstream sync.
@@ -1161,6 +1222,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   through a loaded chunk, relays find their network through an index and invalidate their
   capabilities, and the magnet rings scan every 4 ticks (`UPSTREAM.md`, source changes 60 to 64).
 - The fork keeps the ids that `main` removed or renamed and the base's inventory format.
+- The empowering recipe serializer refuses a recipe without exactly four modifiers with a
+  `JsonSyntaxException`, which the recipe manager of Forge 47 logs and skips, where the base threw an
+  `IllegalStateException` that stopped the server. On `main` the codec does the same with a
+  `DataResult` error (`UPSTREAM.md`, source change 70).
 - Tags use `forge:` instead of `c:`, and tiny coal gets no nugget tag.
 - The Lens of the Killer takes a `forge:partial_nbt` book with Sharpness V in `StoredEnchantments`,
   since the strict ingredient of the base and the 1.20.4 line matched no real book. The 3x3 slime
@@ -1257,11 +1322,13 @@ These differ from upstream on purpose and must survive the next upstream sync.
 ## Operator notes
 
 - Server and clients update together. The mod adds blocks and items, so a client without it cannot
-  join, and the protocol bump refuses a client with another build.
-- Mirror the jar by hand while the java process is gone: copy it from `local-mods/` into `mods/`.
-  Then boot, and commit the new `config/actuallyadditions-common.toml` before
-  `tools/build_mrpack.py`, which takes overrides from git HEAD. Edit that file only while the java
-  process is gone.
+  join, and the protocol bump refuses a client with another build. The release ships with
+  `PROTOCOL_VERSION` 5, so any later change of the handler list or of a payload bumps it.
+- Mirror the jar by hand while the java process is gone: stop over RCON, wait until the java process
+  has exited, copy `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar` from `local-mods/` into `mods/` and
+  boot. The tracked `config/actuallyadditions-common.toml` (1975ce6) is the file the first start
+  writes, so the boot changes nothing in git. Edit that file only while the java process is gone, and
+  commit a change before `tools/build_mrpack.py`, which takes overrides from git HEAD.
 - The ore, the crop patches and the Engineer houses only reach chunks that do not exist yet. The
   live world gets them in new areas only. Keep `/locate` sweeps off the live server.
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only
@@ -1285,6 +1352,9 @@ These differ from upstream on purpose and must survive the next upstream sync.
   and manual bundles (inventory, `critic_notes`, Structure changes).
 - The draft also planned to port f2596f97, 82aaacf1, 9ec20f48 and 758001e2, which the review found
   already in effect on the base or not needed.
+- Until the release, `UPSTREAM.md` kept the version `1.3.26-skytekx.N` open as an alternative for a
+  backport close to the 1.3.x line. The release kept 1.1.52-skytekx.1 and states the content level in
+  the NOTICE instead (ed177d0).
 
 Related: [Mod set](mod-set.md), [Twilight Forest backport](twilightforest-backport.md),
 [Ender IO backport](enderio-backport.md), [AlmostUnified](almostunified.md),

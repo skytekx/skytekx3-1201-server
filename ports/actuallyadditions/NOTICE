@@ -105,11 +105,11 @@ Modifications
       Collector also empties full water and lava cauldrons.
     * Farmer: a compass sets its work area, it plants nether wart again, leaves modded farmland
       alone and tills modded soil into its own farmland, and planting makes a sound.
-    * Atomic Reconstructor: its beam and the other lasers render as particles, the renderer no
-      longer crashes, death messages and tooltips work, lenses stack, the Lens of Color keeps
-      stack sizes, and the Lens of the Miner makes copper, black quartz, ancient debris and
-      deepslate ores, plus the ores of Mekanism, Immersive Engineering, Powah and ElementalCraft
-      when those mods are loaded, without doubling the chances on deepslate.
+    * Atomic Reconstructor: the renderer no longer crashes, death messages and tooltips work,
+      lenses stack, the Lens of Color keeps stack sizes, and the Lens of the Miner makes copper,
+      black quartz, ancient debris and deepslate ores, plus the ores of Mekanism, Immersive
+      Engineering, Powah and ElementalCraft when those mods are loaded, without doubling the
+      chances on deepslate. Its beam renders as a particle, see Particles and lasers below.
     * Display Stand and Empowerer: the hand swings when an item goes in, and the empowered
       emeradic crystals ask for short grass instead of tall grass.
     * Greenhouse Glass: it is visible again, with no faces between two panes, and it reaches
@@ -157,6 +157,10 @@ Modifications
       machines that cache its energy capability no longer keep using a battery that was taken
       out. The energy bar shows the charge, and the creative tab and JEI list an empty and a
       charged stack of every energy item.
+    * Particles and lasers: the beams of the Atomic Reconstructor, the Vertical Digger, the
+      Leaf Generator and the other lasers render as particles, the lasers use the shader that
+      upstream chose for shader packs, and the item particles of item networks no longer
+      disturb translucent particles nearby.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

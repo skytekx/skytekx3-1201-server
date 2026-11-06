@@ -828,17 +828,18 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     its position is no longer a reconstructor (`713568d`), which crashed the client when it read
     the facing of another block. Every laser of the server is a beam particle now, the
     reconstructor's too (`337fbfb`): the particle has its own render type with additive blending
-    (`fb80bf3`, `58b9cbc`), and `AssetUtil.renderLaserParticle` draws the tube in the format
-    position, colour and lightmap. The base wrote the particle into the tesselator without
-    beginning it, which throws, and spawned no particle for any laser but the reconstructor's,
-    whose beam its block entity renderer drew. The particle leaves out the texture coordinates of
-    `main`, which point at the white sprite of Forge in a format that has no texture, and it only
-    spawns when the client has a level and a player, where `main` can read a null player. The
-    lens sits in the middle of the block again (`337fbfb`). Death by the Lens of Certain Death
-    shows its five messages again (`c995908`): the message id already holds the mod id, so the
-    base looked for keys with the mod id twice, and the lang keys are now
-    `death.actuallyadditions.atomic_reconstructor.1` to `.5` as on `main`. The flavour name in
-    the tooltip of the reconstructor item reads the level of the tooltip, which can be null
+    (`fb80bf3`, `58b9cbc`), and `AssetUtil.renderLaserParticle` draws the tube. Item 44 replaces
+    the format position, colour and lightmap and the begin and end for each beam that this item
+    first had with the position and colour format of `main` in one buffer. The base wrote the
+    particle into the tesselator without beginning it, which throws, and spawned no particle for
+    any laser but the reconstructor's, whose beam its block entity renderer drew. The particle
+    leaves out the texture coordinates of `main`, which point at the white sprite of Forge in a
+    format that has no texture, and it only spawns when the client has a level and a player, where
+    `main` can read a null player. The lens sits in the middle of the block again (`337fbfb`).
+    Death by the Lens of Certain Death shows its five messages again (`c995908`): the message id
+    already holds the mod id, so the base looked for keys with the mod id twice, and the lang keys
+    are now `death.actuallyadditions.atomic_reconstructor.1` to `.5` as on `main`. The flavour name
+    in the tooltip of the reconstructor item reads the level of the tooltip, which can be null
     (`ae60e77`, #1415), so the common class no longer names the client class `Minecraft`.
     Lenses stack to 64 (`c0e0480`), and a stack of the same lens with the same tags takes the
     lens out of the reconstructor. The slot holds one lens, so a hopper cannot fill it with a
@@ -1173,3 +1174,32 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     bar. A battery taken out of the box by hand left the slot of the box empty. JEI listed two
     entries each for the Single and the Quintuple Battery, the drill and the Teleport Staff. Not
     tested: a caching cable that lets go of a battery that leaves the box.
+44. Particles and laser render: the beam particle renders (`fb80bf3`). The base wrote it into the
+    tesselator without beginning it, which throws, and spawned no particle for any laser at all,
+    since `spawnLaserWithTimeClient` only reset the beam of an Atomic Reconstructor. Every laser
+    of the server is a beam particle now, the beams of the Vertical Digger and the Leaf Generator
+    too, with the same text as the port of `fb80bf3` and `337fbfb` in the world machines bundle,
+    which also takes the beam out of the reconstructor renderer (item 27). This item replaces the
+    lightmap format of item 27 and its begin and end of the tesselator for each beam. The particle
+    has its own render type with additive blending (`fb80bf3`, `58b9cbc`), and it draws position
+    and colour only (`7fb62cb`) with the shader `position_color` (`db1bb6e`, changelog 1.3.9,
+    compatible with Iris, which is Oculus on 1.20.1). The 1.20.1 particle engine hands the render
+    type the buffer of the tesselator, so `ParticleBeam.LASER_RENDER` begins it in that format,
+    sets the shader and draws all beams of a frame at its end, the part that the 1.21 engine does
+    with the buffer that `begin` returns. The relay lasers use `position_color` too (`db1bb6e`),
+    with the colour dimmed to 0.4 as there, and lose the texture coordinates of `8374a4d`, which
+    their format never had (`de635bb`). The item particle of the item laser relays has its own
+    render type (`b3f87a6`, #1486, changelog 1.3.18), and its item render no longer binds the block
+    atlas and changes its mipmap blur in the middle of the particle pass. Translucent particles
+    next to the item particles glitched before, since the item particle sat in the translucent
+    particle sheet. The 1.21 type begins a buffer that stays empty, so the 1.20.1 type only sets
+    the blending and puts it back at the end. The beam keeps its colour as three floats and an
+    alpha in `BeamParticleData`, the 1.20.1 form, where `7fb62cb` packs the alpha into the int
+    colour of the 1.21 particle data. The client test with and without Oculus and Embeddium has not
+    been run (not verified). No id, key or packet changes.
+    In the same test, with the particle setting at all, the particle engine of the client held
+    particles of the render types `actuallyadditions:laser_particle` and
+    `actuallyadditions:item_particle` and none in the translucent sheet. A screenshot shows the
+    beam of an Atomic Reconstructor, which only spawns for players within 8 blocks of its start
+    or end as on `main`, and closer screenshots show the cobblestone items over the item relays.
+    The client log has no ERROR line but the one of the sound system of the headless client.

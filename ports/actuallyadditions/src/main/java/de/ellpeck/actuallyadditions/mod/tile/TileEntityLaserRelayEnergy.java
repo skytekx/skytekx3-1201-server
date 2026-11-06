@@ -32,6 +32,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +43,12 @@ public class TileEntityLaserRelayEnergy extends TileEntityLaserRelay {
     public static final int CAP = 1000;
     public final ConcurrentHashMap<Direction, BlockEntity> receiversAround = new ConcurrentHashMap<>();
     private final IEnergyStorage[] energyStorages = new IEnergyStorage[6];
+    // SkyTekx: one LazyOptional per side and one for the null side, made on the first query and
+    // invalidated in invalidateCaps, as the Battery Box does since 5f70fbc. The base built a new
+    // LazyOptional at every query and never invalidated it, so a cable that caches the relay capability
+    // kept a handler after the relay was broken or its chunk unloaded
+    @SuppressWarnings("unchecked")
+    private final LazyOptional<IEnergyStorage>[] energyCaps = new LazyOptional[7];
     private Mode mode = Mode.BOTH;
 
     public TileEntityLaserRelayEnergy(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -112,9 +119,34 @@ public class TileEntityLaserRelayEnergy extends TileEntityLaserRelay {
 
     @Override
     public LazyOptional<IEnergyStorage> getEnergyStorage(Direction facing) {
-        return LazyOptional.of(() -> this.energyStorages[facing == null
-            ? 0
-            : facing.ordinal()]);
+        int index = facing == null
+            ? 6
+            : facing.ordinal();
+        LazyOptional<IEnergyStorage> cap = this.energyCaps[index];
+        if (cap == null) {
+            IEnergyStorage storage = this.energyStorages[facing == null
+                ? 0
+                : facing.ordinal()];
+            cap = LazyOptional.of(() -> storage);
+            this.energyCaps[index] = cap;
+        }
+        return cap;
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        for (LazyOptional<IEnergyStorage> cap : this.energyCaps) {
+            if (cap != null) {
+                cap.invalidate();
+            }
+        }
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        Arrays.fill(this.energyCaps, null);
     }
 
     @Override

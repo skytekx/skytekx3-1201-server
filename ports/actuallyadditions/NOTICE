@@ -221,6 +221,9 @@ Modifications
       unchanged.
     * Ring of Magnetizing: the rings of a player look for items every fourth tick and only once
       for all rings in the inventory, instead of once per ring in every tick.
+    * Laser relay capabilities: the energy and fluid relays hand out one capability per side and
+      invalidate it when the relay is broken or its chunk unloads, so a cable that caches it lets
+      go of a relay that is gone.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

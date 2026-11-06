@@ -33,6 +33,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,6 +44,12 @@ public class TileEntityLaserRelayFluids extends TileEntityLaserRelay {
 
     public final ConcurrentHashMap<Direction, BlockEntity> handlersAround = new ConcurrentHashMap<>();
     private final IFluidHandler[] fluidHandlers = new IFluidHandler[6];
+    // SkyTekx: one LazyOptional per side and one for the null side, made on the first query and
+    // invalidated in invalidateCaps, as the Battery Box does since 5f70fbc. The base built a new
+    // LazyOptional at every query and never invalidated it, so a pipe that caches the relay capability
+    // kept a handler after the relay was broken or its chunk unloaded
+    @SuppressWarnings("unchecked")
+    private final LazyOptional<IFluidHandler>[] fluidCaps = new LazyOptional[7];
     private Mode mode = Mode.BOTH;
 
     public TileEntityLaserRelayFluids(BlockPos pos, BlockState state) {
@@ -157,9 +164,34 @@ public class TileEntityLaserRelayFluids extends TileEntityLaserRelay {
     // TODO: [port] super hacky, find better way of handling this.
     @Override
     public LazyOptional<IFluidHandler> getFluidHandler(Direction facing) {
-        return LazyOptional.of(() -> this.fluidHandlers[facing == null
-            ? 0
-            : facing.ordinal()]);
+        int index = facing == null
+            ? 6
+            : facing.ordinal();
+        LazyOptional<IFluidHandler> cap = this.fluidCaps[index];
+        if (cap == null) {
+            IFluidHandler handler = this.fluidHandlers[facing == null
+                ? 0
+                : facing.ordinal()];
+            cap = LazyOptional.of(() -> handler);
+            this.fluidCaps[index] = cap;
+        }
+        return cap;
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        for (LazyOptional<IFluidHandler> cap : this.fluidCaps) {
+            if (cap != null) {
+                cap.invalidate();
+            }
+        }
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        Arrays.fill(this.fluidCaps, null);
     }
 
     private int transmitFluid(Direction from, FluidStack stack, IFluidHandler.FluidAction action) {

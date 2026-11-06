@@ -2039,3 +2039,18 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and on 1.12.
     Savegame: none. New ids: none.
     Not tested in game, since the ring needs a player.
+64. Laser relay capabilities: the energy relays (`TileEntityLaserRelayEnergy#getEnergyStorage`,
+    which the Advanced and Extreme relays inherit) and the fluid relay
+    (`TileEntityLaserRelayFluids#getFluidHandler`) built a new `LazyOptional` at every query and
+    never invalidated it. A cable or pipe that caches the capability of a relay kept a handler
+    after the relay was broken or its chunk unloaded, and only a neighbour update made it let go.
+    Each relay now keeps one `LazyOptional` per side and one for the null side, which still hands
+    out the handler of the down side as the base did. They are made at the first query,
+    invalidated in `invalidateCaps`, which Forge 47 calls from `BlockEntity#setRemoved` when the
+    relay is broken or its chunk unloads, and made anew after `reviveCaps`, as the Battery Box does
+    since source change 43. On `main` the capabilities of NeoForge 21 need no such step, the level
+    drops them with the block entity, so this is the Forge form of the same behaviour and a local
+    change (carryover items 83 and 86).
+    Savegame: none. New ids: none.
+    Not tested in game. A cable that caches the relay capability and lets go of a broken relay is
+    left for the ship stage (carryover `aa-ship`).

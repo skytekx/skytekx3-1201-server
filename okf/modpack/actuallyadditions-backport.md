@@ -32,8 +32,9 @@ second check against the critic's commit list in the workflow scratchpad (`aacri
 none missing in the committed file. At the release the inventory also took in the 67 features of the
 first draft with their upstream commits, paths and tests, each with the bundle of the final plan,
 and every bundle got its status. The file `ports/actuallyadditions-backport-carryover.json` holds the
-153 items that the porters and integrators handed on, per bundle, and every item handed to the
-release carries a release note there. Its key `aa-ship` lists what stays open after the release.
+161 items that the porters and integrators handed on, per bundle, and every item handed to the
+release carries a release note there. The eight items of the release bundle itself carry the note of
+the final ship stage. Its key `aa-ship` lists what stays open after the release.
 
 | Property | Value |
 |---|---|
@@ -47,7 +48,7 @@ release carries a release note there. Its key `aa-ship` lists what stays open af
 | Ships as | The jar in `local-mods/` since 9734e8f, which the `.mrpack` carries under `overrides/mods/`. The server's `mods/` gets it by hand at the deploy. The Modrinth project has no 1.20.1 file the index could point at |
 | Build check | The `compileJava` call in `UPSTREAM.md`, run with `/opt/jdk17` and `-Xmx2g`, with upstream's compiler settings |
 | Integrations | Patchouli 85 (`modrinth.index.json:2169`), Curios 5.14.1 (`modrinth.index.json:1014`), JEI 15.74.0.233 (`modrinth.index.json:1584`) and EMI 1.1.24-skytekx.2 from `local-mods/`, all optional |
-| Dependents | None. Of the 264 `mods.toml` files in the Arclight pack boot copy of the workflow scratchpad (`packboot-arclight/mods/`), none names `actuallyadditions` (scan of 2026-11-05) |
+| Dependents | None. Of the 264 `mods.toml` files in the Arclight pack boot copy of the workflow scratchpad (`packboot-arclight/mods/`), none names `actuallyadditions` (scan of 2026-11-05). On 2026-11-06 no class of its 272 jars linked a symbol of the mod, and the 150 references of the fork into JEI, Patchouli and Curios all resolved, see [Final ship stage](#final-ship-stage) |
 
 ## Status on 2026-11-06
 
@@ -481,7 +482,11 @@ clean builds of 6b5b19e gave the jar SHA-1 `227073059543dd3d969cd53a15f1fd42a389
 bytes, 2529 entries), and a `runData` into an empty `src/generated/resources` wrote all 1238 files
 unchanged, so the committed generated files match the providers. The savegame test from the base jar
 237e0fc6 kept every item, fluid and energy value and showed the planned changes, and the full pack
-booted on the pack's Arclight with no new log signature, see [Release test](#release-test). Every
+booted on the pack's Arclight with no new log signature, see [Release test](#release-test). The
+final ship stage then rebuilt the jar from 712c4e0 with the same SHA-1, found the generated files
+equal to the providers again, booted the full pack on Forge 47.4.18 and on Arclight with no new log
+signature and gave Flux Networks the current id of the Phantom Energyface in `defaultconfigs/`
+(0a5bb1b), see [Final ship stage](#final-ship-stage). Every
 owning feature reads the new config, and the two readers of the 1.12 enums that are left read
 `false` as on `main` (`UPSTREAM.md`, source change 6).
 
@@ -506,7 +511,7 @@ those checks.
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Done in 82954fa, ed5a6dd, 3ee663d, 3ea6f2a and a4700cb, relay capabilities 3af12a2, review fix 0f2da0c |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Done in 06104c9, 0137a04, 02be2bd, 03f016e, 3d78e0c, e7b2e2b and 06b0aa9, review fix a4678ee |
 | Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Done in b20fb45, 6c21c97, bd9ef14, e8f4585, e54f16f and 37c42b5, review fix 1fd242f |
-| Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Done in 17f8b41, 6b5b19e, 9734e8f, 83573f2 and e249be0, with the docs commits after them, review fix 6002c9b |
+| Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Done in 17f8b41, 6b5b19e, 9734e8f, 83573f2 and e249be0, with the docs commits after them, review fix 6002c9b, final ship stage with the Flux Networks config 0a5bb1b and the boots of both loaders |
 
 The baseline comes first, then server safety and the data core. The assets wait for the data core,
 because both edit the tag and recipe generators in `data/`. The three machine bundles (processing
@@ -844,6 +849,12 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   common config of the first pack boot into `config/` (83573f2). The savegame test and the full pack
   boot are under [Release test](#release-test). The README, the [Mod set](mod-set.md), the
   [open items](../open-items.md), the inventory and the carryover file follow the release.
+- The final ship stage built the jar again from a worktree of 712c4e0 with `./gradlew build` and got
+  the SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb` of `local-mods/`. A `runData` over the
+  committed tree ran 23 providers and wrote none of the 1238 files, and git showed no change. The
+  full pack booted on Forge 47.4.18 and on Arclight, and the default server config of Flux Networks
+  now names the Phantom Energyface by its 1.20.1 id (0a5bb1b), see
+  [Final ship stage](#final-ship-stage) and [Pack integration](#pack-integration).
 - No public pack with this jar goes up before a pack client from the `.mrpack` has joined the
   Arclight test server over `actuallyadditions:main` with protocol 5, the login item of carryover
   `aa-client-test`. The private pack of the release test never joined a server, so the registry sync
@@ -901,6 +912,16 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   those dungeons and strongholds get no loot of the mod. Whether the Better Mineshafts chests roll
   the vanilla mineshaft table, and whether the two sets of tables should join the list, is an owner
   decision and was not checked in a world (carryover `aa-ship`, see [open items](../open-items.md)).
+- Flux Networks 7.2.1.15 keeps its plugs and points off the Phantom Energyface through the block
+  blacklist of its server config. Its default names `actuallyadditions:block_phantom_energyface`,
+  the 1.12 id, while the fork registers `actuallyadditions:phantom_energyface`
+  (`mod/blocks/ActuallyBlocks.java:223`). Flux Networks resolves each entry with
+  `ForgeRegistries.BLOCKS.getValue`, which returns air for an unknown id, so the boots of 712c4e0
+  logged "Energy blacklist loaded: 1 block entries" for air and the face stayed open to flux
+  devices. Since 0a5bb1b `defaultconfigs/fluxnetworks-server.toml` holds the file Flux Networks
+  writes with the current id, and Forge copies it into `world/serverconfig/` for a world without
+  that file. Nobody has placed a flux point next to a Phantom Energyface in game yet (carryover
+  `aa-ship`).
 
 ## Excluded
 
@@ -1209,6 +1230,42 @@ SHA-1 into `overrides/mods/`, the license text into `overrides/licenses/` and th
 master holds `ports/actuallyadditions/`, as for the other forks. No pack client joined a server yet
 (carryover `aa-client-test`), which gates a public pack, see [Release](#release).
 
+### Final ship stage
+
+The final ship stage of 2026-11-06 checked the state of 712c4e0, the tree of the release with its
+docs commits, from a worktree in the workflow scratchpad. Its logs, tools and scan results are in
+`bp2/actuallyadditions/final/`.
+
+- A full `./gradlew build` with `/opt/jdk17` gave the jar SHA-1
+  `227073059543dd3d969cd53a15f1fd42a38985cb` of `local-mods/` (`build.log`, 100 compiler warnings
+  as in the release build). A `runData` ran 23 providers, and HashCache wrote 0 of 1238 files
+  (`rundata.log`), so the committed generated files and the `.cache` files need no refresh.
+- The link check `aacompat.py` in that folder, adapted from the compat scan of the Twilight Forest
+  port, found no class of the 272 jars of the pack boot copy outside the fork that links a symbol of
+  `de/ellpeck/actuallyadditions/`. The 150 references of the fork into JEI 15.74.0.233, Patchouli 85
+  and Curios 5.14.1 (126, 15 and 9) all resolve (`compat-forward.txt`, `compat-reverse.txt`). The
+  three version ranges of the optional dependencies in `META-INF/mods.toml` accept those versions.
+- The Forge boot `actuallyadditions-forge` loaded 298 mods from 272 jars and reached `Done` in
+  15.8 s, and the Arclight boot `actuallyadditions-arclight` with the production jar
+  `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` loaded 299 mods and reached `Done` in 19.3 s
+  (`packboot-logs/actuallyadditions-forge-summary.json` and
+  `actuallyadditions-arclight-summary.json`). Both had 0 FATAL lines, no crash report, no watchdog,
+  a clean RCON stop after 4 s and the generated test points of the Overworld, the Twilight Forest
+  and the Skylands. Neither shows a new log signature against the baselines `wavea-forge` and
+  `wavea-arclight`, nor against `enderio-fix-forge` and `aa-ship-arclight`. Their three ERROR lines
+  are the ones of the release boot above.
+- On both loaders Mixin applied `AnvilMixin` to `AnvilMenu` and `ItemCombinerMenuAccessor` to
+  `ItemCombinerMenu` (debug logs, `Mixing ... from actuallyadditions.mixins.json`), logged no apply
+  failure and no WARN about the reference map. The client mixin `client.MinecraftMixin` targets a
+  client class, so a dedicated server never applies it.
+- Next to the four Advanced Loot Info lines, the boots logged that Flux Networks corrected its
+  missing blacklist to the default `[actuallyadditions:block_phantom_energyface]`, an id the fork
+  does not have, see [Pack integration](#pack-integration). After 0a5bb1b the Forge boot
+  `actuallyadditions-forge-flux` copied `defaultconfigs/fluxnetworks-server.toml` byte for byte into
+  `world/serverconfig/` (`flux-after-boot.toml`). It logged none of the 18 `Incorrect key` lines of
+  Flux Networks, reached `Done` in 15.2 s with the same 3 ERROR lines and both mixins, and showed
+  no new log signature against `actuallyadditions-forge`.
+
 ## Local divergences
 
 These differ from upstream on purpose and must survive the next upstream sync.
@@ -1354,6 +1411,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   `plugins/Essentials/userdata/` named by its UUID `5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd`. Git does
   not ignore that folder, so keep such a file out of commits. Nobody has checked this yet
   (carryover `aa-ship`).
+- The first boot of the live world with Flux Networks copies `defaultconfigs/fluxnetworks-server.toml`
+  with the current id of the Phantom Energyface (0a5bb1b). A world that already has
+  `world/serverconfig/fluxnetworks-server.toml` keeps its own file, so change `blockBlacklistStrings`
+  there to `["actuallyadditions:phantom_energyface"]` while the java process is gone.
 - Announce the new mod to the players, with the manual that needs Patchouli and the key bind of the
   Crafting Table On A Stick.
 

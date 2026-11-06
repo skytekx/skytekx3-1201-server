@@ -1110,5 +1110,28 @@ logs stay on the Mac and are not in the repo.
   AGENTS.md asks for `git log --find-object` before every push, see
   [Publish](modpack/publish.md#release-steps).
 
+## 2026-11-06: Unification and melting for the mods of the branch
+
+- After the merge of master with pack 3.1.3 (5c2c6f3), the unify audit and the generated melting were
+  run again for the merged mod set, as [AlmostUnified](modpack/almostunified.md#audit-of-the-merged-mod-set)
+  and [Melting](content/melting.md#running-it-again) describe. Two Forge 47.4.18 test boots of the merged
+  tree, at 20:57 and 21:11, reached `Done` with 0 FATAL lines and the 3 accepted ERROR lines of a test
+  copy and stopped clean over RCON. The unify dump script first needed the same guard against the
+  `getRecipes()` accessor of Create: Dragons Plus as the melting dump (3bb9339).
+- The audit found 284 variants, the 282 of 3.1.3 and the salts of Expanded Delight and Pam's Food Core,
+  and no other new variant, since the new mods keep black quartz, the crystals, the Ender IO alloys and
+  the metals of Extreme Reactors in tags of their own. The salt of Medieval Embroidery joined
+  `forge:dusts/salt` (3891eb8), the cinnamon planks of Expanded Delight joined ten skip tags of the wood
+  fallbacks (506781f), and the EMI hide list names 285 variants (859ecb7). The two rices of Actually
+  Additions and Farmer's Delight went to the owner, see [Open items](open-items.md#owner-decisions).
+- The melting reader counts the containers of the Farmer's Delight cooking pot and the Expanded Delight
+  juicer and the display stand items of the Empowerer as used up (4135bfb), and the three horse armor
+  loops of the Actually Additions crusher are known machine dupes (c3060fa), an owner decision as well.
+  The folder grew from 9,526 to 9,717 files with 191 new and 16 changed files and none gone (df94ad4).
+  The audit found no new dupe, a dump with the folder in place gave the same files, and 14 real melters
+  gave the amounts of their files, see
+  [Melting](content/melting.md#regeneration-for-the-mods-of-the-branch).
+- None of it is live. The Mac mini runs pack 3.1.3, and the files come with the next pack after it.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

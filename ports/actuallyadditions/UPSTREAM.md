@@ -1993,3 +1993,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     connection pairs, is unchanged. The checks for loaded chunks in the transfer loops of the
     energy, fluid and item relays stay as they are. This is a local change.
     Savegame: none, the index is never saved. New ids: none.
+63. Ring of Magnetizing: every ring stack in the inventory looked for item entities in its box of 11
+    blocks in every tick. The rings of a player now look every 4 ticks
+    (`ItemMagnetRing.SCAN_INTERVAL`), staggered by the entity id of the player so that the players
+    of a server do not all scan in the same tick, and only the first ring of the inventory that is
+    switched on scans. An item is paid by the first switched on ring that has the energy for it, so
+    a second ring still takes over when the first one runs dry, as it did when each ring scanned
+    on its own. The pickup still goes through `ItemEntity#playerTouch`, which posts the Forge pickup
+    event and, on Arclight, the Bukkit `PlayerPickupItemEvent` and `EntityPickupItemEvent` of its
+    `ItemEntityMixin`, and the `PreventRemoteMovement` check of other mods stays. The switch keeps
+    the NBT key `IsEnabled`, which the ring now reads without adding an empty tag. These are local
+    changes. Of `c10862ce` only the annotation of `isFoil` concerns the ring. The ring of `main`
+    pays with `extractEnergy` since the 1.21 port `23815b70`, because the internal extraction
+    finds no storage there (`ItemEnergy.java` line 105 of `main` marks it with a TODO), and that
+    call is capped at the 1000 CF per tick of the ring. On 1.20.1 the internal extraction of
+    `3ed5e9cc` works, so the ring keeps it and a stack of 64 still costs 3200 CF, as on the base
+    and on 1.12.
+    Savegame: none. New ids: none.

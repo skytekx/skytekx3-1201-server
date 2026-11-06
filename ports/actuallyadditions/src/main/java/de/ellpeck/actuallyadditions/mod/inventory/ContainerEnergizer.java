@@ -10,6 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.inventory;
 
+import de.ellpeck.actuallyadditions.mod.inventory.slot.ArmorSlot;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotItemHandlerUnconditioned;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotOutput;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityEnergizer;
@@ -20,9 +21,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import java.util.Objects;
@@ -57,34 +56,12 @@ public class ContainerEnergizer extends AbstractContainerMenu {
             this.addSlot(new Slot(inventory, i, 8 + i * 18, 155));
         }
 
+        // SkyTekx: upstream e7e2de68, 556fa487 and c1d10d12 (#1456): the armor slots show their
+        // empty icons and keep the Curse of Binding rule, and the off hand slot sits next to boots
         for (int k = 0; k < 4; ++k) {
-            EquipmentSlot slot = VALID_EQUIPMENT_SLOTS[k];
-            this.addSlot(new Slot(inventory, 36 + 3 - k, 102, 19 + k * 18) {
-                @Override
-                public int getMaxStackSize() {
-                    return 1;
-                }
-
-                @Override
-                public boolean mayPlace(ItemStack stack) {
-                    return StackUtil.isValid(stack) && stack.getItem() instanceof ArmorItem;
-                }
-
-                @Override
-                public boolean mayPickup(Player player) {
-                    ItemStack itemstack = this.getItem();
-                    return (itemstack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(player);
-                }
-
-                // TODO: [port] add back
-
-                //                @Override
-                //                @OnlyIn(Dist.CLIENT)
-                //                public String getSlotTexture() {
-                //                    return Armor.EMPTY_SLOT_NAMES[slot.getIndex()];
-                //                }
-            });
+            this.addSlot(new ArmorSlot(inventory, VALID_EQUIPMENT_SLOTS[k], 36 + 3 - k, 102, 19 + k * 18));
         }
+        this.addSlot(new ArmorSlot.OffHand(inventory, 120, 19 + 3 * 18));
     }
 
     @Override

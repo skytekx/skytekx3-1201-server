@@ -10,17 +10,16 @@
 
 package de.ellpeck.actuallyadditions.mod.inventory;
 
+import de.ellpeck.actuallyadditions.mod.inventory.slot.ArmorSlot;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotItemHandlerUnconditioned;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotOutput;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityEnervator;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
@@ -50,29 +49,11 @@ public class ContainerEnervator extends AbstractContainerMenu {
             this.addSlot(new Slot(inventory, i, 8 + i * 18, 155));
         }
 
+        // SkyTekx: the same armor and off hand slots as the Energizer (556fa487, c1d10d12)
         for (int k = 0; k < 4; ++k) {
-            EquipmentSlot slot = ContainerEnergizer.VALID_EQUIPMENT_SLOTS[k];
-            this.addSlot(new Slot(inventory, 36 + 3 - k, 102, 19 + k * 18) {
-                @Override
-                public int getMaxStackSize() {
-                    return 1;
-                }
-
-                // TODO: [port] validate that this is correct
-                @Override
-                public boolean mayPlace(ItemStack stack) {
-                    return StackUtil.isValid(stack) && stack.getItem() instanceof ArmorItem;
-                }
-
-                // TODO: [port] add this back
-
-                //                @Override
-                //                @OnlyIn(Dist.CLIENT)
-                //                public String getSlotTexture() {
-                //                    return ItemArmor.EMPTY_SLOT_NAMES[slot.getIndex()];
-                //                }
-            });
+            this.addSlot(new ArmorSlot(inventory, ContainerEnergizer.VALID_EQUIPMENT_SLOTS[k], 36 + 3 - k, 102, 19 + k * 18));
         }
+        this.addSlot(new ArmorSlot.OffHand(inventory, 120, 19 + 3 * 18));
     }
 
     @Override

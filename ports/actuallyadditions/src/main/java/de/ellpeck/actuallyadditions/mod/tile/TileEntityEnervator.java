@@ -77,7 +77,7 @@ public class TileEntityEnervator extends TileEntityInventoryBase implements ISha
                     }
 
                     if (canTakeUp) {
-                        tile.inv.setStackInSlot(1, tile.inv.getStackInSlot(0).copy());
+                        tile.inv.setStackInSlot(1, tile.inv.getStackInSlot(0).copyWithCount(1));
                         tile.inv.getStackInSlot(0).shrink(1);
                     }
                 }
@@ -87,6 +87,12 @@ public class TileEntityEnervator extends TileEntityInventoryBase implements ISha
                 tile.lastEnergy = tile.storage.getEnergyStored();
             }
         }
+    }
+
+    // SkyTekx: one item at a time, as in the Energizer
+    @Override
+    public int getMaxStackSize(int slot) {
+        return slot == 0 ? 1 : super.getMaxStackSize(slot);
     }
 
     @Override
@@ -130,7 +136,7 @@ public class TileEntityEnervator extends TileEntityInventoryBase implements ISha
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.enervator");
     }
 
     @Nullable

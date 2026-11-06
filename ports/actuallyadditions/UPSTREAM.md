@@ -1006,3 +1006,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and has nothing to do on the base, whose press already moves pressable items on shift click.
     The crop tag of `9689b4c1` came with source change 9, and its two other files only add TODO
     comments to the fermenting and liquid fuel recipes. No data, NBT key or block state changes.
+36. Energizer and Enervator: both menus get the armor slot class of `556fa487` and the off hand
+    slot of `c1d10d12` (#1456) next to the boots, with the new `gui_energizer.png` of that commit,
+    which is byte identical to `main`. The four armor slots show the empty slot icons of the
+    player inventory (`e7e2de68`), play the equip sound and keep armor with the Curse of Binding
+    on a player who is not in creative mode, which the Enervator did not check before. On 1.20.1
+    a slot takes what `ItemStack.canEquip` allows there, which asks `Mob.getEquipmentSlotForItem`
+    unless the item decides itself, as the armor slots of vanilla's inventory do. The base and
+    `main` take any `ArmorItem` in any of the four slots, so boots fitted the helmet slot. The GUI
+    crash that `556fa487` fixes comes from the 1.21 map of empty slot textures and does not exist
+    on 1.20.1, so no access transformer is needed: the slot uses the public `EMPTY_ARMOR_SLOT_*`
+    constants of `InventoryMenu`. The block entities name their menus (`e7e2de68`), and the names
+    lose their `(wip)` label. The recipes came with source change 10 (`b69847d1`). Local fix: the
+    input slot of both machines holds one item, and a finished item moves out alone. Both machines
+    copied the whole input stack into the output and took one item from the input, which, for a
+    stack of energy items, duplicated all but one of them (unchanged on `main`). Savegame: no
+    NBT key or block state changes. An input stack that an old save holds keeps its count until it
+    is taken out.

@@ -55,6 +55,7 @@ import de.ellpeck.actuallyadditions.mod.network.packet.HotkeyPacket;
 import de.ellpeck.actuallyadditions.mod.particle.ActuallyParticles;
 import de.ellpeck.actuallyadditions.mod.particle.ParticleBeam;
 import de.ellpeck.actuallyadditions.mod.particle.ParticleLaserItem;
+import de.ellpeck.actuallyadditions.mod.patchouli.PatchouliPages;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -74,6 +75,7 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ActuallyAdditionsClient {
@@ -134,6 +136,13 @@ public class ActuallyAdditionsClient {
                         (stack, level, entity, tintIndex) -> "snail mail".equalsIgnoreCase(stack.getHoverName().getString()) ? 1F : 0F));
 
         setupRenderLayers();
+
+        // SkyTekx: the reconstructor page type of the Patchouli manual (upstream 1207a27d), only
+        // with Patchouli (a20c25eb). Patchouli fills the same plain HashMap in its own client setup,
+        // which runs in parallel, so the page type goes in on the main thread
+        if (ModList.get().isLoaded("patchouli")) {
+            event.enqueueWork(PatchouliPages::init);
+        }
     }
 
     private static void setupRenderLayers() {

@@ -3,7 +3,7 @@ type: Mod
 title: Nyx
 description: Ellpeck's moon mod, forked and ported to Forge 1.20.1 for SkyTekx 3, with lunar events, meteors, lunar water and meteor gear.
 tags: [content, mod, nyx]
-timestamp: 2026-11-02
+timestamp: 2026-11-06
 ---
 
 # Nyx
@@ -102,7 +102,7 @@ The file on the server holds the new value since 20:20, and clients read it at t
 - Whether lunar events should also run in the Skylands was never ruled. Commit 44fdf98 turned
   them on there on 2026-10-31, together with a blood moon chance of 0.5. Whether both should
   stay beyond the Halloween map is an owner decision.
-- Two notes still say Nyx is gone: the comment at `kubejs/server_scripts/recipe_fixes.js:28` and the
+- Two notes still say Nyx is gone: the comment at `kubejs/server_scripts/recipe_fixes.js:67` and the
   Nyx rows in `docs/RECIPE_PORT.md` (lines 52 and 55). The fallen star exists again as `nyx:fallen_star`,
   so the SkyTekx 2 hexical diamond recipe could use it (see [KubeJS](../modpack/kubejs.md)).
 

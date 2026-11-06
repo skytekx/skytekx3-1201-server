@@ -14,14 +14,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerCoalGenerator;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityCoalGenerator;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiCoalGenerator extends AAScreen<ContainerCoalGenerator> {
@@ -45,7 +50,6 @@ public class GuiCoalGenerator extends AAScreen<ContainerCoalGenerator> {
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int x, int y, float f) {
-        renderBackground(guiGraphics);
         super.render(guiGraphics, x, y, f);
         this.energy.render(guiGraphics, x, y);
         renderTooltip(guiGraphics, x, y);
@@ -65,5 +69,22 @@ public class GuiCoalGenerator extends AAScreen<ContainerCoalGenerator> {
         }
 
         this.energy.draw(guiGraphics);
+    }
+
+    // SkyTekx: upstream d5757a14 shows what a fuel gives when it is hovered in this screen
+    @Nonnull
+    @Override
+    protected List<Component> getTooltipFromContainerItem(@Nonnull ItemStack stack) {
+        List<Component> tooltip = super.getTooltipFromContainerItem(stack);
+
+        int burnTime = ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);
+        if (burnTime > 0) {
+            tooltip.add(Component.translatable("tooltip.actuallyadditions.coal_generator_stats",
+                    burnTime * TileEntityCoalGenerator.ENERGY_PER_TICK,
+                    TileEntityCoalGenerator.ENERGY_PER_TICK,
+                    burnTime).withStyle(ChatFormatting.GRAY));
+        }
+
+        return tooltip;
     }
 }

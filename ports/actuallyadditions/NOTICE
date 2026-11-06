@@ -119,6 +119,9 @@ Modifications
       copper and deepslate ores, come with a JEI category.
     * Powered Furnace: JEI lists it under smelting and opens that category from its screen, the
       auto split button no longer covers the energy bar, and the item has its tooltip again.
+    * Coal Generator: it burns every furnace fuel at 20 CF/t instead of six fixed fuels, shows
+      what a fuel gives in its screen and no longer darkens its screen twice. The unused solid
+      fuel recipe type stays registered for data packs.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

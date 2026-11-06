@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter, the ore overrides and an EMI hide list carry that into the world, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # AlmostUnified

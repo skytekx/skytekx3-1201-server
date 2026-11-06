@@ -905,5 +905,25 @@ logs stay on the Mac and are not in the repo.
   together, because the network protocol is now "1.0-skytekx.1". The server's `mods/` gets the jar
   only with the deploy of the next pack, after a test on a copy of the live world.
 
+## 2026-11-06: Fox food and roost seeds in two ports
+
+- A review of the NeoForge ports found that the Expanded Delight port had dropped upstream's
+  cranberries in the vanilla tag `minecraft:fox_food`, on the claim that the tag needs Minecraft
+  1.20.5. Vanilla 1.20.1 has it and foxes read it, so 99183d0 restores the file and f655eec bundles the
+  build (SHA-1 `2036aa13`). The chicken, parrot and pig food tags stay out, those really are 1.20.5
+  content, see [Expanded Delight port](modpack/expandeddelight-port.md#what-the-port-changes).
+- The same review found that the roost of Create: Integrated Farming refused the cabbage seeds, tomato
+  seeds and rice of Farmer's Delight and the flax seeds of Supplementaries, which vanilla chickens in
+  the pack eat. Commit cf51b7d adds them to the roost's food tag as optional entries and 5539f6e
+  bundles the build (SHA-1 `9f2cfe23`), see
+  [Create Integrated Farming port](modpack/createintegratedfarming-port.md#seed-test-of-2026-11-06).
+- Plain Forge test servers showed cranberries in `minecraft:fox_food` and a roost fed by hand and by
+  belt with the modded seeds. A full pack boot of 5539f6e on Forge reached `Done` with 0 FATAL lines,
+  the 3 baseline ERROR lines and no new log signature against `newmods-forge`, see
+  [NeoForge ports](modpack/neoforge-ports.md#boot-of-the-two-fixes).
+- Five pages that still said nobody booted the full pack with the new mods now point at the boots of
+  98bf164 (19da57c). The server's `mods/` gets the two jars with the deploy of the next pack, with the
+  SHA-1 values of the deploy steps on [NeoForge ports](modpack/neoforge-ports.md#deploy-of-all-six).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

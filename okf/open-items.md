@@ -380,7 +380,7 @@ evidence and the page with the details. The rulings behind the first section are
   and nine mods ran the juicer with 0 ERROR lines, and the full pack booted with it on 2026-11-06
   (see [NeoForge ports](modpack/neoforge-ports.md#status)), but nobody has opened the juicer screen
   or its recipe book, seen its JEI categories, its boats, signs and new names, or milked a goat,
-  filled a cask, planted cranberries or stripped a cinnamon log by hand. See [Expanded Delight
+  filled a cask, planted cranberries, fed a fox cranberries or stripped a cinnamon log by hand. See [Expanded Delight
   port](modpack/expandeddelight-port.md#integration-test).
 
 ## Docs and housekeeping

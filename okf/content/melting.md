@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Melting
-description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,526 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
+description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,717 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
 tags: [content, recipes, tconstruct, datapack, tools]
 timestamp: 2026-11-06
 ---
@@ -26,32 +26,36 @@ closed. A self check compares the product count of every recipe it reads with th
 recipe declares, so a reader fault that would hide a dupe stops the run as well (see
 [follow-up of 2026-11-05](#follow-up-of-2026-11-05)).
 
-The counts are those of pack 3.1.3 with the nine mods of 2026-11-04, Flux Networks and SkyTekx Molten (see
-[mod set](../modpack/mod-set.md#additions-of-2026-11-04)), after the fixes of the review, the sync with the
-unification, the follow-up of 2026-11-05 and its review (see [fixes of the review](#fixes-of-the-review),
-[sync with the unification](#sync-with-the-unification), [follow-up of 2026-11-05](#follow-up-of-2026-11-05) and
-[review of the follow-up](#review-of-the-follow-up)).
+The counts are those of the merged tree of 2026-11-06: pack 3.1.3 with the nine mods of 2026-11-04, Flux Networks
+and SkyTekx Molten (see [mod set](../modpack/mod-set.md#additions-of-2026-11-04)), and the mods of the port branch,
+such as Actually Additions, Expanded Delight and the forks of Ender IO and Create Crafts & Additions. They follow
+the fixes of the review, the sync with the unification, the follow-up of 2026-11-05 and its review (see
+[fixes of the review](#fixes-of-the-review), [sync with the unification](#sync-with-the-unification),
+[follow-up of 2026-11-05](#follow-up-of-2026-11-05) and [review of the follow-up](#review-of-the-follow-up)), and
+the regeneration for the mods of the branch (see
+[regeneration for the mods of the branch](#regeneration-for-the-mods-of-the-branch)).
 The recheck of 2026-11-05 held the folder back from the deploy of 3.1.3 at 00:46 until its three faults were
 fixed. It reached the Mac mini at 03:47 and went live with a `/reload` at 05:45, after which KubeJS found
-46,980 recipes, as on the test server. The recipes are server side, so they need no new pack. The counts below
-come from the dump of 01:19 on the test server of the follow-up. Since the merge of 2026-11-06 the files of
-Create Crafts & Additions follow the recipes of its fork and the moss soup of the Twilight Forest is gone, from a
-dump of the merged tree (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
+46,980 recipes, as on the test server. The recipes are server side, so they need no new pack. Since the merge of
+2026-11-06 the files of Create Crafts & Additions follow the recipes of its fork and the moss soup of the Twilight
+Forest is gone (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)). The counts below come from
+the dump of 21:13 on 2026-11-06 of a Forge test boot of the merged tree. The mods of the branch reach the live
+server only with the next pack after 3.1.3.
 
 | Count | Without Molten | With Molten |
 |---|---:|---:|
-| Recipes read from the dump | 38,068 | 38,677 |
+| Recipes read from the dump | 39,272 | 39,881 |
 | Items that melt already and keep their recipe | 1,375 | 1,658 |
-| Items that get a generated recipe | 7,865 | 8,318 |
+| Items that get a generated recipe | 8,044 | 8,499 |
 | Of them gear that melts by its repair material | 46 | 49 |
-| Items that stay out below 10 mB | 80 | 281 |
-| Recipes the reader cannot read | 599 | 599 |
+| Items that stay out below 10 mB | 81 | 282 |
+| Recipes the reader cannot read | 617 | 617 |
 | Recipes left out because an ingredient matches no item | 4 | 4 |
-| Recipes that take only inputs the machine keeps | 32 | 32 |
+| Products of recipes that take only inputs the machine keeps | 33 | 33 |
 
-The folder holds 9,526 files with 4.0 MB: 6,655 for both cases, 1,209 only without Molten and 1,662 only with
-it. With Molten, 1,523 of the generated recipes give at least one of 63 Molten fluids, led by soularium 303,
-manasteel 186, dark steel 162 and draconium 161, and 517 items melt only because Molten is there.
+The folder holds 9,717 files with 4.0 MB: 6,826 for both cases, 1,218 only without Molten and 1,673 only with
+it. With Molten, 1,534 of the generated recipes give at least one of 63 Molten fluids, led by soularium 313,
+manasteel 186, dark steel 163 and draconium 161, and 519 items melt only because Molten is there.
 
 ## The rules
 
@@ -107,10 +111,10 @@ The content of an item is a vector of fluids in mB.
   `gilded_blackstone` in a pulverizer recipe of Thermal, is read as a `minecraft` id, as the game reads it. The
   spell book upgrades of Ars Nouveau are read like crafting, since `BookUpgradeRecipe` is a shapeless recipe that
   only copies the spells, and the JSON of the apprentice book has a pattern with an item that no longer exists,
-  which the recipe never reads. The 599 unreadable recipes are led
+  which the recipe never reads. The 617 unreadable recipes are led
   by Immersive Engineering mineral mixes 227, Framed Blocks frames 135, Mystical Agriculture infusion 119, Ars
-  Nouveau caster tomes 27, Mob Grinding Utils beheading 13, Mekanism crystallizing 11 and Forbidden & Arcanus
-  residues 10.
+  Nouveau caster tomes 27, the farmer of Mystical Automation 18, Mob Grinding Utils beheading 13, Mekanism
+  crystallizing 11 and Forbidden & Arcanus residues 10.
 - Inputs that the machine keeps or hands back count as nothing. The code of each machine shows which inputs it
   takes. There are five such cases:
   - Ars Nouveau imbuement: `ImbuementTile` puts the result into its own slot and takes the source and its one
@@ -121,8 +125,17 @@ The content of an item is a vector of fluids in mB.
     stays in its slot.
   - The durability recipes `recipesapi:durability_shapeless` and `recipesapi:durability_shaped`: their
     `getRemainingItems` hands back the tool with one more point of damage, like the Cucumber and Bookshelf types.
-  - The laser drills of Industrial Foregoing: `OreLaserBaseTile` only tests the lens. The 31 ore recipes therefore
-    give their ores nothing, and the ores melt by their own recipes as before.
+  - The laser drills of Industrial Foregoing: `OreLaserBaseTile` only tests the lens. The 32 ore products of its
+    recipes therefore get nothing from them, and the ores melt by their own recipes as before. They were 31 before
+    the merge of 2026-11-06, and the one more is most likely the deepslate yellorite ore, which Extreme Reactors
+    2.0.97 adds to the tag `forge:ores/yellorite` that the yellorite recipe names. Nobody checked that in game.
+- Inputs that a machine uses up under a key that names no ingredient elsewhere count as used up, the table
+  `USED_KEYS` of the script (be014fc). The cooking pot of Farmer's Delight 1.3.4 and the juicer of Expanded Delight
+  serve their result into the item under `container` and shrink that stack
+  (`CookingPotBlockEntity.useStoredContainersOnMeal` and `useHeldItemOnMeal`, read with javap, and
+  `JuicerBlockEntity` of the port), and the Empowerer of Actually Additions shrinks the item on each of its four
+  display stands under `modifiers` (`TileEntityEmpowerer` of the fork). So a drink of the cooking pot or the juicer
+  melts into the 1,000 mB glass of its bottle, as the crafted melon juice of Farmer's Delight does.
 - The other machines of the pack that take items from pedestals or slots around them use them up, which their code
   shows as well: the enchanting apparatus and scribes table of Ars Nouveau, the altars of Mystical Agriculture, the
   fusion crafting of Draconic Evolution and the solidifier of Cyclic. Of the 43 crafting classes that the reader
@@ -334,14 +347,69 @@ no crash and the 3 accepted ERROR lines of a test copy, and no line of its log n
 held 8,317 generated recipes, one fewer than the 8,318 of the first, and gave the same 9,701 files again. Nobody has
 melted the changed items in a melter yet.
 
-The rest of the run stays out of the folder until the full regeneration for the mods of the branch has a review of
-its own. It gave 9,701 files. Against the folder that is 176 more, 129 of them for Actually Additions, and 15 changed
+The rest of the run stayed out of the folder until the full regeneration for the mods of the branch, which followed
+the same evening (see [regeneration for the mods of the branch](#regeneration-for-the-mods-of-the-branch)). It gave
+9,701 files. Against the folder that is 176 more, 129 of them for Actually Additions, and 15 changed
 files of other mods that gain glass through dragon's breath, which Create: Dragons Plus fills into a glass bottle.
 The run also drops the melon juice of Farmer's Delight, which the juicer of Expanded Delight makes with the glass
 bottle in its `container` key, a key that the reader counts as nothing (`QUIET_KEYS` in `gen_melting.py`). On the
 second dump, `gen_melting.py --check` names these 192 files. The audit of the run found three new dupes: the crusher
 of Actually Additions grinds an iron, golden or diamond horse armor into six raw iron, raw gold or diamonds, and a
 horse armor takes four ingots or diamonds in the pack. The run exited with status 1 for them.
+
+## Regeneration for the mods of the branch
+
+The regeneration of 2026-11-06 made the folder follow the merged tree as a whole. A Forge test boot at 20:57 of the
+tree after a18f0ca, with the dump script and `tools/unify_audit_dump.js`, gave the dump of 20:59 (48,197 recipes).
+The generator gave the same 9,701 files from it as the run of 20:32 and the same three dupes. Three changes
+followed:
+
+- The reader counts the container of the cooking pot of Farmer's Delight and of the juicer of Expanded Delight and
+  the display stand items of the Empowerer of Actually Additions as used up (be014fc, see [the rules](#the-rules)).
+  The melon juice keeps its 1,000 mB glass, and 15 more drinks, jellies and meals get a file. No empowered crystal
+  changes, since its stand items hold nothing that melts.
+- The three horse armor loops of the crusher of Actually Additions are known machine dupes (2a8509c, see
+  [known machine dupes](#known-machine-dupes)), since they multiply raw metal and diamonds without any melting.
+  Whether the crusher recipes stay is an owner decision (see [open items](../open-items.md#owner-decisions)).
+- The unification gained the salt of Medieval Embroidery (6c14f16) and the hide list its three salts (7b982a3). No
+  salt melts, so no file changes for them.
+
+A second boot at 21:11 had the new folder of 9,717 files, the salt and the hide list in place. Its dump of 21:13 read
+48,380 recipes, 182 generated ones more than the folder of 9,526 files gave the boot before, and the generator with
+`--check` found 0 of 9,717 files that differ, so a dump with the folder in place gives the same folder. Against the
+folder of 9,526 files:
+
+| Change | Files | What |
+|---|---:|---|
+| New, Actually Additions | 129 | Every item of the mod that holds metal, gems, obsidian, ender or glass, such as the 16 drills at 630 mB iron, 300 mB diamond and 160 mB gold, the AIOTs, the crystals and crystal blocks, the machines, laser relays and phantom blocks. The same file serves both cases |
+| New, Ender IO | 22 | The Vat, the three obelisks, the wireless charger and its two antennas, the Mind Killer, the big and big advanced item filters, the limited item filter and the two hardened conduit facades of the backport, 11 items without Molten and 13 with it |
+| New, Expanded Delight | 12 | The cask, the juicer, the glass jar at 1,666 mB glass, the goat milk bottle, the cinnamon hanging sign, four juices and three jellies |
+| New, Mystical Automation | 7 | All seven machines, such as the crafter at 720 mB iron and 180 mB soulium |
+| New, Mekanism: Extra Modules | 3 | The three modules, the chaos anchor unit at 4,000 mB obsidian and 3,420 mB iron |
+| New, Create: Integrated Farming | 2 | The lava fishing net and the Vacuum Harvester |
+| New, Create: Dragons Plus | 1 | The Fluid Hatch, 180 mB copper and 30 mB iron |
+| New, Extreme Reactors | 1 | The active FE energizer port of 2.0.97 |
+| New, Twilight Delight | 8 | Six drinks of the cooking pot in a glass bottle, the delicious in maze, served in a phantom helmet, and the fiery blood curd, served in a bucket |
+| New, dragon's breath | 6 | Create: Dragons Plus fills dragon's breath into a glass bottle, so the breath holds the 1,000 mB glass of the bottle. The breath itself and five items made of it: the dragon banner pattern, infused breath, the lingering alchemy flask, the fabric of finality and the draco arcanus arrow |
+| Changed, dragon's breath | 15 | Items that hold dragon's breath gain its glass, such as 333 mB for each of the three endshelves of Apotheosis, 2,000 and 4,000 mB for the draconic and chaotic damage modules of Draconic Evolution and 1,000 mB for the dragon charge of Amendments |
+| Changed, phytochemical juice | 1 | The juice of Twilight Delight keeps its 90 mB steeleaf and gains the glass of its bottle |
+| Gone | 0 | The melon juice, which the run of 20:32 dropped, keeps its file |
+
+So no file of the folder of 9,526 files is gone, and every generated item id still exists in the jars of the
+branch. Some new ids get no file: the two plain conduit facades of Ender IO, the dye and dragon's breath buckets of
+Create: Dragons Plus, which a bucket or a spout fills with no recipe, the roosts and the fishing net of Create:
+Integrated Farming, whose recipes hold no metal or less than 10 mB of it, and the wooden and stone AIOTs and the
+crops of Actually Additions. The spool and the electrum rod of Create Crafts & Additions stay out since the merge,
+see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06). Bygone Nether gets no file at all. Its Gilded
+Netherite Shield and its Netherite Bell are loot without a recipe, and a shield has no unit count of Tinkers. Its
+netherite scrap nuggets and ingots come only from crushing withered stone and debris, so they count as made of
+nothing, and its other blocks hold no metal. SkyTekx DE Fixes adds no item, and LittleTiles keeps its 4 files.
+
+The audit of the new folder finds no new dupe in either case. It counts 39 known machine dupes in 18 melting
+recipes, the 36 in 16 of before and the three horse armor loops on the raw iron and raw gold recipes of Tinkers and
+on the diamond, whose recipe the Alkahestry Tome already had. Its other counts are 11 trades in each case, 201
+conversions and 383 sources without Molten and 255 and 409 with it, and the generated recipes have no dupe and no
+trade. The self check of the reader finds no product below the count of its recipe.
 
 ## Counts per mod
 
@@ -356,12 +424,16 @@ follow-up `railways` lost the phantom track and `minecraft` gained four mob buck
 [follow-up of 2026-11-05](#follow-up-of-2026-11-05)), and with its review `thermal_extra` lost three ore chunks
 (see [review of the follow-up](#review-of-the-follow-up)). After the merge of 2026-11-06 `twilightforest` lost the
 moss soup, and `createaddition` lost the spool and the electrum rod and gained the electric pump and the servo
-motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
+motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)). With the regeneration for the mods of
+the branch six namespaces are new, `actuallyadditions`, `expandeddelight`, `mysticalautomation`,
+`mekanism_extra_modules`, `create_integrated_farming` and `create_dragons_plus`, and `enderio`, `twilightdelight`,
+`bigreactors` and six namespaces of items that hold dragon's breath gained items (see
+[regeneration for the mods of the branch](#regeneration-for-the-mods-of-the-branch)).
 
 | Namespace | Without Molten | With Molten |
 |---|---:|---:|
 | `railways` | 1,093 | 1,093 |
-| `enderio` | 562 | 591 |
+| `enderio` | 573 | 604 |
 | `spartanweaponry` | 392 | 392 |
 | `magistuarmory` | 359 | 359 |
 | `botania` | 217 | 340 |
@@ -379,19 +451,20 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `dragnlivestock` | 153 | 153 |
 | `create` | 148 | 148 |
 | `bibliocraft` | 143 | 143 |
-| `bloodmagic` | 130 | 139 |
+| `bloodmagic` | 131 | 140 |
+| `actuallyadditions` | 129 | 129 |
 | `thermal` | 122 | 122 |
 | `ae2` | 121 | 121 |
 | `industrialforegoing` | 118 | 117 |
 | `quark` | 108 | 108 |
-| `minecraft` | 87 | 100 |
+| `minecraft` | 88 | 101 |
 | `spartantwilight` | 96 | 96 |
 | `irons_spellbooks` | 75 | 93 |
-| `bigreactors` | 76 | 73 |
+| `bigreactors` | 77 | 74 |
 | `mocreatures` | 71 | 75 |
 | `megacells` | 74 | 74 |
 | `reliquary` | 70 | 70 |
-| `forbidden_arcanus` | 45 | 66 |
+| `forbidden_arcanus` | 46 | 67 |
 | `simplyjetpacks` | 64 | 64 |
 | `l2complements` | 47 | 63 |
 | `cataclysm` | 42 | 62 |
@@ -402,9 +475,9 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `exchangers` | 47 | 47 |
 | `expatternprovider` | 47 | 47 |
 | `biomesoplenty` | 44 | 44 |
+| `apotheosis` | 42 | 42 |
 | `aquaculture` | 29 | 42 |
 | `cataclysm_spellbooks` | 24 | 42 |
-| `apotheosis` | 41 | 41 |
 | `storagedrawers` | 41 | 41 |
 | `galosphere` | 17 | 37 |
 | `aether_redux` | 0 | 36 |
@@ -424,6 +497,7 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `redstone_arsenal` | 23 | 23 |
 | `deep_aether` | 8 | 22 |
 | `farmersdelight` | 22 | 22 |
+| `twilightdelight` | 22 | 22 |
 | `mysticalagradditions` | 21 | 18 |
 | `chocolate_quest` | 20 | 20 |
 | `mekanismadditions` | 20 | 20 |
@@ -434,10 +508,10 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `elevatorid` | 16 | 16 |
 | `asr` | 15 | 15 |
 | `nyx` | 1 | 15 |
-| `twilightdelight` | 14 | 14 |
+| `dimdoors` | 13 | 13 |
 | `wirelessredstone` | 13 | 13 |
 | `appbot` | 11 | 12 |
-| `dimdoors` | 12 | 12 |
+| `expandeddelight` | 12 | 12 |
 | `lavafishing` | 4 | 12 |
 | `appmek` | 11 | 11 |
 | `arsmagicalegacy` | 11 | 11 |
@@ -449,6 +523,7 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `computercraft` | 7 | 7 |
 | `mekanismtools` | 7 | 7 |
 | `morebows` | 7 | 7 |
+| `mysticalautomation` | 7 | 7 |
 | `secretroomsmod` | 6 | 6 |
 | `ae2wtlib` | 5 | 5 |
 | `chipped` | 5 | 5 |
@@ -461,12 +536,14 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `tflostblocks` | 4 | 4 |
 | `theoneprobe` | 4 | 4 |
 | `torchmaster` | 4 | 4 |
+| `additionalbanners` | 3 | 3 |
 | `decocraft` | 3 | 3 |
+| `mekanism_extra_modules` | 3 | 3 |
 | `playerplates` | 3 | 3 |
 | `twilight_crossbow` | 3 | 3 |
-| `additionalbanners` | 2 | 2 |
 | `aeinfinitybooster` | 2 | 2 |
 | `bountiful` | 2 | 2 |
+| `create_integrated_farming` | 2 | 2 |
 | `eio_legacy_machines` | 2 | 2 |
 | `eplus` | 2 | 2 |
 | `statues` | 2 | 2 |
@@ -475,6 +552,7 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 | `capsule` | 1 | 1 |
 | `chococraft` | 1 | 1 |
 | `comforts` | 1 | 1 |
+| `create_dragons_plus` | 1 | 1 |
 | `doomangelring` | 1 | 1 |
 | `hexxit_additions` | 1 | 1 |
 | `irons_lib` | 1 | 1 |
@@ -491,9 +569,11 @@ motor (see [after the merge of 2026-11-06](#after-the-merge-of-2026-11-06)).
 
 ## What stays out
 
-Of the 2,526 items of the pack whose item class makes them armor, a tool, a weapon, a shield, horse armor, an
-elytra, shears or a fishing rod, counted with Molten, 172 melt already, 1,621 get a generated recipe, 49 are Tinkers
-tools and 684 stay out. The largest groups are Medieval Embroidery 91, Blue Skies 90, Spartan Weaponry 60, Aether
+Of the 2,535 items of the pack whose item class makes them armor, a tool, a weapon, a shield, horse armor, an
+elytra, shears or a fishing rod, counted with Molten, 172 melt already, 1,627 get a generated recipe, 49 are Tinkers
+tools and 687 stay out. The nine of the branch are the six AIOTs and the two engineer's goggles of Actually
+Additions and the Gilded Netherite Shield of Bygone Nether. The iron, gold, diamond and netherite AIOTs and both
+goggles melt, the wooden and stone AIOTs and the shield stay out. The largest groups are Medieval Embroidery 91, Blue Skies 90, Spartan Weaponry 60, Aether
 52, Magistu Armory 50 and Iron's Spellbooks 46. They hold no fluid that counts:
 
 - Leather, cloth, wood, stone, bone or scales, such as the vanilla leather and stone gear, the gambesons and
@@ -511,8 +591,8 @@ tools and 684 stay out. The largest groups are Medieval Embroidery 91, Blue Skie
   the fixes of the review these 46 items melted into molten bendalloy.
 
 The leather horse armor and the Magistu Armory barding are the two horse armors that do not melt, the other 12
-do. Items whose largest fluid is below 10 mB (80 without Molten, 281 with it) stay out. With Molten 204 of them
-are Ender IO clear glass variants: their glass can be made from Aether quicksoil glass, which holds nothing, so only
+do. Items whose largest fluid is below 10 mB (81 without Molten, 282 with it) stay out, since the merge of 2026-11-06
+the spool of Create Crafts & Additions among them. With Molten 204 of them are Ender IO clear glass variants: their glass can be made from Aether quicksoil glass, which holds nothing, so only
 2 mB soularium or dark steel of the token is left. The others are Railcraft tracks, Reliquary bullets, the phantom
 track of Railways and the like.
 Since the golden carrot and the glistering melon slice melt into 5 mB gold, two carrots of Cyclic, the gleaming
@@ -547,10 +627,10 @@ and the self check of the reader finds no product below the count of its recipe:
 | New dupes | 0 | 0 |
 | Dupes in the generated recipes | 0 | 0 |
 | Products that the reader counts below their recipe | 0 | 0 |
-| Known machine dupes, in 16 melting recipes | 36 | 36 |
+| Known machine dupes, in 18 melting recipes | 39 | 39 |
 | Trades | 11 | 11 |
-| Conversions | 196 | 250 |
-| Sources | 360 | 386 |
+| Conversions | 201 | 255 |
+| Sources | 383 | 409 |
 
 ### Dupes closed with overrides
 
@@ -604,11 +684,18 @@ and leaves the melting alone:
 | `glass/sand` | Ad Astra makes four venus sandstone of four venus sand, and the crushers of Immersive Engineering, Mekanism and Thermal make two sand of one sandstone |
 | `glass/sand` | The Cyclic crusher makes one sand of one concrete powder of each of the 16 colors, and eight powder take four sand and four gravel, so gravel becomes sand |
 | `metal/gold/gilded_blackstone` | The Cyclic solidifier makes gilded blackstone of two gold nuggets, a blackstone and lava, and Create crushing gives 18 gold nuggets back |
+| `metal/iron/raw`, `metal/gold/raw` and `diamond/gem` | DragN Livestock crafts the iron, golden and diamond horse armor of four ingots or diamonds, a leather and a carpet, and the crusher of Actually Additions grinds each into six raw iron, raw gold or diamonds (`actuallyadditions:crushing/iron_horse_armor` and the two others), since 2026-11-06 |
 
 The gilded blackstone loop multiplies gold ninefold without any melting. An override of the melting at 20 mB
 would turn the block from an ore into a plain item and open a Blood Magic recipe that makes gold ore of it, so the
 melting stays. Closing the loop itself, such as with `forge:false` on `cyclic:solidifier/gilded_blackstone`, is a
 decision for the owner.
+
+The horse armor loops of Actually Additions turn four diamonds into six with no melting at all, and four iron or
+gold ingots into six raw metal, which the furnace smelts into six ingots. Upstream Actually Additions has the same
+crusher recipes, which harm nothing in a pack where horse armor is loot only. Taking the three recipes out, such as
+with `event.remove` in `recipe_fixes.js`, or lowering them to four raw metal or diamonds, is a decision for the
+owner, see [open items](../open-items.md#owner-decisions).
 
 ### Trades for the owner
 
@@ -932,6 +1019,50 @@ of Twilight Construct and melted into 90 mB molten ironwood, its whole ingot. Th
 The melters ran with Molten only, since the four items have the same recipes without it, and every spot of the
 rig was air before and after it.
 
+### Runs of the regeneration of 2026-11-06
+
+The regeneration for the mods of the branch ran on the boot harness of the session, which builds a fresh run folder
+of the tree with the jars of the index and `local-mods/`, a new world of the seed 12345, Forge 47.4.18, Temurin
+17.0.21 and a heap of 9 GB, and stops the server with `save-all flush` and `stop` over RCON. The fixes pack was the
+last pack in both runs, so the two commands of [load order](boot-fixes.md#load-order) were not needed. Each run also
+ran `tools/unify_audit_dump.js`, see [AlmostUnified](../modpack/almostunified.md#audit-of-the-merged-mod-set).
+
+| Run | Melting recipes | Boot to Done | FATAL and ERROR | Dump | Generated live |
+|---|---|---:|---|---:|---:|
+| 20:57 | Folder of 9,526 files, the tree after a18f0ca | 115 s | 0 and 3 | 48,197 recipes | 8,317 |
+| 21:11 | New folder of 9,717 files, salt, skip tags and hide list | 112 s | 0 and 3 | 48,380 recipes | 8,499 |
+
+The ERRORs are the three of a test copy, AllTheLeaks, the `ModelBakery` line of AdvancedAE and the backup config line
+of Nostalgic Tweaks, and both runs stopped clean 4 s after `stop`. No log has "Parsing error loading recipe" or a
+line that names a generated recipe, and the boot diff finds no new log signature. Generated live counts the
+recipes `skytekx3:melting/` in the dump, 1,694 of them damagable at 21:11. AlmostUnified counted 192 recipes more
+before its run at 21:11, the 191 new files and the melon juice, since it counts the files before their conditions.
+
+At 21:14 the second run built 14 rigs above the spawn by commands, a seared fuel tank with 4,000 mB lava, a seared
+melter on it and a hopper on top, put one item into each hopper with `item replace` and read each melter with
+`data get block` 120 s later. Every melter had been empty before, and every hopper was empty after:
+
+| Item | Case | Recipe | Melter tank |
+|---|---|---|---|
+| Vat of Ender IO | New block of the backport, file for the case with Molten | 1,200 mB iron and three alloys | 1,200 mB molten iron |
+| Iron casing of Actually Additions | Item of a new mod | 360 mB iron | 360 mB molten iron |
+| Drill core of Actually Additions | Item of a new mod | 360 mB iron | 360 mB molten iron |
+| Iron AIOT of Actually Additions | Tool of a new mod | 990 mB iron, unit 10 | 990 mB molten iron |
+| Iron AIOT at 500 of 1,000 damage | Damaged tool | 990 mB iron, unit 10 | 490 mB molten iron |
+| Electric pump of Create Crafts & Additions | New block of the fork | 517 mB copper, 90 mB zinc, 18 mB iron | 517 mB molten copper |
+| Electric servo motor of Create Crafts & Additions | New block of the fork | 630 mB copper and four more fluids | 630 mB molten copper |
+| Lava fishing net of Create: Integrated Farming | Item of a new mod | 330 mB iron | 330 mB molten iron |
+| Crafter of Mystical Automation | Block of a new mod | 720 mB iron, 180 mB soulium | 720 mB molten iron |
+| Juicer of Expanded Delight | Block of a new mod | 540 mB iron | 540 mB molten iron |
+| Fluid Hatch of Create: Dragons Plus | Block of a new mod | 180 mB copper, 30 mB iron | 180 mB molten copper |
+| Melon juice of Farmer's Delight | Kept by the container reader | 1,000 mB glass | 1,000 mB molten glass |
+| Apple juice of Expanded Delight | Juicer with its container | 1,000 mB glass | 1,000 mB molten glass |
+| Torchberry juice of Twilight Delight | Cooking pot with its container | 1,000 mB glass | 1,000 mB molten glass |
+
+The byproducts come out of the foundry only, so the melters show the result fluid alone. The test world is gone
+with the run folder, the dumps, logs and the command output are kept under `regen/` and `packboot-logs/regen-*` of
+the scratch folder of the session.
+
 ### Recipe sync to the clients
 
 Every client gets the whole recipe list at login in one recipe packet. A probe at 22:02, 22:21 and 23:22 serialized it
@@ -954,7 +1085,7 @@ recipe pages is therefore part of the check after the deploy.
 
 ## One JSON folder or one KubeJS table
 
-The recipes ship as 9,526 JSON files in the fixes pack, which is the default. For the comparison at 19:25 the 9,181
+The recipes ship as 9,717 JSON files in the fixes pack, which is the default. For the comparison at 19:25 the 9,181
 recipes of that time were turned into one KubeJS script of 2.7 MB that adds them with `event.custom`:
 
 | Point | JSON folder | KubeJS table |
@@ -963,7 +1094,7 @@ recipes of that time were turned into one KubeJS script of 2.7 MB that adds them
 | Cost at boot | Parsed with the other datapack recipes, no measurable time | 0.19 s to load the script and 95 ms for the table, the KubeJS recipe event took 717 ms against 488 ms to 648 ms with the folder |
 | Molten and mod checks | Forge conditions in each file | Hand written checks in the script |
 | AlmostUnified | Sees and unifies the recipes | Runs before the table and never sees it |
-| Git | 9,526 files under `world/`, added with `git add -f` | One file in `kubejs/server_scripts/` |
+| Git | 9,717 files under `world/`, added with `git add -f` | One file in `kubejs/server_scripts/` |
 | Live server | Copied with the datapack, `/reload` is enough | Needs KubeJS and a reload of the scripts |
 
 Both forms gave all 7,943 recipes of the folder at that time. The JSON folder stays, it needs no script, keeps the
@@ -1002,7 +1133,9 @@ New mods can bring recipe types that the reader does not know. The summary lists
 recipes, and their products lose their melting until the reader learns them, as the processors of Applied
 Energistics 2 would have on 2026-11-04. Comparing the per mod counts with the previous run shows such losses.
 A new machine that keeps some of its inputs, such as on pedestals or in a mould slot, needs an entry in
-`KEPT_KEYS` or `RETURNED_ITEMS` of the script, or its products melt into more than they take. A recipe type that
+`KEPT_KEYS` or `RETURNED_ITEMS` of the script, or its products melt into more than they take. A machine that uses up
+an input under a key that the reader counts as nothing, such as the container of a cooking pot, needs an entry in
+`USED_KEYS`, or its products melt into less than they take. A recipe type that
 uses up a container whole, such as a catch with a water bucket, needs an entry in `WHOLE_TYPES`, or the crafting
 remainder of the container is subtracted. Its code shows which inputs it uses up. The summary also lists the
 recipes left out because an ingredient matches no item, and a recipe there that works in game points to a reader
@@ -1018,4 +1151,7 @@ dump of 23:22 on the new one, while the dump of 22:20 still gives the folder of 
 AlmostUnified therefore needs a new dump as well, since the variants it swaps away lose their recipes. The
 generator of the follow-up gave the same 9,530 files from the dump of 23:22 and from the dump of 01:19 on the
 new folder, and after its review it gives 9,527 files from both. Both dumps are kept on the build machine under
-`~/skytekx3-dumps/`, in `melting-2026-11-04-2322/` and `melting-2026-11-05-0119/`, about 45 MB each.
+`~/skytekx3-dumps/`, in `melting-2026-11-04-2322/` and `melting-2026-11-05-0119/`, about 45 MB each. The generator of
+the regeneration of 2026-11-06 gives the same 9,717 files from the dump of 20:59 without the new folder and from the
+dump of 21:13 with it. Those two dumps, about 46 MB each, stayed in the scratch folder of the session under
+`regen/dumps/base/` and `regen/dumps/r1/` and were not copied to the build machine.

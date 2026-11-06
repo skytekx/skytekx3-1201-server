@@ -453,7 +453,7 @@ counts in the list below are older than the last twenty-three of them and were n
   it carries over. ZeroCore is All Rights Reserved and rides on the modpack grant of its project
   description, see `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. That grant covers the
   `.mrpack` but forbids reposts on other websites, and a jar in this public repository would be one.
-  So since 2026-11-06 git holds no copy of it. It tracks the pointer
+  So since 2026-11-06 git tracks no copy of it. It tracks the pointer
   `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json` with the URL of CurseForge file 7344725, its
   SHA-1 and its size, and `tools/build_mrpack.py` fetches the file into its cache and checks it at
   every build, see
@@ -564,7 +564,7 @@ counts in the list below are older than the last twenty-three of them and were n
 Seven of them are All Rights Reserved without a redistribution grant: Aether Genesis, Connectivity,
 Cupboard, Deadly World, Fireflies, Hexxit Additions and Mob Grinding Utils
 (`modrinth-permissions/README.md`). They block a public Modrinth listing, see [publish](publish.md).
-ZeroCore 2 has a modpack grant, and since 2026-11-06 git holds only a pointer to its CurseForge file,
+ZeroCore 2 has a modpack grant, and since 2026-11-06 git tracks only a pointer to its CurseForge file,
 so its record says OK.
 
 The full pack of 47c3445, with SkyTekx DE Fixes, Extreme Reactors, ZeroCore, LittleTiles and the data

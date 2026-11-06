@@ -610,6 +610,25 @@ public class ItemRecipeGenerator extends RecipeProvider {
             .unlockedBy("", has(Items.AIR))
             .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "black_quartz_ore_blasting"));
 
+        //Patterns
+        // SkyTekx: upstream 659779b1, the item of the pattern and a paper
+        Recipe.shapeless(ActuallyItems.DRILL_PATTERN.get())
+                .requires(ActuallyItems.DRILL_CORE.get())
+                .requires(Items.PAPER)
+                .save(consumer);
+        Recipe.shapeless(ActuallyItems.LEAF_BLO_PATTERN.get())
+                .requires(ActuallyItems.LEAF_BLOWER.get())
+                .requires(Items.PAPER)
+                .save(consumer);
+        Recipe.shapeless(ActuallyItems.PHAN_CON_PATTERN.get())
+                .requires(ActuallyItems.PHANTOM_CONNECTOR.get())
+                .requires(Items.PAPER)
+                .save(consumer);
+        Recipe.shapeless(ActuallyItems.BOOK_PATTERN.get())
+                .requires(ActuallyItems.ITEM_BOOKLET.get())
+                .requires(Items.PAPER)
+                .save(consumer);
+
         // Reset Recipes
         // SkyTekx: upstream a85dcdc0, a machine that keeps its contents as an item crafts alone into an
         // empty one. The result has no BlockEntityTag, so the energy, tanks and redstone mode are gone

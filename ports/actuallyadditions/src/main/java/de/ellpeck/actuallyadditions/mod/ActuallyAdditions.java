@@ -110,6 +110,8 @@ public class ActuallyAdditions {
         ActuallyBiomeModifiers.init(eventBus);
         // SkyTekx: the bat and chest loot of upstream b9435301 replaces the dead DungeonLoot handler (4a16be41)
         ActuallyLootModifiers.init(eventBus);
+        // SkyTekx: the four banner patterns of upstream 659779b1
+        BannerHelper.init(eventBus);
         ActuallyTags.init();
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
@@ -161,7 +163,6 @@ public class ActuallyAdditions {
         commonCapsLoaded = false; // Loader.isModLoaded("commoncapabilities");
 
         new UpdateChecker();
-        BannerHelper.init();
         InitEntities.init(); // todo: [port] replace
         //AAWorldGen gen = new AAWorldGen();
         CrusherCrafting.init();

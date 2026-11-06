@@ -2231,3 +2231,13 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Savegame: none. New ids: none (one recipe).
     Both servers of the test of source change 65, with Mekanism 10.4.6 and 10.4.16, loaded the
     recipe without an error. Not tested: the crusher category of JEI.
+70. Empowering recipes: a data pack empowering recipe whose `modifiers` list does not hold exactly
+    four ingredients is skipped with a log line instead of stopping the server.
+    `EmpowererRecipe.Serializer#fromJson` threw an `IllegalStateException` for it, and the recipe
+    manager of Forge 47 catches only `IllegalArgumentException` and `JsonParseException`, so the
+    recipe reload failed and a dedicated server stopped at boot, as the crushing serializer did
+    before source change 30 (`bp2/actuallyadditions/pmint/old-console.log` shows that failure for a
+    crushing recipe). The serializer now throws a `JsonSyntaxException` with the same message. On
+    `main` the codec of `63fbbb33` returns a `DataResult` error for the same case, which the recipe
+    manager logs and skips as well.
+    Savegame: none. New ids: none.

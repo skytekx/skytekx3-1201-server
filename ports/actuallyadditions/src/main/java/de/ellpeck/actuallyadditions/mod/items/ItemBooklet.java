@@ -63,7 +63,10 @@ public class ItemBooklet extends ItemBase {
 //                return ActionResultType.SUCCESS;
 //            }
 //        }
-        return InteractionResult.FAIL;
+        // SkyTekx: PASS instead of the FAIL of the base and main. On 1.20.1 Minecraft#startUseItem
+        // stops at a FAIL from useItemOn and never calls use, so a right click aimed at a block
+        // opened nothing. With PASS the block acts first and the click falls through to use
+        return InteractionResult.PASS;
     }
 
     @Override

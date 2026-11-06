@@ -14,10 +14,7 @@ import de.ellpeck.actuallyadditions.mod.blocks.base.BlockContainerBase;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityPhantomBooster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -30,16 +27,13 @@ public class BlockPhantomBooster extends BlockContainerBase {
         super(ActuallyBlocks.defaultPickProps());
     }
 
+    // SkyTekx: the booster keeps its block entity, so that the type actuallyadditions:phantom_booster
+    // stays registered and saved boosters load without a warning, but it no longer ticks. The
+    // faces only look for the block above them, and upstream dropped the block entity in ae6695a5
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new TileEntityPhantomBooster(pos, state);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> entityType) {
-        return level.isClientSide? TileEntityPhantomBooster::clientTick : TileEntityPhantomBooster::serverTick;
     }
 
     @Override

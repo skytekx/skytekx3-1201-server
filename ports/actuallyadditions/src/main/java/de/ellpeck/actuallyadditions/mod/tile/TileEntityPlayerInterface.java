@@ -15,6 +15,7 @@ import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -36,6 +37,7 @@ public class TileEntityPlayerInterface extends TileEntityBase implements IEnergy
     public UUID connectedPlayer;
     public String playerName;
     private IItemHandler playerHandler;
+    private LazyOptional<IItemHandler> lazyPlayerHandler;
     private Player oldPlayer;
     private int oldEnergy;
     private int range;
@@ -48,7 +50,9 @@ public class TileEntityPlayerInterface extends TileEntityBase implements IEnergy
         if (this.connectedPlayer != null && this.level != null) {
             Player player = this.level.getPlayerByUUID(this.connectedPlayer);
             if (player != null) {
-                if (player.distanceToSqr(this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ()) <= this.range) {
+                // SkyTekx: the range in blocks, as on 1.12. The base and main compare the squared
+                // distance with the range, which cut the 32 blocks of the manual down to about 5.7
+                if (player.distanceToSqr(this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ()) <= (double) this.range * this.range) {
                     return player;
                 }
             }
@@ -56,20 +60,46 @@ public class TileEntityPlayerInterface extends TileEntityBase implements IEnergy
         return null;
     }
 
-    // TODO: [port] this might not be a stable way of doing this.
+    // SkyTekx: one LazyOptional per connected player, invalidated when the player changes, leaves the
+    // range or the block goes away, as 44e05549 does with invalidateCapabilities. The base made a
+    // new LazyOptional at every call, whose supplier returned null without a player, so asking it
+    // for its handler threw
     @Override
     public LazyOptional<IItemHandler> getItemHandler(Direction facing) {
         Player player = this.getPlayer();
 
-        if (this.oldPlayer != player) {
+        if (this.oldPlayer != player || this.lazyPlayerHandler == null) {
             this.oldPlayer = player;
 
             this.playerHandler = player == null
                 ? null
                 : new PlayerInvWrapper(player.getInventory());
+
+            this.invalidatePlayerHandler();
+            IItemHandler handler = this.playerHandler;
+            this.lazyPlayerHandler = handler == null
+                ? LazyOptional.empty()
+                : LazyOptional.of(() -> handler);
         }
 
-        return LazyOptional.of(() -> this.playerHandler);
+        return this.lazyPlayerHandler;
+    }
+
+    private void invalidatePlayerHandler() {
+        if (this.lazyPlayerHandler != null) {
+            LazyOptional<IItemHandler> old = this.lazyPlayerHandler;
+            this.lazyPlayerHandler = null;
+            if (old.isPresent()) {
+                old.invalidate();
+            }
+        }
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.invalidatePlayerHandler();
+        this.oldPlayer = null;
     }
 
     public static <T extends BlockEntity> void clientTick(Level level, BlockPos pos, BlockState state, T t) {
@@ -87,6 +117,10 @@ public class TileEntityPlayerInterface extends TileEntityBase implements IEnergy
             tile.range = TileEntityPhantomface.upgradeRange(DEFAULT_RANGE, level, pos);
 
             Player player = tile.getPlayer();
+            if (player != tile.oldPlayer) {
+                // SkyTekx: drop the handler of a player who left the range, logged out or respawned
+                tile.getItemHandler(null);
+            }
             if (player != null) {
                 for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                     if (tile.storage.getEnergyStored() > 0) {
@@ -131,9 +165,17 @@ public class TileEntityPlayerInterface extends TileEntityBase implements IEnergy
         super.readSyncableNBT(compound, type);
 
         this.storage.readFromNBT(compound);
-        if (compound.contains("PlayerLeast") && type != NBTType.SAVE_BLOCK) {
-            this.connectedPlayer = compound.getUUID("Player");
-            this.playerName = compound.getString("PlayerName");
+        // SkyTekx: the key that writeSyncableNBT writes, as in d2d0afa6. The base looked for PlayerLeast,
+        // which putUUID never writes, so the interface lost its player at every load. The long pair
+        // PlayerMost and PlayerLeast is still read
+        if (type != NBTType.SAVE_BLOCK) {
+            if (compound.hasUUID("Player")) {
+                this.connectedPlayer = compound.getUUID("Player");
+                this.playerName = compound.getString("PlayerName");
+            } else if (compound.contains("PlayerMost", Tag.TAG_LONG) && compound.contains("PlayerLeast", Tag.TAG_LONG)) {
+                this.connectedPlayer = new UUID(compound.getLong("PlayerMost"), compound.getLong("PlayerLeast"));
+                this.playerName = compound.getString("PlayerName");
+            }
         }
     }
 

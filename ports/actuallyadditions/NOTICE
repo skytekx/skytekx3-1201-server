@@ -94,6 +94,9 @@ Modifications
       Phantom Breaker work, and the Phantom Placer has its side button. The Vertical Digger mines
       down to the bottom of the world, keeps its layer across restarts and restarts once from
       its own height when it was saved by an older build.
+    * Phantomfaces: pipes connected to a face follow it when it is bound elsewhere, the look at
+      overlay shows the target, the Player Interface keeps its player after a restart, reaches
+      32 blocks and no longer throws without a player, and the Player Probe binds again.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

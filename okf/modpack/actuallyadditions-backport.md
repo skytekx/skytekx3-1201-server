@@ -113,6 +113,28 @@ the harness skips them. The ASM scans of the review fix find client references o
 lambdas that `DistExecutor` runs and no server call into a stripped member. Nobody has logged in
 with a stock 1.1.52 client to see the protocol mismatch disconnect.
 
+The assets bundle is done. Its five commits are d7357e9 (Retexture 2.0 and 2.1 and the removal of
+the 1.12 leftovers), e6a4962 (the block shapes of `main`), 05f63d2 (directional crystal clusters),
+94b6b3c (the lamps and the Lamp Controller) and 11ac001 (the block sounds), with the review fixes
+e8f5b47 and 6c5aca4 (`UPSTREAM.md`, source changes 18 to 22). The bundle was written before the
+server safety bundle landed, so its items moved from 13 to 17 up to 18 to 22 during the merge. The
+Lava Factory Controller, Player Interface and Vertical Digger, whose shapes this bundle and whose
+overlays the server safety bundle changed, keep the full cube of the first and the overlay classes
+in `mod/blocks/blockhuds/` of the second. The first review fix makes a lamp toggled by hand change
+for every player and drops the 1.12 `mcmod.info`. The second review found that the Lamp Controller,
+which the data core made craftable, walked the connected lamps by recursion, one stack frame per
+lamp, with a list that never held the checked offsets. A few thousand lamps on a redstone clock
+would lag the server and could overflow the stack in a neighbour update. The walk is now breadth
+first and stops after 4096 lamps. The same review found that a dye in the off hand took the item of
+the selected hotbar slot, and it removed the unused creative tab background that `4ef880a` deleted
+upstream. The main, devtest and test sources of 6c5aca4 compile, and one build gave the jar SHA-1
+`24432d0c23eb8106cdfc7a0f24241edd90340952` (2959595 bytes, 2265 entries) with
+`LICENSE_actuallyadditions` and `NOTICE_actuallyadditions` and without `mcmod.info`, the tab texture
+or an `_old/` folder. No boot of this state is recorded, and nobody has run the client test of the
+retexture yet. It cannot pass before two later ports, since the Bio Reactor has no blockstate until
+the generators port gives it a facing (822913f0) and the Greenhouse Glass renders invisible until
+the greenhouse glass port brings the Java part of 817797ad (`UPSTREAM.md`, source change 18).
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -121,7 +143,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Baseline (`aa-baseline`) | Optional dependencies and pack format 15, removal of the bundled InvTweaks annotations, Patchouli and Curios at compile time, the Mixin setup, the port script, the config of `main`, the datagen baseline and the boot smoke test | 16.5 | Nothing | Done in 4142c4b, 9788dd8 and 6bcbead (setup), 54fb6c3, dbbfe12, ef59d18, 8e0566f and 51031ce, review fix d3bd821 |
 | Server safety (`aa-server-safety`) | Client classes out of common code, packet validation, menu validity with the drill upgrade dupe, player data sync | 18.5 | Baseline | Done in f9b373b, e2696b6, 0b3c5ff and b3f8fee, review fix 426b002 |
 | Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Done in 2053e6a, 71370b7, 63a8eff and a98f81c, review fix fb2f22c |
-| Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Planned |
+| Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Done in d7357e9, e6a4962, 05f63d2, 94b6b3c and 11ac001, review fixes e8f5b47 and 6c5aca4 |
 | Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Planned |
 | World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Planned |
 | Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Planned |
@@ -269,6 +291,16 @@ decide. Nothing in the pack depends on the version, see the property table.
   places them up (`mod/blocks/CrystalClusterBlock.java:32`, `58`).
 - Lamps show their state, the lamp controller follows its rotation, and both get recipes. Casings,
   machines and crystals get their own sounds, and stairs, slabs and walls join the vanilla tags.
+- Eight files of `main` stay out of the jar. The four banner pattern items come with the banner
+  patterns (659779b1) and `item_tag.png` with the Item Tag filter (79b2084e), while `youtube.png`,
+  `black_quartz_deepslate_ore.png` and the animation file of a deleted double crusher texture have
+  no user on `main`. Three hand written models that `main` still carries go too, because nothing
+  names them and their textures do not exist (`double_powered_furnace`, `green_block` and
+  `white_block`, `UPSTREAM.md`, source change 18).
+- Later bundles close the gaps this one leaves. The generators port adds the Bio Reactor
+  blockstate, the greenhouse glass port makes the glass visible, the fluid collector and placer
+  fixes add the Fluid Placer to `minecraft:mineable/pickaxe` (07c59fb3), and the AIOT fixes take
+  the axe check of `AllInOneTool.useOn` from 6686f1f4, which the block shapes left out.
 
 ### Processing machines
 
@@ -543,6 +575,14 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - Compat mining lens recipes ship only for mods whose 1.20.1 ids were checked.
 - The Engineer house uses upstream's structure with a lowered DataVersion, without the structure
   updater.
+- A lamp toggled by hand switches on the server only and sends the change to every client, a dye
+  recolours a lamp from the hand that used it, and the Lamp Controller walks the connected lamps
+  breadth first and stops after 4096 (`UPSTREAM.md`, source change 21). Upstream `main` keeps the
+  client side toggle, the removal from the selected hotbar slot and the recursion.
+- The loot tables of the crystal clusters use the 1.20.1 form of the silk touch predicate and
+  otherwise match `main` (`UPSTREAM.md`, source change 20).
+- The jar leaves out eight textures and three dead block models of `main`, see
+  [Assets](#assets).
 
 ## Operator notes
 

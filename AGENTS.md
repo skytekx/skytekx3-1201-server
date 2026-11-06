@@ -30,7 +30,10 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   in place, the bundled jars from `local-mods/` (three of them patched too, and the pack ships Simply
   Jetpacks 2 patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`), BrassAmber BattleTowers and
   Falling Meteors Reimagined, which are in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change
-  into `mods/` by hand. Update mods with `tools/update_mods.py`, never with `tools/resolve_all.py`. See
+  into `mods/` by hand. Git holds no copy of a jar that a pointer file `local-mods/<jar>.fetch.json`
+  names, ZeroCore 2 for now, because its license forbids one in this public repository. Fetch it with
+  `tools/fetch_local_mods.py` before you mirror `local-mods/`, and never commit it. Update mods with
+  `tools/update_mods.py`, never with `tools/resolve_all.py`. See
   [Mod set](okf/modpack/mod-set.md).
 - Unify materials through `config/almostunified/` and tags, not by editing recipes mod by mod.
 - Test every change against a real boot. A clean boot reaches `Done` with 0 FATAL lines, no crash
@@ -51,7 +54,8 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
 |---|---|
 | Add or remove a Modrinth mod | The index `modrinth.index.json`, then the same jar in `mods/` by hand |
 | Update mods | Script `tools/update_mods.py`, then `tools/patch_mods.py` and a boot test |
-| Add a mod that is not on Modrinth | Folder `local-mods/` (tracked) and `mods/`, plus a file in `modrinth-permissions/` for the review |
+| Add a mod that is not on Modrinth | Folder `local-mods/` (tracked) and `mods/`, plus a file in `modrinth-permissions/` for the review. A jar whose license forbids a copy in this repository gets a pointer file `local-mods/<jar>.fetch.json` and a `.gitignore` line instead, see [Mod set](okf/modpack/mod-set.md#changing-the-mod-set) |
+| Fetch the jars that pointer files name | Script `tools/fetch_local_mods.py`, then copy them into `mods/` |
 | Unify materials and duplicate recipes | File `config/almostunified/unify.json` (`modPriorities`, `ignoredItems`), and script `kubejs/server_scripts/unify_inventory.js` for the items players carry |
 | Recipe and tag tweaks | Scripts `kubejs/server_scripts/recipe_fixes.js`, `tag_fixes.js` and `gameplay.js`. No loot code exists yet |
 | Combat feel (no attack cooldown) | Script `kubejs/server_scripts/combat_1_7.js` |
@@ -62,7 +66,7 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
 | Skylands terrain and structures | Sources `skylands-datapack/` (shared, vanilla safe) and `skylands-datapack-forge/` (mod content), then `tools/sync_skylands_datapack.sh` |
 | Deploy on Linux | Unit `systemd/skytekx3.service` and `ServerLinux.sh`, see [Deploy on Debian](okf/server/deploy.md) |
 | Deploy on the Mac mini | See [Mac mini](okf/server/macos.md) |
-| Build and publish the pack | Scripts `tools/build_mrpack.py`, then `tools/publish_modrinth.py` |
+| Build and publish the pack | Scripts `tools/build_mrpack.py`, which fetches the pointed jars, then `tools/publish_modrinth.py` |
 
 ### The Skylands in short
 

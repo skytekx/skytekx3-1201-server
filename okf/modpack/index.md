@@ -28,7 +28,7 @@ and the server runs them on Arclight together with one Bukkit plugin (see
 | [Draconic Evolution fixes](draconic-fixes.md) | Why Draconic Evolution stays the stock 1.20.1 build and which upstream fixes the pack's addon SkyTekx DE Fixes applies to it |
 | [Mekanism Extra Modules port](mekanism-extra-modules.md) | The Forge 1.20.1 port of a 1.21.1 addon with three MekaSuit body armor modules, its Mekanism 10.4 adaptation, tests, license and operator steps |
 | [AlmostUnified](almostunified.md) | One item per material across the tech mods, the successor of UniDict |
-| [KubeJS](kubejs.md) | The four server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |
+| [KubeJS](kubejs.md) | The ten server scripts, the unfinished port of the SkyTekx 2 CraftTweaker scripts and how to work with Rhino |
 | [Plugins](plugins.md) | The Bukkit layer on Arclight, which is EssentialsX alone, with its permissions and its metrics |
 | [Tools](tools.md) | The scripts in `tools/`, from datapack sync and mod updates through jar patches and the build to the Modrinth upload and RCON |
 | [Client](client.md) | The owner's Prism instance on Asahi Linux, its Java flag, the custom main menu, the client crash history and how a player joins from outside the LAN |

@@ -34,7 +34,7 @@ skytekx.com does not point at a game server yet.
 | File `modrinth.index.json` | The pack manifest with 230 entries, 226 from the Modrinth CDN and 4 from GitHub releases. Git ignores `mods/`, and no script rebuilds it from the index, see [Provide the mods](#provide-the-mods) |
 | Folder `local-mods/` | The jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Actually Additions, Nyx and SkyTekx Compat: 58 jars and the pointer file `ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, which names the CurseForge file of a jar whose license forbids a copy in this repository. Forge does not load this folder, the jars have to be in `mods/` |
 | Folder `config/` | Mod configuration, with `config/almostunified/` for material unification |
-| Folder `kubejs/server_scripts/` | The four server scripts `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js` and `combat_1_7.js` |
+| Folder `kubejs/server_scripts/` | The ten server scripts that [KubeJS](okf/modpack/kubejs.md) describes, among them `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js` and `combat_1_7.js` |
 | Folder `skylands-datapack/` | Source of the shared Skylands datapack. It only uses vanilla ids and also runs on unmodded Spigot |
 | Folder `skylands-datapack-forge/` | Source of the Forge only Skylands content: Dungeons Arise sets, floaters from mod pools, Botania features |
 | Folder `world/datapacks/` | The three datapacks the world loads. Git ignores `world/`, these three were force-added. Two are copies of the sources above, `skytekx3_fixes` has no other source |

@@ -3,7 +3,7 @@ type: Plan
 title: Twilight Forest 4.8 backport
 description: Which TF 4.8 (1.21.1) features are backported onto TF 4.3 for 1.20.1 Forge, in which order, and which TF addons fit the pack.
 tags: [modpack, mods, twilightforest]
-timestamp: 2026-11-04
+timestamp: 2026-11-06
 ---
 
 # Twilight Forest 4.8 → 1.20.1 backport plan
@@ -69,7 +69,7 @@ Still open before the release is deployed and published:
   their jar NOTICE and mods.toml credits; the TF fork's NOTICE points at the history of
   `ports/twilightforest` at c825572, and only its `modrinth-permissions/` file carries the
   `tree/master` URL), and resolve the bundled-jar permission blockers
-  ([publish](publish.md#before-uploading)).
+  ([publish](publish.md#what-blocks-a-release)).
 
 Deferred by the final audit (carryover key `final-audit`): 4.8's *Twilight Forest: Food* creative tab
 (4.8 `TFCreativeTabs.java:603`, from 485d7e0a7). The fork keeps 4.3's three tabs and lists the new foods
@@ -157,7 +157,7 @@ For the server operator, in this order:
 
    Fetch the 9 new index entries (TF_Lost_Blocks, TwilightTreehouses, apothic_category_compat,
    farmers-cutting-twilight-forest, spartantoolkit, spartantwilight, tf_dnv, twilightaether,
-   twilightdelight) with the sha1-checked fetch in the [README](../../README.md#4--clone-the-pack), which
+   twilightdelight) with the sha1-checked fetch in the [README](../../README.md#provide-the-mods), which
    downloads every server-side index file `mods/` lacks; `tools/resolve_all.py` does not pick them up.
    The fetch skips a file only by its name, so it must print exactly these 9 `fetched` lines. Any other
    `fetched` line means the server's `mods/` has drifted from the index (another version of that mod is

@@ -1,9 +1,9 @@
 ---
 type: Reference
 title: Create Integrated Farming port
-description: The Forge 1.20.1 port of Create Integrated Farming 1.4.3 in ports/createintegratedfarming, what it and its library Create Dragons Plus add to the pack, what was left out, its license duties, the tests of 2026-11-05 on Forge and Arclight and the steps for the server.
+description: The Forge 1.20.1 port of Create Integrated Farming 1.4.3 in ports/createintegratedfarming, what it and its library Create Dragons Plus add to the pack, what was left out, its license duties, the tests of 2026-11-05 on Forge and Arclight, the roost seed fix of 2026-11-06 and the steps for the server.
 tags: [modpack, mods, create, port, farming, createdragonsplus, arclight]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Create Integrated Farming port
@@ -19,7 +19,7 @@ id, block state, NBT key and config key of 1.4.3. The work is done for SkyTekx, 
 | Upstream | The DragonsPlusMinecraft/CreateIntegratedFarming repository, branch `1.21.1/6.0.0-dev` at 1f63780 (2026-09-21, release 1.4.3). All 285 Java files of the Modrinth sources jar of 1.4.3 are byte identical to that commit (`UPSTREAM.md`) |
 | Fork | Folder `ports/createintegratedfarming/`, Java 17, ForgeGradle 6.0.6, Forge 47.4.0 userdev, Create 6.0.8-289 (`UPSTREAM.md`, Build changes) |
 | Version | Version 1.4.3-skytekx.1 in `create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` |
-| Ships as | A jar in `local-mods/`, SHA-1 74b2b560712ba3efe7992fb354cfef8b8d18275a, 488,836 bytes since 26fc840, two clean builds of a git archive export alike. The first bundled build of 32d35c9 (SHA-1 0d447e2c, 488,236 bytes) lacks the review fixes |
+| Ships as | A jar in `local-mods/`, SHA-1 9f2cfe23df7e531c31102ce319f68d7da8c2487e, 488,909 bytes since 5539f6e, the build of cf51b7d with the roost seed fix. A build, a clean rebuild and a build of a git archive export are alike. The build of 26fc840 (SHA-1 74b2b560, 488,836 bytes) lacks that fix, and the first bundled build of 32d35c9 (SHA-1 0d447e2c, 488,236 bytes) also lacks the review fixes |
 | Needs | Create 6.0.8 and Create: Dragons Plus 1.11.9 on both sides. Create: Dragons Plus is a new index entry (c15417f) |
 | Uses when present | Farmer's Delight, Supplementaries, Twilight Delight with the Twilight Forest fork, and Lava Fishing, all in the pack |
 | Network | Channel `create_integrated_farming:main`, protocol 1. A client without the jar cannot join |
@@ -72,9 +72,18 @@ pack reload and sends to the clients. A data pack can add foods in
 The fork keeps upstream's `MODPACK_README.md` unchanged, but that file describes the 1.21.1 build:
 its `#minecraft:chicken_food`, `#c:plantoil`, int providers without `value` and the duck, goose,
 turkey and Vanilla Backport roosts do not exist here (`UPSTREAM.md`, source change 11).
-The defaults are the item tag `create_integrated_farming:chicken_food`, which holds the six chicken
-foods of vanilla 1.20.1, and the fluid tag `forge:plantoil` with 100 mB per feeding, which Immersive
-Engineering fills in the pack.
+The defaults are the item tag `create_integrated_farming:chicken_food` and the fluid tag
+`forge:plantoil` with 100 mB per feeding, which Immersive Engineering fills in the pack. The item tag
+holds the six chicken foods of vanilla 1.20.1 and, as optional entries since cf51b7d, the cabbage seeds,
+tomato seeds and rice of Farmer's Delight and the flax seeds of Supplementaries. Those two mods add
+these four items to `Chicken.FOOD_ITEMS` at common setup: Farmer's Delight 1.20.1-1.3.4 in
+`CommonSetup#registerItemSetAdditions`, Supplementaries 1.20-3.1.44 in `ModSetup#registerMobFoods`
+through Moonlight's `RegHelper#registerChickenFood` (javap of the pack jars). So the roost takes what a
+vanilla chicken eats in the pack, as upstream's `#minecraft:chicken_food` key does on 1.21.1. A scan of
+the 271 jars of a full pack boot copy on 2026-11-06 for the field `f_28233_` and for Moonlight's
+`registerChickenFood` found no other mod that changes that list. The Expanded Delight port adds no
+chicken food, so its asparagus and chili pepper seeds stay out. A mod that adds a chicken food later
+needs an entry in this tag, since the roost reads only its food map.
 
 ## Left out
 
@@ -153,7 +162,7 @@ In short:
   the build as modified and names the upstream commit, the date and the changes (GPL 5(a)). The same
   files travel in `licenses/create-integrated-farming-1.20.1-1.4.3-skytekx.1/`.
 - The complete source of the jar is `ports/createintegratedfarming/` at the commit that last changed
-  the jar in `local-mods/` (26fc840, with the fork unchanged since 7bff431), and it has to stay public
+  the jar in `local-mods/` (5539f6e, with the fork unchanged since cf51b7d), and it has to stay public
   there as long as a pack that ships the jar is offered (GPL 6(d)). The source link on master makes `tools/mrpack_permissions.py` refuse the jar until
   master holds that directory and this build.
 - Every upstream header keeps "Copyright (C) 2025 DragonsPlus". The three classes of the Lava Fishing
@@ -232,12 +241,35 @@ those of the other pack mods, and the Aether part of Create: Dragons Plus never 
 use a Forge `FakePlayer` per contraption, as Create's deployer does, and the Arclight copy never ran a
 net.
 
+### Seed test of 2026-11-06
+
+The build of cf51b7d (SHA-1 `9f2cfe23`) on a plain Forge 47.4.18 server with Create 6.0.8, Create:
+Dragons Plus 1.11.9, Farmer's Delight 1.20.1-1.3.4, Supplementaries 1.20-3.1.44 with Moonlight and
+KubeJS 2001.6.5 for the checks, all as the files of the index, `-Xmx3G` and a flat world
+(`bp2/nm/newmods-fix-cif/server/` in the session's scratch directory). The boot reached `Done` in
+5.7 s with 0 ERROR and 0 FATAL lines, and the server stopped over RCON with exit code 0.
+
+- The food map resolved ten items: the six vanilla foods, `farmersdelight:cabbage_seeds`,
+  `farmersdelight:tomato_seeds`, `farmersdelight:rice` and `supplementaries:flax_seeds`. Each of the
+  ten also passed `Chicken.FOOD_ITEMS`, while dirt and bread failed both.
+- A Forge `FakePlayer` fed one cabbage seed through the block's `use` method to a Chicken Roost that
+  the test script had placed. The seed was consumed, `EggLayTime` fell from 11980 to 9580 and `FeedCooldown` became
+  536.
+- Two tomato seeds through the belt input at the back of a fresh roost left one, with the same cut of
+  2,400 ticks and a cooldown of 653.
+- A simulated feeding took rice, flax seeds and wheat seeds and refused dirt and bread.
+- A copy without Farmer's Delight and Supplementaries (`bp2/nm/newmods-fix-cif/server-nooptional/`)
+  loaded the tag with its six vanilla entries and logged no ERROR line up to `Done`. The ERROR lines
+  after `Done` came from the test script, which could not read the private field
+  `Chicken.FOOD_ITEMS` there. In the pack the access transformers of Farmer's Delight and Moonlight
+  make that field public.
+
 ## Steps for the server
 
 Git does not hold `mods/`. With the deploy of the next pack, while the java process is gone:
 
 1. Copy `local-mods/create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` into `mods/` and check its
-   SHA-1 `74b2b560712ba3efe7992fb354cfef8b8d18275a`.
+   SHA-1 `9f2cfe23df7e531c31102ce319f68d7da8c2487e`.
 2. Download `CreateDragonsPlus-1.11.9.jar` from the index entry (the `cdn.modrinth.com` URL of
    `modrinth.index.json`) into `mods/` and check its SHA-1 `cb249347ad15914619a81371b4cfa35f74f575ed`.
 3. Start the server and check that it reaches `Done` with the [ERROR baseline](../server/logs-and-crashes.md#boot-error-baseline)

@@ -1504,3 +1504,144 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and the entity files under `curios/entities` came with 5.2.0-beta.1 (`docs/CHANGELOG.md` of the
     Curios branch 1.20.x). With an older Curios the hotkey would throw a `NoSuchMethodError`. The
     pack ships 5.14.1.
+50. Drills: the drill traces the block it mines within the Forge block reach (`d36cb9c7`,
+    `cf8e56ab`, `2fbf2984`), so the 3x3 and 5x5 areas lie on the face the player mines. The base
+    traced with a `WorldUtil` stub that always answered the bottom face of 0, 0, 0, and the area
+    always lay flat. The new helper `Util.getReachDistance` reads the attribute
+    `ForgeMod.BLOCK_REACH`, which `NeoForgeMod.BLOCK_REACH` replaced on `main`. The drill tag gets
+    the speed of the augments (`d9961a39`), the drop check knows the current power (`ed8ea0e6`)
+    and the drill is never damageable (`424427fd`). The attack attributes are built once under
+    the base attack UUIDs of `Item` and give 9 attack damage and 1 attack speed when charged
+    (`05138857`, `0ebbd811`, `8977b3ba`, #1461). The placer augment lets the hotbar stack place
+    itself with a context of its own (`7e7fd0d8`, `846172e6`, `9bd1fa63`), so `ItemStack#useOn`
+    posts the Forge place events and the hotbar stack shrinks. The base placed the block from a
+    copy of the drill stack. The client outlines the extra blocks of the area (`f390ffd4`). The
+    tooltip lists the installed augments and the placer slot (`d84518fe`, `b7875a09`, #1463), and
+    the augment prints its slot (`ccfb8d16`). The drill screen refuses a higher speed tier without
+    the lower one, keeps the lower one while a higher one is in and refuses duplicates
+    (`75c3757e`, #1488, changelog 1.3.24). The 16 shapeless recipes
+    `actuallyadditions:drill_coloring/dye_drill_<colour>` dye a drill and keep its tag, with the
+    keep data recipe of `e0a8eed3` (new serializer `actuallyadditions:copy_nbt_shapeless`) and the
+    target ingredient of `db9095e0` (#1459). The lang drops the `(wip)` labels of the drills,
+    augments and drill core (`154add17`) and names the area augments as `d1438dd6` does.
+    Local deviations from `main` in this change:
+    - Upstream moved the area break into a `BreakEvent` listener for 1.21 (`32625541`, `92dfcb47`).
+      The 1.20.1 port keeps `Item#onBlockStartBreak` and guards it with a `ThreadLocal` flag, so a
+      vein miner that breaks more blocks inside the break event breaks only its own block on a
+      nested call. Main guards the same case with a check derived from Apotheosis.
+    - The outline helpers that `main` keeps in `AssetUtil` live in the client only class
+      `ClientEvents`, so no lambda of a common class names the client vertex classes (the dist
+      scan of the bundle, `tl-scan1.txt`).
+    - The keep data recipes copy the donor's energy as well, the 1.20.1 form of the attachment
+      copy of `99ea93eb` (`RecipeKeepDataShaped.copyData`). The energy capability writes the NBT
+      key `Energy` only when the stack is saved or copied, so the key can lag behind the storage.
+      The copy happens only when the donor holds more than 0.
+    - The ingredient factory `TargetNBTIngredient.of` takes a `TagKey<Item>` as in `e0a8eed3`.
+      With the raw `TagKey` javac bound the call to `Ingredient.of(TagKey<Item>)`, which wrote a
+      plain tag ingredient.
+    - The upgrade checks read the NBT once per call and never add an empty tag to a drill they
+      only read.
+    Savegame: the drill keeps the NBT keys `Energy` and `Items`, and the augment keeps
+    `SlotToPlaceFrom` with its slot plus one encoding. The off by one that `b7875a09` fixes came
+    with the 1.21 data component and never existed in this NBT form. New ids: the 16 recipes and
+    the serializer above.
+51. All in one tools: the AIOTs till, flatten and strip (`4d3ba552`, `9e0ce035`). The Forge hook
+    `IForgeBlock#getToolModifiedState` asks the stack in the hand whether it can perform the
+    action, and the AIOT answered only the four dig actions, so it never changed a block. It now
+    performs `HOE_TILL`, `SHOVEL_FLATTEN` and `AXE_STRIP` as well. Without sneaking it strips
+    like an axe and else tills like a hoe, and while sneaking it flattens like a shovel, with the
+    corrected check of `6686f1f4`. The unused `DrillAugmentItem`, which `ItemDrillUpgrade`
+    replaced, goes, and the AIOT no longer implements the empty `IActuallyItem` (`a678b3e0`). The
+    vanilla tool tags of `4789e61e` (#1450) came with source change 9. The damage and attack speed
+    fixes `9a418c1c` and `906aa08e` (#1424, changelog 1.3.6 and 1.3.7) repair a 1.21 regression
+    and are not needed here, since `DiggerItem` already gives 4 plus the tier's attack damage
+    bonus and an attack speed of minus 2 under the base attack UUIDs.
+    Local deviations from `main` in this change:
+    - The strip check asks `consumesAction()` instead of `SUCCESS`, since the axe answers
+      `CONSUME` on the server. With the check of `main` the server would also try the hoe on the
+      block the axe had just stripped.
+    - The AIOTs also join `forge:tools/pickaxes`, `axes`, `shovels` and `swords`, and
+      `forge:tools/paxels`. Forge 47 itself defines none of them (source change 9), but pack mods
+      do. Farmer's Delight 1.3.4 ships the pickaxe, axe and shovel tags, Immersive Engineering
+      10.2.0 all four, and Mekanism Tools 10.4.16 and Mystical Agradditions 7.0.12 the paxel tag
+      (file lists of the jars in the pack). The new public constants `ActuallyTags.Items.TOOLS_*`
+      name these tags.
+    Savegame: none. New ids: entries in the five forge tool tags.
+52. Tools and other items: the Bowl of Water picks up water again. The base left its registration
+    on the Forge bus commented out (`9f852348`). Its trace stops at source blocks, and the water
+    leaves through `BucketPickup`, so a waterlogged block keeps its block (`ecb8d46f`,
+    `3191a63d`, #1499, PR #1500). Placing water traces within the Forge block reach. The Handheld
+    Filler takes its second corner from the block the player looks at (`d1438dd6`, `2fbf2984`)
+    and is named `Filler` as on `87b02617`, with the registry id `handheld_filler` unchanged. The
+    `WorldUtil` stubs of the base go (`ecb8d46f`). The Teleport Staff pays 200 plus 200 times the
+    square root of the Manhattan distance (`c812512a`, `bae1ef5e`), where the base charged 200
+    per square block, so any jump past a few blocks cost more than a full staff. Worms till the
+    dirt and grass around them again and water a 3x3 of farmland (`a6f50e2f`). Hoeing a block of
+    the block tag `actuallyadditions:worm_drop` (`e37019a5`) rolls the new loot table
+    `actuallyadditions:worm_drop` (`159fd67c`, `02ca59fe`, `ba90c665`, `c8045ff5`) with the same
+    chance of 5 percent for one or two worms as before. A missing player rolls with luck 0
+    (`acb52994`, #1489). The worm renderer accepts a worm without a name (`ce0e39c4`, `af5c1389`,
+    changelog 1.3.25) and the entity gets its name (`958aead8`), so a worm summoned by command no
+    longer crashes the client. The fertilizer, the Laser Wrench, the Phantom Connector and the
+    Player Probe use the stack of the context and message only a present player (`e08ef13a`).
+    The Ring of Growth takes the empty check of `ac4d53bd`. The recipes of the filler, the ring
+    and the Ender Star came with source change 10.
+    Local deviations from `main` in this change:
+    - The click that fills a bowl ends with a swing, since the bowl is used up.
+    - The filler skips a trace that misses and reads its block without adding an empty tag.
+    - A tilling that a mod only simulates drops no worms.
+    - The id of the worm loot table lives in the new class `LootTableUtil`
+      (`LootTableUtil.WORM_DROP`), so runtime code never reaches into the data generator.
+    Local deviations from the review at the integration (`693daa2`):
+    - The filler saves the clicked block in its default state with only its orientation (the
+      vanilla properties `facing`, `axis`, `half`, `face` and `rotation` and the slab `type` with
+      a double slab as a bottom slab), never waterlogged, and
+      normalizes a state it reads back the same way. The full state of `main` let a double slab,
+      eight snow layers, four sea pickles, a full composter, a beehive full of honey or mature
+      wheat come out of the filler for one item and drop their whole loot when broken. On the
+      base that did not matter, since the filler never filled. A saved block that reads as air,
+      such as a block of a removed mod, counts as no block.
+    - The filler skips a position that spawn protection, the world border or adventure mode
+      keeps from the player (`Level#mayInteract`, `Player#mayUseItemAt`) and posts the Forge
+      place event for every block. Arclight hands that event to Bukkit as a `BlockPlaceEvent`.
+      A cancelled place is undone with the snapshot, costs no item and no energy and ends the
+      job. The filler looks for the item first and takes it only after the event.
+    - The Bowl of Water posts the Forge break event for the water it picks up and for a block
+      that its water washes away, and the place event for the water, which it takes back on a
+      cancel. The spill tick of the config value `waterBowlSpilling` checks spawn protection and
+      adventure mode like a placed bowl. A refusal on the server sends the inventory again, since
+      the client already showed the changed bowl. The slot check of the spill tick no longer
+      reads the one slot off hand list with the index of an armor slot above 0.
+    - The Teleport Staff jumps on a miss only while the player looks no more than 5 degrees
+      upward, as on the base and as the manual says. Upstream `c812512a` jumps on every miss and
+      throws a player who looks up 100 blocks into the air.
+    Savegame: the worm keeps `Timer`, the bowl `lastX` and `lastY`, and the filler `state` with
+    the keys `First*`, `Second*` and `Curr*`. The key `state` now holds a normalized block state.
+    New ids: the loot table `actuallyadditions:worm_drop`. The block tag of that name was already
+    there.
+53. Engineer's Goggles: the infrared goggles outline the entities within 8 blocks for the wearer.
+    The base set the glowing tag of the client copies of the entities, but the client draws the
+    outline from the glowing flag that the server syncs, so nothing glowed. As in `3b297993`
+    (#1523, changelog 1.3.26) the client mixin `client.MinecraftMixin` on
+    `Minecraft#shouldEntityAppearGlowing` (refmap `m_91314_`) asks `ClientEvents.shouldGlow`, so
+    no entity data changes on either side. The tick already lives in `ClientEvents` since source
+    change 13 (`844efe42`). The rendering fix of `6159fda4` (#1449) repairs the 1.21 armor layers.
+    On 1.20.1 the material name `actuallyadditions:goggles_armor_material` already resolves to
+    `goggles_armor_material_layer_1.png`, the same texture as `goggles_layer_1.png` of `main`, and
+    the unused `goggles_armor_material_layer_2.png` goes as in `6159fda4`.
+    Local deviations from `main` in this change:
+    - The goggles keep the entities in a static set only and look them up there, where `main`
+      marks them with `hasGlowingTag`. The set empties when the goggles come off or the client
+      leaves the level, and drops an entity that died or left the range or the level.
+    - From the review at the integration (`693daa2`), the wearer is left out of the set, so the
+      own model no longer glows in third person view.
+    Savegame: none. New ids: none.
+    The dedicated Forge 47.4.18 server of the bundle test, with Patchouli, Curios, JEI and
+    Mekanism next to the jar of the integration (SHA-1
+    `eec659a2c452a4043ed1ad7c39e2d084f7394161`), reached `Done` with 0 FATAL and 0 ERROR lines and
+    no crash report. A worm summoned by command lived, the loot table
+    `actuallyadditions:worm_drop` loaded and rolled, and the client mixin stayed off the server
+    (`bp2/actuallyadditions/srv-tlint1/`). Not tested in game: the drill areas with fortune and
+    silk touch, the placer augment, the drill screen, the dye recipes, the AIOT actions, the bowl,
+    the filler with its normalized state and its events, the staff and the goggles. The ship stage
+    runs those tests (carryover `aa-ship`).

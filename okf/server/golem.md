@@ -32,6 +32,8 @@ These come from the session of 2026-11-06 (claude.ai session `016dYAZDqtsLdVqTQQ
 - Every quirk and every security issue gets its own GitHub issue, and the pull request links all of
   them.
 - The owner asked whether Golem can be licensed under the GNU GPL 2, see [License](#license).
+- Every commit is pushed to `skytekx/golem` as soon as it exists.
+- Golem keeps its own OKF wiki.
 
 ## Why the game itself stays Java
 
@@ -127,6 +129,23 @@ Every source file carries `SPDX-License-Identifier: GPL-2.0-or-later` on its fir
 `LICENSES/` holds the texts of the GPL 2 and of every license a dependency brings. A license check in
 CI, such as `cargo deny`, refuses a dependency whose license is incompatible. This is a reading of the
 licenses and not legal advice.
+
+## Repository rules
+
+These hold for everyone who works on `skytekx/golem`, human or agent.
+
+- Push every commit as soon as it is made. No commit stays only local, not even for the length of a
+  session, so that a lost machine or container never loses work. Work in progress goes to a branch and
+  is pushed there, and only `main` waits for review.
+- Keep commits granular, one concern per commit, so that pushing each one at once stays readable.
+- Keep the OKF wiki in `okf/` of the Golem repository, in the same Open Knowledge Format as this wiki:
+  front matter with `type`, `title`, `description`, `tags` and `timestamp`, an `index.md` with the
+  state and a page map, a change log, a decisions page and open items. A change that alters behaviour,
+  config, the API, a ported command or a plugin's data updates the matching wiki page in the same pull
+  request. Every quirk and security issue of [Quirks and security](#quirks-and-security) gets a line on
+  the wiki page of its plugin with the link to its issue.
+- The Golem wiki holds the design and the operation of Golem itself. This wiki keeps the pages about
+  the SkyTekx 3 server and links to the Golem wiki.
 
 ## Quirks and security
 

@@ -33,8 +33,11 @@ public class ReconstructorRenderer implements BlockEntityRenderer<TileEntityAtom
     @Override
     public void render(TileEntityAtomicReconstructor tile, float partialTicks, @Nonnull PoseStack matrices, @Nonnull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         // SkyTekx: the guard of 713568d7. A renderer that runs after the block changed read the facing
-        // of a state without one and crashed the client
-        if (!tile.getBlockState().is(ActuallyBlocks.ATOMIC_RECONSTRUCTOR.get())) {
+        // of a state without one and crashed the client. As upstream it reads the state of the level,
+        // which getOrientation reads too. A section that has not been rebuilt yet still renders the
+        // block entity of a reconstructor that the client has just broken, while its cached state
+        // is still the reconstructor
+        if (tile.getLevel() == null || !tile.getLevel().getBlockState(tile.getBlockPos()).is(ActuallyBlocks.ATOMIC_RECONSTRUCTOR.get())) {
             return;
         }
         ItemStack stack = tile.inv.getStackInSlot(0);

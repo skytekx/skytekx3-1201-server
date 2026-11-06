@@ -80,14 +80,16 @@ builds.
    that does not call the new JEI method, or an EMI build that implements it, then an owner decision
    and a new test. Since 2026-11-03 git ships such an EMI build, the fork from github.com/skytekx/emi
    (eadc7a6d, as 1.1.24-skytekx.2 since 2026-11-04). The new test is still open.
-3. ZeroCore 2.1.48 is All Rights Reserved, and the modpack grant of its author forbids reposts on any
-   website other than CurseForge, Modrinth and the FTB launcher. Git tracked the jar in `local-mods/`
-   from d74909e on, so the push of step 2 below would have served it from GitHub. Resolved for the
-   pack on 2026-11-06 with option A of [open items](../open-items.md#owner-decisions): git holds only
-   the pointer `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, the builder fetches CurseForge
-   file 7344725 and checks its size and SHA-1, and the record says OK
-   (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). The jar itself is still in the local
-   commits from d74909e on, so those commits have to be rewritten without it before that push.
+3. ZeroCore 2.1.48 is All Rights Reserved, and the modpack grant of its author forbids reposts on
+   any website other than CurseForge, Modrinth and the FTB launcher. Its first bundling put the jar
+   into git in `local-mods/`, so the push of step 2 below would have served it from GitHub. Resolved
+   for the pack on 2026-11-06 with option A of [open items](../open-items.md#owner-decisions): git
+   tracks only the pointer `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, the builder fetches
+   CurseForge file 7344725 and checks its size and SHA-1, and the record says OK
+   (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). No pushed commit ever held the jar, and
+   the unpushed commits that tracked it are rewritten without it before that push. The builder and
+   the upload script refuse while any commit reachable from HEAD holds it, see
+   [tools](tools.md#pointed-jars).
 
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so

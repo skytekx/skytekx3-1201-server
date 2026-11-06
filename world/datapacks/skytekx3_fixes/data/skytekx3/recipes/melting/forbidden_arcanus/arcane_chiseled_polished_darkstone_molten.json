@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:arcane_chiseled_polished_darkstone"
+  },
+  "result": {
+    "tag": "forge:molten_deorum",
+    "amount": 10
+  },
+  "temperature": 850,
+  "time": 21
+}

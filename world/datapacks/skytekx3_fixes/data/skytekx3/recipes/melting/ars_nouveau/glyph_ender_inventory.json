@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ars_nouveau"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ars_nouveau:glyph_ender_inventory"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 8000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 1000,
+  "time": 625
+}

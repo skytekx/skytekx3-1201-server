@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:aluminum_longbow"
+  },
+  "result": {
+    "tag": "forge:molten_aluminum",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 425,
+  "time": 67
+}

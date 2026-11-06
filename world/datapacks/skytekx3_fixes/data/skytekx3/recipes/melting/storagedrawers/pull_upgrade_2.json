@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "storagedrawers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "storagedrawers:pull_upgrade_2"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1170
+  },
+  "temperature": 800,
+  "time": 217
+}

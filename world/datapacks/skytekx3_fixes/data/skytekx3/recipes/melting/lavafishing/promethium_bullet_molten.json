@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "lavafishing"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "lavafishing:promethium_bullet"
+  },
+  "result": {
+    "tag": "forge:molten_promethium",
+    "amount": 10
+  },
+  "temperature": 690,
+  "time": 19
+}

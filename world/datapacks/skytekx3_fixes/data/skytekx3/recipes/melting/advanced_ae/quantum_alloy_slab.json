@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:quantum_alloy_slab"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 1620
+  },
+  "temperature": 500,
+  "time": 212
+}

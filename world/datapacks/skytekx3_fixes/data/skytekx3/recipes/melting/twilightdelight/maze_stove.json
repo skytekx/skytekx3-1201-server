@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightdelight:maze_stove"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_knightmetal",
+    "amount": 270
+  },
+  "temperature": 1300,
+  "time": 130
+}

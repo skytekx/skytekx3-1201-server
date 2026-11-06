@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:quantum_storage_128"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 87570
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 6480
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 4000
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    }
+  ],
+  "temperature": 700,
+  "time": 1774
+}

@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether_genesis"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aether_genesis:divine_carved_stone"
+  },
+  "result": {
+    "tag": "forge:molten_sentrite",
+    "amount": 45
+  },
+  "temperature": 900,
+  "time": 45
+}

@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "meteors:meteorite_chestplate"
+  },
+  "result": {
+    "tag": "forge:molten_meteorite",
+    "amount": 720,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 183
+}

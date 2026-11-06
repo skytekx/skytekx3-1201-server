@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aquaculture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aquaculture:quartz_hook"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 40
+    }
+  ],
+  "temperature": 1000,
+  "time": 221
+}

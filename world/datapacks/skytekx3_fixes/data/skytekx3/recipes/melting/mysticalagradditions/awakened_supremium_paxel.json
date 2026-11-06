@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalagradditions:awakened_supremium_paxel"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 800
+  },
+  "byproducts": [
+    {
+      "fluid": "mysticalagradditions:molten_supremium",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 1450,
+  "time": 235
+}

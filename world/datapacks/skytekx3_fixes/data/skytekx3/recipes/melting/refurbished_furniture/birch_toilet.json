@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "refurbished_furniture"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "refurbished_furniture:birch_toilet"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 637,
+  "time": 258
+}

@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanshields"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "spartanshields:basic_mekanists_basic_shield"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 540
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 90
+    }
+  ],
+  "temperature": 700,
+  "time": 139
+}

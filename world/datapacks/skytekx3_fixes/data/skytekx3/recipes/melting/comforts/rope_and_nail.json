@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "comforts"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "comforts:rope_and_nail"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 45
+  },
+  "temperature": 800,
+  "time": 43
+}

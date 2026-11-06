@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismgenerators:fission_reactor_port"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_lead",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 89
+    }
+  ],
+  "temperature": 750,
+  "time": 276
+}

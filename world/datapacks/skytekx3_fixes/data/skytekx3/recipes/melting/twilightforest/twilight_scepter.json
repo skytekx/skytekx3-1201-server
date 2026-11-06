@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "twilightforest:twilight_scepter"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1750,
+    "unit_size": 10
+  },
+  "temperature": 477,
+  "time": 216
+}

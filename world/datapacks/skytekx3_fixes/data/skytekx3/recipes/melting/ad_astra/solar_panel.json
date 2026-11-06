@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:solar_panel"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 9000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 300
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 180
+    }
+  ],
+  "temperature": 750,
+  "time": 585
+}

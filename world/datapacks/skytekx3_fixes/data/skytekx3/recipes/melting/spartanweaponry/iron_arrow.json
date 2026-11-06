@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "spartanweaponry:iron_arrow"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 15
+  },
+  "temperature": 800,
+  "time": 25
+}

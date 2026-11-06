@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:spirit_sunderer"
+  },
+  "result": {
+    "tag": "forge:molten_arcane",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_cursium",
+      "amount": 90
+    }
+  ],
+  "temperature": 900,
+  "time": 110
+}

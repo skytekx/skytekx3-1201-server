@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanshields"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanshields:obsidian_basic_shield"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 4000,
+    "unit_size": 10
+  },
+  "temperature": 1000,
+  "time": 442
+}

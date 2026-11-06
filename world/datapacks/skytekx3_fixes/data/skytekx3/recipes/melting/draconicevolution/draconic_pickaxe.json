@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:draconic_pickaxe"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 5220
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 1948
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 360
+    }
+  ],
+  "temperature": 700,
+  "time": 433
+}

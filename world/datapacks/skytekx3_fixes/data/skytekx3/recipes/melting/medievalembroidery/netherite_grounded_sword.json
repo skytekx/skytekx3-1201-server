@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "medievalembroidery"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "medievalembroidery:netherite_grounded_sword"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 200
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90
+    }
+  ],
+  "temperature": 1450,
+  "time": 118
+}

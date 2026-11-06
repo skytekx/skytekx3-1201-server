@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "asr"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "asr:gilded_skull_shield"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 540,
+    "unit_size": 10
+  },
+  "temperature": 700,
+  "time": 139
+}

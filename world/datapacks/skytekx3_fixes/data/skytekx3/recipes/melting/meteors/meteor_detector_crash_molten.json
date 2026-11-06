@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "meteors:meteor_detector_crash"
+  },
+  "result": {
+    "tag": "forge:molten_kreknorite",
+    "amount": 360
+  },
+  "temperature": 1150,
+  "time": 141
+}

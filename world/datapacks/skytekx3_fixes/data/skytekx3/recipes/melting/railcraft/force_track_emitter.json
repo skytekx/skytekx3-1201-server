@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:force_track_emitter"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 1080
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 900
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 360
+    }
+  ],
+  "temperature": 500,
+  "time": 173
+}

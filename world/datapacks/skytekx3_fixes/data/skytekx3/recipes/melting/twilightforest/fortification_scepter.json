@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "twilightforest:fortification_scepter"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 2160,
+    "unit_size": 10
+  },
+  "temperature": 700,
+  "time": 279
+}

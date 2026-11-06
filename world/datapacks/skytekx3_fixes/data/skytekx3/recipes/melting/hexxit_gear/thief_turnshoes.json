@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "hexxit_gear"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "hexxit_gear:thief_turnshoes"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 100,
+    "unit_size": 25
+  },
+  "temperature": 1450,
+  "time": 83
+}

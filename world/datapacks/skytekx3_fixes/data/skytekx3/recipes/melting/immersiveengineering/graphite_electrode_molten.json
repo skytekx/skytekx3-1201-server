@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "immersiveengineering:graphite_electrode"
+  },
+  "result": {
+    "tag": "forge:molten_hop_graphite",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "temperature": 300,
+  "time": 84
+}

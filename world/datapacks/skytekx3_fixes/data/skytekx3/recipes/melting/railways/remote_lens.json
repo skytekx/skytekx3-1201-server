@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:remote_lens"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 250
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_brass",
+      "amount": 90
+    }
+  ],
+  "temperature": 477,
+  "time": 82
+}

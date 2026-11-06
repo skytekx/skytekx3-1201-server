@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:dark_nether_star_block"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 36000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1440
+    }
+  ],
+  "temperature": 1000,
+  "time": 1326
+}

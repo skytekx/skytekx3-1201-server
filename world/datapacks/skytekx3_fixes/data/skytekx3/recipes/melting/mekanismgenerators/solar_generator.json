@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismgenerators:solar_generator"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 990
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 270
+    }
+  ],
+  "temperature": 975,
+  "time": 217
+}

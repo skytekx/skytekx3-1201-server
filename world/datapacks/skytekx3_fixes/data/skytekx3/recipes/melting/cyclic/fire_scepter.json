@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:fire_scepter"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 1000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 40,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1000,
+  "time": 221
+}

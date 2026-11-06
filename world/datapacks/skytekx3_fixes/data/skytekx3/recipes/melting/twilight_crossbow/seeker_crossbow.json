@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_crossbow"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "twilight_crossbow:seeker_crossbow"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_steeleaf",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 934,
+  "time": 64
+}

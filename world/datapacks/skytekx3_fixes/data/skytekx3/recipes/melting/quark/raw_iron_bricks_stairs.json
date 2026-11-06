@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "quark"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "quark:raw_iron_bricks_stairs"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 810
+  },
+  "temperature": 800,
+  "time": 180
+}

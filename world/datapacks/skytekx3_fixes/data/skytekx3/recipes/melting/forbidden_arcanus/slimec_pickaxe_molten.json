@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:slimec_pickaxe"
+  },
+  "result": {
+    "tag": "forge:molten_deorum",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "temperature": 850,
+  "time": 123
+}

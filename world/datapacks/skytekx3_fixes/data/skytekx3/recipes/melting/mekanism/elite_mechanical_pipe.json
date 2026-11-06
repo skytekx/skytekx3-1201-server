@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:elite_mechanical_pipe"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 55
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 22
+    }
+  ],
+  "temperature": 800,
+  "time": 47
+}

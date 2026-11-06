@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:mekanism_exchanger_core_tier1"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 975,
+  "time": 131
+}

@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartanweaponry"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartanweaponry:netherite_warhammer"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 300,
+    "unit_size": 25
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1450,
+  "time": 144
+}

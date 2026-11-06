@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "l2complements:totemic_gold_axe"
+  },
+  "result": {
+    "tag": "forge:molten_totemic_gold",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 750,
+  "time": 83
+}

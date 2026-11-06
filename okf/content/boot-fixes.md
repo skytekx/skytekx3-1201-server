@@ -37,9 +37,9 @@ with 7cea753.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 2883e32 `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 245 files, 244 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 108 are
-[gameplay overrides](#gameplay-overrides).
+is tracked: 9,799 files, 9,798 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,662 are
+[gameplay overrides](#gameplay-overrides), 9,527 of them the generated recipes of [melting](melting.md).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -119,15 +119,16 @@ logged no "Couldn't parse element" and no Cyclic recipe error, and neither did t
 Each command reloads the data, and between the two the fixes pack is off, so run them with nobody
 online. On the Mac mini's world the fixes pack is pack 273 of 295 (read from its `level.dat` on
 2026-11-04). The 20 mod packs after it, from Elementary Staffs to GraveStone, belong to mods that no
-override touches, and its boot of 16:05 that day logged no "Couldn't parse element". The deploy of
-3.1.3 puts the new mods after it too, so that deploy has to run both commands once after the first
-start. The fixes pack and the Skylands packs share no file except `pack.mcmeta`, so the fixes pack may
-load after them. After a save, `tools/datapack_order.py world/level.dat` prints the file packs and
-every mod pack that loads after the fixes pack, which should be none.
+override touches, and its boot of 16:05 that day logged no "Couldn't parse element". The first start
+of 3.1.3 on 2026-11-05 put 14 new mod packs after it too, and the two commands moved it to the end at
+00:47, see [Pack order](#pack-order). The fixes pack and the Skylands packs share no file except
+`pack.mcmeta`, so the fixes pack may load after them. After a save, `tools/datapack_order.py
+world/level.dat` prints the file packs and every mod pack that loads after the fixes pack, which should
+be none.
 
 ### Gameplay overrides
 
-Eight groups of files in the pack change the game on purpose:
+Eleven groups of files in the pack change the game on purpose:
 
 - Sixteen biome modifiers of Railcraft and Immersive Engineering are set to `forge:none`. They turn off the
   ores that duplicate the preferred ores of AlmostUnified, see
@@ -152,7 +153,7 @@ Eight groups of files in the pack change the game on purpose:
   all on grass blocks. The final files gave 25 logs in 278 forest chunks (0.090) in 10,082 fresh
   chunks, all on grass or coarse dirt and none floating. The live boot of 2026-11-04 16:06 no longer
   logs the tag warning.
-- The 32 melting recipes under `data/tconstruct/recipes/smeltery/melting/` let the smeltery and the
+- The 32 hand written melting recipes under `data/tconstruct/recipes/smeltery/melting/` let the smeltery and the
   melter of Tinkers' Construct 3.12 melt the horse armor, the gloves and three obsidian items of other
   mods since 2026-11-04.
   Tinkers ships recipes only for vanilla items and its own compat metals, so the owner's horse armor
@@ -160,15 +161,24 @@ Eight groups of files in the pack change the game on purpose:
   gem that its cheapest recipe takes and never more. Leather, carpet and smithing templates come back
   as nothing. The 17 files in `horse_armor/` cover DragN's Livestock Overhaul 3.9.4 (14), Epic Knights
   (chainmail, 440 mB of iron, the same as DragN's), Mo' Creatures (crystal, 400 mB of diamond and
-  300 mB of quartz) and Galosphere (sterling). The sterling file waits for a molten palladium and loads
-  only with the mod `skytekx_molten`. The 9 files in `gloves/` cover the Aether (iron, golden, diamond,
+  300 mB of quartz) and Galosphere (sterling). The sterling file needs a molten palladium and loads
+  only with the mod `skytekx_molten`, which the server runs since the deploy of 3.1.3 on 2026-11-05. It
+  melts at 960, the palladium temperature of SkyTekx Molten, in 130 ticks (790 and 120 before that day). The 9 files in `gloves/` cover the Aether (iron, golden, diamond,
   netherite and chainmail) and Twilight Aether (ironwood, fiery, knightmetal and steeleaf). They use
-  `tconstruct:damagable_melting`, so a worn glove returns less, as Tinkers does for tools. Every file
+  `tconstruct:damagable_melting`, so a worn glove returns less, as Tinkers does for tools. Since 2026-11-05 the
+  ironwood gloves give 90 mB of iron and 10 mB of gold, half of before, since one raw iron makes two raw
+  ironwood (see [Melting](melting.md#dupes-closed-with-overrides)). Every file
   for another mod carries a `forge:mod_loaded` condition. The 3 files in `forbidden_arcanus/` answer the
   prompt of 16:43, which asked why Obsidian With Iron does not melt. In Forbidden & Arcanus 2.2.6 it
   takes one obsidian and four iron nuggets, and the furnace turns it into an Obsidian Ingot. Both melt
   into 1000 mB of molten obsidian and the Processed Obsidian Block of nine ingots into 9000 mB. The iron
-  comes back as a byproduct, 40 mB per ingot, which only the foundry gives out.
+  comes back as a byproduct, 40 mB per ingot, which only the foundry gives out. SkyTekx Molten melts the
+  ingot and the block itself into the same molten obsidian but without the iron. From b1b57633 on the two
+  files loaded only without `skytekx_molten`, so with Molten the four iron nuggets of an ingot did not come
+  back. Since the follow-up of 2026-11-05 they load in both cases again, and two files under
+  `data/skytekx_molten/recipes/smeltery/melting/obsidian/` switch off the two recipes of Molten with
+  `forge:false` (see [Melting](melting.md#dupes-closed-with-overrides)). Obsidian With Iron keeps its file in
+  both cases.
 - Three of these files replace the recipes of Tinkers for the vanilla iron, golden and diamond horse
   armor at their own ids. DragN's Livestock Overhaul makes them craftable from 4 ingots or diamonds,
   and Tinkers melted them into 7 (630 mB, 630 mB and 700 mB), a dupe. They now give 360 mB, 360 mB and
@@ -179,6 +189,17 @@ Eight groups of files in the pack change the game on purpose:
   log names one of the files. The three files of Forbidden & Arcanus went live at 17:39:10 with another
   `/reload`, after which KubeJS counted 37,023 recipes and the log had no new ERROR line. Nobody melted
   one in game yet.
+- 9,527 generated melting recipes under `data/skytekx3/recipes/melting/` let every armor piece, weapon,
+  tool and other item that holds a meltable material melt since 2026-11-05, as the owner asked on
+  2026-11-04 at 17:35. The script `tools/gen_melting.py` writes them from a dump of a test server, one per
+  item with the content of its cheapest recipe, and audits every melting recipe of the pack for dupes. With
+  them came 16 files under `data/tconstruct/recipes/smeltery/melting/` that close dupes of Tinkers which the
+  audit found, such as the ironwood of the Twilight Forest and the enchanted golden apple, the item tag
+  `data/skytekx3/tags/items/melting/not_as_template.json`, which keeps the stratus smithing template of
+  Deep Aether out of the template recipe of Tinkers, and the two files of SkyTekx Molten above. The
+  ironwood files for the axes, the helmet, the leggings and the shovel use the unit size 5, since Tinkers
+  rounds even a new piece down to whole units and ten does not divide their 135, 225, 315 and 45 mB. See
+  [Melting](melting.md).
 - One crafting recipe at `data/exura/recipes/auto_executor.json` makes the Auto Executor of Extra
   Utilities Reborn Again craftable since 2026-11-04. Version 1.2.0-rc10 registers the block with its
   item but ships no recipe for it, and the upstream source on GitHub (main of 2026-10-13) has none
@@ -206,7 +227,23 @@ Eight groups of files in the pack change the game on purpose:
   gave wheat, potatoes and carrots by row, and the scan found 59 such recipes. The pack
   `mod:mysticalagriculture` sits at index 215 of the 295 enabled packs in `level.dat` on the Mac mini
   (read 2026-11-04 21:47), before the fixes pack at 273, so the overrides win. The files reached the
-  Mac mini at 21:54 and load with its next `/reload` or start.
+  Mac mini at 21:54 and went live with the restart of 23:10 ("Done" at 23:11:09), whose log has no
+  error about them.
+- Two trim materials, `data/tconstruct/trim_material/steel.json` and
+  `data/tinkers_reforged/trim_material/graphite.json`, let the steel trim of Tinkers' Construct take the
+  steel of Mekanism and the graphite trim of Tinkers' Reforged the graphite of Extreme Reactors since
+  2026-11-04. AlmostUnified prefers those items, and the inventory converter swaps the steel and
+  graphite of the two Tinkers mods for them, so no steel or graphite that a player holds made a trim.
+  Each file is the one of the jar with only the ingredient changed, so trims made before keep their id.
+  A trim material is read at boot only, not on `/reload`. On a test server the two items then mapped to
+  `tconstruct:steel` and `tinkers_reforged:graphite`, see
+  [AlmostUnified](../modpack/almostunified.md#emi-hide-list).
+- Six files under `data/chocolate_quest/` turn the five old decoration blocks of the Chocolate Quest
+  Builder Village into the normal blocks since 2026-11-04. The owner asked at 17:33 to replace them
+  everywhere. The template pool `worldgen/template_pool/builder_village.json` gives new villages a rule
+  processor, and five loot tables under `loot_tables/blocks/` make an old block drop what its
+  replacement drops. The script `tools/replace_blocks.py` converted the world of the Mac mini offline
+  at the deploy of 3.1.3 on 2026-11-05, see [Old blocks](old-blocks.md).
 - One block loot table at `data/bigreactors/loot_tables/blocks/energizerpowerportfe_active.json` makes
   the Energizer Active FE Power Port of Extreme Reactors 2.0.97 drop itself since 2026-11-05. The jar
   registers the block like the passive port but ships no loot table for it, and its loot datagen
@@ -294,6 +331,13 @@ since the world was created, among them Falling Meteors, Elementary Staffs, the 
 and GraveStone. None of them ships a file at a path of the three file packs, but a new override for one
 of these mods would lose. Mo' Creatures (33), When Dungeons Arise (68) and Repurposed Structures (23)
 come before the fixes pack, so the overrides of 2026-11-04 win.
+
+On 2026-11-05 at 00:47 the deploy of 3.1.3 ran the two commands of [load order](#load-order) with
+nobody online. The `level.dat` of the Mac mini then listed 309 enabled packs with the fixes pack last,
+after the two Skylands packs, and `tools/datapack_order.py` counted no mod pack after it. Chocolate
+Quest (110) comes before it, so the old block overrides win. The reload with the pack enabled logged
+no ERROR line and no parse error, while the boot before the move had logged the four Cyclic recipes and
+the two loot tables of ExtendedAE and MEGA Cells that the pack replaces.
 
 ## Jar patches
 

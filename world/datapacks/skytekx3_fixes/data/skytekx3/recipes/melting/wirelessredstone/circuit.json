@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "wirelessredstone"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "wirelessredstone:circuit"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 125
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 477,
+  "time": 58
+}

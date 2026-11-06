@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "supplementaries"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "supplementaries:dragon_banner_pattern"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1000
+  },
+  "temperature": 477,
+  "time": 164
+}

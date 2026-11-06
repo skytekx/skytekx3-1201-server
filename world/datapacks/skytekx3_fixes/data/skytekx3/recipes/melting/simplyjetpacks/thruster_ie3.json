@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:thruster_ie3"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 580
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 220
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 950,
+  "time": 165
+}

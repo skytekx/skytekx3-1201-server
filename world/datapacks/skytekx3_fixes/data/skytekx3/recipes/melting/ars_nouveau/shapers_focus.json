@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ars_nouveau"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ars_nouveau:shapers_focus"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 100
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 1450,
+  "time": 83
+}

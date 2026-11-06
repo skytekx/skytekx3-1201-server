@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:enderium_glass"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 500
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    },
+    {
+      "tag": "forge:molten_enderium",
+      "amount": 45
+    }
+  ],
+  "temperature": 1000,
+  "time": 156
+}

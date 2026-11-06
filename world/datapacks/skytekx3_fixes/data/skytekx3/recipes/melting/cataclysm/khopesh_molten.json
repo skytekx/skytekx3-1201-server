@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cataclysm:khopesh"
+  },
+  "result": {
+    "tag": "forge:molten_ancient_metal",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 1000,
+  "time": 94
+}

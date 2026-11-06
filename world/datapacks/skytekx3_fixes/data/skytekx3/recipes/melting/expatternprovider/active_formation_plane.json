@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "expatternprovider"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "expatternprovider:active_formation_plane"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 450
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 800,
+  "time": 134
+}

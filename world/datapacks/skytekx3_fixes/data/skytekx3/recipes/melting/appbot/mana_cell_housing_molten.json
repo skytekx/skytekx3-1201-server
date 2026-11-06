@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "appbot"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "appbot:mana_cell_housing"
+  },
+  "result": {
+    "tag": "forge:molten_manasteel",
+    "amount": 270
+  },
+  "temperature": 850,
+  "time": 107
+}

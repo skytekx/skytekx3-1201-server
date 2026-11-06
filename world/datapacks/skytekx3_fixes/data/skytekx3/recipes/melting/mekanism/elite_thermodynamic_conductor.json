@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:elite_thermodynamic_conductor"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 22
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 22
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 11
+    }
+  ],
+  "temperature": 800,
+  "time": 30
+}

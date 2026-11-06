@@ -21,7 +21,7 @@
 import io, json, os, shutil, struct, subprocess, sys, tarfile, types, zipfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERSION = "3.1.2"
+VERSION = "3.1.3"
 FORGE = "47.4.18"   # The Forge build that the server (inside Arclight) and the owner's client run
 
 def git(*args):
@@ -143,7 +143,7 @@ OVERRIDES = [
     ("local-mods", "mods"),
     # What bundled jars must travel with: the sources of LGPL ports and of the LittleTiles build, the
     # license text of MIT jars that carry none inside (Simply Jetpacks 2, EnderIO Legacy Machines, Flux
-    # Networks, Extreme Reactors 2)
+    # Networks, Extreme Reactors 2, SkyTekx Molten)
     # and the license texts of the parts of the Ender IO build with their NOTICE.
     ("licenses", "licenses"),
 ]

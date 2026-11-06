@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tinkers_reforged"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:reinforced_reactorchargingportfe"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_graphite",
+      "amount": 1440
+    }
+  ],
+  "temperature": 800,
+  "time": 241
+}

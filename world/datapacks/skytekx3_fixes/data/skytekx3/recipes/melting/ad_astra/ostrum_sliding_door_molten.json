@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ad_astra:ostrum_sliding_door"
+  },
+  "result": {
+    "tag": "forge:molten_ostrum",
+    "amount": 1350
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 500
+    }
+  ],
+  "temperature": 1100,
+  "time": 268
+}

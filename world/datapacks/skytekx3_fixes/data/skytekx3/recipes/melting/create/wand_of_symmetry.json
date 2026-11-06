@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "create:wand_of_symmetry"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "tag": "forge:molten_brass",
+      "amount": 90
+    }
+  ],
+  "temperature": 1000,
+  "time": 221
+}

@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "hexxit_gear"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "hexxit_gear:scale_boots"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 4000,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100,
+      "unit_size": 25
+    }
+  ],
+  "temperature": 1000,
+  "time": 442
+}

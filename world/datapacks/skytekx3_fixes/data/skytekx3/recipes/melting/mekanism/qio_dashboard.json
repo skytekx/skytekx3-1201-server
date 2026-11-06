@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:qio_dashboard"
+  },
+  "result": {
+    "tag": "forge:molten_lead",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 100
+    }
+  ],
+  "temperature": 330,
+  "time": 87
+}

@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:portal_frame"
+  },
+  "result": {
+    "tag": "forge:molten_arcane",
+    "amount": 180
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 125
+    },
+    {
+      "tag": "forge:molten_mithril",
+      "amount": 90
+    }
+  ],
+  "temperature": 900,
+  "time": 90
+}

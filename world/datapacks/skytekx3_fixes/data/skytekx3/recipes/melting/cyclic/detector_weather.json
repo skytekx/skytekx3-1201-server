@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:detector_weather"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 6000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 700
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 80
+    }
+  ],
+  "temperature": 750,
+  "time": 478
+}

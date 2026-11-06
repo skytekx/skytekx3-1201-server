@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:gem_cutting_table"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 180
+  },
+  "temperature": 800,
+  "time": 85
+}

@@ -1,0 +1,91 @@
+{
+  "name": "chocolate_quest:builder_village",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "chocolate_quest:builder_village",
+        "projection": "rigid",
+        "processors": {
+          "processors": [
+            {
+              "processor_type": "minecraft:block_ignore",
+              "blocks": [
+                {
+                  "Name": "minecraft:structure_block"
+                }
+              ]
+            },
+            {
+              "processor_type": "minecraft:rule",
+              "rules": [
+                {
+                  "input_predicate": {
+                    "predicate_type": "minecraft:block_match",
+                    "block": "chocolate_quest:old_cobblestone"
+                  },
+                  "location_predicate": {
+                    "predicate_type": "minecraft:always_true"
+                  },
+                  "output_state": {
+                    "Name": "minecraft:cobblestone"
+                  }
+                },
+                {
+                  "input_predicate": {
+                    "predicate_type": "minecraft:block_match",
+                    "block": "chocolate_quest:old_iron_block"
+                  },
+                  "location_predicate": {
+                    "predicate_type": "minecraft:always_true"
+                  },
+                  "output_state": {
+                    "Name": "minecraft:iron_block"
+                  }
+                },
+                {
+                  "input_predicate": {
+                    "predicate_type": "minecraft:block_match",
+                    "block": "chocolate_quest:old_diamond_ore"
+                  },
+                  "location_predicate": {
+                    "predicate_type": "minecraft:always_true"
+                  },
+                  "output_state": {
+                    "Name": "minecraft:diamond_ore"
+                  }
+                },
+                {
+                  "input_predicate": {
+                    "predicate_type": "minecraft:block_match",
+                    "block": "chocolate_quest:old_glass"
+                  },
+                  "location_predicate": {
+                    "predicate_type": "minecraft:always_true"
+                  },
+                  "output_state": {
+                    "Name": "minecraft:glass"
+                  }
+                },
+                {
+                  "input_predicate": {
+                    "predicate_type": "minecraft:block_match",
+                    "block": "chocolate_quest:old_obsidian"
+                  },
+                  "location_predicate": {
+                    "predicate_type": "minecraft:always_true"
+                  },
+                  "output_state": {
+                    "Name": "minecraft:obsidian"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

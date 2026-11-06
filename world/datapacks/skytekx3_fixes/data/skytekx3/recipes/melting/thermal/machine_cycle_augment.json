@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:machine_cycle_augment"
+  },
+  "result": {
+    "tag": "forge:molten_signalum",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_silver",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_constantan",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 999,
+  "time": 188
+}

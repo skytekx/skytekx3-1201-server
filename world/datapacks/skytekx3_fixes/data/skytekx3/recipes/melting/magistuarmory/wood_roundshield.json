@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "magistuarmory:wood_roundshield"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 90,
+    "unit_size": 10
+  },
+  "temperature": 950,
+  "time": 65
+}

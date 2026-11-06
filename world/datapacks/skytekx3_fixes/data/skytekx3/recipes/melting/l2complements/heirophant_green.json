@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:heirophant_green"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 100
+  },
+  "temperature": 934,
+  "time": 68
+}

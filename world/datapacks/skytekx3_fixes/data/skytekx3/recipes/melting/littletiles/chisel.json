@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "littletiles"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "littletiles:chisel"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 180
+  },
+  "temperature": 800,
+  "time": 85
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:beacon_redstone"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 2500
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 400
+    }
+  ],
+  "temperature": 750,
+  "time": 308
+}

@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:device_xp_condenser"
+  },
+  "result": {
+    "tag": "forge:molten_silver",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 200
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 100
+    }
+  ],
+  "temperature": 790,
+  "time": 120
+}

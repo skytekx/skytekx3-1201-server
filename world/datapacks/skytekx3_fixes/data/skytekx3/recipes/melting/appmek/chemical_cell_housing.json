@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "appmek"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "appmek:chemical_cell_housing"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 270
+  },
+  "temperature": 975,
+  "time": 114
+}

@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:hp_buffer_card"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 4410
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 2700
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1020
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 100
+    }
+  ],
+  "temperature": 500,
+  "time": 349
+}

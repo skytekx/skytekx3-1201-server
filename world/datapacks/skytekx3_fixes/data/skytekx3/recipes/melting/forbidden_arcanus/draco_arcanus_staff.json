@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "forbidden_arcanus"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "forbidden_arcanus:draco_arcanus_staff"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 5000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 312
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 200
+    }
+  ],
+  "temperature": 1000,
+  "time": 494
+}

@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:draconic_energy_core"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 4680
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 2880
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 800
+    },
+    {
+      "tag": "forge:molten_draconium_awakened",
+      "amount": 360
+    }
+  ],
+  "temperature": 1300,
+  "time": 540
+}

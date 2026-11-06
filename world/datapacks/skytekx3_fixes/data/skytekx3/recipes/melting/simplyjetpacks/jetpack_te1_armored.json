@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:jetpack_te1_armored"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1800
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 810
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_electrum",
+      "amount": 360
+    }
+  ],
+  "temperature": 800,
+  "time": 269
+}

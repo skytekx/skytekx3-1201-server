@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "magistuarmory"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "magistuarmory:silver_tartsche"
+  },
+  "result": {
+    "tag": "forge:molten_silver",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 790,
+  "time": 120
+}

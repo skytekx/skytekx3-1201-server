@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "pipe_api"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "pipe_api:void_hopper"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 1000,
+  "time": 221
+}

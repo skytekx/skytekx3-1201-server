@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:reinforced_turbinecomputerport"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 1620
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_cyanite",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1440
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 810
+    }
+  ],
+  "temperature": 950,
+  "time": 275
+}

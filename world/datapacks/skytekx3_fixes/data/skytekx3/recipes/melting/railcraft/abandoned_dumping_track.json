@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:abandoned_dumping_track"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 22
+  },
+  "temperature": 950,
+  "time": 32
+}

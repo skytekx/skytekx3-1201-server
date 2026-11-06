@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2complements"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2complements:totem_of_the_sea"
+  },
+  "result": {
+    "tag": "forge:molten_totemic_gold",
+    "amount": 540
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_poseidite",
+      "amount": 180
+    }
+  ],
+  "temperature": 750,
+  "time": 143
+}

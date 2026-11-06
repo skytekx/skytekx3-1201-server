@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "industrialforegoing"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "industrialforegoing:simple_black_hole_unit"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 750
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 360
+    }
+  ],
+  "temperature": 477,
+  "time": 142
+}

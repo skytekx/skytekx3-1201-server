@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:steam_locomotive"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1110
+  },
+  "temperature": 800,
+  "time": 211
+}

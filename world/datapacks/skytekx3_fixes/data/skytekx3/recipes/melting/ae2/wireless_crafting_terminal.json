@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ae2:wireless_crafting_terminal"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 300
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 800,
+  "time": 110
+}

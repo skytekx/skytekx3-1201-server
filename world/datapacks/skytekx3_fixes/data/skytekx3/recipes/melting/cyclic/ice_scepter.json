@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:ice_scepter"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 10,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 10,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 500,
+  "time": 17
+}

@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aquaculture"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "aquaculture:neptunium_fillet_knife"
+  },
+  "result": {
+    "tag": "forge:molten_neptunium",
+    "amount": 180
+  },
+  "temperature": 415,
+  "time": 66
+}

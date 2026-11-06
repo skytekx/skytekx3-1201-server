@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:powered_spawner"
+  },
+  "result": {
+    "tag": "forge:molten_soularium",
+    "amount": 1120
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 500
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 200
+    },
+    {
+      "tag": "forge:molten_vibrant_alloy",
+      "amount": 160
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 750,
+  "time": 206
+}

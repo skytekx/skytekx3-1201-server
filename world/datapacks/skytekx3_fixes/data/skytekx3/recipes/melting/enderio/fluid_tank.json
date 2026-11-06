@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:fluid_tank"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 480
+  },
+  "temperature": 800,
+  "time": 139
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:fluid_cell_frame"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 360
+    }
+  ],
+  "temperature": 700,
+  "time": 114
+}

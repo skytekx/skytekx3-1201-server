@@ -1,0 +1,35 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "twilightforest:travellers_wings"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_carminite",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 500,
+  "time": 100
+}

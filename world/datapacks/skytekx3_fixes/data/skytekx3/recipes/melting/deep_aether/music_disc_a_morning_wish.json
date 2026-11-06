@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "deep_aether"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "deep_aether:music_disc_a_morning_wish"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 90
+  },
+  "temperature": 800,
+  "time": 60
+}

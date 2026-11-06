@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railways"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railways:turquoise_flat_riveted_locometal"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 101
+  },
+  "temperature": 800,
+  "time": 64
+}

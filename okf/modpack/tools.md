@@ -8,17 +8,23 @@ timestamp: 2026-11-06
 
 # Tools
 
-The folder [tools/](../../tools) holds the scripts below. Six came from the build sessions of June and
-July 2026. The seventh, `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at
-16:58 whether the installed mods have updates. It was committed at 18:14 (257d4c1). Three region
-scans checked the Halloween world on the Mac mini the same evening, and `cf_tunnel.py` sets up the
-Cloudflare Tunnel that made the server public at 21:13. The order script `datapack_order.py`
-followed on 2026-11-04 (2dc53e6) and the wire scan `wire_scan.py` of the Create Crafts & Additions
-backport on 2026-11-05 (a3285fc). Since 2026-11-06 `fetch_local_mods.py` fetches the jars that
-`local-mods/` names by a pointer file, see [pointed jars](#pointed-jars). Three more live on other
-pages: the permission check `mrpack_permissions.py` on [Publish](publish.md), the alternator scan
-`alternator_scan.py` on the [Create Crafts & Additions backport](createaddition-backport.md#release)
-and the Arclight rebuild in `tools/arclight/` on [Arclight runtime](../server/arclight.md).
+The folder [tools/](../../tools) holds 21 scripts, not counting the Arclight build helpers in
+`tools/arclight/`. Six came from the build sessions of June and July 2026. The seventh,
+`update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58 whether the installed
+mods have updates. It was committed at 18:14 (257d4c1). The next three are the region scans that
+checked the Halloween world on the Mac mini the same evening. The eleventh, `cf_tunnel.py`, sets up the
+Cloudflare Tunnel that made the server public at 21:13. Five came on 2026-11-04: the permission check
+`mrpack_permissions.py` that the build and the upload share, `datapack_order.py` (2dc53e6), the unify
+audit `unify_audit.py` with its dump script `unify_audit_dump.js`, and `replace_blocks.py`, after the
+owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere. The melting generator
+`gen_melting.py` and its dump script `melting_dump.js` answer the request of 17:35 the same day that
+everything that holds a meltable material melts, and were committed on 2026-11-05. The wire scan
+`wire_scan.py` (a3285fc) and the alternator scan `alternator_scan.py` (7f1364c) of the Create Crafts &
+Additions backport came on 2026-11-05 too, and the alternator scan is described on the
+[Create Crafts & Additions backport](createaddition-backport.md#release). Since 2026-11-06
+`fetch_local_mods.py` fetches the jars that `local-mods/` names by a pointer file, see
+[pointed jars](#pointed-jars). The permission check is described on [Publish](publish.md) and the
+Arclight rebuild in `tools/arclight/` on [Arclight runtime](../server/arclight.md).
 
 | Order | Tool | Lines | Job | Needs | Writes |
 |---|---|---:|---|---|---|
@@ -31,6 +37,9 @@ and the Arclight rebuild in `tools/arclight/` on [Arclight runtime](../server/ar
 | 5 | Publish, `publish_modrinth.py` | 232 | Creates the Modrinth project if missing, uploads the version and checks its hash, or replaces the project texts | Modrinth token in `MODRINTH_TOKEN` | Modrinth (only with `--go` or `--texts`) |
 | Any time | RCON, `rcon.py` | 23 | Sends one command to the server | RCON password | Nothing |
 | After a mod joins | Order, `datapack_order.py` | 78 | Prints the datapack order of a saved `level.dat` and the mod packs that load after the fixes pack | Python 3 | Nothing |
+| After the mod set changes | Melting dump, `melting_dump.js` | 347 | Dumps every recipe, item, fluid, tag and mod of a booted test server for the generator, as `kubejs/server_scripts/zz_melting_dump.js` there and never on the live server | KubeJS on a test server | `melting_dump_*.json` in `kubejs/` of that server |
+| After the mod set changes | Melting, `gen_melting.py` | 1,766 | Writes one Tinkers melting recipe per item that holds a meltable material from the dump, audits every melting recipe of the pack for dupes and checks its own reader, see [Melting](../content/melting.md) | Python 3, standard library only | Only `world/datapacks/skytekx3_fixes/data/skytekx3/recipes/melting/`, nothing with `--check` |
+| Once per world, server stopped | Replace, `replace_blocks.py` | 926 | Replaces the five old blocks of Chocolate Quest with the normal blocks in every chunk, entity and NBT file of a world, see [Old blocks](../content/old-blocks.md) | Python 3.9 or newer, standard library only | Only the region and NBT files that hold an old block, each through a temporary file |
 | Once per host | Tunnel, `cf_tunnel.py` | 82 | Creates or updates the Cloudflare Tunnel, its route and the DNS records for `hex.skytekx.com` | Cloudflare credentials in the environment | Cloudflare and a token file (mode 600) |
 | After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 160 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
@@ -306,7 +315,10 @@ The scripts that locate the repo from their own path work on any host: the sync 
 `publish_modrinth.py`. Only `resolve_all.py` still hard-codes `/home/snekmin/git/skytekx3-1201-server`.
 The builder reads git, and the Mac mini's copy has no `.git` folder, so packs are built on the build
 machine. The Mac mini does not need them to run the server. The server
-files reach it through `macos/sync-to-mac.sh`, see [macOS host](../server/macos.md).
+files reach it through `macos/sync-to-mac.sh`, see [macOS host](../server/macos.md). The scripts
+`replace_blocks.py` and `datapack_order.py` take the world folder or its `level.dat` as their argument
+and run on the system `/usr/bin/python3` 3.9.6 of the Mac mini without a venv. Both ran there at the
+deploy of 3.1.3 on 2026-11-05.
 
 ## History
 

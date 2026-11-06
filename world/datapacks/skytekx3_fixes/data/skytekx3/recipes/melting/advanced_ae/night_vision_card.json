@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:night_vision_card"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 5000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 4320
+    },
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 3000
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 180
+    }
+  ],
+  "temperature": 750,
+  "time": 436
+}

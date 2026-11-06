@@ -767,6 +767,12 @@ logs stay on the Mac and are not in the repo.
   reported that it still did not. Three melting recipes for it, the Obsidian Ingot and the Processed
   Obsidian Block went live at 17:39:10 through `/reload`, and KubeJS counted 37,023 recipes, see
   [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- At 17:33 the owner asked to replace the old blocks of Chocolate Quest everywhere and to deploy. Each
+  Builder Village holds 48 old cobblestone, 21 old iron blocks, 10 old diamond ores, 5 old glass and 3
+  old obsidian, which drop only themselves and which no recipe, Fortune or smeltery takes. At 17:35 the
+  owner asked that every armor piece, weapon and other item with a meltable part melts, also into the
+  new fluids of SkyTekx Molten. A workflow built both on two test servers from 17:58, see the next
+  section.
 - At 18:29 a player's client crashed when it opened the guide of Applied Energistics 2 with the G key,
   because Starlight 1.1.2 calls a method that the fake world of the guide lacks. The index now keeps
   Starlight off the clients from the next pack on, and the server keeps it, see
@@ -802,6 +808,73 @@ logs stay on the Mac and are not in the repo.
 - At 21:45 the owner asked for Flux Networks from its GitHub repository. Version 7.2.1.15 is on
   CurseForge only and MIT licensed, so the pack bundles it in `local-mods/` for 3.1.3 after a boot of a
   test server, see [Mod set](modpack/mod-set.md#flux-networks).
+- At 22:12 the owner asked why two iron ingots offer 2 or 4 iron rods, at 22:27 why zinc sheets cannot
+  be made and at 22:34 for one item per material with the other variants out of sight. Thermal Extra's
+  rod recipe goes, five recipes give the preferred item, two trims take it, AlmostUnified covers five
+  more materials, coal coke, silicon, slag, three rods and graphite, and the 282 variants leave EMI
+  through the tag `c:hidden_from_recipe_viewers`, see
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list). The files reached the Mac mini after its
+  restart of 23:10, so all of it goes live with the next restart, or apart from the two trims with a
+  `/reload`.
+
+## 2026-11-05: Pack 3.1.3 goes live with the old blocks replaced
+
+- At 00:35 the workflow of 17:58 ended. Its review and recheck approved the old blocks: the fixes pack
+  got the Builder Village pool with a rule processor and five loot tables, the unify script swaps the
+  five old items, and the new script `tools/replace_blocks.py` converts a stopped world, see
+  [Old blocks](content/old-blocks.md). The recheck held back its 9,546 generated melting recipes,
+  because three of them still gave more than their recipe takes, see
+  [Open items](open-items.md#defects-to-fix). The fixes pack took only the two Forbidden & Arcanus files
+  that leave the obsidian ingot to SkyTekx Molten, and the sterling horse armor melts at the 960 of
+  Molten's palladium (1a16cf2d).
+- Pack 3.1.3 was built at 00:41 (f34d7362, 75,915,546 bytes, 232 index entries, 49 bundled jars) with
+  the nine mods of 2026-11-04, Advanced Loot Info, Flux Networks and SkyTekx Molten (a50c6748), and
+  went to the owner as `~/Downloads/SkyTekx3-3.1.3.mrpack` to send to the players. Six bundled jars
+  without permission keep it off Modrinth, see [publish](modpack/publish.md#version-history). The
+  config of The One Probe ships with `spawnNote = false` (16d45cc8).
+- After a chat message the server stopped at 00:44:13 with nobody online. The world and `mods/` were
+  cloned to `~/skytekx3-backups/before-313-2026-11-05/` on the Mac mini. The 13 new jars and EMI
+  1.1.24-skytekx.2 went into `mods/` (264 jars), the fixes pack came from git HEAD (250 files), and
+  `unify_inventory.js`, `spigot.yml` with `restart-on-crash: false` and the One Probe config followed.
+  `tools/replace_blocks.py` converted 13 chunks in 14 files in 5.6 s with no error, and a second dry run
+  found nothing left, see [Old blocks](content/old-blocks.md#deploy).
+- The server was `Done` at 00:46:19 with 0 FATAL lines and no chunk error. At 00:47 the two datapack
+  commands moved the fixes pack to the end of 309 packs, after which the reload logged no ERROR line
+  and no parse error, see [Boot fixes](content/boot-fixes.md#pack-order). KubeJS loaded 11 scripts
+  without an error and found 38,661 recipes, and AlmostUnified turned 43,596 recipes into 43,087. The
+  unification of 2026-11-04, the two trims and the EMI hide list went live with this start.
+
+## 2026-11-05: Every item that holds a meltable material melts
+
+- The three dupes of the recheck were faults of the reader of `tools/gen_melting.py`. By 01:14 it read
+  the count inside the item of a SAG mill product with the best grinding ball, the result counts of a
+  sequenced assembly and a count beside a plain result id, and it modelled the catch of a mob with a
+  water bucket, which uses up the bucket whole. A new reader check stops the run when a product counts
+  below its recipe, and on the old reader it reported 81 findings in 47 recipes. The obsidian ingot of
+  Forbidden & Arcanus melts with its iron again when Molten is loaded, since two files switch off the
+  obsidian recipes of Molten. The folder then had 9,530 files (39435a34), see
+  [Melting](content/melting.md#follow-up-of-2026-11-05).
+- On the new test server `skytest-melt5`, with the 264 jars of 3.1.3, the boots of 01:17 with Molten
+  and 01:21 without it loaded all 8,321 and 7,868 generated recipes with no parse error. Real melters
+  gave 27 mB ender for the ender pearl dusts, 29 mB iron for the monorail track and 270 mB iron for the
+  fish buckets, see [Melting](content/melting.md#runs-of-the-follow-up).
+- A review of the follow-up found seven smaller faults, all fixed in c7a764b5 to 91004246. The reader
+  counts the catalysts and augments of the Thermal machines, so the three ore chunks of Thermal Extra
+  fall below 10 mB and stay out, four ironwood overrides of Tinkers melt in full with the unit size 5,
+  and the audit counts a full refund as a source. The folder has 9,527 files. The boots of 03:24 with
+  Molten and 03:32 without it loaded all 8,318 and 7,865 generated recipes with no parse error, and a
+  new ironwood axe melted into 135 mB iron, see [Melting](content/melting.md#review-of-the-follow-up).
+- At 03:47 the 9,546 new files and the three changed overrides reached the fixes pack of the Mac mini
+  after a checksum dry run and an APFS clone of the pack to
+  `~/skytekx3-backups/before-melting-2026-11-05/`. The pack has 9,796 files and is still the last of
+  309 packs.
+- On the owner's go a `minecraft:reload` at 05:45:05, with nobody online, brought the recipes live
+  after a checksum dry run found the pack equal to git HEAD (563cf5fe). KubeJS found 46,980 recipes,
+  as on the test server, and AlmostUnified turned 53,123 recipes into 52,614. The reload logged no
+  ERROR or FATAL line and no parse error, and the server fell 2.4 s behind once while it ran.
+- The owner decisions on loot that melts into metal, the eleven trades, the known machine dupes, the
+  variants of AlmostUnified and the cheap ender pearl dust are in
+  [Open items](open-items.md#owner-decisions).
 
 ## 2026-11-05: SkyTekx DE Fixes
 

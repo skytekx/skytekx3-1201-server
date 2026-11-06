@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:strap_iron_locking_track"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 24
+  },
+  "temperature": 800,
+  "time": 31
+}

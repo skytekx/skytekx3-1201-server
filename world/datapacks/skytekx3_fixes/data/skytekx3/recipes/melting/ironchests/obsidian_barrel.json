@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ironchests"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ironchests:obsidian_barrel"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 8000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 1260
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 200
+    }
+  ],
+  "temperature": 1000,
+  "time": 625
+}

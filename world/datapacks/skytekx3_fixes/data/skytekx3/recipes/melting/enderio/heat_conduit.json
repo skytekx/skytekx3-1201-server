@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:heat_conduit"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 22
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 11
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 11
+    }
+  ],
+  "temperature": 950,
+  "time": 32
+}

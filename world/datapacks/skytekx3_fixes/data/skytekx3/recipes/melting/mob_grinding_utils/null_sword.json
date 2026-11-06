@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mob_grinding_utils"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "mob_grinding_utils:null_sword"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 200,
+    "unit_size": 25
+  },
+  "temperature": 1450,
+  "time": 118
+}

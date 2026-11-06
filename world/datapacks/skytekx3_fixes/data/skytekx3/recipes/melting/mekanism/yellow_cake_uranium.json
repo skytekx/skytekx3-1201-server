@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:yellow_cake_uranium"
+  },
+  "result": {
+    "tag": "forge:molten_uranium",
+    "amount": 45
+  },
+  "temperature": 830,
+  "time": 43
+}

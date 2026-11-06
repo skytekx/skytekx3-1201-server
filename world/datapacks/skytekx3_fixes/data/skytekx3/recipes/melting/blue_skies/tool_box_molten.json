@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "blue_skies"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "blue_skies:tool_box"
+  },
+  "result": {
+    "tag": "forge:molten_ventium",
+    "amount": 180
+  },
+  "temperature": 700,
+  "time": 80
+}

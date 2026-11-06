@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "railcraft:bronze_tunnel_bore_head"
+  },
+  "result": {
+    "tag": "forge:molten_bronze",
+    "amount": 810,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 720,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 700,
+  "time": 171
+}

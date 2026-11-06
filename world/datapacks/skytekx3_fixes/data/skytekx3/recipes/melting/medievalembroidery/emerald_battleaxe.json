@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "medievalembroidery"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "medievalembroidery:emerald_battleaxe"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 500,
+    "unit_size": 25
+  },
+  "temperature": 934,
+  "time": 152
+}

@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "megacells:radioactive_cell_component"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 7290
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_lead",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 22
+    }
+  ],
+  "temperature": 700,
+  "time": 512
+}

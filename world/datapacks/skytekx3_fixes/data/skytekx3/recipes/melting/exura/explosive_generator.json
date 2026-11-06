@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exura"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exura:explosive_generator"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 4000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    }
+  ],
+  "temperature": 750,
+  "time": 390
+}

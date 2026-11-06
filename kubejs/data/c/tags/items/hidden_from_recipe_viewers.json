@@ -1,0 +1,1133 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "ad_astra:glacio_coal_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:glacio_copper_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:glacio_iron_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:glacio_lapis_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:iron_plate",
+      "required": false
+    },
+    {
+      "id": "ad_astra:iron_rod",
+      "required": false
+    },
+    {
+      "id": "ad_astra:mars_diamond_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:mars_iron_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:mercury_iron_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:moon_iron_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:steel_block",
+      "required": false
+    },
+    {
+      "id": "ad_astra:steel_ingot",
+      "required": false
+    },
+    {
+      "id": "ad_astra:steel_nugget",
+      "required": false
+    },
+    {
+      "id": "ad_astra:steel_plate",
+      "required": false
+    },
+    {
+      "id": "ad_astra:steel_rod",
+      "required": false
+    },
+    {
+      "id": "ad_astra:venus_coal_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:venus_diamond_ore",
+      "required": false
+    },
+    {
+      "id": "ad_astra:venus_gold_ore",
+      "required": false
+    },
+    {
+      "id": "ae2:ender_dust",
+      "required": false
+    },
+    {
+      "id": "bloodmagic:coalsand",
+      "required": false
+    },
+    {
+      "id": "bloodmagic:coppersand",
+      "required": false
+    },
+    {
+      "id": "bloodmagic:goldsand",
+      "required": false
+    },
+    {
+      "id": "bloodmagic:ironsand",
+      "required": false
+    },
+    {
+      "id": "bloodmagic:saltpeter",
+      "required": false
+    },
+    {
+      "id": "bloodmagic:sulfur",
+      "required": false
+    },
+    {
+      "id": "blue_skies:everbright_emerald_ore",
+      "required": false
+    },
+    {
+      "id": "blue_skies:everdawn_emerald_ore",
+      "required": false
+    },
+    {
+      "id": "bno:aluminum_block",
+      "required": false
+    },
+    {
+      "id": "bno:aluminum_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:aluminum_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:copper_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:lead_block",
+      "required": false
+    },
+    {
+      "id": "bno:lead_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:lead_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:nickel_block",
+      "required": false
+    },
+    {
+      "id": "bno:nickel_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:nickel_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:osmium_block",
+      "required": false
+    },
+    {
+      "id": "bno:osmium_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:osmium_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:raw_aluminum",
+      "required": false
+    },
+    {
+      "id": "bno:raw_aluminum_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_lead",
+      "required": false
+    },
+    {
+      "id": "bno:raw_lead_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_nickel",
+      "required": false
+    },
+    {
+      "id": "bno:raw_nickel_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_osmium",
+      "required": false
+    },
+    {
+      "id": "bno:raw_osmium_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_silver",
+      "required": false
+    },
+    {
+      "id": "bno:raw_silver_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_tin",
+      "required": false
+    },
+    {
+      "id": "bno:raw_tin_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_uranium",
+      "required": false
+    },
+    {
+      "id": "bno:raw_uranium_block",
+      "required": false
+    },
+    {
+      "id": "bno:raw_zinc",
+      "required": false
+    },
+    {
+      "id": "bno:raw_zinc_block",
+      "required": false
+    },
+    {
+      "id": "bno:silver_block",
+      "required": false
+    },
+    {
+      "id": "bno:silver_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:silver_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:tin_block",
+      "required": false
+    },
+    {
+      "id": "bno:tin_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:tin_nugget",
+      "required": false
+    },
+    {
+      "id": "bno:uranium_block",
+      "required": false
+    },
+    {
+      "id": "bno:uranium_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:zinc_block",
+      "required": false
+    },
+    {
+      "id": "bno:zinc_ingot",
+      "required": false
+    },
+    {
+      "id": "bno:zinc_nugget",
+      "required": false
+    },
+    {
+      "id": "create:copper_nugget",
+      "required": false
+    },
+    {
+      "id": "create:copper_sheet",
+      "required": false
+    },
+    {
+      "id": "create:golden_sheet",
+      "required": false
+    },
+    {
+      "id": "create:iron_sheet",
+      "required": false
+    },
+    {
+      "id": "create:powdered_obsidian",
+      "required": false
+    },
+    {
+      "id": "createaddition:copper_wire",
+      "required": false
+    },
+    {
+      "id": "createaddition:diamond_grit",
+      "required": false
+    },
+    {
+      "id": "createaddition:electrum_block",
+      "required": false
+    },
+    {
+      "id": "createaddition:electrum_ingot",
+      "required": false
+    },
+    {
+      "id": "createaddition:electrum_nugget",
+      "required": false
+    },
+    {
+      "id": "createaddition:electrum_sheet",
+      "required": false
+    },
+    {
+      "id": "createaddition:electrum_wire",
+      "required": false
+    },
+    {
+      "id": "createaddition:iron_rod",
+      "required": false
+    },
+    {
+      "id": "createaddition:zinc_sheet",
+      "required": false
+    },
+    {
+      "id": "cyclic:copper_nugget",
+      "required": false
+    },
+    {
+      "id": "cyclic:netherite_nugget",
+      "required": false
+    },
+    {
+      "id": "enderio:iron_gear",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_coal",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_copper",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_ender_pearl",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_gold",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_iron",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_lapis_lazuli",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_obsidian",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_quartz",
+      "required": false
+    },
+    {
+      "id": "enderio:powdered_tin",
+      "required": false
+    },
+    {
+      "id": "enderio:silicon",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:coal_coke",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:coke",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:deepslate_ore_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:deepslate_ore_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:deepslate_ore_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:deepslate_ore_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_constantan",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_copper",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_electrum",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_gold",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_iron",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_steel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_sulfur",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:dust_wood",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_constantan",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_electrum",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_steel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ingot_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_constantan",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_copper",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_electrum",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_steel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:nugget_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ore_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ore_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ore_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:ore_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_constantan",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_copper",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_electrum",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_gold",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_iron",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:plate_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_block_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_block_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_block_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_block_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:raw_uranium",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:slag",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_constantan",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_electrum",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_lead",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_nickel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_silver",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_steel",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:storage_uranium",
+      "required": false
+    },
+    {
+      "id": "industrialforegoing:diamond_gear",
+      "required": false
+    },
+    {
+      "id": "industrialforegoing:gold_gear",
+      "required": false
+    },
+    {
+      "id": "industrialforegoing:iron_gear",
+      "required": false
+    },
+    {
+      "id": "magistuarmory:steel_ingot",
+      "required": false
+    },
+    {
+      "id": "magistuarmory:steel_nugget",
+      "required": false
+    },
+    {
+      "id": "magistuarmory:steel_plate",
+      "required": false
+    },
+    {
+      "id": "mekanism:block_bronze",
+      "required": false
+    },
+    {
+      "id": "mekanism:block_charcoal",
+      "required": false
+    },
+    {
+      "id": "mekanism:block_lead",
+      "required": false
+    },
+    {
+      "id": "mekanism:block_raw_lead",
+      "required": false
+    },
+    {
+      "id": "mekanism:block_raw_tin",
+      "required": false
+    },
+    {
+      "id": "mekanism:block_tin",
+      "required": false
+    },
+    {
+      "id": "mekanism:deepslate_lead_ore",
+      "required": false
+    },
+    {
+      "id": "mekanism:deepslate_tin_ore",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_bronze",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_copper",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_diamond",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_emerald",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_gold",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_iron",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_lapis_lazuli",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_lead",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_netherite",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_quartz",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_sulfur",
+      "required": false
+    },
+    {
+      "id": "mekanism:dust_tin",
+      "required": false
+    },
+    {
+      "id": "mekanism:ingot_bronze",
+      "required": false
+    },
+    {
+      "id": "mekanism:ingot_lead",
+      "required": false
+    },
+    {
+      "id": "mekanism:ingot_tin",
+      "required": false
+    },
+    {
+      "id": "mekanism:lead_ore",
+      "required": false
+    },
+    {
+      "id": "mekanism:nugget_bronze",
+      "required": false
+    },
+    {
+      "id": "mekanism:nugget_lead",
+      "required": false
+    },
+    {
+      "id": "mekanism:nugget_tin",
+      "required": false
+    },
+    {
+      "id": "mekanism:raw_lead",
+      "required": false
+    },
+    {
+      "id": "mekanism:raw_tin",
+      "required": false
+    },
+    {
+      "id": "mekanism:sawdust",
+      "required": false
+    },
+    {
+      "id": "mekanism:tin_ore",
+      "required": false
+    },
+    {
+      "id": "oreberriesreplanted:copper_nugget",
+      "required": false
+    },
+    {
+      "id": "quark:charcoal_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:brass_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:brass_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:brass_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:brass_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:bronze_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:bronze_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:bronze_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:bronze_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:bronze_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:charcoal_dust",
+      "required": false
+    },
+    {
+      "id": "railcraft:coal_coke",
+      "required": false
+    },
+    {
+      "id": "railcraft:coal_coke_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:coal_dust",
+      "required": false
+    },
+    {
+      "id": "railcraft:copper_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:copper_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:deepslate_lead_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:deepslate_nickel_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:deepslate_silver_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:deepslate_sulfur_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:deepslate_tin_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:deepslate_zinc_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:gold_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:gold_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:invar_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:invar_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:invar_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:invar_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:invar_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:iron_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:iron_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:lead_raw",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:nickel_raw",
+      "required": false
+    },
+    {
+      "id": "railcraft:obsidian_dust",
+      "required": false
+    },
+    {
+      "id": "railcraft:saltpeter_dust",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:silver_raw",
+      "required": false
+    },
+    {
+      "id": "railcraft:slag",
+      "required": false
+    },
+    {
+      "id": "railcraft:steel_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:steel_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:steel_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:steel_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:sulfur_dust",
+      "required": false
+    },
+    {
+      "id": "railcraft:sulfur_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_gear",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_plate",
+      "required": false
+    },
+    {
+      "id": "railcraft:tin_raw",
+      "required": false
+    },
+    {
+      "id": "railcraft:zinc_block",
+      "required": false
+    },
+    {
+      "id": "railcraft:zinc_ingot",
+      "required": false
+    },
+    {
+      "id": "railcraft:zinc_nugget",
+      "required": false
+    },
+    {
+      "id": "railcraft:zinc_ore",
+      "required": false
+    },
+    {
+      "id": "railcraft:zinc_raw",
+      "required": false
+    },
+    {
+      "id": "tconstruct:copper_nugget",
+      "required": false
+    },
+    {
+      "id": "tconstruct:knightmetal_block",
+      "required": false
+    },
+    {
+      "id": "tconstruct:knightmetal_ingot",
+      "required": false
+    },
+    {
+      "id": "tconstruct:netherite_nugget",
+      "required": false
+    },
+    {
+      "id": "tconstruct:steel_block",
+      "required": false
+    },
+    {
+      "id": "tconstruct:steel_ingot",
+      "required": false
+    },
+    {
+      "id": "tconstruct:steel_nugget",
+      "required": false
+    },
+    {
+      "id": "thermal_extra:copper_rod",
+      "required": false
+    },
+    {
+      "id": "thermal_extra:electrum_rod",
+      "required": false
+    },
+    {
+      "id": "thermal_extra:gold_rod",
+      "required": false
+    },
+    {
+      "id": "thermal_extra:iron_rod",
+      "required": false
+    },
+    {
+      "id": "thermal_extra:obsidian_dust",
+      "required": false
+    },
+    {
+      "id": "tinkers_reforged:graphite_block",
+      "required": false
+    },
+    {
+      "id": "tinkers_reforged:graphite_dust",
+      "required": false
+    },
+    {
+      "id": "tinkers_reforged:graphite_ingot",
+      "required": false
+    },
+    {
+      "id": "twilightforest:copper_nugget",
+      "required": false
+    }
+  ]
+}

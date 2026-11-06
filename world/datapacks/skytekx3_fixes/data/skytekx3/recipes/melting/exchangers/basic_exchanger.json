@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:basic_exchanger"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 900
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 360
+    }
+  ],
+  "temperature": 975,
+  "time": 207
+}

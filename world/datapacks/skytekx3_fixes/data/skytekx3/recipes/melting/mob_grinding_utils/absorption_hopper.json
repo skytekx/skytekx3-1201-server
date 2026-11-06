@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mob_grinding_utils"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mob_grinding_utils:absorption_hopper"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 3000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    }
+  ],
+  "temperature": 1000,
+  "time": 383
+}

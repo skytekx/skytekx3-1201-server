@@ -51,11 +51,6 @@ evidence and the page with the details. The rulings behind the first section are
 - No dashes in commit messages (2026-06-29 22:14). Spaced hyphens used as dashes remain in the bodies of
   5ae7f82 and 573cc25. A fix means another history rewrite and force push.
 
-- Our own mod for molten metals (2026-11-04 14:33). The owner asked for a fluid for every material
-  that makes an ingot and has none in Tinkers' Construct, such as palladium and yellorium. The mod
-  SkyTekx Molten is being built. Clients need its fluids, so it goes live together with a pack update.
-  The melting recipe of the Galosphere sterling horse armor waits for it, see
-  [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 
 ## Owner decisions
 
@@ -159,9 +154,12 @@ evidence and the page with the details. The rulings behind the first section are
 - One sleeper for everybody. Since 2026-11-02 14:10 the rule `playersSleepingPercentage` is 0, so one
   sleeping player turns night into day for the whole server. It was set to make sleeping in the Skylands
   work. The value 50 would ask for half of the players in a dimension instead.
-- Saltpeter, niter and rods. Railcraft's saltpeter and Thermal's niter stay two items, and the rod tags
-  that only Create Crafts & Additions and Thermal Extra fill have no preferred mod. Joining them needs a
-  choice of the item that wins. See [AlmostUnified](modpack/almostunified.md#limits).
+- Same-named items of two mods. 29 pairs of crafting recipes share a grid and give items of the same
+  name from two mods, such as the emerald tools and armor of Cyclic and Medieval Embroidery, the steel
+  armor of Mekanism Tools and Railcraft, the gold bars of Cyclic, Quark and Tinkers' Construct and the
+  crop crates of Farmer's Delight and Quark. Polymorph lets the player choose. Each item has stats or
+  looks of its own, so keeping both or removing one recipe is the owner's choice. See
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list).
 
 - Big pregens with players online. The out of memory crash of 2026-10-31 23:17 came from a Skylands
   pregen at radius 3000 with three players online, and every big pregen pushed the 9 GB heap above 90
@@ -178,7 +176,41 @@ evidence and the page with the details. The rulings behind the first section are
   islands, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
 - Fluids for the gems of other mods. Tinkers' Construct melts diamond and emerald into fluids of their
   own, but gems such as zanite and skyjade have none, so their gloves and tools cannot melt. Whether
-  they get fluids too was asked on 2026-11-04 and is open.
+  they get fluids too was asked on 2026-11-04 and is open, see
+  [Melting](content/melting.md#what-stays-out).
+- Loot and gifts that hold metal melt into it now. Neptune's Bounty of Aquaculture melts into 720 mB
+  neptunium with Molten, the cost of its recipe of eight neptunium ingots. Aquaculture also hands it
+  out filled as very rare fishing loot (`aquaculture:gameplay/fishing/neptunium`), and the emptied
+  block drops itself, so every fished bounty adds eight ingots to its loot, and a fishing farm can
+  repeat that. The same holds for other loot and gifts that a recipe also makes, such as the Faraday
+  armor of the Immersive Engineering hero gifts (up to 720 mB aluminum a piece) and its revolver
+  magazine, the gun parts that its commandos drop (the drum 405 mB steel), the evocation rune of Iron's
+  Spellbooks (800 mB emerald) and the dragon scales of Forbidden & Arcanus (333 mB ender each). Keep
+  it, as the request of 2026-11-04 asks, or leave such items out of the melting, which takes it from
+  the crafted ones too, see [Melting](content/melting.md#review-of-the-follow-up).
+- Eleven melting trades gain a fluid by paying with another one that the melting does not give back.
+  Most take tinted glass where `forge:glass` stands, in the seared tanks and gauges, the crushers and
+  the ARC of Blood Magic. The closest to a dupe is the Immersive Engineering recipe that makes three
+  tinted glass of one glass, four amethyst shards and four lead wires. Leave them, or override the
+  melting or the recipes, see [Melting](content/melting.md#trades-for-the-owner).
+- Sixteen melting recipes show machine loops that multiply an item without any melting, such as the
+  Alkahestry Tome of Reliquary for ingots, gems, obsidian and sand, the SAG mill of Ender IO with a
+  grinding ball and the Mekanism combiner for obsidian, and the Cyclic solidifier with Create crushing
+  for gilded blackstone, which multiplies gold ninefold. The melting stays as it is. Closing a loop,
+  such as with `forge:false` on `cyclic:solidifier/gilded_blackstone`, is the owner's choice, see
+  [Melting](content/melting.md#known-machine-dupes).
+- Variants that AlmostUnified swaps away count as nothing in the melting generator, since no recipe
+  makes them any more, and so does a slot that also takes them. On 2026-11-04 that took the ender out
+  of 107 files, such as the 12,000 mB of the lava immunity card of AdvancedAE. A rule that leaves the
+  variants out of a slot would count such a slot as the Thermal dust, 27 mB ender since 2026-11-05,
+  but then a variant from loot or from before the unification would fill it for less than it counts,
+  see [Melting](content/melting.md#sync-with-the-unification).
+- The SAG mill of Ender IO grinds one ender pearl into nine ender pearl dusts, the dusts of Thermal
+  since the unification of 2026-11-04. Recipes of AE2 and Thermal that take a dust of
+  `forge:dusts/ender_pearl` therefore get it for a ninth of a pearl, as they got the powder of Ender IO
+  before. No recipe turns one dust back into a pearl, and the dust melts into 27 mB ender since
+  2026-11-05. Keep the SAG recipe, or let it give fewer dusts, see
+  [Melting](content/melting.md#follow-up-of-2026-11-05).
 - Recipes for the other uncraftable items of Extra Utilities Reborn Again. Version 1.2.0-rc10 registers
   17 more names without a recipe, among them the Resonator, which the four resonator recipes of the mod
   need, the Stone, Iron, Reinforced Large and Demonically Gargantuan Drums and the Halitosis Generator.
@@ -280,12 +312,6 @@ evidence and the page with the details. The rulings behind the first section are
   `Entity.load` for a NaN coordinate, and which mod writes such entities is still open. Since
   skytekx-compat 2.1.6 a "Dropped entity" line names the next one with its type, chunk and raw
   position, see [SkyTekx Compat](content/compat-mod.md#entities-that-fail-to-load).
-- Most tools and armor of other mods do not melt in the smeltery, because Tinkers' Construct ships
-  melting recipes only for vanilla items and its own compat metals. Since 2026-11-04 the fixes pack
-  melts horse armor and gloves, see [Boot fixes](content/boot-fixes.md#gameplay-overrides). A
-  generator over all crafting and smithing recipes would cover the rest, with each piece giving back
-  what its cheapest recipe takes, and it would also check the recipes of Tinkers for more dupes like
-  the one of the vanilla horse armor.
 - A `/setblock`, `/clone` or `/data merge` of an `enderio:conduit` block with a `ConduitBundle`
   compound leaves the bundle without graph nodes, because its block entity reads the conduit types
   after `setLevel`. The next capability query of a neighbour crashes the server tick in
@@ -304,13 +330,18 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Not verified
 
+- Pack 3.1.3 in a client. No client loaded it before it went to the players on 2026-11-05. A static
+  check of its 268 client jars found every mandatory dependency present in a matching version, and the
+  server runs the same mods, but no fresh install, no update of a 3.1.2 instance and no join was
+  tested, see [publish](modpack/publish.md#version-history).
+
 - The nine mods of 2026-11-04 in play. A test server ran their blocks for half a minute, but nobody
   has opened their screens, built an ME network with the AE addons or used a Cyclic machine in a
-  client. The deploy of 3.1.3 has to move the fixes pack to the end of the pack order once after the
-  first start, see [Boot fixes](content/boot-fixes.md#load-order). See
+  client. They run on the server since the deploy of 3.1.3 on 2026-11-05, which moved the fixes pack to
+  the end of the pack order, see [Boot fixes](content/boot-fixes.md#pack-order). See
   [Mod set](modpack/mod-set.md#additions-of-2026-11-04).
-- Flux Networks in play. A test server ran its devices, but nobody has opened their screens, made Flux
-  Dust or sent energy from a plug to a point in a client, see
+- Flux Networks in play. It runs on the server since 2026-11-05. A test server ran its devices, but
+  nobody has opened their screens, made Flux Dust or sent energy from a plug to a point in a client, see
   [Mod set](modpack/mod-set.md#flux-networks).
 - SkyTekx DE Fixes in a client. A test server applied its server mixins, and a probe checked the chest
   with three kinds of click, the recipe and the tags of the KubeJS scripts, the tier and the blocks
@@ -347,8 +378,8 @@ evidence and the page with the details. The rulings behind the first section are
   run. No client has opened the Ponder scenes or the JEI category Roosting or seen the renderers.
   See [Create Integrated Farming port](modpack/createintegratedfarming-port.md#integration-tests).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
-  opened its tabs yet. The test of the next pack should open the loot tabs of a block, a mob and a
-  chest in EMI on the server and note how much longer the join takes with the loot that the server
+  opened its tabs yet. It runs on the server and in pack 3.1.3 since 2026-11-05. The first client
+  should open the loot tabs of a block, a mob and a chest in EMI on the server and note how much longer the join takes with the loot that the server
   sends, see [Mod set](modpack/mod-set.md#advanced-loot-info).
 - The essence recipes of Mystical Agriculture in EMI. On 2026-11-04 EMI showed the three Certus Quartz
   Essence of the Certus Quartz Dust recipe in the middle row, while the recipe matched only in the top
@@ -376,6 +407,12 @@ evidence and the page with the details. The rulings behind the first section are
   [KubeJS](modpack/kubejs.md#apotheosis-riders).
 - The melting recipes of 2026-11-04 in game. Nobody has melted a horse armor or a glove since they
   went live, see [Boot fixes](content/boot-fixes.md#gameplay-overrides).
+- The generated melting recipes in a client. The 9,527 files run on the Mac mini since the `/reload` of
+  05:45 on 2026-11-05, and on the test servers real melters gave the amounts of the files, but no
+  client has logged in with them yet. So the login with about 8,300 more recipes in the recipe packet
+  and the pages of the smeltery in JEI or EMI and the Tinkers book were not seen. The first client
+  should melt one generated item in a smeltery and look it up in EMI, see
+  [Melting](content/melting.md#recipe-sync-to-the-clients).
 - Modflared in a running game. Nobody has joined through it yet. The second MacBook is set up for it,
   but its sign-in and first launch are left to the person at that Mac. Where Modflared runs, and that
   on Linux on ARM it only logs an error and cannot join through the tunnel, was read from its
@@ -419,10 +456,15 @@ evidence and the page with the details. The rulings behind the first section are
 - The SkyTekx logo's origin before 2026-06-28 18:12 is not recorded.
 - Why Better Combat, Memory Leak Fix, Geophilic Backported, Platform and VanillaBackport were parked is
   not recorded, nor why the Forge pack overrides Botania's placed features (commit 0f78e9d).
-- About 7,000 machine recipes hide their ingredients from the recipe probe of 2026-11-02, so whether
-  they take every variant of a material was not checked. No chunk generated since 17:33 that day was
-  checked for Mekanism tin and lead either, only the loaded config. See
-  [AlmostUnified](modpack/almostunified.md#one-item-per-material).
+- 245 of the 7,116 recipes that hide their ingredients have no file to read, mostly AlmostUnified's
+  own trackers, Ars Nouveau enchantments and smithing recipes, so whether they take the preferred items
+  was not checked. No chunk generated since 17:33 on 2026-11-02 was checked for Mekanism tin and lead
+  either, only the loaded config. See [AlmostUnified](modpack/almostunified.md#emi-hide-list).
+- The EMI hide list in a client. A test server loaded the tag, and the EMI 1.1.24 build in the pack
+  reads it in `EmiTags` and `EmiStackList`, but no client has looked at the item list with it yet. The list,
+  the config of AlmostUnified, the recipe fixes of 2026-11-04 and the two trims run on the Mac mini since
+  the start of 3.1.3 at 00:46 on 2026-11-05. See
+  [AlmostUnified](modpack/almostunified.md#emi-hide-list).
 - Expanded Delight in a client. A plain Forge test server loaded its recipes, items and blocks and
   ran the juicer, the casks, the crops and the worldgen, and an Arclight copy with the hardened jar
   and nine mods ran the juicer with 0 ERROR lines, and the full pack booted with it on 2026-11-06
@@ -474,10 +516,7 @@ evidence and the page with the details. The rulings behind the first section are
   its badge and its text, promises a public server and a working "Play on Modrinth" link, and its guide
   has a broken symlink step. See
   [Related repos and services](related.md#claims-on-the-site-that-are-wrong-on-2026-10-31).
-- The compat mod source in `~/git/skytekx-worldgen` has no remote, and the old name skytekx-worldgen
-  survives in some places. See [SkyTekx Compat](content/compat-mod.md#open-points).
-- The commits of 2026-10-31 are not pushed (remote master 940f07e, checked on 2026-10-31 at 20:00), and the
-  tracking ref `origin/master` is stale at bd5f18b. See
-  [Related repos and services](related.md#this-repo-on-github).
+- The compat mod source keeps its old name skytekx-worldgen in its Gradle project, package, main class,
+  logger and `pack.mcmeta`. See [SkyTekx Compat](content/compat-mod.md#open-points).
 
 Related: [OKF index](index.md), [Decisions](decisions.md), [Change log](log.md).

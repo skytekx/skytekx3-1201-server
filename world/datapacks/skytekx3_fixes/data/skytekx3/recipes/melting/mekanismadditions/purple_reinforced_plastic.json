@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanismadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanismadditions:purple_reinforced_plastic"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 22
+  },
+  "temperature": 975,
+  "time": 32
+}

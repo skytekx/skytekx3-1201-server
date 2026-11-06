@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "eio_legacy_machines"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "eio_legacy_machines:killer_joe"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 2000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_dark_steel",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_soularium",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 637,
+  "time": 258
+}

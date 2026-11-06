@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2hostility"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2hostility:divinity_light"
+  },
+  "result": {
+    "tag": "forge:molten_miracle",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_chaos",
+      "amount": 90
+    }
+  ],
+  "temperature": 1450,
+  "time": 158
+}

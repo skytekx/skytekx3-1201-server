@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "elevatorid"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "elevatorid:elevator_blue"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 250
+  },
+  "temperature": 477,
+  "time": 82
+}

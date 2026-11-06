@@ -1,0 +1,43 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "exchangers"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "exchangers:end_steel_exchanger"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 9270
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 2400
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 1500
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 1170
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 520
+    }
+  ],
+  "temperature": 800,
+  "time": 610
+}

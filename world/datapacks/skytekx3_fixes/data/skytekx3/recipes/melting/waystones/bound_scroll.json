@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "waystones"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "waystones:bound_scroll"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 83
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 6
+    }
+  ],
+  "temperature": 477,
+  "time": 47
+}

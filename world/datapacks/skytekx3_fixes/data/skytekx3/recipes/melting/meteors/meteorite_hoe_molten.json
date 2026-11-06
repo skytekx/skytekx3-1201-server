@@ -1,0 +1,30 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "meteors:meteorite_hoe"
+  },
+  "result": {
+    "tag": "forge:molten_meteorite",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 950,
+  "time": 92
+}

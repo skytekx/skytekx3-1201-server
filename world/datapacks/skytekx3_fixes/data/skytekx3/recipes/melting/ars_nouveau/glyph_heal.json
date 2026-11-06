@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ars_nouveau"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ars_nouveau:glyph_heal"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 740
+  },
+  "temperature": 700,
+  "time": 163
+}

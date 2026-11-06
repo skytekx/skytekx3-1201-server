@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:advanced_detector"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 720
+  },
+  "temperature": 950,
+  "time": 183
+}

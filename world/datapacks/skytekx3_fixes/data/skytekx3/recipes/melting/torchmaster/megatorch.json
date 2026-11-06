@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "torchmaster"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "torchmaster:megatorch"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 1620
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 200
+    }
+  ],
+  "temperature": 700,
+  "time": 241
+}

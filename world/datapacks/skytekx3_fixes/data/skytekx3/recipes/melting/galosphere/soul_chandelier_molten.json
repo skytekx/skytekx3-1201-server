@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "galosphere"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "galosphere:soul_chandelier"
+  },
+  "result": {
+    "tag": "forge:molten_palladium",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 220
+    }
+  ],
+  "temperature": 960,
+  "time": 113
+}

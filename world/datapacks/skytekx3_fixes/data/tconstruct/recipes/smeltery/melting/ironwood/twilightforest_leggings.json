@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:item_exists",
+      "item": "twilightforest:ironwood_leggings"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "twilightforest:ironwood_leggings"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 315,
+    "unit_size": 5
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 35,
+      "unit_size": 5
+    }
+  ],
+  "temperature": 800,
+  "time": 113
+}

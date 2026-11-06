@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:bannerpattern_wolf_l"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 248
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_lead",
+      "amount": 20
+    }
+  ],
+  "temperature": 477,
+  "time": 81
+}

@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:dimensional_stabilizer"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1260
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 900
+    },
+    {
+      "tag": "forge:molten_refined_obsidian",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 225
+}

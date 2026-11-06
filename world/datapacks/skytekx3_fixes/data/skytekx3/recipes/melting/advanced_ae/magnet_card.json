@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:magnet_card"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 5040
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 450
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 180
+    }
+  ],
+  "temperature": 500,
+  "time": 374
+}

@@ -1,0 +1,23 @@
+{
+  "type": "tconstruct:melting",
+  "ingredient": [
+    {
+      "item": "minecraft:netherite_upgrade_smithing_template"
+    },
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "minecraft:trim_templates"
+      },
+      "subtracted": {
+        "tag": "skytekx3:melting/not_as_template"
+      }
+    }
+  ],
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 500
+  },
+  "temperature": 1450,
+  "time": 186
+}

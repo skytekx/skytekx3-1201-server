@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:electric_locomotive"
+  },
+  "result": {
+    "tag": "forge:molten_brass",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 1350
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 990
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 990
+    },
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 360
+    }
+  ],
+  "temperature": 605,
+  "time": 215
+}

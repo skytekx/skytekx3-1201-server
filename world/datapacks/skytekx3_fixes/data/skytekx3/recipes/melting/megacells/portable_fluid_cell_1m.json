@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "megacells:portable_fluid_cell_1m"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 22050
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 232
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 50
+    }
+  ],
+  "temperature": 700,
+  "time": 890
+}

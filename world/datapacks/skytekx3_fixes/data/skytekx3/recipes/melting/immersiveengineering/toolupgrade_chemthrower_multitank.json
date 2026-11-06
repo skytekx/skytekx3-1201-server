@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:toolupgrade_chemthrower_multitank"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 381
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 90
+    }
+  ],
+  "temperature": 950,
+  "time": 183
+}

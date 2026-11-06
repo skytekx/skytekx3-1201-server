@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:ender_eye_reuse"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 2000,
+    "unit_size": 10
+  },
+  "temperature": 477,
+  "time": 231
+}

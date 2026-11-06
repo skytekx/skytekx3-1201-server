@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ticex"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "ticex:wyvern_evolved_core"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 2610
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 2340
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 600
+    },
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 400
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_cobalt",
+      "amount": 90
+    }
+  ],
+  "temperature": 1300,
+  "time": 403
+}

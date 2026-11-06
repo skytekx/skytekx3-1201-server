@@ -1,0 +1,46 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "advanced_ae:quantum_boots"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 21870,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 8640,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 1250,
+      "unit_size": 10
+    },
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 500,
+      "unit_size": 25
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 450,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 700,
+  "time": 887
+}

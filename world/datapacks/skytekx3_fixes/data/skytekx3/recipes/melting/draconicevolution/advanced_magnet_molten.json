@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "draconicevolution:advanced_magnet"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "tag": "forge:molten_draconium_awakened",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 1300,
+  "time": 212
+}

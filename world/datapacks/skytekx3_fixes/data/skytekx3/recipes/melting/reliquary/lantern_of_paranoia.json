@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "reliquary"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "reliquary:lantern_of_paranoia"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 270
+  },
+  "temperature": 800,
+  "time": 104
+}

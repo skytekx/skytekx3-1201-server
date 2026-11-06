@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:device_rock_gen"
+  },
+  "result": {
+    "tag": "forge:molten_constantan",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_invar",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    }
+  ],
+  "temperature": 920,
+  "time": 128
+}

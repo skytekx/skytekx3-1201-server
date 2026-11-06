@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:cosmic_tier_installer"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 2520
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_refined_obsidian",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 318
+}

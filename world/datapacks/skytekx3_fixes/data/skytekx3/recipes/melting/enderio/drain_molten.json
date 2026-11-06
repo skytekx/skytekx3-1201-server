@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:drain"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1470
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper_alloy",
+      "amount": 360
+    }
+  ],
+  "temperature": 800,
+  "time": 243
+}

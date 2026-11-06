@@ -14,14 +14,14 @@ server runs whatever is in its `mods/` folder, which is neither of the two exact
 
 | Item | Value | Evidence |
 |---|---|---|
-| Pack version | 3.1.2 since 551170bb, built privately and not on Modrinth, after 3.1.1 (ccc9289e), 3.1.0 (aaf6a5e9) and 3.0.7 | Field `versionId` in `modrinth.index.json`. The build wrote 3.0.7 in 15430ce and 3.0.6 in 3860591 |
+| Pack version | 3.1.3 since f34d7362, built privately and not on Modrinth, after 3.1.2 (551170bb), 3.1.1 (ccc9289e), 3.1.0 (aaf6a5e9) and 3.0.7 | Field `versionId` in `modrinth.index.json`. The build wrote 3.0.7 in 15430ce and 3.0.6 in 3860591 |
 | Minecraft | 1.20.1 | Index `dependencies` |
 | Forge in the index | 47.4.18 since a36207c, 47.4.6 before | Index `dependencies`, `FORGE` in `tools/build_mrpack.py` |
 | Forge at runtime | 47.4.18, on the server (Arclight) and in the owner's client | Server crash reports, Prism `mmc-pack.json` |
 | Index entries | 230 since d52d46c on 2026-11-06, after Create Crafts & Additions 1.3.3 moved to `local-mods/` as the fork 1.20.1-1.7.3-skytekx.1 (see [Create Crafts & Additions backport](createaddition-backport.md)), 226 of them from `cdn.modrinth.com` and 4 from GitHub. Before it, 231 since c15417f on 2026-11-05, which added Create: Dragons Plus 1.11.9 for the [Create Integrated Farming port](createintegratedfarming-port.md), 227 of them from `cdn.modrinth.com` and 4 from GitHub. Before it, 230 since 2026-11-05 with Bygone Nether (61adc700, see [Bygone Nether](#bygone-nether)), 226 of them from `cdn.modrinth.com` and 4 from GitHub. Before that, 229 since 2026-11-05, after Extreme Reactors and ZeroCore (ffc3aa3, 230) and LittleTiles (18b2ad0) moved to `local-mods/`, 225 of them from `cdn.modrinth.com` and 4 from GitHub. Before them, 232 since 2026-11-04 (b36bc030 to 3b98076f), which put Advanced Loot Info and its library Advanced Core Info in the place of Just Enough Resources, see [Advanced Loot Info](#advanced-loot-info). 228 of them come from `cdn.modrinth.com` and 4 from GitHub. Before them, 231 since c482e040, after 394330db to c482e040 added five addons of Applied Energistics 2, Cyclic and FLib, see [additions](#additions-of-2026-11-04), 224 since d1cabf85, which added Just Enough Resources as a client only entry, and 223 since 56912155, which moved Simply Jetpacks 2 to `local-mods/`, and 224 since 551170bb, which removed Elenai Dodge 2. Before them, 225 since 1ea5bb29, which moved EMI to `local-mods/`, 222 of them from `cdn.modrinth.com` and 3 from GitHub. The index held 226 since 4eca94b1, which added the GraveStone Mod. The Twilight Forest merge 3bdc98d6 left 225. Before it, 215 since 3afc3bf, all from `cdn.modrinth.com`. Commit ca131c3 added Modflared, a client only mod for the Cloudflare Tunnel, for 217, 787cb1f took Placeable Items out for 216 and 3afc3bf Get It Together Drops for 215. Between 74faf22 and ca131c3 there were 216. From 092140d to 74faf22 there were 217 as well, the extra one Nyx from a GitHub release that does not exist | File `modrinth.index.json` |
 | Size of the index downloads | 1,019,338,945 bytes since d52d46c, 1,020,916,258 from c15417f, 1,019,927,924 from 61adc700, 1,012,285,311 from 18b2ad0, 1,014,908,901 from ffc3aa3, 1,018,751,213 from 3b98076f, 1,019,027,444 from 4e3c25b0 with both Advanced Loot Info and Just Enough Resources, 1,018,349,694 from b36bc030, 1,018,089,782 from c482e040, 1,007,463,556 from d1cabf85 with Just Enough Resources, 1,007,187,325 from 56912155, 1,007,808,005 from 551170bb, 1,008,110,498 from 1ea5bb29, 1,009,232,248 from 4eca94b1, 1,008,915,067 from 3bdc98d6, 952,346,929 from 3afc3bf, 952,354,792 from 787cb1f, 952,411,152 from ca131c3, 952,341,086 from 74faf22, 952,759,925 with Nyx, 933,046,213 before commit 092140d | Sum of `fileSize` |
-| Bundled jars | 58 since 2026-11-06 with the Actually Additions fork (26415ad). Git holds 57 of them in `local-mods/` and names ZeroCore 2 there by a pointer file, whose jar the pack build fetches, see [bundled jars](#bundled-jars). The 57 came with the Create Crafts & Additions fork (d52d46c), 56 with the Create: Integrated Farming port (32d35c9, rebuilt in 26fc840 and 5539f6e), 55 with the Expanded Delight port (d9eb6cc, rebuilt in 047ff2d and f655eec), 54 with the Mekanism: Extra Modules port (74bf989, rebuilt in fa64b7f), 53 with the Mystical Automation port (3b9e2f7, rebuilt in 3c92dcb), 52 with the LittleTiles build (18b2ad0), 51 with Extreme Reactors and ZeroCore (ffc3aa3), 49 with SkyTekx DE Fixes (0cb119e), 48 since Flux Networks (1984082), 47 since 2026-11-04 (f315fa3d and ee238bea), 45 since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git, ZeroCore 2 as `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json` |
-| Jars the server loads | 252 in the Mac mini's `mods/` since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
+| Bundled jars | 59 since the merge of master on 2026-11-06, which brought SkyTekx Molten (a50c6748). Git holds 58 of them in `local-mods/` and names ZeroCore 2 there by a pointer file, whose jar the pack build fetches, see [bundled jars](#bundled-jars). Before the merge the branch had 58 since 2026-11-06 with the Actually Additions fork (26415ad), 57 with the Create Crafts & Additions fork (d52d46c), 56 with the Create: Integrated Farming port (32d35c9, rebuilt in 26fc840 and 5539f6e), 55 with the Expanded Delight port (d9eb6cc, rebuilt in 047ff2d and f655eec), 54 with the Mekanism: Extra Modules port (74bf989, rebuilt in fa64b7f), 53 with the Mystical Automation port (3b9e2f7, rebuilt in 3c92dcb), 52 with the LittleTiles build (18b2ad0), 51 with Extreme Reactors and ZeroCore (ffc3aa3), 49 with SkyTekx DE Fixes (0cb119e), and master had 49 since 2026-11-05 with SkyTekx Molten (a50c6748). Both had 48 since Flux Networks (1984082), 47 since 2026-11-04 (f315fa3d and ee238bea), 45 since 56912155, 44 since 1ea5bb29, 43 before it, 35 since 507a8f2, 33 before | Tracked in git, ZeroCore 2 as `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json` |
+| Jars the server loads | 264 in the Mac mini's `mods/` since the deploy of 3.1.3 on 2026-11-05 at 00:46, 251 before it, 252 since 2026-11-02 19:35, 236 in `mods/` after the update of 2026-10-31, 235 before | Counted 2026-10-31 and 2026-11-02 |
 
 ## Update of 2026-10-31
 
@@ -72,9 +72,8 @@ later for five addons of Applied Energistics 2, and at 19:41 for Cyclic from its
 | EnderIO Legacy Machines | 0.4.9 | CurseForge only, bundled in `local-mods/` |
 | Mob Grinding Utils | 1.1.0 | CurseForge only, bundled in `local-mods/` |
 
-- All nine are required on both sides. They reach the server with the deploy of 3.1.3, because the
-  clients need them too. Until then neither the server folder on the build machine nor the Mac mini
-  has them in `mods/`.
+- All nine are required on both sides. They reached the server with the deploy of 3.1.3 on
+  2026-11-05, together with pack 3.1.3, because the clients need them too.
 - The GitHub releases of Cyclic end at 1.12.2 from 2023. The branch `trunk/1.20.1` carries 1.13.7 and
   since then only a typo fix, so the pack takes the Modrinth file of the same author, as the owner's
   ruling of 2026-06-27 puts Modrinth first.
@@ -134,7 +133,7 @@ BloCamLimb, one of the two authors) in `local-mods/`. Its `mods.toml` declares M
 and the jar has no license text, so the LICENSE of the branch `1.20` travels in `licenses/`.
 
 - It is required on both sides and needs only Forge. Modern UI and JEI are optional, and the jar has
-  no mixins. It reaches the server with the deploy of 3.1.3, like the
+  no mixins. It runs on the server since the deploy of 3.1.3 on 2026-11-05, like the
   [nine mods](#additions-of-2026-11-04) above.
 - Flux Dust comes from redstone that lies on obsidian, when a player left-clicks the obsidian and the
   block below it is bedrock or a Flux Block.
@@ -350,8 +349,8 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 | Place | In git | Content |
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
-| Folder [local-mods/](../../local-mods) | Yes | 57 jars that are not on Modrinth or were built from source, and since 2026-11-06 the pointer file of ZeroCore 2, whose jar git does not hold (`.gitignore` ignores its path). All 58 ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks, SkyTekx DE Fixes, Bygone Nether, Mystical Automation, Mekanism: Extra Modules, the Expanded Delight port, the Create: Integrated Farming port and Create: Dragons Plus join them only with the deploy of 3.1.3. That deploy also swaps four jars by hand: Extreme Reactors 2.0.84 out and 2.0.97 in, ZeroCore 2.1.45 out and 2.1.48 in (from `python3 tools/fetch_local_mods.py`, since git holds only its pointer), LittleTiles 1.6.0-pre161 out and 1.6.0-pre161-skytekx.1 in, and Create Crafts & Additions 1.3.3 out and 1.20.1-1.7.3-skytekx.1 in, because two jars of one mod id stop the boot. The Create Crafts & Additions swap waits for the live world gates of its [backport](createaddition-backport.md#release). The Actually Additions fork 1.20.1-1.1.52-skytekx.1 joins with the same deploy as a new jar, see its [operator notes](actuallyadditions-backport.md#operator-notes). Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder [local-mods/](../../local-mods) | Yes | 58 jars that are not on Modrinth or were built from source, and since 2026-11-06 the pointer file of ZeroCore 2, whose jar git does not hold (`.gitignore` ignores its path). All 59 ship as `overrides/mods/` |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. SkyTekx DE Fixes, Bygone Nether, Mystical Automation, Mekanism: Extra Modules, the Expanded Delight port, the Create: Integrated Farming port and Create: Dragons Plus join them only with the deploy of the next pack after 3.1.3, which went live without them. That deploy also swaps four jars by hand: Extreme Reactors 2.0.84 out and 2.0.97 in, ZeroCore 2.1.45 out and 2.1.48 in (from `python3 tools/fetch_local_mods.py`, since git holds only its pointer), LittleTiles 1.6.0-pre161 out and 1.6.0-pre161-skytekx.1 in, and Create Crafts & Additions 1.3.3 out and 1.20.1-1.7.3-skytekx.1 in, because two jars of one mod id stop the boot. The Create Crafts & Additions swap waits for the live world gates of its [backport](createaddition-backport.md#release). The Actually Additions fork 1.20.1-1.1.52-skytekx.1 joins with the same deploy as a new jar, see its [operator notes](actuallyadditions-backport.md#operator-notes). Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since ca131c3, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from d1cabf85 to 3b98076f |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
@@ -403,9 +402,9 @@ loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 
-The 58 bundled jars, 57 of them in `local-mods/` and ZeroCore 2 by its pointer file there (origins
+The 59 bundled jars, 58 of them in `local-mods/` and ZeroCore 2 by its pointer file there (origins
 from each jar's manifest and from `modrinth-permissions/`). The
-counts in the list below are older than the last twenty-three of them and were not recounted:
+counts in the list below are older than the last twenty-four of them and were not recounted:
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
@@ -441,6 +440,11 @@ counts in the list below are older than the last twenty-three of them and were n
 - Flux Networks 7.2.1.15 joined on 2026-11-04 as a CurseForge file, see
   [Flux Networks](#flux-networks). It is MIT licensed, and the LICENSE of its repository travels in
   `licenses/` because the jar has none.
+- SkyTekx Molten 1.0.0 joined on 2026-11-05 (a50c6748). The pack's own mod, built from the public repo
+  [skytekx/skytekx-molten](https://github.com/skytekx/skytekx-molten) at edec978, adds 70 molten fluids
+  with their melting and casting recipes for the ingot materials that Tinkers' Construct does not handle,
+  such as palladium and yellorium. It registers fluids, blocks and buckets, so it is required on both
+  sides. It is MIT licensed, and its license text travels in `licenses/` because the jar has none.
 - SkyTekx DE Fixes 1.0.0 joined on 2026-11-05. It is the pack's own addon, built from
   `ports/skytekx-defixes/`, MIT for our code with a few portions under the Draconic Evolution license.
   It fixes eight bugs of Draconic Evolution and one of Brandon's Core after their 1.21 branches in the
@@ -702,7 +706,7 @@ hard coded list and would bring back Radium, Rubidium, memoryleakfix and Better 
 
 The script `macos/sync-to-mac.sh` mirrors `mods/` to the Mac mini as it is, with `rsync --delete`. The
 folder already holds the patched jars and BattleTowers, since 2026-10-31 also the new builds of the
-update above, since 2026-11-01 Falling Meteors Reimagined and the Backpack port, since 2026-11-03 the EMI fork. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
+update above, since 2026-11-01 Falling Meteors Reimagined and the Backpack port, since 2026-11-03 the EMI fork, since 2026-11-05 the 13 new jars of 3.1.3 and EMI 1.1.24-skytekx.2. Do not rebuild `mods/` from the index or from `resolve_all.py`. See
 [macOS host](../server/macos.md).
 
 ## History

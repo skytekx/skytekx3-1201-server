@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "nvlforcefields"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "nvlforcefields:nvl_block_ffdcontroller"
+  },
+  "result": {
+    "tag": "forge:molten_quandrium",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 250
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 180
+    }
+  ],
+  "temperature": 700,
+  "time": 99
+}

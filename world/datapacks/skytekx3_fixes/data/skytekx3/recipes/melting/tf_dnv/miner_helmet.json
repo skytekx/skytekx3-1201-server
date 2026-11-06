@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tf_dnv"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "tf_dnv:miner_helmet"
+  },
+  "result": {
+    "tag": "forge:molten_ironwood",
+    "amount": 450,
+    "unit_size": 10
+  },
+  "temperature": 900,
+  "time": 142
+}

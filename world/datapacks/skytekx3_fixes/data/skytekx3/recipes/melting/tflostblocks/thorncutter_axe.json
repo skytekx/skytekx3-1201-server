@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tflostblocks"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "tflostblocks:thorncutter_axe"
+  },
+  "result": {
+    "fluid": "tconstruct:fiery_liquid",
+    "amount": 250,
+    "unit_size": 50
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1500,
+  "time": 134
+}

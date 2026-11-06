@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:energycore"
+  },
+  "result": {
+    "tag": "forge:molten_magentite",
+    "amount": 810
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 500
+    }
+  ],
+  "temperature": 900,
+  "time": 190
+}

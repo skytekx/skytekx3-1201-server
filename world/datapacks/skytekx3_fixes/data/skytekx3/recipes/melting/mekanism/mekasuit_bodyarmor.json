@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism:mekasuit_bodyarmor"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 800
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 90
+    }
+  ],
+  "temperature": 1450,
+  "time": 235
+}

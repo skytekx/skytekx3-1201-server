@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "chocolate_quest"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "chocolate_quest:heavy_diamond_armor_helmet"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 1400,
+    "unit_size": 25
+  },
+  "temperature": 1450,
+  "time": 311
+}

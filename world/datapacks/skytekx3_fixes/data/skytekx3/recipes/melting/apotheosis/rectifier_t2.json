@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "apotheosis"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "apotheosis:rectifier_t2"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_amethyst",
+    "amount": 3200
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 1000
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 120
+    }
+  ],
+  "temperature": 950,
+  "time": 386
+}

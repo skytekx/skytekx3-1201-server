@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "spartantwilight"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "spartantwilight:steeleaf_parrying_dagger"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_steeleaf",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 934,
+  "time": 91
+}

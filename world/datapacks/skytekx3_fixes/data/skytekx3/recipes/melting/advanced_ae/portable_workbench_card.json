@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "advanced_ae"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "advanced_ae:portable_workbench_card"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 5760
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    },
+    {
+      "tag": "forge:ender",
+      "amount": 250
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 180
+    }
+  ],
+  "temperature": 500,
+  "time": 399
+}

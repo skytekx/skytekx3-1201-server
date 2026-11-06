@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "immersiveengineering:survey_tools"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000,
+    "unit_size": 10
+  },
+  "temperature": 750,
+  "time": 195
+}

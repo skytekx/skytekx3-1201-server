@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cataclysm_spellbooks:the_berserker"
+  },
+  "result": {
+    "tag": "forge:molten_witherite",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_cursium",
+      "amount": 90
+    }
+  ],
+  "temperature": 1300,
+  "time": 130
+}

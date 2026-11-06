@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "botania"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "botania:thorn_chakram"
+  },
+  "result": {
+    "tag": "forge:molten_terrasteel",
+    "amount": 45
+  },
+  "temperature": 1150,
+  "time": 50
+}

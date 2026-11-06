@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:buzzsaw"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_copper",
+      "amount": 110
+    },
+    {
+      "tag": "forge:molten_electrum",
+      "amount": 22
+    }
+  ],
+  "temperature": 950,
+  "time": 130
+}

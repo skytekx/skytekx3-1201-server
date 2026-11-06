@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extras"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extras:reinforced_induction_port"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 8000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 900
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 268
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 225
+    }
+  ],
+  "temperature": 750,
+  "time": 552
+}

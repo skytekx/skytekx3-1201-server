@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "waystones"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "waystones:pink_sharestone"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 3000
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 1000
+    },
+    {
+      "fluid": "tconstruct:molten_amethyst",
+      "amount": 400
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 100
+    }
+  ],
+  "temperature": 1000,
+  "time": 383
+}

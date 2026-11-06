@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "irons_spellbooks:tyros_statue"
+  },
+  "result": {
+    "tag": "forge:molten_pyrium",
+    "amount": 90
+  },
+  "temperature": 1300,
+  "time": 75
+}

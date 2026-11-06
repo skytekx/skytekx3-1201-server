@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "irons_spellbooks"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "irons_spellbooks:keeper_flamberge"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_debris",
+    "amount": 180,
+    "unit_size": 10
+  },
+  "temperature": 1175,
+  "time": 101
+}

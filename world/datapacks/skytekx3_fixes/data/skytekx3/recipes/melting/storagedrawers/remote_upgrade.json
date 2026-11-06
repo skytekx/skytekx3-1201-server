@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "storagedrawers"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "storagedrawers:remote_upgrade"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 250
+  },
+  "temperature": 477,
+  "time": 82
+}

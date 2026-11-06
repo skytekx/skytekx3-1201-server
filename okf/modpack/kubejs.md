@@ -24,19 +24,20 @@ tracked in [docs/RECIPE_PORT.md](../../docs/RECIPE_PORT.md).
 The server scripts live in [kubejs/server_scripts/](../../kubejs/server_scripts). The only startup
 script, [apotheosis_passengers.js](../../kubejs/startup_scripts/apotheosis_passengers.js) since
 2026-11-04, holds the one Forge event of the Apotheosis riders fix, see
-[Apotheosis riders](#apotheosis-riders). There are no client scripts, and the folder `assets/` is
-empty. The folder `data/` holds the six uncrafting recipes of Twilight Tweaks, see
+[Apotheosis riders](#apotheosis-riders). There are no client scripts, and the folder `assets/` is empty.
+The folder `data/` holds the six uncrafting recipes of Twilight Tweaks, see
 [Twilight Forest backport](twilightforest-backport.md), the wood fallbacks, see
 [Wood fallbacks](#wood-fallbacks), three recipes of
 [Twilight Delight 3.2](#twilight-delight-recipes), the bosses and gear sets of
-[Iron's Apothic Invaders](#irons-apothic-invaders), and overrides for broken recipes, loot tables and
-loot modifiers of other mods, see [Recipe failures](#recipe-failures). The last boot on the build machine loaded 4 of
-4 scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
+[Iron's Apothic Invaders](#irons-apothic-invaders), overrides for broken recipes, loot tables and
+loot modifiers of other mods, see [Recipe failures](#recipe-failures), and the EMI hide list, see
+[AlmostUnified](almostunified.md#emi-hide-list). The last boot on the build machine loaded 4 of 4
+scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of the Mac mini on
 2026-11-02 at 17:33 loaded 7 of 7, again with 0 errors and 0 warnings.
 
 | Script | What it does |
 |---|---|
-| Recipe fixes, `recipe_fixes.js` | Adds two recipes and gives the Chaotic Shield Capacity of Draconic Evolution its Awakened Core, the rest is commented out |
+| Recipe fixes, `recipe_fixes.js` | Adds two recipes, removes Thermal Extra's iron rod, makes five recipes give the preferred item and gives the Chaotic Shield Capacity of Draconic Evolution its Awakened Core, the rest is commented out |
 | Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags, lets every sulfur dust count as yellow dye, puts the Draconic Evolution tools into the vanilla tool tags and links the salt, juice and jelly tags of Expanded Delight, Pam's Food Core and Mekanism |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
@@ -44,18 +45,21 @@ loot modifiers of other mods, see [Recipe failures](#recipe-failures). The last 
 | Apotheosis passengers, `startup_scripts/apotheosis_passengers.js` | Discards the wither cloud of a Withering Archer that despawns, see [Apotheosis riders](#apotheosis-riders) |
 | Skylands sleep, `skylands_sleep.js` | Turns the overworld to day when players sleep in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#sleep-and-hostile-mobs) |
 | Skylands portals, `skylands_portals.js` | Lets nether portals work in the Skylands, see [Skylands worldgen](../content/skylands-worldgen.md#nether-portals) |
-| Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, see [AlmostUnified](almostunified.md#inventory-converter) |
+| Unify inventory, `unify_inventory.js` | Swaps other variants of a material for the preferred item, and the five old blocks of Chocolate Quest for the normal blocks, see [AlmostUnified](almostunified.md#inventory-converter) and [Old blocks](../content/old-blocks.md) |
 | Recipe races, `recipe_races.js` | Builds three recipe types of Tinkers' Construct and Reliquary on the main thread, because they write into shared state of their mod while they are built, see [Recipe failures](#recipe-failures) |
 
-The recipe summary of that boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes,
-with 17 failed recipes" (`logs/kubejs/server.log:54`, 23:25:52). The 17 failures are third-party
-recipes that name items which do not exist in this pack. They are not caused by these scripts. The
-boot of the Mac mini on 2026-11-02 at 17:33 logged "Added 2 recipes, removed 0 recipes, modified 9
-recipes, with 13 failed recipes". Those 13 failures are listed under [Recipe failures](#recipe-failures).
+The recipe summary of that boot reads "Added 2 recipes, removed 0 recipes, modified 14 recipes, with 17
+failed recipes" (`logs/kubejs/server.log:54`, 23:25:52). The 17 failures are third-party recipes that
+name items which do not exist in this pack. They are not caused by these scripts. The boot of the Mac
+mini on 2026-11-02 at 17:33 logged "Added 2 recipes, removed 0 recipes, modified 9 recipes, with 13
+failed recipes". Those 13 failures are listed under [Recipe failures](#recipe-failures). A test server
+with the mods of 3.1.3 and the fixes of 2026-11-04 logged "Added 7 recipes, removed 6 recipes, modified
+9 recipes, with 10 failed recipes" on 2026-11-04 at 22:55.
 
 ### Recipe fixes
 
-The file [recipe_fixes.js](../../kubejs/server_scripts/recipe_fixes.js) has two live recipes:
+The file [recipe_fixes.js](../../kubejs/server_scripts/recipe_fixes.js) has two live recipes and, since
+2026-11-04, three fixes for one item per material:
 
 - The recipe `skytekx3:flesh_to_leather` smelts rotten flesh into leather (line 9).
 - The recipe `skytekx3:bookshelf_any_plank` crafts a bookshelf from any planks (lines 12 to 16). The
@@ -63,6 +67,16 @@ The file [recipe_fixes.js](../../kubejs/server_scripts/recipe_fixes.js) has two 
   bookshelves are on (`config/quark-common.toml:137`), and Quark ships its own `minecraft:bookshelf`
   recipe that switches itself off when they are on. That is why the log says "removed 0 recipes". The
   added recipe overlaps Quark's per wood bookshelf recipes, and Polymorph lets the player choose.
+- The recipe `thermal_extra:crafting/iron_rod` is removed (line 28). It took two iron ingots on top of
+  each other like the rod of Immersive Engineering and made 2 rods where that one makes 4. After
+  AlmostUnified both gave the same rod, so Polymorph offered 2 or 4 of it.
+- Spartan Weaponry smelts and blasts its copper and steel weapons into the first nugget of a tag,
+  which is a variant. Its four recipes are removed and made again, such as
+  `skytekx3:copper_nugget_from_smelting_copper_weapons`, with the nuggets of Thermal and Mekanism and
+  the same cooking times and experience (lines 30 to 45).
+- The Alkahestry Tome of Reliquary doubled steel into the first ingot of the tag, the one of Immersive
+  Engineering. The recipe `skytekx3:alkahestry/crafting/steel_ingot` takes and gives the steel of
+  Mekanism instead (lines 47 to 55).
 
 Since 2026-11-05 it also swaps the Chaotic Core in the recipe
 `draconicevolution:modules/item_chaotic_shield_capacity` for an Awakened Core with a `replaceInput`, as
@@ -73,11 +87,11 @@ Evolution and KubeJS showed the Awakened Core in the bottom middle of that recip
 
 The commented blocks wait for the right item ids:
 
-- Angel Ring (lines 24 to 26): the SkyTekx 2 rule kept it loot only, now meant for Excessive Utilities.
-- Hexical diamond (lines 28 to 32): the comment says Nyx's fallen star is gone. Nyx is back and
+- Angel Ring (lines 63 to 65): the SkyTekx 2 rule kept it loot only, now meant for Excessive Utilities.
+- Hexical diamond (lines 67 to 71): the comment says Nyx's fallen star is gone. Nyx is back and
   registers `nyx:fallen_star` (see [Nyx](../content/nyx.md)). The commented code also uses the namespace
   `hexxitgear`, but the installed Hexxit Gear (`hexxit_gear-1.0.1.jar`) uses `hexxit_gear`.
-- Fresh water for HarvestCraft 2 (lines 34 and 35).
+- Fresh water for HarvestCraft 2 (lines 73 and 74).
 
 ### Wood fallbacks
 

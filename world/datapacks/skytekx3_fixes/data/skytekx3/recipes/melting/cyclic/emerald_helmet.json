@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "cyclic:emerald_helmet"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 500,
+    "unit_size": 25
+  },
+  "temperature": 934,
+  "time": 152
+}

@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "theoneprobe"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "theoneprobe:iron_helmet_probe"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 450,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 100,
+      "unit_size": 25
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 10,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 800,
+  "time": 134
+}

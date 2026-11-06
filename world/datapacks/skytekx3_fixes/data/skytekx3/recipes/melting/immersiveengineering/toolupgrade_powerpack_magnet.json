@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:toolupgrade_powerpack_magnet"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_steel",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_nickel",
+      "amount": 60
+    },
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 45
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 30
+    }
+  ],
+  "temperature": 800,
+  "time": 60
+}

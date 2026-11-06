@@ -1,0 +1,45 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ad_astra"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "ad_astra:jet_suit_boots"
+  },
+  "result": {
+    "tag": "forge:molten_calorite",
+    "amount": 1800,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 400,
+      "unit_size": 25
+    },
+    {
+      "tag": "forge:molten_desh",
+      "amount": 180,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_ostrum",
+      "amount": 180,
+      "unit_size": 10
+    },
+    {
+      "tag": "forge:molten_netherite",
+      "amount": 90,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1200,
+  "time": 322
+}

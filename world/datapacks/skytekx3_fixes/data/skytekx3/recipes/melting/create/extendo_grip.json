@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "create:extendo_grip"
+  },
+  "result": {
+    "tag": "forge:molten_brass",
+    "amount": 450,
+    "unit_size": 10
+  },
+  "temperature": 605,
+  "time": 120
+}

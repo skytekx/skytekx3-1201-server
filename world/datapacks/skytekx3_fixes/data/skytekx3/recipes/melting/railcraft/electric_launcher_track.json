@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "railcraft"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "railcraft:electric_launcher_track"
+  },
+  "result": {
+    "tag": "forge:molten_steel",
+    "amount": 1620
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 12
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 4
+    }
+  ],
+  "temperature": 950,
+  "time": 275
+}

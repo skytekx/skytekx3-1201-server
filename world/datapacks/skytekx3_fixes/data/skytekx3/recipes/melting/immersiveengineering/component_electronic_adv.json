@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "immersiveengineering:component_electronic_adv"
+  },
+  "result": {
+    "tag": "forge:molten_nickel",
+    "amount": 60
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_aluminum",
+      "amount": 45
+    },
+    {
+      "tag": "forge:molten_copper",
+      "amount": 30
+    }
+  ],
+  "temperature": 950,
+  "time": 53
+}

@@ -10,8 +10,19 @@
 // chest) and when a player opens a chest. It uses the replacement table of Almost Unified itself, so the
 // result fits every recipe that the variant fitted. Items with NBT data stay as they are, and so does
 // everything from Extreme Reactors, whose yellorium Almost Unified would turn into Mekanism uranium.
+//
+// The same swap turns the five old decoration blocks of Chocolate Quest into the normal blocks, which
+// the owner asked for on 2026-11-04 at 17:33. The offline tool tools/replace_blocks.py converts the
+// world itself, so this only catches stacks that it could not reach.
 
 const UnifySkip = /^bigreactors:/
+const UnifyOldBlocks = {
+  'chocolate_quest:old_cobblestone': 'minecraft:cobblestone',
+  'chocolate_quest:old_iron_block': 'minecraft:iron_block',
+  'chocolate_quest:old_diamond_ore': 'minecraft:diamond_ore',
+  'chocolate_quest:old_glass': 'minecraft:glass',
+  'chocolate_quest:old_obsidian': 'minecraft:obsidian'
+}
 var unifyPending = {}
 var unifyLogged = 0
 var unifyErrors = 0
@@ -23,6 +34,7 @@ function unifyError(what, e) {
 function unifyTarget(stack) {
   if (stack == null || stack.isEmpty() || stack.nbt != null) return null
   var id = String(stack.id)
+  if (UnifyOldBlocks.hasOwnProperty(id)) return UnifyOldBlocks[id]
   if (UnifySkip.test(id)) return null
   var replacement = AlmostUnified.getReplacementForItem(stack)
   if (replacement == null || replacement.isEmpty()) return null

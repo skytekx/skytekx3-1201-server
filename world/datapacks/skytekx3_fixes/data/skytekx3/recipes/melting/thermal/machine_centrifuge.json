@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thermal"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "thermal:machine_centrifuge"
+  },
+  "result": {
+    "tag": "forge:molten_constantan",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 720
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 90
+    }
+  ],
+  "temperature": 920,
+  "time": 181
+}

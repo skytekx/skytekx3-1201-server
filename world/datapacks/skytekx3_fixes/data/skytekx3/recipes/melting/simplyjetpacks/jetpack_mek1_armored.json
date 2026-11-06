@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "simplyjetpacks"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "simplyjetpacks:jetpack_mek1_armored"
+  },
+  "result": {
+    "tag": "forge:molten_osmium",
+    "amount": 2160
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_steel",
+      "amount": 88
+    }
+  ],
+  "temperature": 975,
+  "time": 321
+}

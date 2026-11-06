@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "deep_aether"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "deep_aether:metal_mixture"
+  },
+  "result": {
+    "tag": "forge:molten_sentrite",
+    "amount": 90
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_veridium",
+      "amount": 90
+    }
+  ],
+  "temperature": 900,
+  "time": 63
+}

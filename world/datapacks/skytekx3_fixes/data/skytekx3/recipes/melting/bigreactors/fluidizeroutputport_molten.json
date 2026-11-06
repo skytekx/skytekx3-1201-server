@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "bigreactors"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "bigreactors:fluidizeroutputport"
+  },
+  "result": {
+    "tag": "forge:molten_yellorium",
+    "amount": 1440
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 1440
+    }
+  ],
+  "temperature": 830,
+  "time": 244
+}

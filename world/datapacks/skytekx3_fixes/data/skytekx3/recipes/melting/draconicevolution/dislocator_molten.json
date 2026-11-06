@@ -1,0 +1,30 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "draconicevolution"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "draconicevolution:dislocator"
+  },
+  "result": {
+    "tag": "forge:molten_draconium",
+    "amount": 360,
+    "unit_size": 10
+  },
+  "byproducts": [
+    {
+      "tag": "forge:ender",
+      "amount": 250,
+      "unit_size": 10
+    }
+  ],
+  "temperature": 1300,
+  "time": 150
+}

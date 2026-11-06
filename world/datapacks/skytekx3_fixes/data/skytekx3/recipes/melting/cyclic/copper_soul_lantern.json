@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cyclic"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "cyclic:copper_soul_lantern"
+  },
+  "result": {
+    "tag": "forge:molten_copper",
+    "amount": 80
+  },
+  "temperature": 500,
+  "time": 47
+}

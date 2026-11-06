@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "l2hostility"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "l2hostility:curse_of_envy"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 500
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_chaos",
+      "amount": 90
+    }
+  ],
+  "temperature": 477,
+  "time": 116
+}

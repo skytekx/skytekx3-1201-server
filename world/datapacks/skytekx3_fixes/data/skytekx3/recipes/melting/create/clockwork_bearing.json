@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "create:clockwork_bearing"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 100
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_brass",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 637,
+  "time": 58
+}

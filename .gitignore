@@ -44,6 +44,8 @@ menu-assets/*.png
 # license forbids a copy in this public repository. tools/fetch_local_mods.py puts them here, and
 # tools/build_mrpack.py fetches them by itself.
 /local-mods/ZeroCore2-1.20.1-2.1.48.jar
+# The temporary files of tools/fetch_local_mods.py, which a killed run leaves behind.
+/local-mods/.fetch-*
 
 # --- local dev ---
 spark/

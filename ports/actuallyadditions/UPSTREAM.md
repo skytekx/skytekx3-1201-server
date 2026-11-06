@@ -1967,7 +1967,10 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     (`al-events-old.log`) lost the torch, ended with 178 contexts on the stack, and its lenses
     changed the blocks while the plugin cancelled. A refused Leaf-Eating Generator with two leaves
     in range posted about 7 break events per second and a refused Breaker one per work cycle of 15
-    ticks. Not tested: the drill, which needs a client, the Vertical Digger and the Farmer.
+    ticks. Not tested: the drill, which needs a client, the Vertical Digger and the Farmer. The
+    ship stage runs those tests on the pack's `safeiter2` jar with EssentialsX and the test plugin
+    of `bp2/actuallyadditions/al-tools`, together with the drill in creative, a hand break by a
+    player right after a machine break and the magnet ring (carryover `aa-ship`).
 61. Phantom blocks and unloaded targets: a phantomface, the Phantom Placer and the Phantom Breaker
     checked their binding with `Level#getBlockEntity` at the target in every server tick, before
     the range check, and the face also read the block at the target there. On the server thread
@@ -1976,9 +1979,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     that read its target in every tick therefore kept the target chunk loaded for good. A face out
     of range, after its booster was taken away or when it was bound with an edited connector far
     away, kept loading that chunk. The checks now run in the order range, then loaded chunk, then
-    block entity, and every read of the face and the Phantom Placer at its target goes through the
-    loaded chunk itself (`TileEntityPhantomface#loadedChunk`, `ServerChunkCache#getChunkNow`), which
-    neither loads a chunk nor adds a ticket. A target in an unloaded chunk stays bound and is
+    block entity. The binding and range checks read the target through the loaded chunk itself
+    (`TileEntityPhantomface#loadedChunk`, `ServerChunkCache#getChunkNow`), which neither loads a
+    chunk nor adds a ticket. A work cycle of the Phantom Placer and the Phantom Breaker, once every
+    30 ticks, reads the target through the level only while the chunk of the target is loaded, so
+    it renews the one tick ticket once per cycle but never loads a missing chunk. The Phantom
+    Placer works at the block next to the bound one, and it also waits until the chunk of that
+    block is loaded, since a bound block on a chunk edge would otherwise bring the next chunk to
+    the FULL level once per cycle. A target in an unloaded chunk stays bound and is
     checked again once its chunk is back. The change detection of the face skips the block at an
     unloaded target, and the identity check of the forwarded block entity (source change 24)
     treats an unloaded target like a removed one. The comparator output of the face and the

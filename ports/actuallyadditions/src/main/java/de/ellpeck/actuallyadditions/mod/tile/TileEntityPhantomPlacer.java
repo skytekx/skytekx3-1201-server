@@ -189,8 +189,14 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
                 if (theSlot == -1) {
                     return;
                 }
-                // SkyTekx: the fake player stands at the Phantom Placer, not at the bound block
-                this.inv.setStackInSlot(theSlot, WorldUtil.useItemAtSide(WorldUtil.getDirectionBySidesInOrder(this.side), this.level, this.boundPosition, this.inv.getStackInSlot(theSlot), this.worldPosition));
+                // SkyTekx: the placer works at the block next to the bound one, which can lie in the next chunk.
+                // That chunk has to be loaded too, or the placement would load it. The fake player stands at
+                // the Phantom Placer, not at the bound block
+                Direction placeSide = WorldUtil.getDirectionBySidesInOrder(this.side);
+                if (TileEntityPhantomface.loadedChunk(this.level, this.boundPosition.relative(placeSide)) == null) {
+                    return;
+                }
+                this.inv.setStackInSlot(theSlot, WorldUtil.useItemAtSide(placeSide, this.level, this.boundPosition, this.inv.getStackInSlot(theSlot), this.worldPosition));
             }
         }
     }

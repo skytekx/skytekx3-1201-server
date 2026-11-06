@@ -529,12 +529,13 @@ paths below are relative to the mod's root package folder in `src/main/java`, wh
 
 ### Version
 
-The fork keeps 1.1.52 as the base number and builds 1.1.52-skytekx.1. The code base is 1.1.52, and
-`UPSTREAM.md` and `NOTICE` will state the content level as parity with upstream 1.3.26 (cd9d9c63)
-except the exclusions. A base number of 1.3.26 would claim parity with a NeoForge 1.21.1 build that
-has data components and 1.21 content, and it would point bug reports at the wrong changelog. The
-alternative `1.3.26-skytekx.N` stays recorded in `UPSTREAM.md` (build change 4) for the release to
-decide. Nothing in the pack depends on the version, see the property table.
+The release kept 1.1.52 as the base number and builds 1.1.52-skytekx.1 (ed177d0), because the code
+base is 1.1.52. The NOTICE line `Content` and `UPSTREAM.md` build change 4 state the content level
+as parity with upstream 1.3.26 (cd9d9c63) except the exclusions. A base number of 1.3.26 would have
+claimed parity with a NeoForge 1.21.1 build that has data components and 1.21 content, and it would
+have pointed bug reports at the wrong changelog. The alternative `1.3.26-skytekx.N` stays recorded
+in build change 4 as the option not taken. Nothing in the pack depends on the version, see the
+property table.
 
 ### Baseline
 
@@ -841,6 +842,11 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   common config of the first pack boot into `config/` (1975ce6). The savegame test and the full pack
   boot are under [Release test](#release-test). The README, the [Mod set](mod-set.md), the
   [open items](../open-items.md), the inventory and the carryover file follow the release.
+- No public pack with this jar goes up before a pack client from the `.mrpack` has joined the
+  Arclight test server over `actuallyadditions:main` with protocol 5, the login item of carryover
+  `aa-client-test`. The private pack of the release test never joined a server, so the registry sync
+  of the 121 blocks and the new items, the sync of the new recipe serializers and the client mixin
+  `client.MinecraftMixin` are not proven in the pack (see [Publish](publish.md)).
 
 ## Pack integration
 
@@ -857,8 +863,9 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   which is wanted. The flax seeds join `forge:crops/flax` as on `main`, and Supplementaries 3.1.44
   makes its rope, sack and doormat from that tag, so the seeds craft rope without growing flax. The
   owner can take them out of `forge:crops/flax` in `kubejs/server_scripts/tag_fixes.js` if that is
-  unwanted (review of the data core bundle, not decided). Canola oil and the other three fluids
-  have no `forge:` standard and keep the mod's own bucket tags.
+  unwanted (review of the data core bundle, an owner decision on the
+  [open items](../open-items.md)). Canola oil and the other three fluids have no `forge:` standard
+  and keep the mod's own bucket tags.
 - The new worldgen uses Forge biome modifiers on `#minecraft:is_overworld` and the `forge:` climate
   tags. The Skylands biome `skytekx3:sky_void` sits only in `#skytekx3:has_structure/sky_floaters`
   and two Dungeons Arise tags of the Skylands datapack. None of the tags the modifiers use holds it,
@@ -890,8 +897,8 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   (the loot table files in the jars of the pack). Better Mineshafts 4.0.4 ships no loot table and
   replaces the vanilla mineshafts (`config/bettermineshafts-forge-1_20.toml:5`). So the chests of
   those dungeons and strongholds get no loot of the mod. Whether the Better Mineshafts chests roll
-  the vanilla mineshaft table, and whether the two sets of tables should join the list, is open for
-  the release and not checked in a world (carryover `aa-ship`).
+  the vanilla mineshaft table, and whether the two sets of tables should join the list, is an owner
+  decision and was not checked in a world (carryover `aa-ship`, see [open items](../open-items.md)).
 
 ## Excluded
 
@@ -933,7 +940,8 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   Tinkers' Construct excerpt left with `ClientRegistryHandler`, which the boot smoke test deleted
   (5b06e38).
 - The rotation helper in `VoxelShapes` is marked as taken from Mekanism, which is MIT. The comment
-  stays, and `NOTICE` gets a Mekanism line with its copyright notice when the file lands.
+  stays, and `NOTICE` carries the MIT notice of Mekanism at 46bc2dc (2b2f447), as does the license
+  text in `licenses/` (0ed346b).
 - The snapshot already leaves out `RecipeHandler.java`, a commented copy of a class under CC
   BY-NC-ND 4.0 (`UPSTREAM.md`, Files left out). The baseline also deleted the fully commented
   `RecipeHelper.java`, whose header names a third party author and the MIT License without the
@@ -1181,20 +1189,23 @@ on Arclight (carryover `aa-arclight-test`).
 The Arclight pack boot copy of the workflow scratchpad booted the worktree at 0ed346b with the
 production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, label `aa-ship-arclight`
 (`packboot-logs/aa-ship-arclight-summary.json`). It loaded 299 mods from 272 jars, reached `Done` in
-17.8 s with 0 FATAL lines, no crash report, no watchdog and a clean RCON stop, and generated the test
-points of the Overworld, the Twilight Forest and the Skylands. Against the boot `createaddition-arclight`
-of b781300 it shows no new log signature, and its three ERROR lines are the AllTheLeaks line of the
-boot error baseline and the `RuntimeDistCleaner` and Nostalgic Tweaks lines that every boot of the
-fresh test copy shows, which has no EssentialsX. The mod adds four WARN lines of Advanced Loot Info,
-which finds no reader for the two loot modifiers and the Engineer trade list, so its loot view leaves
-the Bat Wings, the dungeon loot and the Engineer trades out. The first start wrote
-`config/actuallyadditions-common.toml`, which 1975ce6 commits.
+17.8 s with 0 FATAL lines, no crash report, no watchdog and a clean RCON stop, and generated the
+test points of the Overworld, the Twilight Forest and the Skylands. Against the boot
+`createaddition-arclight` of b781300 it shows no new log signature, and its three ERROR lines are
+the AllTheLeaks line of the boot error baseline and two lines that every boot of the fresh test copy
+shows, which has no EssentialsX. The `RuntimeDistCleaner` line for `ModelBakery` comes from the
+client mixin `client.ModelBakeryMixin` of Advanced AE 1.3.6 (`mixins.aae.json`, lines 5739 to 5742
+of `aa-ship-arclight-debug.log.gz`), and the backup config line from Nostalgic Tweaks, which the
+live server keeps off its `mods/` (see [Mod set](mod-set.md)). Neither comes from the fork. The mod
+adds four WARN lines of Advanced Loot Info, which finds no reader for the two loot modifiers and the
+Engineer trade list, so its loot view leaves the Bat Wings, the dungeon loot and the Engineer trades
+out. The first start wrote `config/actuallyadditions-common.toml`, which 1975ce6 commits.
 
-`tools/build_mrpack.py --allow-unpermitted` of 1975ce6 put the jar with the same SHA-1 into
-`overrides/mods/`, the license text into `overrides/licenses/` and the config into
+The pack build `tools/build_mrpack.py --allow-unpermitted` of 1975ce6 put the jar with the same
+SHA-1 into `overrides/mods/`, the license text into `overrides/licenses/` and the config into
 `overrides/config/` of a private pack with 58 bundled jars. A public build refuses the jar until
 master holds `ports/actuallyadditions/`, as for the other forks. No pack client joined a server yet
-(carryover `aa-client-test`).
+(carryover `aa-client-test`), which gates a public pack, see [Release](#release).
 
 ## Local divergences
 
@@ -1244,7 +1255,8 @@ These differ from upstream on purpose and must survive the next upstream sync.
   `NullPointerException` (`UPSTREAM.md`, source change 66).
 - The Lens of the Killer and the two relay modifiers lose their `(WIP)` label, which `main` keeps,
   because they work on the fork. The Wings Of The Bats and the Storage Crate Keeper keep the label
-  and the recipes of `main` until the release decides (`UPSTREAM.md`, source change 67).
+  and the recipes of `main`, as the release decided (`UPSTREAM.md`, source change 67, see
+  [Pack integration](#pack-integration)).
 - The Garden Cloche recipes take the item tag `minecraft:dirt` as soil, as `main` does, where the
   cloche recipes of Immersive Engineering 10.2 take the plain dirt item. The Mekanism crusher recipe
   carries a `forge:mod_loaded` condition that `main` leaves out (`UPSTREAM.md`, source changes 68

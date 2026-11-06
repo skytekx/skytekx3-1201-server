@@ -1,0 +1,29 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "immersiveengineering:cloche",
+  "input": {
+    "item": "actuallyadditions:coffee_beans"
+  },
+  "render": {
+    "type": "crop",
+    "block": "actuallyadditions:coffee"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "actuallyadditions:coffee_beans"
+    },
+    {
+      "item": "actuallyadditions:coffee_beans"
+    }
+  ],
+  "soil": {
+    "tag": "minecraft:dirt"
+  },
+  "time": 800
+}

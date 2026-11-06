@@ -2165,3 +2165,16 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `e408eb94`, the drill core of `154add17`, the firework box of `41e85391`, the items of
     `5a9f7d91` and the Vertical Digger name (source change 23).
     Savegame: none. New ids: none.
+68. Garden Cloche: canola, coffee, flax and rice grow in the Garden Cloche of Immersive Engineering,
+    as on `main` since `e63376b0` and `645dbb2d` (changelog 1.3.7 and 1.3.8). The four recipes
+    `compat/cloche_canola`, `compat/cloche_coffee`, `compat/cloche_flax` and `compat/cloche_rice`
+    give two canola, coffee beans, strings or rice plus one seed back in 800 ticks on any block of
+    the item tag `minecraft:dirt`, with the crop renderer and the crop block of the mod. They are
+    written by hand in `src/main/resources/data/actuallyadditions/recipes/compat/` in the format of
+    the cloche recipes inside `ImmersiveEngineering-1.20.1-10.2.0-183.jar` (`results` as item
+    stacks, the render type `crop` without a namespace) and load only with the condition
+    `forge:mod_loaded` `immersiveengineering`. The generator `ClocheRecipes` of `main` is not
+    ported, because it builds on the classes of Immersive Engineering 12, and the build gets no
+    dependency on Immersive Engineering. The crop blocks extend `CropBlock`, which the crop
+    renderer of Immersive Engineering 10.2 needs for their age.
+    Savegame: none. New ids: none (four recipes).

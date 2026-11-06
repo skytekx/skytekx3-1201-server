@@ -1,5 +1,5 @@
 {
- "_about": "Items that the porters and integrators of the Actually Additions backport handed on, per bundle, in the order they were written, and what the release aa-ship did with the ones handed to it. Items between two content bundles were picked up by the receiving bundle, whose source changes in ports/actuallyadditions/UPSTREAM.md record them. Every item that names aa-ship carries a release note. The key aa-ship lists the release commits and the checks that stay open after the release. Paths under bp2/ are in the workflow scratchpad and are not in the repo. The plan is in actuallyadditions-backport-inventory.json, the docs in okf/modpack/actuallyadditions-backport.md.",
+ "_about": "Items that the porters and integrators of the Actually Additions backport handed on, per bundle, in the order they were written, and what the release aa-ship did with the ones handed to it. Items between two content bundles were picked up by the receiving bundle, whose source changes in ports/actuallyadditions/UPSTREAM.md record them. Every item that names aa-ship carries a release note, and the items of the bundle aa-ship carry the note of the final ship stage, which rebuilt the jar and booted the full pack on Forge and Arclight. The key aa-ship lists the release commits and the checks that stay open after the release. Paths under bp2/ are in the workflow scratchpad and are not in the repo. The plan is in actuallyadditions-backport-inventory.json, the docs in okf/modpack/actuallyadditions-backport.md.",
  "bundles": {
   "aa-baseline": [
    {
@@ -538,6 +538,40 @@
     "item": "aa-ship (testing, integrator of aa-ui-docs-compat): the review fix 23c7466 makes ItemBooklet.useOn return PASS (UPSTREAM.md source change 65). The integration tested it on a dedicated Forge 47.4.18 server with the dev client and the local scenario bp2/actuallyadditions/ui-tools/devtest-uiblock.patch (scenario uiblock, run with SCEN=uiblock ui-tools/uiclient.sh): a click aimed at the floor opened the book, a click aimed at a chest opened the chest, a click into the air opened the book, and the porter's jar ae5284cb with FAIL opened nothing on the floor. Repeat the floor click with the release jar on the pack's Arclight, where ServerPlayerGameMode.useItemOn carries the Bukkit PlayerInteractEvent bridge, and check that a right click with the manual on an Actually Additions machine opens the machine screen, not the book, which is the vanilla order.",
     "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run. The floor click has to run on the pack Arclight as well."
    }
+  ],
+  "aa-ship": [
+   {
+    "item": "aa-ship/pack-wiring-and-docs (moved to aa-client-test): a fresh client from the .mrpack joining the Arclight test server was not run, because no pack client harness exists here. Also untested in a client: JEI and EMI categories (including the EMI recipe tree for the NOTICE bullet), screens and sliders, lasers and particles with Oculus and Embeddium, drill, AIOTs, filler, staff, goggles, Engineer zombie overlay, manual without Patchouli, and the manual floor click on Arclight",
+    "release": "Open, kept under aa-client-test in the key aa-ship. The final ship stage ran no pack client either."
+   },
+   {
+    "item": "aa-ship (moved to aa-arclight-test): the AATest plugin run with EssentialsX on the pack Arclight was not run. It covers the drill 3x3 and creative events, Vertical Digger and Farmer events, magnet ring pickup and cancel, a hand break after a machine break, the EssentialsX userdata file of the fake player, compass crouch click, Hopping Item Interface under a claim, machine contents and StopDrop, Item Tag anvil rename, sack and Ranged Collector against plugin cancels, right click harvest, banners, the drill placer torches, filler and water bowl under spawn protection, the Phantom Placer at a chunk edge, and a Phantom Energyface or relay capabilities with a pipe or cable across an unload",
+    "release": "Open, kept under aa-arclight-test. The final ship stage booted the full pack without a player or a plugin."
+   },
+   {
+    "item": "aa-ship/pack-wiring-and-docs (moved to aa-live-rollout): copying the jar into the server mods/ is not done. This checkout has no mods/, so it happens at the deploy while java is stopped, then boot and let a pack client join",
+    "release": "Open, kept under aa-live-rollout."
+   },
+   {
+    "item": "aa-ship/pack-wiring-and-docs: only the Arclight full pack boot ran. The plain Forge full pack boot was not run",
+    "release": "Done in the final ship stage. The Forge boot actuallyadditions-forge and the Arclight boot actuallyadditions-arclight of 1262c41 reached Done with 0 FATAL lines, no crash report, no watchdog, a clean RCON stop and no new log signature against wavea-forge and wavea-arclight, and both applied AnvilMixin and ItemCombinerMenuAccessor (okf page, Final ship stage)."
+   },
+   {
+    "item": "aa-world-content loot (owner decision, recorded on the backport page): whether the Better Dungeons and Better Strongholds chest tables should get the dungeon loot modifier",
+    "release": "Open, an owner decision on okf/open-items.md."
+   },
+   {
+    "item": "aa-arclight-local machine-fake-player-and-events: the fake player per owner and the menu check of the screen packets stay on okf/open-items.md until a claim plugin arrives",
+    "release": "Open and conditional, on okf/open-items.md."
+   },
+   {
+    "item": "aa-ship (integrator of aa-ship): the review asked for one pack client from the private pack SkyTekx3-3.1.2-UNPERMITTED.mrpack against the packboot-arclight copy under Xvfb before the merge. The integration did not run it, since no pack client harness exists in this container. It made the gate explicit instead (d878dc1): the Release section of okf/modpack/actuallyadditions-backport.md and the Actually Additions paragraph of okf/modpack/publish.md say that no public pack with the jar goes up before the login item of aa-client-test has passed. The two owner decisions (dungeon loot of Better Dungeons, Better Strongholds and Better Mineshafts, flax seeds in forge:crops/flax) are now under Owner decisions in okf/open-items.md",
+    "release": "Holds. The gate stays in the Release section of the okf page and in okf/modpack/publish.md."
+   },
+   {
+    "item": "aa-ship (integrator of aa-ship): the integration rebuilt the porter commits onto the branch and mapped the porter commit ids in the docs, the carryover and the inventory to the branch ids (dbafb06): 40d0122 is 9c01fa1, ed177d0 is 75d3c64, 0ed346b is 26415ad, 1975ce6 is b7704d8, b772868 is ec248ae, 022b30a is b1bb503, 9e76328 is 5dab147, 6613b6a is 5540bf3 and 603f9ef is 3481430. The trees are equal, so the jar SHA-1 22707305 holds. The boot error baseline in okf/server/logs-and-crashes.md now records the Advanced AE ModelBakery line and the Nostalgic Tweaks line of the pack boot copies (1262c41). Whether a live boot with Advanced AE 1.3.6 also logs the ModelBakery ERROR, which would raise the live baseline to 3, nobody has checked",
+    "release": "Holds. The final ship stage built the jar again from 1262c41 and got the SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb. Whether a live boot logs the ModelBakery ERROR stays open on okf/server/logs-and-crashes.md."
+   }
   ]
  },
  "aa-ship": {
@@ -545,7 +579,8 @@
   "done": [
    "savegame-test: OLD 237e0fc6 to NEW 22707305 on a dedicated Forge 47.4.18 server, 49 block entities, 241 items in 33 kinds, four fluids and 130500 energy equal after the NEW load, the expected changes seen (okf page, Release test)",
    "pack-wiring-and-docs: the jar, the permission record and the license text (26415ad), the common config of the first pack boot, the README, mod set, open items and backport page, this file and the full inventory",
-   "release fixes: the empowering recipe serializer (9c01fa1) and the content level of the NOTICE (75d3c64)"
+   "release fixes: the empowering recipe serializer (9c01fa1) and the content level of the NOTICE (75d3c64)",
+   "final-ship-stage: a clean gradle build of 1262c41 gave the jar SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb again, runData wrote 0 of 1238 files, the link check found no pack jar that links the mod and 0 missing of its 150 references into JEI, Patchouli and Curios, the full pack boots actuallyadditions-forge and actuallyadditions-arclight were clean with both mixins applied, and 7def174 gives Flux Networks the current id of the Phantom Energyface in defaultconfigs/, checked by the boot actuallyadditions-forge-flux (okf page, Final ship stage)"
   ],
   "open": [
    {
@@ -559,6 +594,10 @@
    {
     "to": "aa-live-rollout",
     "what": "Copy the jar into the server mods/ while the java process is gone, boot, check Done with 0 FATAL and the 2 ERROR baseline, then let one pack client join. The world gets the ore, crop patches and Engineer houses only in new chunks"
+   },
+   {
+    "to": "aa-client-test",
+    "what": "With a player: a Flux Networks point placed next to a Phantom Energyface that is bound to a machine does not connect to the face, now that defaultconfigs/fluxnetworks-server.toml of 7def174 names actuallyadditions:phantom_energyface"
    }
   ]
  }

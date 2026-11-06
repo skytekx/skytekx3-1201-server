@@ -49,7 +49,8 @@ public class TileEntityPhantomItemface extends TileEntityPhantomface {
     @Override
     public boolean isBoundThingInRange() {
         if (super.isBoundThingInRange()) {
-            BlockEntity tile = this.level.getBlockEntity(this.getBoundPosition());
+            // SkyTekx: through the loaded chunk, see TileEntityPhantomface#loadedChunk
+            BlockEntity tile = loadedBlockEntity(this.level, this.getBoundPosition());
             if (tile != null) {
                 for (Direction facing : Direction.values()) {
                     if (tile.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent()) {

@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import javax.annotation.Nonnull;
@@ -138,11 +139,21 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
     }
 
     // SkyTekx: without the comparisons of the level with itself, as in d088aba7. A bound position on
-    // another phantom block or on this block is dropped
+    // another phantom block or on this block is dropped. As at the phantomfaces (a local change), the
+    // block entity is only read while the chunk of the target is loaded and through that chunk, so a
+    // binding no longer loads or holds the chunk of its target
     @Override
     public boolean hasBoundPosition() {
         if (this.boundPosition != null) {
-            if (this.level.getBlockEntity(this.boundPosition) instanceof IPhantomTile || this.getBlockPos().equals(this.boundPosition)) {
+            if (this.getBlockPos().equals(this.boundPosition)) {
+                this.boundPosition = null;
+                return false;
+            }
+            LevelChunk chunk = TileEntityPhantomface.loadedChunk(this.level, this.boundPosition);
+            if (chunk == null) {
+                return true;
+            }
+            if (chunk.getBlockEntity(this.boundPosition, LevelChunk.EntityCreationType.IMMEDIATE) instanceof IPhantomTile) {
                 this.boundPosition = null;
                 return false;
             }
@@ -198,9 +209,10 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
         }
     }
 
+    // SkyTekx: the range first and the chunk second, so a target out of range or unloaded is never read
     @Override
     public boolean isBoundThingInRange() {
-        return this.hasBoundPosition() && this.boundPosition.distSqr(this.worldPosition) <= this.range * this.range;
+        return this.boundPosition != null && this.boundPosition.distSqr(this.worldPosition) <= this.range * this.range && TileEntityPhantomface.loadedChunk(this.level, this.boundPosition) != null && this.hasBoundPosition();
     }
 
     @Override

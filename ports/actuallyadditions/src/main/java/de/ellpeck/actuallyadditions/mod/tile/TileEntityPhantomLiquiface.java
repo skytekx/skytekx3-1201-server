@@ -42,7 +42,8 @@ public class TileEntityPhantomLiquiface extends TileEntityPhantomface implements
     @Override
     public boolean isBoundThingInRange() {
         if (super.isBoundThingInRange()) {
-            BlockEntity tile = this.level.getBlockEntity(this.boundPosition);
+            // SkyTekx: through the loaded chunk, see TileEntityPhantomface#loadedChunk
+            BlockEntity tile = loadedBlockEntity(this.level, this.boundPosition);
             if (tile != null && !(tile instanceof TileEntityLaserRelayFluids)) {
                 for (Direction facing : Direction.values()) {
                     if (tile.getCapability(ForgeCapabilities.FLUID_HANDLER, facing).isPresent()) {

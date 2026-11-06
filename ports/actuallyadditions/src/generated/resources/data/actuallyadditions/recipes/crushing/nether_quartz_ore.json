@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:nether_quartz_ore"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 3,
+      "item": "minecraft:quartz"
+    }
+  ]
+}

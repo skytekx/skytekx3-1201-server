@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:blaze_rod"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 3,
+      "item": "minecraft:blaze_powder"
+    }
+  ]
+}

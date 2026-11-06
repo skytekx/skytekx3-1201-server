@@ -52,7 +52,9 @@ public class CrusherScreen extends AAScreen<CrusherContainer> {
             : 42), this.topPos + 5, this.tileGrinder.storage);
 
         if (this.isDouble) {
-            this.buttonAutoSplit = new Buttons.SmallerButton( this.leftPos - 10, this.topPos, Component.literal("S"), (button) -> actionPerformed(0));
+            this.buttonAutoSplit = Button.builder(Component.literal("S"), (button) -> actionPerformed(0))
+                    .bounds(this.leftPos - 10, this.topPos, 16, 16)
+                    .build();
             this.addRenderableWidget(this.buttonAutoSplit);
         }
 
@@ -83,7 +85,7 @@ public class CrusherScreen extends AAScreen<CrusherContainer> {
         this.energy.render(guiGraphics, x, y);
 
         if (this.isDouble && this.buttonAutoSplit.isMouseOver(x,y)) {
-            guiGraphics.drawString(font, Component.translatable("info.actuallyadditions.gui.autosplititems." + (tileGrinder.isAutoSplit?"on":"off")).withStyle(ChatFormatting.BOLD), x , y, 0xffffff, false);
+            guiGraphics.renderTooltip(font, Component.translatable("info.actuallyadditions.gui.autosplititems." + (tileGrinder.isAutoSplit?"on":"off")), x, y);
         }
     }
 
@@ -92,7 +94,7 @@ public class CrusherScreen extends AAScreen<CrusherContainer> {
         guiGraphics.blit(AssetUtil.GUI_INVENTORY_LOCATION, this.leftPos, this.topPos + 93, 0, 0, 176, 86);
 
         ResourceLocation usedLoc = this.isDouble ? RES_LOC_DOUBLE : RES_LOC;
-        guiGraphics.blit(AssetUtil.GUI_INVENTORY_LOCATION, this.leftPos, this.topPos, 0, 0, 176, 93);
+        guiGraphics.blit(usedLoc, this.leftPos, this.topPos, 0, 0, 176, 93);
 
         if (this.tileGrinder.firstCrushTime > 0) {
             int i = this.tileGrinder.getFirstTimeToScale(23);
@@ -108,6 +110,14 @@ public class CrusherScreen extends AAScreen<CrusherContainer> {
         }
 
         this.energy.draw(guiGraphics);
+    }
+
+    // SkyTekx: both crushers share one menu type, so the screen factory picks the class here.
+    // Upstream registers CrusherScreen alone and the double crusher click area of JEI never applies
+    public static CrusherScreen create(CrusherContainer container, Inventory inventory, Component title) {
+        return container.isDouble
+            ? new CrusherDoubleScreen(container, inventory, title)
+            : new CrusherScreen(container, inventory, title);
     }
 
     public static class CrusherDoubleScreen extends CrusherScreen {

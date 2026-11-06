@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:crushing",
+  "ingredient": {
+    "item": "minecraft:blue_orchid"
+  },
+  "result": [
+    {
+      "chance": 1.0,
+      "count": 3,
+      "item": "minecraft:light_blue_dye"
+    }
+  ]
+}

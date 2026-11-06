@@ -121,8 +121,8 @@ macos/skytekx3ctl rcon "<command>"                            # On the Mac mini,
   because a push publishes the whole history and its license forbids that copy. Before every push,
   `git log --oneline --find-object=f94d426ce1c02a3d3cbb16ddaf09db424c5435ae HEAD` must print nothing
   for ZeroCore 2. For another pointed jar, look for the id that `git hash-object` gives for its
-  fetched copy. A jar that got in needs a history rewrite before the push, and the scripts
-  `tools/build_mrpack.py` and `tools/publish_modrinth.py` refuse until then.
+  fetched copy. If such a jar got into a commit, rewrite the history without it before the push.
+  The scripts `tools/build_mrpack.py` and `tools/publish_modrinth.py` refuse until then.
 - The default branch is `master`.
 
 ## Writing docs

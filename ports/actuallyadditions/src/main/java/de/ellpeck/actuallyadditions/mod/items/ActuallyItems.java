@@ -12,11 +12,13 @@ package de.ellpeck.actuallyadditions.mod.items;
 
 import com.google.common.collect.ImmutableSet;
 import de.ellpeck.actuallyadditions.api.ActuallyAdditionsAPI;
+import de.ellpeck.actuallyadditions.api.ActuallyTags;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.AABlockItem;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.items.base.ItemBase;
 import de.ellpeck.actuallyadditions.mod.items.lens.ItemLens;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
@@ -181,6 +183,13 @@ public final class ActuallyItems {
     public static final RegistryObject<Item> DIAMOND_AIOT = ITEMS.register("diamond_aiot", () -> new AllInOneTool(Tiers.DIAMOND));
     public static final RegistryObject<Item> NETHERITE_AIOT = ITEMS.register("netherite_aiot", () -> new AllInOneTool(Tiers.NETHERITE));
 
+    // Banner Pattern
+    // SkyTekx: upstream 659779b1, each item unlocks one pattern of BannerHelper in the loom
+    public static final RegistryObject<Item> DRILL_PATTERN = ITEMS.register("drill_pattern", () -> new BannerPatternItem(ActuallyTags.BannerPatterns.PATTERN_DRILL, defaultNonStacking()));
+    public static final RegistryObject<Item> LEAF_BLO_PATTERN = ITEMS.register("leaf_blo_pattern", () -> new BannerPatternItem(ActuallyTags.BannerPatterns.PATTERN_LEAF_BLO, defaultNonStacking()));
+    public static final RegistryObject<Item> PHAN_CON_PATTERN = ITEMS.register("phan_con_pattern", () -> new BannerPatternItem(ActuallyTags.BannerPatterns.PATTERN_PHAN_CON, defaultNonStacking()));
+    public static final RegistryObject<Item> BOOK_PATTERN = ITEMS.register("book_pattern", () -> new BannerPatternItem(ActuallyTags.BannerPatterns.PATTERN_BOOK, defaultNonStacking()));
+
     public static final Set<Supplier<Item>> SIMPLE_ITEMS = ImmutableSet.of(
         // Crystals
         BLACK_QUARTZ, RESTONIA_CRYSTAL, PALIS_CRYSTAL, DIAMATINE_CRYSTAL,
@@ -201,7 +210,7 @@ public final class ActuallyItems {
 /*        CRUSHED_IRON, CRUSHED_GOLD, CRUSHED_DIAMOND, CRUSHED_EMERALD, CRUSHED_LAPIS,
         CRUSHED_QUARTZ, CRUSHED_COAL, CRUSHED_BLACK_QUARTZ, */
         SOLIDIFIED_EXPERIENCE,
-        COFFEE_BEANS, RICE_SEEDS, CANOLA_SEEDS, FLAX_SEEDS
+        COFFEE_BEANS, RICE_SEEDS, CANOLA_SEEDS, FLAX_SEEDS, DRILL_PATTERN, LEAF_BLO_PATTERN, PHAN_CON_PATTERN, BOOK_PATTERN
     );
 
     // SkyTekx: upstream 48766771. Tools and other held items get the handheld item model, the

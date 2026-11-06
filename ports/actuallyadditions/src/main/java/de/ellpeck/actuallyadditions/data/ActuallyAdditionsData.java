@@ -50,6 +50,8 @@ public class ActuallyAdditionsData {
         generator.addProvider(true, new DamageTypeTagsGenerator(packOutput, lookupProvider, helper));
         // SkyTekx: the job site tag of the Engineer (upstream 2a2f5c6c)
         generator.addProvider(true, new PoiTypeTagsGenerator(packOutput, lookupProvider, helper));
+        // SkyTekx: the pattern item tags of upstream 659779b1
+        generator.addProvider(true, new BannerPatternTagsGenerator(packOutput, lookupProvider, helper));
 
         generator.addProvider(true, new BlockStateGenerator(packOutput, helper));
         generator.addProvider(true, new ItemModelGenerator(packOutput, helper));

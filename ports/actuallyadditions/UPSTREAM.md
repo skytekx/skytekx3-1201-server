@@ -58,7 +58,8 @@ of the snapshot are separate commits in this repository's history
 - Code excerpts that upstream marks as taken from other mods, all of them kept in the base:
   `TileEntityXPSolidifier` (experience formulas excerpted from Ender IO with permission),
   `misc/BannerHelper` (a banner pattern helper excerpted from Additional Banners with permission,
-  called from `ActuallyAdditions#setup`), `ClientRegistryHandler` (an empty method whose body is
+  called from `ActuallyAdditions#setup`, replaced by the registry code of `659779b1` in source
+  change 59), `ClientRegistryHandler` (an empty method whose body is
   commented out, excerpted from Tinkers' Construct with permission, removed by source change 8) and
   `booklet/misc/GuiAAAchievements` (a 1.12 class inside a block comment, partially excerpted from
   Botania with permission). Two methods are marked as copied from vanilla Minecraft code
@@ -1797,3 +1798,27 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and never equal the queried `ResourceLocation`, so its chests get nothing. On 1.20.1 both are
     `ResourceLocation`s and the loot arrives. The `System.out` line of `main` for every drill core
     roll is left out. Savegame: none, the modifiers only act on loot rolled after the update.
+59. Banner patterns: the four patterns of `659779b1` (changelog 1.3.10 for their 1.21 form) come back
+    as entries `actuallyadditions:book`, `drill`, `leaf_blo` and `phan_con` of the banner pattern
+    registry of 1.20.1, registered with a `DeferredRegister` on `Registries.BANNER_PATTERN` as on
+    `1.20.4`, with the hash names `actuallyadditions:<id>` that a banner saves. The base's
+    `BannerHelper` only held a commented enum hack of 1.12 and registered nothing. Its comment named
+    it as excerpted from Additional Banners, and that code is gone with this change. The new items
+    `book_pattern`, `drill_pattern`, `leaf_blo_pattern` and `phan_con_pattern` are
+    `BannerPatternItem`s that do not stack, each naming the tag `actuallyadditions:pattern_item/book`,
+    `drill`, `leaf_blower` or `phan_con` of `ActuallyTags.BannerPatterns`, which the new provider
+    `BannerPatternTagsGenerator` fills with its pattern, so the loom offers it. A pattern item is
+    crafted shapeless from paper and the Manual, a Drill Core, a Leaf Blower or a Phantom Connector,
+    as on `main`. The textures of `7245af2a` (#1442) replace the base's
+    `assets/minecraft/textures/entity/banner/actuallyadditions_<name>.png` and the shield copies
+    with `assets/actuallyadditions/textures/entity/banner/<id>.png` and `entity/shield/<id>.png`,
+    the place `BannerPattern.location` derives from the pattern id on 1.20.1 as well. The banner
+    and shield atlases of 1.20.1 scan these folders in every namespace, and `Sheets` builds its
+    banner materials from the registry after the mods registered. The item textures are those of
+    `main`. The tooltip keys of a banner follow `7245af2a`,
+    `block.minecraft.banner.actuallyadditions.<id>.<color>`, the form the Forge 47 banner tooltip
+    builds, and replace the 1.12 keys `item.banner.actuallyadditions<Name>.<color>`. The colors
+    `silver` and `lightBlue` of those keys, which `main` keeps, are `light_gray` and `light_blue`
+    here, the names of `DyeColor` on 1.20.1, so all sixteen colors have a text. The item models,
+    recipes and tags match those of `main` except for the 1.21 recipe result field `id` (here
+    `item`). Savegame: new ids only, four items, four banner patterns and four tags.

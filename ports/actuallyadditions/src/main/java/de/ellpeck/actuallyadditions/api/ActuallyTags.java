@@ -8,12 +8,14 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPattern;
 
 public final class ActuallyTags {
     public static final void init() {
         // lol
         Items.touch();
         Blocks.touch();
+        BannerPatterns.touch();
     }
     public static class Items {
         public static void touch() {
@@ -112,6 +114,22 @@ public final class ActuallyTags {
 
         private static TagKey<Block> forge(String name) {
             return BlockTags.create(new ResourceLocation("forge", name));
+        }
+    }
+
+    // SkyTekx: upstream 659779b1. A banner pattern item names a tag of patterns, and the loom offers its members
+    public static class BannerPatterns {
+        public static void touch() {
+            // load the stupid tags
+        }
+
+        public static final TagKey<BannerPattern> PATTERN_DRILL = tag("pattern_item/drill");
+        public static final TagKey<BannerPattern> PATTERN_LEAF_BLO = tag("pattern_item/leaf_blower");
+        public static final TagKey<BannerPattern> PATTERN_PHAN_CON = tag("pattern_item/phan_con");
+        public static final TagKey<BannerPattern> PATTERN_BOOK = tag("pattern_item/book");
+
+        private static TagKey<BannerPattern> tag(String name) {
+            return TagKey.create(Registries.BANNER_PATTERN, new ResourceLocation(ActuallyAdditions.MODID, name));
         }
     }
 }

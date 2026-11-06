@@ -202,6 +202,9 @@ Modifications
       weaponsmith, stronghold library, igloo, desert pyramid, nether fortress, end city and
       mansion chests can hold crystals, crystal blocks, drill cores, black quartz and Bat Wings,
       through global loot modifiers behind doBatDrops and villageAndDungeonLoot.
+    * Banner patterns: four patterns drawn from the Manual, the Drill, the Leaf Blower and the
+      Phantom Connector, with pattern items for the loom crafted from paper, as on upstream's
+      main branch, and banner and shield textures in the place 1.20.1 reads them from.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.
@@ -213,9 +216,8 @@ Licenses
     LICENSE_actuallyadditions. Upstream moved every active branch to MIT in March 2024 (upstream
     commit 33f554119218b40dc1047c3d5a34545e64c78fe3, issue #1391). Older per file headers that
     point to the former "Actually Additions License" are superseded by that change.
-  * Upstream marks a few code excerpts as taken from other mods with their authors' permission:
-    the experience formulas in TileEntityXPSolidifier (Ender IO) and the banner pattern helper
-    in misc.BannerHelper (Additional Banners).
+  * Upstream marks a code excerpt as taken from another mod with its author's permission: the
+    experience formulas in TileEntityXPSolidifier (Ender IO).
   * Mekanism: the rotation helpers in the nested class VoxelShapes.VoxelShapeUtils are taken
     from mekanism.common.util.VoxelShapeUtils of Mekanism
     (https://github.com/mekanism/Mekanism, commit 46bc2dc05ece7e891ee38838c0e45f6a11029187),

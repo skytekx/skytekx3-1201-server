@@ -10,12 +10,22 @@
 
 package de.ellpeck.actuallyadditions.mod.inventory.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,6 +33,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.text.NumberFormat;
@@ -38,7 +49,7 @@ public class FluidDisplay {
     private int y;
     private boolean outline;
 
-    private ResourceLocation resLoc;
+    private TextureAtlasSprite sprite;
 
     private boolean drawTextNextTo;
 
@@ -88,30 +99,68 @@ public class FluidDisplay {
         FluidStack stack = this.fluidReference.getFluid();
         Fluid fluid = stack.getFluid();
 
-        if (this.resLoc == null || this.oldFluid != stack.getFluid()) {
-            this.oldFluid = stack.getFluid();
+        if (stack != null && !stack.isEmpty() && fluid != null) {
+            IClientFluidTypeExtensions fluidTypeExtension = IClientFluidTypeExtensions.of(fluid);
+            int color = fluidTypeExtension.getTintColor(stack);
+            float red = (float)(FastColor.ARGB32.red(color) / 255.0);
+            float green = (float)(FastColor.ARGB32.green(color) / 255.0);
+            float blue = (float)(FastColor.ARGB32.blue(color) / 255.0);
+            float alpha = (float)(FastColor.ARGB32.alpha(color) / 255.0);
+            ResourceLocation stillTexture = fluidTypeExtension.getStillTexture();
 
-            if (fluid != null && IClientFluidTypeExtensions.of(fluid).getStillTexture() != null) {
-                this.resLoc = new ResourceLocation(IClientFluidTypeExtensions.of(fluid).getStillTexture().getNamespace(), "textures/" + IClientFluidTypeExtensions.of(fluid).getStillTexture().getPath() + ".png");
+            if (this.sprite == null || this.oldFluid != fluid) {
+                this.oldFluid = stack.getFluid();
+
+                AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS);
+                if (texture instanceof TextureAtlas) {
+                    TextureAtlasSprite sprite = ((TextureAtlas) texture).getSprite(stillTexture);
+                    if (sprite != null) {
+                        this.sprite = sprite;
+                    }
+                }
+            }
+
+            if (this.sprite != null) {
+                float minU = sprite.getU0();
+                float maxU = sprite.getU1();
+                float minV = sprite.getV0();
+                float maxV = sprite.getV1();
+                float deltaV = maxV - minV;
+
+                double tankLevel = ((float) this.fluidReference.getFluidAmount() / (float) fluidReference.getCapacity()) * 83;
+
+                // SkyTekx: the quads take the pose of the GuiGraphics and set the position and texture
+                // shader themselves, the 1.20.4 code relied on the shader of the blit before it
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+                RenderSystem.setShaderColor(red, green, blue, alpha);
+                RenderSystem.enableBlend();
+                Matrix4f pose = guiGraphics.pose().last().pose();
+                int count = 1 + ((int) Math.ceil(tankLevel)) / 16;
+                for (int i = 0; i < count; i++) {
+                    double subHeight = Math.min(16.0, tankLevel - (16.0 * i));
+                    double offsetY = 84 - 16.0 * i - subHeight;
+                    drawQuad(pose, barX + 1, barY + offsetY, 16, subHeight, minU, (float) (maxV - deltaV * (subHeight / 16.0)), maxU, maxV);
+                }
+                RenderSystem.disableBlend();
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            }
+
+            if (this.drawTextNextTo) {
+                guiGraphics.drawString(mc.font, this.getOverlayText(), barX + 25, barY + 78, 0xFFFFFF, false);
             }
         }
+    }
 
-        if (stack != null && fluid != null && this.resLoc != null) {
-//            GlStateManager._pushMatrix();
-            GlStateManager._enableBlend();
-//            GlStateManager._disableAlphaTest();
-            GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            int i = this.fluidReference.getFluid().getAmount() * 83 / this.fluidReference.getCapacity();
-	        guiGraphics.blit(this.resLoc, barX + 1, barY + 84 - i, 0, 0, 16, i, 16, 512);
-            //drawModalRectWithCustomSizedTexture(barX + 1, barY + 84 - i, 36, 172, 16, i, 16, 512);
-            GlStateManager._disableBlend();
-//            GlStateManager._enableAlphaTest();
-//            GlStateManager._popMatrix();
-        }
-
-        if (this.drawTextNextTo) {
-			guiGraphics.drawString(mc.font, Component.literal(this.getOverlayText()), barX + 25, barY + 78, 0xFFFFFF, false);
-        }
+    private void drawQuad(Matrix4f pose, double x, double y, double width, double height, float minU, float minV, float maxU, float maxV) {
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder buffer = tesselator.getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        buffer.vertex(pose, (float) x, (float) (y + height), 0).uv(minU, maxV).endVertex();
+        buffer.vertex(pose, (float) (x + width), (float) (y + height), 0).uv(maxU, maxV).endVertex();
+        buffer.vertex(pose, (float) (x + width), (float) y, 0).uv(maxU, minV).endVertex();
+        buffer.vertex(pose, (float) x, (float) y, 0).uv(minU, minV).endVertex();
+        tesselator.end();
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -121,17 +170,17 @@ public class FluidDisplay {
             ? 93
             : 85)) {
             Minecraft mc = Minecraft.getInstance();
-            guiGraphics.renderComponentTooltip(mc.font, Collections.singletonList(Component.literal(this.getOverlayText())), mouseX, mouseY); //TODO: Check if this is correct, used to call GuiUtils.drawHoveringText
+            guiGraphics.renderComponentTooltip(mc.font, Collections.singletonList(this.getOverlayText()), mouseX, mouseY);
         }
     }
 
-    private String getOverlayText() {
+    private Component getOverlayText() {
         NumberFormat format = NumberFormat.getInstance();
         FluidStack stack = this.fluidReference.getFluid();
         String cap = format.format(this.fluidReference.getCapacity());
         return stack.isEmpty()
-            ? "0/" + cap + " mB"
-            : format.format(this.fluidReference.getFluidAmount()) + (drawCapacityInTooltip?"/" + cap + " mB ":" mB ") + stack.getDisplayName().getString();
+            ? Component.literal("0/" + cap + " mB")
+            : Component.literal(format.format(this.fluidReference.getFluidAmount()) + (drawCapacityInTooltip?"/" + cap + " mB ":" mB ")).append(stack.getDisplayName());
     }
 
     public static class DummyTank implements IFluidTank {

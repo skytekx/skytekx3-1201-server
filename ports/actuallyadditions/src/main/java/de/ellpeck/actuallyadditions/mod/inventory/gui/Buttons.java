@@ -7,12 +7,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 public class Buttons {
     @OnlyIn(Dist.CLIENT)
+    @Deprecated(forRemoval = true) //Vanilla's Button class can render small just fine and even allows text scrolling
     public static class SmallerButton extends Button {
 
         public final ResourceLocation resLoc = AssetUtil.getGuiLocation("gui_inputter");
@@ -30,16 +34,14 @@ public class Buttons {
         }
 
         @Override
-        public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
+        public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
             if (this.visible) {
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                RenderSystem.setShaderTexture(0, this.resLoc);
-                this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
                 int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
                 GlStateManager._enableBlend();
                 GlStateManager.glBlendFuncSeparate(770, 771, 1, 0);
                 GlStateManager._blendFunc(770, 771);
-                guiGraphics.blit(this.resLoc, mouseX, mouseY, this.smaller
+                guiGraphics.blit(this.resLoc, this.getX(), this.getY(), this.smaller
                     ? 200
                     : 176, k * this.height, this.width, this.height);
                 //this.mouseDragged(mc, x, y); // The heck was this doing here?
@@ -53,7 +55,12 @@ public class Buttons {
                     color = 16777120;
                 }
 
-                guiGraphics.drawCenteredString(Minecraft.getInstance().font, this.getMessage().getString(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, color);
+                // SkyTekx: the colour of the message as in a85c6795, but the state colour above for a
+                // message without one, which upstream's getColor().getValue() would throw on
+                TextColor messageColor = this.getMessage().getStyle().getColor();
+                guiGraphics.drawCenteredString(Minecraft.getInstance().font, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, messageColor != null
+                    ? messageColor.getValue()
+                    : color);
             }
 
         }
@@ -69,11 +76,9 @@ public class Buttons {
         }
 
         @Override
-        public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
+        public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
             if (this.visible) {
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                RenderSystem.setShaderTexture(0, this.resLoc);
-                this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
                 int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
                 GlStateManager._enableBlend();
                 GlStateManager.glBlendFuncSeparate(770, 771, 1, 0);

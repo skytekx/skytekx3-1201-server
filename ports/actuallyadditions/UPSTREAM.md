@@ -2105,3 +2105,30 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     keys stay unused.
     Savegame: none. New ids: the Patchouli book `actuallyadditions:booklet` and the Patchouli page
     type `actuallyadditions:reconstructor`.
+66. Screens: the fluid bars of the Oil Generator, the Canola Press, the Fermenting Barrel, the Fluid
+    Collector and the Coffee Maker draw the still sprite of the fluid from the block atlas in the
+    tint colour of the fluid, tiled in steps of 16 pixels, as on the 1.20.4 line (`ba64232a`,
+    `50b5209e` and `53e4cb8a`). The base blitted the sprite file as a texture of its own, 512 pixels
+    high and without a tint, so water showed grey. The quads take the pose of the `GuiGraphics` and
+    set the position and texture shader themselves. That is a local change, since the 1.20.4 code
+    relies on the shader that the blit before it leaves set. The text of the energy and fluid bars
+    is a `Component` (`83828a6d`, `4a36c696`), so the fluid name keeps its style, and the energy
+    overlay of a looked at machine shows its charge as text next to the bar again, which the base
+    had commented out. The look at overlays of `ClientEvents` render after the portal overlay
+    instead of the crosshair, which Forge 47 draws after the hotbar, so the hotbar is no longer
+    covered (`f1c7b249`). `TexturedButton` and the two buttons of `Buttons` render in
+    `renderWidget`, so vanilla computes the hover state and the widget tooltip, and the small button
+    draws at its own position instead of at the mouse (`f3efa570`, `04138183`). The small button
+    takes the colour of its message (`a85c6795`) and falls back to its state colour for a message
+    without one, where upstream throws a `NullPointerException`, and it is deprecated as in
+    `e125e80e`. No screen of the fork uses either button. Four screens no longer bind the texture
+    before a blit that binds it anyway (`899b2a98`), and the TODO notes of `cef510c8` are gone. The
+    crystallized and empowered canola seeds have the plural names of `bc5dc448`. Already on the fork:
+    the drill title of `6da50dfa` (source change 15 shows the menu title), the vanilla filter
+    buttons of `e125e80e` and the line `respectModInfo2` of `bc5dc448` (source change 46) and the
+    tooltip order and sack wording of `d7de3e61` (source change 46). Not needed on 1.20.1:
+    `2cef8eb8` drops the call of `renderBackground` from `AAScreen#render`, because `Screen#render`
+    draws the background itself since 1.20.2. On 1.20.1 `AbstractContainerScreen#render` does not,
+    so the call stays and draws the one background, and every screen of the mod extends
+    `AAScreen`. The switch `hideEnergyOverlay` came with source change 6.
+    Savegame: none. New ids: none.

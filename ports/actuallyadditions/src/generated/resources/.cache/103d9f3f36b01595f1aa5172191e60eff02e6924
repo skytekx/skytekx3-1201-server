@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-06T13:23:33.491793927	Registries
+// 1.20.1	2026-11-06T13:36:12.257500472	Registries
 020d2b1f1c21d6c6663ef8126a52e2b9deb0e52e data/actuallyadditions/damage_type/atomicreconstructor.json
 4ba41428fdcf03f52855029153722e22e8702823 data/actuallyadditions/forge/biome_modifier/add_black_quartz.json
 e70e35207fec9716cb97b90078bbfab06707e67a data/actuallyadditions/forge/biome_modifier/add_canola.json
@@ -15,3 +15,4 @@ d7358c6519319ed3950dcdc34102504c53ccaf22 data/actuallyadditions/worldgen/placed_
 fb7baf3c1d721832a9b5bcea7ac7dd3ee2c50118 data/actuallyadditions/worldgen/placed_feature/flax_patch.json
 efb41395b407edbd91712bcb63976de46fed5d04 data/actuallyadditions/worldgen/placed_feature/ore_black_quartz.json
 82a26f6877b290ac73d2fdfc84bbf297bd9124c8 data/actuallyadditions/worldgen/placed_feature/rice_patch.json
+7cf126882346a296f045db75facf741c77b7d3b1 data/actuallyadditions/worldgen/processor_list/engineer_house.json

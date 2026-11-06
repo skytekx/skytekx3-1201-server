@@ -88,7 +88,14 @@ public class Sack extends ItemBase {
                     });
             }
         }
-        return InteractionResultHolder.pass(player.getItemInHand(hand));
+        // SkyTekx: a local deviation from main, which passes on both sides. A pass on the client
+        // made the client try the off hand as well after the sack opened, so it ate the food or
+        // threw the ender pearl that the player held there. The sack opens from the main hand
+        // only, so only that hand succeeds
+        if (hand == InteractionHand.MAIN_HAND) {
+            return InteractionResultHolder.sidedSuccess(sackStack, world.isClientSide);
+        }
+        return InteractionResultHolder.pass(sackStack);
     }
 
     public static boolean isAutoInsert(ItemStack stack) {

@@ -10,6 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.event;
 
+import de.ellpeck.actuallyadditions.api.ActuallyTags;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockLaserRelay;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
@@ -102,8 +103,12 @@ public class CommonEvents {
                                     continue;
                                 }
 
+                                // SkyTekx: a local deviation from main. The slots of the sack
+                                // menu refuse forge:holds_items, so the pickup skips that tag as
+                                // well. Nothing in the pack fills the tag yet, so it only holds
+                                // what a datapack puts there
                                 ItemStackHandlerAA inv = optData.get().getSpecialHandler();
-                                if (optData.get().getFilter().check(stack)) {
+                                if (!stack.is(ActuallyTags.Items.HOLDS_ITEMS) && optData.get().getFilter().check(stack)) {
                                     for (int j = 0; j < inv.getSlots(); j++) {
                                         ItemStack bagStack = inv.getStackInSlot(j);
                                         if (!bagStack.isEmpty()) {
@@ -216,10 +221,16 @@ public class CommonEvents {
 
     // SkyTekx: renaming an Item Tag in an anvil sets its tag at no cost (6f567725, main parses the
     // name with ResourceLocation.tryParse). A name that is not the id of an existing item tag
-    // cancels the event, which leaves the anvil without a result. AnvilMixin lets the player take
-    // a result of cost 0
+    // cancels the event, and AnvilMixin clears the result slot before, so the anvil shows no
+    // result. AnvilMixin lets the player take a result of cost 0. A local deviation from main: the
+    // handler only acts on an empty right slot. The event keeps the material cost 0, and
+    // AnvilMenu.onTake empties the whole right slot for that cost, so main deletes any stack that
+    // sits there. With an item on the right, vanilla gives an Item Tag no result
     @SubscribeEvent
     public void onAnvilEvent(AnvilUpdateEvent event) {
+        if (!event.getRight().isEmpty()) {
+            return;
+        }
         if (!event.getLeft().isEmpty() && event.getLeft().getItem() instanceof ItemTag && event.getName() != null && !event.getName().isEmpty()) {
             event.setCost(0);
             ResourceLocation tagLocation = event.getName().length() <= ItemTag.MAX_TAG_LENGTH ? ResourceLocation.tryParse(event.getName()) : null;

@@ -175,8 +175,9 @@ Modifications
       and NBT, a filter taken out of a filter slot goes back to the cursor, and the Advanced Item
       Laser Relay has working filter and smart buttons and saves its filters. The fluid relay
       shares a stack among its receivers.
-    * Item Tag: a new filter item that holds one item tag, set by renaming it in an anvil at no
-      cost or in its own screen, and that every filter slot of the mod matches by that tag.
+    * Item Tag: a new filter item that holds one item tag, set by renaming it alone in an anvil
+      at no cost or in its own screen, and that every filter slot of the mod matches by that tag.
+      Unlike upstream, the anvil leaves an item in its second slot alone.
     * Ranged Collector: its screen no longer crashes the client, and its filter buttons work, so
       it picks up items again.
     * Crafting Table On A Stick: the grid crafts again and gives its items back when it closes,

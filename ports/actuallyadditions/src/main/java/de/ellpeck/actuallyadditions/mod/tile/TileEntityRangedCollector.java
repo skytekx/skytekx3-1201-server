@@ -117,9 +117,14 @@ public class TileEntityRangedCollector extends TileEntityInventoryBase implement
     }
 
     // SkyTekx: the filter buttons of adc276e8, with the ids of FilterSettings.Buttons. The base
-    // ignored every button
+    // ignored every button. A local deviation from main: only a player who has the menu of this
+    // collector open may press them, since the button packet only checks the distance and a
+    // protection plugin that stops the screen from opening would not stop the packet
     @Override
     public void onButtonPressed(int buttonID, Player player) {
+        if (!(player.containerMenu instanceof ContainerRangedCollector menu) || menu.collector != this) {
+            return;
+        }
         if (this.filter.onButtonPressed(buttonID)) {
             this.setChanged();
         }

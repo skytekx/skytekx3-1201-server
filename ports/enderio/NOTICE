@@ -29,8 +29,9 @@ Modifications
     redstone conduits a strong output, and conduit bundles take facades, also AE2 facades. The
     powered spawner gains its capture mode and the Mind Killer.
   - Fixes from 8.x and SkyTekx fixes for dupes and crashes that also hit 6.x: fluid tanks,
-    capacitor bank items, ghost and filter slots, machine outputs, recipe outputs, and checks of
-    the packets that clients send.
+    capacitor bank items, ghost and filter slots, machine outputs, recipe outputs, the wired
+    charger, which charged items without energy, the coordinate selector, which reached a client
+    class on the server, and checks of the packets that clients send.
   - 1.21.1 APIs translated to 1.20.1 ones: data components became item stack NBT, data
     attachments became Forge capabilities, new packets joined the existing Forge channel with a
     new protocol version (1.0-skytekx.1), and data maps are read by a reload listener of the

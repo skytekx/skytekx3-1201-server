@@ -169,7 +169,8 @@ public class TileEntityLaserRelayItem extends TileEntityLaserRelay {
 
     @Override
     public void onCompassAction(Player player) {
-        if (player.isShiftKeyDown()) {
+        // SkyTekx: a crouching player lowers the priority, as in 99e16633
+        if (player.isCrouching()) {
             this.priority--;
         } else {
             this.priority++;

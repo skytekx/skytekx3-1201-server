@@ -125,4 +125,11 @@ public class RenderLaserRelay implements BlockEntityRenderer<TileEntityLaserRela
     public boolean shouldRenderOffScreen(TileEntityLaserRelay tile) {
         return true;
     }
+
+    // SkyTekx: the view distance of eb796363. Its infinite render box is TileEntityLaserRelay's
+    // getRenderBoundingBox on Forge 1.20.1, which the base already returns
+    @Override
+    public int getViewDistance() {
+        return 32;
+    }
 }

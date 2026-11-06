@@ -146,6 +146,10 @@ Modifications
       output follows the number of animals against the limit, as on upstream's main branch.
     * Lava Factory: the overlay of the controller shows its state again, and the casing is
       called Lava Factory Casing.
+    * Laser relays: lasers render with a shader and up to 32 blocks away, a compass click on a
+      relay works while crouching too, item particles fly from the source to the target, energy
+      relays no longer lose energy to storages that refuse the real transfer, and the fluid
+      relay rate follows fluidLaserTransferRate.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

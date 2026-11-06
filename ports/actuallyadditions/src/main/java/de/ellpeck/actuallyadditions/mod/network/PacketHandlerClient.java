@@ -53,8 +53,10 @@ public final class PacketHandlerClient {
         double outY = compound.getDouble("OutY") + 0.525;
         double outZ = compound.getDouble("OutZ") + 0.5;
 
-        mc.level.addParticle(ParticleLaserItem.Factory.createData(stack, outX, outY, outZ),
-                inX, inY, inZ, 0, 0.025, 0);
+        // SkyTekx: the item rises from the relay it leaves and falls into the relay it goes to, as in
+        // 99e16633. TileEntityItemInterface.doItemParticle names the target In and the source Out
+        mc.level.addParticle(ParticleLaserItem.Factory.createData(stack, inX, inY, inZ),
+                outX, outY, outZ, 0, 0.025, 0);
     }
 
     public static void handlePlayerData(CompoundTag compound, NetworkEvent.Context context) {

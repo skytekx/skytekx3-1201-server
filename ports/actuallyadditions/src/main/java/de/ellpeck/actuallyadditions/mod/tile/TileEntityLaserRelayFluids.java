@@ -15,6 +15,7 @@ import de.ellpeck.actuallyadditions.api.laser.LaserType;
 import de.ellpeck.actuallyadditions.api.laser.Network;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
+import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityLaserRelayEnergy.Mode;
 import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.ChatFormatting;
@@ -109,8 +110,10 @@ public class TileEntityLaserRelayFluids extends TileEntityLaserRelay {
     protected void serverTick() {
         super.serverTick();
         if (this.mode == Mode.INPUT_ONLY) {
+            // SkyTekx: the rate of fluidLaserTransferRate (default 10000 mB per tick) instead of no limit,
+            // as in 1f78ecc5
             for (Direction side : this.handlersAround.keySet()) {
-                WorldUtil.doFluidInteraction(this.handlersAround.get(side), this, side.getOpposite(), Integer.MAX_VALUE);
+                WorldUtil.doFluidInteraction(this.handlersAround.get(side), this, side.getOpposite(), CommonConfig.Machines.FLUID_LASER_TRANSFER_RATE.get());
             }
         }
     }

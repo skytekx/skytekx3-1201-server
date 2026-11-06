@@ -94,7 +94,7 @@ public class BlockLaserRelay extends FullyDirectionalBlock.Container implements 
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEntityLaserRelay relay) {
 
-	        if (StackUtil.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 if (stack.getItem() instanceof ItemLaserWrench) {
                     return InteractionResult.FAIL;
                 } else if (stack.getItem() == CommonConfig.Other.relayConfigureItem) {
@@ -110,10 +110,12 @@ public class BlockLaserRelay extends FullyDirectionalBlock.Container implements 
                         relay.sendUpdate();
                     }
 
-                    return InteractionResult.PASS;
+                    // SkyTekx: SUCCESS as in 99e16633, so the click ends at the relay and the compass is
+                    // not used as an item on top of it
+                    return InteractionResult.SUCCESS;
                 } else if (stack.getItem() instanceof ItemLaserRelayUpgrade) {
                     ItemStack inRelay = relay.inv.getStackInSlot(0);
-                    if (!StackUtil.isValid(inRelay)) {
+                    if (inRelay.isEmpty()) {
                         if (!world.isClientSide) {
                             if (!player.isCreative()) {
                                 player.setItemInHand(hand, StackUtil.shrink(stack, 1));
@@ -131,7 +133,7 @@ public class BlockLaserRelay extends FullyDirectionalBlock.Container implements 
 
             if (player.isShiftKeyDown()) {
                 ItemStack inRelay = relay.inv.getStackInSlot(0).copy();
-                if (StackUtil.isValid(inRelay)) {
+                if (!inRelay.isEmpty()) {
                     if (!world.isClientSide) {
                         relay.inv.setStackInSlot(0, ItemStack.EMPTY);
 

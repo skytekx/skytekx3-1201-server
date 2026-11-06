@@ -236,6 +236,8 @@ Modifications
       read, are gone.
     * Garden Cloche: canola, coffee, flax and rice grow in the Garden Cloche of Immersive
       Engineering when that mod is loaded.
+    * Mekanism: its Crusher turns a black quartz block into smooth black quartz when Mekanism is
+      loaded.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

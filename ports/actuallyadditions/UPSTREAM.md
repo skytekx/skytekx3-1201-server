@@ -2269,3 +2269,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     the vanilla methods in `AACrops` would have dropped it for the four crops. A crop that a player
     plants has `persistent` `false` and grows as before.
     Savegame: none. New ids: none.
+    The test ran the jar of this change (SHA-1 `b45fde952365db78ba57b68400643056647789e3`, 3010535
+    bytes, the build of `4446ce6`) and the release jar `227073059543dd3d969cd53a15f1fd42a38985cb`
+    on a dedicated Forge 47.4.18 server with Patchouli, Curios, JEI, The One Probe and Mekanism.
+    The dev client drove it with a local scenario that is not committed
+    (`bp2/actuallyadditions/cropfix/devtest-cg.patch` in the workflow scratchpad). On grass the
+    client right clicked a ripe canola and a ripe flax with the flag, and both went back to age 0
+    with the flag on both jars. Bone meal from the hand grew the canola, and 200 ticks at the game
+    rule `randomTickSpeed` 3000 grew the flax. With this jar both kept the flag and stayed on their
+    grass when a stone was set next to them. With the release jar both lost the flag and popped
+    off. On both jars a canola that the client planted on farmland grew with `persistent` `false`,
+    and a coffee without the flag on grass popped at the neighbour update. The same scenario
+    passed every check with this jar on an Arclight test server with the production jar
+    `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` and a test plugin that logs the Bukkit
+    grow events (`cropfix/growplugin/`). The plugin saw 14 `BlockGrowEvent`s, two from bone meal
+    and 12 from random ticks, each with the flag of its crop in the new state. In a run of that
+    server without a player, a dispenser with bone meal grew a flagged canola, and the event kept
+    the flag (`cropfix/arc-new/`).

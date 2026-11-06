@@ -40,6 +40,10 @@ client-only-mods/
 menu-assets/*.png
 
 # NOTE: local-mods/ (Twilight Forest, built from source — not on Modrinth) IS tracked.
+# ...but not the jars that git names by a pointer file local-mods/<jar>.fetch.json, because their
+# license forbids a copy in this public repository. tools/fetch_local_mods.py puts them here, and
+# tools/build_mrpack.py fetches them by itself.
+/local-mods/ZeroCore2-1.20.1-2.1.48.jar
 
 # --- local dev ---
 spark/

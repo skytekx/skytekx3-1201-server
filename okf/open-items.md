@@ -440,6 +440,12 @@ evidence and the page with the details. The rulings behind the first section are
   Arclight jar is open too, with the inhibitor obelisk against `/home` and `/tpa` of EssentialsX, the
   attractor next to a Flux Networks point and the wireless charger with several players. See
   [Ender IO backport](modpack/enderio-backport.md#release).
+- Create Crafts & Additions 1.20.1-1.7.3-skytekx.1 in a client and on the live world. A plain Forge
+  test server loaded a world saved by 1.3.3 with the fork unchanged, and the full pack booted with it
+  on Forge and Arclight on 2026-11-06 and charged, pumped and moved energy over wires there, but no
+  pack client has joined a fork server, and the alternator scan and the wire test on a copy of the
+  live world have not run. Both are rollout gates, see [Create Crafts & Additions
+  backport](modpack/createaddition-backport.md#release).
 
 ## Docs and housekeeping
 

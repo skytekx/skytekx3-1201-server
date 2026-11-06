@@ -22,7 +22,7 @@ skytekx.com does not point at a game server yet.
 | Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, started through the symlink `arclight.jar` |
 | Java | Java 17. The boots that reached `Done` ran Temurin 17.0.19 on the build machine and 17.0.21 on the Mac mini. The one try with Java 21 failed on a missing mod and was never repeated |
 | Plugins | EssentialsX 2.22.0 |
-| Mods | 230 entries in `modrinth.index.json` plus 58 bundled jars (counted 2026-11-06 with the Actually Additions fork). Git holds 57 of them in `local-mods/` and since 2026-11-06 names ZeroCore 2 there by a pointer file, see [Mod set](okf/modpack/mod-set.md) |
+| Mods | 230 entries in `modrinth.index.json` plus 59 bundled jars (counted 2026-11-06 after the merge of master with SkyTekx Molten). Git holds 58 of them in `local-mods/` and since 2026-11-06 names ZeroCore 2 there by a pointer file, see [Mod set](okf/modpack/mod-set.md) |
 | Recipe layers | AlmostUnified for one item per material, Polymorph for grid conflicts, KubeJS for scripts |
 | Recipe viewers | EMI and JEI |
 | Pregen and profiling | Chunky and Spark |
@@ -32,7 +32,7 @@ skytekx.com does not point at a game server yet.
 | Path | What |
 |---|---|
 | File `modrinth.index.json` | The pack manifest with 230 entries, 226 from the Modrinth CDN and 4 from GitHub releases. Git ignores `mods/`, and no script rebuilds it from the index, see [Provide the mods](#provide-the-mods) |
-| Folder `local-mods/` | The jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Actually Additions, Nyx and SkyTekx Compat: 57 jars and the pointer file `ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, which names the CurseForge file of a jar whose license forbids a copy in this repository. Forge does not load this folder, the jars have to be in `mods/` |
+| Folder `local-mods/` | The jars the pack bundles because they are built from source or not on Modrinth, such as Twilight Forest, Actually Additions, Nyx and SkyTekx Compat: 58 jars and the pointer file `ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, which names the CurseForge file of a jar whose license forbids a copy in this repository. Forge does not load this folder, the jars have to be in `mods/` |
 | Folder `config/` | Mod configuration, with `config/almostunified/` for material unification |
 | Folder `kubejs/server_scripts/` | The four server scripts `recipe_fixes.js`, `tag_fixes.js`, `gameplay.js` and `combat_1_7.js` |
 | Folder `skylands-datapack/` | Source of the shared Skylands datapack. It only uses vanilla ids and also runs on unmodded Spigot |

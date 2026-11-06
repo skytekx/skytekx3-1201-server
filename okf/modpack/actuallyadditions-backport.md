@@ -339,6 +339,51 @@ them the drill areas with fortune and silk touch, the placer augment, the drill 
 actions, the bowl, the filler with its normalized state and the goggles on a dedicated server
 (carryover `aa-ship`).
 
+The world content bundle is done. Its seven commits are 06104c9 (the crop drops, the right click
+harvest, the `persistent` property, the composter entries and the Tiny Torch), 0137a04 (the black
+quartz ore), 02be2bd (the wild crop patches), 03f016e (the Engineer house and villager), 3d78e0c
+(the bat and chest loot modifiers), e7b2e2b (the banner patterns) and 06b0aa9 (the porter's test
+record), with the review fix a4678ee (`UPSTREAM.md`, source changes 54 to 59). The tools bundle
+landed first with source changes 50 to 53, so the merge renumbered this bundle's source changes
+from 50 to 55 up to 54 to 59, kept the worm and the Engineer house chest sub providers of
+`data/LootTableGenerator.java` side by side and kept the lang lines of both bundles. A data
+generator run on the merged tree wrote no file (`written: 0`), so the merged hash caches match the
+providers. The review found that a zombie villager with the Engineer profession would render the
+missing texture, since the bundle shipped only the villager overlay, that the Engineer's trades
+replaced the mutable trade lists of the Forge event with immutable ones, and that the right click
+harvest dropped the `persistent` flag of a wild crop. The review fix adds the overlay as a copy of
+the villager overlay, lets the trades join the lists that Forge hands out and keeps the flag on the
+replant. It also corrects two sentences of `UPSTREAM.md`. The Powered Furnace turns with a
+structure through `DirectionalBlock.Container`, and the crystal clusters turn through
+`FullyDirectionalBlock`.
+
+The bundle closes several carryover items. The bat wing switch and the removal of the dead
+`DungeonLoot` registration of the baseline are done, while the wing item itself stays as the tools
+bundle left it, unregistered on the bus, so bats do not drop wings twice. The worldgen switches,
+the crop models of the new property, the banner pattern recipes and tags of the data core and the
+house machines with `StopDrop` of the machine contents bundle are done as well. Harvesting coffee
+in the porter's client test earned the advancement `pickup_coffee`, so the four crops now have a
+source. The optional item on the `forge:gems` and `forge:storage_blocks` parents stays deferred,
+because no pack reader that needs them was found.
+
+The porter's test ran the jar of the six feature commits (SHA-1 `82c7e363`) on dedicated Forge
+47.4.18 servers and in a dev client with a local scenario (`bp2/actuallyadditions/wc/` and
+`wc-tools/` in the workflow scratchpad). A world of the OLD jar loaded with its crops and its Tiny
+Torch unchanged. A fresh world of the seed 12345 held about 27 black quartz ore per full chunk
+between Y -30 and 49, wild crops in the expected biomes and village farms with the four crops. The
+15 villages set by command held eight Engineer houses, none of them in a savanna village, and two
+of the seven natural villages of the seed held one. A run with `generateQuartz` and
+`generateCanola` off generated neither. The client harvested ripe crops by right click, placed the
+Tiny Torch upright from below, killed bats for wings, made a Drill banner in the loom and opened
+the trade screen of an Engineer. The integration booted the jar of the review fix (SHA-1
+`235119dc2fedccfce7b76c9a127b5516c8dbce30`, 3223628 bytes, one build) alone on a dedicated Forge
+47.4.18 server. It reached `Done` with 0 FATAL and 0 ERROR lines, a summoned Engineer offered
+black quartz and a Laser Wrench, and a summoned Farmer kept its vanilla offers
+(`bp2/actuallyadditions/wcint/`). Nothing of the bundle ran on the pack's Arclight. The fortune
+drops of the crops, the light and collision of the Tiny Torch, the two loot switches turned off,
+the look of patterned banners and shields, the zombie overlay in a client and the harvest of a wild
+crop stay untested (carryover `aa-ship`).
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -355,7 +400,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Done in b9a294b, 4212a66, f9e4aaf, f83497f and 10edce8, review fix 0f2d071 |
 | Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Done in f45c764, fb6753d, 99f283a and 6042f57, review fix 23a4668 |
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Planned |
-| World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Planned |
+| World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Done in 06104c9, 0137a04, 02be2bd, 03f016e, 3d78e0c, e7b2e2b and 06b0aa9, review fix a4678ee |
 | Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Planned |
 | Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Planned |
 
@@ -600,19 +645,54 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 
 ### World content
 
-- Crops drop like on 1.12, harvest by right click, compost, and world generated plants survive a
-  block update through a new block state property `persistent` (38d6404b). The Tiny Torch gets its
-  fixes.
+- Crops drop as on 1.12 (506d481d), can be harvested by right click and composted with the chances
+  of 3a2f298e, and world generated plants survive a block update through the new block state
+  property `persistent` (38d6404b). The Tiny Torch gives light 12, has no collision and stands
+  upright when placed from below (`UPSTREAM.md`, source change 54).
 - Black quartz ore generates in stone and deepslate, size 6, count 8, between Y -25 and 45, behind
-  the config switch `generateQuartz` (02422d65, ec4b79ff). The base generates nothing.
-- Wild patches of canola, flax, coffee and rice generate with their own switches.
-- The Engineer house joins five village house pools, and the Engineer villager works at an AA job
-  block. The house is upstream's final structure with its DataVersion set to 3465 by a scratchpad
-  script.
-- Bats drop wings, and dungeon and other chests get crystals, drill cores, black quartz and wings,
-  through global loot modifiers instead of the base's dead event handler.
-- Four banner patterns come with their items and tags, with the textures under
-  `assets/actuallyadditions/textures/entity/banner/` as 7245af2a moved them.
+  the config switch `generateQuartz` (02422d65, ec4b79ff). The biome modifier uses the Forge 47
+  serializer `actuallyadditions:bool_config_feature_modifier` (source change 55). The base
+  generated nothing.
+- Wild patches of canola, flax, coffee and rice generate behind their own switches, on the Forge 47
+  names of the `c:` biome tags of `main` (16cd3a69, 2ffe78d6, source change 56).
+- The Engineer house joins five vanilla village house pools, village farms grow the four crops, and
+  the Engineer villager works at the Coffee Maker and trades machines (523cba59, e6c8af19,
+  2a2f5c6c, source change 57). The house is the final structure of `main` with its DataVersion set
+  to 3465 by a scratchpad script.
+- Bats drop wings, and nine vanilla chest tables get crystals, crystal blocks, drill cores, black
+  quartz and wings, through the global loot modifiers of b9435301 instead of the base's dead event
+  handler (source change 58).
+- Four banner patterns come with their items, tags and recipes, with the textures under
+  `assets/actuallyadditions/textures/entity/banner/` and `entity/shield/` as 7245af2a moved them
+  (659779b1, source change 59).
+
+The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54 to 59):
+
+- The right click harvest consumes the click, so bone meal in the hand is not spent on the
+  replanted crop, and since the review fix the replant keeps `persistent`.
+- The composter takes the effective chances of the generated data map of `main`, in which the crop
+  entries of coffee beans and flax seeds replace their seed entries. Canola, coffee beans, flax
+  seeds and rice compost at 0.65, and canola and rice seeds at 0.3.
+- The jigsaw block of the house names the pool `minecraft:empty`, as vanilla houses do. Upstream
+  names a pool that exists on no branch, so every placed house logged a WARN.
+- The weight 3 entry of the house chest takes `#actuallyadditions:crystal_blocks` as on 1.12, where
+  `main` names the crystals tag twice.
+- The nested `Container` classes of `DirectionalBlock` and `FullyDirectionalBlock` and the Crusher
+  turn and mirror with a structure, so the machines of a rotated house face the right way. The
+  Powered Furnace turns through its `Container` class too.
+- The rice patches read `generateRice`, which `main` defines and never reads.
+- The banner tooltip keys use the `DyeColor` names `light_gray` and `light_blue` where `main` keeps
+  `silver` and `lightBlue`, so all sixteen colours have a text.
+- The dungeon loot modifier adds its loot. On 1.20.1 both sides of its table check are
+  `ResourceLocation`s, while `main` compares the `ResourceKey`s of 1.21 with the queried
+  `ResourceLocation` and never adds anything.
+- The data generator class `StructureUpdater` of 43a23883 stays out, because its license does not
+  reach this fork (see [Excluded](#excluded)).
+- Zombie villagers get an Engineer overlay, a copy of the villager overlay, and the Engineer's
+  trades join the mutable trade lists of the Forge event, both from the review fix a4678ee.
+- In the SkyTekx Skylands the island biomes sit only in the two `is_overworld` tags, so they get the
+  ore and the rice patches but none of the other three patches (see
+  [Pack integration](#pack-integration)).
 
 ### Manual and compat
 
@@ -652,8 +732,24 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   tags. The Skylands biome `skytekx3:sky_void` sits only in `#skytekx3:has_structure/sky_floaters`
   and two Dungeons Arise tags of the Skylands datapack. None of the tags the modifiers use holds it,
   and no village starts over the void, so no ore, patch or house lands there. The placed features
-  keep the `minecraft:biome` filter of `main`. A pregenerated copy checked with `tools/void_scan.py`
-  has to confirm it, see [Skylands worldgen](../content/skylands-worldgen.md).
+  keep the `minecraft:biome` filter of `main`. In the porter's test a world with the data pack of
+  `skylands-datapack/`, without its five ChocoCraft biome modifiers since ChocoCraft was not
+  loaded, generated 225 full chunks of `skytekx3:skylands`. They held 81 ore blocks inside the
+  islands between Y 24 and 49, and `tools/void_scan.py` found no block below Y 24 and none in a
+  `sky_void` column (`bp2/actuallyadditions/wc/voidscan-sky.txt` in the workflow scratchpad). The
+  14 island biomes join `#minecraft:is_overworld` through
+  `skylands-datapack/data/minecraft/tags/worldgen/biome/is_overworld.json`, so they get the ore and
+  the rice patches, while no `forge:` climate tag of the canola, flax and coffee patches lists them
+  (`UPSTREAM.md`, source change 56). See [Skylands worldgen](../content/skylands-worldgen.md).
+- The dungeon loot modifier matches only the nine vanilla chest tables it names, through
+  `forge:loot_table_id`, which sees only the queried top level table. Better Dungeons 4.0.4 and
+  Better Strongholds 4.0.3 ship chest tables of their own under `data/betterdungeons/loot_tables/`
+  and `data/betterstrongholds/loot_tables/`, and none of these tables names a vanilla chest table
+  (the loot table files in the jars of the pack). Better Mineshafts 4.0.4 ships no loot table and
+  replaces the vanilla mineshafts (`config/bettermineshafts-forge-1_20.toml:5`). So the chests of
+  those dungeons and strongholds get no loot of the mod. Whether the Better Mineshafts chests roll
+  the vanilla mineshaft table, and whether the two sets of tables should join the list, is open for
+  the release and not checked in a world (carryover `aa-ship`).
 
 ## Excluded
 
@@ -691,7 +787,7 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   the artist on its team and declares MIT. Nobody has verified this with the artist.
 - Excerpts that upstream marks as taken from other mods with permission: the experience formulas of
   Ender IO in `TileEntityXPSolidifier` stay with their credit. The banner helper from Additional
-  Banners leaves with the banner patterns bundle, and its `NOTICE` line goes with it. The empty
+  Banners left with the banner patterns (e7b2e2b), and its `NOTICE` line went with it. The empty
   Tinkers' Construct excerpt left with `ClientRegistryHandler`, which the boot smoke test deleted
   (5b06e38).
 - The rotation helper in `VoxelShapes` is marked as taken from Mekanism, which is MIT. The comment
@@ -720,7 +816,8 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 - New block state properties load with their default: the Bio Reactor and the hopping item interface
   take their default facing, which is `down` for the interface, so it keeps pushing down
   (`UPSTREAM.md`, source change 42), and crops load with `persistent` false, the old behaviour.
-  Crystal clusters keep their state, since the base already has the property.
+  A crop harvested by right click keeps the value it had (source change 54). Crystal clusters keep
+  their state, since the base already has the property.
 - Additive NBT keys: the Vertical Digger gains the format marker `CheckYMin` and starts once more
   from its own height, the sack data gains `Filter`, every filter gains `Damage`, the Void Sack
   keeps `Filter` and `AutoInsert` on its stack, the Farmer gains its work area `Area`, and a broken
@@ -734,8 +831,10 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 - New ids include the item `item_tag`, the menus `void_sack_container` and `item_tag_container`, the
   recipe type `coffee_ingredient`, four banner pattern items with their patterns, the loot modifier
   serializers `bat_loot` and `dungeon_loot`, the point of interest and profession `engineer`, the
-  ore and patch features with their biome modifiers and the house pool. Each spec lists its own
-  under New ids.
+  sound `villager.work_engineer`, the ore and patch features with their biome modifiers and the
+  serializer `bool_config_feature_modifier`, and the house structure `andrew_period_house` with its
+  processor list and chest loot table. The house joins the vanilla pools and gets no pool of its
+  own (`UPSTREAM.md`, source change 57). Each spec lists its own under New ids.
 - A Double Crusher placed with the base jar saved a plain `actuallyadditions:crusher` block entity.
   It loads with its items, but the chunk does not tick it and logs one WARN "invalid for ticking",
   so it has to be broken and placed again (`UPSTREAM.md`, source change 30). The base gave the
@@ -781,6 +880,15 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   `InventoryMoveItemEvent` or `InventoryPickupItemEvent` that a vanilla hopper fires, as other
   modded item transport does (source change 42). Both go on the Arclight pack boot of the release
   (carryover).
+- The right click harvest of a crop hands out its drops and replaces the block without a Bukkit
+  block event. Only the `PlayerInteractEvent` that Arclight fires before `Block.use` guards it, so
+  a claim plugin can refuse the click while a block logger misses the harvest. The review read
+  Arclight's `common.jar` and found that Bukkit's `PatternType` has no entries for the four banner
+  patterns of the mod, that `CraftMetaBanner` drops unknown patterns and that `CraftBanner.load`
+  builds a pattern with a null type. A plugin that rewrites banner meta or a banner block state may
+  then strip such a pattern or throw, as for the other modded patterns of the pack. Neither ran on
+  the pack's Arclight, and both go on its test at the release, with EssentialsX loaded (carryover
+  `aa-ship`).
 - The magnet ring scans a 5 block box every tick for every ring. It scans every 4 ticks instead, and
   the pickup still goes through `ItemEntity.playerTouch`, so Bukkit pickup events fire.
 - The anvil mixin injects at the head of `AnvilMenu.mayPickup` and at the head of
@@ -845,8 +953,18 @@ These differ from upstream on purpose and must survive the next upstream sync.
   upgrade keeps `forge:glass/black` (`UPSTREAM.md`, source change 10).
 - Patchouli stays optional, and the book is hand written without a Patchouli provider.
 - Compat mining lens recipes ship only for mods whose 1.20.1 ids were checked.
-- The Engineer house uses upstream's structure with a lowered DataVersion, without the structure
-  updater.
+- The Engineer house uses upstream's structure with a lowered DataVersion and the jigsaw pool
+  `minecraft:empty`, without the structure updater. Its chest takes crystal blocks for the weight 3
+  entry, and the directional `Container` classes and the Crusher turn with a structure
+  (`UPSTREAM.md`, source change 57).
+- The right click harvest consumes the click and keeps `persistent`, the composter takes the
+  effective chances of `main`, and the rice patches read `generateRice` (`UPSTREAM.md`, source
+  changes 54 and 56).
+- Zombie villagers get the Engineer overlay, and the Engineer's trades join the mutable lists of
+  the Forge trade event, where `main` replaces them with immutable ones (`UPSTREAM.md`, source
+  change 57).
+- The banner tooltip keys use the `DyeColor` names, and the dungeon loot modifier compares
+  `ResourceLocation`s, so its loot arrives (`UPSTREAM.md`, source changes 58 and 59).
 - A lamp toggled by hand switches on the server only and sends the change to every client, a dye
   recolours a lamp from the hand that used it, and the Lamp Controller walks the connected lamps
   breadth first and stops after 4096 (`UPSTREAM.md`, source change 21). Upstream `main` keeps the

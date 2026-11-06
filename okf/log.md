@@ -1040,5 +1040,32 @@ logs stay on the Mac and are not in the repo.
   scan and the wire test on a copy of the live world and the client checks that the backport page
   lists.
 
+## 2026-11-06: Actually Additions 1.20.1-1.1.52-skytekx.1
+
+- Actually Additions is new to the pack. Upstream never released its branch `1.20.1`, so the pack
+  bundles the fork of `ports/actuallyadditions/` (9734e8f, SHA-1
+  `227073059543dd3d969cd53a15f1fd42a38985cb`) with the content of the NeoForge release 1.3.26 except
+  the 1.21 content and the data component changes. Its 14 bundles brought the server safety fixes,
+  the recipes and `forge:` tags, the new textures, the machines, the relays, machines that keep their
+  contents, the sacks and the Item Tag filter, the tools, the world content, the Patchouli manual
+  and the Arclight hardening with the fake player `[ActuallyAdditions]`, see
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#status-on-2026-11-06).
+- Commit 17f8b41 lets the server skip a data pack empowering recipe without four modifiers instead
+  of stopping, 6b5b19e states the content level in the NOTICE, and 83573f2 commits the common config
+  of the first start. The permission record, the license text and the README row came with the jar.
+- A world saved by the base jar with every block of the mod loaded unchanged on a Forge test
+  server, with all items, fluids and energy, and the dev client opened its sacks and drill
+  (e249be0). The final ship stage built the jar again from 712c4e0 with the same SHA-1, and full
+  pack boots on Forge and Arclight reached `Done` with 0 FATAL lines, no new log signature against
+  `wavea-forge` and `wavea-arclight` and both mixins of the fork applied (75e2a02).
+- The boots showed that the default block blacklist of Flux Networks names the 1.12 id of the
+  Phantom Energyface, so flux devices could connect to it. Since 0a5bb1b
+  `defaultconfigs/fluxnetworks-server.toml` names the current id, and Forge copies it into a world
+  without that file, see [Mod set](modpack/mod-set.md#flux-networks).
+- Server and clients must update together, because the channel `actuallyadditions:main` uses
+  protocol 5. The server's `mods/` gets the jar only with the deploy of the next pack, and no public
+  pack goes up before a pack client has joined a test server with it, see
+  [Open items](open-items.md).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

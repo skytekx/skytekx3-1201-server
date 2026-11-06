@@ -403,7 +403,8 @@ loot of the server, which [Advanced Loot Info](#advanced-loot-info) shows.
 
 ## Bundled jars
 
-The 58 jars in `local-mods/` (origins from each jar's manifest and from `modrinth-permissions/`). The
+The 58 bundled jars, 57 of them in `local-mods/` and ZeroCore 2 by its pointer file there (origins
+from each jar's manifest and from `modrinth-permissions/`). The
 counts in the list below are older than the last twenty-three of them and were not recounted:
 
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,

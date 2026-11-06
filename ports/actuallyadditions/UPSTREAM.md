@@ -713,3 +713,41 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and item tags already match `main`. The one difference left in `minecraft:mineable/pickaxe`,
     the Fluid Placer (`07c59fb`), comes with the fluid collector and placer fixes. No data file
     changes, and no block, item, property or NBT key either.
+23. Breakers, placers and the Vertical Digger: the drop chance helper
+    `WorldUtil.fireFakeHarvestEventsForDropChance` posts the break event of the shared fake player
+    and answers 1 when the block can be harvested with a Netherite AIOT in hand, as on `main`
+    (`17d8dcc`, `902e806`, #1425). The base always answered 0, so the Long-Range Breaker and the
+    Vertical Digger mined nothing. On Forge 47 `BlockState#canHarvestBlock` posts the harvest check
+    that `EventHooks.doPlayerHarvestCheck` posts on `main`, and the fake player gets its previous
+    item back afterwards, where `main` leaves the AIOT in its hand. The Breaker breaks through the
+    same helper (`217fc73`, PR #1515), so it now breaks snow and other blocks that need a tool. It
+    still leaves water, lava and Forge fluid blocks alone, as on 1.12, where `main` lost that
+    check. The Breaker runs its work timer in the instance tick (`a117dd5`), which the Placer also
+    reaches, so the Placer places again, and `WorldUtil.useItemAtSide` asks the block in front with
+    `canBeReplaced` instead of a fixed false (`a117dd5`). The Digger checks the right tool with a
+    Netherite AIOT (`e91c156`, #1421, `902e806`), mines the blocks and items of `forge:ores` in ore
+    mode, reads its two block lists from the common config (`17d8dcc`, the base read the 1.12
+    enum, whose lists are null) and has its Mode and Reset buttons back. The Phantom Breaker ticks
+    with the ticker of the Phantom Placer, whose work timer its own ticker never ran (`ccfb8d1`),
+    the Phantom Placer has its side button with the tooltip, and both open their screens. Unlike
+    `main` the phantom block passes the click on when the player holds a Phantom Connector or
+    when no screen opens, so the connector binds without sneaking and blocks can still be placed
+    against a phantomface. The redstone toggle of the Breaker, Placer, Dropper, Firework Box,
+    Ranged Collector, Long-Range Breaker, Atomic Reconstructor and phantom blocks ends the click
+    (`5ce4f9a`). The check for a bound position no longer compares the level with itself
+    (`d088aba`). The Long-Range Breaker, the Vertical Digger and the phantom blocks show their
+    titles, and their names lose the `(wip)` label. The Vertical Digger has its name under its
+    registry id `vertical_digger`, the base had it under the unused key `block.actuallyadditions.miner`.
+    Savegame: the Digger keeps `CheckX`, `CheckY` and `CheckZ`. `CheckY` now means not started
+    at the min build height minus 1 and done at the min build height, as in `ae6f160` (PR #1514).
+    The base used -1 and 0, which are real layers below Y 0. The additive key `CheckYMin` holds the
+    min build height that `CheckY` was written against. A digger without it, one saved by the base
+    or a fresh one, starts again from its own Y minus 1 once and then writes the key, and a saved
+    run continues at its layer after a restart. The Digger marks its block entity changed at each
+    new layer, since the chunk was not saved again while it only passed air, so a restart went
+    back to an older layer (seen on the test server, a local fix). This does not copy `738f098`, which sets `CheckY`
+    to the min build height minus 1 at every load and so restarts every digger at each chunk load.
+    The look at overlay of the Digger reads the new states, where `main` still tests 0 and -1.
+    Left for the Arclight hardening: the named fake player, block events for the Phantom Breaker,
+    and its drops, which `main` still computes at the position and with the block entity of the
+    Phantom Breaker itself.

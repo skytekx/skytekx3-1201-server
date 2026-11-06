@@ -11,6 +11,7 @@
 package de.ellpeck.actuallyadditions.mod.blocks;
 
 import de.ellpeck.actuallyadditions.mod.blocks.base.BlockContainerBase;
+import de.ellpeck.actuallyadditions.mod.items.ItemPhantomConnector;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityPhantomBreaker;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityPhantomEnergyface;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityPhantomItemface;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -96,11 +98,12 @@ public class BlockPhantom extends BlockContainerBase implements IHudDisplay {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> entityType) {
+        // SkyTekx: the Phantom Breaker ticks with the placer's ticker, as in ccfb8d16. Its own ticker
+        // never ran the work timer, so on the base it broke nothing
         switch (this.type) {
             case PLACER:
-                return level.isClientSide? TileEntityPhantomPlacer::clientTick : TileEntityPhantomPlacer::serverTick;
             case BREAKER:
-                return level.isClientSide? TileEntityPhantomBreaker::clientTick : TileEntityPhantomBreaker::serverTick;
+                return level.isClientSide? TileEntityPhantomPlacer::clientTick : TileEntityPhantomPlacer::serverTick;
             case LIQUIFACE:
                 return level.isClientSide? TileEntityPhantomLiquiface::clientTick : TileEntityPhantomLiquiface::serverTick;
             case ENERGYFACE:
@@ -112,20 +115,21 @@ public class BlockPhantom extends BlockContainerBase implements IHudDisplay {
         }
     }
 
-    // TODO: [port] validate this works
+    // SkyTekx: the Phantom Placer and Breaker open their screens, as in ccfb8d16, and a redstone toggle
+    // ends the click (5ce4f9a7). Unlike main the block passes the click on when the player holds a
+    // Phantom Connector or when nothing opens, so the connector binds without sneaking and blocks
+    // can still be placed against a phantomface
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
         if (this.tryToggleRedstone(world, pos, player)) {
+            return InteractionResult.SUCCESS;
+        }
+        if (player.getItemInHand(handIn).getItem() instanceof ItemPhantomConnector) {
             return InteractionResult.PASS;
         }
-/*
-        if (!world.isClientSide) {
-            TileEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof IPhantomTile && ((IPhantomTile) tile).getGuiID() != -1) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, pos);
-            }
+        if (world.getBlockEntity(pos) instanceof MenuProvider) {
+            return this.openGui(world, player, pos, TileEntityPhantomPlacer.class);
         }
-*/
         return InteractionResult.PASS;
     }
 

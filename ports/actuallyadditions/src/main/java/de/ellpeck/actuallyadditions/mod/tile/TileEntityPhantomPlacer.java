@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -134,15 +135,16 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
         }
     }
 
-    // TODO: [port] I have no clue what the cowboy logic is trying to do here. Confirm this still works
+    // SkyTekx: without the comparisons of the level with itself, as in d088aba7. A bound position on
+    // another phantom block or on this block is dropped
     @Override
     public boolean hasBoundPosition() {
         if (this.boundPosition != null) {
-            if (this.level.getBlockEntity(this.boundPosition) instanceof IPhantomTile || this.getBlockPos().getX() == this.boundPosition.getX() && this.getBlockPos().getY() == this.boundPosition.getY() && this.getBlockPos().getZ() == this.boundPosition.getZ() && this.level.dimensionType() == this.level.dimensionType()) {
+            if (this.level.getBlockEntity(this.boundPosition) instanceof IPhantomTile || this.getBlockPos().equals(this.boundPosition)) {
                 this.boundPosition = null;
                 return false;
             }
-            return this.level.dimensionType() == this.level.dimensionType();
+            return true;
         }
         return false;
     }
@@ -236,9 +238,10 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
         this.sendUpdate();
     }
 
+    @Nonnull
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.phantomPlacer");
     }
 
     @Nullable

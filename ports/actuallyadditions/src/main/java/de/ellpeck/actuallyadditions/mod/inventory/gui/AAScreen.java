@@ -19,6 +19,17 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import javax.annotation.Nonnull;
 
 public abstract class AAScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
+    // SkyTekx: the side names of ccfb8d16 as translatable components, main resolves them with I18n
+    // once when the class loads
+    public static final Component[] SIDES = {
+        Component.translatable("info.actuallyadditions.gui.disabled"),
+        Component.translatable("info.actuallyadditions.gui.up"),
+        Component.translatable("info.actuallyadditions.gui.down"),
+        Component.translatable("info.actuallyadditions.gui.north"),
+        Component.translatable("info.actuallyadditions.gui.east"),
+        Component.translatable("info.actuallyadditions.gui.south"),
+        Component.translatable("info.actuallyadditions.gui.west")
+    };
 
     public AAScreen(T container, Inventory inventory, Component pTitle) {
         super(container, inventory, pTitle);

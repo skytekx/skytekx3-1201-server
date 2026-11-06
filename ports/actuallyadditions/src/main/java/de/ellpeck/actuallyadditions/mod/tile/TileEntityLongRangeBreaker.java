@@ -96,7 +96,7 @@ public class TileEntityLongRangeBreaker extends TileEntityInventoryBase implemen
 
     private void doWork() {
         if (this.storage.getEnergyStored() >= ENERGY_USE * RANGE) {
-            BlockState state = this.level.getBlockState(this.worldPosition);
+            BlockState state = this.getBlockState();
             Direction sideToManipulate = WorldUtil.getDirectionByPistonRotation(state);
 
             for (int i = 0; i < RANGE; i++) {
@@ -105,7 +105,7 @@ public class TileEntityLongRangeBreaker extends TileEntityInventoryBase implemen
                 Block blockToBreak = breakState.getBlock();
                 if (blockToBreak != null && !this.level.isEmptyBlock(coordsBlock) && this.level.getBlockState(coordsBlock).getDestroySpeed(this.level, coordsBlock) > -1.0F) {
                     List<ItemStack> drops = Block.getDrops(breakState, (ServerLevel) this.level, coordsBlock, this.level.getBlockEntity(coordsBlock));
-                    float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, drops, this.level, coordsBlock);
+                    float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, this.level, coordsBlock);
 
                     if (chance > 0 && this.level.random.nextFloat() <= chance) {
                         if (StackUtil.canAddAll(this.inv, drops, false)) {
@@ -147,7 +147,7 @@ public class TileEntityLongRangeBreaker extends TileEntityInventoryBase implemen
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.directionalBreaker");
     }
 
     @Nullable

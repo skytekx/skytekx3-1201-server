@@ -3,7 +3,7 @@ type: Runbook
 title: Publish
 description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Publish
@@ -150,8 +150,8 @@ files above.
 On the build machine, after the blockers are fixed:
 
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
-   write the changelog in `publish_modrinth.py`. If the public address changes, change `SERVERS` in
-   `build_mrpack.py` as well.
+   write the changelog in `docs/changelog/<VERSION>.md`, starting from `docs/changelog/next.md`. If
+   the public address changes, change `SERVERS` in `build_mrpack.py` as well.
 2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Merge the
    branch that carries `ports/` into master, push it and run `git fetch`. Then build with
    `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The builder refuses
@@ -213,20 +213,31 @@ first that ships the config of Nostalgic Tweaks, with 3D dropped items (see
 with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with Extreme Reactors
 2.0.97, ZeroCore 2.1.48 and the LittleTiles build of c5694e16 bundled (see
 [mod set](mod-set.md#bundled-jars)), with the Mystical Automation port (see
-[Mystical Automation port](mysticalautomation-port.md)), with the Expanded Delight port and the salt
+[Mystical Automation port](mysticalautomation-port.md)), with the Mekanism: Extra Modules port (see
+[Mekanism Extra Modules port](mekanism-extra-modules.md)), with the Expanded Delight port and the salt
 of the pack unified to the Mekanism salt (see [Expanded Delight port](expandeddelight-port.md)), with
-the Apotheosis bosses of Iron's
-Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine mods of
-2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
+the Create: Integrated Farming port and its library Create: Dragons Plus 1.11.9 (see
+[Create Integrated Farming port](createintegratedfarming-port.md)), with the Apotheosis bosses of
+Iron's Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine
+mods of 2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
 [mod set](mod-set.md#additions-of-2026-11-04)), and with Bygone Nether, whose tag repair in the fixes
 pack also needs that pack at the end of the pack order (see [mod set](mod-set.md#bygone-nether)). Its
-row should record whether a fresh install and the
-update of a 3.1.2 instance were tested in Prism Launcher and the Modrinth App, whether a client without
-Starlight joined, whether the loot tabs of Advanced Loot Info in EMI show the loot of the server,
-whether the machines of the new mods work there, whether the screens and JEI categories of
-Mystical Automation work in a client, whether the Draconic Evolution fixes work in a
-client and whether the mobs and structures of Bygone Nether render there. Its deploy has to move the fixes pack to the end of the
-pack order, see [boot fixes](../content/boot-fixes.md#load-order).
+row should record whether a fresh install and the update of a 3.1.2 instance were tested in Prism
+Launcher and the Modrinth App, whether a client without Starlight joined, whether the loot tabs of
+Advanced Loot Info in EMI show the loot of the server, whether the machines of the new mods work
+there, whether the screens and JEI categories of Mystical Automation work in a client, whether the
+module screen and HUD of Mekanism: Extra Modules, the juicer screen and boats of Expanded Delight and
+the Ponder scenes and the JEI category Roosting of Create: Integrated Farming work there, whether the
+Draconic Evolution fixes work in a client and whether the mobs and structures of Bygone Nether render
+there. Its deploy has to move the fixes pack to the end of the pack order, see
+[boot fixes](../content/boot-fixes.md#load-order).
+
+The full pack of 98bf164 with the six mods that stand in for NeoForge 1.21.1 mods, Create: Dragons
+Plus included, booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the
+test copies, see [NeoForge ports](neoforge-ports.md#status). That boot covers the server side only.
+The player notes for these six mods are drafted in `docs/changelog/next.md`. Before the upload, add
+the other changes of the next pack to it, and rename it to `docs/changelog/<VERSION>.md`, the file
+that `tools/publish_modrinth.py` sends as the changelog of the version.
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

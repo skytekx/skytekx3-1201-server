@@ -420,7 +420,8 @@
    },
    {
     "item": "aa-ship (review fixes of eafcf45, not tested in game): in a dev client, /summon zombie_villager with VillagerData profession actuallyadditions:engineer and check the overlay. Right click a ripe wild crop (persistent=true) on grass and check that it stays at age 0 with persistent=true after a neighbour update. Add an Engineer trade from a second VillagerTradesEvent listener or a KubeJS script and check that the trades load without an UnsupportedOperationException and keep both sets. The integration smoke boot only showed that the level 1 Engineer offers black quartz and a Laser Wrench (bp2/actuallyadditions/wcint/).",
-    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run.",
+    "fix_build": "The crop part is done and showed finding aa-fid-1 of the release audit. In the fix build the dev client right clicked a ripe canola and a ripe flax with persistent=true on grass, and both stayed at age 0 with the flag. With the release jar they lost the flag at their first growth step from bone meal or random ticks and popped off at the next neighbour update. Since 56b7ffa (UPSTREAM.md source change 71) they keep it, on Forge and on the Arclight test server (110cd83, bp2/actuallyadditions/cropfix/). The overlay and trade parts stay open in aa-client-test."
    },
    {
     "item": "aa-ship (Arclight, review note of aa-world-content): on the pack's Arclight with EssentialsX loaded, right click a ripe crop and record that only the Bukkit PlayerInteractEvent fires, place and break a banner with one of the four AA patterns, and run a path that rewrites banner meta or a banner block state (Arclight common.jar CraftMetaBanner drops unknown pattern ids, CraftBanner.load builds a Pattern with a null type). Record the result in the Arclight notes of okf/modpack/actuallyadditions-backport.md.",
@@ -575,12 +576,13 @@
   ]
  },
  "aa-ship": {
-  "status": "Released into local-mods/ on 2026-11-06 as ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar, SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb, not yet on the live server",
+  "status": "Released into local-mods/ on 2026-11-06 as ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar, SHA-1 b45fde952365db78ba57b68400643056647789e3 since the fix build be0192d, which replaced the release build 227073059543dd3d969cd53a15f1fd42a38985cb with the same version, not yet on the live server",
   "done": [
    "savegame-test: OLD 237e0fc6 to NEW 22707305 on a dedicated Forge 47.4.18 server, 49 block entities, 241 items in 33 kinds, four fluids and 130500 energy equal after the NEW load, the expected changes seen (okf page, Release test)",
    "pack-wiring-and-docs: the jar, the permission record and the license text (26415ad), the common config of the first pack boot, the README, mod set, open items and backport page, this file and the full inventory",
    "release fixes: the empowering recipe serializer (9c01fa1) and the content level of the NOTICE (75d3c64)",
-   "final-ship-stage: a clean gradle build of 1262c41 gave the jar SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb again, runData wrote 0 of 1238 files, the link check found no pack jar that links the mod and 0 missing of its 150 references into JEI, Patchouli and Curios, the full pack boots actuallyadditions-forge and actuallyadditions-arclight were clean with both mixins applied, and 7def174 gives Flux Networks the current id of the Phantom Energyface in defaultconfigs/, checked by the boot actuallyadditions-forge-flux (okf page, Final ship stage)"
+   "final-ship-stage: a clean gradle build of 1262c41 gave the jar SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb again, runData wrote 0 of 1238 files, the link check found no pack jar that links the mod and 0 missing of its 150 references into JEI, Patchouli and Curios, the full pack boots actuallyadditions-forge and actuallyadditions-arclight were clean with both mixins applied, and 7def174 gives Flux Networks the current id of the Phantom Energyface in defaultconfigs/, checked by the boot actuallyadditions-forge-flux (okf page, Final ship stage)",
+   "fix-build: finding aa-fid-1 of the release audit, a harvested wild crop lost its persistent flag at its first growth step. 56b7ffa carries the flag through growCrops and randomTick and keeps the Bukkit BlockGrowEvent of Arclight, 110cd83 records the dev client tests on Forge and Arclight, which pass with the new jar and fail with the release jar, be0192d ships the jar b45fde952365db78ba57b68400643056647789e3 with the same version, and the full pack Forge boot actuallyadditions-fix-forge of be0192d showed no new log signature against actuallyadditions-forge (okf page, Fix build)"
   ],
   "open": [
    {

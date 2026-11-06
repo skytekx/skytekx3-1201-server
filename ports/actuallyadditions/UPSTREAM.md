@@ -1645,3 +1645,29 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     silk touch, the placer augment, the drill screen, the dye recipes, the AIOT actions, the bowl,
     the filler with its normalized state and its events, the staff and the goggles. The ship stage
     runs those tests (carryover `aa-ship`).
+54. Crops and the Tiny Torch: a ripe crop drops as on 1.12 (`506d481d`, changelog 1.3.11). Canola
+    gives two to five canola, rice one to three rice, flax two to six string and coffee two to four
+    beans, each with one or two seeds, and both pools take the uniform fortune bonus. An unripe
+    crop drops its seed. The four generated loot tables are byte identical to the `loot_table`
+    files of `main` at `cd9d9c6`. A right click on a ripe crop gives the drops minus one seed to
+    the player and sets the crop back to age 0. On `main` the click goes on to the held item after
+    the harvest, which spends bone meal on the replanted crop on the server while the client still
+    sees the ripe one. Here the harvest consumes the click and swings the hand, as the sweet berry
+    bush does. The four crops get the block state property `persistent` of `38d6404b`, default
+    `false`. A crop with the flag set survives a block update on any block that is not air, so the
+    patches of the world generation, which set it, no longer pop off their grass. Inside a
+    `WorldGenRegion` the flag counts for nothing, so the placement still checks the soil. The
+    blockstates keep their eight `age` variants, which match both values of the new property, so
+    no state lacks a model, and the data generator, which checks that every state is covered,
+    writes them unchanged. The seeds and crops go into the vanilla composter table in common setup
+    with the chances of the generated data map of `3a2f298e` (#1431, changelog 1.3.8). Canola,
+    coffee beans, flax seeds and rice compost at 0.65, canola and rice seeds at 0.3. On `main` the
+    crop entries of coffee beans and flax seeds replace their seed entries, and the port keeps
+    those effective values. The furnace fuel half of `3a2f298e` is not needed, as the tiny coal and
+    tiny charcoal return a burn time of 200 themselves. The Tiny Torch gives light 12 instead of 8
+    (`4cc4b40c`), has no collision (`d3f22bb5`, changelog 1.3.20) and stands upright when the top
+    or bottom face of a block is clicked (`a6a9467d`, #1409). The base set the facing `down`, which
+    its property does not hold, so the placement threw an `IllegalArgumentException`. The property
+    is now built from every direction but down, the same five values as before. Savegame: the new
+    property is additive. A crop of an older world has no saved `persistent`, loads with its age
+    and `false` and behaves as before. The Tiny Torch keeps its five facings.

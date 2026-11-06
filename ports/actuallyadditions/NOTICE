@@ -182,6 +182,11 @@ Modifications
       it picks up items again.
     * Crafting Table On A Stick: the grid crafts again and gives its items back when it closes,
       and a key bind opens it from the hands, the inventory or a Curios charm slot.
+    * Crops: ripe crops drop as in the 1.12 versions and can be harvested with a right click,
+      crops that the world generation places survive block updates, and seeds and crops can be
+      composted.
+    * Tiny Torch: it gives light level 12, has no collision, and a click on the bottom face of a
+      block places it standing instead of throwing an error.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

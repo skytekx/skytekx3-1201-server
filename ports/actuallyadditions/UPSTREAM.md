@@ -2062,3 +2062,46 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Savegame: none. New ids: none.
     Not tested in game. A cable that caches the relay capability and lets go of a broken relay is
     left for the ship stage (carryover `aa-ship`).
+65. Manual: the Actually Additions Manual opens a Patchouli book again, as on `main` since
+    `7658fdaa` and `0e3a9612` (the chat line of `19cfbc92` is in changelog 1.3.26). On the base
+    `ItemBooklet#use` only awarded the root advancement, since the call of the 1.12 booklet screen
+    is commented out. The book `actuallyadditions:booklet` has the `book.json` of `main`
+    (`use_resource_pack`, `custom_book_item` `actuallyadditions:booklet`, `dont_generate_book`, the
+    macros and the book texture `textures/gui/booklet/booklet.png` of `7658fdaa`), the category
+    `getting_started` and the five entries `intro`, `guide`, `tutorial`, `crystals` and
+    `engineer_house`, with the entry icon `textures/item/youtube.png` of `7658fdaa`. The JSON files
+    are the output of the `PatchouliGenerator` of `main`, written by hand. They live in
+    `src/main/resources` and not in `src/generated/resources` as upstream has them, because no
+    provider of the fork writes them and a `runData` into an empty folder would lose them. Neither
+    `PatchouliGenerator` nor the Patchouli Provider of `654465b3` is ported. The page type
+    `actuallyadditions:reconstructor` of `1207a27d` shows two Atomic Reconstructor recipes with the
+    machine between input and output, which `LaserRecipe#getToastSymbol` returns since that commit.
+    `PageReconstructor` extends `PageSimpleProcessingRecipe` of Patchouli `1.20.1-85-FORGE`, which
+    hands the recipe itself to `drawRecipe` and not the `RecipeHolder` of 1.20.2 and later, so the
+    class is the one of `main`. It and `PatchouliPages` are client only. The client setup registers
+    the page type only when Patchouli is loaded (`a20c25eb`) and does so on the main thread through
+    `enqueueWork`, because Patchouli fills the same plain `HashMap` in its own client setup, which
+    runs in parallel. Upstream opens the book on the client. This build opens it on the server
+    through `PatchouliAPI#openBookGUI(ServerPlayer, ResourceLocation)`, which sends the packet of
+    Patchouli, so the common item class names no Patchouli client code. Without Patchouli the
+    player gets the red chat line of `19cfbc92`, as the new key
+    `info.actuallyadditions.booklet.patchouliMissing` instead of a literal, and the server still
+    boots, since `mods.toml` keeps Patchouli optional (source change 1). The manual tooltip uses the
+    keys `tooltip.actuallyadditions.item_booklet.*` of `7658fdaa` and `cf0349b1`. The base built
+    them from the translated item name, so the tooltip showed raw keys. In `en_us.json` the booklet
+    keys follow `7658fdaa` and `1207a27d`: the recipe names, `indexEntry.getting_started`,
+    `chapter.book_tutorial`, `chapter.video_guide` with its two videos and `chapter.engineer_house`
+    lose their camel case, the intro spreads over four pages, and the three crystals pages take
+    the texts of `1207a27d` and `cf0349b1`. The manual loses its "(wip)" label.
+    Local changes against `main`: the book name `booklet.actuallyadditions.item.actuallyadditions.booklet`,
+    which `book.json` names and `main` never translates, reads "Actually Additions Manual". The
+    second link of the video guide shows its own button text `video_guide.dire.button` instead of
+    the one of the first video. The field `creative_tab` is the tab id `actuallyadditions:tab`,
+    since Patchouli 1.20.1 reads it as a resource location (`main` writes `actuallyadditions.tab`,
+    which only counts for a book that Patchouli generates itself, and this one does not). The
+    Engineer house entry speaks of the one Engineer villager of source change 57 and no longer of
+    the Crystallizer of the 1.12 versions. The other chapters of the 1.12 manual, among them the
+    banners, the Coffee Maker and the goggles, are not in the book of `main` either, so their lang
+    keys stay unused.
+    Savegame: none. New ids: the Patchouli book `actuallyadditions:booklet` and the Patchouli page
+    type `actuallyadditions:reconstructor`.

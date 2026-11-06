@@ -224,6 +224,9 @@ Modifications
     * Laser relay capabilities: the energy and fluid relays hand out one capability per side and
       invalidate it when the relay is broken or its chunk unloads, so a cable that caches it lets
       go of a relay that is gone.
+    * Manual: the Actually Additions Manual opens as a Patchouli book with the getting started
+      entries of upstream's main branch and a page type for Atomic Reconstructor recipes, and the
+      player gets a chat line when Patchouli is missing.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

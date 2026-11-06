@@ -34,6 +34,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -75,6 +76,15 @@ public class ItemBooklet extends ItemBase {
             if (advancement != null && !advancements.getOrStartProgress(advancement).isDone()) {
                 advancements.award(advancement, "right_click");
             }
+            // SkyTekx: the manual is a Patchouli book (upstream 7658fdaa, 0e3a9612). Upstream opens
+            // it on the client, this build asks Patchouli on the server to open it for the player,
+            // so the common class names no Patchouli client code. Without Patchouli the player gets
+            // the chat line of upstream 19cfbc92, as a translation key
+            if (ModList.get().isLoaded("patchouli")) {
+                vazkii.patchouli.api.PatchouliAPI.get().openBookGUI(serverPlayer, new ResourceLocation(ActuallyAdditions.MODID, "booklet"));
+            } else {
+                serverPlayer.sendSystemMessage(Component.translatable("info.actuallyadditions.booklet.patchouliMissing").withStyle(ChatFormatting.RED));
+            }
         }
 //        player.openGui(ActuallyAdditions.INSTANCE, GuiHandler.GuiTypes.BOOK.ordinal(), world, (int) player.posX, (int) player.posY, (int) player.posZ);
 //
@@ -88,11 +98,13 @@ public class ItemBooklet extends ItemBase {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level playerIn, List<Component> tooltip, TooltipFlag advanced) {
-        tooltip.add(Component.translatable("tooltip." + ActuallyAdditions.MODID + "." + this.getDescription().getString() + ".desc"));
+        // SkyTekx: the fixed keys of upstream 7658fdaa and cf0349b1. The base built them from the
+        // translated item name, so the tooltip showed raw keys
+        tooltip.add(Component.translatable("tooltip.actuallyadditions.item_booklet.desc").withStyle(ChatFormatting.GRAY));
 
         // TODO: this is bad
         for (int i = 1; i <= 4; i++) {
-            tooltip.add(Component.translatable("tooltip." + ActuallyAdditions.MODID + "." + this.getDescription().getString() + ".sub." + i).withStyle(i == 4
+            tooltip.add(Component.translatable("tooltip.actuallyadditions.item_booklet.sub." + i).withStyle(i == 4
                     ? ChatFormatting.GOLD
                     : ChatFormatting.RESET).withStyle(i == 4
                     ? ChatFormatting.ITALIC

@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
@@ -157,6 +158,22 @@ public class ItemTagsGenerator extends ItemTagsProvider {
                 ActuallyItems.DIAMOND_AIOT.get(),
                 ActuallyItems.NETHERITE_AIOT.get()
         );
+
+        // SkyTekx: the minecraft tags above come from upstream 4789e61e (#1450). Forge 47 mods read the
+        // forge:tools tags as well, and the AIOT is a paxel
+        Item[] aiots = {
+                ActuallyItems.WOODEN_AIOT.get(),
+                ActuallyItems.STONE_AIOT.get(),
+                ActuallyItems.IRON_AIOT.get(),
+                ActuallyItems.GOLD_AIOT.get(),
+                ActuallyItems.DIAMOND_AIOT.get(),
+                ActuallyItems.NETHERITE_AIOT.get()
+        };
+        tag(ActuallyTags.Items.TOOLS_PICKAXES).add(aiots);
+        tag(ActuallyTags.Items.TOOLS_AXES).add(aiots);
+        tag(ActuallyTags.Items.TOOLS_SHOVELS).add(aiots);
+        tag(ActuallyTags.Items.TOOLS_SWORDS).add(aiots);
+        tag(ActuallyTags.Items.TOOLS_PAXELS).add(aiots);
 
         tag(ActuallyTags.Items.STONE_ORE_REPLACEABLES)
                 .add(Items.STONE)

@@ -1031,9 +1031,13 @@ ran `tools/unify_audit_dump.js`, see [AlmostUnified](../modpack/almostunified.md
 |---|---|---:|---|---:|---:|
 | 20:57 | Folder of 9,526 files, the tree after a18f0ca | 115 s | 0 and 3 | 48,197 recipes | 8,317 |
 | 21:11 | New folder of 9,717 files, salt, skip tags and hide list | 112 s | 0 and 3 | 48,380 recipes | 8,499 |
+| 21:32, Arclight | The committed tree of 1600c9e without the dump scripts | 121 s | 0 and 3 | None | Not dumped |
 
 The ERRORs are the three of a test copy, AllTheLeaks, the `ModelBakery` line of AdvancedAE and the backup config line
-of Nostalgic Tweaks, and both runs stopped clean 4 s after `stop`. No log has "Parsing error loading recipe" or a
+of Nostalgic Tweaks, and the runs stopped clean 4 s or 6 s after `stop`. The Arclight run used the hardened jar
+`arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` of the session, and AlmostUnified counted the same 54,473 and
+53,954 recipes there as at 21:11 on Forge. Against the Arclight boot of the branch before the merge
+(`actuallyadditions-arclight`) the boot diff finds no new log signature. No log has "Parsing error loading recipe" or a
 line that names a generated recipe, and the boot diff finds no new log signature. Generated live counts the
 recipes `skytekx3:melting/` in the dump, 1,694 of them damagable at 21:11. AlmostUnified counted 192 recipes more
 before its run at 21:11, the 191 new files and the melon juice, since it counts the files before their conditions.

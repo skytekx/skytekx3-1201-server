@@ -1721,3 +1721,56 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `generateRice` of source change 6. On `main` the rice switch exists but the modifier never
     reads it, so the rice patches ignore it there. Savegame: the world generation only reaches
     chunks that do not exist yet.
+57. Engineer house and villager: the house `actuallyadditions:andrew_period_house` joins the vanilla
+    pools `village/plains/houses`, `village/snowy/houses`, `village/savanna/houses` and
+    `village/taiga/houses` with the weight 10 and `village/desert/houses` with 50, as a legacy
+    single pool element with the processor list `actuallyadditions:engineer_house`, in
+    `ServerAboutToStartEvent` (`523cba59`, `e6c8af19`). That list gives each white lamp a chance of
+    1 in 16 per color to come out as one of the other fifteen lit lamps. A rule processor appended
+    to `minecraft:farm_plains`, `farm_savanna`, `farm_snowy`, `farm_taiga` and `farm_desert` (and the
+    village farms of Repurposed Structures, if present) turns village wheat into rice (30 percent),
+    coffee (25), canola (10) and flax (5), each rule taken in turn. Three access transformer lines
+    with the SRG names `f_210560_` (`StructureTemplatePool.templates`), `f_210559_` (`rawTemplates`)
+    and `f_74422_` (`StructureProcessorList.list`) open the fields that `main` opens by name. The
+    structure is the file of `main` at `cd9d9c6`, which `43a23883` rebuilt around a jigsaw block
+    and `aa013e84` (#1426) and `19a060b3` corrected, in the 1.20.1 folder
+    `data/actuallyadditions/structures/`.
+    The file of `1.20.4` predates the two fixes and is not used. The data generator class
+    `StructureUpdater` of `43a23883` is not ported, as its header puts it under a license that does
+    not extend to this fork (see License). Instead the script
+    `bp2/actuallyadditions/wc-tools/rewrite_house.py` of the workflow scratchpad reads the file of
+    `main`, checks that its writer reproduces the uncompressed input byte for byte, and changes two
+    values. The `DataVersion` goes from 3955 to
+    3465, the version of 1.20.1. The data fixers never downgrade, so this only removes a misleading
+    version. The jigsaw block names the pool `actuallyadditions:andrew_period_house`, which exists
+    on no branch, so the jigsaw placement of 1.20.1 (and of 1.21) logs the WARN `Empty or
+    non-existent pool` for every house it places. The pool becomes `minecraft:empty`, as in the
+    vanilla houses, so the house still attaches to a street with its name and target
+    `minecraft:building_entrance` and grows nothing further. The palette of 88 states is unchanged.
+    It names only blocks of 1.20.1 and of this fork with the properties they have here, among them
+    the crops with `persistent` `false` of source change 54, a chest with the loot table
+    `actuallyadditions:engineer_house` and the Lamp Controller with its facing. Its machines carry
+    `StopDrop` 1, which source change 45 honours, and write their inventories in the 1.21 form
+    `Items: {Size, Items}`, which `TileEntityInventoryBase.loadSlots` reads as an empty list, the
+    content of those machines anyway. The extra jigsaw keys `selection_priority` and
+    `placement_priority` of 1.20.3 are ignored. The chest loot table is generated as on `main`,
+    four to seven rolls of wood casings, iron casings, black quartz, bat wings, drill cores and
+    crystals, except that the entry of weight 3 takes `#actuallyadditions:crystal_blocks`. The
+    table of `main` names the crystals tag twice, where 1.12 gave crystal blocks that weight. The Engineer villager
+    of `2a2f5c6c` is the profession `actuallyadditions:engineer` with the point of interest type
+    `actuallyadditions:engineer` (every state of the Coffee Maker, one ticket, range 1) in
+    `#minecraft:acquirable_job_site` (new provider `PoiTypeTagsGenerator`), the work sound
+    `actuallyadditions:villager.work_engineer` (the Coffee Maker sound), the texture
+    `textures/entity/villager/profession/engineer.png` of `main` and the translation key
+    `entity.minecraft.villager.actuallyadditions.engineer`, which replaces the 1.12 key. Its trades
+    are those of `main` in four levels, from black quartz ore and the Laser Wrench to the Empowerer
+    and the Extreme Laser Relay, through `BasicTradeList`, which gives a 1.20.1 `MerchantOffer` an
+    `ItemStack` cost. Zombie villagers have no Engineer overlay, as on `main`. The plain directional
+    blocks turn and mirror with a structure (`b3bac386`, `3b180faf`), and so do the nested
+    `Container` classes of `DirectionalBlock` and `FullyDirectionalBlock` and the Crusher, which
+    `main` leaves out. Without them the Coffee Maker, the Coal Generator, the Atomic Reconstructor,
+    the laser relays and the Crusher of a rotated house faced the way the file stores them. The
+    Powered Furnace and the crystal clusters still do not turn, as on `main`. The generated
+    processor list, job site tag and sound entry match `main` byte for byte. Savegame: new ids only,
+    the profession, the point of interest type, the sound, the processor list and the loot table.
+    Villages generate the house in new chunks only.

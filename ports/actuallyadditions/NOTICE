@@ -193,6 +193,11 @@ Modifications
     * Wild crops: patches of ripe canola, flax, coffee and rice grow in the world as on upstream's
       main branch, each behind its own switch (generateCanola, generateFlax, generateCoffee and
       generateRice, which upstream defines but never reads), so the four crops have a source.
+    * Engineer house and villager: the Engineer house of upstream's main branch generates in
+      plains, snowy, savanna, taiga and desert villages, village farms grow the four crops, and the
+      Engineer villager works at a Coffee Maker and trades machines. Its jigsaw names the empty
+      pool, as vanilla houses do, and its chest takes crystal blocks again, as in the 1.12
+      versions. Directional machines, among them the Crusher, turn and mirror with a structure.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

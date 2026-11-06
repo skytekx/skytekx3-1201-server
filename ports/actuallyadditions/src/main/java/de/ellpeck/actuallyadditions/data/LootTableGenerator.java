@@ -2,8 +2,10 @@ package de.ellpeck.actuallyadditions.data;
 
 
 import com.google.common.collect.ImmutableSet;
+import de.ellpeck.actuallyadditions.api.ActuallyTags;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.fluids.InitFluids;
+import de.ellpeck.actuallyadditions.mod.gen.ActuallyVillages;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.util.LootTableUtil;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
@@ -22,6 +24,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -46,7 +49,8 @@ public class LootTableGenerator extends LootTableProvider {
     public LootTableGenerator(PackOutput packOutput) {
         super(packOutput, Set.of(), List.of(
                 new SubProviderEntry(Blocks::new, LootContextParamSets.BLOCK),
-                new SubProviderEntry(ItemWorm::new, LootContextParamSets.BLOCK)
+                new SubProviderEntry(ItemWorm::new, LootContextParamSets.BLOCK),
+                new SubProviderEntry(Dungeon::new, LootContextParamSets.CHEST)
         ));
     }
 
@@ -276,6 +280,30 @@ public class LootTableGenerator extends LootTableProvider {
                                             .add(LootItem.lootTableItem(ActuallyItems.WORM.get())
                                                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))))
                                             .when(LootItemRandomChanceCondition.randomChance(0.05F))
+                            )
+            );
+        }
+    }
+
+    // SkyTekx: the chest of the Engineer house (upstream 523cba59). Main lists the crystals tag twice, for the
+    // weights 20 and 3, where 1.12 gave crystals 20 and crystal blocks 3. The second entry takes the crystal
+    // blocks again
+    public static class Dungeon implements LootTableSubProvider {
+        @Override
+        public void generate(BiConsumer<ResourceLocation, LootTable.Builder> pOutput) {
+            pOutput.accept(
+                    ActuallyVillages.ENGINEER_HOUSE_CHEST,
+                    LootTable.lootTable()
+                            .withPool(
+                                    LootPool.lootPool()
+                                            .setRolls(UniformGenerator.between(4.0F, 7.0F))
+                                            .add(LootItem.lootTableItem(ActuallyBlocks.WOOD_CASING.getItem()).setWeight(60).apply(SetItemCountFunction.setCount(UniformGenerator.between(3.0F, 10.0F))))
+                                            .add(LootItem.lootTableItem(ActuallyBlocks.IRON_CASING.getItem()).setWeight(40).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))
+                                            .add(LootItem.lootTableItem(ActuallyItems.BLACK_QUARTZ.get()).setWeight(20).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
+                                            .add(LootItem.lootTableItem(ActuallyItems.BATS_WING.get()).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))))
+                                            .add(LootItem.lootTableItem(ActuallyItems.DRILL_CORE.get()).setWeight(5))
+                                            .add(TagEntry.expandTag(ActuallyTags.Items.CRYSTALS).setWeight(20).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))
+                                            .add(TagEntry.expandTag(ActuallyTags.Items.CRYSTAL_BLOCKS).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))
                             )
             );
         }

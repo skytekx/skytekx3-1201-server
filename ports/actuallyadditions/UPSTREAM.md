@@ -2105,6 +2105,21 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     keys stay unused.
     Savegame: none. New ids: the Patchouli book `actuallyadditions:booklet` and the Patchouli page
     type `actuallyadditions:reconstructor`.
+    The porter's test ran the jar of the five commits of the bundle (SHA-1
+    `ae5284cb09fe28f41e0aabe1dd06c4d7b71bff33`, 3009455 bytes, one build of `fe810f0`) on a
+    dedicated Forge 47.4.18 server with JEI 15.3.0.4, Patchouli `1.20.1-85-FORGE`, Curios 5.14.1,
+    The One Probe and Mekanism 10.4.6, and the dev client of the fork with a local scenario that is
+    not committed (`bp2/actuallyadditions/ui-tools/devtest-ui.patch` in the workflow scratchpad). A
+    right click with the manual awarded the root advancement and opened the landing page of the
+    book (`GuiBookLanding`) with the name Actually Additions Manual, 153rd Edition and the landing
+    text. `PatchouliAPI#openBookEntry` on the client opened the crystals entry at its first
+    reconstructor page, whose two pages drew the input, the Atomic Reconstructor and the output of
+    four crystal recipes under the title Atomic Reconstructor Recipe, and the video guide entry,
+    whose second link shows the button text of its own playlist. The client log held no Patchouli
+    error. A second
+    server with the jar, Immersive Engineering 10.2.0-183 and Mekanism 10.4.16 and without Patchouli
+    reached `Done` with 0 ERROR lines. Not tested: the chat line without Patchouli, which needs a
+    client and a server without it.
 66. Screens: the fluid bars of the Oil Generator, the Canola Press, the Fermenting Barrel, the Fluid
     Collector and the Coffee Maker draw the still sprite of the fluid from the block atlas in the
     tint colour of the fluid, tiled in steps of 16 pixels, as on the 1.20.4 line (`ba64232a`,
@@ -2132,6 +2147,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     so the call stays and draws the one background, and every screen of the mod extends
     `AAScreen`. The switch `hideEnergyOverlay` came with source change 6.
     Savegame: none. New ids: none.
+    In the client test of source change 65, at the GUI scale 2 of an 854 by 480 window, a Fluid
+    Collector that had taken one bucket from a water source drew the water in the blue of its tint
+    (pixel colour 71, 98, 151), and the Coal Generator screen drew its one background with the
+    energy bar. Not tested: the GUI scale 4, the charge text next to the look at overlay and the
+    hotbar under the overlays.
 67. Lang files: the base labelled 131 names `(wip)`, and the bundles before this change dropped the
     label wherever their feature works. The rest goes here, as the 1.20.4 line did it in `8a16143e`,
     `f5e37362`, `06ef7146` and `9d76fad7`: the Black Quartz Ore, the Wood Casing, the Solidified
@@ -2165,6 +2185,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `e408eb94`, the drill core of `154add17`, the firework box of `41e85391`, the items of
     `5a9f7d91` and the Vertical Digger name (source change 23).
     Savegame: none. New ids: none.
+    A check of the Java sources (`bp2/actuallyadditions/ui-tools/keycheck.py`) found every literal
+    translation key of the code in `en_us.json`, apart from the vanilla `container.crafting`. The
+    file keeps 17 names with `(WIP)`, two of them craftable: the Wings Of The Bats and the Storage
+    Crate Keeper, whose features do not work on the fork. Not tested: the Chinese translation in
+    game.
 68. Garden Cloche: canola, coffee, flax and rice grow in the Garden Cloche of Immersive Engineering,
     as on `main` since `e63376b0` and `645dbb2d` (changelog 1.3.7 and 1.3.8). The four recipes
     `compat/cloche_canola`, `compat/cloche_coffee`, `compat/cloche_flax` and `compat/cloche_rice`
@@ -2178,9 +2203,15 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     dependency on Immersive Engineering. The crop blocks extend `CropBlock`, which the crop
     renderer of Immersive Engineering 10.2 needs for their age.
     Savegame: none. New ids: none (four recipes).
+    The second server of the test of source change 65 parsed the four files without an error. On
+    the first one, without Immersive Engineering, their condition skipped them without a log line.
+    Not tested: a crop growing in a cloche and the cloche category of JEI, since the dev client has
+    no Immersive Engineering.
 69. Mekanism crusher: the Crusher of Mekanism turns a black quartz block into a smooth black quartz
     block, next to the smelting recipe of source change 10, as `40012ae3` (#1501) adds it. The
     recipe `compat/mekanism/smooth_black_quartz_block_from_crushing` has the crushing format of
     Mekanism 10.4 (`input.ingredient` and an `output` item stack) instead of the 1.21 form of
     `main`, and the condition `forge:mod_loaded` `mekanism`, which `main` leaves out.
     Savegame: none. New ids: none (one recipe).
+    Both servers of the test of source change 65, with Mekanism 10.4.6 and 10.4.16, loaded the
+    recipe without an error. Not tested: the crusher category of JEI.

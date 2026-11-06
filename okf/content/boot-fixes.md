@@ -37,9 +37,9 @@ with af5860e.
 The pack `skytekx3_fixes` exists only inside the world, at `world/datapacks/skytekx3_fixes/`. It has no
 source folder, and `tools/sync_skylands_datapack.sh` does not touch it. Since 3c2662e `tools/build_mrpack.py` ships it in
 the `.mrpack` next to the two Skylands packs. Git ignores `world/`, but the pack was force added, so it
-is tracked: 9,799 files, 9,798 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
-fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,662 are
-[gameplay overrides](#gameplay-overrides), 9,527 of them the generated recipes of [melting](melting.md).
+is tracked: 9,798 files, 9,797 data files plus `pack.mcmeta` (pack format 15). The table lists the 132 boot
+fixes. Four files add [missing structure pools](#missing-structure-pools), and the other 9,661 are
+[gameplay overrides](#gameplay-overrides), 9,526 of them the generated recipes of [melting](melting.md).
 
 | Override | Count | What it replaces |
 |---|---:|---|
@@ -191,7 +191,7 @@ Eleven groups of files in the pack change the game on purpose:
   log names one of the files. The three files of Forbidden & Arcanus went live at 17:39:10 with another
   `/reload`, after which KubeJS counted 37,023 recipes and the log had no new ERROR line. Nobody melted
   one in game yet.
-- 9,527 generated melting recipes under `data/skytekx3/recipes/melting/` let every armor piece, weapon,
+- 9,526 generated melting recipes under `data/skytekx3/recipes/melting/` let every armor piece, weapon,
   tool and other item that holds a meltable material melt since 2026-11-05, as the owner asked on
   2026-11-04 at 17:35. The script `tools/gen_melting.py` writes them from a dump of a test server, one per
   item with the content of its cheapest recipe, and audits every melting recipe of the pack for dupes. With

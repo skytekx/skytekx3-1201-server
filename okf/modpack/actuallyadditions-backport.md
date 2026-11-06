@@ -45,7 +45,7 @@ the hand overs collect in the workflow scratchpad (`bp2/actuallyadditions/carryo
 | Integrations | Patchouli 85 (`modrinth.index.json:2169`), Curios 5.14.1 (`modrinth.index.json:1014`), JEI 15.74.0.233 (`modrinth.index.json:1584`) and EMI 1.1.24-skytekx.2 from `local-mods/`, all optional |
 | Dependents | None. Of the 264 `mods.toml` files in the Arclight pack boot copy of the workflow scratchpad (`packboot-arclight/mods/`), none names `actuallyadditions` (scan of 2026-11-05) |
 
-## Status on 2026-11-05
+## Status on 2026-11-06
 
 The vendored base (1e786de), the reproducible Java 17 build of 1.1.52-skytekx.1 (1eccbee) and the
 license and notice files in the jar (a6bcde1) are on the branch
@@ -94,13 +94,32 @@ yet. This bundle makes the phantom placer and breaker, the Atomic Reconstructor 
 Digger craftable before the Arclight hardening gives them a fake player that Bukkit sees, so no jar
 of this state may reach the live server.
 
+The server safety bundle is done. Its four commits are ebfb95b (client classes out of common
+code), 147d182 (the packet checks), 95c3289 (the drill, filter and firework menus) and 1f3efa5
+(the player data sync), with the review fix 3576f4c (`UPSTREAM.md`, source changes 13 to 17). The
+review found that one valid number packet still crashed the server through the Firework Box,
+whose type chances and Value Play reached `Weight.of` and `Mth.nextInt` unchecked and were saved,
+so the box now clamps every number on receipt and on load. It also limited the packet WARN lines
+to 20 per sender in 60 seconds. The test mod `aadevtest` (source set `src/devtest`, not in the jar)
+ran against the jar of 3576f4c (SHA-1 `3855717cd50ea85d3e11971532235d93d5e3832f`) on a dedicated
+Forge 47.4.18 server and on the pack's Arclight safeiter2. On both the 15 crafted packets and the
+negative XP Solidifier button got one WARN each and changed nothing, the Firework Box kept `Play` 5
+and `TypeChance0` 0.0 and fired, the drill and filter screens closed at the slot switch without a
+dupe, every machine screen that opened closed 10 blocks away, the client got its player data, and
+122 of 125 blocks and all 107 items ran with no ERROR line or crash on the server. On Arclight a
+flood of 30 more packets gave 4 WARN lines and one suppression line. The Hopping Item Interface,
+the Ranged Collector and the Advanced Item Laser Relay crash the base and wait for their ports, so
+the harness skips them. The ASM scans of the review fix find client references only in the
+lambdas that `DistExecutor` runs and no server call into a stripped member. Nobody has logged in
+with a stock 1.1.52 client to see the protocol mismatch disconnect.
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`aa-baseline`) | Optional dependencies and pack format 15, removal of the bundled InvTweaks annotations, Patchouli and Curios at compile time, the Mixin setup, the port script, the config of `main`, the datagen baseline and the boot smoke test | 16.5 | Nothing | Done in 1e786de, 1eccbee and a6bcde1 (setup), 4f87826, 274cd3c, 9470a0d, d5023b4 and 5b06e38, review fix b285862 |
-| Server safety (`aa-server-safety`) | Client classes out of common code, packet validation, menu validity with the drill upgrade dupe, player data sync | 18.5 | Baseline | Planned |
+| Server safety (`aa-server-safety`) | Client classes out of common code, packet validation, menu validity with the drill upgrade dupe, player data sync | 18.5 | Baseline | Done in ebfb95b, 147d182, 95c3289 and 1f3efa5, review fix 3576f4c |
 | Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Done in 681664e, c1c79a0, 077c3cd and d4d05a7, review fix 655b320 |
 | Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Planned |
 | Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Planned |
@@ -194,9 +213,14 @@ decide. Nothing in the pack depends on the version, see the property table.
   (`mod/network/PacketHandler.java:92-171`), so any client can press buttons on any machine as any
   player and load chunks. The handler list serves both directions (`PacketHandler.java:195-203`), so
   a client can also send the index of a client handler. The fix keeps the channel and its NBT
-  format, uses only the sender, checks the dimension, a loaded position within 8 blocks or the open
-  menu, adds allow lists per direction and logs a WARN per refused packet. The protocol goes from 4
-  to 5 once (`PacketHandler.java:175`).
+  format, uses only the sender, checks the dimension and a loaded position within 8 blocks, adds
+  allow lists per direction and logs a WARN per refused packet, at most 20 per sender in 60
+  seconds. It does not check that the menu of that machine is open, see
+  [Arclight notes](#arclight-notes). The protocol goes from 4 to 5 once (`PacketHandler.java:175`).
+- The Firework Box clamps every number to the slider ranges of `main` when it arrives and when the
+  box loads. Upstream clamps nothing, and a type chance of minus 1 or a Value Play of 2e9 crashed
+  the tick of the box again after every restart, since the box saves them (review of this bundle,
+  `UPSTREAM.md`, source change 17).
 - The drill screen dupes upgrades on the base. It writes them back into whatever hotbar slot is
   selected when it closes (`mod/inventory/ContainerDrill.java:130-136`, unchanged on `main`), and a
   client can change the slot by packet while the screen is open. The fix remembers the slot and the
@@ -204,6 +228,15 @@ decide. Nothing in the pack depends on the version, see the property table.
 - The client never receives its player data on the base, because the clientbound handler reads the
   sender (`PacketHandler.java:134`), which is null on the client. The fix also stops writing the old
   manual keys `Bookmarks`, `Trials` and `DidTutorial` (c8e90aef) and still reads them.
+- Later bundles build on the shape this bundle leaves. A new overlay such as the `FarmerHud` is a
+  client only `IBlockHud` in `mod/blocks/blockhuds/`, and the `ClientEvents` constructor registers
+  it with `BlockHuds.register`, because `IHudDisplay` is an empty marker without upstream's
+  `getHud()`. The lava factory and phantom overlay fixes go into their existing HUD classes. New
+  serverbound handlers such as the hotkey and the Item Tag go at the end of `PacketHandler.init`
+  through `addServerbound`, clientbound ones through `addClientbound`, with no further protocol
+  bump. The helper `PacketHandlerHelper` is split into the client only `PacketHelperClient` and
+  `PacketHelperServer`, the laser relays return their display strings as Components, and the class
+  `StringUtil` is client only.
 
 ### Data core
 
@@ -483,6 +516,11 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   `@Overwrite`.
 - The sacks pick up items in Forge's `EntityItemPickupEvent`. Whether Arclight posts the Bukkit
   pickup event before or after it is not verified yet.
+- The screen packets reach any machine within 8 blocks of the sender, whether or not its menu is
+  open. A claim plugin that cancels the right click never sees them, so a player could toggle
+  machines in a foreign claim. The pack has no claim plugin or mod today. If one is added, the
+  check in `PacketHandler.guiTarget` should also require that `player.containerMenu` belongs to
+  that machine (review of the server safety bundle).
 
 ## Local divergences
 

@@ -61,15 +61,15 @@ evidence and the page with the details. The rulings behind the first section are
   pushed it to master on GitHub. On 2026-11-05 the owner was offered three ways: keep the jar out of
   git and fetch it at build time (A, the recommended default), go back to the Modrinth builds 2.0.84
   and 2.1.45 and lose the 13 builds of fixes with the new port (B), or ask the author to allow the
-  copy in the repository (C). The owner answered "continue" (owner's prompt of 2026-11-05, its clock
-  time is not recorded here), so A was taken on 2026-11-06. Git now tracks only the pointer
-  `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, `tools/build_mrpack.py` fetches CurseForge
-  file 7344725 at build time and checks its size and SHA-1, and the record says OK, see
-  [Publish](modpack/publish.md#what-blocks-a-release). B and C stay possible later. B takes both
-  mods, because Extreme Reactors 2.0.97, whose MIT jar may stay in git in any case, needs ZeroCore
-  2.1.48 or newer. A grant from the author under C would let the jar come back into git. Still open:
-  the unpushed commits that tracked the jar have to be rewritten without it before any push. The
-  rewrite is done when
+  copy in the repository (C). The answer was the owner's prompt "continue" after the offer of
+  2026-11-05, date and time not verified, so A, the recommended default, was taken on 2026-11-06.
+  Git now tracks only the pointer `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`,
+  `tools/build_mrpack.py` fetches CurseForge file 7344725 at build time and checks its size and
+  SHA-1, and the record says OK, see [Publish](modpack/publish.md#what-blocks-a-release). B and C
+  stay possible later. B takes both mods, because Extreme Reactors 2.0.97, whose MIT jar may stay in
+  git in any case, needs ZeroCore 2.1.48 or newer. A grant from the author under C would let the jar
+  come back into git. Still open: the unpushed commits that tracked the jar have to be rewritten
+  without it before any push. The rewrite is done when
   `git log --oneline --find-object=f94d426ce1c02a3d3cbb16ddaf09db424c5435ae HEAD` prints nothing,
   and until then the build and the upload refuse. Removing the jar after a push would mean another
   history rewrite and a force push.

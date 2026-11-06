@@ -1012,8 +1012,8 @@ logs stay on the Mac and are not in the repo.
 ## 2026-11-06: ZeroCore 2 leaves git
 
 - ZeroCore 2.1.48 is All Rights Reserved, and its author allows it in a modpack but forbids reposts
-  on other websites. Its first bundling had put the jar into git in `local-mods/`, so a push would
-  have served it from GitHub. Offered three ways on 2026-11-05, keeping the jar out of git (A),
+  on other websites. Its first bundling had put the jar into local commits in `local-mods/`, so a
+  push would have served it from GitHub. Offered three ways on 2026-11-05, keeping the jar out of git (A),
   going back to the Modrinth builds (B) or asking the author (C), the owner answered "continue", so
   A was taken as the recommended default. B and C stay possible later, see
   [Open items](open-items.md#owner-decisions).
@@ -1026,9 +1026,12 @@ logs stay on the Mac and are not in the repo.
   [Tools](modpack/tools.md#pointed-jars).
 - Test builds of the branch before and after the change held the same 1,063 entries with the same
   content. A wrong SHA-1, a wrong size and an unreachable URL in the pointer each refused the build.
-- No pushed commit ever held the jar, since it came into git after 5947d4e, the tip of the remote
-  branch. The unpushed commits that tracked it are rewritten without it before any push. Since the
-  review of the same day the build and the upload refuse while any commit reachable from HEAD holds
+- No pushed commit ever held the jar, since it came into local commits after 5947d4e, the tip of the
+  remote branch. Before the first push, a history rewrite put the pointer in place of the jar in
+  every local commit and gave each a new id, and the follow-up a2034dc rebuilt the sources zip of
+  Mekanism: Extra Modules from its renamed commit, so its record matches the file again. After the
+  rewrite `git log --find-object` with the blob id of the jar printed nothing. Since the review of
+  the same day the build and the upload refuse while any commit reachable from HEAD holds
   the jar at any path, the fetch script writes into the tree only where git ignores the path, and
   AGENTS.md asks for `git log --find-object` before every push, see
   [Publish](modpack/publish.md#release-steps).

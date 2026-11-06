@@ -38,7 +38,7 @@ scripts with 0 errors and 0 warnings (`logs/kubejs/server.log:15`). The boot of 
 | Script | What it does |
 |---|---|
 | Recipe fixes, `recipe_fixes.js` | Adds two recipes, removes Thermal Extra's iron rod, makes five recipes give the preferred item and gives the Chaotic Shield Capacity of Draconic Evolution its Awakened Core, the rest is commented out |
-| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags, lets every sulfur dust count as yellow dye, puts the Draconic Evolution tools into the vanilla tool tags and links the salt, juice and jelly tags of Expanded Delight, Pam's Food Core and Mekanism |
+| Tag fixes, `tag_fixes.js` | Mends tags of Ad Astra, Twilight's Flavors & Delight and the Twilight Forest backport, keeps yellorium out of the uranium tags, lets every sulfur dust count as yellow dye, puts the Draconic Evolution tools into the vanilla tool tags and links the salt, juice and jelly tags of Expanded Delight, Pam's Food Core and Mekanism, with the salt of Medieval Embroidery |
 | Gameplay, `gameplay.js` | Nothing yet, every line is a comment |
 | Combat, `combat_1_7.js` | Removes the attack cooldown, see [combat](../content/combat.md) |
 | Apotheosis riders, `apotheosis_riders.js` | Puts the riders of Apotheosis bosses on their mounts and adds the wither cloud of the Withering Archer to the level, see [Apotheosis riders](#apotheosis-riders) |
@@ -152,6 +152,12 @@ To refresh the skip lists after a mod change, run the dump again: a temporary sc
 `kubejs reload server_scripts` and deleted right after. Without a refresh, a wood that later gains its
 own item still works, Polymorph then offers both results.
 
+Expanded Delight brings cinnamon planks with a door, trapdoor, fence, fence gate, sign, slab, stairs,
+pressure plate, button and boat of their own, so the unify audit of the merged tree on 2026-11-06 found
+ten grids that a fallback shared with a cinnamon recipe. Since 506781f the cinnamon planks sit in those
+ten skip tags, and the audit of the next test boot found none of them. Chest and ladder still come from
+the fallback, since the mod has neither.
+
 ### Twilight Delight recipes
 
 Twilight's Flavors & Delight ships 2.2.8 for 1.20.1 and 3.2.9 for 1.21.1 with the same changelog. The
@@ -207,6 +213,15 @@ commit 4d360c95 on the 1.21 branch of Draconic Evolution. Like the recipe above 
 jar of SkyTekx DE Fixes, see [Draconic Evolution fixes](draconic-fixes.md#license). The block runs only
 with Draconic Evolution loaded. A test server with Draconic Evolution and KubeJS found every tool and
 both staffs in their tags on 2026-11-05 and loaded the script with 0 errors.
+
+Since 2026-11-05 it links the salt, juice and jelly tags of Expanded Delight, Pam's Food Core and
+Mekanism, so each salt, juice and jelly fits the recipes of the other mods, see
+[Expanded Delight port](expandeddelight-port.md#pack-fit). Since 2026-11-06 it also puts the salt of
+Medieval Embroidery into `forge:dusts/salt` when that mod is loaded (3891eb8). That salt sat in no tag,
+and the 14 recipes of the mod named it directly. In the tag it becomes a variant of the Mekanism salt,
+so a Forge test boot of the merged tree at 21:14 showed all 14 recipes taking the four salts and the
+salt ore block of the mod giving nine Mekanism salt, see
+[AlmostUnified](almostunified.md#audit-of-the-merged-mod-set).
 
 ### Apotheosis riders
 

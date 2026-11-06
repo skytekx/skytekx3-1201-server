@@ -6,6 +6,7 @@ import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -31,8 +32,10 @@ public class TargetNBTIngredient extends Ingredient {
     public static TargetNBTIngredient of(ItemStack itemStack) {
         return new TargetNBTIngredient(Stream.of(new ItemValue(itemStack)));
     }
+    // SkyTekx: typed as on upstream e0a8eed3. With the raw TagKey, javac bound a call with a
+    // TagKey<Item> to the more specific Ingredient.of(TagKey<Item>), which writes a plain tag ingredient
     @Nonnull
-    public static TargetNBTIngredient of(@Nonnull TagKey tag) {
+    public static TargetNBTIngredient of(@Nonnull TagKey<Item> tag) {
         return new TargetNBTIngredient(Stream.of(new TagValue(tag)));
     }
 

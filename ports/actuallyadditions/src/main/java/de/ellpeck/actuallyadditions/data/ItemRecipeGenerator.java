@@ -1,6 +1,7 @@
 package de.ellpeck.actuallyadditions.data;
 
 import com.google.gson.JsonObject;
+import de.ellpeck.actuallyadditions.api.ActuallyTags;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.config.conditions.BoolConfigCondition;
@@ -19,6 +20,7 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -235,7 +237,7 @@ public class ItemRecipeGenerator extends RecipeProvider {
                 .define('C', ActuallyItems.ADVANCED_COIL.get())
                 .save(consumer);
 
-        //Drill //TODO the rest of the coloring recipes
+        //Drill
         Recipe.shaped(ActuallyItems.DRILL_MAIN.get())
             .pattern("DDD")
             .pattern("CRC")
@@ -244,6 +246,24 @@ public class ItemRecipeGenerator extends RecipeProvider {
             .define('C', ActuallyItems.ADVANCED_COIL.get())
             .define('R', ActuallyItems.DRILL_CORE.get())
             .define('I', ActuallyItems.ENORI_CRYSTAL.get()).save(consumer);
+
+        // Drill Colors (upstream e0a8eed3 and db9095e0, #1459)
+        dyeDrill(ActuallyItems.DRILL_BLACK, Tags.Items.DYES_BLACK, consumer);
+        dyeDrill(ActuallyItems.DRILL_RED, Tags.Items.DYES_RED, consumer);
+        dyeDrill(ActuallyItems.DRILL_GREEN, Tags.Items.DYES_GREEN, consumer);
+        dyeDrill(ActuallyItems.DRILL_BROWN, Tags.Items.DYES_BROWN, consumer);
+        dyeDrill(ActuallyItems.DRILL_BLUE, Tags.Items.DYES_BLUE, consumer);
+        dyeDrill(ActuallyItems.DRILL_PURPLE, Tags.Items.DYES_PURPLE, consumer);
+        dyeDrill(ActuallyItems.DRILL_CYAN, Tags.Items.DYES_CYAN, consumer);
+        dyeDrill(ActuallyItems.DRILL_LIGHT_GRAY, Tags.Items.DYES_LIGHT_GRAY, consumer);
+        dyeDrill(ActuallyItems.DRILL_GRAY, Tags.Items.DYES_GRAY, consumer);
+        dyeDrill(ActuallyItems.DRILL_PINK, Tags.Items.DYES_PINK, consumer);
+        dyeDrill(ActuallyItems.DRILL_LIME, Tags.Items.DYES_LIME, consumer);
+        dyeDrill(ActuallyItems.DRILL_YELLOW, Tags.Items.DYES_YELLOW, consumer);
+        dyeDrill(ActuallyItems.DRILL_MAIN, Tags.Items.DYES_LIGHT_BLUE, consumer);
+        dyeDrill(ActuallyItems.DRILL_ORANGE, Tags.Items.DYES_ORANGE, consumer);
+        dyeDrill(ActuallyItems.DRILL_WHITE, Tags.Items.DYES_WHITE, consumer);
+        dyeDrill(ActuallyItems.DRILL_MAGENTA, Tags.Items.DYES_MAGENTA, consumer);
 
         //Drill Core
         Recipe.shaped(ActuallyItems.DRILL_CORE.get())
@@ -627,6 +647,13 @@ public class ItemRecipeGenerator extends RecipeProvider {
         addPaxel(consumer, ActuallyItems.DIAMOND_AIOT, Items.DIAMOND_AXE, Items.DIAMOND_PICKAXE, Items.DIAMOND_SWORD, Items.DIAMOND_SHOVEL, Items.DIAMOND_HOE);
         addPaxel(consumer, ActuallyItems.NETHERITE_AIOT, Items.NETHERITE_AXE, Items.NETHERITE_PICKAXE, Items.NETHERITE_SWORD, Items.NETHERITE_SHOVEL, Items.NETHERITE_HOE);
 }
+
+    private static void dyeDrill(RegistryObject<Item> result, TagKey<Item> dyeItem, Consumer<FinishedRecipe> consumer) {
+        Recipe.shapeless(result.get())
+                .requires(TargetNBTIngredient.of(ActuallyTags.Items.DRILLS))
+                .requires(dyeItem)
+                .save(WrappedRecipe.Inject(consumer, ActuallyRecipes.KEEP_DATA_SHAPELESS_RECIPE.get()), new ResourceLocation(ActuallyAdditions.MODID, "drill_coloring/dye_" + ForgeRegistries.ITEMS.getKey(result.get()).getPath()));
+    }
 
     public static void addPaxel(Consumer<FinishedRecipe> consumer, RegistryObject<Item> output, Item axe, Item pickaxe, Item sword, Item shovel, Item hoe) {
         Recipe.shapeless(output.get())

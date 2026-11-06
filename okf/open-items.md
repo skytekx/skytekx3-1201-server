@@ -3,6 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
+timestamp: 2026-11-06
 timestamp: 2026-11-05
 ---
 
@@ -306,27 +307,29 @@ evidence and the page with the details. The rulings behind the first section are
   [Draconic Evolution fixes](modpack/draconic-fixes.md#license). With a grant, for example in an issue
   on Draconic-Inc/Draconic-Evolution, that fix could come back. Record the grant and its link in
   `modrinth-permissions/skytekx_defixes-1.0.0.jar.md`.
-- Bygone Nether in play. Forge and Arclight test servers generated its structures with their mobs and
-  blocks in the Nether, but nobody has seen the natural spawns inside the structures, which need a
-  player close by, rescued a Piglin Prisoner, used the Gilded Netherite Shield or seen the mobs in a
-  client. The test servers only carried the pack mods that it touches. The full pack has not booted
-  with it, so Deep Aether, L2Complements, Dungeons Arise and the rest of the Nether content never ran
-  next to it, and nobody has checked its soul stone biome modifier against all the Nether biome
-  modifiers of the pack for a feature order cycle. Before 3.1.3 ships, the full pack Arclight boot of
-  the integration should run a short Nether pregen and be checked against the error baseline and for
-  a line "Feature order cycle". A scan of all pack jars in the review of 2026-11-05 found no other
-  mixin on the methods of `PiglinAi`, `PiglinBruteAi`, `Player.disableShield`, `BasaltColumnsFeature`
-  or `DeltaFeature` that the mod targets. Its basalt check runs since the fixes pack carries its
-  structure tag (1e25cdf), see [Mod set](modpack/mod-set.md#mixins-and-arclight). The
-  deploy has to move the fixes pack to the end of the pack order once, or the repaired Quark tag fails
-  again, see [Mod set](modpack/mod-set.md#deploy).
-- Create: Integrated Farming with the full pack and in a client. Plain Forge test servers ran its
-  machines, roosts, nets and integrations, and a minimal Arclight copy with the hardened
-  `arclight.jar` reached `Done` with no failed mixin, Create: Dragons Plus's mixins into `ServerPlayer`
-  and five more vanilla classes included. Nobody booted the full pack with the two mods, on Forge or on
-  Arclight, so their mixins never met those of the other pack mods and the Aether part of Create:
-  Dragons Plus never ran. No client has opened the Ponder scenes or the JEI category Roosting or seen
-  the renderers. See [Create Integrated Farming port](modpack/createintegratedfarming-port.md#integration-tests).
+- Bygone Nether in play. Forge and Arclight test servers generated its structures with their mobs
+  and blocks in the Nether, but nobody has seen the natural spawns inside the structures, which need
+  a player close by, rescued a Piglin Prisoner, used the Gilded Netherite Shield or seen the mobs in
+  a client. The full pack booted with it on Forge and on Arclight on 2026-11-06 with the error
+  baseline of the test copies, and the Arclight repeat generated 36 Nether chunks without a line
+  "Feature order cycle", see [NeoForge
+  ports](modpack/neoforge-ports.md#full-pack-boots-of-2026-11-06). A Nether pregen of the size that
+  players explore, next to Deep Aether, L2Complements, Dungeons Arise and the rest of the Nether
+  content in play, is still open. A scan of all pack jars in the review of 2026-11-05 found no other
+  mixin on the methods of `PiglinAi`, `PiglinBruteAi`, `Player.disableShield`,
+  `BasaltColumnsFeature` or `DeltaFeature` that the mod targets. Its basalt check runs since the
+  fixes pack carries its structure tag (1e25cdf), see [Mod
+  set](modpack/mod-set.md#mixins-and-arclight). The deploy has to move the fixes pack to the end of
+  the pack order once, or the repaired Quark tag fails again, see [Mod
+  set](modpack/mod-set.md#deploy).
+- Create: Integrated Farming in a client. Plain Forge test servers ran its machines, roosts, nets
+  and integrations, and a minimal Arclight copy with the hardened `arclight.jar` reached `Done` with
+  no failed mixin, Create: Dragons Plus's mixins into `ServerPlayer` and five more vanilla classes
+  included. The full pack booted with the two mods on Forge and on Arclight on 2026-11-06 and
+  applied all their mixins that have a target in the pack, the Aether mixins of Create: Dragons Plus
+  included, see [NeoForge ports](modpack/neoforge-ports.md#status), but no Aether fan recipe has
+  run. No client has opened the Ponder scenes or the JEI category Roosting or seen the renderers.
+  See [Create Integrated Farming port](modpack/createintegratedfarming-port.md#integration-tests).
 - Advanced Loot Info joined the index on 2026-11-04 after one boot of a test server, and no client has
   opened its tabs yet. It runs on the server and in pack 3.1.3 since 2026-11-05. The first client
   should open the loot tabs of a block, a mob and a chest in EMI on the server and note how much longer the join takes with the loot that the server
@@ -410,12 +413,13 @@ evidence and the page with the details. The rulings behind the first section are
   they take every variant of a material was not checked. No chunk generated since 17:33 that day was
   checked for Mekanism tin and lead either, only the loaded config. See
   [AlmostUnified](modpack/almostunified.md#one-item-per-material).
-- Expanded Delight with the full pack and in a client. A plain Forge test server loaded its recipes,
-  items and blocks and ran the juicer, the casks, the crops and the worldgen, and an Arclight copy
-  with the hardened jar and nine mods ran the juicer with 0 ERROR lines, but nobody has booted it with
-  the full pack, opened the juicer screen or its recipe book, seen its JEI categories, its boats,
-  signs and new names, or milked a goat, filled a cask, planted cranberries or stripped a cinnamon log
-  by hand. See [Expanded Delight port](modpack/expandeddelight-port.md#integration-test).
+- Expanded Delight in a client. A plain Forge test server loaded its recipes, items and blocks and
+  ran the juicer, the casks, the crops and the worldgen, and an Arclight copy with the hardened jar
+  and nine mods ran the juicer with 0 ERROR lines, and the full pack booted with it on 2026-11-06
+  (see [NeoForge ports](modpack/neoforge-ports.md#status)), but nobody has opened the juicer screen
+  or its recipe book, seen its JEI categories, its boats, signs and new names, or milked a goat,
+  filled a cask, planted cranberries or stripped a cinnamon log by hand. See [Expanded Delight
+  port](modpack/expandeddelight-port.md#integration-test).
 - 245 of the 7,116 recipes that hide their ingredients have no file to read, mostly AlmostUnified's
   own trackers, Ars Nouveau enchantments and smithing recipes, so whether they take the preferred items
   was not checked. No chunk generated since 17:33 on 2026-11-02 was checked for Mekanism tin and lead

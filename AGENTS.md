@@ -18,7 +18,7 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   full boot test. See
   [Arclight runtime](okf/server/arclight.md#java-17-only).
 - Keep `arclight.jar` pointed at the hardened jar
-  `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, which git tracks together with its patch in
+  `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, which git tracks together with its patch in
   `patches/`. A stock Arclight build brings back the shutdown crash of 2026-06-29.
 - Do not commit secrets or runtime state. Git ignores all of `world/`, and only the three datapacks in
   `world/datapacks/` were force-added, so new files there need `git add -f`. It also ignores

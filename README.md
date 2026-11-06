@@ -19,7 +19,7 @@ skytekx.com does not point at a game server yet.
 |---|---|
 | Minecraft | 1.20.1 |
 | Loader | Forge 47.4.18 inside Arclight, the same build the pack index asks clients for |
-| Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter.jar`, started through the symlink `arclight.jar` |
+| Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, started through the symlink `arclight.jar` |
 | Java | Java 17. The boots that reached `Done` ran Temurin 17.0.19 on the build machine and 17.0.21 on the Mac mini. The one try with Java 21 failed on a missing mod and was never repeated |
 | Plugins | EssentialsX 2.22.0 |
 | Mods | 230 entries in `modrinth.index.json` plus 59 bundled jars (counted 2026-11-06 after the merge of master with SkyTekx Molten). Git holds 58 of them in `local-mods/` and since 2026-11-06 names ZeroCore 2 there by a pointer file, see [Mod set](okf/modpack/mod-set.md) |

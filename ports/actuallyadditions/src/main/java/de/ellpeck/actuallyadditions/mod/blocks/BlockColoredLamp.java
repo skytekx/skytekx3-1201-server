@@ -87,10 +87,13 @@ public class BlockColoredLamp extends BlockBase {
             Block newColor = COLOR_TO_LAMP.get(color).get();
             if (!world.isClientSide) {
                 world.setBlock(pos, newColor.defaultBlockState().setValue(LIT, state.getValue(LIT)), 2);
+                // SkyTekx: take the dye from the hand that used it. Upstream removed one item from
+                // the selected hotbar slot, which lost that item when the dye sat in the off hand
                 if (!player.isCreative()) {
-                    player.getInventory().removeItem(player.getInventory().selected, 1);
+                    stack.shrink(1);
                 }
             }
+            return InteractionResult.sidedSuccess(world.isClientSide);
         }
         return super.use(state, world, pos, player, hand, hit);
     }

@@ -1,0 +1,565 @@
+{
+ "_about": "Items that the porters and integrators of the Actually Additions backport handed on, per bundle, in the order they were written, and what the release aa-ship did with the ones handed to it. Items between two content bundles were picked up by the receiving bundle, whose source changes in ports/actuallyadditions/UPSTREAM.md record them. Every item that names aa-ship carries a release note. The key aa-ship lists the release commits and the checks that stay open after the release. Paths under bp2/ are in the workflow scratchpad and are not in the repo. The plan is in actuallyadditions-backport-inventory.json, the docs in okf/modpack/actuallyadditions-backport.md.",
+ "bundles": {
+  "aa-baseline": [
+   {
+    "item": "aa-filters-sacks/item-tag-filter: add AnvilMixin and ItemCombinerMenuAccessor (6f567725) to actuallyadditions.mixins.json. Keep its refmap key: once a mixin exists the annotation processor writes actuallyadditions.refmap.json and the boot WARN 'Reference map could not be read' goes away. Also the item_tag part of 19afc5f0 (ITEM_TAG in SIMPLE_ITEMS, no separate item_tag model line)."
+   },
+   {
+    "item": "aa-tools/engineer-goggles: add client.MinecraftMixin (3b297993) to the client list of actuallyadditions.mixins.json."
+   },
+   {
+    "item": "aa-processing-machines/generators-misc: TileEntityLeafGenerator still reads ConfigIntValues.LEAF_GENERATOR_*, which are never loaded and so are 0. Switch it to CommonConfig.Machines.LEAF_GENERATOR_* (5182ac8b). The keys exist since config-port."
+   },
+   {
+    "item": "aa-world-machines/breakers-placers-diggers: TileEntityVerticalDigger.isBlacklisted and isMinable iterate ConfigStringListValues.MINER_BLACKLIST and MINER_EXTRA_WHITELIST, whose value is null on the base. That would throw an NPE in the block entity tick once a digger has energy and a minable block. Switch to CommonConfig.Machines.MINER_BLACKLIST and MINER_EXTRA_WHITELIST (17d8dcce). The keys exist."
+   },
+   {
+    "item": "aa-energy-relays/laser-relays: hook CommonConfig.Machines.FLUID_LASER_TRANSFER_RATE into TileEntityLaserRelayFluids (1f78ecc5). The key exists."
+   },
+   {
+    "item": "aa-world-machines/farmer: BlockFarmer and FarmerHud should read CommonConfig.Other.farmerConfigureItem (b66af844). onConfigReload already resolves it."
+   },
+   {
+    "item": "aa-world-content/loot-modifiers and aa-tools/tools-and-misc-items: ItemWingsOfTheBats reads ConfigBoolValues.DO_BAT_DROPS (always false on the base). Use CommonConfig.Other.DO_BAT_DROPS (b9435301). Also remove the DungeonLoot registration on the Forge bus (ActuallyAdditions.java:105, 4a16be41)."
+   },
+   {
+    "item": "aa-world-content/plant-worldgen: read CommonConfig.Worldgen.GENERATE_QUARTZ, CANOLA, FLAX, COFFEE and RICE in the biome modifier (16cd3a69, 2ffe78d6)."
+   },
+   {
+    "item": "aa-assets/retexture-2: the crop stage texture references of 19afc5f0 go with the four-stage crop textures of c0dfed8f. Cutout is already on every crop model. 3ce53350 is done: textures/item/crate_keeper.png is a copy of items_old/item_crate_keeper.png and stays needed when items_old is deleted, until 9cf9601e replaces it."
+   },
+   {
+    "item": "aa-world-content/crops-and-plants: 93242df1 is done in datagen-provider-fixes. The persistent property variants must reuse the cutout crop models."
+   },
+   {
+    "item": "aa-processing-machines/crusher-double-crusher: CrushingRecipe.Result now omits an empty second output (the c1b23b52 form). New crushing datagen can use it directly."
+   },
+   {
+    "item": "aa-data-core/advancements: 50407e95 is a no-op on 1.20.1, because the base already uses the 1.20.1 DisplayInfo."
+   },
+   {
+    "item": "aa-ship/savegame-test: the OLD jar is 237e0fc65275a0204fe7008f144c395207e41205, not c37140ce. A copy and its build recipe are in bp2/actuallyadditions/old-jar/. The 'content parity: upstream 1.3.26 (cd9d9c6) except the exclusions' line goes into UPSTREAM.md and the NOTICE at release.",
+    "release": "Done. The savegame test of the release used 237e0fc6 as OLD (okf/modpack/actuallyadditions-backport.md, Release test)."
+   },
+   {
+    "item": "integrator: okf/modpack/actuallyadditions-backport.md (Status on 2026-11-05 and the Baseline row) still names c37140ce as the OLD jar and lists the baseline as open. Not edited here."
+   },
+   {
+    "item": "aa-assets/retexture-2: BlockStateGenerator reuses the model names x_2 and x_3 for rice, flax and coffee with different textures, and the last write wins (src/generated models/block/rice_2.json uses rice_stage_3, rice_3.json uses rice_stage_5), so the stage 2 and 4 textures never render. Port the BlockStateGenerator part of 19afc5f0 together with its texture renames and regenerate the 16 crop models, which keep minecraft:cutout."
+   },
+   {
+    "item": "aa-ship/release: before release, grep the fork for live readers of ConfigBoolValues, ConfigIntValues and ConfigStringListValues. Every owning feature must have switched its reader to CommonConfig or ClientConfig (review note on CommonConfig of aa-baseline).",
+    "release": "Done in ed177d0. Every owning feature reads CommonConfig or ClientConfig. Two live readers of the 1.12 enums are left, the spider cobweb drop and the unregistered bat drop listener of ItemWingsOfTheBats, and both read false as on main (UPSTREAM.md, source change 6)."
+   },
+   {
+    "item": "aa-ship/savegame-test: the branch head jar after the review fix b285862 is SHA-1 342af9c288d7afb676105bf16b1466621edfa516 (4527513 bytes, two clean builds). It differs from the bundle jar ba5e48f8 of the aa-new-arclight boot only in META-INF/mods.toml (a comment). The baseline commits on the branch are 4f87826, 274cd3c, 9470a0d, d5023b4, 5b06e38, b285862 and the docs commit 78f4c1e.",
+    "release": "Done. Superseded by the release jar 227073059543dd3d969cd53a15f1fd42a38985cb of ed177d0, which local-mods/ ships since 0ed346b."
+   },
+   {
+    "item": "all AA bundles/port pipeline: the integrator changed bp2/actuallyadditions/tools/aaport.py for the review note. HAND_MARKERS now also flag Java tag keys written as (\"c\", ...), such as new ResourceLocation(\"c\", \"ingots/iron\"), and every recipe JSON line where the \"id\" -> \"item\" rewrite fired is listed in the report as 'id -> item'. Check those report lines by hand: only result stacks should read item. The previous script is kept as aaint/aaport.py.orig in the scratchpad. Tags.* constants whose c: convention changed are not flagged."
+   }
+  ],
+  "aa-data-core": [
+   {
+    "item": "aa-tools/drills: drill dye recipes drill_coloring/dye_* (e0a8eed3, 99ea93eb, db9095e0) need RecipeKeepDataShapeless, which the base lacks"
+   },
+   {
+    "item": "aa-machine-retain/machine-contents: the 17 shapeless reset recipes (a85dcdc0, generateReset)"
+   },
+   {
+    "item": "aa-filters-sacks/item-tag-filter: the item_tag recipe (6f567725), because the item does not exist yet"
+   },
+   {
+    "item": "aa-filters-sacks/crafter-on-a-stick-hotkey-curios: ActuallyTags.Items.CURIOS_CHARM and the curios:charm item tag (b5cb3434)"
+   },
+   {
+    "item": "aa-world-content/banner-patterns: the four pattern recipes and ActuallyTags.BannerPatterns (659779b1)"
+   },
+   {
+    "item": "aa-ui-docs-compat/mekanism-compat: compat/mekanism/smooth_black_quartz_block_from_crushing.json of 40012ae3 (only its smelting recipe is here)"
+   },
+   {
+    "item": "aa-ui-docs-compat/compat cloche recipes: compat/cloche_*.json"
+   },
+   {
+    "item": "aa-tools/tools-and-misc-items: switch Worm.java to ActuallyTags.Blocks.WORM_CAN_POP (e37019a5). The tag and its data already exist"
+   },
+   {
+    "item": "aa-world-machines/atomic-reconstructor-lenses: the MiningLensGenerator part of af8f1f18 (stone and deepslate builders on the new ore replaceable tags, nether builder on forge:ore_bearing_ground/netherrack)"
+   },
+   {
+    "item": "aa-world-machines/fluid-collector-placer: FLUID_PLACER in minecraft:mineable/pickaxe (07c59fb3)"
+   },
+   {
+    "item": "aa-processing-machines/powered-furnace: the Powered Furnace smelting catalyst (ca3f84ef) and the GuiFurnaceDouble click area of 53414c43. The plugin has no registerGuiHandlers yet"
+   },
+   {
+    "item": "aa-processing-machines/coffee-machine-and-coffee: the coffee category (f58948e7), its catalyst and the GuiCoffeeMachine click area of 53414c43"
+   },
+   {
+    "item": "aa-processing-machines/crusher-double-crusher: the crusher category and click areas (1bcf0110)"
+   },
+   {
+    "item": "aa-processing-machines/canola-press-fermenting: the pressing category and the fermenting arrow (0632253a, 62ff6acd)"
+   },
+   {
+    "item": "aa-energy-relays/battery-box-and-energy-items: EnergyInterpreter and registerItemSubtypes (f0184f4d, c86a2905)"
+   },
+   {
+    "item": "aa-processing-machines/coal-generator-burnables: the solid fuel part of 9492973a (only its XP Solidifier part is here)"
+   },
+   {
+    "item": "aa-ship/notice: the NOTICE bullets 'Advancements: every advancement of the Actually Additions tab can be earned' and 'JEI: ... so EMI's recipe tree no longer counts one per craft' describe the shipped jar. Check both at the ship stage. The first holds only once plant-worldgen gives coffee beans, canola, flax and rice a source (pickup_coffee, craft_coffee_machine). The second needs a client test (UPSTREAM.md source change 12 marks it untested)",
+    "release": "Partly done. The advancements bullet holds: every criterion of the tab names a craftable item, the crystals tag or the coffee beans, which the wild coffee of source change 56 gives. The EMI recipe tree part rests on the catalyst change of source change 12 and waits for aa-client-test."
+   },
+   {
+    "item": "aa-ship/client-test: open the fermenting, laser, empowerer and mining lens JEI categories in a client with the pack's JEI 15.74.0.233 and EMI 1.1.24-skytekx.2, check that the EMI recipe tree of an empowered crystal asks for no Atomic Reconstructor per craft, and cite the log in UPSTREAM.md source change 12",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ship/pack-wiring: when okf/modpack/mod-set.md gets the Actually Additions row, add that its flax seeds count as flax in the Supplementaries 3.1.44 rope, sack and doormat recipes (forge:crops/flax) and its rice in five Farmer's Delight 1.3.4 cooking recipes (forge:crops/rice), as UPSTREAM.md source change 9 records",
+    "release": "Done. okf/modpack/mod-set.md names the flax seeds in forge:crops/flax and the rice in forge:crops/rice in the entry of the fork."
+   },
+   {
+    "item": "aa-world-content/plant-worldgen (optional, review note of aa-data-core): forge:gems/black_quartz and the thirteen forge:storage_blocks/<name> tags are not in the Forge 47 parents forge:gems and forge:storage_blocks (main has no c: parents either). Add them with the block side in ItemTagsGenerator and BlockTagsGenerator only if a reader in the pack needs them, then rerun runData"
+   },
+   {
+    "item": "aa-server-safety integrator: UPSTREAM.md source changes 9 to 12 are taken by aa-data-core (a8635f9 rewrote 9, 11 and 12). Renumber the server safety items from 13 when merging"
+   }
+  ],
+  "aa-server-safety": [
+   {
+    "item": "aa-ui-docs-compat/patchouli-booklet: a20c25eb (guard PatchouliPages.init with ModList.isLoaded(\"patchouli\")). PatchouliPages does not exist on the fork yet, so the guard has to land together with it in ActuallyAdditionsClient.setup."
+   },
+   {
+    "item": "aa-filters-sacks/sacks-and-filters: the GuiLaserRelayItemWhitelist part of 3a767e18 (filter widgets, smart buttons, tooltip, buttonClicked through GUI_BUTTON_TO_CONTAINER). It needs the FilterSettingsGui rework. This bundle only ported that screen's Component labels and its title."
+   },
+   {
+    "item": "aa-processing-machines/firework-box: clamp the values in TileEntityFireworkBox.onNumberReceived (packet-hardening point 4). Non-finite numbers are already dropped by packet-hardening. Status after the integration: the review fix of aa-server-safety already clamps onNumberReceived and readSyncableNBT to main's slider ranges (UPSTREAM.md source change 17). Keep those clamps when the screen lands and run the slider test of the spec."
+   },
+   {
+    "item": "aa-processing-machines/xp-solidifier: add buttonID >= 0 at TileEntityXPSolidifier.java:208. The harness shows that -1 throws an AIOOBE, which is now logged as a WARN."
+   },
+   {
+    "item": "aa-filters-sacks/crafter-on-a-stick-hotkey-curios: the Curios compat-class rule from the client-split spec. The base calls no Curios API."
+   },
+   {
+    "item": "packet-hardening test: the clean protocol-mismatch disconnect of a stock 1.1.52 client was not run. It relies on Forge's standard channel version predicates."
+   },
+   {
+    "item": "aa-filters-sacks/sacks-and-filters (review note of aa-server-safety): SackContainer.stillValid still returns true and removed() writes Filter and AutoInsert into whatever stack is selected (SackContainer.java:211-225). Bind the menu to the hotbar slot and stack it opened with, as ContainerDrill and ContainerFilter do (recorded in the inventory spec)."
+   },
+   {
+    "item": "aa-processing-machines/lava-factory, aa-world-machines/farmer and phantomfaces-booster (review note of aa-server-safety): IHudDisplay is an empty marker without getHud(). A new HUD such as FarmerHud is an @OnlyIn(CLIENT) IBlockHud in mod/blocks/blockhuds and needs BlockHuds.register(BlockX.class, new XHud()) in the ClientEvents constructor, or it never shows. HUD fixes go into LavaFactoryControllerHud and PhantomHud."
+   },
+   {
+    "item": "aa-arclight-local (review note of aa-server-safety): GUI_BUTTON_TO_TILE, GUI_NUMBER_TO_TILE and GUI_STRING_TO_TILE accept any reactor within 8 blocks whether or not its menu is open. No claim plugin is in the pack today. If one is added, PacketHandler.guiTarget should also require that player.containerMenu belongs to that tile (okf page, Arclight notes)."
+   },
+   {
+    "item": "aa-energy-relays/item-interfaces, aa-filters-sacks/ranged-collector and aa-filters-sacks/sacks-and-filters: the harness skips actuallyadditions:hopping_item_interface (server tick crash, missing facing property, TileEntityItemInterfaceHopping.java:129, plus the null tag NPE of TileEntityBase.onDataPacket that 26758cb4 fixes), actuallyadditions:ranged_collector (null FilterSettingsGui, adc276e8) and actuallyadditions:laser_relay_item_advanced (GuiLaserRelayItemWhitelist.containerTick on a null filter). Drop each from SKIP of ss-tools/aasafety.sh once its port lands."
+   }
+  ],
+  "aa-assets": [
+   {
+    "item": "aa-tools/aiot-tools: the AllInOneTool.useOn axe check part of 6686f1f4 (tmp == SUCCESS instead of tmp != SUCCESS). It is not in voxel-shapes, and the aiot-tools record in ports/actuallyadditions-backport-inventory.json now names it."
+   },
+   {
+    "item": "Fluid collector and placer fixes bundle: the Fluid Placer entry of minecraft:mineable/pickaxe (07c59fb3), the one tag difference to main left after block-sounds-and-harvest."
+   },
+   {
+    "item": "Banner patterns feature (659779b1): the four banner pattern item textures, held back from retexture-2."
+   },
+   {
+    "item": "Item Tag filter feature (79b2084e): item_tag.png, held back from retexture-2."
+   }
+  ],
+  "aa-world-machines": [
+   {
+    "item": "aa-tools/drills: the chat line 'Set the slot to place from to N' that ccfb8d16 adds to ItemDrillUpgrade is not ported here, because it is drill content and belongs with b7875a09."
+   },
+   {
+    "item": "aa-tools/tools-and-misc-items: a65dccf9 (#1480) is already ported by the review fix cff2f92 of aa-world-machines. Worm.onHoe returns early for a FakePlayer (b26c47dd) and reads event.getLevel() instead of the nullable player. Build the other worm commits (e37019a5, 159fd67c, 02ca59fe, acb52994) on that and do not port a65dccf9 again."
+   },
+   {
+    "item": "aa-arclight-local/machine-fake-player-and-events: the Phantom Breaker drops and break event are fixed in cff2f92 (drops at the bound block with its block entity, through WorldUtil.fireFakeHarvestEventsForDropChance, fluids skipped). Still open: lens conversions and mining lens block placements post no place event, and fireFakeHarvestEventsForDropChance and WorldUtil.useItemAtSide still use the shared [Minecraft] fake player. The harvest helper restores the item the player held before, and useItemAtSide now returns a copy of the hand stack and empties the hand. The planned AAFakePlayers helper should replace both uses."
+   },
+   {
+    "item": "aa-machine-retain/machine-retain-contents: the Farmer's new Area key is written only for SAVE_TILE and SYNC, never for SAVE_BLOCK. The copy_nbt key list must decide whether Area stays on the item."
+   },
+   {
+    "item": "aa-world-machines/atomic-reconstructor-lenses: the compat mining lens sets for elementsofpower and xycraft are left out because no 1.20.1 Forge jar could be found to check their ids (Modrinth lists neither). The modern_industrialization set is left out for good, since its 1.20.1 builds are Fabric only."
+   },
+   {
+    "item": "aa-ui-docs-compat/lang: main renames the Phantom Booster to 'Range Booster'. This bundle only drops the '(wip)' labels and renames the lang key block.actuallyadditions.miner to block.actuallyadditions.vertical_digger."
+   },
+   {
+    "item": "aa-ship/client-test: nobody has opened a client yet. Still unchecked: the beam particle rendering (beams now spawn only within 8 blocks of either end, AssetUtil.java:223, as on main, where the base's block entity renderer drew the reconstructor beam at any distance), the Greenhouse Glass on the cutout layer and its culling, FarmerHud, PhantomHud wrapping, the Phantom Placer side button and tooltip, the Miner Mode and Reset buttons, and the JEI mining lens category listing only ores of loaded mods. One dev client session: fire a reconstructor, a digger and a laser relay, place Greenhouse Glass, look at a Farmer and a phantomface, click the miner buttons and the Phantom Placer side button.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ship/client-test: add the Farmer's Delight rich soil case to the ship test list. A Farmer with seeds on farmersdelight:rich_soil should till it into rich_soil_farmland (FD 1.3.4 RichSoilBlock.getToolModifiedState, rich_soil is in minecraft:dirt) and plant on it. This was only checked by reading the FD code, never in game.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-energy-relays/particles-and-laser-render (integrator of aa-energy-relays): aa-world-machines (167c868) already ports fb80bf33 and 58b9cbc9: ParticleBeam.LASER_RENDER with the SRC_ALPHA/ONE blend, AssetUtil.renderLaserParticle in place of the broken renderLaser(double...), the int colour createData overload, and spawnLaserWithTimeClient always spawning a particle (337fbfb8). Resolve ParticleBeam.java and AssetUtil.java onto this bundle's version and keep only db1bb6e7, 7fb62cb8, de635bb7 and b3f87a6f on top. The renderLaser(PoseStack, MultiBufferSource, ...) overloads of the relays and the Empowerer are unchanged here."
+   },
+   {
+    "item": "aa-processing-machines (integrator): UPSTREAM.md source changes 23 to 29 belong to aa-world-machines, which merged first (d884a85 to 98711dd, review fix cff2f92 extends 23 to 26). Renumber the processing machines entries from 30. Both bundles touch BlockFireworkBox.use (5ce4f9a7 here changes one return from PASS to SUCCESS), the '(wip)' labels in en_us.json, NOTICE and UPSTREAM.md."
+   },
+   {
+    "item": "aa-arclight-local/phantom-chunk-guard: cff2f92 makes a phantomface remember the block entity it forwards (forwardedTarget) and drop its handlers in getCapability and serverTick when the block entity at the target is another one or isRemoved. On Forge 47 the face's per tick getBlockState refreshes the one tick UNKNOWN ticket of the target chunk, so the target never unloads today and the test (bp2/actuallyadditions/wmint/int1.txt) recreates the target with clone instead. Once the chunk guard lets the target chunk unload, rerun that Energyface test with a real unload and reload, and keep the serverTick identity check behind the guard (it short circuits on isRemoved, so it loads no chunk itself)."
+   }
+  ],
+  "aa-processing-machines": [
+   {
+    "item": "aa-world-machines/phantomfaces-booster: PhantomHud draws its three lines with StringUtil.drawSplitString, whose body is commented out on the base, so the phantom overlay shows nothing. The lava factory port switched its HUD to GuiGraphics.drawWordWrap with Components (6886aca6), the same fix applies to PhantomHud."
+   },
+   {
+    "item": "aa-arclight-local/fake-player-block-events: the Leaf-Eating Generator now works (its config is read since aa-processing-machines/generators-misc) and removes leaves within 7 blocks of itself with level.setBlockAndUpdate and no BreakEvent (TileEntityLeafGenerator.serverTick). Route that removal through the named fake player with a BreakEvent like the breakers, or a claim plugin cannot stop it."
+   },
+   {
+    "item": "aa-ship/savegame-test: a Double Crusher placed with the OLD jar 237e0fc6 saved an actuallyadditions:crusher block entity (the base registered crusher_double as BlockCrusher(false)). It loads with its items but the chunk does not tick it (one WARN 'invalid for ticking'), so the savegame test should place one, check the load and the WARN, and confirm that breaking and placing it again gives a working double crusher. Base coffee cups (plain 64 stack items then) keep their count until split.",
+    "release": "Done. In the savegame test the block entity loaded with its 8 bone meal and logged the WARN \"invalid for ticking\" once. Broken with setblock destroy it dropped itself with BlockEntityTag Energy 5000 and the bone meal, and placed again it became a crusher_double block entity with six slots that crushed bones."
+   },
+   {
+    "item": "aa-ui-docs-compat/manual-patchouli and lang-cleanup: milk in the Coffee Maker is a local feature (the additive recipe key milk, CoffeeIngredientRecipe.MILK_EXTRA_SECONDS 120), and the JEI line jei.actuallyadditions.coffee.extra.milk says +02:00, -1 Level. The manual text should match. The Experience Solidifier menu uses the existing key container.actuallyadditions.xpSolidifier, main's container.actuallyadditions.experienceSolidifier was not added. The crushing recipe id crushing/danedlion keeps upstream's spelling."
+   },
+   {
+    "item": "aa-ship/notice and client test: the bundle was tested on a dedicated Forge 47.4.18 server by console (crushers, coal generator fuels, coffee with milk, feeder comparator, leaf generator, bio reactor facing, powered furnace light). No client has opened the crusher, coffee, pressing or fermenting JEI categories, the click areas, the firework sliders, the XP Solidifier buttons or the energizer armor and off hand slots yet.",
+    "release": "Open for the client part, moved to aa-client-test. The console tests of the bundle stand, and the NOTICE bullets describe the code."
+   },
+   {
+    "item": "aa-ship/client-test: nobody has opened the new screens and JEI parts in a client yet: the crusher, coffee and pressing categories, the fermenting arrow, the click areas, the firework sliders, the XP Solidifier buttons, the energizer and enervator armor and off hand slots, and the bio reactor model in all four facings",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-world-machines/phantomfaces-booster: PhantomHud calls the empty StringUtil.drawSplitString, so its overlay shows nothing. The same drawWordWrap fix as the lava factory applies (this bundle's lava-factory id fixed only LavaFactoryControllerHud)"
+   },
+   {
+    "item": "aa-arclight-local: the Leaf-Eating Generator works now and removes leaves within 7 blocks with setBlockAndUpdate and no BreakEvent. It should go through the named fake player"
+   },
+   {
+    "item": "aa-ship/savegame-test: a Double Crusher placed with the OLD jar keeps a plain crusher block entity that no longer ticks. Check that it loads, logs the WARN, and works again once broken and placed",
+    "release": "Done, see the release note of the first Double Crusher item of this bundle."
+   },
+   {
+    "item": "aa-arclight-local/fake-player-block-events (integrator of aa-processing-machines): the review fix 1205f84 already posts BlockEvent.BreakEvent before the Leaf-Eating Generator takes a leaf and before the Heat Collector removes a lava or magma block, through the new helper WorldUtil.fireFakeBreakEvent with the shared [Minecraft] fake player placed at the machine. A refused leaf moves on to the next shuffled one, up to BREAK_TRIES 8 per cycle, so a generator next to a claim posts up to 8 events every 5 ticks. What is left is to switch that helper (and fireFakeHarvestEventsForDropChance) to the named [ActuallyAdditions] fake player and to check the event cost of BREAK_TRIES on Arclight with a claim plugin. The Heat Collector path was only compiled, not run (it removes a block at random once in 200 after 1000 ticks). Test logs: bp2/actuallyadditions/pmint/new-latest.log and cancel-latest.log (test only canceller mod in pmint/canceller-src)."
+   },
+   {
+    "item": "aa-ship/recipe-serializers (integrator of aa-processing-machines): EmpowererRecipe.Serializer.fromJson (mod/crafting/EmpowererRecipe.java:167, base code) still throws IllegalStateException for a recipe without exactly 4 modifiers. Forge 47 RecipeManager catches only IllegalArgumentException and JsonParseException, so one bad data pack empowering recipe stops a dedicated server at boot, as the crushing serializer did before 1205f84 (bp2/actuallyadditions/pmint/old-console.log shows that failure for crushing). Throw JsonSyntaxException there too.",
+    "release": "Done in 40d0122 (UPSTREAM.md, source change 70). The NEW boot of the savegame test loaded a data pack recipe with three modifiers, logged one ERROR for it and reached Done."
+   },
+   {
+    "item": "aa-ship/config (integrator of aa-processing-machines): leafGeneratorArea is now a radius capped at 1 to 16 with a new comment (1205f84). A config written by an earlier build keeps its value when it is in range, and Forge clamps a value above 16 to 16 when it corrects the file (ForgeConfigSpec.Range.correct). The pack ships no actuallyadditions-common.toml yet, so commit the one the first pack boot writes.",
+    "release": "Done. config/actuallyadditions-common.toml is the file the Arclight pack boot aa-ship-arclight wrote, committed by the release."
+   }
+  ],
+  "aa-energy-relays": [
+   {
+    "item": "aa-ship/client-test (particles-and-laser-render): the lasers, beam and item particles were tested only in the vanilla dev client under Xvfb. They have not been tested with Oculus shader packs and Embeddium.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-arclight-local (laser-relays): the crouching compass click relies on PlayerInteractEvent.RightClickBlock setUseBlock(ALLOW). This was not run on the pack's Arclight."
+   },
+   {
+    "item": "laser-relays: the 9fe3fa1c case (a storage that accepts the simulated transfer but refuses the real one) was not reproduced, so it is checked by code only."
+   },
+   {
+    "item": "battery-box-and-energy-items: invalidation of the battery box LazyOptional toward a cable that caches the capability (for example a Mekanism universal cable) was not tested. The relay to cube and battery removal paths were tested."
+   },
+   {
+    "item": "aa-filters-sacks/sacks-and-filters: f46de7d9 (advanced item relay filter) stays there, as the spec says."
+   },
+   {
+    "item": "aa-server-safety harness: once this bundle is integrated, drop actuallyadditions:hopping_item_interface from the default SKIP of ss-tools/aasafety.sh. It now runs clean. The Ranged Collector and the Advanced Item Laser Relay still need skipping until aa-filters-sacks lands."
+   },
+   {
+    "item": "aa-arclight-local/pack-boot-checks (integrator of aa-energy-relays): add two checks to the Arclight pack boot of the release. A crouching compass click on an item relay must lower its priority (the Forge RightClickBlock useBlock=ALLOW has to survive the Bukkit PlayerInteractEvent bridge of Arclight's ServerPlayerGameMode.useItemOn), and a Hopping Item Interface under a claimed chest must behave as in the dev test. The interface pulls from inventories and item entities without the Bukkit InventoryMoveItemEvent or InventoryPickupItemEvent of a vanilla hopper, like other modded item transport (UPSTREAM.md, source changes 41 and 42). No code change is needed unless a check fails."
+   },
+   {
+    "item": "aa-machine-retain or aa-arclight-local/relay-capabilities (integrator of aa-energy-relays, review note): TileEntityLaserRelayEnergy.getEnergyStorage and TileEntityLaserRelayFluids.getFluidHandler build a new LazyOptional on every call and never invalidate it, the pattern that 6596a8e6 fixed for the Battery Box (decae4e here). A cable that caches the relay capability lets go only through neighbour updates. Keep one LazyOptional per side in a field, invalidate them in invalidateCaps and recreate them in reviveCaps, as TileEntityBatteryBox does now. The base already had this, the bundle does not change it."
+   },
+   {
+    "item": "aa-ship/client-test (integrator of aa-energy-relays): the NOTICE bullet Particles and lasers says the lasers use the shader that upstream chose for shader packs. That rests on the upstream changelog 1.3.9 (db1bb6e7) only. Run the Oculus and Embeddium client check (lasers, reconstructor beam, item particles) before the release and carry the result into UPSTREAM.md source change 44 and the open items.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ship/docs (integrator of aa-energy-relays): the merge renumbered this bundle's source changes to 41 to 44 (laser relays, item interfaces, battery box and energy items, particles and laser render). Source change 44 replaces the position, colour and lightmap form of the beam that source change 27 (world machines, 167c868) first had. Later bundles start at 45.",
+    "release": "Done. The backport page and UPSTREAM.md use the source changes 41 to 44."
+   }
+  ],
+  "aa-machine-retain": [
+   {
+    "item": "aa-arclight-local/relay-capabilities: carryover item 83 (one LazyOptional per side for TileEntityLaserRelayEnergy.getEnergyStorage and TileEntityLaserRelayFluids.getFluidHandler, invalidated in invalidateCaps). The item was handed to 'aa-machine-retain or aa-arclight-local' and is not part of machine-retain-contents, so it is left for aa-arclight-local"
+   },
+   {
+    "item": "aa-world-content (Engineer's House): the house structure that sets StopDrop 1 on every machine is not in the fork yet. This bundle only makes StopDrop machines drop nothing"
+   },
+   {
+    "item": "aa-arclight-local or aa-ship: no test of keeping contents, reset recipes and StopDrop on the pack's Arclight",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "Not reproduced: the stack overflow that c197f653 guards against"
+   }
+  ],
+  "aa-filters-sacks": [
+   {
+    "item": "aa-ui-docs-compat: the Allowlist and Blocklist wording of 66e6123a and moving the literal sack pickup tooltips (main literals) to lang keys. Note that bc5dc448 (respectModInfo2) already landed in sacks-and-filters, so that bundle must not port it again"
+   },
+   {
+    "item": "aa-ship (release test): anvil rename of the Item Tag on the pack's Arclight with EssentialsX present, sack pickup on Arclight (Bukkit pickup events fire after the Forge event, so plugins cannot block sacks), and a client plus server that both lack Curios with the hotkey",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-arclight-local: the sack pickup and void deletion run before the Bukkit PlayerPickupItemEvent and EntityPickupItemEvent, and the Ranged Collector takes item entities without InventoryPickupItemEvent and scans its 13x13x13 area every unpowered tick. Decide whether to post Bukkit visible events or throttle"
+   },
+   {
+    "item": "aa-ship/test harness (carryover 48): with this bundle integrated, the default SKIP of ss-tools/aasafety.sh can be emptied. A run with SKIP empty is clean. The Advanced Item Laser Relay screen did not open in the harness click (it clicks a few ticks after a teleport) and is covered only by the scenario",
+    "release": "Noted. The release ran no aasafety.sh harness."
+   },
+   {
+    "item": "No bundle (upstream gap): emptying a Traveler's Sack into a clicked inventory. Main comments it out with a TODO (Sack.useOn), and the port returns PASS like main"
+   },
+   {
+    "item": "Not tested anywhere: an Item Tag in a laser relay network transfer (the tag matching was tested through the Ranged Collector)"
+   },
+   {
+    "item": "aa-ship/docs (integrator of aa-filters-sacks): the merge renumbered this bundle's source changes from 45 to 48 to 46 to 49 (sacks and filters, Item Tag filter, Ranged Collector, Crafting Table On A Stick), since aa-machine-retain landed first as source change 45. Later bundles start at 50. The commits are b9a294b, 4212a66, f9e4aaf, f83497f and 10edce8, the review fix 0f2d071 and the okf record 6fa0144",
+    "release": "Done. The backport page and UPSTREAM.md use the source changes 46 to 49."
+   },
+   {
+    "item": "aa-ship/docs: okf/modpack/actuallyadditions-backport.md has no status paragraph for aa-machine-retain and its table row still says Planned, although its commits 8510592 and 4439c57 and the review fix ae6a98d are on the branch. The integrator of aa-filters-sacks left that row alone",
+    "release": "Done before the release. The status, scope and bundle table of the backport page describe the machine contents bundle."
+   },
+   {
+    "item": "All later bundles and aa-ship (packet order): DATA_HANDLERS is 0 to 8 of the base, 9 GUI_STRING_TO_CONTAINER_HANDLER, 10 HOTKEY_HANDLER, and any later serverbound or clientbound handler appends after 10. PROTOCOL_VERSION stays 5 because no build with 5 has shipped. Once the first release ships, any change of the handler list or a payload bumps it. aa-tools (worktree 18e3ac8) adds no handler. The devtest index constants still list only 0 to 8",
+    "release": "Holds at the release. PROTOCOL_VERSION 5 ships with this first build, so any later change of the handler list or of a payload bumps it (backport page, Operator notes)."
+   },
+   {
+    "item": "aa-ui-docs-compat or aa-ship: forge:holds_items is empty in the pack (no tags/items/holds_items.json in the 275 jars of packcache/mods or in local-mods), so the sack slots and the sack pickup (both refuse that tag) still take shulker boxes and other sacks. The fsint scenario confirmed a shulker box going into a Traveler's Sack. Either fill the tag in ItemTagsGenerator with the shulker boxes and both sacks (hand write the generated JSON and the tag cache) or record that it stays empty as on main",
+    "release": "Decided at the release: forge:holds_items stays empty, as c:holds_items does on main under NeoForge, so shulker boxes and sacks still go into a sack (backport page, Pack integration)."
+   },
+   {
+    "item": "aa-arclight-local: the sack pickup ignores the ItemEntity target (vanilla checks it in playerTouch only after the Forge EntityItemPickupEvent, and the private field target has no getter on Forge 47.4.0), so a sack takes items dropped for another player. Needs an accessor mixin if wanted. Same on main"
+   },
+   {
+    "item": "aa-arclight-local: only the Ranged Collector and the Advanced Item Laser Relay check player.containerMenu in onButtonPressed (review fix 0f2d071). Every other IButtonReactor tile and the number and string to tile handlers still act without the open menu. A generic check in PacketHandler.guiTarget or GUI_BUTTON_TO_TILE_HANDLER would cover them"
+   },
+   {
+    "item": "Not tested: the menu guard of the Advanced Item Laser Relay buttons (the fsint scenario exercised only the Ranged Collector guard) and the Curios range [5.2.0+1.20.1,) against an older Curios (only 5.14.1 was loaded, javap of the 5.2.0-beta.3 and 5.2.0 API jars gives the bound)"
+   },
+   {
+    "item": "aa-ship (savegame): load a Traveler's Sack of the base jar (filter in the item NBT, empty SackData filter) into the final build and check its items survive and its filter is empty, and repeat the anvil test of UPSTREAM.md source change 47 (Item Tag plus 64 diamonds on the right, then forge:ingotsx after forge:ingots) on the pack's Arclight with EssentialsX",
+    "release": "Done for the savegame part. In the dev client the Traveler's Sack of the base opened with the 7 diamonds, 20 iron ingots and 9 black quartz of its saved data, and the Void Sack showed the cobblestone filter of its stack. The anvil test on the pack Arclight is open, moved to aa-arclight-test."
+   }
+  ],
+  "aa-tools": [
+   {
+    "item": "aa-ship (in-game tests of all four ids, none run here): mine 3x3 and 5x5 with fortune and silk touch, placer augment placing torches from slot 3, the drill screen rejecting speed III without speed II, dyeing a drill and keeping its augments and energy, AIOT mining all tool classes plus till, path and strip with the damage tooltip, hoeing grass with a fake player (Create deployer or Mekanism digital miner) without a crash, water bowl pickup and placing, infrared goggles outlining mobs on a dedicated server for the wearer only, and a two-player check that the other player sees no glow. Only boots, /summon and loot table loading were checked.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-world-content/loot-modifiers: ItemWingsOfTheBats still reads ConfigBoolValues.DO_BAT_DROPS and is never registered on the bus. b9435301 (CommonConfig.Other.DO_BAT_DROPS and the bat loot modifier) and the DungeonLoot removal of 4a16be41 belong there. The bat wing flight tick stays disabled as on main."
+   },
+   {
+    "item": "aa-filters-sacks (integration check): the Sack.useOn part of e08ef13a is not in my commit, because the filters-sacks bundle rewrites Sack.useOn and already drops the player.getItemInHand line."
+   },
+   {
+    "item": "aa-arclight-local: the Handheld Filler fills with world.setBlock and the Bowl of Water's water-loss tick uses destroyBlock and setBlock, both without place events, so claim plugins on Arclight do not see them. The drill's middle block also gets two BreakEvents, one from ServerPlayerGameMode and one from WorldUtil.breakExtraBlock."
+   },
+   {
+    "item": "aa-ui-docs-compat/lang-and-wip-cleanup: the remaining '(wip)' labels. The drill tooltip also keeps main's hardcoded English augment names (getUpgradesString)."
+   },
+   {
+    "item": "aa-arclight-local (status after the integration review fix 23a4668): the filler and Bowl of Water part of the porter's item is done. The filler checks mayInteract and mayUseItemAt and posts EntityPlaceEvent per block with snapshot restore on a cancel, and the bowl posts BreakEvent for the picked up source and for a washed away block and EntityPlaceEvent for the water (UPSTREAM.md source change 52). Still open for aa-arclight-local: the drill center block gets two BreakEvents (ServerPlayerGameMode.destroyBlock and WorldUtil.breakExtraBlock, WorldUtil.java:342), so skip the event for the center block in breakExtraBlock or break the center through the vanilla path, carried together with bb06b24a. In creative breakExtraBlock posts no BreakEvent for the extra blocks, so post them there too. The placer augment passes the drill's hand into the nested ItemStack.useOn, so Arclight's BlockPlaceEvent names the drill as the item in hand."
+   },
+   {
+    "item": "aa-ship (Arclight pack boot of the release): place torches from slot 3 with the drill's placer augment on the pack's Arclight and check that the torches shrink and a Bukkit BlockPlaceEvent fires. Run the Handheld Filler and the Bowl of Water (pickup, placing and the waterBowlSpilling tick) inside spawn protection and with a plugin or Forge listener that cancels the place and break events, and check that nothing changes, no item or energy is taken and the client inventory resyncs.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship (Handheld Filler normalization of 23a4668, not tested in game): save a double oak slab, snow with 8 layers and mature wheat with a crouching click, then confirm that the filler places a bottom slab, one snow layer and age 0 wheat, that one item buys one drop's worth, that stairs and logs keep their facing and axis, and that a filler saved by the porter's jar with a multiplied state reads back normalized.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ship (Teleport Staff and goggles review changes of 23a4668, not tested in game): a staff miss while looking more than 5 degrees up does nothing, a miss while looking level or down still jumps with the new cost, and the infrared goggles no longer outline the wearer in third person view while other entities, items included, still glow.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ui-docs-compat: the goggles chapter says the infrared goggles show any entity, which still holds except for the wearer. The staff chapter text.1 (5 degrees upward on a miss) matches the code again since 23a4668 and needs no change. The ActuallyTags comment on the forge tool tags was corrected, the earlier claim that Tinkers' Construct and Mekanism Tools read forge:tools/pickaxes is not backed by their jars (TConstruct 3.12.1 ships none of the four, Mekanism Tools 10.4.16 only paxels)."
+   }
+  ],
+  "aa-world-content": [
+   {
+    "item": "aa-ship (Arclight): nothing in this bundle was tested on the pack's Arclight safeiter2, including right click harvest under claim plugins, village house placement, the loot modifiers and the loom. The harvest posts no Bukkit BlockBreakEvent; only the PlayerInteractEvent that Arclight fires before Block.use guards it.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-world-content/engineer-house-and-villager: the house appeared in none of 5 savanna villages, and it fits rarely in natural villages because the jigsaw algorithm is the same as main's. This was not investigated further."
+   },
+   {
+    "item": "aa-world-content/engineer-house-and-villager: the template pool actuallyadditions:andrew_period_house named in the spec was not created. The jigsaw points to minecraft:empty instead, because a registered empty pool still logs the WARN."
+   },
+   {
+    "item": "aa-assets: the zombie villager Engineer overlay texture (textures/entity/zombie_villager/profession/engineer.png) is missing, as it is on main."
+   },
+   {
+    "item": "aa-processing-machines/aa-assets (optional): the Powered Furnace and the crystal clusters still do not rotate or mirror with structures, as on main."
+   },
+   {
+    "item": "aa-world-content/plant-worldgen (carryover item 37, optional): the forge:gems and forge:storage_blocks parent tags were not added, because no pack reader that needs them was found."
+   },
+   {
+    "item": "aa-world-content tests left open: fortune on the new crop drops, the Tiny Torch light level and collision on a client, doBatDrops and villageAndDungeonLoot turned off, and the visual rendering of patterned banners and shields."
+   },
+   {
+    "item": "aa-world-content (status after the integration review fix a4678ee): the porter's item on the missing zombie villager Engineer overlay is done. textures/entity/zombie_villager/profession/engineer.png is now a byte copy of the villager overlay of main (SHA-1 e243802b), as vanilla 1.20.1 ships one image for both overlays for 11 of its 14 professions. The porter's item on the Powered Furnace and the crystal clusters does not hold: BlockPoweredFurnace extends DirectionalBlock.Container, whose FACING is its HORIZONTAL_FACING and which gets rotate and mirror in 03f016e, and CrystalClusterBlock inherits the rotate of FullyDirectionalBlock (b3bac386). UPSTREAM.md source change 57 says so now. Drop both at the ship stage."
+   },
+   {
+    "item": "aa-ship (review fixes of a4678ee, not tested in game): in a dev client, /summon zombie_villager with VillagerData profession actuallyadditions:engineer and check the overlay. Right click a ripe wild crop (persistent=true) on grass and check that it stays at age 0 with persistent=true after a neighbour update. Add an Engineer trade from a second VillagerTradesEvent listener or a KubeJS script and check that the trades load without an UnsupportedOperationException and keep both sets. The integration smoke boot only showed that the level 1 Engineer offers black quartz and a Laser Wrench (bp2/actuallyadditions/wcint/).",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ship (Arclight, review note of aa-world-content): on the pack's Arclight with EssentialsX loaded, right click a ripe crop and record that only the Bukkit PlayerInteractEvent fires, place and break a banner with one of the four AA patterns, and run a path that rewrites banner meta or a banner block state (Arclight common.jar CraftMetaBanner drops unknown pattern ids, CraftBanner.load builds a Pattern with a null type). Record the result in the Arclight notes of okf/modpack/actuallyadditions-backport.md.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship (loot, review note of aa-world-content): DungeonLootModifier only matches the nine vanilla chest tables through forge:loot_table_id, which sees only the queried top level table. Better Dungeons 4.0.4 and Better Strongholds 4.0.3 ship their own chest tables (data/betterdungeons/loot_tables/, data/betterstrongholds/loot_tables/) that name no vanilla table, and Better Mineshafts 4.0.4 ships none with Disable Vanilla Mineshafts = true (config/bettermineshafts-forge-1_20.toml:5). In a pregenerated copy, open or /loot those chests. Then either add the table ids to the condition list and the doApply switch of GlobalLootModifierGenerator and DungeonLootModifier (owner decision on balance) or keep the okf note that only vanilla structures get the loot.",
+    "release": "Open, an owner decision on balance (backport page, Pack integration). No chest of the three mods was opened in a world."
+   },
+   {
+    "item": "aa-ui-docs-compat (review note of aa-world-content): booklet.actuallyadditions.chapter.banners.text.1 in en_us.json still describes the 1.12 method of putting the item next to the banner in the crafting grid. The patterns now come from the four pattern items (paper plus the Manual, a Drill Core, a Leaf Blower or a Phantom Connector) in the loom. The chapter is not registered on the base (InitBooklet.java:155 is commented out), so reword it when the manual is ported and list it as a SkyTekx text change. Upstream main carries the same stale text."
+   }
+  ],
+  "aa-arclight-local": [
+   {
+    "item": "aa-arclight-local (machine-fake-player-and-events): in game test of the drill 3x3 events, the creative drill events, and a hand break by a real player right after a machine break. These need a client and go to aa-ship.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run. The drill part also needs a client."
+   },
+   {
+    "item": "aa-arclight-local (machine-fake-player-and-events): Vertical Digger and Farmer not run on the test server. The Farmer's harvest and planting, the Fluid Placer and Collector and the Lava Factory still change blocks without block events."
+   },
+   {
+    "item": "aa-arclight-local (machine-fake-player-and-events): per owner fake players would need a new additive owner key on every machine. Left out, open item. With one fixed profile a claim plugin must trust [ActuallyAdditions]."
+   },
+   {
+    "item": "aa-arclight-local (magnet-ring-throttle): in game test with a player (pickup, energy per item, a Bukkit plugin cancelling EntityPickupItemEvent, EssentialsX pickup rules) goes to aa-ship.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-arclight-local (laser-relay-network-index): a profile of a 300 relay network was not taken (spark is not in the test setup). Functional parity, split and restart were tested."
+   },
+   {
+    "item": "aa-arclight-local/relay-capabilities (carryover items 83 and 86): one LazyOptional per side for TileEntityLaserRelayEnergy.getEnergyStorage and TileEntityLaserRelayFluids.getFluidHandler. Not one of the four ids, left open."
+   },
+   {
+    "item": "aa-arclight-local (carryover items 47 and 101): a generic containerMenu check in PacketHandler.guiTarget for the button, number and string to tile packets. Not one of the four ids, left open."
+   },
+   {
+    "item": "aa-arclight-local (carryover items 92 and 100): the sack pickup ignores the ItemEntity target and runs before the Bukkit pickup events, and the Ranged Collector posts no InventoryPickupItemEvent. Not one of the four ids, left open."
+   },
+   {
+    "item": "aa-arclight-local/pack-boot-checks (carryover items 77, 82 and 88): compass crouch click, Hopping Item Interface under a claim, and machine retain on the pack's Arclight boot. These go to aa-ship.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship: the Phantom Energyface flow test with a real unload and reload (carryover item 63) still needs a pipe. The unload itself now works and was tested.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run. It needs a pipe mod next to the face as well."
+   },
+   {
+    "item": "aa-ship (Arclight test of the aa-arclight-local machines, review of aa-arclight-local): run on the pack's Arclight 1.0.6 safeiter2 jar with EssentialsX and the AATest plugin of bp2/actuallyadditions/al-tools (plugin/, mksrv.sh, arcrun.py), with the plugin logging and on request cancelling BlockBreakEvent, BlockPlaceEvent and EntityPickupItemEvent. Steps: (1) mine a 3x3 area with a drill of the 3x3 augment in survival and check exactly one BlockBreakEvent per block, none twice for the middle block, the normal experience of each block, and that a cancel keeps each refused block. (2) The same in creative: every extra block posts its event and a cancel keeps it. (3) Run the Vertical Digger and check its breaks as [ActuallyAdditions] and that a cancel stops them. (4) Run the Farmer with a hoe on dirt and check that the tilling uses [ActuallyAdditions] (harvest and planting post no event, see UPSTREAM.md source change 60). (5) With a Ring of Magnetizing switched on, drop items in range, check the pickup, the energy per item (a stack of 64 costs 3200 CF) and that a cancelled EntityPickupItemEvent keeps the item on the ground. (6) Break a block with a torch on it by a machine, then right away break a block with a torch by hand as a real player and check that both torches and the hand break drops appear normally and that ArclightCaptures.blockBreakEventStack ends empty. (7) With EssentialsX loaded, check whether plugins/Essentials/userdata/ gets a file for 5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd instead of the [Minecraft] UUID, keep it out of git, and check that EssentialsX logs no error for the fake player. UPSTREAM.md source change 60 names this entry next to its Not tested sentence.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship (status after the integration of aa-arclight-local): the porter's relay-capabilities item (carryover items 83 and 86) is done in 3af12a2. TileEntityLaserRelayEnergy and TileEntityLaserRelayFluids keep one LazyOptional per side plus one for the null side, invalidate them in invalidateCaps and make them anew after reviveCaps (UPSTREAM.md source change 64). Not tested in game: place a Mekanism or Ender IO cable next to an energy relay and a pipe next to a fluid relay, break the relay, and check that the cable stops offering energy to it and logs no error, also after the chunk of the relay unloads and reloads.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run. It needs a Mekanism or Ender IO cable next to the relays as well."
+   },
+   {
+    "item": "aa-ship (screen packet menu check, carryover items 47 and 101, status after aa-arclight-local): still open and conditional. PacketHandler.guiTarget accepts any machine within 8 blocks whether or not its menu is open. Add the player.containerMenu check together with the first claim plugin or claim mod in the pack. Nothing is needed while the pack runs EssentialsX only.",
+    "release": "Open and conditional, on okf/open-items.md together with the fake player per owner. Nothing is needed while the pack runs EssentialsX only."
+   },
+   {
+    "item": "aa-ship (sacks and Ranged Collector on Arclight, carryover items 92 and 100, status after aa-arclight-local): still open. The sack pickup runs in Forge EntityItemPickupEvent before the Bukkit PlayerPickupItemEvent and EntityPickupItemEvent and ignores the ItemEntity target, and the Ranged Collector takes item entities without InventoryPickupItemEvent and scans its area every unpowered tick. Record on the pack's Arclight with EssentialsX whether a plugin cancel stops them and decide whether to post Bukkit visible events, add an accessor mixin for the target or throttle the collector.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship (Arclight pack boot checks, carryover items 77, 82 and 88, status after aa-arclight-local): still open. On the pack's Arclight boot of the release check that a crouching compass click lowers the priority of an item relay, that a Hopping Item Interface under a claimed chest behaves as in the dev test, and that machines keep their contents, reset recipes and StopDrop.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship (Phantom Placer, review note of aa-arclight-local): 0f2da0c lets the Phantom Placer also wait for the chunk next to its bound block, where it places. Not tested: a placer bound to a block on a chunk edge with that neighbour chunk unloaded must not load it, and must place again once the chunk is back.",
+    "release": "Open, moved to aa-arclight-test: needs the AATest plugin run with a player on the pack Arclight with EssentialsX, which the release did not run."
+   },
+   {
+    "item": "aa-ship (AAFakePlayers.postBreak, review note of aa-arclight-local, no fix needed now): postBreak discards the whole Arclight capture context its own break event pushed, so a drop that another listener spawns through Block.popResource during that event, and a plugin's BlockBreakEvent setDropItems or setExpToDrop, are lost. The machines take their drops from Block.getDrops and ignore experience, and the old code lost such drops too. If a plugin or listener that spawns drops on BreakEvent is added, spawn the drops of the removed contexts (BlockBreakEventContext.getBlockDrops) at the target instead.",
+    "release": "No fix needed while no plugin or listener spawns drops on BreakEvent (backport page, Arclight notes)."
+   },
+   {
+    "item": "aa-ship (Arclight, other mods, integrator of aa-arclight-local): any pack mod that posts BlockEvent.BreakEvent outside a real player break leaves an ArclightCaptures context behind, so later block drops of the server are swallowed until a player mines a block. Nobody checked the other machine breakers of the pack (okf/open-items.md, Not verified). A short test on the pack's Arclight with the AATest plugin and a torch next to each modded breaker would show it.",
+    "release": "Open, on okf/open-items.md as not verified."
+   }
+  ],
+  "aa-ui-docs-compat": [
+   {
+    "item": "aa-ship: not tested in game by aa-ui-docs-compat: the red chat line of the manual without Patchouli (needs a client and a server without Patchouli), a crop growing in the Garden Cloche of Immersive Engineering 10.2.0-183 and its JEI cloche category, the Mekanism crusher category in JEI for compat/mekanism/smooth_black_quartz_block_from_crushing, the GUI scale 4, the charge text next to the look at energy overlay and the hotbar under the overlays (UPSTREAM.md source changes 65 to 69 list the tests that ran).",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run."
+   },
+   {
+    "item": "aa-ship: forge:holds_items is still empty (carryover item of aa-filters-sacks, offered to aa-ui-docs-compat or aa-ship). aa-ui-docs-compat left it alone: main reads c:holds_items, which NeoForge does not fill either. Decide whether ItemTagsGenerator fills it with the shulker boxes and both sacks (then hand write tags/items/holds_items.json under src/generated/resources/data/forge and its tag cache) or record that it stays empty as on main.",
+    "release": "Decided at the release, see the release note of the forge:holds_items item of aa-filters-sacks."
+   },
+   {
+    "item": "aa-ship: the Patchouli book of source change 65 is hand written in src/main/resources (data/actuallyadditions/patchouli_books/booklet/book.json and assets/actuallyadditions/patchouli_books/booklet/en_us/), not in src/generated, since no provider writes it. The datagen reconcile has nothing to do for it.",
+    "release": "Done. The release ran runData into an empty src/generated/resources, all 1238 files came out unchanged, and the hand written book needs no provider."
+   },
+   {
+    "item": "aa-ship: the Wings Of The Bats and the Storage Crate Keeper keep (WIP) in en_us.json although main's recipes craft them, because the wings tick is switched off (if (false && ...) in ItemWingsOfTheBats, never registered on the event bus) and the keeper is a plain ItemGeneric without crates. Either drop their recipes (a SkyTekx divergence from main) or leave them as main does. The okf page should name both.",
+    "release": "Decided at the release: both keep the recipes and the (WIP) label of main. The backport page names them under Pack integration."
+   },
+   {
+    "item": "aa-ship/okf: carryover items 67 (Coffee Maker milk in the manual), 113 (goggles chapter) and 125 (banners chapter) need no book text: the Patchouli book of main has only the five getting started entries. The unused banners lang text was reworded anyway to the loom patterns (source change 67).",
+    "release": "Done. No book text needed."
+   },
+   {
+    "item": "aa-ship/okf: zh_cn.json is main's file from 871d8414 with the eight banner colour keys renamed to light_gray and light_blue. It still carries main's keys for crate_small, crate_medium, crate_large, container.actuallyadditions.experienceSolidifier and the networking failure lines, which the fork does not use, and lacks the fork only keys (autoInsert tooltips, patchouliMissing, the book name key, the drill augment and placer tooltips), which fall back to English.",
+    "release": "Recorded on the backport page. The fork only keys fall back to English."
+   },
+   {
+    "item": "Not ported because the fork does not need them: 2cef8eb8 (1.20.1 does not draw the background twice); 6da50dfa and d7de3e61 plus parts of bc5dc448 and e125e80e (already on the fork); 764ded58 (TODO comments only in the dead 1.12 booklet API); 654465b3's Patchouli Provider and the PatchouliGenerator (the book is hand written); main's ClocheRecipes generator (it needs Immersive Engineering 12 classes)."
+   },
+   {
+    "item": "aa-ship (testing, integrator of aa-ui-docs-compat): the look at overlays of ClientEvents.onGameOverlay still hang off RenderGuiOverlayEvent.Post of minecraft:portal (upstream f1c7b249). Forge 47 fires Post only when no mod cancelled the Pre of that overlay, so a HUD mod that cancels the portal overlay hides the redstone mode, laser relay, phantom and energy overlays. The integration scanned the 271 jars of the Arclight pack boot copy (packboot-arclight/mods) with bp2/actuallyadditions/uidc-int-tools/portalscan.py and found no class that names RenderGuiOverlayEvent$Pre together with the portal overlay. The 16 client only jars of modrinth.index.json (among them BetterF3, Embeddium, Prism) were not scanned. Either scan them in the ship stage or register a dedicated overlay on the mod bus with RegisterGuiOverlaysEvent.registerBelow(VanillaGuiOverlay.HOTBAR.id(), \"look_at_hud\", ...), client only, and move the body of onGameOverlay into it.",
+    "release": "Done for the scan. The 16 client only jars of modrinth.index.json, downloaded from the Modrinth CDN with matching SHA-1, hold no class that names RenderGuiOverlayEvent$Pre together with the portal overlay (bp2/actuallyadditions/uidc-int-tools/portalscan.py). The overlays stay on the Post event of the portal overlay as on main."
+   },
+   {
+    "item": "aa-ship (testing, integrator of aa-ui-docs-compat): the review fix 1fd242f makes ItemBooklet.useOn return PASS (UPSTREAM.md source change 65). The integration tested it on a dedicated Forge 47.4.18 server with the dev client and the local scenario bp2/actuallyadditions/ui-tools/devtest-uiblock.patch (scenario uiblock, run with SCEN=uiblock ui-tools/uiclient.sh): a click aimed at the floor opened the book, a click aimed at a chest opened the chest, a click into the air opened the book, and the porter's jar ae5284cb with FAIL opened nothing on the floor. Repeat the floor click with the release jar on the pack's Arclight, where ServerPlayerGameMode.useItemOn carries the Bukkit PlayerInteractEvent bridge, and check that a right click with the manual on an Actually Additions machine opens the machine screen, not the book, which is the vanilla order.",
+    "release": "Open, moved to aa-client-test: needs a pack client, which the release did not run. The floor click has to run on the pack Arclight as well."
+   }
+  ]
+ },
+ "aa-ship": {
+  "status": "Released into local-mods/ on 2026-11-06 as ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar, SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb, not yet on the live server",
+  "done": [
+   "savegame-test: OLD 237e0fc6 to NEW 22707305 on a dedicated Forge 47.4.18 server, 49 block entities, 241 items in 33 kinds, four fluids and 130500 energy equal after the NEW load, the expected changes seen (okf page, Release test)",
+   "pack-wiring-and-docs: the jar, the permission record and the license text (0ed346b), the common config of the first pack boot, the README, mod set, open items and backport page, this file and the full inventory",
+   "release fixes: the empowering recipe serializer (40d0122) and the content level of the NOTICE (ed177d0)"
+  ],
+  "open": [
+   {
+    "to": "aa-client-test",
+    "what": "One session of a pack client from the .mrpack on the Arclight test server: the login and the protocol, the JEI and EMI categories (crusher, coffee, pressing, fermenting, laser, empowerer, mining lens, powered furnace, cloche, Mekanism crusher) and the EMI recipe tree of an empowered crystal, the screens of the processing machines and their click areas, the firework sliders, the XP Solidifier buttons, the energizer armor and off hand slots, the Bio Reactor model in four facings, the Greenhouse Glass, the beams, lasers and item particles also with Oculus and Embeddium, the Farmer and phantom overlays, the Phantom Placer side button, the miner buttons, the drill area mining, placer augment, upgrade checks and dyeing, the AIOTs, the Handheld Filler, the Teleport Staff, the goggles in a two player check, the Engineer zombie overlay, the manual without Patchouli and the floor click on Arclight, GUI scale 4 and the charge text of the energy overlay"
+   },
+   {
+    "to": "aa-arclight-test",
+    "what": "The AATest plugin of bp2/actuallyadditions/al-tools with EssentialsX on the pack Arclight: the drill 3x3 and creative events, the Vertical Digger and Farmer events, the magnet ring pickup and its cancel, a hand break right after a machine break, the EssentialsX user file of the fake player, the compass crouch click on an item relay, the Hopping Item Interface under a claim, machine contents and StopDrop, the Item Tag anvil rename, the sack pickup and the Ranged Collector against plugin cancels, the right click harvest, banner patterns, the torches of the placer augment, the Handheld Filler and Bowl of Water under spawn protection, the Phantom Placer at a chunk edge, a Phantom Energyface and the relay capabilities with a pipe or cable over an unload"
+   },
+   {
+    "to": "aa-live-rollout",
+    "what": "Copy the jar into the server mods/ while the java process is gone, boot, check Done with 0 FATAL and the 2 ERROR baseline, then let one pack client join. The world gets the ore, crop patches and Engineer houses only in new chunks"
+   }
+  ]
+ }
+}

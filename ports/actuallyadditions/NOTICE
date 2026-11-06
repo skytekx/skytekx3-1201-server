@@ -179,6 +179,8 @@ Modifications
       cost or in its own screen, and that every filter slot of the mod matches by that tag.
     * Ranged Collector: its screen no longer crashes the client, and its filter buttons work, so
       it picks up items again.
+    * Crafting Table On A Stick: the grid crafts again and gives its items back when it closes,
+      and a key bind opens it from the hands, the inventory or a Curios charm slot.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

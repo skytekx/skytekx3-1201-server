@@ -1379,3 +1379,27 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     change 10. On Arclight the collector takes item entities without the Bukkit
     `InventoryPickupItemEvent` that a vanilla hopper posts, as the Hopping Item Interface of
     source change 42 does. Savegame: the NBT key `Filter` keeps its form and gains `Damage`.
+49. Crafting Table On A Stick: the crafting grid works again (`c4d81aea`). The base opened
+    `CraftingMenu` with `ContainerLevelAccess.NULL`, which runs nothing it is handed, so the grid
+    never showed a result and the items in it were deleted when the menu closed. The menu now
+    has the player's level and position, and its `stillValid` returns `true` as on `main`, since
+    no crafting table stands there. The new key bind `key.actualladditions.crafting_stick_open.desc`
+    (unbound by default, category `key.actuallyadditions.category`, the keys of `main` with its
+    spelling) opens the crafter when it is in either hand, in the 36 slots of the main inventory or
+    in a Curios slot (`b5cb3434`, #1417, changelog 1.3.6). The client registers the key in
+    `RegisterKeyMappingsEvent` and sends it from `TickEvent.ClientTickEvent`, both only on the
+    physical client. The key goes to the server through the new serverbound handler
+    `HOTKEY_HANDLER` (index 10 of `DATA_HANDLERS`, no protocol bump, source change 14), which
+    checks the sender like the screen packets, drops an unknown hotkey with a WARN and opens the
+    crafter only when the player has one. `main` sends its own `HotkeyPacket` payload. Every call
+    into the Curios API sits in the new class `CuriosCompat`, which `hasCrafterOnAStick` only
+    calls while `Util.curiosLoaded` is set (`ModList` at mod construction), so a server without
+    Curios never loads a Curios class. `main` imports `CuriosApi` in the common item class. On
+    Curios 5 for 1.20.1 `CuriosApi.getCuriosInventory` returns a `LazyOptional`, which the compat
+    class resolves before `findFirstCurio`. The item goes into the tag `curios:charm`
+    (`ActuallyTags.Items.CURIOS_CHARM`), and the new data provider `data/Curios.java` writes
+    `data/actuallyadditions/curios/entities/player.json`, which gives players the charm slot in the
+    entity format of Curios 5.14.1 (keys `entities` and `slots`, checked against
+    `CuriosEntityManager` of `curios-forge-5.14.1+1.20.1.jar`). The data generator adds the provider
+    only when Curios is loaded, as in the dev runs. Not tested on Arclight. Savegame: none, the
+    key bind is client only.

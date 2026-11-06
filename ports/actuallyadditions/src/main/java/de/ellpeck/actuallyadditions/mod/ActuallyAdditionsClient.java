@@ -10,6 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.blocks.render.ReconstructorRenderer;
 import de.ellpeck.actuallyadditions.mod.blocks.render.RenderBatteryBox;
@@ -49,10 +50,13 @@ import de.ellpeck.actuallyadditions.mod.inventory.gui.SackGui;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.VoidSackGui;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.misc.special.SpecialRenderInit;
+import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
+import de.ellpeck.actuallyadditions.mod.network.packet.HotkeyPacket;
 import de.ellpeck.actuallyadditions.mod.particle.ActuallyParticles;
 import de.ellpeck.actuallyadditions.mod.particle.ParticleBeam;
 import de.ellpeck.actuallyadditions.mod.particle.ParticleLaserItem;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -65,11 +69,31 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ActuallyAdditionsClient {
+
+    // SkyTekx: the key bind of b5cb3434, unbound by default, with main's translation keys (the first
+    // one keeps main's spelling actualladditions). It opens the Crafting Table On A Stick from
+    // either hand, the main inventory or a Curios slot
+    private static final KeyMapping OPEN_CRAFTING_KEY = new KeyMapping("key.actualladditions.crafting_stick_open.desc", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), "key.actuallyadditions.category");
+
+    public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        event.register(OPEN_CRAFTING_KEY);
+    }
+
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            while (OPEN_CRAFTING_KEY.consumeClick()) {
+                PacketHelperClient.sendHotkeyPacket(HotkeyPacket.HotKey.OPEN_CRAFTING_STICK);
+            }
+        }
+    }
 
     public static void setup(FMLClientSetupEvent event) {
         MenuScreens.register(ActuallyContainers.BAG_CONTAINER.get(), SackGui::new);

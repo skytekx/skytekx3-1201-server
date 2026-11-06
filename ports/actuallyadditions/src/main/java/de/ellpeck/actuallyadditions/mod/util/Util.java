@@ -21,6 +21,10 @@ public final class Util {
     @Deprecated
     public static final int BUCKET = 1000;
 
+    // SkyTekx: whether Curios is loaded (b5cb3434), set by the ActuallyAdditions constructor. Only
+    // with this flag set may code call into CuriosCompat
+    public static boolean curiosLoaded = false;
+
     public static boolean isDevVersion() {
         return ActuallyAdditions.VERSION.equals("@VERSION@");
     }

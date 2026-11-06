@@ -17,6 +17,7 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Set;
@@ -60,6 +61,11 @@ public class ActuallyAdditionsData {
 
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(
                 packOutput, lookupProvider, Set.of(ActuallyAdditions.MODID)));
+
+        // SkyTekx: the Curios slot data of b5cb3434, only with Curios on the classpath
+        if (ModList.get().isLoaded("curios")) {
+            Curios.addTo(generator, packOutput, helper, lookupProvider);
+        }
     }
 
     private static HolderLookup.Provider getProvider() {

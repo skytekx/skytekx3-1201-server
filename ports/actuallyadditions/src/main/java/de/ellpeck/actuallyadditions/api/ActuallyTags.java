@@ -56,6 +56,8 @@ public final class ActuallyTags {
         public static final TagKey<Item> STONE_ORE_REPLACEABLES = tag("stone_ore_replaceables");
         public static final TagKey<Item> DEEPSLATE_ORE_REPLACEABLES = tag("deepslate_ore_replaceables");
         public static final TagKey<Item> LAMPS = tag("lamps");
+        // SkyTekx: the Curios charm slot of b5cb3434, filled with the Crafting Table On A Stick
+        public static final TagKey<Item> CURIOS_CHARM = ItemTags.create(new ResourceLocation("curios", "charm"));
 
         private static TagKey<Item> tag(String name) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(ActuallyAdditions.MODID, name));

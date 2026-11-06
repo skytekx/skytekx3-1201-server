@@ -121,7 +121,9 @@ online. On the Mac mini's world the fixes pack is pack 273 of 295 (read from its
 2026-11-04). The 20 mod packs after it, from Elementary Staffs to GraveStone, belong to mods that no
 override touches, and its boot of 16:05 that day logged no "Couldn't parse element". The first start
 of 3.1.3 on 2026-11-05 put 14 new mod packs after it too, and the two commands moved it to the end at
-00:47, see [Pack order](#pack-order). The fixes pack and the Skylands packs share no file except
+00:47, see [Pack order](#pack-order). The deploy of the next pack after 3.1.3 appends the packs of its
+new mods, Bygone Nether among them, after the fixes pack again, so it has to run both commands once
+after its first start. The fixes pack and the Skylands packs share no file except
 `pack.mcmeta`, so the fixes pack may load after them. After a save, `tools/datapack_order.py
 world/level.dat` prints the file packs and every mod pack that loads after the fixes pack, which should
 be none.

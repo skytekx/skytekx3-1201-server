@@ -2178,3 +2178,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     dependency on Immersive Engineering. The crop blocks extend `CropBlock`, which the crop
     renderer of Immersive Engineering 10.2 needs for their age.
     Savegame: none. New ids: none (four recipes).
+69. Mekanism crusher: the Crusher of Mekanism turns a black quartz block into a smooth black quartz
+    block, next to the smelting recipe of source change 10, as `40012ae3` (#1501) adds it. The
+    recipe `compat/mekanism/smooth_black_quartz_block_from_crushing` has the crushing format of
+    Mekanism 10.4 (`input.ingredient` and an `output` item stack) instead of the 1.21 form of
+    `main`, and the condition `forge:mod_loaded` `mekanism`, which `main` leaves out.
+    Savegame: none. New ids: none (one recipe).

@@ -219,8 +219,8 @@ Mekanism, so each salt, juice and jelly fits the recipes of the other mods, see
 [Expanded Delight port](expandeddelight-port.md#pack-fit). Since 2026-11-06 it also puts the salt of
 Medieval Embroidery into `forge:dusts/salt` when that mod is loaded (6c14f16). That salt sat in no tag,
 and the 14 recipes of the mod named it directly. In the tag it becomes a variant of the Mekanism salt,
-so a Forge test boot of the merged tree at 21:14 showed all 14 recipes taking the four salts and the
-salt ore block of the mod giving nine Mekanism salt, see
+so the unify dump of 21:14 on a Forge test boot of the merged tree showed all 14 recipes taking the four
+salts and the salt ore block of the mod giving nine Mekanism salt, see
 [AlmostUnified](almostunified.md#audit-of-the-merged-mod-set).
 
 ### Apotheosis riders

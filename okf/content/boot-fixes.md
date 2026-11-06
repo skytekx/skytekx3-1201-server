@@ -343,7 +343,7 @@ the two loot tables of ExtendedAE and MEGA Cells that the pack replaces.
 
 ## Jar patches
 
-The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (776
+The script [tools/patch_mods.py](../../tools/patch_mods.py) edits mod jars in `mods/` in place (777
 lines). It finds each jar by a glob next to the script, so the repo path does not matter, and it is
 idempotent: a second run prints `noop` for every jar. Three of the patches change class files. The
 script adds new constants at the end of the constant pool, so every index the class uses keeps its

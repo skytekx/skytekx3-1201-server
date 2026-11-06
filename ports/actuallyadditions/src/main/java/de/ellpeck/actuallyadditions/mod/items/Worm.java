@@ -67,7 +67,10 @@ public class Worm extends ItemBase {
             if (event.getPlayer() instanceof FakePlayer) {
                 return;
             }
-            Level level = event.getPlayer().level();
+            // SkyTekx: the level of the event, as on main, since a tilling without a player has none
+            if (!(event.getLevel() instanceof Level level)) {
+                return;
+            }
 
             if (level.isClientSide || !CommonConfig.Other.WORMS.get() || event.getResult() == Event.Result.DENY)
                 return;

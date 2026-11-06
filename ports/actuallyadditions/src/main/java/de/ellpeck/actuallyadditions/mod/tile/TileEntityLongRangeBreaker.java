@@ -28,10 +28,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -103,7 +105,9 @@ public class TileEntityLongRangeBreaker extends TileEntityInventoryBase implemen
                 BlockPos coordsBlock = this.worldPosition.relative(sideToManipulate, i + 1);
                 BlockState breakState = this.level.getBlockState(coordsBlock);
                 Block blockToBreak = breakState.getBlock();
-                if (blockToBreak != null && !this.level.isEmptyBlock(coordsBlock) && this.level.getBlockState(coordsBlock).getDestroySpeed(this.level, coordsBlock) > -1.0F) {
+                // SkyTekx: water, lava and Forge fluid blocks stay, as at the Breaker. They need no tool, so
+                // the harvest check let the breaker delete every source in its line
+                if (blockToBreak != null && !this.level.isEmptyBlock(coordsBlock) && !(blockToBreak instanceof LiquidBlock) && !(blockToBreak instanceof IFluidBlock) && this.level.getBlockState(coordsBlock).getDestroySpeed(this.level, coordsBlock) > -1.0F) {
                     List<ItemStack> drops = Block.getDrops(breakState, (ServerLevel) this.level, coordsBlock, this.level.getBlockEntity(coordsBlock));
                     float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, this.level, coordsBlock);
 

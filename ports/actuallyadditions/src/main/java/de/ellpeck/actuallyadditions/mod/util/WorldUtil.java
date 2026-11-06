@@ -172,39 +172,43 @@ public final class WorldUtil {
     public static ItemStack useItemAtSide(Direction side, Level level, BlockPos pos, ItemStack stack) {
         if (level instanceof ServerLevel && StackUtil.isValid(stack) && pos != null) {
             BlockPos offsetPos = pos.relative(side);
-            BlockState state = level.getBlockState(offsetPos);
-            // SkyTekx: the replace check of a117dd53, the base hard coded false
-            boolean replaceable = state.canBeReplaced(new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, stack,
-                    new BlockHitResult(new Vec3(0, 0, 0), side, pos, false)
-            ));
-
-            //Redstone
-            if (replaceable && stack.getItem() == Items.REDSTONE) {
-                level.setBlock(offsetPos, Blocks.REDSTONE_WIRE.defaultBlockState(), 2);
-                return StackUtil.shrink(stack, 1);
-            }
-
-            //Plants
-/*            if (replaceable && stack.getItem() instanceof IPlantable) { //TODO
-                if (((IPlantable) stack.getItem()).getPlant(world, offsetPos).getBlock().canPlaceBlockAt(world, offsetPos)) {
-                    if (world.setBlock(offsetPos, ((IPlantable) stack.getItem()).getPlant(world, offsetPos), 2)) {
-                        return StackUtil.shrink(stack, 1);
-                    }
-                }
-            }*/
-
-            //Everything else
+            // SkyTekx: the replace check runs in the try with the fake player in its context, so a modded
+            // canBeReplaced that reads the player of the context cannot crash the tick of the machine
             try {
                 FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) level);
                 if (fake.connection == null) {
                     fake.connection = new NetHandlerSpaghettiServer(fake);
                 }
-                //ItemStack heldBefore = fake.getMainHandItem();
+
+                BlockState state = level.getBlockState(offsetPos);
+                // SkyTekx: the replace check of a117dd53, the base hard coded false
+                boolean replaceable = state.canBeReplaced(new BlockPlaceContext(level, fake, InteractionHand.MAIN_HAND, stack,
+                        new BlockHitResult(new Vec3(0, 0, 0), side, pos, false)
+                ));
+
+                //Redstone
+                if (replaceable && stack.getItem() == Items.REDSTONE) {
+                    level.setBlock(offsetPos, Blocks.REDSTONE_WIRE.defaultBlockState(), 2);
+                    return StackUtil.shrink(stack, 1);
+                }
+
+                //Plants
+/*                if (replaceable && stack.getItem() instanceof IPlantable) { //TODO
+                    if (((IPlantable) stack.getItem()).getPlant(world, offsetPos).getBlock().canPlaceBlockAt(world, offsetPos)) {
+                        if (world.setBlock(offsetPos, ((IPlantable) stack.getItem()).getPlant(world, offsetPos), 2)) {
+                            return StackUtil.shrink(stack, 1);
+                        }
+                    }
+                }*/
+
+                //Everything else
                 setHandItemWithoutAnnoyingSound(fake, InteractionHand.MAIN_HAND, stack.copy());
                 BlockHitResult ray = new BlockHitResult(new Vec3(0.5, 0.5, 0.5), side.getOpposite(), offsetPos, true);
                 fake.gameMode.useItemOn(fake, level, fake.getMainHandItem(), InteractionHand.MAIN_HAND, ray);
-                ItemStack result = fake.getItemInHand(InteractionHand.MAIN_HAND);
-                //setHandItemWithoutAnnoyingSound(fake, Hand.MAIN_HAND, heldBefore);
+                // SkyTekx: a copy goes back and the hand of the shared fake player is emptied, so the slot
+                // of the machine never holds the same stack as a fake player that other mods use too
+                ItemStack result = fake.getItemInHand(InteractionHand.MAIN_HAND).copy();
+                setHandItemWithoutAnnoyingSound(fake, InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                 return result;
             } catch (Exception e) {
                 ActuallyAdditions.LOGGER.error("Something that places Blocks at " + offsetPos.getX() + ", " + offsetPos.getY() + ", " + offsetPos.getZ() + " in World " + level.dimension() + " threw an Exception! Don't let that happen again!", e);

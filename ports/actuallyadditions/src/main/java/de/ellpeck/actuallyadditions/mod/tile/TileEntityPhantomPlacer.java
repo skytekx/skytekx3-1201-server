@@ -33,9 +33,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -152,15 +154,23 @@ public class TileEntityPhantomPlacer extends TileEntityInventoryBase implements 
     private void doWork() {
         if (this.isBoundThingInRange()) {
             if (this.isBreaker) {
-                Block blockToBreak = this.level.getBlockState(this.boundPosition).getBlock();
-                if (blockToBreak != null && this.level.getBlockState(this.boundPosition).getDestroySpeed(this.level, this.boundPosition) > -1.0F) {
-                    List<ItemStack> drops = Block.getDrops(this.level.getBlockState(this.boundPosition), (ServerLevel) this.level, this.worldPosition, this.level.getBlockEntity(this.worldPosition));
+                // SkyTekx: the drops of the bound block come from its own position and block entity, so a
+                // shulker box keeps its contents and copy_nbt reads the broken block. The base and main
+                // used the position and block entity of the Phantom Breaker itself. The break goes
+                // through the harvest check and break event of the Breaker, and fluids stay as they are
+                BlockState stateToBreak = this.level.getBlockState(this.boundPosition);
+                Block blockToBreak = stateToBreak.getBlock();
+                if (!stateToBreak.isAir() && !(blockToBreak instanceof LiquidBlock) && !(blockToBreak instanceof IFluidBlock) && stateToBreak.getDestroySpeed(this.level, this.boundPosition) >= 0.0F) {
+                    List<ItemStack> drops = Block.getDrops(stateToBreak, (ServerLevel) this.level, this.boundPosition, this.level.getBlockEntity(this.boundPosition));
+                    float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, this.level, this.boundPosition);
 
-                    if (StackUtil.canAddAll(this.inv, drops, false)) {
-                        this.level.levelEvent(2001, this.boundPosition, Block.getId(this.level.getBlockState(this.boundPosition)));
-                        this.level.setBlockAndUpdate(this.boundPosition, Blocks.AIR.defaultBlockState());
-                        StackUtil.addAll(this.inv, drops, false);
-                        this.setChanged();
+                    if (chance > 0 && this.level.random.nextFloat() <= chance) {
+                        if (StackUtil.canAddAll(this.inv, drops, false)) {
+                            this.level.levelEvent(2001, this.boundPosition, Block.getId(stateToBreak));
+                            this.level.setBlockAndUpdate(this.boundPosition, Blocks.AIR.defaultBlockState());
+                            StackUtil.addAll(this.inv, drops, false);
+                            this.setChanged();
+                        }
                     }
                 }
             } else {

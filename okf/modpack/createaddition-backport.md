@@ -78,7 +78,9 @@ Aeronautics compat stays out. The research records are in the workflow scratchpa
 
 Two of the named fixes need no port. The 1.20.1 base already invalidates the Portable Energy
 Interface capability (`PortableEnergyInterfaceBlockEntity:33-50`) and already clears the wire spool
-tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded](#excluded).
+tag (`WireSpool.java:89`, `107`). Both only need a check in game. The open steps under
+[Release](#release) list both checks together with the refuel of the Liquid Blaze Burner from a fluid
+container, and [Excluded](#excluded) gives the reasons.
 
 ### Baseline
 
@@ -632,6 +634,18 @@ These steps stay open. The carryover file lists each of them under `cca-pack-rel
   an iron pickaxe mines and that drops itself. A client must show the burn and charge timers on the
   goggles, the stress values in the item tooltips and the death messages of barbed wire and the
   Tesla Coil in chat.
+- Three fixes that the base already holds need a check in game as well, see [Excluded](#excluded).
+  The first is a Portable Energy Interface on a train. After the train leaves and comes back, also
+  after a stop at a station, the interface must still move FE, and the cable or pipe on the fixed
+  side must not keep the capability of the old contraption
+  (`PortableEnergyInterfaceBlockEntity:33-50`, upstream 9c6dc1a).
+- The second is the wire spool. A spool that was used for a connection and is empty again, and a
+  spool whose connection was cancelled halfway, must stack with fresh spools (`WireSpool.java:89`,
+  `107`, upstream 42fe46d).
+- The third is the Liquid Blaze Burner. A bucket of bioethanol or seed oil and a filled Mekanism
+  Portable Tank must refuel it, and the empty bucket or the drained tank must come back to the player
+  (`LiquidBlazeBurnerBlockEntity.java:306-313`, `FluidUtil.tryEmptyContainerAndStow`, upstream
+  3ec4663).
 - The in game tests of the changes of 1.6.0 are the chain of motor, alternator, shaft and alternator
   with Flywheel on and off (visual and renderer), the Electrum Amulet with a player (a Capacitor
   charged in the other hand, Shocking, the zap sound, `amulet_effect_enabled` set to false), a
@@ -672,13 +686,13 @@ These steps stay open. The carryover file lists each of them under `cca-pack-rel
 | NeoForge port churn (`neoforge-port-churn`) | About 180 commits from 23d5509 to 1ebd90c (2025-03-20 to 2025-07-16) and later API changes. They are translated where a ported feature needs them and never ported on their own |
 | NeoForge datagen (`neoforge-datagen`) | The 1.20.1 tree writes every resource by hand and commits no datagen output, so new files are written by hand. Generated 1.21 blockstates and models are the mod's own files in a format 1.20.1 reads and may be copied. Recipes, loot tables and tags are translated |
 | Common `c:` tags (`c-common-tags`) | Upstream moved to `c:` tags (3e8a818, a95515d, 29db159). AlmostUnified relies on `forge:` tags, so the port keeps them |
-| Wire spool stacking fix (`wire-spool-stacking-fix`) | Commit 42fe46d fixes a bug of the 1.21 data components. The 1.20.1 `WireSpool` already clears the tag (`WireSpool.java:89`, `107`). Verify only |
-| Portable Energy Interface capability (`pei-capability-invalidate`) | Commit 9c6dc1a is NeoForge specific. The 1.20.1 code already invalidates the old capability (`PortableEnergyInterfaceBlockEntity:33-50`). Verify on a train only |
+| Wire spool stacking fix (`wire-spool-stacking-fix`) | Commit 42fe46d fixes a bug of the 1.21 data components. The 1.20.1 `WireSpool` already clears the tag (`WireSpool.java:89`, `107`). Verify only, the check is open under [Release](#release) |
+| Portable Energy Interface capability (`pei-capability-invalidate`) | Commit 9c6dc1a is NeoForge specific. The 1.20.1 code already invalidates the old capability (`PortableEnergyInterfaceBlockEntity:33-50`). Verify on a train only, the check is open under [Release](#release) |
 | Connector capability cache (`connector-cache-blockcapabilitycache`) | Commit d239617 is the NeoForge `BlockCapabilityCache` cleanup. Its 1.20.1 form is the connector capability retry in the connector rework |
 | Recycling recipe conflict (`recycling-recipe-conflict`) | The base already ships `data/create/recipes/crushing/*_recycling.json` (e3fc63e) |
 | Tesla Coil damage type (`tesla-coil-damage-type`) | Part of 7a66e82, already in the base as 22546fb |
 | Biofuel and Blaze Cake burn times (`biofuel-and-blaze-cake-burn-times`) | The base already has 24000 and 3200 (b453db8, bcea84e, f5da39c) |
-| Liquid Blaze Burner container rewrite (`liquid-blaze-burner-fluid-container-rewrite`) | Commit 3ec4663 is a NeoForge rewrite. The 1.20.1 code uses `FluidUtil.tryEmptyContainerAndStow`. Verify only |
+| Liquid Blaze Burner container rewrite (`liquid-blaze-burner-fluid-container-rewrite`) | Commit 3ec4663 is a NeoForge rewrite. The 1.20.1 code uses `FluidUtil.tryEmptyContainerAndStow`. Verify only, the check is open under [Release](#release) |
 | Liquid Blaze Burner tank of 1000 mB (`liquid-blaze-burner-capacity-default-1000`) | Commit 6cbf853 silently lowers the tank default from 4000 to 1000 mB, a savegame and behaviour change. The port keeps 4000 |
 | Liquid Blaze Burner Flywheel visual (`liquid-blaze-burner-flywheel-visual`) | Commits c6d4e98 and db34ece fix the rendering of the 1.21 port. The 1.20.1 renderer works |
 | Electric Motor visual (`electric-motor-visual`) | The `ElectricMotorVisual` of 5c2b9ea is dead code upstream and never registered |

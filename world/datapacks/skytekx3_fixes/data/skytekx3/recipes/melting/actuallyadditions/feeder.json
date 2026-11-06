@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:feeder"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 10
+  },
+  "temperature": 700,
+  "time": 19
+}

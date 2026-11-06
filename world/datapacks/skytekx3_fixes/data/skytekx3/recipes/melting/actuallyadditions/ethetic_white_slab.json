@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:ethetic_white_slab"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 200
+  },
+  "temperature": 637,
+  "time": 82
+}

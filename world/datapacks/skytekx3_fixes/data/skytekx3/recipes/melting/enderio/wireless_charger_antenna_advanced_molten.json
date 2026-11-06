@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:wireless_charger_antenna_advanced"
+  },
+  "result": {
+    "tag": "forge:molten_vibrant_alloy",
+    "amount": 270
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_conductive_alloy",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_soularium",
+      "amount": 180
+    }
+  ],
+  "temperature": 850,
+  "time": 107
+}

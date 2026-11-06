@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:drill_upgrade_silk_touch"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 396
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 396
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 80
+    }
+  ],
+  "temperature": 1450,
+  "time": 166
+}

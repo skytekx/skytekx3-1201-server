@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "skytekx_molten"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:attractor_obelisk"
+  },
+  "result": {
+    "tag": "forge:molten_soularium",
+    "amount": 760
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_energetic_alloy",
+      "amount": 580
+    },
+    {
+      "fluid": "tconstruct:molten_quartz",
+      "amount": 500
+    },
+    {
+      "fluid": "tconstruct:molten_emerald",
+      "amount": 100
+    }
+  ],
+  "temperature": 750,
+  "time": 170
+}

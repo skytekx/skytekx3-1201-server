@@ -10,9 +10,15 @@
     "item": "amendments:dragon_charge"
   },
   "result": {
-    "fluid": "tconstruct:molten_obsidian",
+    "fluid": "tconstruct:molten_glass",
     "amount": 1000
   },
-  "temperature": 1000,
-  "time": 221
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_obsidian",
+      "amount": 1000
+    }
+  ],
+  "temperature": 750,
+  "time": 195
 }

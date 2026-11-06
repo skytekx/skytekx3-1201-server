@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalautomation"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalautomation:farmer"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 600
+    },
+    {
+      "fluid": "mysticalagradditions:molten_soulium",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 170
+}

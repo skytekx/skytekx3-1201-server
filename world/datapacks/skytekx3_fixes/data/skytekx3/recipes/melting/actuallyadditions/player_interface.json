@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:player_interface"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 5000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 2178
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 80
+    }
+  ],
+  "temperature": 477,
+  "time": 366
+}

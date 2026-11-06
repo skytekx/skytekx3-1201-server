@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalautomation"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mysticalagradditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mysticalautomation:infusion_altarnator"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 720
+  },
+  "byproducts": [
+    {
+      "fluid": "mysticalagradditions:molten_soulium",
+      "amount": 270
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 180
+    }
+  ],
+  "temperature": 800,
+  "time": 170
+}

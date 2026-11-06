@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:phantom_booster"
+  },
+  "result": {
+    "tag": "forge:ender",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 792
+    }
+  ],
+  "temperature": 477,
+  "time": 164
+}

@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:vat"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 1200
+  },
+  "temperature": 800,
+  "time": 220
+}

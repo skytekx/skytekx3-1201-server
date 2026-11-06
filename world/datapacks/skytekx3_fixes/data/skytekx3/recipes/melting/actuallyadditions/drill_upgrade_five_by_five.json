@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:drill_upgrade_five_by_five"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 396
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 80
+    }
+  ],
+  "temperature": 1450,
+  "time": 166
+}

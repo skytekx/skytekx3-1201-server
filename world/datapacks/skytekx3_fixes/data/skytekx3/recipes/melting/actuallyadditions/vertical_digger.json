@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:vertical_digger"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 2070
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 300
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 160
+    }
+  ],
+  "temperature": 800,
+  "time": 288
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "expandeddelight"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "expandeddelight:glow_berry_jelly"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1666
+  },
+  "temperature": 750,
+  "time": 252
+}

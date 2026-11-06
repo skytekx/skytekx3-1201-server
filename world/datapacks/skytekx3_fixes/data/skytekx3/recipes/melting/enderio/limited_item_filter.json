@@ -1,0 +1,31 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "enderio"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "skytekx_molten"
+      }
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "enderio:limited_item_filter"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 200
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    }
+  ],
+  "temperature": 637,
+  "time": 82
+}

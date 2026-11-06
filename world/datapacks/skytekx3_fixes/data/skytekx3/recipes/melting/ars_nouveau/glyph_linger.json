@@ -10,9 +10,15 @@
     "item": "ars_nouveau:glyph_linger"
   },
   "result": {
-    "fluid": "tconstruct:molten_diamond",
-    "amount": 900
+    "fluid": "tconstruct:molten_glass",
+    "amount": 1000
   },
-  "temperature": 1450,
-  "time": 250
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 900
+    }
+  ],
+  "temperature": 750,
+  "time": 195
 }

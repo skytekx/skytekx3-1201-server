@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:emeradic_crystal_shard"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_emerald",
+    "amount": 11
+  },
+  "temperature": 934,
+  "time": 22
+}

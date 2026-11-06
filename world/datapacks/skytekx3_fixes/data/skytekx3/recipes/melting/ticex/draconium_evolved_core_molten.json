@@ -19,6 +19,10 @@
   },
   "byproducts": [
     {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 1000
+    },
+    {
       "tag": "forge:ender",
       "amount": 500
     },

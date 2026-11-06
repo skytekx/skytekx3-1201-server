@@ -2100,9 +2100,16 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     since Patchouli 1.20.1 reads it as a resource location (`main` writes `actuallyadditions.tab`,
     which only counts for a book that Patchouli generates itself, and this one does not). The
     Engineer house entry speaks of the one Engineer villager of source change 57 and no longer of
-    the Crystallizer of the 1.12 versions. The other chapters of the 1.12 manual, among them the
-    banners, the Coffee Maker and the goggles, are not in the book of `main` either, so their lang
-    keys stay unused.
+    the Crystallizer of the 1.12 versions. The method `ItemBooklet#useOn` returns `PASS` instead of
+    the `FAIL` of the base and of `main`. On 1.20.1 `Minecraft#startUseItem` returns right after a
+    `FAIL` from `MultiPlayerGameMode#useItemOn` and never reaches `useItem` (javap of the mapped
+    Forge 47.4.0 jar, the `if_acmpne` after `InteractionResult.FAIL` at offset 398), so a right
+    click aimed at a block in reach opened nothing, and the manual only opened when aimed at the
+    air. With `PASS` the block acts first, so chests and machines still open, and otherwise the
+    click falls through to `ItemBooklet#use`, which opens the book on the server. The commented out
+    shift click page lookup of 1.12 stays as a comment. The other chapters of the 1.12 manual, among
+    them the banners, the Coffee Maker and the goggles, are not in the book of `main` either, so
+    their lang keys stay unused.
     Savegame: none. New ids: the Patchouli book `actuallyadditions:booklet` and the Patchouli page
     type `actuallyadditions:reconstructor`.
     The porter's test ran the jar of the five commits of the bundle (SHA-1
@@ -2120,6 +2127,15 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     server with the jar, Immersive Engineering 10.2.0-183 and Mekanism 10.4.16 and without Patchouli
     reached `Done` with 0 ERROR lines. Not tested: the chat line without Patchouli, which needs a
     client and a server without it.
+    The integration repeated the click through the private `Minecraft#startUseItem`, which a right
+    click calls, with a second local scenario (`bp2/actuallyadditions/ui-tools/devtest-uiblock.patch`)
+    on the same dedicated server setup. With the jar of the review fix (SHA-1
+    `fea34aaa5ce391fef3b406343792202e6beecb3d`, 3009455 bytes, one build) a click aimed at the
+    stone floor awarded the root advancement and opened `GuiBookLanding`, a click aimed at a chest
+    opened the chest, and a click aimed at the air opened the book. As a control, the porter's jar
+    `ae5284cb` with the `FAIL` in the dev client opened nothing on the floor and awarded the
+    advancement only at the click into the air (`bp2/actuallyadditions/srv-uidc-int/` and
+    `srv-uidc-ctl/`). Both servers logged 0 ERROR lines.
 66. Screens: the fluid bars of the Oil Generator, the Canola Press, the Fermenting Barrel, the Fluid
     Collector and the Coffee Maker draw the still sprite of the fluid from the block atlas in the
     tint colour of the fluid, tiled in steps of 16 pixels, as on the 1.20.4 line (`ba64232a`,

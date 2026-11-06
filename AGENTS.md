@@ -117,6 +117,12 @@ macos/skytekx3ctl rcon "<command>"                            # On the Mac mini,
     `combat`, `config`, `tools`, `deploy`, `release` and `okf`.
 - Commit messages carry no em dashes, no en dashes, no hyphens used as dashes and no semicolons.
 - Keep commits granular, one concern per commit, such as a mod group, a script or a config area.
+- Never let a jar that a pointer file `local-mods/<jar>.fetch.json` names into any commit, at any path,
+  because a push publishes the whole history and its license forbids that copy. Before every push,
+  `git log --oneline --find-object=f94d426ce1c02a3d3cbb16ddaf09db424c5435ae HEAD` must print nothing
+  for ZeroCore 2. For another pointed jar, look for the id that `git hash-object` gives for its
+  fetched copy. A jar that got in needs a history rewrite before the push, and the scripts
+  `tools/build_mrpack.py` and `tools/publish_modrinth.py` refuse until then.
 - The default branch is `master`.
 
 ## Writing docs

@@ -36,14 +36,16 @@ public class NetherWartFarmerBehavior implements IFarmerBehavior {
     @Override
     public FarmerResult tryPlantSeed(ItemStack seed, Level world, BlockPos pos, IFarmer farmer) {
         int use = 500;
-        if (farmer.getEnergy() >= use) {
-            if (seed.getItem() == Items.NETHER_WART) {
-                if (world.getBlockState(pos.below()).getBlock().canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, (IPlantable) Items.NETHER_WART)) {
-                    world.setBlock(pos, Blocks.NETHER_WART.defaultBlockState(), 2);
-                    farmer.extractEnergy(use);
-                    return FarmerResult.SUCCESS;
-                }
-                return FarmerResult.FAIL;
+        // SkyTekx: the check of 124cac11. The base cast the item Items.NETHER_WART to IPlantable,
+        // which it is not, so a nether wart in a seed slot threw at every try. The block is the
+        // IPlantable, and a soil that the wart survives on counts too
+        if (farmer.getEnergy() >= use && seed.is(Items.NETHER_WART)) {
+            BlockState belowState = world.getBlockState(pos.below());
+            BlockState wartState = Blocks.NETHER_WART.defaultBlockState();
+            if (belowState.canSustainPlant(world, pos.below(), Direction.UP, (IPlantable) Blocks.NETHER_WART) || wartState.canSurvive(world, pos)) {
+                world.setBlock(pos, wartState, 2);
+                farmer.extractEnergy(use);
+                return FarmerResult.SUCCESS;
             }
         }
         return FarmerResult.FAIL;

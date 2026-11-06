@@ -17,27 +17,32 @@ import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayerFactory;
 
 import java.util.ArrayList;
@@ -45,15 +50,21 @@ import java.util.List;
 
 public class DefaultFarmerBehavior implements IFarmerBehavior {
 
+    // SkyTekx: soil that already holds the plant stays as it is, any FarmBlock as in b66af844 and,
+    // through Forge's canSustainPlant, modded farmland that is no FarmBlock. Dirt is tilled with the
+    // hoe item as in b26c47dd (#1522), so a modded soil turns into its own farmland (the rich soil of
+    // Farmer's Delight into rich soil farmland) instead of vanilla farmland. The hoe plays the till
+    // sound, and the energy is only used when the soil changed
     public static boolean defaultPlant(Level world, BlockPos pos, BlockState toPlant, IFarmer farmer, int use) {
         if (toPlant != null) {
             BlockPos farmland = pos.below();
-            BlockState farmlandState = world.getBlockState(farmland);
-            if (farmlandState.is(BlockTags.DIRT) || farmlandState.is(Blocks.GRASS_BLOCK)) {
+            BlockState targetBlockstate = world.getBlockState(farmland);
+            boolean sustains = toPlant.getBlock() instanceof IPlantable plantable && targetBlockstate.canSustainPlant(world, farmland, Direction.UP, plantable);
+            if (!sustains && !(targetBlockstate.getBlock() instanceof FarmBlock) && (targetBlockstate.is(BlockTags.DIRT) || targetBlockstate.is(Blocks.GRASS_BLOCK))) {
                 world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                useHoeAt(world, farmland);
-                world.playSound(null, farmland, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-                farmer.extractEnergy(use);
+                if (useHoeAt(world, farmland).consumesAction()) {
+                    farmer.extractEnergy(use);
+                }
             }
 
             if (tryPlant(toPlant, world, pos)) {
@@ -66,7 +77,10 @@ public class DefaultFarmerBehavior implements IFarmerBehavior {
 
     private static boolean tryPlant(BlockState toPlant, Level world, BlockPos pos) {
         if (toPlant.canSurvive(world, pos)) {
+            // SkyTekx: the place sound of the plant, as in bfd8eb8f
+            SoundType sound = toPlant.getSoundType(world, pos, null);
             world.setBlockAndUpdate(pos, toPlant);
+            world.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
             return true;
         }
         return false;
@@ -76,11 +90,23 @@ public class DefaultFarmerBehavior implements IFarmerBehavior {
     public FarmerResult tryPlantSeed(ItemStack seed, Level world, BlockPos pos, IFarmer farmer) {
         int use = 350;
         if (farmer.getEnergy() >= use * 2) {
-            if (defaultPlant(world, pos, this.getPlantablePlantFromStack(seed, world, pos), farmer, use)) {
+            BlockState toPlant = this.getPlantablePlantFromStack(seed, world, pos);
+            if (toPlant == null && isPlantable(seed)) {
+                // SkyTekx: the fallback of b23ba8f0 (#1464) for a seed or crop item whose block is no
+                // IPlantable. Forge's IPlantable already covers potatoes and carrots on 1.20.1
+                toPlant = ((BlockItem) seed.getItem()).getBlock().defaultBlockState();
+            }
+            if (defaultPlant(world, pos, toPlant, farmer, use)) {
                 return FarmerResult.SUCCESS;
             }
         }
         return FarmerResult.FAIL;
+    }
+
+    private static boolean isPlantable(ItemStack seed) {
+        if (seed.is(Tags.Items.SEEDS) && seed.getItem() instanceof BlockItem) {
+            return true;
+        } else return seed.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof CropBlock;
     }
 
     @Override
@@ -113,7 +139,8 @@ public class DefaultFarmerBehavior implements IFarmerBehavior {
         if (drops.isEmpty())
             return FarmerResult.FAIL;
         for (ItemStack stack : drops) {
-            if (this.getPlantableFromStack(stack) != null) {
+            // SkyTekx: the seeds of 690aa4bc go back into the seed slots too
+            if (this.getPlantableFromStack(stack) != null || isPlantable(stack)) {
                 seeds.add(stack);
             } else {
                 other.add(stack);
@@ -178,6 +205,8 @@ public class DefaultFarmerBehavior implements IFarmerBehavior {
     private static ItemStack getHoeStack() {
         if (hoe.isEmpty()) {
             hoe = new ItemStack(Items.DIAMOND_HOE);
+            // SkyTekx: the hoe item now tills, and it would wear out and break after 1561 uses
+            hoe.getOrCreateTag().putBoolean("Unbreakable", true);
         }
         return hoe;
     }
@@ -201,14 +230,12 @@ public class DefaultFarmerBehavior implements IFarmerBehavior {
 
             if (world.isEmptyBlock(pos.above())) {
                 BlockState state = world.getBlockState(pos);
-                if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH)) {
-                    world.setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
-                    return InteractionResult.SUCCESS;
-                }
-
-                if (state.is(BlockTags.DIRT)) {
-                    world.setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
-                    return InteractionResult.SUCCESS;
+                // SkyTekx: till with the hoe item as in b26c47dd (#1522). Forge's getToolModifiedState
+                // asks the block, so modded soil keeps its own farmland, and the tool modification
+                // event is posted. The base set vanilla farmland on every dirt
+                if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT_PATH) || state.is(BlockTags.DIRT)) {
+                    UseOnContext context = new UseOnContext(world, player, InteractionHand.MAIN_HAND, itemstack, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
+                    return itemstack.useOn(context);
                 }
             }
             return InteractionResult.PASS;

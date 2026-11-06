@@ -43,7 +43,7 @@ the final ship stage. Its key `aa-ship` lists what stays open after the release.
 | Port source | Branch `main` at cd9d9c63 (2026-06-19), release 1.3.26 for NeoForge 1.21.1 |
 | Intermediate steps | Branch `1.20.4` at 0ebbd811 (1.2.14, NeoForge 20.4) and branch `1.21` at d9b0a714 (1.3.6, NeoForge 21.1). The 1.20.4 port commit 63fbbb33 has the base as its parent and is the reference for every reverse mapping |
 | Fork | Folder `ports/actuallyadditions/`, Java 17, ForgeGradle 6.0.54, Forge 47.1.3 userdev, Parchment 2023.09.03 (`UPSTREAM.md`, Build changes) |
-| Version | Version 1.1.52-skytekx.1 in `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, the reobf jar from `build/libs/` with SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb` at 75d3c64, see [Version](#version) |
+| Version | Version 1.1.52-skytekx.1 in `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, the reobf jar from `build/libs/` with SHA-1 `b45fde952365db78ba57b68400643056647789e3` since be0192d, which replaced the release build `227073059543dd3d969cd53a15f1fd42a38985cb` of 75d3c64 with the same version, see [Version](#version) and [Fix build](#fix-build) |
 | Content level | Parity with upstream 1.3.26 (cd9d9c63) except the exclusions, as the NOTICE line `Content` says (75d3c64) |
 | Ships as | The jar in `local-mods/` since 26415ad, which the `.mrpack` carries under `overrides/mods/`. The server's `mods/` gets it by hand at the deploy. The Modrinth project has no 1.20.1 file the index could point at |
 | Build check | The `compileJava` call in `UPSTREAM.md`, run with `/opt/jdk17` and `-Xmx2g`, with upstream's compiler settings |
@@ -486,7 +486,9 @@ booted on the pack's Arclight with no new log signature, see [Release test](#rel
 final ship stage then rebuilt the jar from 1262c41 with the same SHA-1, found the generated files
 equal to the providers again, booted the full pack on Forge 47.4.18 and on Arclight with no new log
 signature and gave Flux Networks the current id of the Phantom Energyface in `defaultconfigs/`
-(7def174), see [Final ship stage](#final-ship-stage). Every
+(7def174), see [Final ship stage](#final-ship-stage). The fix build of be0192d then let a
+harvested wild crop keep its `persistent` flag when it grows again, finding aa-fid-1 of the release
+audit, with the same version, see [Fix build](#fix-build). Every
 owning feature reads the new config, and the two readers of the 1.12 enums that are left read
 `false` as on `main` (`UPSTREAM.md`, source change 6).
 
@@ -793,7 +795,8 @@ All parts are local changes, see [Arclight notes](#arclight-notes).
 The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54 to 59):
 
 - The right click harvest consumes the click, so bone meal in the hand is not spent on the
-  replanted crop, and since the review fix the replant keeps `persistent`.
+  replanted crop, and since the review fix the replant keeps `persistent`. Since the fix build the
+  crop also keeps the flag when it grows again (56b7ffa, `UPSTREAM.md`, source change 71).
 - The composter takes the effective chances of the generated data map of `main`, in which the crop
   entries of coffee beans and flax seeds replace their seed entries. Canola, coffee beans, flax
   seeds and rice compost at 0.65, and canola and rice seeds at 0.3.
@@ -855,6 +858,9 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   full pack booted on Forge 47.4.18 and on Arclight, and the default server config of Flux Networks
   now names the Phantom Energyface by its 1.20.1 id (7def174), see
   [Final ship stage](#final-ship-stage) and [Pack integration](#pack-integration).
+- A wild crop that a right click harvested keeps its `persistent` flag when it grows again, so it
+  stays on its grass (56b7ffa, `UPSTREAM.md`, source change 71). The jar of that fix replaced the
+  release build in `local-mods/` with the same version (be0192d), see [Fix build](#fix-build).
 - No public pack with this jar goes up before a pack client from the `.mrpack` has joined the
   Arclight test server over `actuallyadditions:main` with protocol 5, the login item of carryover
   `aa-client-test`. The private pack of the release test never joined a server, so the registry sync
@@ -1266,6 +1272,30 @@ docs commits, from a worktree in the workflow scratchpad. Its logs, tools and sc
   Flux Networks, reached `Done` in 15.2 s with the same 3 ERROR lines and both mixins, and showed
   no new log signature against `actuallyadditions-forge`.
 
+### Fix build
+
+The release audit of 2026-11-06 found that the replant of the right click harvest kept the
+`persistent` flag of a wild crop only while the crop stayed at age 0 (finding aa-fid-1). Its first
+growth step set the state of `CropBlock#getStateForAge`, which starts from the default state with the
+flag off, so the crop popped off its grass at the next neighbour update, the same end as on `main`.
+The fix build keeps the version 1.1.52-skytekx.1, because no build of the fork has reached a client
+or the live server yet. Its commits are 56b7ffa (the fix, source change 71, and the NOTICE line),
+110cd83 (its tests in `UPSTREAM.md`) and be0192d (the jar in `local-mods/` and its permission record).
+The test logs, scripts and the scenario patch are in `bp2/actuallyadditions/cropfix/` of the workflow
+scratchpad.
+
+| Check | Result |
+|---|---|
+| Fix | The class `AACrops` overrides `randomTick` and `growCrops` to hold the flag of the growing crop in a thread local while the methods of `CropBlock` run, and its `getStateForAge` puts the flag on the grown state (`mod/blocks/base/AACrops.java`). The audit suggested copies of the vanilla methods. Arclight fires the Bukkit `BlockGrowEvent` from the `setBlock` calls of those two methods (`CropBlockMixin` in the `common.jar` of `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`), so a copy in the subclass would have dropped the event for the four crops |
+| Jar | SHA-1 `b45fde952365db78ba57b68400643056647789e3`, 3010535 bytes, the reobf jar of `./gradlew build` with Java 17 and `LC_ALL=C.UTF-8`. Clean builds of 56b7ffa and 110cd83 in fresh worktrees gave the same file with the same 100 compiler warnings. Against the release jar only `AACrops` and `NOTICE_actuallyadditions` differ, so no id, NBT key, block state, packet or config key changed |
+| Link check | No jar of the pack outside the fork links a symbol of the mod, and the 150 references of the fork into JEI 15.74.0.233, Patchouli 85 and Curios 5.14.1 all resolve (`compat-forward.txt`, `compat-reverse.txt`) |
+| Forge test | The dev client right clicked a ripe canola and a ripe flax with the flag on grass on a dedicated Forge 47.4.18 server, then grew the canola with bone meal from the hand and the flax with 200 ticks at `randomTickSpeed` 3000 and set a stone next to each. With the new jar both kept the flag and their place, with the release jar both lost the flag and popped off. A canola planted on farmland grew with the flag off on both jars, and a coffee without the flag on grass popped as before (`srv-new/`, `srv-old/`) |
+| Arclight test | The same scenario passed every check with the new jar on the Arclight test server with the production jar. A test plugin saw 14 `BlockGrowEvent`s, two from bone meal and 12 from random ticks, each with the flag of its crop in the new state (`arc-cl-new/`). Without a player a dispenser with bone meal fired the event with the flag kept (`arc-new/`). Random ticks need a player near the chunk, so the run without a player grew nothing by random ticks |
+| Forge boot | Label `actuallyadditions-fix-forge` of a fresh worktree at be0192d, run with `PACKBOOT_DONE_ONLY=1` on the harness `packboot_mtt.sh` of the final pack boots: 298 mods from 272 jars, `Done` in 16.5 s, 0 FATAL, no crash, no watchdog, a clean stop after 10 s, the same 3 ERROR lines as `actuallyadditions-forge`, both mixins of the fork applied, and no new or lost log signature against `actuallyadditions-forge` (`packboot-logs/actuallyadditions-fix-forge-summary.json`) |
+
+The client checks of the release stay open in the carryover file, and the right click harvest is
+still one of the checks of `aa-arclight-test`.
+
 ## Local divergences
 
 These differ from upstream on purpose and must survive the next upstream sync.
@@ -1325,7 +1355,8 @@ These differ from upstream on purpose and must survive the next upstream sync.
   `minecraft:empty`, without the structure updater. Its chest takes crystal blocks for the weight 3
   entry, and the directional `Container` classes and the Crusher turn with a structure
   (`UPSTREAM.md`, source change 57).
-- The right click harvest consumes the click and keeps `persistent`, the composter takes the
+- The right click harvest consumes the click and keeps `persistent`, which the crop also keeps when
+  it grows (source change 71), the composter takes the
   effective chances of `main`, and the rice patches read `generateRice` (`UPSTREAM.md`, source
   changes 54 and 56).
 - Zombie villagers get the Engineer overlay, and the Engineer's trades join the mutable lists of

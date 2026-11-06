@@ -539,8 +539,12 @@ counts in the list below are older than the last twenty-three of them and were n
   makes that branch at 226a439 release quality and brings the fixes and content of the newer lines up
   to release 1.3.26 (cd9d9c63) onto it, MIT licensed, built from
   [ports/actuallyadditions/](../../ports/actuallyadditions) with SHA-1
-  `227073059543dd3d969cd53a15f1fd42a38985cb`. Patchouli, Curios and JEI stay optional, energy stays
-  on Forge Energy, and no pack mod depends on it. Its new worldgen keeps off `skytekx3:sky_void`. Its
+  `b45fde952365db78ba57b68400643056647789e3` since the fix build be0192d, which keeps a harvested wild
+  crop on its grass when it grows again (finding aa-fid-1 of the release audit) and replaced the
+  release build `227073059543dd3d969cd53a15f1fd42a38985cb` with the same version, see
+  [Actually Additions backport](actuallyadditions-backport.md#fix-build). Patchouli, Curios and JEI
+  stay optional, energy stays on Forge Energy, and no pack mod depends on it. Its new worldgen keeps
+  off `skytekx3:sky_void`. Its
   flax seeds join `forge:crops/flax`, so they count as flax in the rope, sack and doormat recipes of
   Supplementaries 3.1.44, and its rice joins `forge:crops/rice`, so it counts in five cooking recipes
   of Farmer's Delight 1.3.4 (`ports/actuallyadditions/UPSTREAM.md`, source change 9). A world saved by

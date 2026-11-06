@@ -1,6 +1,49 @@
 {
- "_about": "Items deferred while porting earlier bundles of the Create Crafts & Additions backport. Later porters and the release: grep this file for your bundle name or feature id and pick up what was handed to you. The plan is in createaddition-backport-inventory.json, the docs in okf/modpack/createaddition-backport.md.",
+ "_about": "Items deferred while porting and releasing the Create Crafts & Additions backport. Each bundle key lists what its porter and integrator handed on, and each handed_on item carries the release note of 2026-11-06. The key cca-pack-release lists the steps that stay open after the release: the rollout gates on a copy of the live world and the checks that need a pack client. The plan is in createaddition-backport-inventory.json, the docs in okf/modpack/createaddition-backport.md.",
  "bundles": {
+  "cca-baseline": [
+   {
+    "bundle": "cca-baseline",
+    "to": "cca-pack-release",
+    "ids": [
+     "fork-baseline-and-metadata",
+     "config-additions",
+     "network-protocol-bump"
+    ],
+    "status": "Done, client login test open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-pack-release / fork-baseline-and-metadata: confirm on a real Forge and Arclight boot that the Forge mod list shows 1.20.1-1.7.3-skytekx.1. Only the manifest and mods.toml ${file.jarVersion} were checked here.",
+      "release": "Done. The full pack boots createaddition-forge and createaddition-arclight of 2026-11-06 list createaddition as version 1.20.1-1.7.3-skytekx.1 in the mod discovery of their debug logs."
+     },
+     {
+      "item": "cca-pack-release / config-additions: on the first real boot, check that the tracked config/createaddition-common.toml keeps its 41 values and gains the 11 keys. Only Config.loadConfig was run here, outside a boot. Commit the rewritten file while the server is stopped.",
+      "release": "Done. The first fork boot of the savegame test kept the 41 values and appended the 11 keys, and b781300 commits the rewritten config/createaddition-common.toml. Both full pack boots left the tracked file byte for byte as it is."
+     },
+     {
+      "item": "cca-pack-release / network-protocol-bump: test that a stock 1.3.3 client gets the mismatched-channel disconnect. No client was available here.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-phase1-fixes / goggle-time-remaining-tooltips: add the TimeRemainingPacket class and register it with CreateAddition.PACKET_TIME_REMAINING. Only the id is reserved here.",
+      "release": "Done in 8fb90f8."
+     },
+     {
+      "item": "cca-wiregraph, cca-phase1-fixes, cca-160-rework, cca-electric-pump: the code that reads the new config keys (EnergyNetwork.getMaxBuff, LiquidBlazeBurnerBlockEntity tank and heat, amulet and capacitor, pump). Each bundle wires its own keys.",
+      "release": "Done in the bundles that use the keys."
+     },
+     {
+      "item": "cca-pack-release (docs): update the okf/modpack/createaddition-backport.md status table, which still lists the baseline items as open, and the NOTICE summary of backported content.",
+      "release": "Done. The status table of okf/modpack/createaddition-backport.md and the NOTICE summary are current at the release."
+     },
+     {
+      "item": "Integrator note for cca-pack-release (docs) and every later bundle: the integration already set the Baseline row of okf/modpack/createaddition-backport.md to done (51492e1) and added the Release checks for the Forge mod list version, the login of a stock 1.3.3 client against the fork and of the fork client against 1.3.3 (both must end with 'Connection closed - mismatched mod channel list' naming createaddition:main) and the first boot config rewrite. c744616 added the config and network items to the NOTICE summary and a section Source changes to ports/createaddition/UPSTREAM.md. Each later bundle adds its own items there. Slim jar SHA-1 at c744616: 7671e5a93338228bbb7f01d55ba9fbb32508e239.",
+      "release": "Note for the record, nothing left to do."
+     }
+    ]
+   }
+  ],
   "cca-wiregraph": [
    {
     "bundle": "cca-wiregraph",
@@ -62,6 +105,432 @@
      "WireGraphVerifier: isReadable() checks tag.contains(\"block_entities\") and blockEntity() fetches the list again later. A concurrent put of __context that resizes the map could make the second lookup empty and markMissing a real node. All 83 full chunks of the full pack Arclight test world have exactly 20 top level keys, so the resize threshold of 24 is not crossed. Optional: take the ListTag once in SavedChunk or isReadable and reuse it, and only markMissing when the saved section block state at the position is not a CC&A wire node block.",
      "AbstractConnectorBlockEntity: as in upstream 1.7.2, a wire end stays stale on B when its partner A was removed by a non player (drill, explosion or contraption) while B was unloaded and A dropped the wire. Breaking B before the graph prunes that end drops the wire a second time (playerWillDestroy and dropWires, or remove()). No practical exploit was found. Optional: prune the slots whose partner is in missing in onNodeLoaded, or skip the drop in remove() and dropWires for a slot whose far end the graph has confirmed gone.",
      "The status row of cca-wiregraph on okf/modpack/createaddition-backport.md lists the integrated commits. Renumber the UPSTREAM.md Source changes items and the NOTICE summary if later bundles append items."
+    ]
+   },
+   {
+    "bundle": "cca-wiregraph",
+    "to": "cca-pack-release",
+    "ids": [
+     "wiregraph-core",
+     "wiregraph-command",
+     "wiregraph-live-world-migration",
+     "connector-wire-render-culling",
+     "connector-shears-cut-wires",
+     "festive-wire-low-current",
+     "connector-external-cap-recheck"
+    ],
+    "status": "Ported, live world test open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-wiregraph / wiregraph-live-world-migration: run the test on a COPY of the live world (Mac mini), which was not available here. Steps: tools/wire_scan.py <world> --json before.json, then the fork boot, cca_wires stats and verify, Chunky, unload and reload, restart, then wire_scan --compare before.json. Count the one-sided wire ends before the deploy, because the upgrade cuts them.",
+      "release": "Open. It needs the copy of the live world on the Mac mini and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-wiregraph / wiregraph-live-world-migration: repeat steps 1 to 3 with skytekx-compat 2.1.6. That jar is only on the Mac mini (the private source repo), and every run here used 2.1.3.",
+      "release": "Open. It needs the copy of the live world on the Mac mini and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-wiregraph / wiregraph-live-world-migration: reading wire nodes in the legacy node0..node7 format (WireVertex.fromBlockEntityTag) was not tested, because a loaded block entity converts them at once.",
+      "release": "Open. It needs the copy of the live world on the Mac mini and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-wiregraph / connector-wire-render-culling: client checks were not run (no client here): a 32-block wire with its connector off screen, a far end in a chunk the client has not loaded, the F3+B boxes, Embeddium and Oculus, and the box of the wire in hand.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-wiregraph / connector-shears-cut-wires: in-game test with a player was not run: shears on a connector with 4 wires drop 4 wire items, and nothing drops in creative mode.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-wiregraph / festive-wire-low-current: in-game test was not run: a festive spool between two large connectors should show the red 'requires a high current wire' message.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-wiregraph / wiregraph-command: refusal for a non-op player was not tested. The command was tested through a Python RCON client on Arclight, in the overworld, the Nether and the End. No TF or Skylands dimension was present.",
+      "release": "Partly done. The full pack hook boots ran cca_wires stats over RCON in the Overworld, the Nether, the End, the Skylands and the Twilight Forest. The refusal of a player without op level 2 needs a client."
+     },
+     {
+      "item": "cca-wiregraph / connector-external-cap-recheck: the planned chunk-border test cannot be built on Forge 1.20.1. A ticking connector's neighbour is always in a chunk at full ticket level, and getBlockEntity waits for it. So the retry was never seen firing. Only the normal path (energy flows) was verified.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release: put the integrated commit shas into the cca-wiregraph status row of okf/modpack/createaddition-backport.md (the row now says Ported with no shas), add carryover entries, and renumber the UPSTREAM.md Source changes items 3 to 9 and the NOTICE summary if parallel bundles also appended items. [Integrator note: done at integration. 0755eeb set the row to Done with ce05082, 9db6834, 30ce6cc, eba2b0d, 9a4cfa1, dec0962, 788fd47, a1a1500, 823b8db and the review fix e3fd422. The porter's UPSTREAM.md items 3 to 9 are items 14 to 20 now, after the 13 items of the baseline, small fixes and ignitable fluids, and the NOTICE 'Wires:' item sits after 'Ignitable fluids'. Only the carryover file ports/createaddition-backport-carryover.json, which does not exist yet, and the final release status remain.]",
+      "release": "Done in 0755eeb, and this file exists since b754b25."
+     },
+     {
+      "item": "Integrator note for every later bundle: cca-wiregraph was integrated on claude/twilight-forest-port-mods-j2owbq on top of 716d84b as ce05082 saved graph, 9db6834 /cca_wires, 30ce6cc render culling, eba2b0d shears, 9a4cfa1 festive wire, dec0962 capability retry, 788fd47 verify at load, a1a1500 tools/wire_scan.py, 823b8db test record, e3fd422 review fix (verifier drops chunk read answers that do not arrive on the server thread, which happens after the server stopped, the lazy tick retry runs in push and pull mode only, comments and docs say vanilla 1.20.1 IOWorker.loadAsync hands out the queued tag, operator notes show execute in for /cca_wires per dimension), 0755eeb okf status. UPSTREAM.md Source changes items 14 to 20 are this bundle. compileJava at e3fd422: 38 warnings (ResourceLocation and forgeItemTag removal warnings plus the known FireBlockMixin isFireSource mapping warning), no new warning from the bundle files. Slim jar SHA-1 at e3fd422: dbad2c6805963637f6af5383b2c7ef738eff1591. ccacompat.py of that jar against the 265 jars of scratchpad packboot-forge/mods (AllTheLeaks 1.1.1, Steam 'n' Rails 1.7.3, CC:Tweaked 1.120.2 among them): TOTAL MISSING 0. No kubejs script references createaddition. Stop test after the fix: scratchpad wgtest/srv/boot10-int.log (ports moved to 26841 RCON and 26842 game, because another workflow's server held 25741 and 25742), stop 0.8 s after Done, 0 ERROR, 0 FATAL, Overworld graph written with 50 vertices, cmp_dat against wgtest/scan-final.json 0 mismatches.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release / observe-packet-guard: cca-wiregraph did not take the ObservePacket.sendUpdate guard (hasChunkAt, 64 block distance, per player rate limit) that the cca-phase1-fixes carryover offered to it, so it stays with the release bundle.",
+      "release": "Done in e58a076."
+     },
+     {
+      "item": "cca-pack-release / wiregraph-stop-path: the late answer guard in WireGraphVerifier.startReads (e3fd422) was only checked for no regression. The boot 10 stop came 0.8 s after Done, when the 26 reads of the load check had most likely already answered, so the dropped answer path itself was not seen. Optional: a debug log line or a world with many unloaded nodes to see it fire during a stop.",
+      "release": "Optional and not done. Listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release: put the integrated commit shas into the cca-wiregraph status row of okf/modpack/createaddition-backport.md (the row now says Ported with no shas), add carryover entries, and renumber the UPSTREAM.md Source changes items 3 to 9 and the NOTICE summary if parallel bundles also appended items.",
+      "release": "Done in 0755eeb, and this file exists since b754b25."
+     },
+     {
+      "item": "Integrator note (second review round, 2026-11-06): the nine porter commits were already on the branch as ce05082..823b8db with identical code, so nothing was cherry-picked again. The second review was applied in b754b25 (tools/wire_scan.py reports differences, gone vertices, nodes not yet discovered and unchecked vertices apart, and reads the old node0..node7 slots as wires) and a2d5346 (status sha). b754b25 also adds ports/createaddition-backport-carryover.json with the open live world and client steps of cca-wiregraph for cca-pack-release: cca-pack-release extends that file (add its own entries under bundles) instead of creating it. No Java changed, compileJava clean at a2d5346.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release / wiregraph-verifier-listtag (optional review note, not applied to keep the release jar source stable): WireGraphVerifier.isReadable() checks block_entities and blockEntity() fetches the list again. Take the ListTag once and only markMissing when the saved block state is not a CC&A wire node block. See ports/createaddition-backport-carryover.json.",
+      "release": "Optional and not done. Listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release / connector-stale-end-double-drop (optional review note, upstream 1.7.2 has it too): a stale wire end on B whose partner A was removed by a non player while B was unloaded can drop the wire a second time when B is broken before the graph prunes it. See ports/createaddition-backport-carryover.json.",
+      "release": "Optional and not done. Listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release / entityculling-whitelist: if long wires vanish behind occluders on a pack client, add createaddition:connector, small_light_connector, large_connector and redstone_relay to blockEntityWhitelist in config/entityculling.json and ship it as an override (the repo has no EntityCulling config yet).",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     }
+    ]
+   }
+  ],
+  "cca-phase1-fixes": [
+   {
+    "bundle": "cca-phase1-fixes",
+    "to": "cca-pack-release",
+    "ids": [
+     "modular-accumulator-fixes",
+     "liquid-blaze-burner-fixes-and-config",
+     "goggle-time-remaining-tooltips",
+     "client-sound-fixes",
+     "kinetic-stress-tooltips",
+     "death-message-lang-keys",
+     "cc-peripheral-hardening",
+     "barbed-wire-waterlog-wrench",
+     "misc-data-fixes",
+     "electrum-block-and-tag-fixes"
+    ],
+    "status": "Done, in game tests open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-phase1-fixes / modular-accumulator-fixes: in-game test not run (3x3x5 multiblock with goggles on non-controller blocks, schematic print, Symmetry Wand). Belongs to the cca-pack-release test pass.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-phase1-fixes / goggle-time-remaining-tooltips: test not run that a dedicated Forge and Arclight server loads no client class and that the timers show on a client. Only a static javap check was done.",
+      "release": "Server side done. The dedicated Forge and Arclight full pack boots loaded no client class of the mod. The timers on a client stay open, see cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-phase1-fixes / barbed-wire-waterlog-wrench and electrum-block-and-tag-fixes: in-game checks not run (placing wire in water, wrench rotate and pickup, iron pickaxe drop, beacon base). Belongs to cca-pack-release.",
+      "release": "Partly done. Barbed wire saved by 1.3.3 loads with waterlogged=false (savegame test), and a new Electrum Block is in #minecraft:beacon_base_blocks and #minecraft:needs_iron_tool (hook boots). Water, the wrench, the pickup and the drop need a player."
+     },
+     {
+      "item": "cca-ponders-and-translations / translations-merge: translated values for the new en_us keys createaddition.tooltip.liquid_burning.*, tooltip.charging.* and tooltip.alternator.info. Only en_us has them. The death.attack keys are already renamed in all 21 locales, so that bundle must not add them again under the old names.",
+      "release": "Done in 74a1e31 where a 1.21.1 locale has a value. The other keys show English."
+     },
+     {
+      "item": "cca-pack-release (docs): the okf/modpack/createaddition-backport.md status row for Small fixes (cca-phase1-fixes) is still Planned. Its text should also say that de9d7e7 was not ported (the 1.20.1 FluidIngredient ignores the amount) and that the JEI time format changed to 20m.",
+      "release": "Done in 3bd0483."
+     },
+     {
+      "item": "cca-wiregraph or cca-pack-release / observe-packet-guard (review note, predates the fork): ObservePacket.sendUpdate runs player.level().getBlockEntity(pkt.pos) on the server thread for any client chosen position, with no isLoaded or distance check and a cooldown only on the client, so a modified client can make the live server load or generate chunks. The small fixes add the Tesla Coil and the accumulator controller as IObserveTileEntity. Guard with 'if (!player.level().hasChunkAt(pkt.pos) || player.distanceToSqr(Vec3.atCenterOf(pkt.pos)) > 64*64) return;' before getBlockEntity and add a short per player rate limit. Additive, no protocol change. Recorded in the Release section of okf/modpack/createaddition-backport.md.",
+      "release": "Done in e58a076."
+     },
+     {
+      "item": "cca-ponders-and-translations or later polish / time-remaining-cache (review note, upstream design, optional): TimeRemainingPacket keeps one static clientTimeRemaining shared by burners and coils and never resets it, so the first goggle frames after switching blocks show the previous timer. The client also builds the burner tank from its own common config, so a server with a non default capacity shows the client's value. Could key the cached value by BlockPos. No server, savegame or protocol effect.",
+      "release": "Optional and not done. Listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "Integrator note for every later bundle: cca-phase1-fixes was integrated on claude/twilight-forest-port-mods-j2owbq after the history rewrite of 2026-11-05, so its hashes differ from the porter's: 010ffd5 accumulator, 1ad4bf1 burner config, 8fb90f8 goggle timers and TimeRemainingPacket, 0bb10b7 soundscapes, f855f94 stress tooltips (CABlocks.java keeps its CRLF line endings, the integration amended the porter's 27cec04 for that, so keep CRLF when the pump and servo bundles add entries), 66076fb death messages, 2f39e85 motor peripheral, fa15e47 barbed wire, 95a599b data fixes, 47f954c Electrum Block, d4ee92e UPSTREAM.md items 3 to 12 and NOTICE, 8224da6 review fix (setSpeed clamps to electric_motor_rpm_range in double before the float cast, UPSTREAM.md item 9 mentions it), 3bd0483 okf docs. The old base 51492e1 is e6a5ac4 on the branch now. Slim jar SHA-1 at 8224da6 (incremental and clean build agree): 251b86adafcff4689eb0008ba99a1e305cb85997. compileJava: 36 warnings, same as the porter. ccacompat.py of that jar against the 265 jars of scratchpad packboot-forge/mods: TOTAL MISSING 0.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "Integrator note for cca-pack-release (docs): commit 3bd0483 already set the Small fixes row of okf/modpack/createaddition-backport.md to Done, says de9d7e7 was not ported and that JEI shows 20m, rewrote the Small fixes section with line numbers, added the deferred in game and boot tests and the ObservePacket guard to the Release section and the translation handoff to Ponders and translations. The porter item about the Planned status row is therefore done, only the final release status remains.",
+      "release": "Note for the record, nothing left to do."
+     }
+    ]
+   }
+  ],
+  "cca-160-rework": [
+   {
+    "bundle": "cca-160-rework",
+    "to": "cca-pack-release",
+    "ids": [
+     "alternator-double-shaft",
+     "capacitor-fe-item",
+     "electrum-amulet-rework",
+     "tesla-coil-light-and-powered-state"
+    ],
+    "status": "Done, client tests and alternator scan open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-pack-release / alternator-double-shaft: client test of the motor, alternator, shaft, alternator chain with Flywheel on and off (visual and renderer). Scan the live world or warn players about alternators whose back face touches another kinetic network, because they join it on the next update and a speed conflict breaks a block.",
+      "release": "Open. The client check needs a pack client, and the alternator scan on the copy of the live world is a deploy gate. Both are listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release / capacitor-fe-item: in game tests of discharging into a machine that drains item FE, crafting with a charged capacitor, the tooltip and bar on a client, and old capacitor stacks in a copy of the live world stacking with new empty ones.",
+      "release": "Partly done. In the savegame test an empty capacitor of the fork merged through a hopper into a stack of 5 that 1.3.3 had saved, which became 6, and a charged one keeps its energy tag at a count of 1. A Tesla Coil charged a capacitor on a depot to 5000 FE (hook boots). The rest needs a client."
+     },
+     {
+      "item": "cca-pack-release / electrum-amulet-rework: in game test with a player (charging a Capacitor in the other hand, Shocking, zap sound, amulet_effect_enabled false). List the removal of Luck and Speed in the release changelog (okf already lists it under Changed for players).",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-ponders-and-translations / translations-merge: item.createaddition.electrum_amulet.tooltip.summary still describes the old Luck effect in all 20 non English locales (upstream 658a390 is equally stale). Retranslate the key, or drop it so en_us shows.",
+      "release": "Done in 74a1e31. The stale summary is gone from the other locales, so they show the English text until someone translates it."
+     },
+     {
+      "item": "cca-pack-release (license): texcmp.py of item/electrum_amulet.png against Create 6.0.10. It was only run against Create 6.0.8 (no overlap found).",
+      "release": "Done at the release. texcmp.py and texslide.py ran against Create 6.0.10 (51e7a31, UPSTREAM.md License)."
+     },
+     {
+      "item": "cca-pack-release (docs): set the cca-160-rework row of okf/modpack/createaddition-backport.md to Done with the four commits. Optionally note the local bar cap and the overflow guard of the amulet under Local divergences.",
+      "release": "Done in 752cf77."
+     },
+     {
+      "item": "cca-pack-release: Arclight boot with the full pack. Only a plain Forge 47.4.18 boot with Create 6.0.8 ran here.",
+      "release": "Done. The full pack Arclight boot createaddition-arclight reached Done with no new log signature."
+     },
+     {
+      "item": "cca-pack-release (integration note): the integrator already set the cca-160-rework row to Done and added the bar cap and the amulet overflow guard to Local divergences (752cf77). The review showed that alternators join the network behind them on the first server tick after their chunk loads (3f97be7), so the scan is a deploy gate: run tools/alternator_scan.py (ade8903) on a copy of the live world with --json, boot it with the release jar, Chunky the built areas, scan again with --compare and fix every listed spot before the deploy.",
+      "release": "Open. The alternator scan is a deploy gate on the copy of the live world, see cca-pack-release, deferred."
+     }
+    ]
+   }
+  ],
+  "cca-ignitable-fluids": [
+   {
+    "bundle": "cca-ignitable-fluids",
+    "to": "cca-pack-release",
+    "ids": [
+     "ignitable-fluids"
+    ],
+    "status": "Done, lumisene fire in game open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-ignitable-fluids / ignitable-fluids: Supplementaries' own lumisene fire was not tested in game. Only the mixin export shows that its injectors chain with ours on different injection points.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-ignitable-fluids / ignitable-fluids: no full-pack Arclight boot was run. The release bundle (cca-pack-release) should check the 2 accepted ERROR lines and the export with the whole mod set.",
+      "release": "Done. The full pack Arclight boot createaddition-arclight exported FireBlock, BaseFireBlock and FlowingFluid with the mixins of the fork next to those of the other mods, and it shows no new log signature against newmods-arclight."
+     },
+     {
+      "item": "cca-ponders-and-translations / translations-merge: tag.fluid.forge.ignites is only in en_us and ko_kr. The other 1.21.1 locales have no value for it, so the merge has nothing to take beyond ko_kr.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release (docs): set the Ignitable fluids row of okf/modpack/createaddition-backport.md to done (56f628f, 833ae6d). The status paragraph above the table still says no feature is ported yet. [Integrator note: the cherry-picks rewrote 56f628f and 833ae6d as e0fed53 and 7ee0449. The integration (b3565f8) already set the row to done with e0fed53, 7ee0449 and the review fixes d49e1b0 and 200afee, and updated the status paragraph. The release only has to check them.]",
+      "release": "Done in b3565f8."
+     }
+    ]
+   }
+  ],
+  "cca-charging-sequenced-assembly": [
+   {
+    "bundle": "cca-charging-sequenced-assembly",
+    "to": "cca-pack-release",
+    "ids": [
+     "charging-sequenced-assembly",
+     "electrify-gold-charging-recipes",
+     "deoxidize-create-copper-tiles"
+    ],
+    "status": "Done, client tests open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-pack-release / charging-sequenced-assembly: client tests not run (no client here). Needed: JEI and EMI (through its JEI layer) show a Sequenced Assembly charging step with the powered coil and the tooltip 'Charge 1.0K⚡ with Tesla Coil'; a fork client receives the synced recipes with charging steps from a fork server; a run on a moving belt, not only a depot.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release / charging-sequenced-assembly + electrify + tiles: full-pack Forge and Arclight boot must parse every charging recipe and keep the 2 accepted ERROR lines. Only the reduced test servers ran here.",
+      "release": "Done for the server. Both full pack boots loaded the recipes with no recipe error of the mod, and the hook boots charged a gold wire, a gold rod, a gold ingot, weathered copper tiles and a capacitor on depots under Tesla Coils. The belt run and JEI need a client."
+     },
+     {
+      "item": "cca-pack-release / electrify-gold-charging-recipes: gold nugget and gold rod were not tried in game, and the JEI listing of the six recipes on a client was not checked.",
+      "release": "Partly done. A gold rod became an electrum rod on the hook boots. The gold nugget and the JEI listing are open."
+     },
+     {
+      "item": "cca-ponders-and-translations / translations-merge: createaddition.recipe.charging.sequence exists only in en_us. Upstream 658a390 has no other locale for it either, so there is nothing to merge.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release (docs): the 'Charging recipes (cca-charging-sequenced-assembly)' status row in okf/modpack/createaddition-backport.md still says Planned and should become Done with the integrated hashes.",
+      "release": "Done in cec22f6."
+     },
+     {
+      "item": "cca-pack-release (integration note): the integrator already set the 'Charging recipes (cca-charging-sequenced-assembly)' row of okf/modpack/createaddition-backport.md to Done in cec22f6, with fa51d4c (Sequenced Assembly charging), ddb7fc6 (electrify), e277ef6 (copper tiles), the test record 2a2b79b and the review fix 353c753. The bundle's UPSTREAM.md items are source changes 25 to 27 (renumbered behind the wiregraph and 160-rework items 14 to 24). The release section of that page now also lists: a coil drawing check in JEI Sequenced Assembly (ChargingAssemblySubCategory FACING UP vs AnimatedTeslaCoil DOWN, both from upstream), the full-pack check that gold wire gives immersiveengineering:wire_electrum and gold rod stays createaddition:electrum_rod (AlmostUnified modPriorities), and a player changelog line that powered Tesla Coils now catch gold items and Create copper tiles on belts and depots. The integrated jars (e277ef6 SHA-1 9cf70e69d5f0bcde700a7e9ba934e94eb14774db, 353c753 SHA-1 122017190996b570f15af20e6befd38732ba6050) scanned TOTAL MISSING 0 against packboot-forge/mods, and the e277ef6 jar passed the depot tests on the reduced Forge and Arclight servers (bp2/createaddition/csa/forgeboot and arcboot now hold that jar instead of the porter's cca-csa.jar).",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release / charging-jei-chance (review note, optional): ChargingCategory shows only getResultItem() and no chance. Recorded as a local divergence. If a Create-form charging recipe with several results or chance < 1 is ever shipped, put the output slot on the ProcessingOutput list and add Create's chance tooltip.",
+      "release": "Note for the record, nothing left to do."
+     }
+    ]
+   }
+  ],
+  "cca-electric-pump": [
+   {
+    "bundle": "cca-electric-pump",
+    "to": "cca-pack-release",
+    "ids": [
+     "electric-pump"
+    ],
+    "status": "Done, client tests open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-pack-release: client checks for the pump. The goggle line, the pulsing partials with Flywheel on and with '/flywheel backend off', reversing with a real wrench, the recipe in JEI and EMI, and the item model. No client was available.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release: on the full-pack Arclight boot, check that FluidPropagatorMixin is applied in the exported com/simibubi/create/content/fluids/FluidPropagator next to any other mod's mixin there. Also check the 2 accepted ERROR lines.",
+      "release": "Done. The full pack hook boots ran an Electric Pump between Create pipes, and the exported FluidPropagator of the Forge and the Arclight hook boot carries FluidPropagatorMixin. Repeat the check after every Create update, see cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release: re-run texcmp.py on electric_pump/block.png against the Create 6.0.10 (1.21.1) assets. Against 6.0.8 the best match is create/textures/block/pump.png at 22.6%, below the 25% mark. The 1.21.1 tree in the licence research has the same pump.png blob 8f3d8f7, so the same result is expected.",
+      "release": "Done at the release. texcmp.py against Create 6.0.10 found the same match (51e7a31, UPSTREAM.md License)."
+     },
+     {
+      "item": "cca-ponders-and-translations: the electric_pump_flow ponder scene (562d383), the CAPonders storyboard entry for CABlocks.ELECTRIC_PUMP, the createaddition.ponder.electric_pump_flow.* lang keys, and translations of block.createaddition.electric_pump (only en_us has it). The setActive method the scene uses is already ported.",
+      "release": "Done in 65de407."
+     },
+     {
+      "item": "cca-servo-motor: integrate after this bundle. SERVO_MOTOR goes after ELECTRIC_PUMP in CABlocks (keep its CRLF line endings), in CABlockEntities and CAPartials, and after createaddition:electric_pump in mineable/pickaxe.json and en_us.json, as upstream orders them.",
+      "release": "Done in the integration order, 3d9bdf0 after 1051eaf."
+     },
+     {
+      "item": "Review note (upstream design, optional): with no hysteresis, an under-supplied pump switches on and off every one or two ticks. Each switch triggers a Create pressure update over the pipe network and a block entity sync. Ported unchanged, not fixed.",
+      "release": "Open owner decision, see okf/modpack/createaddition-backport.md, Open owner decisions."
+     },
+     {
+      "item": "Unresolved test observation: one heavily edited test line stopped flowing with an Electric and a mechanical pump in series. It did not repeat on three fresh lines. Worth an in-game look in the cca-pack-release test pass.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "Cosmetic (upstream): block_pump_partial.json and item.json point to '#missing' for faces that are hidden. Expect texture-reference warnings in the client log. The files are kept byte-identical.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release (integration note): the integrator set the 'Electric Pump (cca-electric-pump)' row of okf/modpack/createaddition-backport.md to Done in 63896e4, with 1051eaf (pump), a56b0c4 (FluidPropagatorMixin), the test record 9dc45aa and the review fix 914089f. The pump's UPSTREAM.md item is source change 28 (14 to 27 were taken by the wiregraph, 160-rework and charging items). Review fixes were docs and comments only: no hysteresis (kept as upstream, now listed under Open owner decisions and Operator notes), schematics keep the pump FE (as upstream), and FluidPropagatorMixin keeps no require (a failed require would crash the live server when the class loads during play), so the Release section asks to repeat the FluidPropagator export check after every Create update through tools/update_mods.py. The Release section also asks for an in game run of an Electric Pump and a Mechanical Pump in series at 32 and 256 RPM in both orders with a redstone toggle before the pump counts as tested in game. The integrated jar (914089f, slim, SHA-1 e000472b0884645502cce3fbe80e33a2fc142cef) scanned TOTAL MISSING 0 against packboot-forge/mods and passed flow, redstone, pipe replacement, 15 FE/t draw and restart checks on bp2/createaddition/pump-boot/forgeboot and arcboot, which now hold that jar (the porter's jars, logs, mixin exports and worlds are in pump-boot/porter-evidence). Use bp2/createaddition/pump-int/scripts/srvlaunch.sh (setsid) to start those servers: a first run through the porter's boot.sh lost its parent shell and fifo holder mid run.",
+      "release": "Note for the record, nothing left to do."
+     }
+    ]
+   }
+  ],
+  "cca-servo-motor": [
+   {
+    "bundle": "cca-servo-motor",
+    "to": "cca-pack-release",
+    "ids": [
+     "servo-motor",
+     "servo-cc-peripheral"
+    ],
+    "status": "Done, client tests open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-ponders-and-translations / new-ponders: the servo ponder storyboard (servo.nbt, PonderScenes.servoMotor), the CAPonders entries that add SERVO_MOTOR to the ELECTRIC and AllCreatePonderTags.MOVEMENT_ANCHOR tags, and the createaddition.ponder.servo_motor.* lang keys. None of these were added here.",
+      "release": "Done in 65de407."
+     },
+     {
+      "item": "cca-ponders-and-translations / translations-merge: block.createaddition.servo_motor exists only in en_us (and en_ud is not added). Take the translated values from the 1.21.1 locales.",
+      "release": "Nothing to merge. No 1.21.1 locale has a value for the key."
+     },
+     {
+      "item": "cca-pack-release: the in-game client tests were not run. They are the wrench roll on all faces, the Max, Min and movement mode scroll boxes on the correct sides for each roll, the renderer with Flywheel on and off, and the 24 blockstate variants seen on a client, the lever door rig, printing a schematic and moving the servo inside a contraption.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-pack-release: no Arclight boot was run with the servo. Blocks and block entities are low risk. Check the 2 accepted ERROR lines in a full-pack boot.",
+      "release": "Done. The full pack Arclight boot loaded the servo, and the Arclight hook boot placed one that took FE and followed a redstone signal."
+     },
+     {
+      "item": "cca-pack-release licence: run texcmp.py on servo_motor/block.png against the Create 6.0.10 (1.21.1) assets. Only 6.0.8 was checked here (best match 8%). Also confirm the copyright line of Create's current MIT code licence for the NOTICE paragraph on the servo renderer, visual and assembly, which follow Create 6 bearing code.",
+      "release": "Done in 51e7a31. texcmp.py ran against Create 6.0.10, and the NOTICE gives the copyright line of Create's current code license."
+     },
+     {
+      "item": "servo-motor: the 1.21 recipe advancement advancement/recipes/redstone/crafting/servo_motor.json is not ported, which matches the fork, since it has no recipe advancements.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release (docs): okf/modpack/createaddition-backport.md still lists the Servo Motor row as Planned. Set it to Done with 72811d9 and 7f32c10, and record the three local changes: the target follows the limits, the angle and limits persist, and the goggles show fe/t.",
+      "release": "Done in 7090507."
+     },
+     {
+      "item": "cca-pack-release (integration note): the integrator cherry-picked 72811d9 and 7f32c10 onto the Electric Pump as 3d9bdf0 and e84695f, added the review fix 7571bc4 and the docs record 7090507. The servo entries follow the pump's in CABlocks (CRLF kept), CABlockEntities, mineable/pickaxe.json and en_us.json, as upstream orders them, and the servo's UPSTREAM.md items are source changes 29 and 30. The docs item above is done in 7090507 (row Done, Local divergences, test record, Release checks, License conditions). The review found Create's bearing_top.png (blob 1d156fa, 256 of 256 pixels) as the lower left quarter and an edited clockwork_bearing_side.png (blob e21a7de, 128 of 256) in the upper left quarter of servo_motor/block.png. Both are in create-1.20.1-6.0.3.jar, so MIT, and 7571bc4 lists them in the NOTICE. The 'best match 8%' of texcmp.py in the licence item above is wrong: texcmp.py only compares whole images. The new sliding check bp2/license-createaddition/scripts/texslide.py (every Create texture up to 16x16 and every 16x16 tile of a larger one, 8 rotations and mirrors) ran on servo_motor, electric_pump, electrum_amulet and barbed_wire against 6.0.3 and 6.0.8 (bp2/createaddition/servo-int/texslide-603-608*.txt). Run both scripts against 6.0.10 before the release. The integrated jar (slim, SHA-1 8ce73fc73067f5d5ffbd7ae4a5f71ee1a6663b36, bp2/createaddition/servo-int/cca-servo-int.jar) compiled with 38 warnings and scanned TOTAL MISSING 0 against packboot-forge/mods with bp2/createaddition/servo-int/scripts/ccacompat.py (tfcompat.py with the CC&A package). The integrator ran no new boot. The porter's test server bp2/createaddition/servo/boot now points at world_nocc and keeps CC:Tweaked in mods-off/.",
+      "release": "Note for the record, nothing left to do."
+     }
+    ]
+   }
+  ],
+  "cca-ponders-and-translations": [
+   {
+    "bundle": "cca-ponders-and-translations",
+    "to": "cca-pack-release",
+    "ids": [
+     "new-ponders",
+     "translations-merge"
+    ],
+    "status": "Done, pack client look open",
+    "source": "Workflow carryover of the porter and the integrator, with the release note of 2026-11-06 for each item",
+    "handed_on": [
+     {
+      "item": "cca-ponders-and-translations / new-ponders: the ponders were tested only in the dev client (Forge 47.4.0 userdev, Create 6.0.8, Ponder 1.0.91, JEI, CC:Tweaked), not on a full pack client. A pack client look belongs to cca-pack-release.",
+      "release": "Open. It needs a pack client and is listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-ponders-and-translations (optional polish, from the cca-phase1-fixes carryover) / time-remaining-cache: the shared static clientTimeRemaining of TimeRemainingPacket is not keyed by BlockPos. Not done, since it is not part of either id. It is left for cca-pack-release or later polish.",
+      "release": "Optional and not done. Listed under cca-pack-release, deferred."
+     },
+     {
+      "item": "cca-ponders-and-translations / translations-merge: the ponder texts, block.createaddition.electric_pump, block.createaddition.servo_motor, createaddition.recipe.charging.sequence and (in fr_fr) tooltip.alternator.info have no translation in any 1.21.1 locale, so they show English. The Electrum Amulet summary shows English in 19 locales until someone translates the new text. No self-made translations were added.",
+      "release": "Note for the record, nothing left to do."
+     },
+     {
+      "item": "cca-pack-release (integration note): the integrator integrated cca-ponders-and-translations as 65de407 and 74a1e31 with the review fix 64a412d (UPSTREAM.md wording only) and set its status row and section in okf/modpack/createaddition-backport.md in 49bf517, including the Release check for the ponders on a pack client, the License conditions bullet for the pump ponder schematic and PumpScenes.flow, and the player changelog lines.",
+      "release": "Note for the record, nothing left to do."
+     }
+    ]
+   }
+  ],
+  "cca-pack-release": [
+   {
+    "bundle": "cca-pack-release",
+    "to": "owner (deploy of the next pack)",
+    "ids": [
+     "pack-wiring-and-release"
+    ],
+    "status": "Shipped in the pack branch, live world gates and client checks open",
+    "commits": [
+     "e58a076 fix(createaddition): answer goggle observations only near the player",
+     "51e7a31 fix(createaddition): name Create's current code licence holder in the NOTICE",
+     "ac87ce7 feat(mods): bundle the Create Crafts & Additions fork 1.20.1-1.7.3-skytekx.1",
+     "b781300 chore(config): add the new Create Crafts & Additions keys to the common config"
+    ],
+    "tests": [
+     "Build: ./gradlew build at the fork state of 51e7a31 gave SHA-1 b7355fab1f431ddf186a5c7be2e5a4d4c751983b, 1716104 bytes, the same jar as the two release builds of 2026-11-05. No datagen applies, the fork has no data providers.",
+     "Compat: ccacompat.py against the 271 other jars of the full pack boot found 0 missing symbols. Only AllTheLeaks links into the mod, no jar declares a range on createaddition, no KubeJS script or config names it.",
+     "Savegame: a world built with 1.3.3 on Forge 47.4.18 with Create 6.0.8 and CC:Tweaked 1.120.2 loaded with the fork. All 29 recorded block entities kept every NBT key, the chest of 27 stacks stayed identical, the block states stayed identical except the new waterlogged=false of barbed wire, the graph took the 9 wire nodes in 5 networks and tools/wire_scan.py --compare found 0 differences. The new pump and servo worked, an empty capacitor of the fork stacked onto a 1.3.3 stack, and a second fork boot kept everything.",
+     "Full pack boots of b781300: createaddition-forge and createaddition-arclight reached Done with 0 FATAL lines, no crash report and no watchdog, and showed no new log signature against newmods-forge and newmods-arclight, the last boots with the same mixin export. The mixins of the fork were applied in the exported classes on both loaders.",
+     "Hook boots createaddition-forge-hook and createaddition-arclight-hook (Done only, then in world checks over RCON): Tesla Coils over depots made immersiveengineering:wire_electrum from a gold wire, createaddition:electrum_rod from a gold rod, thermal:electrum_ingot from a gold ingot and create:copper_tiles from weathered copper tiles, and charged a capacitor to 5000 FE. An Electric Pump between Create pipes ran, which applied FluidPropagatorMixin, and a servo took FE and followed a redstone signal. A chain of 320 connectors filled in one command formed one network, and after 14 of its 20 chunks unloaded, cca_wires rebuild walked the 224 unloaded nodes through the saved chunks back to 320 nodes in 1 network."
+    ],
+    "deferred": [
+     "Login checks: a stock 1.3.3 pack client against the fork server and a fork client against a 1.3.3 server must end with 'Connection closed - mismatched mod channel list' naming createaddition:main, and a fork client must join the fork server.",
+     "Alternator scan gate: tools/alternator_scan.py <world> --json before.json on a copy of the live world with every dimension, a boot of the copy with the release jar, Chunky over the built area of each dimension, then --compare before.json. Fix every listed spot before the deploy.",
+     "Live world gate of the connector rework: every step of the first cca-wiregraph entry above, with skytekx-compat 2.1.6 and 2.1.3 on the production Arclight jar.",
+     "Client checks of the connector rework: every step of the second cca-wiregraph entry above, and the EntityCulling whitelist if long wires vanish.",
+     "In game tests of the small fixes: the 3x3x5 Modular Accumulator with goggles, its schematic print and a Symmetry Wand, barbed wire in water, with a wrench and picked up, the Electrum Block mined with an iron pickaxe, the goggle timers, the stress tooltips and the death messages on a client.",
+     "In game tests of the changes of 1.6.0: the motor, alternator, shaft and alternator chain with Flywheel on and off, the Electrum Amulet with a player and amulet_effect_enabled false, a capacitor discharging into a machine, crafting with a charged capacitor, and its tooltip and bar.",
+     "Supplementaries' lumisene fire next to the ignitable fluids in game.",
+     "Electric Pump on a client: the goggle line, the partials with Flywheel on and with /flywheel backend off, the wrench reversal, the recipe in JEI and EMI, the item model, and an Electric Pump and a Mechanical Pump in series at 32 and 256 RPM in both orders with redstone toggles. Repeat the FluidPropagator export check after every Create update.",
+     "Charging on a client: a Sequenced Assembly charging step in JEI and in EMI, the synced recipes, a run on a moving belt, the coil drawing of ChargingAssemblySubCategory, the gold nugget and the JEI listing of the electrify recipes.",
+     "Servo Motor on a client: the wrench roll on all six faces, the four value boxes per roll, the renderer and the Flywheel visual, the 24 blockstate variants, the item model, the goggle line, a lever door rig, a printed schematic and a servo inside a contraption.",
+     "Ponders on a pack client: the pump, connector and servo scenes, the accumulator scene and Create's Fluid Tank scene with the whole mod set.",
+     "Optional code notes, not applied to keep the release jar stable: the ListTag of WireGraphVerifier, the stale wire end double drop, the shared clientTimeRemaining of TimeRemainingPacket, a debug line for the late answer guard of the verifier, and the pump hysteresis, which is an open owner decision.",
+     "Deploy: with the java process gone, remove mods/createaddition-1.20.1-1.3.3.jar from the server and copy local-mods/createaddition-1.20.1-1.7.3-skytekx.1.jar in, together with the next pack, since clients need the same jar."
     ]
    }
   ]

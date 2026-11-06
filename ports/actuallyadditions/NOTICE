@@ -117,6 +117,8 @@ Modifications
     * Crushers: the Double Crusher works, shift click fills the crushers, their screens show
       their own background, and the crushing recipes of upstream's main branch, among them the
       copper and deepslate ores, come with a JEI category.
+    * Powered Furnace: JEI lists it under smelting and opens that category from its screen, the
+      auto split button no longer covers the energy bar, and the item has its tooltip again.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

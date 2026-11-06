@@ -19,6 +19,7 @@ import de.ellpeck.actuallyadditions.mod.crafting.FermentingRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.LaserRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.MiningLensRecipe;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.CrusherScreen;
+import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiFurnaceDouble;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.jei.crusher.CrusherCategory;
 import de.ellpeck.actuallyadditions.mod.jei.empowerer.EmpowererRecipeCategory;
@@ -69,6 +70,7 @@ public class JEIActuallyAdditionsPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
         registry.addRecipeCatalyst(new ItemStack(ActuallyItems.CRAFTER_ON_A_STICK.get()), RecipeTypes.CRAFTING);
+        registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.POWERED_FURNACE.getItem()), RecipeTypes.SMELTING);
         registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.FERMENTING_BARREL.getItem()), FERMENTING);
         registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.ATOMIC_RECONSTRUCTOR.getItem()), LASER);
         registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.EMPOWERER.getItem()), EMPOWERER);
@@ -76,7 +78,6 @@ public class JEIActuallyAdditionsPlugin implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.CRUSHER_DOUBLE.getItem()), CRUSHING);
         registry.addRecipeCatalyst(new ItemStack(ActuallyItems.LENS_OF_THE_MINER.get()), MINING_LENS);
 
-//        registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.blockFurnaceDouble.get()), VanillaRecipeCategoryUid.SMELTING);
 //        registry.addRecipeCatalyst(new ItemStack(ActuallyBlocks.blockCoffeeMachine.get()), CoffeeMachineRecipeCategory.NAME);
 //        registry.addRecipeCatalyst(new ItemStack(ActuallyItems.itemBooklet.get()), BookletRecipeCategory.NAME);
         //        registry.addRecipeCatalyst(new ItemStack(InitBlocks.blockCompost.get()), CompostRecipeCategory.NAME);
@@ -101,6 +102,7 @@ public class JEIActuallyAdditionsPlugin implements IModPlugin {
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addRecipeClickArea(CrusherScreen.class, 80, 40, 24, 22, CRUSHING);
         registration.addRecipeClickArea(CrusherScreen.CrusherDoubleScreen.class, 51, 40, 74, 22, CRUSHING);
+        registration.addRecipeClickArea(GuiFurnaceDouble.class, 51, 40, 74, 22, RecipeTypes.SMELTING);
     }
 
 //    @Override
@@ -116,7 +118,6 @@ public class JEIActuallyAdditionsPlugin implements IModPlugin {
 //
 //
 //        registry.addRecipeClickArea(GuiCoffeeMachine.class, 53, 42, 22, 16, CoffeeMachineRecipeCategory.NAME);
-//        registry.addRecipeClickArea(GuiFurnaceDouble.class, 51, 40, 74, 22, VanillaRecipeCategoryUid.SMELTING);
 //
 //        IIngredientBlacklist blacklist = helpers.getIngredientBlacklist();
 //        blacklist.addIngredientToBlacklist(new ItemStack(ActuallyBlocks.blockRice.get()));

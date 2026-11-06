@@ -12,15 +12,20 @@ package de.ellpeck.actuallyadditions.mod.blocks;
 
 import de.ellpeck.actuallyadditions.mod.blocks.base.DirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityPoweredFurnace;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -32,13 +37,13 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class BlockPoweredFurnace extends DirectionalBlock.Container {
     public BlockPoweredFurnace() {
-        // TODO: [port] confirm this is correct for light level... Might not be reactive.
         super(ActuallyBlocks.defaultPickProps().sound(SoundType.METAL).randomTicks().lightLevel(state -> state.getValue(LIT)
             ? 12
             : 0));
@@ -84,18 +89,10 @@ public class BlockPoweredFurnace extends DirectionalBlock.Container {
         builder.add(LIT).add(HORIZONTAL_FACING);
     }
 
-    // TODO: [port] add back
-
-    //    public static class TheItemBlock extends ItemBlockBase {
-    //
-    //        public TheItemBlock(Block block) {
-    //            super(block);
-    //        }
-    //
-    //        @Override
-    //        public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-    //            tooltip.add(TextFormatting.ITALIC + StringUtil.localize("tooltip." + ActuallyAdditions.MODID + ".previouslyDoubleFurnace"));
-    //        }
-    //    }
-
+    // SkyTekx: upstream bf4be229 brings back the tooltip of the 1.12 item block
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag advanced) {
+        super.appendHoverText(stack, level, tooltip, advanced);
+        tooltip.add(Component.translatable("tooltip.actuallyadditions.previouslyDoubleFurnace").withStyle(ChatFormatting.ITALIC));
+    }
 }

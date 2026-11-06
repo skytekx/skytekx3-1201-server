@@ -9,7 +9,7 @@ timestamp: 2026-11-06
 # Actually Additions backport
 
 Actually Additions (mod id `actuallyadditions`) is new to the pack, which bundles the fork since the
-release of 2026-11-06 (0ed346b). Upstream never released a build
+release of 2026-11-06 (9734e8f). Upstream never released a build
 for Minecraft 1.20.1. Its branch `1.20.1` stopped at 226a439 on 2024-03-04 with `mod_version` 1.1.52
 for Forge 47.1.3, and the mod went on as NeoForge builds for 1.20.4, 1.21 and 1.21.1, up to release
 1.3.26 of 2026-06-19 (`ports/actuallyadditions/UPSTREAM.md`, Upstream table). This plan makes the
@@ -42,9 +42,9 @@ release carries a release note there. Its key `aa-ship` lists what stays open af
 | Port source | Branch `main` at cd9d9c63 (2026-06-19), release 1.3.26 for NeoForge 1.21.1 |
 | Intermediate steps | Branch `1.20.4` at 0ebbd811 (1.2.14, NeoForge 20.4) and branch `1.21` at d9b0a714 (1.3.6, NeoForge 21.1). The 1.20.4 port commit 63fbbb33 has the base as its parent and is the reference for every reverse mapping |
 | Fork | Folder `ports/actuallyadditions/`, Java 17, ForgeGradle 6.0.54, Forge 47.1.3 userdev, Parchment 2023.09.03 (`UPSTREAM.md`, Build changes) |
-| Version | Version 1.1.52-skytekx.1 in `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, the reobf jar from `build/libs/` with SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb` at ed177d0, see [Version](#version) |
-| Content level | Parity with upstream 1.3.26 (cd9d9c63) except the exclusions, as the NOTICE line `Content` says (ed177d0) |
-| Ships as | The jar in `local-mods/` since 0ed346b, which the `.mrpack` carries under `overrides/mods/`. The server's `mods/` gets it by hand at the deploy. The Modrinth project has no 1.20.1 file the index could point at |
+| Version | Version 1.1.52-skytekx.1 in `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar`, the reobf jar from `build/libs/` with SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb` at 6b5b19e, see [Version](#version) |
+| Content level | Parity with upstream 1.3.26 (cd9d9c63) except the exclusions, as the NOTICE line `Content` says (6b5b19e) |
+| Ships as | The jar in `local-mods/` since 9734e8f, which the `.mrpack` carries under `overrides/mods/`. The server's `mods/` gets it by hand at the deploy. The Modrinth project has no 1.20.1 file the index could point at |
 | Build check | The `compileJava` call in `UPSTREAM.md`, run with `/opt/jdk17` and `-Xmx2g`, with upstream's compiler settings |
 | Integrations | Patchouli 85 (`modrinth.index.json:2169`), Curios 5.14.1 (`modrinth.index.json:1014`), JEI 15.74.0.233 (`modrinth.index.json:1584`) and EMI 1.1.24-skytekx.2 from `local-mods/`, all optional |
 | Dependents | None. Of the 264 `mods.toml` files in the Arclight pack boot copy of the workflow scratchpad (`packboot-arclight/mods/`), none names `actuallyadditions` (scan of 2026-11-05) |
@@ -470,17 +470,19 @@ only jars of the index either. The Wings Of The Bats and the Storage Crate Keepe
 so, left `forge:holds_items` empty and kept `zh_cn.json` as it is, see
 [Pack integration](#pack-integration).
 
-The release is done. Its commits are 40d0122 (the empowering recipe serializer, `UPSTREAM.md`
-source change 70), ed177d0 (the content level in the NOTICE, the version decision and the config
-reader check), 0ed346b (the jar in `local-mods/`, the permission record and the license text),
-1975ce6 (the common config of the first pack boot) and b772868 (the savegame test), followed by the
-docs commits of this page, the mod set, the README, the open items, the inventory and the carryover
-file. Two clean builds of ed177d0 gave the jar SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb`
-(3009728 bytes, 2529 entries), and a `runData` into an empty `src/generated/resources` wrote all 1238
-files unchanged, so the committed generated files match the providers. The savegame test from the
-base jar 237e0fc6 kept every item, fluid and energy value and showed the planned changes, and the
-full pack booted on the pack's Arclight with no new log signature, see [Release test](#release-test).
-Every owning feature reads the new config, and the two readers of the 1.12 enums that are left read
+The release is done. Its commits are 17f8b41 (the empowering recipe serializer, `UPSTREAM.md` source
+change 70), 6b5b19e (the content level in the NOTICE, the version decision and the config reader
+check), 9734e8f (the jar in `local-mods/`, the permission record and the license text), 83573f2 (the
+common config of the first pack boot) and e249be0 (the savegame test), followed by the docs commits
+of this page, the mod set, the README, the open items, the inventory and the carryover file. The
+review fix 6002c9b moved the two owner decisions that the release left open to the
+[open items](../open-items.md) and made the first login of a pack client a gate for a public pack. Two
+clean builds of 6b5b19e gave the jar SHA-1 `227073059543dd3d969cd53a15f1fd42a38985cb` (3009728
+bytes, 2529 entries), and a `runData` into an empty `src/generated/resources` wrote all 1238 files
+unchanged, so the committed generated files match the providers. The savegame test from the base jar
+237e0fc6 kept every item, fluid and energy value and showed the planned changes, and the full pack
+booted on the pack's Arclight with no new log signature, see [Release test](#release-test). Every
+owning feature reads the new config, and the two readers of the 1.12 enums that are left read
 `false` as on `main` (`UPSTREAM.md`, source change 6).
 
 The jar is not on the live server yet, and no pack client has joined a server with it. The checks
@@ -504,7 +506,7 @@ those checks.
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Done in 82954fa, ed5a6dd, 3ee663d, 3ea6f2a and a4700cb, relay capabilities 3af12a2, review fix 0f2da0c |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Done in 06104c9, 0137a04, 02be2bd, 03f016e, 3d78e0c, e7b2e2b and 06b0aa9, review fix a4678ee |
 | Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Done in b20fb45, 6c21c97, bd9ef14, e8f4585, e54f16f and 37c42b5, review fix 1fd242f |
-| Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Done in 40d0122, ed177d0, 0ed346b, 1975ce6 and b772868, with the docs commits after them |
+| Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Done in 17f8b41, 6b5b19e, 9734e8f, 83573f2 and e249be0, with the docs commits after them, review fix 6002c9b |
 
 The baseline comes first, then server safety and the data core. The assets wait for the data core,
 because both edit the tag and recipe generators in `data/`. The three machine bundles (processing
@@ -529,7 +531,7 @@ paths below are relative to the mod's root package folder in `src/main/java`, wh
 
 ### Version
 
-The release kept 1.1.52 as the base number and builds 1.1.52-skytekx.1 (ed177d0), because the code
+The release kept 1.1.52 as the base number and builds 1.1.52-skytekx.1 (6b5b19e), because the code
 base is 1.1.52. The NOTICE line `Content` and `UPSTREAM.md` build change 4 state the content level
 as parity with upstream 1.3.26 (cd9d9c63) except the exclusions. A base number of 1.3.26 would have
 claimed parity with a NeoForge 1.21.1 build that has data components and 1.21 content, and it would
@@ -834,12 +836,12 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
 ### Release
 
 - A data pack empowering recipe without exactly four modifiers is skipped with a log line instead of
-  stopping the server, as `main` skips it through its codec (40d0122, `UPSTREAM.md`, source change
+  stopping the server, as `main` skips it through its codec (17f8b41, `UPSTREAM.md`, source change
   70). The crushing serializer got the same fix in 1205f84.
 - The NOTICE states the content level, parity with upstream 1.3.26 except the exclusions, and the
-  version stays 1.1.52-skytekx.1 (ed177d0, `UPSTREAM.md`, build change 4).
-- The jar went into `local-mods/` with the permission record and the license text (0ed346b), and the
-  common config of the first pack boot into `config/` (1975ce6). The savegame test and the full pack
+  version stays 1.1.52-skytekx.1 (6b5b19e, `UPSTREAM.md`, build change 4).
+- The jar went into `local-mods/` with the permission record and the license text (9734e8f), and the
+  common config of the first pack boot into `config/` (83573f2). The savegame test and the full pack
   boot are under [Release test](#release-test). The README, the [Mod set](mod-set.md), the
   [open items](../open-items.md), the inventory and the carryover file follow the release.
 - No public pack with this jar goes up before a pack client from the `.mrpack` has joined the
@@ -941,7 +943,7 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   (5b06e38).
 - The rotation helper in `VoxelShapes` is marked as taken from Mekanism, which is MIT. The comment
   stays, and `NOTICE` carries the MIT notice of Mekanism at 46bc2dc (2b2f447), as does the license
-  text in `licenses/` (0ed346b).
+  text in `licenses/` (9734e8f).
 - The snapshot already leaves out `RecipeHandler.java`, a commented copy of a class under CC
   BY-NC-ND 4.0 (`UPSTREAM.md`, Files left out). The baseline also deleted the fully commented
   `RecipeHelper.java`, whose header names a third party author and the MIT License without the
@@ -954,7 +956,7 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   links the source in `tree/master/ports/actuallyadditions`, so `tools/mrpack_permissions.py` refuses
   a public build until master holds that directory and this jar. The file
   `licenses/ActuallyAdditions-1.20.1-1.1.52-skytekx.1-LICENSE.txt` holds the upstream MIT text with its
-  copyright line, the MIT notice of Mekanism and the credit of the Ender IO excerpt (0ed346b).
+  copyright line, the MIT notice of Mekanism and the credit of the Ender IO excerpt (9734e8f).
 
 ## Savegame notes
 
@@ -1125,7 +1127,7 @@ No live world has the mod, so the test ran on a fresh flat world of a dedicated 
 with the mods of the fork's dev runs (JEI 15.3.0.4, Patchouli 85, Curios 5.14.1, The One Probe and
 Mekanism 10.4.6), so that the dev client could join it at the end. OLD was the base with the InvTweaks
 removal, jar `237e0fc65275a0204fe7008f144c395207e41205`, and NEW the release jar
-`227073059543dd3d969cd53a15f1fd42a38985cb` of ed177d0. The scripts, the command files, the snapshots
+`227073059543dd3d969cd53a15f1fd42a38985cb` of 6b5b19e. The scripts, the command files, the snapshots
 and the logs are in the workflow scratchpad under `bp2/actuallyadditions/ship/` (`tools/`, `sv/`,
 `srv-sv/logs-keep/`).
 
@@ -1186,7 +1188,7 @@ on Arclight (carryover `aa-arclight-test`).
 
 ### Full pack boot
 
-The Arclight pack boot copy of the workflow scratchpad booted the worktree at 0ed346b with the
+The Arclight pack boot copy of the workflow scratchpad booted the tree of 9734e8f with the
 production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, label `aa-ship-arclight`
 (`packboot-logs/aa-ship-arclight-summary.json`). It loaded 299 mods from 272 jars, reached `Done` in
 17.8 s with 0 FATAL lines, no crash report, no watchdog and a clean RCON stop, and generated the
@@ -1199,9 +1201,9 @@ of `aa-ship-arclight-debug.log.gz`), and the backup config line from Nostalgic T
 live server keeps off its `mods/` (see [Mod set](mod-set.md)). Neither comes from the fork. The mod
 adds four WARN lines of Advanced Loot Info, which finds no reader for the two loot modifiers and the
 Engineer trade list, so its loot view leaves the Bat Wings, the dungeon loot and the Engineer trades
-out. The first start wrote `config/actuallyadditions-common.toml`, which 1975ce6 commits.
+out. The first start wrote `config/actuallyadditions-common.toml`, which 83573f2 commits.
 
-The pack build `tools/build_mrpack.py --allow-unpermitted` of 1975ce6 put the jar with the same
+The pack build `tools/build_mrpack.py --allow-unpermitted` of 83573f2 put the jar with the same
 SHA-1 into `overrides/mods/`, the license text into `overrides/licenses/` and the config into
 `overrides/config/` of a private pack with 58 bundled jars. A public build refuses the jar until
 master holds `ports/actuallyadditions/`, as for the other forks. No pack client joined a server yet
@@ -1338,7 +1340,7 @@ These differ from upstream on purpose and must survive the next upstream sync.
   `PROTOCOL_VERSION` 5, so any later change of the handler list or of a payload bumps it.
 - Mirror the jar by hand while the java process is gone: stop over RCON, wait until the java process
   has exited, copy `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar` from `local-mods/` into `mods/` and
-  boot. The tracked `config/actuallyadditions-common.toml` (1975ce6) is the file the first start
+  boot. The tracked `config/actuallyadditions-common.toml` (83573f2) is the file the first start
   writes, so the boot changes nothing in git. Edit that file only while the java process is gone, and
   commit a change before `tools/build_mrpack.py`, which takes overrides from git HEAD.
 - The ore, the crop patches and the Engineer houses only reach chunks that do not exist yet. The
@@ -1366,7 +1368,7 @@ These differ from upstream on purpose and must survive the next upstream sync.
   already in effect on the base or not needed.
 - Until the release, `UPSTREAM.md` kept the version `1.3.26-skytekx.N` open as an alternative for a
   backport close to the 1.3.x line. The release kept 1.1.52-skytekx.1 and states the content level in
-  the NOTICE instead (ed177d0).
+  the NOTICE instead (6b5b19e).
 
 Related: [Mod set](mod-set.md), [Twilight Forest backport](twilightforest-backport.md),
 [Ender IO backport](enderio-backport.md), [AlmostUnified](almostunified.md),

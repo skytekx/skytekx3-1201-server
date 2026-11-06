@@ -318,7 +318,7 @@ evidence and the page with the details. The rulings behind the first section are
   Placer and the Fluid Collector and the Lava Factory (`ports/actuallyadditions/UPSTREAM.md`, source
   change 60). The sacks pick items up before the Bukkit pickup events, and the Ranged Collector
   takes item entities without the Bukkit `InventoryPickupItemEvent` (source changes 46 and 48). The
-  pack bundles the fork since 0ed346b, and it reaches the server with the next deploy. See
+  pack bundles the fork since 9734e8f, and it reaches the server with the next deploy. See
   [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
 
 ## Not verified

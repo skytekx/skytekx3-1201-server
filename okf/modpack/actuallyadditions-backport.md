@@ -90,9 +90,11 @@ fb2f22c (SHA-1 `bb73c65ef81d17ef862f7231c28d66ebe67438d0`, 4605920 bytes, one bu
 in 62.5 s on a dedicated Forge 47.4.18 server with AlmostUnified 0.11.0 and the pack config,
 Farmer's Delight 1.3.4 and Patchouli 85, with 0 FATAL and 0 ERROR lines, a clean stop and an empty
 `uncovered_recipes.txt` of AlmostUnified. Nobody has opened the JEI or EMI categories in a client
-yet. This bundle makes the phantom placer and breaker, the Atomic Reconstructor and the Vertical
-Digger craftable before the Arclight hardening gives them a fake player that Bukkit sees, so no jar
-of this state may reach the live server.
+yet. This bundle made the phantom placer and breaker, the Atomic Reconstructor and the Vertical
+Digger craftable before the Arclight hardening gave them a fake player that Bukkit sees, so no jar
+from before that bundle may reach the live server. Since 6511595 of the Arclight hardening they act
+as `[ActuallyAdditions]` with block events, and the release decides when a jar reaches the live
+server.
 
 The server safety bundle is done. Its four commits are f9b373b (client classes out of common
 code), e2696b6 (the packet checks), 0b3c5ff (the drill, filter and firework menus) and b3f8fee
@@ -184,9 +186,9 @@ Placer and the JEI list of the mining lens wait for the client test of the relea
 ports fb80bf33 and 58b9cbc9, the laser render type and `AssetUtil.renderLaserParticle`, which the
 energy and relays bundle ported as well, in the final form of `main` with db1bb6e7, 7fb62cb8,
 de635bb7 and b3f87a6f. Its merge replaced the beam of this bundle with that form (see below and
-`UPSTREAM.md`, source changes 27 and 44). No jar of this state may reach the live server before
-the Arclight hardening, since the Phantom Breaker, the placers and the lenses still act as the
-shared fake player `[Minecraft]`.
+`UPSTREAM.md`, source changes 27 and 44). No jar of this state may reach the live server, since
+the Phantom Breaker, the placers and the lenses acted as the shared fake player `[Minecraft]` until
+the Arclight hardening (6511595).
 
 The processing machines bundle is done. Its eleven commits are af3d19b (the crushers), 493dc03
 (the Powered Furnace), 08587ba (the Coal Generator fuels), cb66c85 (the Leaf-Eating Generator and
@@ -274,9 +276,10 @@ Five points of the bundle are not verified. They are the lasers and particles wi
 packs and Embeddium, the crouching compass click and the Hopping Item Interface next to a claim on
 the pack's Arclight (see [Arclight notes](#arclight-notes)), a storage that accepts a simulated
 energy transfer and refuses the real one (9fe3fa1c), and a caching cable that lets go of a battery
-that leaves the Battery Box. The energy and fluid relays still build a new `LazyOptional` on every
-capability call and never invalidate it, as the base did, while the Battery Box now invalidates its
-own. All of these are in the carryover for the Arclight hardening and the release.
+that leaves the Battery Box. The energy and fluid relays built a new `LazyOptional` on every
+capability call and never invalidated it, as the base did, until the integration of the Arclight
+hardening gave them one per side that they invalidate (f876a8c, `UPSTREAM.md`, source change 64).
+The other points are in the carryover for the release.
 
 The filters and sacks bundle is done. Its five commits are a2b6cb4 (the sacks, the filters and the
 buttons of the Advanced Item Laser Relay), 2c289eb (the Item Tag filter with the first two mixins),
@@ -384,6 +387,44 @@ drops of the crops, the light and collision of the Tiny Torch, the two loot swit
 the look of patterned banners and shields, the zombie overlay in a client and the harvest of a wild
 crop stay untested (carryover `aa-ship`).
 
+The Arclight hardening bundle is done. Its five commits are 6511595 (the named fake player with
+block events), 0a4d282 (the chunk guard of the phantom blocks), 818581c (the index of the relay
+networks), 1febab4 (the throttle of the magnet rings) and b32f06a (the porter's test record), with
+the relay capabilities f876a8c and the review fix 094e4ad (`UPSTREAM.md`, source changes 60 to
+64). The world content bundle landed first with source changes 54 to 59, so the merge renumbered
+this bundle's source changes from 54 to 57 up to 60 to 63 and put its NOTICE lines after those of
+the world content. The integration added the relay capabilities of carryover items 83 and 86 as
+one `LazyOptional` per side that a relay invalidates when it is broken or its chunk unloads, as the
+Battery Box does since 73db2b2. The review found that the Phantom Placer places in the chunk next
+to its bound block without checking it, and that source change 61 claimed more than the code does.
+The review fix lets the placer wait for that chunk too and rewords the entry. The binding and range
+checks read the target through the loaded chunk, and a work cycle of the Phantom Placer and Breaker
+reads through the level only while the target chunk is loaded.
+
+The bundle closes several carryover items. The lens events and the named player of the drop
+chance helper and of `WorldUtil.useItemAtSide`, the named player of the Leaf-Eating Generator and
+the Heat Collector, the second break event of the drill, the unload of a phantomface target and the
+relay capabilities are done. Still open are the open menu check of the screen packets, the Bukkit
+pickup events of the sacks and the Ranged Collector, the target of an item entity that a sack
+ignores, and the compass click, the Hopping Item Interface and the machine contents on the pack's
+Arclight (carryover `aa-ship`).
+
+The porter's test ran the jar of the four feature commits (SHA-1
+`a808fcb685cb8a800c4a9a310d916d8488124db3`) on an Arclight 1.0.6 server with the pack's
+`safeiter2` jar, Patchouli, a flat world and a test only Bukkit plugin that logs and cancels the
+block events (`bp2/actuallyadditions/al-events-final.log`, `al-events-old.log` and
+`al-relay-boot1.log` to `al-relay-boot4.log` in the workflow scratchpad, the plugin and scripts in
+`al-tools/`). Every change of the Breaker, the Placer, the Phantom Breaker and Placer, the
+Long-Range Breaker, the Leaf-Eating Generator and the lenses came from `[ActuallyAdditions]` and
+stopped while the plugin cancelled it. A torch on a broken block dropped and the capture stack of
+Arclight stayed empty, where the jar of 693daa2 lost the torch and left 178 contexts on the stack.
+A phantomface bound 295 blocks away never loaded its target chunk, and the chunk of a chest in range
+of a face unloaded like a control chunk. A chain of 50 energy relays carried energy as before,
+split when its middle relay was removed and kept both halves over a restart. The drill, the
+Vertical Digger, the Farmer and the magnet ring did not run, nothing ran with EssentialsX and no
+profile of a large relay network was taken, so the ship stage takes those tests (carryover
+`aa-ship`). The integration compiled the merged tree and booted no jar of it.
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -399,7 +440,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Done in fa08482 and 939981d, review fix 677bf9d |
 | Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Done in a2b6cb4, 2c289eb, 0f90517, 0ecb2ca and 6ec115c, review fix b3f3362 |
 | Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Done in 94af253, ec4164c, 6839d1c and a516398, review fix 693daa2 |
-| Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Planned |
+| Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Done in 6511595, 0a4d282, 818581c, 1febab4 and b32f06a, relay capabilities f876a8c, review fix 094e4ad |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Done in 32f3cfb, 36c1eea, c013130, 70ae973, 1416d6a, 4c8c227 and 52f5fd8, review fix eafcf45 |
 | Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Planned |
 | Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Planned |
@@ -641,7 +682,21 @@ decide. Nothing in the pack depends on the version, see the property table.
 
 ### Arclight hardening
 
-All four parts are local, see [Arclight notes](#arclight-notes).
+- The machines break, place and convert blocks as the fake player `[ActuallyAdditions]` with the
+  fixed UUID `5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd`, through the new helper
+  `mod/util/AAFakePlayers.java`. The breakers, the placers, the Vertical Digger, the Leaf-Eating
+  Generator, the Heat Collector and the lenses of the Atomic Reconstructor post the Forge break or
+  place event and undo a refused change. The drill posts no second break event for the block the
+  player mined (`UPSTREAM.md`, source change 60).
+- Phantom blocks check the range first and read their target through the loaded chunk, so they
+  neither load nor hold the chunk of their target (source change 61, review fix 094e4ad).
+- The laser relays find their network through the transient index `WorldData.laserRelayIndex`, and
+  the saved list `Networks` is unchanged (source change 62). Since f876a8c the energy and fluid
+  relays hand out one capability per side and invalidate it (source change 64).
+- The magnet rings of a player scan every 4 ticks, staggered by the entity id of the player, and
+  only the first switched on ring scans (source change 63).
+
+All parts are local changes, see [Arclight notes](#arclight-notes).
 
 ### World content
 
@@ -841,6 +896,9 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   Double Crusher no recipe, so only a creative world can hold one. The Coal Generator no longer
   writes `currentRecipe` and ignores it on load, and the cup `coffee_cup` keeps its id and becomes a
   stack of one (`UPSTREAM.md`, source changes 32 and 34).
+- The Arclight hardening adds no key. The fake player has a fixed UUID, and the relay index is
+  built at the load and never saved, so a save that lists one relay in two networks loads as one
+  network (`UPSTREAM.md`, source changes 60 and 62).
 - Worldgen reaches new chunks only. The config files `actuallyadditions-common.toml` and, on the
   client, `actuallyadditions-client.toml` are new to the pack, so nothing needs a migration.
 
@@ -856,21 +914,44 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   `WorldUtil.fireFakeBreakEvent` before they remove a leaf or a lava or magma block, and a refused
   block stays. The generator then tries up to 8 of its shuffled leaves in one cycle, so next to a
   claim it posts up to 8 events every 5 ticks (`mod/tile/TileEntityLeafGenerator.java`, lines 37 and
-  96, and `UPSTREAM.md`, source change 33). The port adds one fake player per level with the fixed
-  profile `[ActuallyAdditions]`, posts `BlockEvent.BreakEvent` and `EntityPlaceEvent` for every
-  machine break and placement and reverts on a cancel. Arclight 1.0.6 turns both into the Bukkit
-  `BlockBreakEvent` and `BlockPlaceEvent` with the fake player (javap by the review on the
-  production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, extract in the workflow
-  scratchpad under `aacritic/arc/`).
+  96, and `UPSTREAM.md`, source change 33). Since 6511595 these machines and the lenses use one
+  fake player per level with the fixed profile `[ActuallyAdditions]`, post `BlockEvent.BreakEvent`
+  or `EntityPlaceEvent` and revert on a cancel. The harvest and planting of the Farmer, the Fluid
+  Placer and Collector and the Lava Factory still change blocks without any event (`UPSTREAM.md`,
+  source change 60). Arclight 1.0.6 turns both events into the Bukkit `BlockBreakEvent` and
+  `BlockPlaceEvent` with the fake player (javap by the review on the production jar
+  `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, extract in the workflow scratchpad under
+  `aacritic/arc/`). A place event reaches Bukkit only through `ForgeEventFactory.onBlockPlace`,
+  where Arclight captures the face, so the lenses post it there.
+- Arclight's break dispatcher pushes a capture context onto `ArclightCaptures.blockBreakEventStack`
+  for every posted break event, and only the break of a real player takes it off again, while its
+  overwrite of `Block.popResource` puts every drop into the top context. Before the Arclight
+  hardening a machine break therefore swallowed later block drops of the whole server, a torch that
+  fell off a broken block for example, until a player mined a block. The new method
+  `AAFakePlayers.postBreak` takes back the contexts that its own events pushed. In the porter's test
+  the stack stayed empty, while the jar of 693daa2 lost the torch and left 178 contexts
+  (`al-events-final.log`, `al-events-old.log`). Any other pack mod that posts a break event outside
+  a player break may lose drops the same way on the live server, which nobody has checked. The
+  helper also discards the drops that another listener spawns during its event and the drop and
+  experience choices of a plugin, which the machines did not honour before either (review of the
+  Arclight hardening).
 - A claim plugin has to trust `[ActuallyAdditions]` for machines to work inside claims. The pack
-  runs EssentialsX only. Fake players per owner would need a new key on every tile and go on the
-  [open items](../open-items.md) at the release.
-- A phantom block reads its target's block entity every tick before it checks the range (main
-  `TileEntityPhantomface:141-170`), which loads the target chunk when the booster is gone. The port
-  checks the range and `hasChunkAt` first.
-- Every energy and fluid relay scans all networks and connections of the level in its tick
-  (`mod/misc/apiimpl/LaserRelayConnectionHandler.java:71-120`, unchanged on `main`). A transient
-  index by position replaces the scan, and the saved format stays.
+  runs EssentialsX only. Fake players per owner would need a new key on every tile and are on the
+  [open items](../open-items.md).
+- A phantom block read its target's block entity every tick before it checked the range (main
+  `TileEntityPhantomface:141-170`), which loaded the target chunk when the booster was gone and
+  renewed the one tick ticket of a loaded target, so that chunk never unloaded. The port checks the
+  range first and then reads through the loaded chunk with `getChunkNow` (source change 61). A first
+  form with `hasChunkAt` in front of `getBlockEntity` still kept a chest chunk loaded in the test.
+  The comparator output of a face and the Phantom Redstoneface only ask a target whose chunk ticks
+  blocks, so otherwise the comparator reads 0 and the Redstoneface keeps its last signals. Since
+  094e4ad the Phantom Placer also waits for the chunk next to its bound block, where it places.
+- Every energy and fluid relay looked through all networks and connections of the level to find its
+  own (`mod/misc/apiimpl/LaserRelayConnectionHandler.java:71-120` before 818581c, unchanged on
+  `main`). The transient index `WorldData.laserRelayIndex` replaces the scan, and the saved format
+  stays (source change 62). A chain of 50 relays carried energy as before, split and kept both
+  halves over a restart (`al-relay-boot1.log` to `al-relay-boot4.log`). No profile of a large
+  network was taken.
 - A crouching click with the relay configure item reaches a laser relay because a Forge listener of
   `PlayerInteractEvent.RightClickBlock` denies the item and allows the block
   (`mod/event/CommonEvents.java:49-54`, `UPSTREAM.md`, source change 41). Whether that result
@@ -879,7 +960,7 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   Hopping Item Interface pulls from inventories and item entities without the Bukkit
   `InventoryMoveItemEvent` or `InventoryPickupItemEvent` that a vanilla hopper fires, as other
   modded item transport does (source change 42). Both go on the Arclight pack boot of the release
-  (carryover).
+  (carryover `aa-ship`).
 - The right click harvest of a crop hands out its drops and replaces the block without a Bukkit
   block event. Only the `PlayerInteractEvent` that Arclight fires before `Block.use` guards it, so
   a claim plugin can refuse the click while a block logger misses the harvest. The review read
@@ -889,8 +970,11 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   then strip such a pattern or throw, as for the other modded patterns of the pack. Neither ran on
   the pack's Arclight, and both go on its test at the release, with EssentialsX loaded (carryover
   `aa-ship`).
-- The magnet ring scans a 5 block box every tick for every ring. It scans every 4 ticks instead, and
-  the pickup still goes through `ItemEntity.playerTouch`, so Bukkit pickup events fire.
+- The magnet ring scanned a box that reaches 5 blocks around the player in every tick, once for
+  every ring. Since 1febab4 the rings of a player scan every 4 ticks, and the pickup still goes
+  through `ItemEntity.playerTouch`, so the Bukkit pickup events fire (source change 63). A test with
+  a player, the energy per item and a plugin that cancels `EntityPickupItemEvent` is open
+  (carryover `aa-ship`).
 - The anvil mixin injects at the head of `AnvilMenu.mayPickup` and at the head of
   `AnvilMenu.createResult`, and an accessor reads `ItemCombinerMenu.inputSlots` and `resultSlots`.
   Arclight's own anvil mixin redirects the `setItem` calls in `createResult`, injects at its
@@ -902,13 +986,15 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   posts before the Bukkit `PlayerPickupItemEvent` and `EntityPickupItemEvent`, so a plugin that
   cancels those does not stop a sack (`UPSTREAM.md`, source change 46). The Ranged Collector takes
   item entities without the Bukkit `InventoryPickupItemEvent` and scans its area every unpowered
-  tick (source change 48). Neither ran on the pack's Arclight yet (carryover).
+  tick (source change 48). The Arclight hardening left both open, and neither ran on the pack's
+  Arclight yet (carryover `aa-ship`).
 - The drill's placer augment lets the hotbar stack place itself through `ItemStack#useOn`, so the
   Forge place events and Arclight's `BlockPlaceEvent` fire. That event names the drill as the item
-  in hand. The drill's center block gets two break events, the one of
-  `ServerPlayerGameMode.destroyBlock` and a second from `WorldUtil.breakExtraBlock`
-  (`mod/util/WorldUtil.java:342`), and in creative the extra blocks get none. Both predate the
-  bundle and go to the Arclight hardening (carryover `aa-arclight-local`).
+  in hand. Before the Arclight hardening the drill's center block got two break events, the one of
+  `ServerPlayerGameMode.destroyBlock` and a second from `WorldUtil.breakExtraBlock`, and in creative
+  the extra blocks got none. Since 6511595 the drill posts no second event, and the extra blocks of
+  a creative drill post theirs (`UPSTREAM.md`, source change 60). Neither ran in game yet
+  (carryover `aa-ship`).
 - Since the review fix 693daa2 the Handheld Filler skips a position that spawn protection, the world
   border or adventure mode keeps from the player and posts the Forge place event for every block,
   and a cancelled place costs nothing and ends the job. The Bowl of Water posts the break event for
@@ -921,6 +1007,8 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   right click never sees them, so a player could toggle machines in a foreign claim. The pack has no
   claim plugin or mod today. If one is added, the check in `PacketHandler.guiTarget` should also
   require that `player.containerMenu` belongs to that machine (review of the server safety bundle).
+  The Arclight hardening left this open, and the check goes in together with a claim plugin
+  (carryover `aa-ship`).
 
 ## Local divergences
 
@@ -943,8 +1031,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   bd392b0a added and that `main` still runs for every item entity it picks up
   (`TileEntityItemInterfaceHopping.java:81` on `main`). A state without the facing falls back to
   `down` (`mod/tile/TileEntityItemInterfaceHopping.java:130`, `UPSTREAM.md`, source change 42).
-- Machines break and place as the fake player `[ActuallyAdditions]` with block events, phantom
-  blocks check the chunk first, relays use an index, and the magnet ring is throttled.
+- Machines break and place as the fake player `[ActuallyAdditions]` with block events and take
+  back the Arclight capture contexts of their break events. Phantom blocks read their target only
+  through a loaded chunk, relays find their network through an index and invalidate their
+  capabilities, and the magnet rings scan every 4 ticks (`UPSTREAM.md`, source changes 60 to 64).
 - The fork keeps the ids that `main` removed or renamed and the base's inventory format.
 - Tags use `forge:` instead of `c:`, and tiny coal gets no nugget tag.
 - The Lens of the Killer takes a `forge:partial_nbt` book with Sharpness V in `StoredEnchantments`,
@@ -1037,6 +1127,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   [Logs and crashes](../server/logs-and-crashes.md#boot-error-baseline)). Since the Item Tag filter
   brought the first mixins, the jar carries `actuallyadditions.refmap.json` and Mixin logs no WARN
   about it (`UPSTREAM.md`, build change 11).
+- With EssentialsX loaded, the fake player `[ActuallyAdditions]` may get a user file under
+  `plugins/Essentials/userdata/` named by its UUID `5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd`. Git does
+  not ignore that folder, so keep such a file out of commits. Nobody has checked this yet
+  (carryover `aa-ship`).
 - Announce the new mod to the players, with the manual that needs Patchouli and the key bind of the
   Crafting Table On A Stick.
 

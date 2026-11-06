@@ -3,7 +3,8 @@
 
 Side-effect free, so both tools can import it:
 - build_mrpack.py checks the jars of local-mods/ under the names they ship as (pack_jar_name of
-  patch_mods.py) before it builds anything,
+  patch_mods.py) before it builds anything, the jars that a pointer file <jar>.fetch.json names in
+  place of a tracked copy (tools/fetch_local_mods.py) among them,
 - publish_modrinth.py checks every jar inside the .mrpack it is about to upload, so an old or
   hand-made file at the public name is caught too.
 
@@ -20,6 +21,8 @@ import hashlib
 import os
 import re
 import subprocess
+
+import fetch_local_mods
 
 STATUS = re.compile(r"(?:\*\*Status:\*\*|Status:)(.*)")
 _OK = re.compile(r"OK(\s|\(|$)")
@@ -89,11 +92,16 @@ def check(repo, jars, data=None):
 
 
 def local_mod_jars(repo):
-    """File names of the jars in local-mods/ (what build_mrpack.py bundles)."""
+    """File names of the jars that build_mrpack.py bundles from local-mods/: the jars there and the
+    jars that a pointer file names, which git does not hold. A pointed jar needs its permission file
+    like any other, whether an operator keeps a local copy of it or not."""
     lm = os.path.join(repo, "local-mods")
     if not os.path.isdir(lm):
         return []
-    return sorted(fn for fn in os.listdir(lm) if fn.endswith(".jar"))
+    names = os.listdir(lm)
+    jars = {fn for fn in names if fn.endswith(".jar")}
+    jars |= {fn[:-len(fetch_local_mods.SUFFIX)] for fn in names if fn.endswith(".jar" + fetch_local_mods.SUFFIX)}
+    return sorted(jars)
 
 
 def mrpack_jars(zf):

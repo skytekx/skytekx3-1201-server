@@ -1340,6 +1340,31 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     sack data gains the key `Filter`, the filters gain `Damage`, and a sack keeps its `UUID` and
     `AutoInsert`. A Traveler's Sack of the base loads with an empty filter, since the base kept
     its filter in the item NBT, which no menu read. No id changes but the new menu id.
+    The porter's test ran the dev client with a local scenario, which is not committed
+    (`bp2/actuallyadditions/fs-tools/devtest-filterssacks.patch` in the workflow scratchpad),
+    against the jar of the four commits of the bundle (SHA-1
+    `f81afeeb6c09dd9268858c427c1d67c44892acc3`, 3117412 bytes, one build) on a dedicated Forge
+    47.4.18 server with JEI, Patchouli, Curios, The One Probe and Mekanism 10.4. With the pickup
+    toggle on, a Traveler's Sack in the first hotbar slot took 16 cobblestone that the player
+    touched, and its stack held `AutoInsert:1b`. With a deny filter of an iron pickaxe of damage
+    10 and a named diamond and with damage and NBT matching on, the sack took a pickaxe of
+    damage 0 and two plain diamonds and left the damaged pickaxe and the named diamond to the
+    inventory. With the toggle off, 4 stone went into the inventory and the stack held
+    `AutoInsert:0b`. A Void Sack with an allow list of cobblestone and the toggle on destroyed 8
+    cobblestone and let 8 dirt into the inventory, and its stack held the filter under `Filter`
+    and `AutoInsert:1b`. The smart button of an Advanced Item Laser Relay put the stone, oak log
+    and iron ingot of the chest below it into its inbound filter, and its buttons turned on the
+    inbound damage matching and made the outbound allow list a deny list
+    (`LeftFilter.Damage:1b`, `RightFilter.Whitelist:0b`). After a restart of the server the sack
+    held the same items and ghost items, its filter had the packed settings 12 (damage and NBT)
+    and the toggle off, and the Void Sack, the relay and the Ranged Collector kept their
+    filters. The server safety harness of source change 14 then ran with nothing skipped. It
+    placed, right clicked, wrenched and broke all 125 blocks and used all 108 items with no
+    ERROR line and no crash on the server, and the screens of the Ranged Collector, both sacks,
+    the Item Tag and the Crafting Table On A Stick opened and were closed. The click on the
+    Advanced Item Laser Relay opened no screen in that run, which clicks a few ticks after a
+    teleport, so the relay screen is covered by the scenario only. Not tested: the pickup on the
+    pack's Arclight and next to a plugin that cancels the Bukkit pickup.
 47. Item Tag filter: the new item `actuallyadditions:item_tag` of `6f56772` holds one item tag,
     and every filter slot of the mod matches the items in that tag (`FilterSettings.check`). The
     tag id sits in the stack's NBT key `tag` as a string, the 1.20.1 form of the attachment of the
@@ -1368,6 +1393,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     in `AnvilMenu.createResult` to post that event (javap of `common.jar` in
     `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`). Not tested on Arclight with EssentialsX.
     Savegame: new ids only.
+    In the same test the Item Tag screen showed the tag `minecraft:logs` of the held item, and
+    Enter with `forge:ingots` set the NBT key `tag` to `forge:ingots`. After the restart an
+    anvil showed no result for the name `forge:no_such_tag`, and the name `forge:ingots` gave an
+    Item Tag with that tag at the cost 0, which the player took. A Ranged Collector with that
+    Item Tag in its allow list took 3 iron and 2 gold ingots and left 5 cobblestone on the
+    ground. The jar boots alone on a dedicated Forge 47.4.18 server (without Curios, Patchouli
+    and JEI) with 0 ERROR and 0 FATAL lines and no WARN about the reference map. Not tested: an
+    Item Tag in a laser relay network.
 48. Ranged Collector: its screen opens again and its filter works (`adc276e8`). The base never
     built the filter buttons, so `containerTick` of the screen threw a `NullPointerException` on
     the client as soon as the screen opened, and the collector ignored every button. Since its
@@ -1379,6 +1412,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     change 10. On Arclight the collector takes item entities without the Bukkit
     `InventoryPickupItemEvent` that a vanilla hopper posts, as the Hopping Item Interface of
     source change 42 does. Savegame: the NBT key `Filter` keeps its form and gains `Damage`.
+    In the same test the screen of the Ranged Collector opened, and after its WH button made the
+    allow list of the Item Tag test a deny list, the collector also took the 5 cobblestone and 4
+    dirt dropped next to it.
 49. Crafting Table On A Stick: the crafting grid works again (`c4d81aea`). The base opened
     `CraftingMenu` with `ContainerLevelAccess.NULL`, which runs nothing it is handed, so the grid
     never showed a result and the items in it were deleted when the menu closed. The menu now
@@ -1403,3 +1439,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `CuriosEntityManager` of `curios-forge-5.14.1+1.20.1.jar`). The data generator adds the provider
     only when Curios is loaded, as in the dev runs. Not tested on Arclight. Savegame: none, the
     key bind is client only.
+    In the same test the key, bound to K by the test mod, opened the crafter from a slot of the
+    main inventory and from the Curios charm slot, which the data of this change gives the
+    player, and opened nothing once the crafter was gone. Two oak logs in the grid showed 4 oak
+    planks as the result, and closing the screen gave the logs back. The server without Curios
+    of source change 47 reached `Done`. Not tested: a client and a server that both lack Curios.

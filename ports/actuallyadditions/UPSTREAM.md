@@ -1023,3 +1023,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     stack of energy items, duplicated all but one of them (unchanged on `main`). Savegame: no
     NBT key or block state changes. An input stack that an old save holds keeps its count until it
     is taken out.
+37. Experience Solidifier: its screen has the nine buttons again (1, 5, 10, 20, 30, 40, 50, 64 and
+    All), as vanilla buttons at the places of the commented 1.12 ones, and the stored amount moves
+    down to y 34 (`a4cc12d9`). A press sends the button packet and predicts the change of the
+    player's experience on the client, as upstream does. The block entity names its menu with the
+    existing lang key `container.actuallyadditions.xpSolidifier`, where `main` added a second key
+    `experienceSolidifier` with the same text. The name loses its `(wip)` label. Local hardening:
+    `onButtonPressed` refuses a negative id (`TileEntityXPSolidifier.java:208` on the base checked
+    only the upper bound), so the crafted press with id minus 1 of the test mod changes nothing and
+    throws no `ArrayIndexOutOfBoundsException` any more (source change 14). The recipe with
+    experience bottles came with source change 10 (`b68cfecd`, `9492973a`). The experience formulas
+    excerpted from Ender IO keep their credit, and `NOTICE` names them. No NBT key changes.

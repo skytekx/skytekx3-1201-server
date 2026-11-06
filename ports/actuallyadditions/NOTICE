@@ -134,6 +134,8 @@ Modifications
     * Energizer and Enervator: both have armor slots that only take fitting armor and keep cursed
       armor, an off hand slot and titles, and their input holds one item, which stops a
       duplication of stacked energy items.
+    * Experience Solidifier: the screen has its buttons again, and the server refuses negative
+      button ids.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

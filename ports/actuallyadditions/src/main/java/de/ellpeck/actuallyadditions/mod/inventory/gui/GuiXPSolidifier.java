@@ -12,9 +12,11 @@ package de.ellpeck.actuallyadditions.mod.inventory.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerXPSolidifier;
+import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityXPSolidifier;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,6 +28,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class GuiXPSolidifier extends AAScreen<ContainerXPSolidifier> {
 
     private static final ResourceLocation RES_LOC = AssetUtil.getGuiLocation("gui_xp_solidifier");
+    private static final int[] BUTTON_X = {62, 80, 99};
     private final TileEntityXPSolidifier solidifier;
 
     public GuiXPSolidifier(ContainerXPSolidifier container, Inventory inventory, Component title) {
@@ -35,38 +38,20 @@ public class GuiXPSolidifier extends AAScreen<ContainerXPSolidifier> {
         this.imageHeight = 93 + 86;
     }
 
+    // SkyTekx: upstream a4cc12d9 brings the buttons back with vanilla buttons. The client predicts
+    // the change of its experience, and the server checks the press (packet hardening)
     @Override
     public void init() {
         super.init();
-//
-//        Button buttonOne = new GuiInputter.SmallerButton(this.leftPos + 62, this.topPos + 44, new StringTextComponent("1"), btn -> {
-//        });
-//        Button buttonFive = new GuiInputter.SmallerButton(this.leftPos + 80, this.topPos + 44, new StringTextComponent("5"), btn -> {
-//        });
-//        Button buttonTen = new GuiInputter.SmallerButton(this.leftPos + 99, this.topPos + 44, new StringTextComponent("10"), btn -> {
-//        });
-//        Button buttonTwenty = new GuiInputter.SmallerButton(this.leftPos + 62, this.topPos + 61, new StringTextComponent("20"), btn -> {
-//        });
-//        Button buttonThirty = new GuiInputter.SmallerButton(this.leftPos + 80, this.topPos + 61, new StringTextComponent("30"), btn -> {
-//        });
-//        Button buttonForty = new GuiInputter.SmallerButton(this.leftPos + 99, this.topPos + 61, new StringTextComponent("40"), btn -> {
-//        });
-//        Button buttonFifty = new GuiInputter.SmallerButton(this.leftPos + 62, this.topPos + 78, new StringTextComponent("50"), btn -> {
-//        });
-//        Button buttonSixtyFour = new GuiInputter.SmallerButton(this.leftPos + 80, this.topPos + 78, new StringTextComponent("64"), btn -> {
-//        });
-//        Button buttonAll = new GuiInputter.SmallerButton(this.leftPos + 99, this.topPos + 78, new StringTextComponent("All"), btn -> {
-//        });
-//
-//        this.addButton(buttonOne);
-//        this.addButton(buttonFive);
-//        this.addButton(buttonTen);
-//        this.addButton(buttonTwenty);
-//        this.addButton(buttonThirty);
-//        this.addButton(buttonForty);
-//        this.addButton(buttonFifty);
-//        this.addButton(buttonSixtyFour);
-//        this.addButton(buttonAll);
+
+        String[] labels = {"1", "5", "10", "20", "30", "40", "50", "64", "All"};
+        for (int i = 0; i < labels.length; i++) {
+            int id = i;
+            this.addRenderableWidget(Button.builder(Component.literal(labels[i]), btn -> {
+                PacketHelperClient.sendButtonPacket(this.solidifier, id);
+                this.solidifier.onButtonPressed(id, this.minecraft.player);
+            }).bounds(this.leftPos + BUTTON_X[i % 3], this.topPos + 44 + (i / 3) * 17, 16, 16).build());
+        }
     }
 
     @Override
@@ -77,13 +62,6 @@ public class GuiXPSolidifier extends AAScreen<ContainerXPSolidifier> {
 
         guiGraphics.blit(RES_LOC, this.leftPos, this.topPos, 0, 0, 176, 93);
 
-        guiGraphics.drawCenteredString(this.font, Integer.toString(this.solidifier.amount), this.leftPos + 88, this.topPos + 30, 0xFFFFFF);
+        guiGraphics.drawCenteredString(this.font, Integer.toString(this.solidifier.amount), this.leftPos + 88, this.topPos + 34, 0xFFFFFF);
     }
-
-//    @Override
-//    public void actionPerformed(Button button) {
-//        PacketHelperClient.sendButtonPacket(this.solidifier, button.id);
-//
-//        this.solidifier.onButtonPressed(button.id, Minecraft.getInstance().player);
-//    }
 }

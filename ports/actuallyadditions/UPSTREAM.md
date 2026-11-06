@@ -341,7 +341,13 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    banner pattern tags come with their features. The 20 `forge:` files that the 1.20.4 line also
    generates match it byte for byte. The other 24 are the storage block tags of the crystals and
    empowered crystals, which came after that line (#1418, `c952c77`), and they match the `c:` files
-   of `main` with the namespace changed.
+   of `main` with the namespace changed. Two mods of the pack read the crop tags. Farmer's Delight
+   1.3.4 cooks with `forge:crops/rice` in five recipes (`data/farmersdelight/recipes/cooking/`
+   `cooked_rice.json`, `dog_food.json`, `fried_rice.json`, `mushroom_rice.json` and
+   `stuffed_pumpkin_block.json`), so the mod's rice counts there. The flax seeds fill
+   `forge:crops/flax`, as `main` puts them into `c:crops/flax`, and Supplementaries 3.1.44 makes
+   its rope, sack and doormat from that tag (`data/supplementaries/recipes/rope.json`, `sack.json`
+   and `doormat_2.json`), so the seeds count as flax in those recipes as they do upstream.
 10. Recipes: the two recipe generators carry the crafting, smelting and stonecutting recipes of
     `main` for every block and item the base registers, which adds 111 files to the 299 of the
     base. They are 33 machine recipes, among them the generators, crushers, breakers, placers,
@@ -385,18 +391,31 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     icons and criteria. The fix of `50407e9` is the 1.20.2 `DisplayInfo` with an `Optional`
     background and has nothing to do on 1.20.1. The note about an advancement for the underwater
     treasure chest goes, since that content is gone (`863c2b7`). The eleven advancement titles in
-    `en_us.json` are in title case (`4b3a6a0`, #1457). With the recipes of source change 10 every
-    advancement can be earned. On the base the coal generator, leaf generator, coffee maker,
-    crusher, double crusher and the three phantom faces had no recipe, so eight of the 17 children
-    of the root could not be crafted.
+    `en_us.json` are in title case (`4b3a6a0`, #1457). On the base the coal generator, leaf
+    generator, coffee maker, crusher, double crusher and the three phantom faces had no recipe, so
+    eight of the 17 children of the root could not be crafted. The recipes of source change 10
+    give each of them a recipe, but the coffee branch of the tree stays out of reach for now.
+    Coffee beans, canola, flax and rice have no source in this state, because the plant
+    generation of the base is commented out (`mod/gen/AAWorldGen.java` lines 105 to 113, and
+    `ActuallyAdditions.java:145` keeps `//AAWorldGen gen`) and no biome or loot modifier exists.
+    So `pickup_coffee` and its child `craft_coffee_machine` cannot be earned, and the Coffee Maker,
+    Canola Press, Fermenting Barrel and Oil Generator cannot be crafted in survival. They become
+    reachable with the feature `plant-worldgen` of the bundle `aa-world-content`, which ports the
+    biome modifiers `add_coffee`, `add_canola`, `add_flax` and `add_rice` of `main`
+    (`neoforge/biome_modifier/` there).
 12. JEI: the plugin registers the categories whose recipe types exist on the base, with the
     API of JEI 15. The fermenting, laser and empowerer categories move into their own packages
     as on the newer lines (`2f50f5e`), and their catalysts and recipes lose the comments that
     called them disabled. New is the category of the Lens of the Miner with its two lang keys
-    and the lens as catalyst (`b866f50`). In it and in the laser category the Atomic
-    Reconstructor is a render only slot and the lens a catalyst, so EMI's recipe tree, which
-    reads the JEI categories, no longer asks for one reconstructor per craft (`d1eb4ca`,
-    `fa4ccab`, changelog 1.3.16). The slots line up with the new
+    and the lens as catalyst (`b866f50`). In the laser category the Atomic Reconstructor is a
+    render only slot (`jei/laser/LaserRecipeCategory.java:69`) and stays the registered catalyst
+    of the category (`JEIActuallyAdditionsPlugin.java:67`). In the mining lens category it is a
+    render only slot as well, and the lens is the catalyst
+    (`jei/lens/MiningLensRecipeCategory.java:72-73`). Upstream made this change so that EMI's
+    recipe tree, which reads the JEI categories, no longer asks for one reconstructor per craft
+    (`d1eb4ca`, `fa4ccab`, changelog 1.3.16). That effect is expected here too, but nobody has
+    tested it yet. No client has opened these categories in JEI 15.74.0.233 or EMI
+    1.1.24-skytekx.2 of the pack. The slots line up with the new
     `gui_nei_atomic_reconstructor.png` of `4a1e483` (PR #1508), the only change of that texture
     since 2016. The categories keep `getBackground`, since the switch to `getWidth`, `getHeight`
     and a drawn background of `31e2f47` follows JEI 19. The click areas of `53414c4` need the

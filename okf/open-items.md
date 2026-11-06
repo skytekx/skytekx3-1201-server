@@ -350,6 +350,13 @@ evidence and the page with the details. The rulings behind the first section are
   check of its 268 client jars found every mandatory dependency present in a matching version, and the
   server runs the same mods, but no fresh install, no update of a 3.1.2 instance and no join was
   tested, see [publish](modpack/publish.md#version-history).
+- The merged branch with players. After the merge of master with pack 3.1.3, the full pack of the
+  branch at 59931b9 booted on Forge 47.4.18 and on the production Arclight jar with the forceloaded
+  points, the 3 ERROR lines of the test copies and no new log signature against the branch before
+  the merge and against 3.1.3, see [NeoForge
+  ports](modpack/neoforge-ports.md#boots-of-the-merged-branch). The copies ran without EssentialsX and
+  the other plugins, no player joined them, and no copy of the live world has loaded the mods of the
+  branch. These checks wait for the next pack after 3.1.3.
 
 - The nine mods of 2026-11-04 in play. A test server ran their blocks for half a minute, but nobody
   has opened their screens, built an ME network with the AE addons or used a Cyclic machine in a
@@ -500,9 +507,10 @@ evidence and the page with the details. The rulings behind the first section are
 - Actually Additions 1.20.1-1.1.52-skytekx.1 in a client, on the pack Arclight with a player and on
   the live server. A dedicated Forge 47.4.18 server loaded a world saved by the base jar with every item,
   fluid and energy value, and the full pack booted with the fork on Forge and on Arclight on
-  2026-11-06 with no new log signature, but no pack client has joined a server with it. Open are the
-  JEI and EMI categories, the screens, the lasers and particles with Oculus and Embeddium and the
-  tools in a client, the Bukkit events of the drill, the machines and the magnet rings under the
+  2026-11-06 with no new log signature, the jar with the crop fix on Arclight in the [boots of the
+  merged branch](modpack/neoforge-ports.md#boots-of-the-merged-branch), but no pack client has joined
+  a server with it. Open are the JEI and EMI categories, the screens, the lasers and particles with
+  Oculus and Embeddium and the tools in a client, the Bukkit events of the drill, the machines and the magnet rings under the
   AATest plugin with EssentialsX, and a Flux Networks point next to a Phantom Energyface, which the
   config of 7def174 should keep apart. The carryover file
   `ports/actuallyadditions-backport-carryover.json` lists them under `aa-client-test`,

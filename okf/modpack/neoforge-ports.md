@@ -31,8 +31,10 @@ worlds and configs keep working if an upstream build for Forge 1.20.1 replaces i
 All six mods of the table, Create: Dragons Plus included, are in the branch, and the full pack with
 them booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the test copies.
 A later Forge boot of 5539f6e checked the rebuilt jars of Expanded Delight and Create: Integrated
-Farming, see [the boot of the two fixes](#boot-of-the-two-fixes). What remains for each of them is a
-test in a client, which only the next pack brings, see [open items](../open-items.md#not-verified).
+Farming, see [the boot of the two fixes](#boot-of-the-two-fixes). The latest full pack boots ran on
+both loaders after the merge of master with pack 3.1.3, see [boots of the merged
+branch](#boots-of-the-merged-branch). What remains for each of them is a test in a client, which only
+the next pack brings, see [open items](../open-items.md#not-verified).
 
 | Mod | Mixins applied on Forge and Arclight | Registry ids found on both | Log lines of the mod in the full pack | Still open |
 |---|---|---|---|---|
@@ -112,6 +114,52 @@ f6cd870).
 - This boot ran no RCON check of the two tags. The plain test servers of the two fixes did, see
   [Expanded Delight port](expandeddelight-port.md#fox-food-test-of-2026-11-06) and
   [Create Integrated Farming port](createintegratedfarming-port.md#seed-test-of-2026-11-06).
+
+### Boots of the merged branch
+
+After the merge of master with pack 3.1.3 (f0d5096) and the regeneration of the unification and the
+melting for the merged mod set, four boots ran on the same harness with the forceloaded points, each
+from a fresh detached worktree: the branch at 59931b9 and, as the reference, origin/master at 3fa5ae6,
+which is pack 3.1.3. The branch worktree got the ZeroCore 2 jar from `tools/fetch_local_mods.py`. The
+Arclight copies ran `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` (SHA-1 70b44a84), the jar that
+`arclight.jar` points to. The summaries are `packboot-logs/final-merge-*` and `master313-*` in the
+workflow scratchpad, not in the repository.
+
+| Boot | Server | Tree | Done after | Mod ids and jars | FATAL, crash, watchdog | ERROR lines | Log signatures | Stop |
+|---|---|---|---|---|---|---|---|---|
+| Branch `final-merge-forge` | Forge 47.4.18 | 59931b9 | 15.4 s, 115 s wall | 299 and 273 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+| Branch `final-merge-arclight` | Arclight 1.0.6 | 59931b9 | 16.0 s, 133 s wall | 300 and 273 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+| Master `master313-forge` | Forge 47.4.18 | 3fa5ae6 | 14.9 s, 117 s wall | 290 and 265 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+| Master `master313-arclight` | Arclight 1.0.6 | 3fa5ae6 | 16.3 s, 127 s wall | 291 and 265 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+
+- The 3 ERROR lines are the baseline of the test copies. Against the boots of the branch before the
+  merge (`actuallyadditions-forge`, `actuallyadditions-arclight` and `actuallyadditions-fix-forge`)
+  and against the master boots, the merged boots have no new log signature and lose none. All 20
+  forceloaded points ticked in every boot, after 15 to 17 s.
+- Each WARN line that the merged boots add or lose has a cause. AlmostUnified ignores 364 tags, exactly
+  the 320 of the branch and the 354 of master together. Master's unify config of 2026-11-04 (a9fc66f)
+  added wood, saltpeter, ender pearl, knightmetal and quartz. AlmostUnified counted 54,473 recipes
+  before its run and 53,954 after, master 53,123 and 52,614. The lines "Found already existing holder"
+  of Aether Redux are always 30, but the biomes and tags they name change from run to run, as
+  `newmods-arclight` and `newmods-arclight-r2` of the same tree already showed. On Arclight the tooltip
+  line of Advanced Loot Info for `SetFluidLootFunction` of Mantle was missing, as in 7 of 40 earlier
+  boots, among them `wavea-forge` and `actuallyadditions-fix-forge`.
+- Two WARN lines are gone on both loaders: the correction of `fluxnetworks-server.toml`, which the
+  branch ships since 7def174, and the correction of `theoneprobe-common.toml`, which master ships since
+  16d45cc. Master lacks the two WARN lines of the Bygone Nether loot modifiers, a mod of the branch,
+  see [log lines](#log-lines-of-the-new-mods).
+- KubeJS loaded its 10 server scripts with 0 errors on both loaders and logged the same 22 recipe
+  warnings as the boots before. It found 48,239 recipes, master 46,980, and its recipe event added 7,
+  removed 6 and modified 10, the changes of master and the Draconic Evolution fix of the branch. No
+  log has "Parsing error loading recipe", "Mixin apply failed" or a WARN line that names a generated
+  melting recipe.
+- In `level.dat` the fixes pack loads at 317 of 319 on Forge and at 318 of 320 on Arclight, after
+  every mod pack and before only the two Skylands packs, which share no path with it
+  (`tools/datapack_order.py`).
+- On Arclight the debug log shows `LivingEntityMixin`, `AbstractCookingRecipeAccessor` and
+  `RecipeManagerMixin` of Ender IO and the `CountedIngredientMixin` of AllTheLeaks applied, with the
+  Ender IO fix build of 4980259 (SHA-1 a05d8b0a) in `mods/`. The same copy ran the Actually
+  Additions jar of be0192d (SHA-1 b45fde95), whose own full pack boot ran on Forge only.
 
 ### How the checks ran
 

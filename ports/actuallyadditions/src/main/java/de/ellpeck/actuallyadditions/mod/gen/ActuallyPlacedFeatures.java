@@ -13,22 +13,70 @@ import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.NoiseThresholdCountPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
 import java.util.List;
 
-// SkyTekx: the placed features of main (upstream 02422d65, 97c7a969, ec4b79ff), written by the data
+// SkyTekx: the placed features of main (upstream 02422d65, 97c7a969, ec4b79ff, 16cd3a69, 2ffe78d6), written by the data
 // generator into data/actuallyadditions/worldgen/placed_feature/. Every list ends in the biome filter, which
 // keeps a placement inside the biomes that a biome modifier gave the feature to
 public class ActuallyPlacedFeatures {
 	public static final ResourceKey<PlacedFeature> PLACED_ORE_BLACK_QUARTZ = createKey("ore_black_quartz");
+	public static final ResourceKey<PlacedFeature> CANOLA_PATCH = createKey("canola_patch");
+	public static final ResourceKey<PlacedFeature> FLAX_PATCH = createKey("flax_patch");
+	public static final ResourceKey<PlacedFeature> COFFEE_PATCH = createKey("coffee_patch");
+	public static final ResourceKey<PlacedFeature> RICE_PATCH = createKey("rice_patch");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		PlacementUtils.register(context, PLACED_ORE_BLACK_QUARTZ, holdergetter.getOrThrow(ActuallyConfiguredFeatures.ORE_BLACK_QUARTZ),
 				commonOrePlacement(8, HeightRangePlacement.triangle(VerticalAnchor.absolute(-25), VerticalAnchor.absolute(45))));
+
+		PlacementUtils.register(
+				context,
+				CANOLA_PATCH,
+				holdergetter.getOrThrow(ActuallyConfiguredFeatures.CANOLA_PATCH),
+				RarityFilter.onAverageOnceEvery(8),
+				NoiseThresholdCountPlacement.of(-0.8, 5, 10),
+				InSquarePlacement.spread(),
+				PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
+				BiomeFilter.biome()
+		);
+		PlacementUtils.register(
+				context,
+				FLAX_PATCH,
+				holdergetter.getOrThrow(ActuallyConfiguredFeatures.FLAX_PATCH),
+				RarityFilter.onAverageOnceEvery(8),
+				NoiseThresholdCountPlacement.of(-0.8, 5, 10),
+				InSquarePlacement.spread(),
+				PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
+				BiomeFilter.biome()
+		);
+		PlacementUtils.register(
+				context,
+				COFFEE_PATCH,
+				holdergetter.getOrThrow(ActuallyConfiguredFeatures.COFFEE_PATCH),
+				RarityFilter.onAverageOnceEvery(8),
+				NoiseThresholdCountPlacement.of(-0.8, 5, 10),
+				InSquarePlacement.spread(),
+				PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
+				BiomeFilter.biome()
+		);
+
+		PlacementUtils.register(
+				context,
+				RICE_PATCH,
+				holdergetter.getOrThrow(ActuallyConfiguredFeatures.RICE_PATCH),
+				RarityFilter.onAverageOnceEvery(4),
+				NoiseThresholdCountPlacement.of(-0.8, 5, 10),
+				InSquarePlacement.spread(),
+				PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
+				BiomeFilter.biome()
+		);
 	}
 
 	private static List<PlacementModifier> orePlacement(PlacementModifier modifier, PlacementModifier modifier1) {

@@ -1,0 +1,13 @@
+{
+  "type": "actuallyadditions:bool_config_feature_modifier",
+  "biomes": {
+    "type": "forge:or",
+    "values": [
+      "#forge:is_dense/overworld",
+      "#forge:is_cold/overworld"
+    ]
+  },
+  "boolConfig": "generateFlax",
+  "features": "actuallyadditions:flax_patch",
+  "step": "vegetal_decoration"
+}

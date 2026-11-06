@@ -14,16 +14,23 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.registries.holdersets.OrHolderSet;
 
-// SkyTekx: the biome modifiers of main (upstream 02422d65) on Forge 47. The serializer is a plain Codec
+import java.util.List;
+
+// SkyTekx: the biome modifiers of main (upstream 02422d65, 16cd3a69, 2ffe78d6) on Forge 47. The serializer is a plain Codec
 // in ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, and the data generator writes the modifiers into
 // data/actuallyadditions/forge/biome_modifier/ (main: neoforge/biome_modifier/). The bool config
 // condition that main also registers here belongs to recipes and is not needed by the modifier.
+// The c: biome tags of main become their Forge 47 names (c:is_sparse_vegetation/overworld is
+// forge:is_sparse/overworld, c:is_dense_vegetation/overworld is forge:is_dense/overworld, c:is_overworld is
+// minecraft:is_overworld), and the neoforge:or holder set becomes forge:or with the same values.
 // Every modifier names an overworld biome tag. skytekx3:sky_void, the biome over the void of the
 // Skylands, is in none of them, so nothing generates below the islands
 public final class ActuallyBiomeModifiers {
@@ -42,6 +49,10 @@ public final class ActuallyBiomeModifiers {
 	}
 
 	protected static final ResourceKey<BiomeModifier> ADD_BLACK_QUARTZ_ORE_MODIFIER = createKey("add_black_quartz");
+	protected static final ResourceKey<BiomeModifier> ADD_CANOLA = createKey("add_canola");
+	protected static final ResourceKey<BiomeModifier> ADD_FLAX = createKey("add_flax");
+	protected static final ResourceKey<BiomeModifier> ADD_COFFEE = createKey("add_coffee");
+	protected static final ResourceKey<BiomeModifier> ADD_RICE = createKey("add_rice");
 
 	public static void bootstrap(BootstapContext<BiomeModifier> context) {
 		HolderGetter<Biome> biomeGetter = context.lookup(Registries.BIOME);
@@ -53,6 +64,26 @@ public final class ActuallyBiomeModifiers {
 				overworldHolder,
 				HolderSet.direct(placedGetter.getOrThrow(ActuallyPlacedFeatures.PLACED_ORE_BLACK_QUARTZ)),
 				GenerationStep.Decoration.UNDERGROUND_ORES, "generateQuartz"
+		));
+		context.register(ADD_CANOLA, new BoolConfigFeatureBiomeModifier(
+				new OrHolderSet<>(List.of(biomeGetter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD), biomeGetter.getOrThrow(Tags.Biomes.IS_SPARSE_OVERWORLD))),
+				HolderSet.direct(placedGetter.getOrThrow(ActuallyPlacedFeatures.CANOLA_PATCH)),
+				GenerationStep.Decoration.VEGETAL_DECORATION, "generateCanola"
+		));
+		context.register(ADD_FLAX, new BoolConfigFeatureBiomeModifier(
+				new OrHolderSet<>(List.of(biomeGetter.getOrThrow(Tags.Biomes.IS_DENSE_OVERWORLD), biomeGetter.getOrThrow(Tags.Biomes.IS_COLD_OVERWORLD))),
+				HolderSet.direct(placedGetter.getOrThrow(ActuallyPlacedFeatures.FLAX_PATCH)),
+				GenerationStep.Decoration.VEGETAL_DECORATION, "generateFlax"
+		));
+		context.register(ADD_COFFEE, new BoolConfigFeatureBiomeModifier(
+				biomeGetter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
+				HolderSet.direct(placedGetter.getOrThrow(ActuallyPlacedFeatures.COFFEE_PATCH)),
+				GenerationStep.Decoration.VEGETAL_DECORATION, "generateCoffee"
+		));
+		context.register(ADD_RICE, new BoolConfigFeatureBiomeModifier(
+				overworldHolder,
+				HolderSet.direct(placedGetter.getOrThrow(ActuallyPlacedFeatures.RICE_PATCH)),
+				GenerationStep.Decoration.VEGETAL_DECORATION, "generateRice"
 		));
 	}
 

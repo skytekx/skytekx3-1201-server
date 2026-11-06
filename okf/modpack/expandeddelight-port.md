@@ -209,9 +209,11 @@ An Arclight copy with the repo's hardened `arclight-forge-1.20.1-1.0.6-6de9fec-s
   `RecipesUsed`.
 - The tag check logged the same `forge:nuts` content.
 
-Not verified: a boot with the full pack, a client (the juicer screen, its recipe book, JEI, the boat,
-sign and tooltip rendering, and the seven new names) and the hand interactions that need a player:
-milking a goat, filling and emptying a cask, planting cranberries and stripping logs.
+Not verified: a client (the juicer screen, its recipe book, JEI, the boat, sign and tooltip rendering,
+and the seven new names) and the hand interactions that need a player: milking a goat, filling and
+emptying a cask, planting cranberries and stripping logs. The full pack of 052a0e4 with the jar of
+d93682b booted on Forge 47.4.18 and on Arclight on 2026-11-06, see
+[NeoForge ports](neoforge-ports.md#status).
 
 ### Fox food test of 2026-11-06
 

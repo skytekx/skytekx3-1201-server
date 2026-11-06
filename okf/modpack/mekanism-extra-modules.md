@@ -3,7 +3,7 @@ type: Mod
 title: Mekanism Extra Modules port
 description: The pack's Forge 1.20.1 port of Mekanism: Extra Modules 0.1.0-beta.3, a 1.21.1 NeoForge addon with three MekaSuit body armor modules, how it was adapted to Mekanism 10.4, what it changes in play, how it was tested, its license terms and the steps for the server's mods folder.
 tags: [modpack, mods, mekanism, draconicevolution, port, mixin]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Mekanism Extra Modules port
@@ -166,4 +166,6 @@ through every module over RCON. The tables are in `ports/mekanism-extra-modules/
   canceled by Phase Guard or answered by Emergency Revival.
 
 Nobody has tested a real client, the HUD icons, the module screen, a Chaos Guardian fight, the
-EssentialsX `/kill` command itself or a boot with EssentialsX or the full pack yet.
+EssentialsX `/kill` command itself or a boot with EssentialsX yet. The full pack of 052a0e4 with the jar
+of b59a9df booted on Forge 47.4.18 and on Arclight on 2026-11-06 without plugins, and its mixin into
+`LaserBeamPhase` applied on both, see [NeoForge ports](neoforge-ports.md#status).

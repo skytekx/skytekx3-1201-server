@@ -1133,5 +1133,31 @@ logs stay on the Mac and are not in the repo.
   [Melting](content/melting.md#regeneration-for-the-mods-of-the-branch).
 - None of it is live. The Mac mini runs pack 3.1.3, and the files come with the next pack after it.
 
+## 2026-11-06: Pack 3.1.3 merged into the branch and booted
+
+- The merge 5c2c6f3 brought the 55 commits of master after 9786a09 into the branch, up to b2d9a8f:
+  pack 3.1.3 with the nine mods of 2026-11-04, Advanced Loot Info, Flux Networks and SkyTekx Molten,
+  the unification of 2026-11-04, the replacement of the old Chocolate Quest blocks, the note fix of
+  The One Probe and about 9,530 generated melting recipes. The merge took the config values and the
+  docs of the live server from master and the ports, their records and the pointer of ZeroCore 2
+  from the branch. The review of the merge fixed the melting dump and two melting cases (6cf3386,
+  dbd2ea8, 337525f), and then the unification and the melting followed the merged mod set, see the
+  entry above.
+- Between 21:38 and 21:55 four full pack test boots ran on the boot harness of the session, each
+  from a fresh detached worktree and with the forceloaded points. The branch at 4c3374b reached
+  `Done` at 21:40 on Forge 47.4.18 (`final-merge-forge`, 15.4 s, 299 mod ids from 273 jars) and at
+  21:45 on Arclight (`final-merge-arclight`, 16.0 s, 300 mod ids). Pack 3.1.3 at b2d9a8f reached it
+  at 21:49 on Forge (`master313-forge`, 14.9 s, 290 mod ids from 265 jars) and at 21:53 on Arclight
+  (`master313-arclight`, 16.3 s, 291 mod ids). All four had 0 FATAL lines, no crash report and no
+  watchdog, the 3 accepted ERROR lines of a test copy and 11 log signatures, and stopped clean over
+  RCON 4 s after `stop`. The Arclight boots ran the hardened jar that `arclight.jar` points to.
+- Against the branch before the merge and against 3.1.3 the merged boots have no new log signature
+  and lose none. Each WARN line they add comes from master's unify config or changes from run to
+  run, the fixes pack loads after every mod pack, and on Arclight the mixins of the Ender IO fix
+  build applied. The boots found no defect, so no fix followed, see [NeoForge
+  ports](modpack/neoforge-ports.md#boots-of-the-merged-branch). The summaries are
+  `packboot-logs/final-merge-*-summary.json` and `master313-*-summary.json` in the workflow
+  scratchpad, not in the repository.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

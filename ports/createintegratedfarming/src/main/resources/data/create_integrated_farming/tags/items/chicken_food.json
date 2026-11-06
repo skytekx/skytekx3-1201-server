@@ -5,6 +5,22 @@
     "minecraft:pumpkin_seeds",
     "minecraft:beetroot_seeds",
     "minecraft:torchflower_seeds",
-    "minecraft:pitcher_pod"
+    "minecraft:pitcher_pod",
+    {
+      "id": "farmersdelight:cabbage_seeds",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:tomato_seeds",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:rice",
+      "required": false
+    },
+    {
+      "id": "supplementaries:flax_seeds",
+      "required": false
+    }
   ]
 }

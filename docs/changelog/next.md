@@ -38,6 +38,8 @@
   of the controls. Both also work from a Curios charm slot.
 - Fixed dupes with fluid tanks, stacked capacitor banks and ghost and filter slots. Machines no longer
   void their secondary outputs.
+- The wired charger only charges items while it has power. Before, a charger with a capacitor filled
+  items for free.
 
 ## On an existing world
 - The structures, blocks and bastions of Bygone Nether only appear in Nether chunks that nobody has

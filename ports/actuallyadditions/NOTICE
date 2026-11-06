@@ -97,6 +97,8 @@ Modifications
     * Phantomfaces: pipes connected to a face follow it when it is bound elsewhere, the look at
       overlay shows the target, the Player Interface keeps its player after a restart, reaches
       32 blocks and no longer throws without a player, and the Player Probe binds again.
+    * Fluid machines: the Fluid Placer places again without wasting fluid and drops itself when
+      mined with a pickaxe, and the Fluid Collector also empties full water and lava cauldrons.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

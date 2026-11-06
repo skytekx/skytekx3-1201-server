@@ -777,3 +777,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `5a921e1` with source change 10. The faces, the booster, the Player Interface, the Phantom
     Connector and the Player Probe lose the `(wip)` label. Savegame: no key, id or state changes.
     A Player Interface saved by the base stays bound to its player.
+25. Fluid Collector and Fluid Placer: the work timer lives in the instance tick (`e4fdc6d`), which
+    the ticker of the Fluid Placer also reaches, so the placer places again. The placer no longer
+    drains a bucket into a source block that is already in front of it (`f524ecc`). The base
+    only checked for Forge fluid blocks, which vanilla water is not. The collector empties a full
+    water or lava cauldron into its tank with the bucket sound and leaves an empty cauldron
+    (`ea1a072`, #1440). Unlike `main` only the collector does that, since `main` also lets the
+    placer take from a cauldron. The cauldron classes are the same on 1.20.1. The Fluid Placer
+    joins `minecraft:mineable/pickaxe` (`07c59fb`), the one difference to `main` that source
+    change 22 left in that tag, so a pickaxe breaks it at its normal speed and it drops itself.
+    The provider `BlockTagsGenerator` lists it, and the generated tag file and its hash in the
+    cache of the provider match. Savegame: no key, id or state changes.

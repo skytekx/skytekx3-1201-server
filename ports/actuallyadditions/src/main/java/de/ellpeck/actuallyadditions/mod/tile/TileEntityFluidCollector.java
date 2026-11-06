@@ -28,16 +28,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
@@ -104,6 +105,29 @@ public class TileEntityFluidCollector extends TileEntityBase implements ISharing
         BlockPos coordsBlock = this.worldPosition.relative(sideToManipulate);
 
         BlockState stateToBreak = this.level.getBlockState(coordsBlock);
+
+        // SkyTekx: the collector empties a full water or lava cauldron, as in ea1a072c (#1440). Only
+        // the collector, main also lets the Fluid Placer take from a cauldron
+        if (!this.isPlacer && stateToBreak.getBlock() instanceof AbstractCauldronBlock cauldron) {
+            if (cauldron.isFull(stateToBreak)) {
+                if (stateToBreak.getBlock() == Blocks.WATER_CAULDRON) {
+                    if (this.tank.fillInternal(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.SIMULATE) >= FluidType.BUCKET_VOLUME) {
+                        this.tank.fillInternal(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+                        this.level.setBlockAndUpdate(coordsBlock, Blocks.CAULDRON.defaultBlockState());
+                        this.level.playSound(null, coordsBlock, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        return;
+                    }
+                } else if (stateToBreak.getBlock() == Blocks.LAVA_CAULDRON) {
+                    if (this.tank.fillInternal(new FluidStack(Fluids.LAVA, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.SIMULATE) >= FluidType.BUCKET_VOLUME) {
+                        this.tank.fillInternal(new FluidStack(Fluids.LAVA, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+                        this.level.setBlockAndUpdate(coordsBlock, Blocks.CAULDRON.defaultBlockState());
+                        this.level.playSound(null, coordsBlock, SoundEvents.BUCKET_FILL_LAVA, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        return;
+                    }
+                }
+            }
+        }
+
         Block blockToBreak = stateToBreak.getBlock();
         if (!this.isPlacer && FluidType.BUCKET_VOLUME <= this.tank.getCapacity() - this.tank.getFluidAmount()) {
             if (blockToBreak instanceof LiquidBlock && stateToBreak.getFluidState().isSource() && ((LiquidBlock) blockToBreak).getFluid() != null) {
@@ -118,7 +142,9 @@ public class TileEntityFluidCollector extends TileEntityBase implements ISharing
                 Block fluid = stack.getFluid().defaultFluidState().createLegacyBlock().getBlock();
                 if (fluid != null) {
                     BlockPos offsetPos = this.worldPosition.relative(sideToManipulate);
-                    boolean placeable = !(blockToBreak instanceof IFluidBlock) && blockToBreak.defaultBlockState().canBeReplaced();
+                    // SkyTekx: no bucket goes into a source block that is already there, as in f524eccc.
+                    // The base drained a bucket into a water source in front of it
+                    boolean placeable = !stateToBreak.getFluidState().isSource() && blockToBreak.defaultBlockState().canBeReplaced();
                     if (placeable) {
                         this.tank.drainInternal(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
                         // TODO: [port] validate this check is still valid.
@@ -177,27 +203,33 @@ public class TileEntityFluidCollector extends TileEntityBase implements ISharing
     public static <T extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState state, T t) {
         if (t instanceof TileEntityFluidCollector tile) {
             tile.serverTick();
+        }
+    }
 
-            if (!tile.isRedstonePowered && !tile.isPulseMode) {
-                if (tile.currentTime > 0) {
-                    tile.currentTime--;
-                    if (tile.currentTime <= 0) {
-                        tile.doWork();
-                    }
-                } else {
-                    tile.currentTime = 15;
+    // SkyTekx: the work timer lives in the instance tick as in e4fdc6d7, so that the Fluid Placer,
+    // whose ticker calls TileEntityFluidPlacer::serverTick, runs it too. On the base it never placed
+    @Override
+    protected void serverTick() {
+        super.serverTick();
+        if (!this.isRedstonePowered && !this.isPulseMode) {
+            if (this.currentTime > 0) {
+                this.currentTime--;
+                if (this.currentTime <= 0) {
+                    this.doWork();
                 }
+            } else {
+                this.currentTime = 15;
             }
+        }
 
-            if (tile.lastCompare != tile.getComparatorStrength()) {
-                tile.lastCompare = tile.getComparatorStrength();
+        if (this.lastCompare != this.getComparatorStrength()) {
+            this.lastCompare = this.getComparatorStrength();
 
-                tile.setChanged();
-            }
+            this.setChanged();
+        }
 
-            if (tile.lastTankAmount != tile.tank.getFluidAmount() && tile.sendUpdateWithInterval()) {
-                tile.lastTankAmount = tile.tank.getFluidAmount();
-            }
+        if (this.lastTankAmount != this.tank.getFluidAmount() && this.sendUpdateWithInterval()) {
+            this.lastTankAmount = this.tank.getFluidAmount();
         }
     }
 

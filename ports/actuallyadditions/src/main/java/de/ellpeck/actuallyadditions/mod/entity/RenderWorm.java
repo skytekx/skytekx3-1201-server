@@ -42,23 +42,26 @@ public class RenderWorm extends EntityRenderer<EntityWorm> {
         snailStack.setHoverName(Component.literal("Snail Mail"));
     }
 
+    // SkyTekx: a worm without a custom name, such as one from /summon, rendered with a null name and
+    // crashed the client (upstream ce0e39c4, param names of af5c1389)
     @Override
-    public void render(EntityWorm entity, float partialTicks, float p_225623_3_, PoseStack matrix, MultiBufferSource buffer, int light) {
-        boolean isSnail = entity.getCustomName().getString().equalsIgnoreCase("snail mail");
-        matrix.pushPose();
-        matrix.translate(0, 0.75F, 0);
+    public void render(EntityWorm worm, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        Component customName = worm.getCustomName();
+        boolean isSnail = customName != null && customName.getString().equalsIgnoreCase("snail mail");
+        poseStack.pushPose();
+        poseStack.translate(0, 0.75F, 0);
         double boop = Util.getMillis() / 70D;
-        matrix.mulPose(Axis.YP.rotationDegrees(-(float) (boop % 360)));
-        matrix.translate(0,0,0.4);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-(float) (boop % 360)));
+        poseStack.translate(0,0,0.4);
         Minecraft.getInstance().getItemRenderer().renderStatic(
-                isSnail? snailStack:stack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, matrix, buffer, null, 0
+                isSnail? snailStack:stack, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, null, 0
         );
 
-        matrix.popPose();
+        poseStack.popPose();
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityWorm pEntity) {
+    public ResourceLocation getTextureLocation(EntityWorm worm) {
         return InventoryMenu.BLOCK_ATLAS;
     }
 }

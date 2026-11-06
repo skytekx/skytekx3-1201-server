@@ -12,86 +12,100 @@ package de.ellpeck.actuallyadditions.mod.items;
 
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.items.base.ItemBase;
-import de.ellpeck.actuallyadditions.mod.util.StackUtil;
-import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
+import de.ellpeck.actuallyadditions.mod.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nonnull;
+
 public class ItemWaterBowl extends ItemBase {
 
+    // SkyTekx: registered on the Forge bus as on upstream 9f852348. The base left the registration
+    // commented out, so an empty bowl never picked up water
     public ItemWaterBowl() {
         super(ActuallyItems.defaultProps().stacksTo(1));
-        //MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
+    // SkyTekx: the pickup of upstream 9f852348 and 3191a63d (#1499, PR #1500). The trace stops at
+    // source blocks only, and the water leaves through BucketPickup, so a waterlogged block keeps its
+    // block and loses its water instead of turning into air. The base traced with a stub that always
+    // answered the bottom face of 0, 0, 0
     @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent.RightClickItem event) {
-        if (event.getLevel() != null) {
-            if (CommonConfig.Other.WATER_BOWL.get()) {
-                if (StackUtil.isValid(event.getItemStack()) && event.getItemStack().getItem() == Items.BOWL) {
-                    HitResult rayTrace = WorldUtil.getNearestBlockWithDefaultReachDistance(event.getLevel(), event.getEntity(), true, false, false);
-                    if (rayTrace.getType() != HitResult.Type.BLOCK) {
-                        return;
-                    }
+        if (CommonConfig.Other.WATER_BOWL.get() && event.getItemStack().is(Items.BOWL)) {
+            Player player = event.getEntity();
+            Level level = event.getLevel();
+            BlockHitResult trace = getPlayerPOVHitResult(
+                    level, player, ClipContext.Fluid.SOURCE_ONLY //Using pick will also return flowing water
+            );
+            if (trace.getType() != HitResult.Type.BLOCK) {
+                return;
+            }
 
-                    BlockHitResult trace = (BlockHitResult) rayTrace;
-                    InteractionResultHolder<ItemStack> result = ForgeEventFactory.onBucketUse(event.getEntity(), event.getLevel(), event.getItemStack(), trace);
-                    if (result == null) {
-                        if (event.getEntity().mayUseItemAt(trace.getBlockPos().relative(trace.getDirection()), trace.getDirection(), event.getItemStack())) {
-                            BlockState state = event.getLevel().getBlockState(trace.getBlockPos());
-                            Block block = state.getBlock();
+            ItemStack bowl = event.getItemStack();
+            BlockPos pos = trace.getBlockPos();
 
-                            // TODO: Validate fluid check
-                            if ((block == Blocks.WATER) && state.getValue(BlockStateProperties.LEVEL) == 0) {
-                                event.getEntity().playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F);
+            if (level.mayInteract(player, pos) && player.mayUseItemAt(pos.relative(trace.getDirection()), trace.getDirection(), bowl)) {
+                BlockState blockState = level.getBlockState(pos);
+                FluidState fluidState = blockState.getFluidState();
 
-                                if (!event.getLevel().isClientSide) {
-                                    event.getLevel().setBlock(trace.getBlockPos(), Blocks.AIR.defaultBlockState(), 11);
-                                    ItemStack reduced = StackUtil.shrink(event.getItemStack(), 1);
-
-                                    ItemStack bowl = new ItemStack(ActuallyItems.WATER_BOWL.get());
-                                    if (!StackUtil.isValid(reduced)) {
-                                        event.getEntity().setItemInHand(event.getHand(), bowl);
-                                    } else if (!event.getEntity().getInventory().add(bowl.copy())) {
-                                        ItemEntity entityItem = new ItemEntity(event.getLevel(), event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ(), bowl.copy());
-                                        entityItem.setPickUpDelay(0);
-                                        event.getLevel().addFreshEntity(entityItem);
-                                    }
-                                }
-                            }
+                if (fluidState.isSourceOfType(Fluids.WATER)) {
+                    if (blockState.getBlock() instanceof BucketPickup pickup) {
+                        ItemStack fillResult = pickup.pickupBlock(level, pos, blockState);
+                        if (!fillResult.isEmpty()) {
+                            player.awardStat(Stats.ITEM_USED.get(bowl.getItem()));
+                            level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
                         }
+
+                        pickup.getPickupSound(blockState).ifPresent(soundEvent -> player.playSound(soundEvent, 1.0F, 1.0F));
                     }
+
+                    ItemStack waterBowl = new ItemStack(ActuallyItems.WATER_BOWL.get());
+                    ItemStack inHand = ItemUtils.createFilledResult(bowl, player, waterBowl);
+                    player.setItemInHand(event.getHand(), inHand);
+                    // SkyTekx: the bowl is used up, so the click ends here with a swing
+                    event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
                 }
             }
         }
     }
 
+    @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level world, Player player, @Nonnull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        HitResult trace = WorldUtil.getNearestBlockWithDefaultReachDistance(world, player);
+        // SkyTekx: the reach of upstream ecb8d46f, 2fbf2984 and 3191a63d instead of the base's stub trace
+        HitResult trace = player.pick(Util.getReachDistance(player), 1.0F, false);
         InteractionResultHolder<ItemStack> result = ForgeEventFactory.onBucketUse(player, world, stack, trace);
         if (result != null) {
             return result;

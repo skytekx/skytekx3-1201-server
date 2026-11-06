@@ -85,7 +85,8 @@ public class ItemPlayerProbe extends ItemBase {
             return InteractionResult.FAIL;
         }
 
-        ItemStack stack = player.getItemInHand(context.getHand());
+        // SkyTekx: the stack of the context (upstream e08ef13a)
+        ItemStack stack = context.getItemInHand();
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
         if (tile instanceof TileEntityPlayerInterface face) {
             CompoundTag compound = stack.getOrCreateTag();

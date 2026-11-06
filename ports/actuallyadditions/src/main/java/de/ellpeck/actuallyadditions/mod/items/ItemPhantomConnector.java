@@ -78,7 +78,8 @@ public class ItemPhantomConnector extends ItemBase {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        ItemStack stack = context.getPlayer().getItemInHand(context.getHand());
+        // SkyTekx: the stack of the context and messages only for a player (upstream e08ef13a)
+        ItemStack stack = context.getItemInHand();
         if (!context.getLevel().isClientSide) {
             //Passing Data to Phantoms
             BlockPos pos = context.getClickedPos();
@@ -93,7 +94,8 @@ public class ItemPhantomConnector extends ItemBase {
                             ((TileEntityBase) tile).sendUpdate();
                         }
                         clearStorage(stack, "XCoordOfTileStored", "YCoordOfTileStored", "ZCoordOfTileStored", "WorldOfTileStored");
-                        context.getPlayer().displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.connected.desc"), true);
+                        if (context.getPlayer() != null)
+                            context.getPlayer().displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.connected.desc"), true);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.FAIL;
@@ -101,7 +103,8 @@ public class ItemPhantomConnector extends ItemBase {
             }
             //Storing Connections
             storeConnection(stack, pos.getX(), pos.getY(), pos.getZ(), context.getLevel());
-            context.getPlayer().displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.stored.desc"), true);
+            if (context.getPlayer() != null)
+                context.getPlayer().displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.stored.desc"), true);
         }
         return InteractionResult.SUCCESS;
     }

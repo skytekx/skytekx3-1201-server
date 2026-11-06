@@ -153,6 +153,10 @@ Modifications
     * Item interfaces: the Hopping Item Interface faces the way it is placed, pulls from above
       and pushes that way, and no longer crashes the server tick, and the Item Interface reaches
       every slot of its network.
+    * Battery Box and energy items: the box shows the charge on all four sides, and cables and
+      machines that cache its energy capability no longer keep using a battery that was taken
+      out. The energy bar shows the charge, and the creative tab and JEI list an empty and a
+      charged stack of every energy item.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

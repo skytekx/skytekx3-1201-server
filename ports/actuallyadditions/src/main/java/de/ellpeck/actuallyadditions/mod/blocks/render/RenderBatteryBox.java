@@ -61,18 +61,16 @@ public class RenderBatteryBox implements BlockEntityRenderer<TileEntityBatteryBo
             float backgroundOpacity = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
             int j = (int) (backgroundOpacity * 255.0F) << 24;
 
+            // SkyTekx: the text of c1ee118e. Each side is drawn before the turn to the next one, in white and
+            // with the normal display mode, and the name is centred on its own width. The base pushed and
+            // popped the same turn four times, so all four lines landed on one side, in black and see through
             for (int i = 0; i < 4; i++) {
-                matrices.pushPose();
+                Matrix4f pose = matrices.last().pose();
+                font.drawInBatch(energyTotal, -font.width(energyTotal) / 2F, 10F, 0xFFFFFF, false, pose, buffer, Font.DisplayMode.NORMAL, j, combinedLight);
+                font.drawInBatch(energyName, -font.width(energyName) / 2F, 20F, 0xFFFFFF, false, pose, buffer, Font.DisplayMode.NORMAL, j, combinedLight);
 
                 matrices.translate(-60F, 0F, 60F);
                 matrices.mulPose(Axis.YP.rotationDegrees(90));
-                Matrix4f pose = matrices.last().pose();
-                font.drawInBatch(energyTotal, -font.width(energyTotal) / 2F, 10F, 0, false, pose, buffer, Font.DisplayMode.SEE_THROUGH, j, combinedLight, true);
-                font.drawInBatch(energyName, -font.width(energyTotal) / 2F, 20F, 0, false, pose, buffer, Font.DisplayMode.SEE_THROUGH, j, combinedLight);
-//                font.draw(matrices, energyTotal, -font.width(energyTotal) / 2F, 10F, 0xFFFFFF);
-//                font.draw(matrices, energyName, -font.width(energyName) / 2F, 20F, 0xFFFFFF);
-
-                matrices.popPose();
             }
         });
 

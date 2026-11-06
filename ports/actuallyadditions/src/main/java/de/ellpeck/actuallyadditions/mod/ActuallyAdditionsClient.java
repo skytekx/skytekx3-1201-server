@@ -50,6 +50,7 @@ import de.ellpeck.actuallyadditions.mod.misc.special.SpecialRenderInit;
 import de.ellpeck.actuallyadditions.mod.particle.ActuallyParticles;
 import de.ellpeck.actuallyadditions.mod.particle.ParticleBeam;
 import de.ellpeck.actuallyadditions.mod.particle.ParticleLaserItem;
+import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -59,6 +60,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -152,5 +154,14 @@ public class ActuallyAdditionsClient {
         assert connection != null;
         assert Minecraft.getInstance().hitResult != null;
         connection.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, pos, ((BlockHitResult) Minecraft.getInstance().hitResult).getDirection()));
+    }
+
+    // SkyTekx: the rainbow energy bar of 87f753a1, which ItemEnergy.getBarColor reaches through
+    // DistExecutor, so that the common item class names no client class
+    public static int getEnergyBarColor(int defaultColor) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return defaultColor;
+        float[] color = AssetUtil.getWheelColor(mc.player.level().getGameTime() % 256);
+        return Mth.color(color[0] / 255F, color[1] / 255F, color[2] / 255F);
     }
 }

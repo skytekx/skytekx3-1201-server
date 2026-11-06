@@ -10,6 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.items.base;
 
+import de.ellpeck.actuallyadditions.mod.ActuallyAdditionsClient;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.tile.CustomEnergyStorage;
 import net.minecraft.core.Direction;
@@ -26,6 +27,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +36,9 @@ import java.util.List;
 
 public abstract class ItemEnergy extends ItemBase {
 
-    private final int maxPower;
-    private final int transfer;
+    // SkyTekx: public as in 24763a46, for the charged stacks of the creative tab and JEI
+    public final int maxPower;
+    public final int transfer;
 
     public ItemEnergy(int maxPower, int transfer) {
         super(ActuallyItems.defaultProps().stacksTo(1));
@@ -82,19 +85,28 @@ public abstract class ItemEnergy extends ItemBase {
         return true;
     }
 
+    // SkyTekx: the bar of 87f753a1, filled in the direction of 24763a46 from the NBT key Energy that the
+    // client receives. The base returned 0 or 1, so the bar never showed the charge
     @Override
     public int getBarWidth(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains("Energy")) {
-            return (int)(1 - (stack.getTag().getDouble("Energy") / this.maxPower));
-        }
-        return 1;
+        return Math.round(13.0F / this.maxPower * getEnergyFromTag(stack));
     }
 
+    // SkyTekx: the rainbow colour of 87f753a1, from the client only ActuallyAdditionsClient
     @Override
     public int getBarColor(ItemStack stack) {
-        //float[] color = AssetUtil.getWheelColor(player.level().getGameTime() % 256);
-        //return MathHelper.color(color[0] / 255F, color[1] / 255F, color[2] / 255F);
-        return super.getBarColor(stack);
+        int defaultColor = super.getBarColor(stack);
+        Integer color = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ActuallyAdditionsClient.getEnergyBarColor(defaultColor));
+        return color != null ? color : defaultColor;
+    }
+
+    /**
+     * SkyTekx: the energy in the NBT key Energy, which the capability writes on the server and which
+     * the client receives with the stack. The capability of a client stack does not follow it.
+     */
+    public static int getEnergyFromTag(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        return tag != null ? tag.getInt("Energy") : 0;
     }
 
     public void setEnergy(ItemStack stack, int energy) {
@@ -161,6 +173,15 @@ public abstract class ItemEnergy extends ItemBase {
             this.storage = new CustomEnergyStorage(item.maxPower, item.transfer, item.transfer);
             this.energyCapability = LazyOptional.of(() -> this.storage);
             this.stack = stack;
+            // SkyTekx: Forge gathers the capabilities of a stack when they are first read, after the stack
+            // has its tag. A stack read from a packet, such as a charged battery that a creative player
+            // takes from the tab, has no capability data to deserialize, so the storage started empty
+            // while the tag said full. It starts from the tag now, as deserializeNBT does
+            CompoundTag tag = stack.getTag();
+            if (tag != null && tag.contains("Energy")) {
+                this.storage.setEnergyStored(tag.getInt("Energy"));
+                this.storage.clearDirty();
+            }
         }
 
         @Nonnull

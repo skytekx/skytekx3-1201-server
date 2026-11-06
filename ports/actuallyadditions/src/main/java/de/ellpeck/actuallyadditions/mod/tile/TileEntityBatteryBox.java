@@ -32,17 +32,55 @@ public class TileEntityBatteryBox extends TileEntityInventoryBase implements ISh
     private int lastEnergyStored;
     private int lastCompare;
 
+    // SkyTekx: the capability invalidation of 6596a8e6 in Forge terms. The box hands out its own
+    // LazyOptional for the battery in its slot and invalidates it when the battery leaves or another one
+    // comes in, so cables and machines that cache the capability let go of the old battery. The base
+    // handed out the battery's own LazyOptional, which stays valid after the battery is taken out, so a
+    // cached neighbour kept charging or draining a stack that was no longer in the box
+    private ItemStack energyCapStack = null;
+    private LazyOptional<IEnergyStorage> energyCap = LazyOptional.empty();
+
     public TileEntityBatteryBox(BlockPos pos, BlockState state) {
         super(ActuallyBlocks.BATTERY_BOX.getTileEntityType(),  pos, state, 1);
     }
 
     @Override
     public LazyOptional<IEnergyStorage> getEnergyStorage(Direction facing) {
+        this.updateEnergyCap();
+        return this.energyCap;
+    }
+
+    private void updateEnergyCap() {
         ItemStack stack = this.inv.getStackInSlot(0);
-        if (stack.getItem() instanceof ItemBattery) {
-            return stack.getCapability(ForgeCapabilities.ENERGY, null);
+        if (stack != this.energyCapStack) {
+            this.energyCapStack = stack;
+            LazyOptional<IEnergyStorage> old = this.energyCap;
+            IEnergyStorage storage = stack.getItem() instanceof ItemBattery
+                ? stack.getCapability(ForgeCapabilities.ENERGY, null).orElse(null)
+                : null;
+            this.energyCap = storage != null
+                ? LazyOptional.of(() -> storage)
+                : LazyOptional.empty();
+            old.invalidate();
         }
-        return LazyOptional.empty();
+    }
+
+    @Override
+    public void setChanged() {
+        this.updateEnergyCap();
+        super.setChanged();
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.energyCap.invalidate();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        this.energyCapStack = null;
     }
 
     public static <T extends BlockEntity> void clientTick(Level level, BlockPos pos, BlockState state, T t) {

@@ -12,6 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ActuallyTabs {
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ActuallyAdditions.MODID);
@@ -21,12 +22,20 @@ public class ActuallyTabs {
 			.withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
 			.title(Component.translatable("itemGroup.actuallyadditions"))
 			.displayItems((parameters, output) -> {
-				List<ItemStack> stacks = ActuallyItems.ITEMS.getEntries().stream().map(reg -> new ItemStack(reg.get())).toList();
-				stacks.forEach(stack -> {
+				List<ItemStack> stacks = ActuallyItems.ITEMS.getEntries().stream().map(reg -> new ItemStack(reg.get())).collect(Collectors.toList());
+
+				// SkyTekx: an empty and a charged stack of every energy item, as in f0184f4d. The base listed
+				// only a charged one, with the charge as a double. The charge goes into the NBT key Energy as
+				// the int the capability writes, before anything reads the capability of the stack
+				List<ItemStack> charged = ActuallyItems.ITEMS.getEntries().stream().map(reg -> new ItemStack(reg.get()))
+						.filter(stack -> stack.getItem() instanceof ItemEnergy).toList();
+				charged.forEach(stack -> {
 					if(stack.getItem() instanceof ItemEnergy itemEnergy) {
-						stack.getOrCreateTag().putDouble("Energy", itemEnergy.getMaxEnergyStored(stack));
+						stack.getOrCreateTag().putInt("Energy", itemEnergy.maxPower);
 					}
 				});
+				stacks.addAll(charged);
+
 				output.acceptAll(stacks);
 			}).build());
 

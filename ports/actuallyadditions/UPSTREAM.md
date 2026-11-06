@@ -1143,3 +1143,33 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     14 then placed, right clicked, wrenched and broke the Hopping Item Interface with no ERROR
     line and no crash on the server. It skipped only the Ranged Collector and the Advanced Item
     Laser Relay, whose screens the sacks and filters port fixes.
+43. Battery box and energy items: the Battery Box writes its charge on all four sides, in white
+    and with the normal display mode, and centres the name on its own width (`c1ee118`). The base
+    pushed and popped the same turn four times, so the four lines landed on one side, black and
+    see through. The box hands out its own `LazyOptional` for the battery in its slot and
+    invalidates it when the battery leaves or another one comes in, the Forge form of
+    `invalidateCapabilities` in `6596a8e`, changelog 1.3.7. The base handed out the battery's own
+    `LazyOptional`, which stays valid after the battery is taken out, so a cable or machine that
+    caches it kept charging or draining a stack that was no longer in the box. The durability bar
+    of the energy items shows the charge, `round(13 / max * energy)`, in the rainbow colour of
+    `87f753a` and the fill direction of `24763a4` (the base returned 0 or 1). The bar reads the
+    NBT key `Energy`, which the client stack carries, the colour comes from the client only
+    `ActuallyAdditionsClient` through `DistExecutor`, and `maxPower` and `transfer` are public as
+    in `24763a4`. The creative tab lists an empty and a charged stack of every energy item
+    (`f0184f4`), where the base listed only a charged one, and JEI tells them apart with the
+    subtype interpreter `EnergyInterpreter` (`c86a290`, `3cf1815`, #1485). JEI 15 takes a string
+    there, so it returns the legacy string of `main`, `charged` for a full item and `uncharged`
+    for any other, and a part charged stack looks up the empty entry. The energy capability of an
+    item starts from the NBT key `Energy` when Forge gathers it. A stack read from a packet, such
+    as a charged battery that a creative player takes from the tab, has no capability data to
+    deserialize, so its storage started empty while its tag said full. The tab writes the charge
+    as an int before anything reads the capability, where the base wrote a double. The drill fix
+    of `b8575c4` has nothing to change here: on 1.20.1 the drill uses `defaultDurability(0)`,
+    which leaves it without durability, while the 1.21 `durability(0)` made it breakable.
+    Savegame: the item energy stays in the NBT key `Energy`, and a double `Energy` written by the
+    base tab still reads as an int. No id or block state changes.
+    In the same test the hotbar showed the bar of a half charged Single Battery at half width
+    and of a full drill at full width in the rainbow colour, and empty batteries with an empty
+    bar. A battery taken out of the box by hand left the slot of the box empty. JEI listed two
+    entries each for the Single and the Quintuple Battery, the drill and the Teleport Staff. Not
+    tested: a caching cable that lets go of a battery that leaves the box.

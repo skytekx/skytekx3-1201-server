@@ -177,6 +177,8 @@ Modifications
       shares a stack among its receivers.
     * Item Tag: a new filter item that holds one item tag, set by renaming it in an anvil at no
       cost or in its own screen, and that every filter slot of the mod matches by that tag.
+    * Ranged Collector: its screen no longer crashes the client, and its filter buttons work, so
+      it picks up items again.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

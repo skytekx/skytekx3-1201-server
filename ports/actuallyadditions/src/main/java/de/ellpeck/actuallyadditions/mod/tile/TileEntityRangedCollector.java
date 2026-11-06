@@ -38,7 +38,14 @@ import java.util.List;
 public class TileEntityRangedCollector extends TileEntityInventoryBase implements IButtonReactor, MenuProvider {
 
     public static final int RANGE = 6;
-    public FilterSettings filter = new FilterSettings(12, true, false, false, false);
+    // SkyTekx: a change of a filter slot marks the collector for saving, which the base and main
+    // do not do, as for the Advanced Item Laser Relay
+    public FilterSettings filter = new FilterSettings(12, true, false, false, false) {
+        @Override
+        public void onContentsChanged() {
+            TileEntityRangedCollector.this.setChanged();
+        }
+    };
 
     public TileEntityRangedCollector(BlockPos pos, BlockState state) {
         super(ActuallyBlocks.RANGED_COLLECTOR.getTileEntityType(), pos, state, 6);
@@ -109,14 +116,19 @@ public class TileEntityRangedCollector extends TileEntityInventoryBase implement
         return (slot, stack, automation) -> !automation;
     }
 
+    // SkyTekx: the filter buttons of adc276e8, with the ids of FilterSettings.Buttons. The base
+    // ignored every button
     @Override
     public void onButtonPressed(int buttonID, Player player) {
-        //this.filter.onButtonPressed(buttonID);
-    } //TODO
+        if (this.filter.onButtonPressed(buttonID)) {
+            this.setChanged();
+        }
+    }
 
+    // SkyTekx: the title of adc276e8, the base showed none
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.rangedCollector");
     }
 
     @Nullable

@@ -1368,3 +1368,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     in `AnvilMenu.createResult` to post that event (javap of `common.jar` in
     `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`). Not tested on Arclight with EssentialsX.
     Savegame: new ids only.
+48. Ranged Collector: its screen opens again and its filter works (`adc276e8`). The base never
+    built the filter buttons, so `containerTick` of the screen threw a `NullPointerException` on
+    the client as soon as the screen opened, and the collector ignored every button. Since its
+    filter starts as an empty allow list, the collector picked up nothing, and nothing could
+    switch the filter. Now the four filter buttons of source change 46 send their ids to the
+    collector, the screen shows the title `container.actuallyadditions.rangedCollector`, and the
+    block loses its `(wip)` label. A change of a filter slot or button marks the collector for
+    saving, which the base and `main` do not do. The recipe of `adc276e8` came with source
+    change 10. On Arclight the collector takes item entities without the Bukkit
+    `InventoryPickupItemEvent` that a vanilla hopper posts, as the Hopping Item Interface of
+    source change 42 does. Savegame: the NBT key `Filter` keeps its form and gains `Damage`.

@@ -12,6 +12,7 @@ package de.ellpeck.actuallyadditions.mod.inventory.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerRangedCollector;
+import de.ellpeck.actuallyadditions.mod.network.PacketHelperClient;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityRangedCollector;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.gui.GuiGraphics;
@@ -39,18 +40,21 @@ public class GuiRangedCollector extends AAScreen<ContainerRangedCollector> {
         this.imageHeight = 86 + 86;
     }
 
+    // SkyTekx: the filter buttons of adc276e8, which send their ids to the collector. The base
+    // never built them, so containerTick threw a NullPointerException on the client as soon as
+    // the screen opened
     @Override
     public void init() {
         super.init();
 
-        //this.filter = new FilterSettingsGui(this.collector.filter, this.leftPos + 3, this.topPos + 6, this.buttonList);
+        this.filter = new FilterSettingsGui(this.collector.filter, this.leftPos + 3, this.topPos + 6, true, this::addRenderableWidget, id -> PacketHelperClient.sendButtonPacket(this.collector, id), 0);
     }
 
     @Override
     public void render(@Nonnull GuiGraphics guiGraphics, int x, int y, float f) {
         super.render(guiGraphics, x, y, f);
 
-        //this.filter.drawHover(matrices, x, y);
+        this.filter.drawHover(guiGraphics, x, y);
     }
 
     @Override
@@ -69,8 +73,4 @@ public class GuiRangedCollector extends AAScreen<ContainerRangedCollector> {
         guiGraphics.blit(RES_LOC, this.leftPos, this.topPos, 0, 0, 176, 86);
     }
 
-//    @Override
-//    public void actionPerformed(Button button) {
-//        PacketHelperClient.sendButtonPacket(this.collector, button.id);
-//    }
 }

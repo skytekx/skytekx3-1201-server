@@ -50,11 +50,11 @@
    },
    {
     "item": "aa-ship/release: before release, grep the fork for live readers of ConfigBoolValues, ConfigIntValues and ConfigStringListValues. Every owning feature must have switched its reader to CommonConfig or ClientConfig (review note on CommonConfig of aa-baseline).",
-    "release": "Done in ed177d0. Every owning feature reads CommonConfig or ClientConfig. Two live readers of the 1.12 enums are left, the spider cobweb drop and the unregistered bat drop listener of ItemWingsOfTheBats, and both read false as on main (UPSTREAM.md, source change 6)."
+    "release": "Done in 75d3c64. Every owning feature reads CommonConfig or ClientConfig. Two live readers of the 1.12 enums are left, the spider cobweb drop and the unregistered bat drop listener of ItemWingsOfTheBats, and both read false as on main (UPSTREAM.md, source change 6)."
    },
    {
     "item": "aa-ship/savegame-test: the branch head jar after the review fix d3bd821 is SHA-1 342af9c288d7afb676105bf16b1466621edfa516 (4527513 bytes, two clean builds). It differs from the bundle jar ba5e48f8 of the aa-new-arclight boot only in META-INF/mods.toml (a comment). The baseline commits on the branch are 54fb6c3, dbbfe12, ef59d18, 8e0566f, 51031ce, d3bd821 and the docs commit 253672d.",
-    "release": "Done. Superseded by the release jar 227073059543dd3d969cd53a15f1fd42a38985cb of ed177d0, which local-mods/ ships since 0ed346b."
+    "release": "Done. Superseded by the release jar 227073059543dd3d969cd53a15f1fd42a38985cb of 75d3c64, which local-mods/ ships since 26415ad."
    },
    {
     "item": "all AA bundles/port pipeline: the integrator changed bp2/actuallyadditions/tools/aaport.py for the review note. HAND_MARKERS now also flag Java tag keys written as (\"c\", ...), such as new ResourceLocation(\"c\", \"ingots/iron\"), and every recipe JSON line where the \"id\" -> \"item\" rewrite fired is listed in the report as 'id -> item'. Check those report lines by hand: only result stacks should read item. The previous script is kept as aaint/aaport.py.orig in the scratchpad. Tags.* constants whose c: convention changed are not flagged."
@@ -248,7 +248,7 @@
    },
    {
     "item": "aa-ship/recipe-serializers (integrator of aa-processing-machines): EmpowererRecipe.Serializer.fromJson (mod/crafting/EmpowererRecipe.java:167, base code) still throws IllegalStateException for a recipe without exactly 4 modifiers. Forge 47 RecipeManager catches only IllegalArgumentException and JsonParseException, so one bad data pack empowering recipe stops a dedicated server at boot, as the crushing serializer did before 48a8724 (bp2/actuallyadditions/pmint/old-console.log shows that failure for crushing). Throw JsonSyntaxException there too.",
-    "release": "Done in 40d0122 (UPSTREAM.md, source change 70). The NEW boot of the savegame test loaded a data pack recipe with three modifiers, logged one ERROR for it and reached Done."
+    "release": "Done in 9c01fa1 (UPSTREAM.md, source change 70). The NEW boot of the savegame test loaded a data pack recipe with three modifiers, logged one ERROR for it and reached Done."
    },
    {
     "item": "aa-ship/config (integrator of aa-processing-machines): leafGeneratorArea is now a radius capped at 1 to 16 with a new comment (48a8724). A config written by an earlier build keeps its value when it is in range, and Forge clamps a value above 16 to 16 when it corrects the file (ForgeConfigSpec.Range.correct). The pack ships no actuallyadditions-common.toml yet, so commit the one the first pack boot writes.",
@@ -544,8 +544,8 @@
   "status": "Released into local-mods/ on 2026-11-06 as ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar, SHA-1 227073059543dd3d969cd53a15f1fd42a38985cb, not yet on the live server",
   "done": [
    "savegame-test: OLD 237e0fc6 to NEW 22707305 on a dedicated Forge 47.4.18 server, 49 block entities, 241 items in 33 kinds, four fluids and 130500 energy equal after the NEW load, the expected changes seen (okf page, Release test)",
-   "pack-wiring-and-docs: the jar, the permission record and the license text (0ed346b), the common config of the first pack boot, the README, mod set, open items and backport page, this file and the full inventory",
-   "release fixes: the empowering recipe serializer (40d0122) and the content level of the NOTICE (ed177d0)"
+   "pack-wiring-and-docs: the jar, the permission record and the license text (26415ad), the common config of the first pack boot, the README, mod set, open items and backport page, this file and the full inventory",
+   "release fixes: the empowering recipe serializer (9c01fa1) and the content level of the NOTICE (75d3c64)"
   ],
   "open": [
    {

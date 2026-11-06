@@ -23,7 +23,7 @@ worlds and configs keep working if an upstream build for Forge 1.20.1 replaces i
 | [Bygone Nether](#bygone-nether) 1.3.2 | Eternal Nether, NeoForge 1.21.1 only | Index entry, no fork | Modrinth version `RA38ax2z`, built from upstream commit cb38a20 | Commit 3d7c5cc0, 2026-11-05 | Boots with the full pack on Forge and Arclight, see [status](#status). Client untested |
 | [Mystical Automation](#mystical-automation) 1.0.8-skytekx.1 | Itself, NeoForge 1.21.1 and newer only | Fork in `ports/mysticalautomation/`, jar in `local-mods/` | Branch `1.21` of the upstream repository at 4149601 ("Release 1.0.8") | Commits c3bb6eb and e6b9182, 2026-11-05 | Boots with the full pack on Forge and Arclight. Client untested |
 | [Mekanism: Extra Modules](#mekanism-extra-modules) 0.1.0-beta.3-skytekx.1 | Itself, NeoForge 1.21.1 with Mekanism 10.7 only | Fork in `ports/mekanism-extra-modules/`, jar in `local-mods/` | Tag `v1.21.1-0.1.0-beta.3` of the upstream repository at 1548dd6 | Commits a2df2b5 to b59a9df, 2026-11-05 | Boots with the full pack on Forge and Arclight. Client untested |
-| [Expanded Delight](#expanded-delight) 0.1.4-skytekx.1 | Itself, NeoForge 1.21.1 only, and on 1.20.1 an older Fabric line with 44 items | Fork in `ports/expandeddelight/`, jar in `local-mods/` | Branch `1.21-neo` of the upstream repository at ea82640, with branch `1.20` at 8d8fe44 as the reference for the 1.20.1 API | Commits c8c0ef8 to d93682b, 2026-11-05 | Boots with the full pack on Forge and Arclight. Client untested |
+| [Expanded Delight](#expanded-delight) 0.1.4-skytekx.1 | Itself, NeoForge 1.21.1 only, and on 1.20.1 an older Fabric line with 44 items | Fork in `ports/expandeddelight/`, jar in `local-mods/` | Branch `1.21-neo` of the upstream repository at ea82640, with branch `1.20` at 8d8fe44 as the reference for the 1.20.1 API | Commits c8c0ef8 to d93682b, 2026-11-05, and the fox food fix 3df647a with its jar ffb40aa, 2026-11-06 | Boots with the full pack on Forge and Arclight. Client untested |
 | [Create: Integrated Farming](#create-integrated-farming) 1.4.3-skytekx.1 | Itself, NeoForge 1.21.1 only | Fork in `ports/createintegratedfarming/`, jar in `local-mods/`, its library Create: Dragons Plus 1.11.9 as an index entry | Branch `1.21.1/6.0.0-dev` of the upstream repository at 1f63780 ("[version] Release 1.4.3") | Commits dc176f0 to 3b20b42, 2026-11-05 | Boots with the full pack on Forge and Arclight, Create: Dragons Plus too. Client untested |
 
 ## Status
@@ -136,7 +136,7 @@ client without any of them cannot join. The steps of each mod are in its section
 - Copy the four port jars from `local-mods/` into the server's `mods/` and check their SHA-1:
   `MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar` 585446d5,
   `mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar` 3c40952a,
-  `expandeddelight-0.1.4-skytekx.1.jar` 45b288dd and
+  `expandeddelight-0.1.4-skytekx.1.jar` 2036aa13 and
   `create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` 74b2b560.
 - Download the two index jars from their `cdn.modrinth.com` links in `modrinth.index.json` into
   `mods/` and check their SHA-1: `bygonenether-1.3.2-1.20.x.jar` 529e31d2 and
@@ -497,7 +497,7 @@ Expanded Delight is an addon for Farmer's Delight with a cinnamon tree and wood 
 potatoes, chili peppers, peanuts and cranberries, a juicer, casks that ferment milk into cheese
 wheels, salt and many dishes. Upstream builds the full content set only for NeoForge 1.21.1, and its
 Fabric line for 1.20.1 has 44 items against 99, so the pack bundles a port to Forge 1.20.1 in
-`ports/expandeddelight/` (c8c0ef8 to 4f8db0a, the jar in fc1c482 and rebuilt in d93682b). The full
+`ports/expandeddelight/` (c8c0ef8 to 3df647a, the jar in fc1c482 and rebuilt in d93682b and ffb40aa). The full
 change list is `ports/expandeddelight/UPSTREAM.md`, and the page
 [Expanded Delight port](expandeddelight-port.md) has the content, the pack fit and the test tables.
 
@@ -512,10 +512,11 @@ change list is `ports/expandeddelight/UPSTREAM.md`, and the page
   Delight 1.20.1-1.3.4. The branch `1.21-rework` at 5ef645b (0.2.0) is an emptied restart whose
   commits say "complete emptiness" and "content cut", so it was not used.
 - The jar `local-mods/expandeddelight-0.1.4-skytekx.1.jar` has SHA-1
-  45b288dd96173e620db5a6d1065250a96b584949 and 486,426 bytes since d93682b, the same from two clean
-  builds with `./gradlew build` on Java 17 (NeoForged ForgeGradle 6.0.21, Forge 47.1.70 userdev, the
-  setup of SkyTekx DE Fixes). The first bundled build of fc1c482, SHA-1
-  3e156033dbf6a5a09d199960614776023e15e69a, lacks the review fixes.
+  2036aa13e77937afc7ba69b7f1a7c9ce8e9b21be and 486,648 bytes since ffb40aa, the same from a build and
+  a clean rebuild with `./gradlew build` on Java 17 (NeoForged ForgeGradle 6.0.21, Forge 47.1.70
+  userdev, the setup of SkyTekx DE Fixes). The build of d93682b, SHA-1
+  45b288dd96173e620db5a6d1065250a96b584949, lacks the fox food fix, and the first bundled build of
+  fc1c482, SHA-1 3e156033dbf6a5a09d199960614776023e15e69a, also lacks the review fixes.
 - It needs Farmer's Delight 1.20.1-1.3.4 or newer, which the index has. The build fetches that file
   from the Modrinth CDN and checks its SHA-1 against the index, as it does for the compile only
   KubeJS, Rhino and Architectury.
@@ -545,11 +546,14 @@ change list is `ports/expandeddelight/UPSTREAM.md`, and the page
   neither saved nor synced, a chest boat that lost its items at every save, the crushing mallet that
   1.20.1 refuses (09ce313), and from the review the default state of the juicer, which was waterlogged
   for `/setblock` and every mod that places it (fd8d5de), seven language keys that showed raw
-  (b224edc) and the juicer's container slot, which took any item from a pipe (1fc8ba0).
+  (b224edc) and the juicer's container slot, which took any item from a pipe (1fc8ba0). A later
+  review found that the conversion had also dropped upstream's cranberries in `minecraft:fox_food`,
+  a tag that vanilla 1.20.1 has and that `Fox#isFood` reads, and 3df647a restores it.
 - The port leaves out the datagen classes and worldgen bootstrap classes, which only build upstream's JSON on
   NeoForge, the overrides of Farmer's Delight's dough and melon juice recipes and of a Farmer's
-  Respite recipe (the pack edits no recipes of other mods, and the 1.20.1 ids differ), the 1.20.5
-  animal food tags and the Fabric libraries of the 1.20 branch. The wild sweet potato gives Absorption
+  Respite recipe (the pack edits no recipes of other mods, and the 1.20.1 ids differ), the chicken,
+  parrot and pig food tags, which only exist from Minecraft 1.20.5 on, and the Fabric libraries of the
+  1.20 branch. The wild sweet potato gives Absorption
   in suspicious stew, because Oozing needs Minecraft 1.20.5.
 - The Skylands rules hold. The biome modifiers add the cinnamon tree and wild crops to
   `#minecraft:is_jungle`, `#forge:is_plains`, `#forge:is_desert`, `#minecraft:is_savanna` and
@@ -618,6 +622,9 @@ are on [Expanded Delight port](expandeddelight-port.md#test-of-2026-11-05).
   `execute if block ... expandeddelight:juicer[facing=north,waterlogged=false]`, a side hopper handed
   over three glass bottles and kept four apples, and `forge:nuts` held the peanut next to Pam's
   sunflower seeds.
+- The fox food test of 2026-11-06 with the jar of ffb40aa and only Farmer's Delight reached `Done`
+  with 0 ERROR and 0 FATAL lines and stopped over RCON with exit code 0. The Forge tags command listed
+  cranberries, glow berries and sweet berries in `minecraft:fox_food`.
 - An Arclight copy with the repo's hardened `arclight.jar` and the same mods reached `Done` with
   0 ERROR and 0 FATAL lines and no failed mixin, ran the same juicer, hopper and tag checks with the
   same results, pressed an apple juice into the hopper below and stopped over RCON with exit code 0.

@@ -66,7 +66,15 @@ function unifyDumpRun(server) {
     var byType = new UnifyDumpList(rm.getAllRecipesFor(UnifyDumpBIR.RECIPE_TYPE.get(typeKeys[i])))
     for (var j = 0; j < byType.size(); j++) typeOf[String(byType.get(j).getId())] = String(typeKeys[i])
   }
-  var all = new UnifyDumpList(rm.getRecipes())
+  // Create: Dragons Plus adds the accessor RecipeManagerAccessor.getRecipes() with the same name and no arguments,
+  // which returns the map of recipes by type, and Rhino may call that one. Such a map is flattened by type and id.
+  var byName = rm.getRecipes()
+  var all = new UnifyDumpList()
+  if (byName.keySet === undefined) {
+    all.addAll(byName)
+  } else {
+    byName.values().forEach(byId => all.addAll(byId.values()))
+  }
   var table = []
   var index = {}
   var recipes = []

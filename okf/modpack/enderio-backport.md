@@ -798,8 +798,9 @@ Not ported in 6.3.0-skytekx.1. The plan below stays for a later build.
 - Athena 3.1.2 sets no render type, since its `AthenaBakedModel` does not override `getRenderTypes`
   (javap, inventory `critic_notes`). The fork wraps the connected model in a cutout render type, or the
   glass would render solid. Without Athena the glass falls back to today's model.
-- Machines show particles while they run (f761802d6, particles only), with a client config switch.
-  The sounds of that commit stay out.
+- Machines show particles while they run (f761802d6, particles only). The 6.x client key
+  `machineParticles` (`BaseClientConfig.java:17`) already exists and can switch them off. The sounds
+  of that commit stay out.
 - Walking and landing on a conduit bundle shows conduit or facade particles (6ae3dd177). On a faced
   bundle they use the facade's state, as upstream's `addLandingEffects` and `addRunningEffects` do,
   because vanilla particles of the bundle state take the conduit channel colour of tint index 0. Break
@@ -879,7 +880,7 @@ Left out on purpose (inventory, `plan.excluded`):
 | Machine networking rewrite of 7.1 (`machine-networking-rewrite-7-1`) | Internal, and the 7.1 notes say a rollback loses IO config and redstone settings |
 | Machine push buffs of 7.1 (`machine-io-push-buffs`) | Balance experiments that raise the cost per tick. The 6.x item transfer moves one item per call and has no dupe there |
 | Retexture and GUI redesign of 8.x | An asset and GUI overhaul of about 30 h. The damage mode of the filters uses a 6.x cycle button instead of the new picker |
-| Machine sounds (`machine-sounds`) | The 1.21.1 sounds count as CC BY-NC 3.0 material from freesound, and the commit ships no credit list. The particles of the same commit are ported |
+| Machine sounds (`machine-sounds`) | The 1.21.1 sounds count as CC BY-NC 3.0 material from freesound, and the commit ships no credit list. The particles of the same commit belong to the visual polish, which is not ported |
 | Vial of the void (`void-potential-vial-of-the-void-exp-rod`) | Renames the experience rod, which breaks saves without aliases, and adds a new progression |
 | Fire crafting rework (`fire-crafting-rework`) | A progression change outside the scope |
 | SAG Mill additions (`sag-mill-recipe-additions`) | Raw ore recipes and compat recipes. AlmostUnified and Mekanism govern the pack's ore processing, and KubeJS can add them later |
@@ -893,7 +894,6 @@ Left out on purpose (inventory, `plan.excluded`):
 | Recipe format changes (`grinding-ball-data-map-and-recipe-format-changes`) | Data maps for grinding balls, `SizedFluidIngredient` tank recipes and components in recipes would break pack datapacks and `kubejs/data/soulshards/recipes/soulsteeler.json` (type `enderio:enchanting`) |
 | Optional fluid codec of the Vat (`vat-optional-fluidstack-codec`) | Commit fec605fba fixes a NeoForge component codec. The port keeps fluids in NBT |
 | Smaller 8.x changes (`misc-8x-qol`) | Vacuum range, wrench rotation, external capacitor insertion, throttling and idle energy configs, renderer fixes of 8.x and buffer fixes for pooled buffers that 6.x does not use |
-| Painted walls (`painted-walls`) | New content outside the scope. Save safe and about 3 h if the owner wants it |
 | Athena resource pack (`athena-resourcepack-restructure`) | Athena 4.x on 1.21.1 only. The pack ships Athena 3.1.2 |
 | Regression fixes of 8.x (`8x-regression-fixes`) | They fix code that the NeoForge port or the 8.x conduit core introduced. Spot checks found the 6.x paths free of these bugs |
 | Translation refresh (`translations-refresh`) | The 8.x lang files use 8.x keys. Only English entries for ported content are added |
@@ -917,6 +917,7 @@ Already in the 6.x base, so no work (same file):
 | Refined Storage conduits (`refined-storage-conduits`) | Ender IO 6.1. Refined Storage is not in the pack |
 | Obelisk shapes (`obelisk-voxel-shapes`) | Ender IO 6.2.12 (1855ea5da) |
 | Load fixes for large conduit networks (`large-conduit-network-load-fixes`) | Ender IO 6.2.9 and 6.2.10 |
+| Painted walls (`painted-walls`) | The 1.20.1 commit 378197224, in every tag from 6.1.4-beta on, is the twin of e8dafa9e2. The base registers `enderio:painted_wall` (`EIOBlocks.java:389`) with its blockstate, models, loot table and painting recipes |
 | Fixes made on both branches in 2024 (`shared-1201-1211-fixes`) | Filter dupe, items voiding in filters, wrench conduit dupe, pickup noise, item loss, conduit upgrade voids, XP obelisk lockup and the crafter fixes, each checked as an ancestor of `1.20.1` |
 
 ## License conditions
@@ -1131,7 +1132,7 @@ Nobody has verified these yet (inventory, `critic_notes`, Things nobody has veri
   inhibitor blocks `/home` and `/tpa`.
 
 The owner may also want the content left out with a small cost: the weather obelisk (about 10 h, with
-a permission gate) and the painted walls (about 3 h). The wind charge default is the owner's to change
+a permission gate). The wind charge default is the owner's to change
 ([Decisions](../decisions.md)).
 
 ## Operator notes
@@ -1148,8 +1149,8 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   committed first.
 - Server and clients update together. The protocol "1.0-skytekx.1" and the new registry entries make
   Forge refuse a client of an older pack at login.
-- The first boot writes the new config keys, such as `chargeInterval`, the obelisk ranges,
-  `attractorAttractBosses` and the particle switch. The tracked `config/enderio/machines-common.toml`
+- The first boot writes the new config keys, such as `chargeInterval`, the obelisk ranges and
+  `attractorAttractBosses`. The tracked `config/enderio/machines-common.toml`
   lacks the sections `energy.inhibitor`, `energy.relocator`, `energy.attractor`, `obelisks`,
   `energy.wirelessCharger` and `wirelessCharger`, so Forge corrects it with a WARN at the first boot.
   Forge appends missing keys and keeps old values. The regenerated `machines-common.toml` is committed

@@ -228,7 +228,7 @@
    },
    {
     "id": "machine-sounds",
-    "reason": "License: the 1.21.1 sound files are treated as CC BY-NC 3.0 freesound material, and the commit ships no credit list. Skipped unless the credits are recovered and reproduced. The particles from the same commit are ported in b9. (commits: f761802d6 (sound part))"
+    "reason": "License: the 1.21.1 sound files are treated as CC BY-NC 3.0 freesound material, and the commit ships no credit list. Skipped unless the credits are recovered and reproduced. The particles of the same commit belong to eio-b9-visual-polish, which is not ported. (commits: f761802d6 (sound part))"
    },
    {
     "id": "void-potential-vial-of-the-void-exp-rod",
@@ -281,10 +281,6 @@
    {
     "id": "misc-8x-qol",
     "reason": "Out of scope: vacuum range buff, wrench rotation removal, external capacitor insertion, energy throttling config, ME conduit idle-energy config (8.x ME conduit energy model), task-host tick change, stirling and redstone-filter render fixes of the 8.x GUI and conduit renderer. Also 5eb93130a (#1185): its ByteBuf.array() fix targets 8.x pooled buffers, while 6.x EnderBlockEntity uses Unpooled buffers passed directly (lines 164 and 191). Its data-slot sync throttle and capacitor-bank reflection cache are 8.x perf changes. f08a5fe06 (resource bar clamp) is cosmetic. (commits: 1b5f4817f, 3d2eeef14, 26cea4eaa, 2a1945881, 08f5cb843, 6c7d0bec1, 1dd1fdddf, e0324ee30, 60e0b59fd, 2cf25cb87, 5eb93130a, f08a5fe06)"
-   },
-   {
-    "id": "painted-walls",
-    "reason": "Out of scope additive content (enderio:painted_wall, PaintedWallBlock, painting recipes), not in the TAKE list. Save-safe and about 3 h if the owner wants it later. (commits: e8dafa9e2)"
    },
    {
     "id": "athena-resourcepack-restructure",
@@ -357,6 +353,10 @@
    {
     "id": "shared-1201-1211-fixes",
     "reason": "Already in the 6.x base, no work. These fixes were made on both branches in 2024 (6.1.x-6.2.x community releases), verified with merge-base --is-ancestor against origin/1.20.1. As 1.20.1 hash = 1.21.1 hash: e2d537ce5 = 88c01d9de (filter dupe), 6f396368e = f8cd179ef (items voiding in filters), 387aeddd7 = 54fc27912 (wrench conduit dupe), 0c88a33b0 = 13de62500 (pickup noise), bef1ae494 = d4fb2181b (item loss), 1055009e6 = b3496580c (conduit upgrade voids item), 6b0fcb55d = cf9b9f26f (XP obelisk lockup). Also 1ece77ede (crafter energy), 67b3b0bff (crafter shared container) and fa730ba6b (XP obelisk). aba059223 (duplicate redstone filter recipes) is the 1.21 side of the filter recipe port. (commits: e2d537ce5, 88c01d9de, 6f396368e, f8cd179ef, 387aeddd7, 54fc27912, 0c88a33b0, 13de62500, bef1ae494, d4fb2181b, 1055009e6, b3496580c, 6b0fcb55d, cf9b9f26f, 1ece77ede, 67b3b0bff, fa730ba6b, aba059223)"
+   },
+   {
+    "id": "painted-walls",
+    "reason": "Already in the 6.x base, no work: the 1.20.1 commit 378197224 'feat: Add painted walls', in every tag from v6.1.4-beta to v6.2.18-beta, is the twin of the 1.21.1 commit e8dafa9e2. The base registers EIOBlocks.PAINTED_WALL (EIOBlocks.java:389) and tracks its blockstate, models, loot table and painting recipes. The first inventory listed it as new content by mistake (finding eio-fid-4 of the release audit). (commits: e8dafa9e2, 378197224)"
    }
   ]
  },

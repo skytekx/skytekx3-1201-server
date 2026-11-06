@@ -748,9 +748,17 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     back to an older layer (seen on the test server, a local fix). This does not copy `738f098`, which sets `CheckY`
     to the min build height minus 1 at every load and so restarts every digger at each chunk load.
     The look at overlay of the Digger reads the new states, where `main` still tests 0 and -1.
-    Left for the Arclight hardening: the named fake player, block events for the Phantom Breaker,
-    and its drops, which `main` still computes at the position and with the block entity of the
-    Phantom Breaker itself.
+    The Phantom Breaker computes the drops at the bound block with that block's own block entity,
+    breaks through the same drop chance helper as the Breaker and leaves fluid blocks alone. The
+    base and `main` used the position and the block entity of the Phantom Breaker itself, so a
+    bound shulker box lost its contents and `copy_nbt` read the Phantom Breaker. The Long-Range
+    Breaker leaves water, lava and Forge fluid blocks alone too, where the base and `main` deleted
+    every source in its line, since a fluid needs no tool. `WorldUtil.useItemAtSide` asks
+    `canBeReplaced` with the fake player in the place context and inside its `try`, and it hands
+    back a copy of the stack in the hand and then empties the hand of the shared fake player.
+    The base passed a null player outside the `try` and handed back the very stack that the fake
+    player held. These three are local changes of the integration review. Left for the Arclight
+    hardening: the named fake player in place of the shared `[Minecraft]` one.
 24. Phantomfaces, the Player Interface and boosters: a phantomface hands out a `LazyOptional` of
     its own for the handler of its target. It invalidates it when the target, the block at the
     target or the range changes and when the face is removed or unloaded, and it follows the
@@ -758,6 +766,12 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     the Forge 47 form of the capability invalidation of `ae6695a` and `b8e284d`, which call
     `invalidateCapabilities` on NeoForge. The base returned the target's `LazyOptional` itself,
     so a pipe that cached it kept feeding the old target after the face was bound elsewhere. The
+    face also remembers the block entity whose handlers it holds and drops them, at the next
+    request and in its own tick, when the block entity at the target is another one or is
+    removed. The block entities of the mod never invalidate their own handlers, so after the
+    target chunk unloaded and loaded again the face would have kept the handlers of the removed
+    copy, and an Energyface or Liquiface would have drained energy or fluid that the reloaded
+    copy still held (a local fix of the integration review). The
     look at overlay of the faces draws its wrapped lines again (`ae6695a`), since the base's
     `StringUtil.drawSplitString` draws nothing, and the range lines keep their green and red. The
     Player Interface keeps one `LazyOptional` per player and invalidates it when the player
@@ -783,7 +797,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     only checked for Forge fluid blocks, which vanilla water is not. The collector empties a full
     water or lava cauldron into its tank with the bucket sound and leaves an empty cauldron
     (`ea1a072`, #1440). Unlike `main` only the collector does that, since `main` also lets the
-    placer take from a cauldron. The cauldron classes are the same on 1.20.1. The Fluid Placer
+    placer take from a cauldron. The cauldron classes are the same on 1.20.1. A fluid without a
+    block, such as the potions and the tea of Create, stays in the tank of the placer, where the
+    base and `main` set air and voided a bucket every 15 ticks (a local fix). The Fluid Placer
     joins `minecraft:mineable/pickaxe` (`07c59fb`), the one difference to `main` that source
     change 22 left in that tag, so a pickaxe breaks it at its normal speed and it drops itself.
     The provider `BlockTagsGenerator` lists it, and the generated tag file and its hash in the
@@ -799,7 +815,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Delight into rich soil farmland, where the base set vanilla farmland on every dirt. The hoe is
     unbreakable, since it now wears like a real one, the energy of the tilling is only used when
     the soil changed, and the hoe plays the till sound once. Worms do not drop when a fake player
-    tills (`b26c47d`). A planted crop makes its place sound (`bfd8eb8`). Nether wart is planted
+    tills (`b26c47d`), and the worm check reads the level of the event, so a tilling without a
+    player no longer throws (`a65dccf`, #1480). A planted crop makes its place sound (`bfd8eb8`). Nether wart is planted
     again (`124cac1`): the base cast the item `Items.NETHER_WART` to `IPlantable`, which threw at
     every try. Potatoes and carrots already worked on 1.20.1 through Forge's `IPlantable`, so
     `b23ba8f` (#1464) only adds its fallback for a seed or crop item whose block is no

@@ -43,6 +43,10 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
     private int lastStrength;
     // SkyTekx: the capabilities this face hands out, per capability and side (index 6 for no side)
     private final Map<Capability<?>, LazyOptional<?>[]> forwardedCaps = new IdentityHashMap<>();
+    // SkyTekx: the block entity whose handlers forwardedCaps holds. A target chunk that unloads and
+    // loads again makes a new block entity at the same place, and the handlers of the old one must
+    // not be handed out any more
+    private BlockEntity forwardedTarget;
 
     public TileEntityPhantomface(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state, 0);
@@ -101,6 +105,12 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
 
         if (this.doesNeedUpdateSend()) {
             this.onUpdateSent();
+        }
+
+        // SkyTekx: pipes that cached a forwarded handler drop it once the target block entity is gone,
+        // even while nobody asks the face. A removed target needs no look into its chunk
+        if (this.forwardedTarget != null && (this.forwardedTarget.isRemoved() || this.boundPosition == null || this.level.getBlockEntity(this.boundPosition) != this.forwardedTarget)) {
+            this.invalidateForwardedCaps();
         }
 
         int strength = this.getComparatorStrength();
@@ -207,7 +217,12 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
         if (this.isCapabilitySupported(capability) && this.isBoundThingInRange()) {
             BlockEntity tile = this.level.getBlockEntity(this.getBoundPosition());
-            if (tile != null) {
+            // SkyTekx: handlers of another or a removed block entity are never handed out again
+            if (tile != this.forwardedTarget || tile != null && tile.isRemoved()) {
+                this.invalidateForwardedCaps();
+                this.forwardedTarget = tile;
+            }
+            if (tile != null && !tile.isRemoved()) {
                 return this.forwardCapability(capability, side, tile.getCapability(capability, side));
             }
         }
@@ -235,6 +250,7 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
     }
 
     protected void invalidateForwardedCaps() {
+        this.forwardedTarget = null;
         if (!this.forwardedCaps.isEmpty()) {
             List<LazyOptional<?>> toInvalidate = new ArrayList<>();
             for (LazyOptional<?>[] bySide : this.forwardedCaps.values()) {

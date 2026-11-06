@@ -140,7 +140,9 @@ public class TileEntityFluidCollector extends TileEntityBase implements ISharing
             if (this.tank.getFluidAmount() >= FluidType.BUCKET_VOLUME) {
                 FluidStack stack = this.tank.getFluid();
                 Block fluid = stack.getFluid().defaultFluidState().createLegacyBlock().getBlock();
-                if (fluid != null) {
+                // SkyTekx: a fluid without a block, such as the potions and tea of Create, stays in the
+                // tank. The check for null was always true, so the placer set air and voided a bucket
+                if (!fluid.defaultBlockState().isAir()) {
                     BlockPos offsetPos = this.worldPosition.relative(sideToManipulate);
                     // SkyTekx: no bucket goes into a source block that is already there, as in f524eccc.
                     // The base drained a bucket into a water source in front of it

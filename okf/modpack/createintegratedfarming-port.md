@@ -235,11 +235,12 @@ RCON.
 
 Not verified: the Ponder scenes, the JEI category Roosting, the renderers and the client prediction of
 feeding by hand, since no client joined. The Mechanical Harvester rules, the saw tags, the seat rule and
-the Twilight Delight lily pads were only checked as applied mixins and registrations. Nobody booted the
-full pack with the port and Create: Dragons Plus, on Forge or on Arclight, so their mixins never met
-those of the other pack mods, and the Aether part of Create: Dragons Plus never ran. The fishing nets
-use a Forge `FakePlayer` per contraption, as Create's deployer does, and the Arclight copy never ran a
-net.
+the Twilight Delight lily pads were only checked as applied mixins and registrations. The full pack of
+98bf164 with the jar of 26fc840 and Create: Dragons Plus booted on Forge 47.4.18 and on Arclight on
+2026-11-06, and all mixins of the two mods that have a target in the pack applied there, the Aether
+mixins of Create: Dragons Plus included, see [NeoForge ports](neoforge-ports.md#status). No Aether fan
+recipe of Create: Dragons Plus has run. The fishing nets use a Forge `FakePlayer` per contraption, as
+Create's deployer does, and the Arclight copy never ran a net.
 
 ### Seed test of 2026-11-06
 

@@ -289,8 +289,11 @@ block by block. The two pregens of 6,561 chunks ran on a machine that other test
 their times only show that the tag costs nothing visible.
 
 Not tested: the natural spawns of the structures, which need a player close by, the rescue of a
-Piglin Prisoner, the shield, the piglins next to armor with a gold trim, the textures in a client, and
-a boot of the full pack with the mod. See [open items](../open-items.md#not-verified).
+Piglin Prisoner, the shield, the piglins next to armor with a gold trim and the textures in a client.
+The full pack of 98bf164 with the mod booted on Forge 47.4.18 and on Arclight on 2026-11-06, see
+[NeoForge ports](neoforge-ports.md#status), but there only the Arclight repeat generated Nether
+chunks, 36 around 0 0, so a Nether pregen of the size that players explore next to the other Nether
+mods of the pack is still open. See [open items](../open-items.md#not-verified).
 
 ### Deploy
 

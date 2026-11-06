@@ -3,7 +3,7 @@ type: Reference
 title: Mystical Automation port
 description: The Forge 1.20.1 port of Mystical Automation 1.0.8 in ports/mysticalautomation, what it changes against upstream, how it was tested on Forge and Arclight, what nobody verified yet and how the operator deploys it.
 tags: [modpack, mods, mysticalautomation, mysticalagriculture, port]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Mystical Automation port
@@ -126,7 +126,10 @@ Not verified yet, because no client joined a test server:
 - The screens, their widgets and buttons, the JEI categories, the recipe transfer, the ghost slots and
   the slot counts above 127 in the Infuser and the Enchanternator on a client.
 - The guide book entries in a client with Patchouli.
-- The full pack. The test copies held only the mod and its dependencies.
+
+The test copies above held only the mod and its dependencies. The full pack of 98bf164 with the jar of
+3c92dcb booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the test
+copies, see [NeoForge ports](neoforge-ports.md#status).
 
 ## Deploy
 

@@ -12,6 +12,10 @@ A jar passes only when modrinth-permissions/<jar>.md exists and has exactly one 
 that starts with the word OK ("OK", "OK (author allows)") and does not mention BLOCKER or VERIFY. A
 status line starts with `**Status:**` or with a plain `Status:`, since the files use both.
 
+A jar that a pointer file names must not be in the git history either, since a push would publish
+every commit that holds it: history_commits() lists the commits reachable from HEAD that add or
+delete its exact bytes at any path, and both tools refuse unless that list is empty.
+
 A jar whose file points its source at tree/master/ports/<dir> of this repository (our own builds,
 whose licenses demand public source) passes only when origin/master already holds that directory
 and the same build of the jar in local-mods/. Until the branch with the source is merged and pushed,
@@ -40,6 +44,14 @@ def _git(repo, *args):
 def _blob_id(data):
     """The git blob id of `data`, as git hash-object gives it."""
     return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def history_commits(repo, data, rev="HEAD"):
+    """Short hashes of the commits reachable from `rev` that add or delete a file with exactly the
+    bytes `data`, at any path (git log --find-object with its blob id), or None when git cannot tell.
+    For a jar that a pointer file names it must be empty, or a push of `rev` reposts the jar."""
+    out = _git(repo, "log", "--format=%h", "--find-object=" + _blob_id(data), rev)
+    return None if out is None else out.split()
 
 
 def source_problem(repo, jar, text, data=None):

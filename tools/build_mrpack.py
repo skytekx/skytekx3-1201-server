@@ -10,7 +10,9 @@
 - fetches the jars that local-mods/ names by a pointer file <jar>.fetch.json instead of holding them
   (tools/fetch_local_mods.py) into a cache, outside the tree unless $SKYTEKX3_FETCH_CACHE points into
   it, which the tools refuse unless git ignores that path. It checks their size and SHA-1 against the
-  pointer and bundles them exactly like tracked jars. A failed download or check refuses the build
+  pointer and bundles them exactly like tracked jars. A failed download or check refuses the build,
+  and so does a commit reachable from HEAD that holds such a jar, since a push would repost it
+  (--allow-unpermitted builds the private/draft pack anyway)
 - patches the bundled jars that tools/patch_mods.py lists in PACK_RULES (patch_mods.py read from git
   HEAD too) and ships each under the file name that pack_jar_name gives it, so local-mods/ keeps the
   pristine jars and players get the bytes the server runs
@@ -85,7 +87,10 @@ if problems:
 # Their license allows them in the .mrpack but not as a copy in the public repository (ZeroCore 2).
 # The pointers come from git HEAD like every override. Each jar comes from the cache or its URL and
 # must match the size and SHA-1 of its pointer, or the build stops before it moves or writes anything.
+# No commit reachable from HEAD may hold the jar itself, at any path: the license forbids that copy,
+# and pushing HEAD would publish all of them (git log --find-object with the blob id of the jar).
 pointed = {}
+held = []
 for rel in git("ls-tree", "-r", "-z", "--name-only", "HEAD", "--", "local-mods").decode("utf-8").split("\0"):
     if not rel.endswith(fetch_local_mods.SUFFIX):
         continue
@@ -99,6 +104,20 @@ for rel in git("ls-tree", "-r", "-z", "--name-only", "HEAD", "--", "local-mods")
         sys.exit("refusing to build: %s: %s" % (rel, e))
     print("fetched %s for %s (%d bytes, SHA-1 %s, cache %s)" % (p["file"], rel, p["size"], p["sha1"],
                                                                fetch_local_mods.cache_dir()))
+    commits = mrpack_permissions.history_commits(REPO, pointed[name])
+    if commits is None:
+        sys.exit("refusing to build: git log --find-object failed for %s" % name)
+    if commits:
+        held.append("git history still holds %s (blob %s) in %s, rewrite it before any push"
+                    % (p["file"], mrpack_permissions._blob_id(pointed[name]), " ".join(commits)))
+if held:
+    print("\n".join(held))
+    if "--allow-unpermitted" not in sys.argv:
+        sys.exit("refusing to build: a push of this history would repost the jars above, or pass "
+                 "--allow-unpermitted for a private/draft build that must not be uploaded")
+    if not out.endswith("-UNPERMITTED.mrpack"):
+        out = REPO+f"/SkyTekx3-{VERSION}-UNPERMITTED.mrpack"
+        print("--allow-unpermitted: building a private/draft pack as", out, "-- do NOT upload it")
 
 # --- split client-only jars out of the server mods/ dir ---
 clientonly = REPO+"/client-only-mods"

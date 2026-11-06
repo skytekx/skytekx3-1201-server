@@ -1047,3 +1047,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     integer slider sends the whole number it shows, where `main` sends the raw value, which the
     server cuts down (a slider at 4.6 showed 5 and stored 4). The screen builds no sliders when
     the client found no box at the position of the menu (source change 15). No NBT key changes.
+39. Automatic Feeder: the screen shows the animal count and whether the animals can breed when the
+    mouse is over the heart, a tooltip that the base had commented out (`73be71af`), the search
+    box of five blocks is centered on the feeder (`73be71af`, the base reached one block less to
+    the positive sides), the menu has its title (`c418b867`) and the name loses its `(wip)` label.
+    The comparator output follows the animal count as `5db04c0b` (#1504, changelog 1.3.22) does:
+    0 without animals, then 1 to 15 as the count rises to the limit of 30, where the base always
+    gave the 0 of `TileEntityBase`. A change of the output updates the comparators, as the
+    Coal Generator does it. `Mth.lerpDiscrete` of `main` does not exist on 1.20.1, and its formula
+    goes past 15 above the limit, so the port caps the count at the limit, which the commit message
+    of `5db04c0b` describes. The recipe came with source change 10 (`7c7a095c`). No NBT key
+    changes.

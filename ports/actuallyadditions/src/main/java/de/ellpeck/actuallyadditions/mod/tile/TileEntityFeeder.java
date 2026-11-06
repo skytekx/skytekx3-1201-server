@@ -44,6 +44,7 @@ public class TileEntityFeeder extends TileEntityInventoryBase implements MenuPro
     public int currentAnimalAmount;
     private int lastAnimalAmount;
     private int lastTimer;
+    private int lastCompare;
 
     public TileEntityFeeder(BlockPos pos, BlockState state) {
         super(ActuallyBlocks.FEEDER.getTileEntityType(), pos, state,1);
@@ -86,7 +87,8 @@ public class TileEntityFeeder extends TileEntityInventoryBase implements MenuPro
             int range = 5;
             ItemStack stack = tile.inv.getStackInSlot(0);
             if (!stack.isEmpty() && tile.currentTimer >= TIME) {
-                List<Animal> animals = level.getEntitiesOfClass(Animal.class, new AABB(tile.worldPosition.getX() - range, tile.worldPosition.getY() - range, tile.worldPosition.getZ() - range, tile.worldPosition.getX() + range, tile.worldPosition.getY() + range, tile.worldPosition.getZ() + range));
+                // SkyTekx: upstream 73be71af centers the area on the block
+                List<Animal> animals = level.getEntitiesOfClass(Animal.class, new AABB(pos).inflate(range));
                 tile.currentAnimalAmount = animals.size();
                 if (tile.currentAnimalAmount >= 2 && tile.currentAnimalAmount < THRESHOLD) {
                     Optional<Animal> opt = animals.stream().filter((e) -> canBeFed(stack, e)).findAny();
@@ -98,6 +100,12 @@ public class TileEntityFeeder extends TileEntityInventoryBase implements MenuPro
                     }
                 }
             }
+            // SkyTekx: the comparator follows the animal count, so a change of it updates the comparators
+            if (tile.lastCompare != tile.getComparatorStrength()) {
+                tile.lastCompare = tile.getComparatorStrength();
+                tile.setChanged();
+            }
+
             if ((tile.lastAnimalAmount != tile.currentAnimalAmount || tile.lastTimer != tile.currentTimer) && tile.sendUpdateWithInterval()) {
                 tile.lastAnimalAmount = tile.currentAnimalAmount;
                 tile.lastTimer = tile.currentTimer;
@@ -128,9 +136,24 @@ public class TileEntityFeeder extends TileEntityInventoryBase implements MenuPro
         return animal.getAge() == 0 && !animal.isInLove() && animal.isFood(stack);
     }
 
+    /**
+     * SkyTekx: upstream 5db04c0b (#1504). 0 without animals, 1 to 15 as the count rises to the
+     * limit, 15 at the limit and above it. Upstream's Mth.lerpDiscrete is 1.21 only, and the count
+     * is capped here, since the formula of main goes past 15 above the limit
+     */
+    @Override
+    public int getComparatorStrength() {
+        if (this.currentAnimalAmount <= 0) {
+            return 0;
+        }
+        float amount = Math.min(1.0F, this.currentAnimalAmount / (float) THRESHOLD);
+        return Math.min(15, 1 + Mth.floor(amount * 14.0F));
+    }
+
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        // SkyTekx: upstream c418b867
+        return Component.translatable("container.actuallyadditions.feeder");
     }
 
     @Nullable

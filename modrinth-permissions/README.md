@@ -5,23 +5,18 @@ Modrinth requires distribution-permission attribution for every mod BUNDLED in t
 file per bundled mod with the exact fields to paste into
 `Settings -> Permissions` on the project, plus this overview.
 
-Researched automatically across the 40 bundled mods of that time. The table below lists all 58 jars of
-`local-mods/`, and the counts at the top were recounted on 2026-11-06. **Verify the blockers yourself before trusting them.**
+Researched automatically across the 40 bundled mods of that time. The table below lists all 59 bundled
+jars, the 58 that git holds in `local-mods/` and ZeroCore 2, which git names there by a pointer file,
+and the counts at the top were recounted on 2026-11-06. **Verify the blockers yourself before trusting them.**
 
 ## TL;DR
 
-- **50** mods are fine to bundle (open license or author allows modpacks).
-- **2** need a manual check, Status VERIFY: Deadly World, whose CurseForge modpack flag is unconfirmed, and ZeroCore 2, whose author allows modpacks but forbids reposts on other websites, while git tracks its jar in `local-mods/` of this public repository.
-Researched automatically across the 40 bundled mods of that time. The table below lists all 49 jars of
-`local-mods/`, and the counts at the top were recounted on 2026-11-04. **Verify the blockers yourself before trusting them.**
-
-## TL;DR
-
-- **42** mods are fine to bundle (open license or author allows modpacks).
-- **1** needs a quick manual check (CurseForge modpack flag unconfirmed): Deadly World, Status VERIFY.
+- **52** mods are fine to bundle (open license or author allows modpacks).
+- **1** needs a manual check, Status VERIFY: Deadly World, whose CurseForge modpack flag is unconfirmed.
 - **6** are BLOCKERS — All-Rights-Reserved with no modpack permission. These will fail Modrinth review and must be resolved (contact author / get permission / replace / remove) before the pack can be public.
 - `tools/build_mrpack.py` refuses to build while any `local-mods/` jar has no file here or its single **Status** line does not start with the word `OK` (`--allow-unpermitted` builds a private/draft pack named `SkyTekx3-<ver>-UNPERMITTED.mrpack` that must not be uploaded). `tools/publish_modrinth.py` runs the same check (`tools/mrpack_permissions.py`) on every jar inside the `.mrpack` it uploads and refuses, with no override.
 - A jar whose file here points its source at `https://github.com/skytekx/skytekx3-1201-server/tree/master/ports/<dir>` also fails that check until the local `origin/master` holds `ports/<dir>` and the same build of the jar in `local-mods/`. Merge and push the branch with the source, then fetch, before a public build.
+- A jar whose license allows it in the `.mrpack` but forbids a copy in this public repository is not in git. Git tracks the pointer file `local-mods/<jar>.fetch.json` in its place, with the URL, the SHA-1 and the size of the author's file, and `.gitignore` ignores the jar path. That is ZeroCore 2 since 2026-11-06. Such a jar needs its file here like any bundled jar. `tools/build_mrpack.py` downloads it at build time and refuses the build unless size and SHA-1 match, `tools/publish_modrinth.py` checks it inside the `.mrpack`, and `tools/fetch_local_mods.py` fetches it for a server's `mods/`.
 - A jar that `PACK_RULES` in `tools/patch_mods.py` patches for the pack keeps its upstream name in `local-mods/`, but ships, and has its file here, under the name with the suffix of its rule. For Simply Jetpacks 2 that is `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`. Both checks use that shipped name.
 - **3** are on Modrinth and could be CDN-linked in `modrinth.index.json` instead of bundled, which removes them from this list entirely.
 
@@ -41,10 +36,9 @@ These cannot legally be bundled in a public modpack as-is:
 
 ## Manual check (resolve before publishing)
 
-Two jars have Status VERIFY. Deadly World depends on a CurseForge flag nobody has confirmed yet, and ZeroCore 2 on where its jar is hosted:
+One jar has Status VERIFY. Deadly World depends on a CurseForge flag nobody has confirmed yet:
 
 - **Deadly World** (`deadlyworld-1.20.1-1.2.3.jar`) — All Rights Reserved. Not on Modrinth — must be bundled, requiring explicit permission. CurseForge project ID 60098. The GitHub repo (FatherToast/DeadlyWorld, default branch 1.16.5, also has a 1.20.X branch) carries no LICENSE file (GitHub API returns null). Version 1.2.3 for MC 1.20.1 confirmed via gradle.properties in the 1.20.X branch. The CurseForge "Allow distribution" (allowModDistribution) flag status is unconfirmed without an API key — this is the key thing to verify before bundling; if the flag is true, reason upgrades to "Special permission".
-- ZeroCore 2 (`ZeroCore2-1.20.1-2.1.48.jar`) is All Rights Reserved. Its author grants modpack use but adds "No one is authorized to repost my mods, or any part of them, on any other website then the ones I post them to", which names CurseForge, Modrinth and the FTB launcher. The `.mrpack` on Modrinth is covered. The copy that git tracks in `local-mods/` since d74909e is not, because pushing the branch to GitHub makes it a download of its own there. Ask the author to allow that copy, go back to the Modrinth builds, or keep the jar out of the public git history before the push, see the record.
 
 ## Could be CDN-linked instead of bundled
 
@@ -64,7 +58,6 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `connectivity-1.20.1-7.7.jar` | Connectivity | All Rights Reserved | No permission | **NO** | - |
 | `cupboard-1.20.1-4.2.jar` | Cupboard | All Rights Reserved | No permission | **NO** | - |
 | `deadlyworld-1.20.1-1.2.3.jar` | Deadly World | All Rights Reserved | Unknown | **NO** | - |
-| `ZeroCore2-1.20.1-2.1.48.jar` | ZeroCore 2 | All Rights Reserved (MIT multiblock API) | Special permission, modpacks only | **VERIFY**, not while git holds the jar in the public repository | older builds only |
 | `fireflies-1.0.0-forge-1.20.1.jar` | 🟨⬛!!Fireflies!!🟨⬛ | All Rights Reserved | No permission | **NO** | - |
 | `hexxit_additions-1.0.2-forge-1.20.1.jar` | Hexxit Additions | All Rights Reserved | No permission | **NO** | - |
 | `mob_grinding_utils-1.20.1-1.1.0.jar` | Mob Grinding Utils | All Rights Reserved | No permission | **NO** | - |
@@ -107,8 +100,8 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar` | Simply Jetpacks 2 (guide book patched by SkyTekx) | MIT | Licensed | yes | upstream only |
 | `SkewersReflavored-1.20.1-1.0.0.jar` | Skewers Reflavored | MIT | Licensed | yes | - |
 | `skytekx-compat-2.1.3.jar` | SkyTekx Compat | MIT | Licensed | yes | - |
-| `skytekx_defixes-1.0.0.jar` | SkyTekx DE Fixes (addon with fixes after Draconic Evolution 1.21, needs DE 3.1.2.621) | MIT for own code, portions LicenseRef-CoFH-Dont-Be-a-Jerk | Licensed | yes | - |
 | `skytekx-molten-1.0.0.jar` | SkyTekx Molten | MIT | Licensed | yes | - |
+| `skytekx_defixes-1.0.0.jar` | SkyTekx DE Fixes (addon with fixes after Draconic Evolution 1.21, needs DE 3.1.2.621) | MIT for own code, portions LicenseRef-CoFH-Dont-Be-a-Jerk | Licensed | yes | - |
 | `spiced_twilight-2.0.0-1.20.1-skytekx.1.jar` | Spiced Twilight (1.20.1 backport by SkyTekx) | LGPL-3.0-or-later | Licensed | yes | 1.21.1 only |
 | `traverse-forge-7.0.12.jar` | Traverse Reforged | LGPL-3.0-only | Licensed | yes | - |
 | `trumpet_skeleton-1.2-forge-1.20.1.jar` | Trumpet Skeleton: Reforged | MIT | Licensed | yes | - |
@@ -119,6 +112,7 @@ On Modrinth, so you can add them to `modrinth.index.json` as CDN downloads and d
 | `twilightforest-1.20.1-4.3.2508-skytekx.1-universal.jar` | The Twilight Forest (SkyTekx 1.20.1 fork, TF 4.8 backport) | LGPL-2.1 (code), CC BY-NC-SA 4.0 (non-code/non-sound assets), All Rights Reserved (sounds and structures), MIT (Mystic Crown Compat parts) | Special permission | yes | - |
 | `twilightforestfinalboss-1.0.1-forge-1.20.1.jar` | The King of Twilight | MIT | Licensed | yes | - |
 | `twilighttweaks-1.20.x-1.2.jar` | Twilight Tweaks | LGPL-2.1 | Licensed | yes | - |
+| `ZeroCore2-1.20.1-2.1.48.jar` | ZeroCore 2 | All Rights Reserved (MIT multiblock API) | Special permission, modpacks only | yes, unmodified and inside the `.mrpack` only, git holds a pointer to the CurseForge file | older builds only |
 
 ## How to fill the form
 

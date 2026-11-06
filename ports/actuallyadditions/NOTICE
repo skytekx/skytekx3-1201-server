@@ -175,6 +175,8 @@ Modifications
       and NBT, a filter taken out of a filter slot goes back to the cursor, and the Advanced Item
       Laser Relay has working filter and smart buttons and saves its filters. The fluid relay
       shares a stack among its receivers.
+    * Item Tag: a new filter item that holds one item tag, set by renaming it in an anvil at no
+      cost or in its own screen, and that every filter slot of the mod matches by that tag.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

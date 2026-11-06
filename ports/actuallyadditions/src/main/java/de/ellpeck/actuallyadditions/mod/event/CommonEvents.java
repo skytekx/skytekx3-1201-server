@@ -17,6 +17,7 @@ import de.ellpeck.actuallyadditions.mod.config.values.ConfigBoolValues;
 import de.ellpeck.actuallyadditions.mod.data.PlayerData;
 import de.ellpeck.actuallyadditions.mod.data.WorldData;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
+import de.ellpeck.actuallyadditions.mod.items.ItemTag;
 import de.ellpeck.actuallyadditions.mod.items.Sack;
 import de.ellpeck.actuallyadditions.mod.network.PacketHelperServer;
 import de.ellpeck.actuallyadditions.mod.sack.SackData;
@@ -24,12 +25,17 @@ import de.ellpeck.actuallyadditions.mod.sack.SackManager;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA;
 import de.ellpeck.actuallyadditions.mod.util.ItemUtil;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -206,5 +212,24 @@ public class CommonEvents {
     @SubscribeEvent
     public void onPickupEvent(EntityItemPickupEvent event) {
         //checkAchievements(event.getItem().getItem(), event.getEntityPlayer(), InitAchievements.Type.PICK_UP);
+    }
+
+    // SkyTekx: renaming an Item Tag in an anvil sets its tag at no cost (6f567725, main parses the
+    // name with ResourceLocation.tryParse). A name that is not the id of an existing item tag
+    // cancels the event, which leaves the anvil without a result. AnvilMixin lets the player take
+    // a result of cost 0
+    @SubscribeEvent
+    public void onAnvilEvent(AnvilUpdateEvent event) {
+        if (!event.getLeft().isEmpty() && event.getLeft().getItem() instanceof ItemTag && event.getName() != null && !event.getName().isEmpty()) {
+            event.setCost(0);
+            ResourceLocation tagLocation = event.getName().length() <= ItemTag.MAX_TAG_LENGTH ? ResourceLocation.tryParse(event.getName()) : null;
+            if (tagLocation != null && BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, tagLocation)).isPresent()) {
+                ItemStack stack = event.getLeft().copy();
+                ItemTag.setTag(stack, tagLocation);
+                event.setOutput(stack);
+            } else {
+                event.setCanceled(true);
+            }
+        }
     }
 }

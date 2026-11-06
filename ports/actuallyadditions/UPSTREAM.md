@@ -200,11 +200,11 @@ next to it are upstream's Maven artifacts and are not shipped.
     `MixinConfigs`, as `ports/enderio/build.gradle:342` does. The config
     `src/main/resources/actuallyadditions.mixins.json` is the one of `main` with
     `compatibilityLevel` `JAVA_17` instead of `JAVA_21`, `minVersion` 0.8.5, `required`,
-    `defaultRequire` 1 and the refmap. Its lists stay empty until the mixins land with their
-    features (`AnvilMixin` and `ItemCombinerMenuAccessor` of `6f56772` with the Item Tag filter,
-    `client.MinecraftMixin` of `3b29799` with the Engineer's Goggles). Until then the annotation
-    processor writes no refmap, so the jar has none and Mixin logs one WARN line at boot that the
-    reference map could not be read. The dev runs get the properties `mixin.env.remapRefMap` and
+    `defaultRequire` 1 and the refmap. The mixins land with their features. `AnvilMixin` and
+    `ItemCombinerMenuAccessor` of `6f56772` came with the Item Tag filter (source change 47), and
+    `client.MinecraftMixin` of `3b29799` comes with the Engineer's Goggles. Before source change 47
+    the annotation processor wrote no refmap, so the jar had none and Mixin logged one WARN line at
+    boot that the reference map could not be read. The dev runs get the properties `mixin.env.remapRefMap` and
     `mixin.env.refMapRemappingFile`, so the mixins of the deobfuscated mod jars apply there. The
     two mixins of `main` touch nothing that Arclight patches: `AnvilMixin` injects at the head of
     `AnvilMenu.mayPickup`, while Arclight's `RepairContainerMixin` only redirects and injects in
@@ -1340,3 +1340,31 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     sack data gains the key `Filter`, the filters gain `Damage`, and a sack keeps its `UUID` and
     `AutoInsert`. A Traveler's Sack of the base loads with an empty filter, since the base kept
     its filter in the item NBT, which no menu read. No id changes but the new menu id.
+47. Item Tag filter: the new item `actuallyadditions:item_tag` of `6f56772` holds one item tag,
+    and every filter slot of the mod matches the items in that tag (`FilterSettings.check`). The
+    tag id sits in the stack's NBT key `tag` as a string, the 1.20.1 form of the attachment of the
+    1.20.4 line, which saved a compound with that key, and of the data component `ITEM_TAG` of
+    `main`. Renaming the item in an anvil to the id of an existing item tag sets it at the cost 0
+    (`CommonEvents.onAnvilEvent`, `main` parses the name with `ResourceLocation.tryParse`), and
+    the mixin `AnvilMixin` with the accessor `ItemCombinerMenuAccessor` lets the player take that
+    result, which vanilla's `mayPickup` refuses at the cost 0. A name that names no item tag
+    leaves the anvil without a result, as on `main`. The refmap maps the accessor to the field
+    `f_39769_` and the injection to `m_6560_`. The item also opens its own screen in the new menu
+    `actuallyadditions:item_tag_container`, which `main` registers but never opens (its `use` is
+    commented out), and whose button handler there only clears the tag, so the tag the screen
+    sends was lost. Here Enter sends a tag that exists on the client through the new serverbound
+    handler `GUI_STRING_TO_CONTAINER_HANDLER` (index 9 of `DATA_HANDLERS`, no protocol bump,
+    source change 14). The handler checks the sender like the other screen packets, drops a text
+    of more than 256 characters with a WARN and hands the rest to the sender's open menu while
+    that menu is still valid. The menu parses the text with `ResourceLocation.tryParse` and sets
+    it only when the item tag exists on the server. Enter on an empty box clears the tag through
+    button 0. The menu is bound to the hotbar slot and the stack it opened with, as the other item
+    menus. The screen shows whether the typed id is a tag, which `main` leaves at its last state
+    when a valid id names no tag. The item has the texture of `79b2084` and the flat item model
+    of `ActuallyItems.SIMPLE_ITEMS` (the item part of `19afc5f`), and the recipe of `6f56772`
+    (paper and black quartz). On Arclight the result skips the Bukkit `PrepareAnvilEvent`, as
+    every result of a Forge `AnvilUpdateEvent` does: `ForgeHooks.onAnvilChange` puts it into the
+    result slot itself, and Arclight's `RepairContainerMixin` only redirects the `setItem` calls
+    in `AnvilMenu.createResult` to post that event (javap of `common.jar` in
+    `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`). Not tested on Arclight with EssentialsX.
+    Savegame: new ids only.

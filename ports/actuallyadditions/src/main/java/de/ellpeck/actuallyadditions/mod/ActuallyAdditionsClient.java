@@ -44,6 +44,7 @@ import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiOilGenerator;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiPhantomPlacer;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiRangedCollector;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.GuiXPSolidifier;
+import de.ellpeck.actuallyadditions.mod.inventory.gui.ItemTagScreen;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.SackGui;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.VoidSackGui;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
@@ -97,6 +98,7 @@ public class ActuallyAdditionsClient {
         MenuScreens.register(ActuallyContainers.PHANTOM_PLACER_CONTAINER.get(), GuiPhantomPlacer::new);
         MenuScreens.register(ActuallyContainers.RANGED_COLLECTOR_CONTAINER.get(), GuiRangedCollector::new);
         MenuScreens.register(ActuallyContainers.XPSOLIDIFIER_CONTAINER.get(), GuiXPSolidifier::new);
+        MenuScreens.register(ActuallyContainers.ITEM_TAG_CONTAINER.get(), ItemTagScreen::new);
         // From old proxy
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
         // SkyTekx: upstream f9897f06 moved ClientRegistryHandler to the mod bus, and 2e394d92

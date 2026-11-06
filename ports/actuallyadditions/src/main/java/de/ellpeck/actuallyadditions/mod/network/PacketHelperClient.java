@@ -57,6 +57,25 @@ public final class PacketHelperClient {
         PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(compound, PacketHandler.GUI_BUTTON_TO_CONTAINER_HANDLER));
     }
 
+    /**
+     * SkyTekx: a text for the open menu, such as the tag of the Item Tag screen (6f567725). The
+     * server hands it to the sender's open menu while that menu is still valid
+     * (PacketHandler.GUI_STRING_TO_CONTAINER_HANDLER).
+     */
+    @OnlyIn(Dist.CLIENT)
+    public static void sendContainerStringPacket(String text, int textId) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) {
+            return;
+        }
+        CompoundTag compound = new CompoundTag();
+        compound.putString("Text", text);
+        compound.putInt("TextID", textId);
+        compound.putInt("PlayerID", mc.player.getId());
+        compound.putString("WorldID", mc.level.dimension().location().toString());
+        PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(compound, PacketHandler.GUI_STRING_TO_CONTAINER_HANDLER));
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static void sendPlayerDataToServer(boolean log, int type) {
         CompoundTag compound = new CompoundTag();

@@ -508,7 +508,7 @@ evidence and the page with the details. The rulings behind the first section are
 
 ## Docs and housekeeping
 
-- Two notes still say Nyx is gone, `kubejs/server_scripts/recipe_fixes.js:28` and the Nyx rows of
+- Two notes still say Nyx is gone, `kubejs/server_scripts/recipe_fixes.js:67` and the Nyx rows of
   `docs/RECIPE_PORT.md`. See [Nyx](content/nyx.md#open-points).
 - The GitHub repo description says "kitchen-sink" and points at a Modrinth project that is not public.
   See [Related repos and services](related.md#this-repo-on-github).

@@ -27,7 +27,11 @@ These come from the session of 2026-11-06 (claude.ai session `016dYAZDqtsLdVqTQQ
   better choice if it is clearly faster.
 - The plugins in use are ported, and the Skylands stay as they are, because the datapack generator is
   already optimal.
-- The project is called Golem.
+- The project is called Golem and lives in the repository `skytekx/golem`.
+- Quirks and security issues of the ported plugins are fixed during the port, not carried over.
+- Every quirk and every security issue gets its own GitHub issue, and the pull request links all of
+  them.
+- The owner asked whether Golem can be licensed under the GNU GPL 2, see [License](#license).
 
 ## Why the game itself stays Java
 
@@ -94,12 +98,73 @@ The parts in detail.
 
 ## Where the code lives
 
-Golem should be its own repository, for example `skytekx/golem`, that names Aosabi by path or git as
-long as the Aosabi crates are not on a registry. Aosabi promises no unsafe block in its own code and
-puts embedded targets first ([Aosabi principles](https://github.com/netsnek/aosabi/blob/main/Documentation/principles.md)).
-A JVM host needs unsafe JNI calls and only runs on servers, so it does not belong into the Aosabi core.
-The bridge mod lives in the same repository as a Gradle subproject. The owner has not decided this
-yet.
+Golem lives in its own repository, `skytekx/golem`, as the owner decided on 2026-11-06. It names Aosabi
+by path or git as long as the Aosabi crates are not on a registry. Aosabi promises no unsafe block in
+its own code and puts embedded targets first
+([Aosabi principles](https://github.com/netsnek/aosabi/blob/main/Documentation/principles.md)). A JVM
+host needs unsafe JNI calls and only runs on servers, so it does not belong into the Aosabi core. The
+bridge mod lives in the same repository as a Gradle subproject.
+
+## License
+
+The owner wants the GNU GPL 2. Golem takes `GPL-2.0-or-later`, not `GPL-2.0-only`, for these reasons.
+
+- Aosabi is MIT, but some of its files are Apache-2.0, the code it takes from Pylon in
+  `aosabi-core`, `aosabi-serve`, `aosabi-query` and `aosabi-build` ([Aosabi licensing](https://github.com/netsnek/aosabi/blob/main/Documentation/licensing.md)).
+  Its TLS stack uses `ring`, which is under Apache-2.0 and ISC terms as well. The Free Software
+  Foundation counts Apache-2.0 as compatible with the GPL 3 but not with the GPL 2 only. A Golem binary
+  under `GPL-2.0-only` that links Aosabi would carry a license conflict.
+- Under `GPL-2.0-or-later` the source stays GPL 2 and every combined binary is distributed under the
+  GPL 3, which takes the Apache-2.0 parts.
+- Forge is LGPL-2.1, which the bridge mod may link under either GPL version. LuckPerms is MIT. Neither
+  blocks the choice.
+- EssentialsX is GPL-3.0. Golem does not copy or translate its code. The port is written from the
+  documented behaviour and from tests against the running plugin, so the GPL 3 of EssentialsX does
+  not reach Golem. Arclight and CraftBukkit code is not used either.
+- Golem never ships Minecraft. The server jar comes from Mojang's download as today.
+
+Every source file carries `SPDX-License-Identifier: GPL-2.0-or-later` on its first line, and
+`LICENSES/` holds the texts of the GPL 2 and of every license a dependency brings. A license check in
+CI, such as `cargo deny`, refuses a dependency whose license is incompatible. This is a reading of the
+licenses and not legal advice.
+
+## Quirks and security
+
+The port is a chance to fix what the plugins do wrong today. Golem does not copy a behaviour only
+because EssentialsX, LuckPerms, Spigot or Arclight have it.
+
+- A quirk is a behaviour that surprises players or operators, breaks a documented intent or needs a
+  workaround. A security issue is anything that lets a player or an outsider get access, data, items,
+  money or control they should not have, or take the server down.
+- Every quirk and every security issue found while porting gets its own GitHub issue in
+  `skytekx/golem` before the fix, with the label `quirk` or `security`. The issue states the old
+  behaviour, with evidence such as a log line, a config line or a test against the running plugin,
+  and the behaviour Golem has instead.
+- Every pull request that ports or changes a plugin lists all issues it fixes in a section of its
+  body, one link per issue with `Fixes #n`. A pull request without that section does not merge. A
+  pull request that found no quirk and no security issue says so in that section.
+- As long as the live server still runs EssentialsX and the repository is public, a security issue
+  that is exploitable on the live server is filed as a private security advisory of the repository
+  instead of a public issue. The pull request links the advisory in the same section, and the
+  advisory is published after the switch.
+
+These are known at the start. Each one gets its issue when the work begins.
+
+| Area | Quirk or security issue today | Golem |
+|---|---|---|
+| Permissions | The option `use-bukkit-permissions: true` makes the `player-commands` list of Essentials do nothing, so the config says one thing and the server does another ([Plugins](../modpack/plugins.md#permissions)) | One permission system with one source of truth |
+| Permissions | LuckPerms and its 39 nodes exist only in an H2 database on the Mac mini, so a new host has none ([Plugins](../modpack/plugins.md#open-points)) | Groups and nodes as a tracked config file that seeds the database |
+| Homes | Without `home.bed`, `/home` of a player with no home ignores the bed and goes to the spawn ([Plugins](../modpack/plugins.md#permissions)) | The bed comes first by default |
+| Data | The player data of Essentials sits in `plugins/`, which git does not ignore ([Plugins](../modpack/plugins.md#files)) | The Golem store lives outside the tracked tree and is ignored |
+| Telemetry | bStats and the update check are on ([Plugins](../modpack/plugins.md#metrics-and-update-checks)) | No telemetry |
+| Entities | Spigot's activation range left items hanging in the air until misc was set to 0 ([Floating items](arclight.md#floating-items)) | Items are exempt by design |
+| Stop path | A signal stop and Arclight's shutdown thread could work on chunks at the same time ([Arclight runtime](arclight.md)) | Golem stops only through the server thread |
+| Remote control | RCON sends its password in clear text and must never be exposed | The GraphQL API with authentication and TLS replaces it |
+
+The port also checks these classes of issues and files what it finds: chat and name formatting codes
+that fake system messages, spam through `tpa`, `msg` and `mail` without limits, money that goes
+negative or rounds wrong in `pay` and `eco`, teleports into unsafe or unloaded places, and API calls
+without rate limits.
 
 ## The GraphQL API
 
@@ -283,12 +348,12 @@ Two engineers. Durations in weeks of one engineer.
 | GraphQL API | Schema above, auth, server sent events, the Cloudflare Tunnel route | 3 to 5 |
 | Plugin runtime | Rust plugin trait, server thread calls with time budgets, config and SQLite store | 3 to 4 |
 | Permissions | Plugin `golem-permissions`, Forge PermissionAPI handler, LuckPerms import | 3 to 4 |
-| Essentials port | Plugin `golem-essentials` and the spawn commands, economy, migration tool, golden sample scenarios | 6 to 9 |
+| Essentials port | Plugin `golem-essentials` and the spawn commands, economy, migration tool, golden sample scenarios, the issues of [Quirks and security](#quirks-and-security) | 7 to 10 |
 | World settings | Plugin `golem-world` with activation range, tracking range and the other hooks | 2 to 3 |
 | Switch | Test copy run, migration on the Mac mini, launchers, docs in this wiki | 2 to 3 |
 | Native acceleration | Golden sample recorder, noise, density functions, region files | 20 to 32 |
 
-Golem without the native code is 27 to 39 weeks of work, about 4 to 5 months with two engineers. The
+Golem without the native code is 28 to 40 weeks of work, about 4 to 5 months with two engineers. The
 native code runs in parallel and ends about 8 to 10 months after the start.
 
 ### Before the port
@@ -312,8 +377,9 @@ native code runs in parallel and ends about 8 to 10 months after the start.
 
 ## Open decisions
 
-- Where Golem lives, a separate repository or a crate in Aosabi. This page recommends a separate
-  repository.
+- Whether the license is `GPL-2.0-or-later` as this page recommends, or another GPL version.
+- Whether `skytekx/golem` is private until the switch, which would let security issues be public
+  issues there from the start.
 - Whether a Bukkit layer is ever wanted for plugins beyond the ported ones.
 - Whether the economy of EssentialsX is in use at all, which the usage audit decides.
 

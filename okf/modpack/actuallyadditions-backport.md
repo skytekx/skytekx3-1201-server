@@ -425,6 +425,47 @@ Vertical Digger, the Farmer and the magnet ring did not run, nothing ran with Es
 profile of a large relay network was taken, so the ship stage takes those tests (carryover
 `aa-ship`). The integration compiled the merged tree and booted no jar of it.
 
+The manual and compat bundle is done. Its six commits are 33cc559 (the manual as a Patchouli book),
+352d9d1 (the fluid bars, the bar texts, the overlay layer and the buttons), 378f2b4 (the last
+`(wip)` labels, the lang keys as literals, the Chinese translation and the removal of the 1.12
+`.lang` files), 2d5ced1 (the Garden Cloche recipes), 92e3549 (the Mekanism crusher recipe) and
+c05fa59 (the porter's test record), with the review fix 23c7466 (`UPSTREAM.md`, source changes 65
+to 69). The porter built on the Arclight hardening, so the commits came on without a conflict and
+keep their numbers, and the next bundle starts at source change 70. The review found that the
+manual opened only when aimed at the air. Its `useOn` returned `FAIL`, as on the base and on
+`main`, and on 1.20.1 `Minecraft#startUseItem` stops at that result before it calls `use`, so a
+right click aimed at the ground, a wall or a machine did nothing. The review fix returns `PASS`,
+so the block acts first and the click then falls through to the book (`UPSTREAM.md`, source change
+65).
+
+The porter's test ran the jar of the five feature commits (SHA-1
+`ae5284cb09fe28f41e0aabe1dd06c4d7b71bff33`, 3009455 bytes) on a dedicated Forge 47.4.18 server with
+JEI, Patchouli, Curios, The One Probe and Mekanism 10.4.6 and in the dev client with a local
+scenario (`bp2/actuallyadditions/ui-tools/devtest-ui.patch`, screenshots in `ui-shots1/` of the
+workflow scratchpad). The manual awarded the root advancement and opened the landing page of the
+book, the crystals entry showed the reconstructor pages, the video guide showed the button of its
+own playlist, and a Fluid Collector screen drew its water in the blue tint of the fluid. A second
+server with Immersive Engineering 10.2.0-183 and Mekanism 10.4.16 and without Patchouli reached
+`Done` with 0 ERROR lines and loaded the cloche and crushing recipes. The integration repeated the
+right click through `Minecraft#startUseItem` with the jar of the review fix (SHA-1
+`fea34aaa5ce391fef3b406343792202e6beecb3d`, 3009455 bytes, one build) and a second local scenario
+(`ui-tools/devtest-uiblock.patch`). A click aimed at the floor opened the book, a click aimed at a
+chest opened the chest, and a click into the air opened the book. The porter's jar as a control
+opened nothing on the floor (`bp2/actuallyadditions/srv-uidc-int/` and `srv-uidc-ctl/`). Every
+server of the bundle logged 0 ERROR lines and only the FATAL lines in which The One Probe reports a
+changed config file. Not tested are the chat line without Patchouli, a crop growing in the cloche,
+the JEI categories of the cloche and of the Mekanism crusher, the GUI scale 4, the charge text next
+to the energy overlay and the hotbar under the overlays (carryover `aa-ship`).
+
+The look at overlays still draw from the `Post` event of the vanilla portal overlay, as upstream
+f1c7b249 does, so a HUD mod that cancels that overlay would hide them. A scan of the 271 jars of the
+Arclight pack boot copy found no class that names the portal overlay together with the `Pre` event
+(`bp2/actuallyadditions/uidc-int-tools/portalscan.py`), while the 16 client only jars of the index
+were not scanned. The Wings Of The Bats and the Storage Crate Keeper keep their `(WIP)` label and
+the recipes of `main`, although neither works on the fork. The release decides whether their
+recipes go, whether `forge:holds_items` gets filled and what to do with the keys of `zh_cn.json`
+that the fork does not use (carryover `aa-ship`).
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -442,7 +483,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Done in 94af253, ec4164c, 6839d1c and a516398, review fix 693daa2 |
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Done in 6511595, 0a4d282, 818581c, 1febab4 and b32f06a, relay capabilities f876a8c, review fix 094e4ad |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Done in 32f3cfb, 36c1eea, c013130, 70ae973, 1416d6a, 4c8c227 and 52f5fd8, review fix eafcf45 |
-| Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Planned |
+| Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Done in 33cc559, 352d9d1, 378f2b4, 2d5ced1, 92e3549 and c05fa59, review fix 23c7466 |
 | Release (`aa-ship`) | Savegame test, pack wiring, licenses, README row and the final state of this page | 9 | Manual and compat, Arclight hardening | Planned |
 
 The baseline comes first, then server safety and the data core. The assets wait for the data core,
@@ -752,13 +793,22 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
 ### Manual and compat
 
 - The manual opens a Patchouli book with the category getting started and five entries, plus the
-  reconstructor page type. The JSON is hand written from the generated files of `main`. Without
-  Patchouli a chat line explains it.
-- Screen fixes, the lang cleanup of the 131 entries marked work in progress, the Chinese translation
-  and the removal of the eight 1.12 `.lang` files.
+  reconstructor page type (7658fdaa, 1207a27d, 0e3a9612). The JSON is hand written from the
+  generated files of `main` and lives in `src/main/resources`, because no provider of the fork
+  writes it. The server asks Patchouli to open the book, so the common item class names no client
+  code, and without Patchouli a red chat line from a lang key explains it (19cfbc92, `UPSTREAM.md`,
+  source change 65).
+- The fluid bars draw the tinted still sprite of the fluid from the block atlas, the energy overlay
+  of a looked at machine shows its charge again, and the look at overlays render under the hotbar
+  (ba64232a, 83828a6d, f1c7b249, source change 66).
+- The lang cleanup drops the `(wip)` label from everything that works, keeps `(WIP)` on 17 names of
+  what does not, removes 15 dead 1.12 keys, ships the Chinese translation of 871d8414 and removes
+  the eight 1.12 `.lang` files. The code names its 51 lang keys as literals, and no key changes
+  (source change 67).
 - Canola, coffee, flax and rice grow in the Garden Cloche of Immersive Engineering 10.2.0-183, and
   the Mekanism crusher turns a black quartz block into smooth black quartz, each behind a
-  `forge:mod_loaded` condition.
+  `forge:mod_loaded` condition and written by hand in the recipe formats of those two 1.20.1 jars
+  (e63376b0, 645dbb2d, 40012ae3, source changes 68 and 69).
 
 ### Release
 
@@ -1041,7 +1091,24 @@ These differ from upstream on purpose and must survive the next upstream sync.
   since the strict ingredient of the base and the 1.20.4 line matched no real book. The 3x3 slime
   block recipe takes rice slimeballs instead of every `forge:slimeballs` item, and the invisibility
   upgrade keeps `forge:glass/black` (`UPSTREAM.md`, source change 10).
-- Patchouli stays optional, and the book is hand written without a Patchouli provider.
+- Patchouli stays optional, and the book is hand written in `src/main/resources` without a
+  Patchouli provider. The server opens it through `PatchouliAPI#openBookGUI`, where `main` opens it
+  on the client, and the chat line without Patchouli is the lang key
+  `info.actuallyadditions.booklet.patchouliMissing` instead of an English literal. The manual's
+  `useOn` returns `PASS` instead of the `FAIL` of `main`, so a right click aimed at a block opens
+  the book too, after the block had its turn. The book names the creative tab by its id, translates
+  its own name and the second video button, and the Engineer house entry speaks of the Engineer
+  villager instead of the 1.12 Crystallizer (`UPSTREAM.md`, source change 65).
+- The fluid bars set their own shader where the 1.20.4 code relies on the blit before them, and the
+  small button falls back to its state colour for a message without one, where `main` throws a
+  `NullPointerException` (`UPSTREAM.md`, source change 66).
+- The Lens of the Killer and the two relay modifiers lose their `(WIP)` label, which `main` keeps,
+  because they work on the fork. The Wings Of The Bats and the Storage Crate Keeper keep the label
+  and the recipes of `main` until the release decides (`UPSTREAM.md`, source change 67).
+- The Garden Cloche recipes take the item tag `minecraft:dirt` as soil, as `main` does, where the
+  cloche recipes of Immersive Engineering 10.2 take the plain dirt item. The Mekanism crusher recipe
+  carries a `forge:mod_loaded` condition that `main` leaves out (`UPSTREAM.md`, source changes 68
+  and 69).
 - Compat mining lens recipes ship only for mods whose 1.20.1 ids were checked.
 - The Engineer house uses upstream's structure with a lowered DataVersion and the jigsaw pool
   `minecraft:empty`, without the structure updater. Its chest takes crystal blocks for the weight 3

@@ -17,6 +17,7 @@ import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.network.gui.IButtonReactor;
 import de.ellpeck.actuallyadditions.mod.network.PacketHelperServer;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IAcceptor;
+import de.ellpeck.actuallyadditions.mod.util.AAFakePlayers;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -38,7 +39,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -185,7 +185,7 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
 
             BlockState state = this.level.getBlockState(pos);
             Block block = state.getBlock();
-            ItemStack stack = block.getCloneItemStack(state, new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, false), this.level, pos, FakePlayerFactory.getMinecraft((ServerLevel) this.level));
+            ItemStack stack = block.getCloneItemStack(state, new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, false), this.level, pos, AAFakePlayers.get((ServerLevel) this.level));
             if (!state.isAir()) {
                 if (fakePickaxe.isCorrectToolForDrops(state) && state.getDestroySpeed(this.level, pos) >= 0F && !(block instanceof IFluidBlock) && this.isMinable(state, stack)) {
                     List<ItemStack> drops = Block.getDrops(state, (ServerLevel) this.level, pos, this.level.getBlockEntity(pos));

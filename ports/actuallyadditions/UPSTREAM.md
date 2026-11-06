@@ -1899,3 +1899,58 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     its one pattern. A loom with a white banner, red dye and the Drill pattern item offered
     `actuallyadditions:drill`, and the resulting banner held that pattern with the tooltip `Red
     Drill Pattern`. Not tested: how a banner or a shield with a pattern looks.
+60. Named fake player and block events of the machines: the machines break, place and convert
+    blocks as the fake player `[ActuallyAdditions]` with the fixed UUID
+    `5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd`, through the new helper `mod/util/AAFakePlayers.java`.
+    The base and `main` use the shared `[Minecraft]` player of Forge everywhere. Forge 47 caches one
+    such player per level and profile, gives it its own net handler and drops it in
+    `FakePlayerFactory#unloadLevel`, so the helper keeps no reference to it. Each use stands the
+    player in the middle of the machine with empty hands and gives back its hands and position when
+    it ends. A block that one machine places can pulse another machine, whose use then runs inside
+    the first one, and emptying the hand there would have lost the stack that the first machine
+    reads back. The drop chance helper `WorldUtil.fireFakeHarvestEventsForDropChance` of the
+    Breaker, the Long-Range Breaker, the Phantom Breaker and the Vertical Digger and the break check
+    `WorldUtil.fireFakeBreakEvent` of the Leaf-Eating Generator and the Heat Collector post their
+    `BlockEvent.BreakEvent` with that player, and `WorldUtil.useItemAtSide` of the Placer and the
+    Phantom Placer places with it, standing at the Phantom Placer and not at its bound block. The
+    redstone wire of the Placer, which the base and `main` set without an event, goes through the
+    place event and stays in the machine when refused. The Lens of the Miner, the Lens of Color and
+    the block conversions of the Lens of Conversion set their block, post
+    `ForgeEventFactory.onBlockPlace` with the face toward the reconstructor and the result in the
+    hand of the player, and put the old block back from its `BlockSnapshot` when the event is
+    cancelled, as `ForgeHooks#onPlaceItemIntoWorld` does. A conversion into an item asks the break
+    event first. A refused change costs no energy. The Lens of the Killer, the hoe of the Farmer and
+    the clone stack of the Vertical Digger use the named player too. The Phantom Breaker already
+    dropped the bound block with its own block entity (source change 23).
+    Arclight 1.0.6 bridges both Forge events, as `javap` of the shipped
+    `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` shows. `BlockBreakEventDispatcher` turns
+    each posted break event into a Bukkit `BlockBreakEvent` of the player's `CraftPlayer` and
+    copies the cancel flag back. `BlockPlaceEventDispatcher` turns the `EntityPlaceEvent` of a
+    server player into a `BlockPlaceEvent`, but only after `ForgeEventFactory#onBlockPlace` has
+    captured the face (`ForgeEventFactoryMixin`), so a bare post of the event would reach no
+    plugin. The break dispatcher also pushes a capture context onto
+    `ArclightCaptures.blockBreakEventStack`, and only the break of a real player takes it off
+    again, since `ServerPlayerGameModeMixin` clears the stack before `destroyBlock` and pops it at
+    its return. Arclight overwrites `Block#popResource` to put every drop into the top context of
+    that stack instead of the level (`BlockMixin`). A context that a machine leaves behind
+    therefore swallows every later block drop of the server, a torch that falls off a broken block
+    for example, until the next block that a player mines clears the stack and loses them, and the
+    stack grows by one context per machine break. `AAFakePlayers#postBreak` takes back the
+    contexts that its own event pushed. It finds the stack by reflection, so nothing changes
+    without Arclight. These are local changes.
+    The drill posts no second break event for the block that the player mined.
+    `ServerPlayerGameMode#destroyBlock` posts that event before `Item#onBlockStartBreak` hands the
+    break to the drill, and `WorldUtil.breakExtraBlock` posted another one, so protection and
+    logging plugins saw the block broken twice (carryover of `aa-tools`). Its experience is worked
+    out as the `BreakEvent` constructor does it, with the fortune or silk touch that the drill
+    holds by then. The extra blocks of a drill in creative post their break event too, the base
+    removed them without one. Of `bb06b24` only the air check comes over. That commit adds the call
+    to `Block#playerWillDestroy` that 1.21 moved out of `onDestroyedByPlayer`, which
+    `IForgeBlock#onDestroyedByPlayer` of Forge 47 still makes, so the call would run twice here. On
+    Arclight the break events of the drill run inside the `destroyBlock` of the player, and the
+    mixin at its return merges their drops into the context of the player.
+    With one fixed profile a claim plugin has to trust `[ActuallyAdditions]` for the machines to
+    work inside a claim. Per owner fake players would need a new owner key on every machine and
+    stay out of this change. The harvest and planting of the Farmer, the Fluid Placer and Collector
+    and the Lava Factory still change blocks without an event.
+    Savegame: none. New ids: none.

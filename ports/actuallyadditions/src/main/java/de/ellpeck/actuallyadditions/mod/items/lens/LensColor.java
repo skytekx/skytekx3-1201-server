@@ -13,10 +13,12 @@ package de.ellpeck.actuallyadditions.mod.items.lens;
 import de.ellpeck.actuallyadditions.api.internal.IAtomicReconstructor;
 import de.ellpeck.actuallyadditions.api.lens.Lens;
 import de.ellpeck.actuallyadditions.mod.crafting.ColorChangeRecipe;
+import de.ellpeck.actuallyadditions.mod.util.AAFakePlayers;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -55,11 +57,13 @@ public class LensColor extends Lens {
                 BlockState state = tile.getWorldObject().getBlockState(hitBlock);
                 Block block = state.getBlock();
                 ItemStack returnStack = this.tryConvert(new ItemStack(block), tile.getWorldObject().registryAccess());
-                if (!returnStack.isEmpty() && returnStack.getItem() instanceof BlockItem) {
+                if (!returnStack.isEmpty() && returnStack.getItem() instanceof BlockItem && tile.getWorldObject() instanceof ServerLevel level) {
                     Block toPlace = Block.byItem(returnStack.getItem());
                     BlockState state2Place = toPlace.defaultBlockState();
-                    tile.getWorldObject().setBlock(hitBlock, state2Place, 2);
-                    tile.extractEnergy(ENERGY_USE);
+                    // SkyTekx: the recolored block goes through the place event of the named fake player
+                    if (AAFakePlayers.placeBlock(level, tile.getPosition(), hitBlock, state2Place, 2, tile.getOrientation().getOpposite(), returnStack)) {
+                        tile.extractEnergy(ENERGY_USE);
+                    }
                 }
             }
 

@@ -19,11 +19,13 @@ import de.ellpeck.actuallyadditions.mod.blocks.BlockLaserRelay;
 import de.ellpeck.actuallyadditions.mod.crafting.CoffeeIngredientRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.LaserRecipe;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityAtomicReconstructor;
+import de.ellpeck.actuallyadditions.mod.util.AAFakePlayers;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -234,20 +236,29 @@ public class MethodHandler implements IMethodHandler {
                             Optional<LaserRecipe> recipe = LaserRecipe.getRecipeForStack(new ItemStack(state.getBlock()));
                             if (recipe.isPresent() && tile.getEnergy() >= recipe.get().getEnergy()) {
                                 ItemStack output = recipe.get().getResultItem(tile.getWorldObject().registryAccess()).copy();
-                                if (!output.isEmpty()) {
-                                    tile.getWorldObject().levelEvent(2001, pos, Block.getId(state));
+                                // SkyTekx: a conversion into a block is a placement and one into an item a
+                                // break of the named fake player at the reconstructor, each with its event.
+                                // A refused block stays as it is and costs no energy
+                                if (!output.isEmpty() && tile.getWorldObject() instanceof ServerLevel level) {
+                                    boolean converted;
                                     if (output.getItem() instanceof BlockItem) {
                                         Block toPlace = Block.byItem(output.getItem());
                                         BlockState state2Place = toPlace.defaultBlockState(); //.getStateForPlacement(tile.getWorldObject(), pos, facing, 0, 0, 0, output.getMetadata(), FakePlayerFactory.getMinecraft((WorldServer) tile.getWorldObject()), Hand.MAIN_HAND); //TODO
-                                        tile.getWorldObject().setBlock(pos, state2Place, 2);
+                                        converted = AAFakePlayers.placeBlock(level, tile.getPosition(), pos, state2Place, 2, facing.getOpposite(), output);
                                     } else {
-                                        ItemEntity item = new ItemEntity(tile.getWorldObject(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, output.copy());
-                                        tile.getWorldObject().addFreshEntity(item);
-                                        tile.getWorldObject().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                                        converted = AAFakePlayers.mayBreak(level, tile.getPosition(), pos);
+                                        if (converted) {
+                                            ItemEntity item = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, output.copy());
+                                            level.addFreshEntity(item);
+                                            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                                        }
                                     }
 
-                                    tile.extractEnergy(recipe.get().getEnergy());
-                                    break;
+                                    if (converted) {
+                                        level.levelEvent(2001, pos, Block.getId(state));
+                                        tile.extractEnergy(recipe.get().getEnergy());
+                                        break;
+                                    }
                                 }
                             }
                         }

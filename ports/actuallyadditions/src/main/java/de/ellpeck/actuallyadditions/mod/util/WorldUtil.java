@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -35,10 +36,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
@@ -171,15 +170,19 @@ public final class WorldUtil {
     }
 
     public static ItemStack useItemAtSide(Direction side, Level level, BlockPos pos, ItemStack stack) {
-        if (level instanceof ServerLevel && StackUtil.isValid(stack) && pos != null) {
+        return useItemAtSide(side, level, pos, stack, pos);
+    }
+
+    // SkyTekx: the named fake player of AAFakePlayers stands at the machine, which for the Phantom Placer
+    // is not the block it places next to. Forge 47 gives every FakePlayer its own net handler, so the
+    // NetHandlerSpaghettiServer of 1.12 is no longer needed (main comments it out too)
+    public static ItemStack useItemAtSide(Direction side, Level level, BlockPos pos, ItemStack stack, BlockPos machine) {
+        if (level instanceof ServerLevel serverLevel && StackUtil.isValid(stack) && pos != null) {
             BlockPos offsetPos = pos.relative(side);
             // SkyTekx: the replace check runs in the try with the fake player in its context, so a modded
             // canBeReplaced that reads the player of the context cannot crash the tick of the machine
-            try {
-                FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) level);
-                if (fake.connection == null) {
-                    fake.connection = new NetHandlerSpaghettiServer(fake);
-                }
+            try (AAFakePlayers.Use use = AAFakePlayers.use(serverLevel, machine)) {
+                FakePlayer fake = use.player();
 
                 BlockState state = level.getBlockState(offsetPos);
                 // SkyTekx: the replace check of a117dd53, the base hard coded false
@@ -188,9 +191,13 @@ public final class WorldUtil {
                 ));
 
                 //Redstone
+                // SkyTekx: the wire goes through the place event like every other block, and a refused
+                // wire keeps the redstone in the machine
                 if (replaceable && stack.getItem() == Items.REDSTONE) {
-                    level.setBlock(offsetPos, Blocks.REDSTONE_WIRE.defaultBlockState(), 2);
-                    return StackUtil.shrink(stack, 1);
+                    if (AAFakePlayers.placeBlock(serverLevel, machine, offsetPos, Blocks.REDSTONE_WIRE.defaultBlockState(), 2, side.getOpposite(), stack)) {
+                        return StackUtil.shrink(stack, 1);
+                    }
+                    return stack;
                 }
 
                 //Plants
@@ -203,14 +210,12 @@ public final class WorldUtil {
                 }*/
 
                 //Everything else
-                setHandItemWithoutAnnoyingSound(fake, InteractionHand.MAIN_HAND, stack.copy());
+                use.hold(stack.copy());
                 BlockHitResult ray = new BlockHitResult(new Vec3(0.5, 0.5, 0.5), side.getOpposite(), offsetPos, true);
                 fake.gameMode.useItemOn(fake, level, fake.getMainHandItem(), InteractionHand.MAIN_HAND, ray);
-                // SkyTekx: a copy goes back and the hand of the shared fake player is emptied, so the slot
-                // of the machine never holds the same stack as a fake player that other mods use too
-                ItemStack result = fake.getItemInHand(InteractionHand.MAIN_HAND).copy();
-                setHandItemWithoutAnnoyingSound(fake, InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-                return result;
+                // SkyTekx: a copy goes back and the use gives the hands of the fake player back, so the
+                // slot of the machine never holds the stack the fake player holds
+                return fake.getItemInHand(InteractionHand.MAIN_HAND).copy();
             } catch (Exception e) {
                 ActuallyAdditions.LOGGER.error("Something that places Blocks at " + offsetPos.getX() + ", " + offsetPos.getY() + ", " + offsetPos.getZ() + " in World " + level.dimension() + " threw an Exception! Don't let that happen again!", e);
             }
@@ -269,26 +274,20 @@ public final class WorldUtil {
 
     //I think something is up with this, but I'm not entirely certain what.
     // SkyTekx: the drop chance of 17d8dcce and 902e8064. The base never answered anything but 0, so the
-    // Long-Range Breaker and the Vertical Digger mined nothing. The fake player holds a Netherite AIOT
-    // for the harvest check, as on main, and gets its previous item back afterwards. On Forge 47
-    // BlockState#canHarvestBlock posts the HarvestCheck that EventHooks.doPlayerHarvestCheck posts on main
+    // Long-Range Breaker and the Vertical Digger mined nothing. The named fake player of AAFakePlayers
+    // stands at the machine and holds a Netherite AIOT for the harvest check, as the [Minecraft] player
+    // of main does, and gets its hands back afterwards. On Forge 47 BlockState#canHarvestBlock posts
+    // the HarvestCheck that EventHooks.doPlayerHarvestCheck posts on main. AAFakePlayers#postBreak takes
+    // back the capture context that Arclight pushes for the break event
     public static float fireFakeHarvestEventsForDropChance(BlockEntity caller, Level level, BlockPos pos) {
-        if (level instanceof ServerLevel) {
-            FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) level);
-            int selected = fake.getInventory().selected;
-            ItemStack heldBefore = fake.getInventory().items.get(selected);
-            fake.getInventory().items.set(selected, new ItemStack(ActuallyItems.NETHERITE_AIOT.get()));
-            try {
-                BlockPos tePos = caller.getBlockPos();
-                fake.setPos(tePos.getX() + 0.5, tePos.getY() + 0.5, tePos.getZ() + 0.5);
+        if (level instanceof ServerLevel serverLevel) {
+            try (AAFakePlayers.Use use = AAFakePlayers.use(serverLevel, caller.getBlockPos())) {
+                FakePlayer fake = use.player();
+                use.hold(new ItemStack(ActuallyItems.NETHERITE_AIOT.get()));
                 BlockState state = level.getBlockState(pos);
-
-                BreakEvent event = new BreakEvent(level, pos, state, fake);
-                if (!MinecraftForge.EVENT_BUS.post(event)) {
+                if (AAFakePlayers.postBreak(new BreakEvent(level, pos, state, fake))) {
                     return state.canHarvestBlock(level, pos, fake) ? 1F : 0F;
                 }
-            } finally {
-                fake.getInventory().items.set(selected, heldBefore);
             }
         }
         return 0F;
@@ -296,14 +295,11 @@ public final class WorldUtil {
 
     // SkyTekx: a local change. The Leaf-Eating Generator and the Heat Collector remove blocks without a
     // tool or drops, and upstream main posts no event for that. They ask here first, so protection mods
-    // and, on Arclight, Bukkit plugins see the break of the shared fake player at the machine and can
+    // and, on Arclight, Bukkit plugins see the break of the named fake player at the machine and can
     // refuse it. Answers true when the block may go
     public static boolean fireFakeBreakEvent(BlockEntity caller, Level level, BlockPos pos) {
-        if (level instanceof ServerLevel) {
-            FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) level);
-            BlockPos tePos = caller.getBlockPos();
-            fake.setPos(tePos.getX() + 0.5, tePos.getY() + 0.5, tePos.getZ() + 0.5);
-            return !MinecraftForge.EVENT_BUS.post(new BreakEvent(level, pos, level.getBlockState(pos), fake));
+        if (level instanceof ServerLevel serverLevel) {
+            return AAFakePlayers.mayBreak(serverLevel, caller.getBlockPos(), pos);
         }
         return false;
     }
@@ -318,10 +314,30 @@ public final class WorldUtil {
      * @return If the break was successful.
      */
     public static boolean breakExtraBlock(ItemStack stack, Level level, Player player, BlockPos pos) {
+        return breakExtraBlock(stack, level, player, pos, true);
+    }
+
+    // SkyTekx: isExtra is false for the block the player mined. ServerPlayerGameMode#destroyBlock already
+    // posted its break event before Item#onBlockStartBreak handed the break to the drill, so a second one
+    // made protection and logging plugins see that block broken twice. Its experience is worked out as
+    // the BreakEvent constructor does, with the fortune or silk touch the drill holds by now. The extra
+    // blocks of a drill in creative post their break event too, the base removed them without one.
+    // bb06b24a adds the call to Block#playerWillDestroy that 1.21 moved out of onDestroyedByPlayer. On
+    // Forge 47 IForgeBlock#onDestroyedByPlayer still makes that call, so only its air check comes over
+    public static boolean breakExtraBlock(ItemStack stack, Level level, Player player, BlockPos pos, boolean isExtra) {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
 
+        if (state.isAir()) {
+            return false;
+        }
+
         if (player.isCreative()) {
+            if (isExtra && !level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                if (ForgeHooks.onBlockBreakEvent(level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos) == -1) {
+                    return false;
+                }
+            }
             if (block.onDestroyedByPlayer(state, level, pos, player, false, state.getFluidState())) {
                 block.destroy(level, pos, state);
             }
@@ -339,9 +355,16 @@ public final class WorldUtil {
         // server sided handling
         if (!level.isClientSide) {
             // send the blockbreak event
-            int xp = ForgeHooks.onBlockBreakEvent(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(), (ServerPlayer) player, pos);
-            if (xp == -1) {
-                return false;
+            int xp;
+            if (isExtra) {
+                xp = ForgeHooks.onBlockBreakEvent(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(), (ServerPlayer) player, pos);
+                if (xp == -1) {
+                    return false;
+                }
+            } else {
+                xp = ForgeHooks.isCorrectToolForDrops(state, player)
+                    ? state.getExpDrop(level, level.random, pos, stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE), stack.getEnchantmentLevel(Enchantments.SILK_TOUCH))
+                    : 0;
             }
 
             BlockEntity blockEntity = level.getBlockEntity(pos);

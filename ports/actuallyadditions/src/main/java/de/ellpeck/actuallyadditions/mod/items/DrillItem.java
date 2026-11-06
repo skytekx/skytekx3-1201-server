@@ -617,7 +617,9 @@ public class DrillItem extends ItemEnergy {
                 this.extractEnergyInternal(stack, use, false);
             }
             //Break the Block
-            return WorldUtil.breakExtraBlock(stack, world, player, pos);
+            // SkyTekx: isExtra tells WorldUtil#breakExtraBlock whether the vanilla break already posted
+            // the break event of this block
+            return WorldUtil.breakExtraBlock(stack, world, player, pos, isExtra);
         }
         return false;
     }

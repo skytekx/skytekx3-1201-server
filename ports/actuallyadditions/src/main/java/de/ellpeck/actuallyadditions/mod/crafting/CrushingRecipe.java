@@ -2,6 +2,7 @@ package de.ellpeck.actuallyadditions.mod.crafting;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -130,12 +131,14 @@ public class CrushingRecipe implements Recipe<Container> {
             Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient"));
 
             // SkyTekx: as the result codec of upstream main (bb84d539), a recipe has one or two
-            // results, a missing chance means 1.0 and a missing count means 1
+            // results, a missing chance means 1.0 and a missing count means 1. A JsonSyntaxException
+            // is a JsonParseException, which RecipeManager logs and skips, where an
+            // IllegalStateException leaves the recipe reload and stops a dedicated server at boot
             JsonArray resultList = GsonHelper.getAsJsonArray(pJson, "result");
             if (resultList.size() < 1)
-                throw new IllegalStateException(pRecipeId.toString() + ": Recipe must contain at least 1 result item");
+                throw new JsonSyntaxException(pRecipeId.toString() + ": Recipe must contain at least 1 result item");
             if (resultList.size() > 2)
-                throw new IllegalStateException(pRecipeId.toString() + ": Too many results for crushing recipe. The maximum is: 2");
+                throw new JsonSyntaxException(pRecipeId.toString() + ": Too many results for crushing recipe. The maximum is: 2");
 
             JsonObject result1 = GsonHelper.convertToJsonObject(resultList.get(0), "result");
             int count1 = GsonHelper.getAsInt(result1, "count", 1);

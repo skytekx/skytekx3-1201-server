@@ -61,7 +61,9 @@ public class CommonConfig {
             LASER_RELAY_LOSS = BUILDER.comment("If Energy Laser Relays should have energy loss.").define("laserRelayLoss", true);
             LEAF_GENERATOR_COOLDOWN = BUILDER.comment("The cooldown between two generation cycles of the Leaf Generator, in ticks").defineInRange("leafGeneratorCooldown", 5, 1, Integer.MAX_VALUE);
             LEAF_GENERATOR_CF_PER_LEAF = BUILDER.comment("The Leaf Generator's Energy Production in CF/Leaf").defineInRange("leafGeneratorCPPerLeaf", 300, 1, Integer.MAX_VALUE);
-            LEAF_GENERATOR_AREA = BUILDER.comment("The size of the Leaf Generator's harvesting area.  Default is 7x7x7, must be an odd number.").defineInRange("leafGeneratorArea", 7, 1, Integer.MAX_VALUE);
+            // SkyTekx: a local change. The generator reads the value as a radius, so the comment says so, and
+            // the cap of 16 keeps a bad value from reading millions of block states every cycle
+            LEAF_GENERATOR_AREA = BUILDER.comment("The radius of the Leaf Generator's harvesting area around the generator.  Default is 7, which harvests a 15x15x15 cube.").defineInRange("leafGeneratorArea", 7, 1, 16);
             FLUID_LASER_TRANSFER_RATE = BUILDER.comment("The amount of fluid the Fluid Laser Relay can transfer per tick.").defineInRange("fluidLaserTransferRate", 10000, 1, Integer.MAX_VALUE);
             MINER_EXTRA_WHITELIST = BUILDER
                     .comment("By default, the Vertical Digger mines everything that is in the 'forge:ores' block/item tags. If there is one that it can't mine, but should be able to, put its REGISTRY NAME here. These are the actual registered Item Names, the ones you use, for example, when using the /give Command. This Config Option only applies if the miner is in Ores Only Mode.")

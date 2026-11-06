@@ -182,8 +182,9 @@ Nobody has opened a client with this state. The beam particle, the Greenhouse Gl
 layer, the overlays of the Farmer and the phantomfaces, the buttons of the miner and the Phantom
 Placer and the JEI list of the mining lens wait for the client test of the release. The bundle also
 ports fb80bf33 and 58b9cbc9, the laser render type and `AssetUtil.renderLaserParticle`, which the
-energy and relays bundle plans as well. That bundle builds on them and only adds db1bb6e7,
-7fb62cb8, de635bb7 and b3f87a6f (carryover). No jar of this state may reach the live server before
+energy and relays bundle ported as well, in the final form of `main` with db1bb6e7, 7fb62cb8,
+de635bb7 and b3f87a6f. Its merge replaced the beam of this bundle with that form (see below and
+`UPSTREAM.md`, source changes 27 and 44). No jar of this state may reach the live server before
 the Arclight hardening, since the Phantom Breaker, the placers and the lenses still act as the
 shared fake player `[Minecraft]`.
 
@@ -232,6 +233,51 @@ JEI, the fermenting arrow, the click areas, the firework sliders, the buttons of
 Solidifier, the armor and off hand slots of the Energizer and the Enervator and the Bio Reactor
 model in all four facings wait for the client test of the release.
 
+The energy and relays bundle is done. Its four commits are 9695d90 (the laser relays), 75ba7e7 (the
+item interfaces), decae4e (the Battery Box and the energy items) and 1dc2c74 (the beam and item
+particles and the laser render), with the review fix fc660fb (`UPSTREAM.md`, source changes 41 to
+44). The porter based the bundle on an older tip, so the merge renumbered its source changes from 23
+to 41 and kept both import sets of the JEI plugin. The world machines bundle had ported the beam
+particle of fb80bf33 and 58b9cbc9 in a form whose render type only set the blending and whose
+`AssetUtil.renderLaserParticle` began and ended the tesselator for each beam in the position, colour
+and lightmap format. The energy and relays bundle ported the final form of `main`, where the render
+type begins the buffer in the position and colour format and draws all beams at its end. The review
+found that any mix of the two forms breaks the client at the first beam, since the buffer is then
+either begun twice or written without a begin. The merge takes the final form in `ParticleBeam` and
+`AssetUtil` whole, and source change 27 now points at source change 44. The review also found that
+source change 42 claimed one blockstate variant for every facing of the Hopping Item Interface. The
+blockstate keeps the single variant of `main`, so the model does not turn with the facing, as
+upstream.
+
+The porter's test ran a dedicated Forge 47.4.18 server with JEI, Patchouli, Curios, The One Probe
+and Mekanism 10.4 and the dev client with the test mod under Xvfb, against the jar of the four
+commits before the merge (SHA-1 `0bf32839`). Its results are in `UPSTREAM.md`, source changes 41 to
+44. The integration repeated that test on the merged tree with the jar of fc660fb (SHA-1
+`b9ddce0c51943455c941a755b8a7db23ae408b33`, 3079440 bytes, one build) and added a Leaf-Eating
+Generator in 60 persistent oak leaves to the local scenario (`bp2/actuallyadditions/erint/` in the
+workflow scratchpad, patch `devtest-energyrelays-int.patch`, script `er-tools/ertest.sh`). The
+server reached `Done` with 0 ERROR lines and the 4 FATAL lines in which The One Probe reports its
+new config file (`server-latest.log`). The client held up to 5 particles of the render type
+`actuallyadditions:laser_particle`, 4 to 6 of `actuallyadditions:item_particle` and none in the
+translucent sheet, and its log has no exception but the missing sound device and the Realms check of
+the headless client (`client-latest.log`). The screenshots show the beam of the Atomic
+Reconstructor, the beams of the Leaf-Eating Generator into the leaves, the energy, fluid and item
+lasers and the items over the item relays (`screenshots/er-6-view5.png`, `er-3-view2.png` and
+`er-10-items1.png`). The Mekanism cube ended with 451867.5 J, the input only fluid relay moved 1100
+mB per sample at a `fluidLaserTransferRate` of 100, a plain compass click set the energy relay to
+`OUTPUT_ONLY`, one plain and two crouching clicks left the item relay at priority minus 1, the
+Hopping Item Interface moved 168 cobblestone from the chest above it to the chest east of it, and
+JEI listed two entries each for the Single and the Quintuple Battery, the drill and the Teleport
+Staff.
+
+Five points of the bundle are not verified. They are the lasers and particles with Oculus shader
+packs and Embeddium, the crouching compass click and the Hopping Item Interface next to a claim on
+the pack's Arclight (see [Arclight notes](#arclight-notes)), a storage that accepts a simulated
+energy transfer and refuses the real one (9fe3fa1c), and a caching cable that lets go of a battery
+that leaves the Battery Box. The energy and fluid relays still build a new `LazyOptional` on every
+capability call and never invalidate it, as the base did, while the Battery Box now invalidates its
+own. All of these are in the carryover for the Arclight hardening and the release.
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -243,7 +289,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Done in 76bcfa8, 2b2f447, 8adc613, 07cde77 and 4c4d0ca, review fixes cb89609 and f13045a |
 | Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Done in 8a1ac46, d5d3bc1, e09a6a6, 3751de6, 7b3485e, 9c9a285, 6b7355e, 6b7cd54, 2eccd48, dc2cdbb and 2895da5, review fix 1205f84 |
 | World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Done in d884a85, 4eaaaab, 17f74f1, 68e1bd8, 167c868, 693c527 and 98711dd, review fix cff2f92 |
-| Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Planned |
+| Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Done in 9695d90, 75ba7e7, decae4e and 1dc2c74, review fix fc660fb |
 | Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Planned |
 | Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Planned |
 | Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Planned |
@@ -607,8 +653,9 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   The items `dough` and `paper_cone`, the menu `bag_container` and the recipe serializer
   `actuallyadditions:solid_fuel` stay registered. The machine inventories keep the base's slot list.
 - New block state properties load with their default: the Bio Reactor and the hopping item interface
-  take their default facing, and crops load with `persistent` false, the old behaviour. Crystal
-  clusters keep their state, since the base already has the property.
+  take their default facing, which is `down` for the interface, so it keeps pushing down
+  (`UPSTREAM.md`, source change 42), and crops load with `persistent` false, the old behaviour.
+  Crystal clusters keep their state, since the base already has the property.
 - Additive NBT keys: the Vertical Digger gains the format marker `CheckYMin` and starts once more
   from its own height, the sack data gains `Filter`, the Farmer gains its work area `Area`, and a
   broken machine item carries `BlockEntityTag` with only the kept keys. Firework Box values outside
@@ -655,6 +702,15 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 - Every energy and fluid relay scans all networks and connections of the level in its tick
   (`mod/misc/apiimpl/LaserRelayConnectionHandler.java:71-120`, unchanged on `main`). A transient
   index by position replaces the scan, and the saved format stays.
+- A crouching click with the relay configure item reaches a laser relay because a Forge listener of
+  `PlayerInteractEvent.RightClickBlock` denies the item and allows the block
+  (`mod/event/CommonEvents.java:49-54`, `UPSTREAM.md`, source change 41). Whether that result
+  survives the Bukkit `PlayerInteractEvent` bridge in Arclight's `ServerPlayerGameMode.useItemOn` is
+  not verified, since the energy and relays bundle ran on a plain Forge 47.4.18 server only. The
+  Hopping Item Interface pulls from inventories and item entities without the Bukkit
+  `InventoryMoveItemEvent` or `InventoryPickupItemEvent` that a vanilla hopper fires, as other
+  modded item transport does (source change 42). Both go on the Arclight pack boot of the release
+  (carryover).
 - The magnet ring scans a 5 block box every tick for every ring. It scans every 4 ticks instead, and
   the pickup still goes through `ItemEntity.playerTouch`, so Bukkit pickup events fire.
 - The anvil mixin injects at the head of `AnvilMenu.mayPickup` and an accessor reads
@@ -686,6 +742,10 @@ These differ from upstream on purpose and must survive the next upstream sync.
   Fluid Collector empties cauldrons (`UPSTREAM.md`, source changes 23 to 25). Upstream `main` takes
   the drops at the Phantom Breaker, lets its breakers delete fluid sources and gives the Player
   Interface a reach of about 5.7 blocks.
+- The Hopping Item Interface leaves out the debug line `System.out.println(cap.getSlots())` that
+  bd392b0a added and that `main` still runs for every item entity it picks up
+  (`TileEntityItemInterfaceHopping.java:81` on `main`). A state without the facing falls back to
+  `down` (`mod/tile/TileEntityItemInterfaceHopping.java:130`, `UPSTREAM.md`, source change 42).
 - Machines break and place as the fake player `[ActuallyAdditions]` with block events, phantom
   blocks check the chunk first, relays use an index, and the magnet ring is throttled.
 - The fork keeps the ids that `main` removed or renamed and the base's inventory format.

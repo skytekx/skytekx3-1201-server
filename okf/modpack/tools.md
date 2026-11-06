@@ -13,10 +13,11 @@ The folder [tools/](../../tools) holds 21 scripts, not counting the Arclight bui
 `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58 whether the installed
 mods have updates. It was committed at 18:14 (a64f045). The next three are the region scans that
 checked the Halloween world on the Mac mini the same evening. The eleventh, `cf_tunnel.py`, sets up the
-Cloudflare Tunnel that made the server public at 21:13. Five came on 2026-11-04: the permission check
-`mrpack_permissions.py` that the build and the upload share, `datapack_order.py` (c450324), the unify
-audit `unify_audit.py` with its dump script `unify_audit_dump.js`, and `replace_blocks.py`, after the
-owner asked at 17:33 to replace the old blocks of Chocolate Quest everywhere. The melting generator
+Cloudflare Tunnel that made the server public at 21:13. The permission check `mrpack_permissions.py`
+that the build and the upload share came on 2026-11-02 (002250f). Four came on 2026-11-04:
+`datapack_order.py` (c450324), the unify audit `unify_audit.py` with its dump script
+`unify_audit_dump.js`, and `replace_blocks.py`, after the owner asked at 17:33 to replace the old blocks
+of Chocolate Quest everywhere. The melting generator
 `gen_melting.py` and its dump script `melting_dump.js` answer the request of 17:35 the same day that
 everything that holds a meltable material melts, and were committed on 2026-11-05. The wire scan
 `wire_scan.py` (a1a1500) and the alternator scan `alternator_scan.py` (ade8903) of the Create Crafts &

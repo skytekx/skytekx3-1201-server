@@ -15,6 +15,7 @@ import de.ellpeck.actuallyadditions.mod.items.base.ItemBase;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityPlayerInterface;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,23 +40,38 @@ public class ItemPlayerProbe extends ItemBase {
         super(ActuallyItems.defaultProps().stacksTo(1));
     }
 
+    // SkyTekx: the probe stores the player with putUUID under UUID, and the checks look for that key as
+    // in d2d0afa6. The base looked for UUIDMost, which putUUID never writes, so a probe never bound a
+    // Player Interface. A probe with the long pair UUIDMost and UUIDLeast still works, and clearing
+    // removes both forms
+    @Nullable
+    private static UUID getProbedPlayer(CompoundTag compound) {
+        if (compound.hasUUID("UUID")) {
+            return compound.getUUID("UUID");
+        }
+        if (compound.contains("UUIDMost", Tag.TAG_LONG) && compound.contains("UUIDLeast", Tag.TAG_LONG)) {
+            return new UUID(compound.getLong("UUIDMost"), compound.getLong("UUIDLeast"));
+        }
+        return null;
+    }
+
     // TODO: [port] might be the wrong event
     @Override
     public void inventoryTick(ItemStack stack, Level world, Entity entity, int itemSlot, boolean isSelected) {
         if (!world.isClientSide) {
             CompoundTag compound = stack.getOrCreateTag();
-            if (compound.contains("UUIDMost")) {
-                UUID id = compound.getUUID("UUID");
+            UUID id = getProbedPlayer(compound);
+            if (id != null) {
                 Player player = world.getPlayerByUUID(id);
                 if (player != null) {
                     if (player.isShiftKeyDown()) {
-                        ItemPhantomConnector.clearStorage(stack, "UUIDLeast", "UUIDMost", "Name");
+                        ItemPhantomConnector.clearStorage(stack, "UUID", "UUIDLeast", "UUIDMost", "Name");
                         ((Player) entity).displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.disconnect.1"), false);
                         player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.notice"), false);
                         //TheAchievements.GET_UNPROBED.get(player);
                     }
                 } else {
-                    ItemPhantomConnector.clearStorage(stack, "UUIDLeast", "UUIDMost", "Name");
+                    ItemPhantomConnector.clearStorage(stack, "UUID", "UUIDLeast", "UUIDMost", "Name");
                     ((Player) entity).displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.disconnect.2"), false);
                 }
             }
@@ -71,17 +87,17 @@ public class ItemPlayerProbe extends ItemBase {
 
         ItemStack stack = player.getItemInHand(context.getHand());
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (tile instanceof TileEntityPlayerInterface) {
+        if (tile instanceof TileEntityPlayerInterface face) {
             CompoundTag compound = stack.getOrCreateTag();
-            if (compound.contains("UUIDMost")) {
+            UUID id = getProbedPlayer(compound);
+            if (id != null) {
                 if (!context.getLevel().isClientSide) {
-                    TileEntityPlayerInterface face = (TileEntityPlayerInterface) tile;
-                    face.connectedPlayer = compound.getUUID("UUID");
+                    face.connectedPlayer = id;
                     face.playerName = compound.getString("Name");
                     face.setChanged();
                     face.sendUpdate();
 
-                    ItemPhantomConnector.clearStorage(stack, "UUIDLeast", "UUIDMost", "Name");
+                    ItemPhantomConnector.clearStorage(stack, "UUID", "UUIDLeast", "UUIDMost", "Name");
                 }
                 return InteractionResult.SUCCESS;
             }

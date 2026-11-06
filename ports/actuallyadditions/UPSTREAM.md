@@ -751,3 +751,29 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Left for the Arclight hardening: the named fake player, block events for the Phantom Breaker,
     and its drops, which `main` still computes at the position and with the block entity of the
     Phantom Breaker itself.
+24. Phantomfaces, the Player Interface and boosters: a phantomface hands out a `LazyOptional` of
+    its own for the handler of its target. It invalidates it when the target, the block at the
+    target or the range changes and when the face is removed or unloaded, and it follows the
+    invalidation of the target's own one, so it never hands out an invalidated one again. This is
+    the Forge 47 form of the capability invalidation of `ae6695a` and `b8e284d`, which call
+    `invalidateCapabilities` on NeoForge. The base returned the target's `LazyOptional` itself,
+    so a pipe that cached it kept feeding the old target after the face was bound elsewhere. The
+    look at overlay of the faces draws its wrapped lines again (`ae6695a`), since the base's
+    `StringUtil.drawSplitString` draws nothing, and the range lines keep their green and red. The
+    Player Interface keeps one `LazyOptional` per player and invalidates it when the player
+    changes, leaves the range, logs out or respawns and when the block goes away (`44e0554`). The
+    base made a new one at every call whose supplier returned null without a player, so asking it
+    for its handler threw. It reads the key `Player` that it writes (`d2d0afa`). The base looked
+    for `PlayerLeast`, which `putUUID` never writes, so it lost its player at every load. The
+    Player Probe checks for the key `UUID` that it writes (`d2d0afa`), where the base looked for
+    `UUIDMost` and never bound an interface. Both still read the old long pairs `PlayerMost` and
+    `PlayerLeast` and `UUIDMost` and `UUIDLeast`, and the probe clears both forms. The Player
+    Interface compares the squared distance with the squared range, so its range is 32 blocks
+    as on 1.12 and in the manual. The base and `main` compare it with the plain range, about 5.7
+    blocks. This is a local divergence. The Phantom Booster keeps its block entity, so that the
+    type `actuallyadditions:phantom_booster` stays registered, but it no longer ticks, since the
+    faces only look for the block (`ae6695a` removed the block entity). Its shape of `2cadd9e`
+    came with source change 19, and the recipes of the faces and the booster of `ae6695a` and
+    `5a921e1` with source change 10. The faces, the booster, the Player Interface, the Phantom
+    Connector and the Player Probe lose the `(wip)` label. Savegame: no key, id or state changes.
+    A Player Interface saved by the base stays bound to its player.

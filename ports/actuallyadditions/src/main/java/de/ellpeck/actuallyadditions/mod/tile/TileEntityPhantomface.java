@@ -27,6 +27,10 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class TileEntityPhantomface extends TileEntityInventoryBase implements IPhantomTile {
     public static final int RANGE = 16;
@@ -37,6 +41,8 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
     private BlockPos boundPosBefore;
     private Block boundBlockBefore;
     private int lastStrength;
+    // SkyTekx: the capabilities this face hands out, per capability and side (index 6 for no side)
+    private final Map<Capability<?>, LazyOptional<?>[]> forwardedCaps = new IdentityHashMap<>();
 
     public TileEntityPhantomface(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state, 0);
@@ -124,6 +130,9 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
             ? null
             : this.level.getBlockState(this.boundPosition).getBlock();
 
+        // SkyTekx: the target, its block or the range changed, so pipes drop what they cached
+        this.invalidateForwardedCaps();
+
         if (this.boundPosition != null) {
             this.level.updateNeighborsAt(this.worldPosition, this.level.getBlockState(this.boundPosition).getBlock());
         }
@@ -187,17 +196,63 @@ public abstract class TileEntityPhantomface extends TileEntityInventoryBase impl
 
     protected abstract boolean isCapabilitySupported(Capability<?> capability);
 
+    // SkyTekx: the Forge 47 form of the capability invalidation of b8e284d9 and ae6695a5. The base
+    // returned the target's own LazyOptional, so a pipe that cached it kept using the old target
+    // after the face was bound elsewhere or its range dropped. The face now hands out a LazyOptional
+    // of its own for the target's handler, invalidates it when the target, the target's block or the
+    // range changes and when the face goes away, and follows the target's invalidation. An
+    // invalidated one is never handed out again
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
-        if (this.isBoundThingInRange() && this.isCapabilitySupported(capability)) {
+        if (this.isCapabilitySupported(capability) && this.isBoundThingInRange()) {
             BlockEntity tile = this.level.getBlockEntity(this.getBoundPosition());
             if (tile != null) {
-                return tile.getCapability(capability, side);
+                return this.forwardCapability(capability, side, tile.getCapability(capability, side));
             }
         }
 
         return LazyOptional.empty();
+    }
+
+    private <T> LazyOptional<T> forwardCapability(Capability<T> capability, @Nullable Direction side, LazyOptional<T> target) {
+        if (!target.isPresent()) {
+            return LazyOptional.empty();
+        }
+        LazyOptional<?>[] bySide = this.forwardedCaps.computeIfAbsent(capability, c -> new LazyOptional<?>[7]);
+        int index = side == null
+            ? 6
+            : side.ordinal();
+        LazyOptional<?> known = bySide[index];
+        if (known != null && known.isPresent()) {
+            return known.cast();
+        }
+        T handler = target.orElseThrow(IllegalStateException::new);
+        LazyOptional<T> forwarded = LazyOptional.of(() -> handler);
+        target.addListener(invalid -> forwarded.invalidate());
+        bySide[index] = forwarded;
+        return forwarded;
+    }
+
+    protected void invalidateForwardedCaps() {
+        if (!this.forwardedCaps.isEmpty()) {
+            List<LazyOptional<?>> toInvalidate = new ArrayList<>();
+            for (LazyOptional<?>[] bySide : this.forwardedCaps.values()) {
+                for (LazyOptional<?> optional : bySide) {
+                    if (optional != null) {
+                        toInvalidate.add(optional);
+                    }
+                }
+            }
+            this.forwardedCaps.clear();
+            toInvalidate.forEach(LazyOptional::invalidate);
+        }
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.invalidateForwardedCaps();
     }
 
     @Override

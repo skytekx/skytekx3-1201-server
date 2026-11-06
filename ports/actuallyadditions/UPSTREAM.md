@@ -1058,3 +1058,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     goes past 15 above the limit, so the port caps the count at the limit, which the commit message
     of `5db04c0b` describes. The recipe came with source change 10 (`7c7a095c`). No NBT key
     changes.
+40. Lava Factory: the look at overlay of the controller says again whether the multiblock is
+    complete. The base called `StringUtil.drawSplitString`, whose body is commented out, so the
+    overlay drew nothing. As in `6886aca6` it now uses `GuiGraphics.drawWordWrap` with Components,
+    in the client only `LavaFactoryControllerHud` of source change 13, and reads the block entity
+    with an `instanceof` check. The lang key of the complete factory is
+    `tooltip.actuallyadditions.factory.working.desc` as on `main` (`6886aca6` renamed the code
+    and the lang key differently, `main` has both as `working.desc`). The casing recipe that gives
+    4 came with source change 10 (the port.MD change list, `main`), the casing is called Lava
+    Factory Casing as on `main`, and both names lose their `(wip)` label. The Phantom overlay calls
+    the same empty helper and comes with the phantom block fixes. No data, NBT key or block state
+    changes.

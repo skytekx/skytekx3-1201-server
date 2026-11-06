@@ -3,7 +3,7 @@ type: Runbook
 title: World reset and pregen
 description: Wiping and regenerating dimensions while keeping the seed and datapacks, Chunky pregeneration with measured rates, datapack sources and pack order, and what a fresh world needs.
 tags: [server, world, worldgen, pregen, datapacks]
-timestamp: 2026-11-04
+timestamp: 2026-11-06
 ---
 
 # World reset and pregen
@@ -162,6 +162,11 @@ A new `world/level.dat` changes three things.
   No fresh world has booted with the copy yet, so check the value after the first boot. A world that
   already has the file keeps its own, so the old world on the build machine still holds `false`. The
   pack ships `defaultconfigs/` too, so new singleplayer worlds get the same value.
+- In the same way Forge copies `defaultconfigs/fluxnetworks-server.toml`, whose block blacklist names
+  the Phantom Energyface of Actually Additions by its 1.20.1 id, where the default of Flux Networks
+  names a 1.12 id that matches nothing (7def174). The pack boot `actuallyadditions-forge-flux` of
+  2026-11-06 showed the copy in a fresh world, see
+  [Actually Additions backport](../modpack/actuallyadditions-backport.md#pack-integration).
 
 ```text
 /datapack disable "file/skytekx3_fixes"

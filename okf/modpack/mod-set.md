@@ -141,6 +141,12 @@ and the jar has no license text, so the LICENSE of the branch `1.20` travels in 
 - Its server config `world/serverconfig/fluxnetworks-server.toml` keeps the defaults. The Flux Dust
   recipe is on, every flux device may keep its chunk loaded once a player turns that on, and Super Admin
   needs permission level 1, which only the ops have here.
+- The one change is the block blacklist, which keeps flux devices off the Phantom Energyface of
+  Actually Additions. Its default names the 1.12 id `actuallyadditions:block_phantom_energyface`,
+  which matches no block of the fork, so `defaultconfigs/fluxnetworks-server.toml` names
+  `actuallyadditions:phantom_energyface` since 7def174, and Forge copies that file into a world
+  without one, see
+  [Actually Additions backport](actuallyadditions-backport.md#pack-integration).
 - A test server with the other new mods of 3.1.3 booted with it on 2026-11-04 at 22:04. It logged no
   ERROR of its own, only 19 warnings that its 7 blocks, 11 items and 1 sound did not get the registry
   ids they asked for, which Forge prints when a world saved without the mod loads it for the first time.
@@ -538,7 +544,8 @@ counts in the list below are older than the last twenty-three of them and were n
   flax seeds join `forge:crops/flax`, so they count as flax in the rope, sack and doormat recipes of
   Supplementaries 3.1.44, and its rice joins `forge:crops/rice`, so it counts in five cooking recipes
   of Farmer's Delight 1.3.4 (`ports/actuallyadditions/UPSTREAM.md`, source change 9). A world saved by
-  the base loaded with all contents, and the full pack booted on Arclight with no new log signature.
+  the base loaded with all contents, and the full pack booted on Forge and on Arclight with no new log
+  signature.
   The machines act as the fake player `[ActuallyAdditions]` with block events. The plan, the tests and
   the rollout rules are on [Actually Additions backport](actuallyadditions-backport.md).
 

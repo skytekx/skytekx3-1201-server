@@ -2,6 +2,7 @@ package de.ellpeck.actuallyadditions.mod.crafting;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.FriendlyByteBuf;
@@ -162,9 +163,12 @@ public class EmpowererRecipe implements Recipe<Container> {
         public EmpowererRecipe fromJson(@Nonnull ResourceLocation pRecipeId, @Nonnull JsonObject pJson) {
             Ingredient base = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "base"));
 
+            // SkyTekx: a JsonSyntaxException is a JsonParseException, which RecipeManager logs and
+            // skips, where an IllegalStateException leaves the recipe reload and stops a dedicated
+            // server at boot, as for the crushing recipes (CrushingRecipe.Serializer#fromJson)
             JsonArray modifiers = GsonHelper.getAsJsonArray(pJson, "modifiers");
             if (modifiers.size() != 4)
-                throw new IllegalStateException(pRecipeId.toString() + ": Must have exactly 4 modifiers, has: " + modifiers.size());
+                throw new JsonSyntaxException(pRecipeId.toString() + ": Must have exactly 4 modifiers, has: " + modifiers.size());
 
             Ingredient mod1 = Ingredient.fromJson(modifiers.get(0));
             Ingredient mod2 = Ingredient.fromJson(modifiers.get(1));

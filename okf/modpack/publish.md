@@ -164,21 +164,24 @@ On the build machine, after the blockers are fixed:
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
    write the changelog in `docs/changelog/<VERSION>.md`, starting from `docs/changelog/next.md`. If
    the public address changes, change `SERVERS` in `build_mrpack.py` as well.
-2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Before the
-   push, check that no commit to be pushed holds a jar that a pointer file stands for:
-   `git log --oneline origin/master..HEAD -- local-mods/ZeroCore2-1.20.1-2.1.48.jar` has to print
-   nothing. Merge the branch that carries `ports/` into master, push it and run `git fetch`. Then
-   build with `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The
-   builder refuses a public pack while a bundled jar points its source at `tree/master/ports/<dir>` on
-   GitHub and the local `origin/master` lacks that directory or that build of the jar in `local-mods/`,
-   and the upload script checks the jars inside the `.mrpack` the same way
-   (`tools/mrpack_permissions.py`). Those source links are the source offers that the licenses of
-   these builds demand. The builder also downloads every jar that `local-mods/` names by a pointer
-   file, ZeroCore 2 from `mediafilez.forgecdn.net` among them, into `~/.cache/skytekx3/local-mods/`
-   (or `$SKYTEKX3_FETCH_CACHE`), and refuses the build when a download fails or its size or SHA-1
-   differ from the pointer. The upload script refuses a `.mrpack` without that jar or with other
-   bytes, see [tools](tools.md#pointed-jars). A local test build that is never uploaded, while other
-   blockers remain, is `python3 tools/build_mrpack.py --allow-unpermitted`. It writes
+2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Before
+   the push, check that no commit holds a jar that a pointer file stands for, at any path:
+   `git log --oneline --find-object=f94d426ce1c02a3d3cbb16ddaf09db424c5435ae HEAD` has to print
+   nothing for ZeroCore 2, and for another pointed jar the id to look for is what `git hash-object`
+   gives for its fetched copy. The builder and the upload script refuse while it prints anything,
+   see [tools](tools.md#pointed-jars). Merge the branch that carries `ports/` into master, push it
+   and run `git fetch`. Then build with `python3 tools/build_mrpack.py` and commit the rewritten
+   `modrinth.index.json`. The builder refuses a public pack while a bundled jar points its source at
+   `tree/master/ports/<dir>` on GitHub and the local `origin/master` lacks that directory or that
+   build of the jar in `local-mods/`, and the upload script checks the jars inside the `.mrpack` the
+   same way (`tools/mrpack_permissions.py`). Those source links are the source offers that the
+   licenses of these builds demand. The builder also downloads every jar that `local-mods/` names by
+   a pointer file, ZeroCore 2 from `mediafilez.forgecdn.net` among them, into
+   `~/.cache/skytekx3/local-mods/` (or `$SKYTEKX3_FETCH_CACHE`), and refuses the build when a
+   download fails or its size or SHA-1 differ from the pointer. The upload script refuses a
+   `.mrpack` without that jar or with other bytes, see [tools](tools.md#pointed-jars). A local test
+   build that is never uploaded, while other blockers remain, is
+   `python3 tools/build_mrpack.py --allow-unpermitted`. It writes
    `SkyTekx3-<version>-UNPERMITTED.mrpack`, which the upload script never picks up.
 3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap, add BrassAmber BattleTowers by
    hand as players do, and join the server with it. On Asahi Linux add the JVM flag from

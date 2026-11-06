@@ -10,7 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.blocks;
 
-import de.ellpeck.actuallyadditions.mod.blocks.base.BlockContainerBase;
+import de.ellpeck.actuallyadditions.mod.blocks.base.DirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityBioReactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -26,7 +26,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
-public class BlockBioReactor extends BlockContainerBase {
+// SkyTekx: upstream 822913f0 makes the Bio Reactor face the player, like its model expects
+public class BlockBioReactor extends DirectionalBlock.Container {
 
     public BlockBioReactor() {
         super(ActuallyBlocks.defaultPickProps(2.0F, 10.0F).sound(SoundType.METAL));

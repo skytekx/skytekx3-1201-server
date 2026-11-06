@@ -189,7 +189,7 @@ public class TileEntityBioReactor extends TileEntityInventoryBase implements Men
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.bioReactor");
     }
 
     @Nullable

@@ -941,3 +941,22 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Savegame: `BurnTime` and `MaxBurnTime` keep their meaning. The key `currentRecipe` of a
     burning generator is no longer written and is ignored on load, and the generator finishes the
     burn at 20 CF/t, the rate it had before.
+33. Other generators: the Leaf-Eating Generator reads `leafGeneratorCooldown`,
+    `leafGeneratorCPPerLeaf` and `leafGeneratorArea` of the common config (source change 6), as
+    `5182ac8b` does. The base read the 1.12 enums in `mod/config/values/`, which nothing loads, so
+    the energy per leaf was 0 and the generator never ate a leaf. It now takes a leaf every 5
+    ticks for 300 CF from the blocks within 7 of it (a 15 block cube), counting every
+    `LeavesBlock` and every block in `minecraft:leaves`. The Bio Reactor faces the player who
+    places it (`822913f0`), so the generator writes its blockstate, which matches `main`, and the
+    block no longer shows the missing model that source change 18 left. Its screen draws the
+    energy bar and its tooltip and labels the output with the lang key
+    `misc.actuallyadditions.energy_tick` instead of the missing `actuallyadditions.cft`, and the
+    menu has its title (`fc75b13b`). The recipes of the Leaf-Eating Generator, the Bio Reactor and
+    the Heat Collector came with source change 10 (`5182ac8b`, `8abfa241`, `8419cc67`). The three
+    blocks, the six AIOTs and the Laser Wrench lose their `(wip)` label (`5182ac8b`, `8419cc67`,
+    `5a9f7d91`). Nothing to port from `b261d92b` and `f8cc5252`: they fix the 1.20.4 codec of the
+    liquid fuel recipes, which had read `total_energy` into the burn time and the other way round,
+    and the 1.20.1 serializer of the base already reads both keys into the right fields, as the
+    four generated `liquid_fuel` files show. Savegame: the Bio Reactor gains the block state
+    property `facing`, and a Bio Reactor placed with the base jar loads facing north, the default
+    of `DirectionalBlock.Container`. No NBT key changes.

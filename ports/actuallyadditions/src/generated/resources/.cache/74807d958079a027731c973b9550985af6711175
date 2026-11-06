@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-05T07:43:03.263413973	Tags for minecraft:item mod id actuallyadditions
+// 1.20.1	2026-11-06T11:53:53.790441776	Tags for minecraft:item mod id actuallyadditions
 ea53bfe045e7e533a13fa2fa8793cd7741e92902 data/actuallyadditions/tags/items/buckets/canola_oil.json
 fb46ac4e564c749fcaa5ba1393ab33fcd91817f5 data/actuallyadditions/tags/items/buckets/crystallized_oil.json
 e70a00f63e5f22e8f37d76d45bbadc66ff0e3598 data/actuallyadditions/tags/items/buckets/empowered_oil.json
@@ -11,6 +11,7 @@ f3ee78cd8c9563bd1828de2b4b336735f289f9f2 data/actuallyadditions/tags/items/cryst
 83111df92efa391d74f8427fa020e6882823a299 data/actuallyadditions/tags/items/lamps.json
 84150f9be2fa26f9202962b031c722718dd23ca0 data/actuallyadditions/tags/items/stone_ore_replaceables.json
 ae55da193b94fd6375c05d5aa46cafdda9d335cd data/actuallyadditions/tags/items/tiny_coals.json
+d0115caba2ef0aae6d1c07068d2b30819dfad612 data/curios/tags/items/charm.json
 31cd008db3c44a9c3f643f296e1c7688ca45e2e5 data/forge/tags/items/crops.json
 aaf3c8c818cc015e9c693e0bbf8f86da81f78285 data/forge/tags/items/crops/canola.json
 87327118c2f16da245b76de4fdcaab149456d9b8 data/forge/tags/items/crops/coffee.json

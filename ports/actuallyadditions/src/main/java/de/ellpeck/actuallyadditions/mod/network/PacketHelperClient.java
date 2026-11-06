@@ -10,6 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.network;
 
+import de.ellpeck.actuallyadditions.mod.network.packet.HotkeyPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -74,6 +75,14 @@ public final class PacketHelperClient {
         compound.putInt("PlayerID", mc.player.getId());
         compound.putString("WorldID", mc.level.dimension().location().toString());
         PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(compound, PacketHandler.GUI_STRING_TO_CONTAINER_HANDLER));
+    }
+
+    /**
+     * SkyTekx: a hotkey of b5cb3434 (PacketHandler.HOTKEY_HANDLER).
+     */
+    @OnlyIn(Dist.CLIENT)
+    public static void sendHotkeyPacket(HotkeyPacket.HotKey hotKey) {
+        PacketHandler.THE_NETWORK.sendToServer(new PacketClientToServer(HotkeyPacket.create(hotKey), PacketHandler.HOTKEY_HANDLER));
     }
 
     @OnlyIn(Dist.CLIENT)

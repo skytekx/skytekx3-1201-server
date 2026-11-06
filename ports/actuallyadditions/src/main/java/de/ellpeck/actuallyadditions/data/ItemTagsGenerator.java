@@ -175,5 +175,7 @@ public class ItemTagsGenerator extends ItemTagsProvider {
                         ActuallyBlocks.LAMP_CYAN.getItem(), ActuallyBlocks.LAMP_PURPLE.getItem(), ActuallyBlocks.LAMP_BLUE.getItem(),
                         ActuallyBlocks.LAMP_BROWN.getItem(), ActuallyBlocks.LAMP_GREEN.getItem(), ActuallyBlocks.LAMP_RED.getItem(),
                         ActuallyBlocks.LAMP_BLACK.getItem());
+
+        tag(ActuallyTags.Items.CURIOS_CHARM).add(ActuallyItems.CRAFTER_ON_A_STICK.get());
     }
 }

@@ -14,6 +14,7 @@ import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.network.gui.IButtonReactor;
 import de.ellpeck.actuallyadditions.mod.network.gui.INumberReactor;
 import de.ellpeck.actuallyadditions.mod.network.gui.IStringReactor;
+import de.ellpeck.actuallyadditions.mod.network.packet.HotkeyPacket;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -117,6 +118,15 @@ public final class PacketHandler {
             }
         }
     };
+    // SkyTekx: the hotkeys of b5cb3434 (HotkeyPacket), sent by the key bind of the Crafting Table On
+    // A Stick. Main sends them as their own payload. The sender is checked like the screen packets,
+    // and an unknown hotkey is dropped
+    public static final IDataHandler HOTKEY_HANDLER = (compound, context) -> {
+        ServerPlayer player = guiSender(compound, context, "hotkey");
+        if (player != null && !HotkeyPacket.handle(compound, player)) {
+            warnDropped(player, "hotkey", "it names the unknown hotkey " + compound.getByte(HotkeyPacket.HOTKEY_KEY));
+        }
+    };
     public static final IDataHandler SYNC_PLAYER_DATA = (compound, context) ->
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PacketHandlerClient.handlePlayerData(compound, context));
     // SkyTekx: a no op that keeps its index. The base let any client overwrite the bookmarks, the
@@ -189,6 +199,7 @@ public final class PacketHandler {
         // Indices after the base's nine, added without another protocol bump, since no build with
         // version 5 has shipped yet
         addServerbound(GUI_STRING_TO_CONTAINER_HANDLER);
+        addServerbound(HOTKEY_HANDLER);
     }
 
     /**

@@ -66,13 +66,13 @@ public class ItemPlayerProbe extends ItemBase {
                 if (player != null) {
                     if (player.isShiftKeyDown()) {
                         ItemPhantomConnector.clearStorage(stack, "UUID", "UUIDLeast", "UUIDMost", "Name");
-                        ((Player) entity).displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.disconnect.1"), false);
-                        player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.notice"), false);
+                        ((Player) entity).displayClientMessage(Component.translatable("tooltip.actuallyadditions.playerProbe.disconnect.1"), false);
+                        player.displayClientMessage(Component.translatable("tooltip.actuallyadditions.playerProbe.notice"), false);
                         //TheAchievements.GET_UNPROBED.get(player);
                     }
                 } else {
                     ItemPhantomConnector.clearStorage(stack, "UUID", "UUIDLeast", "UUIDMost", "Name");
-                    ((Player) entity).displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.disconnect.2"), false);
+                    ((Player) entity).displayClientMessage(Component.translatable("tooltip.actuallyadditions.playerProbe.disconnect.2"), false);
                 }
             }
         }
@@ -130,7 +130,7 @@ public class ItemPlayerProbe extends ItemBase {
     public void appendHoverText(ItemStack stack, @Nullable Level playerIn, List<Component> tooltip, TooltipFlag advanced) {
         if (stack.getOrCreateTag().contains("Name")) {
             String name = stack.getOrCreateTag().getString("Name");
-            tooltip.add(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".playerProbe.probing").append(": " + name));
+            tooltip.add(Component.translatable("tooltip.actuallyadditions.playerProbe.probing").append(": " + name));
         }
     }
 }

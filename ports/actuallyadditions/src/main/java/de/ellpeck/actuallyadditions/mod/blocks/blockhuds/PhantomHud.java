@@ -37,7 +37,7 @@ public class PhantomHud implements IBlockHud {
         BlockEntity tile = minecraft.level.getBlockEntity(pos);
         if (tile != null) {
             if (tile instanceof IPhantomTile phantom) {
-                guiGraphics.drawString(minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".blockPhantomRange.desc").append(": " + phantom.getRange()).withStyle(ChatFormatting.GOLD), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 - 40, ChatFormatting.WHITE.getColor());
+                guiGraphics.drawString(minecraft.font, Component.translatable("tooltip.actuallyadditions.blockPhantomRange.desc").append(": " + phantom.getRange()).withStyle(ChatFormatting.GOLD), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 - 40, ChatFormatting.WHITE.getColor());
                 if (phantom.hasBoundPosition()) {
                     int distance = Mth.ceil(new Vec3(pos.getX(), pos.getY(), pos.getZ()).distanceTo(new Vec3(phantom.getBoundPosition().getX(), phantom.getBoundPosition().getY(), phantom.getBoundPosition().getZ())));
                     BlockState state = minecraft.level.getBlockState(phantom.getBoundPosition());
@@ -46,15 +46,15 @@ public class PhantomHud implements IBlockHud {
                     String name = item.getName(new ItemStack(block)).getString();
                     // SkyTekx: wrapped components as in ae6695a5, StringUtil.drawSplitString of the base
                     // draws nothing. The range lines keep their colours
-                    drawWordWrap(guiGraphics, minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.blockInfo.desc", name, phantom.getBoundPosition().getX(), phantom.getBoundPosition().getY(), phantom.getBoundPosition().getZ(), distance), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 - 30, 200, 0xFFFFFF, true);
+                    drawWordWrap(guiGraphics, minecraft.font, Component.translatable("tooltip.actuallyadditions.phantom.blockInfo.desc", name, phantom.getBoundPosition().getX(), phantom.getBoundPosition().getY(), phantom.getBoundPosition().getZ(), distance), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 - 30, 200, 0xFFFFFF, true);
 
                     if (phantom.isBoundThingInRange()) {
-                        drawWordWrap(guiGraphics, minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.connectedRange.desc").withStyle(ChatFormatting.DARK_GREEN), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 25, 200, 0xFFFFFF, true);
+                        drawWordWrap(guiGraphics, minecraft.font, Component.translatable("tooltip.actuallyadditions.phantom.connectedRange.desc").withStyle(ChatFormatting.DARK_GREEN), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 25, 200, 0xFFFFFF, true);
                     } else {
-                        drawWordWrap(guiGraphics, minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.connectedNoRange.desc").withStyle(ChatFormatting.DARK_RED), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 25, 200, 0xFFFFFF, true);
+                        drawWordWrap(guiGraphics, minecraft.font, Component.translatable("tooltip.actuallyadditions.phantom.connectedNoRange.desc").withStyle(ChatFormatting.DARK_RED), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 25, 200, 0xFFFFFF, true);
                     }
                 } else {
-                    guiGraphics.drawString(minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".phantom.notConnected.desc").withStyle(ChatFormatting.RED), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 25, ChatFormatting.WHITE.getColor());
+                    guiGraphics.drawString(minecraft.font, Component.translatable("tooltip.actuallyadditions.phantom.notConnected.desc").withStyle(ChatFormatting.RED), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 25, ChatFormatting.WHITE.getColor());
                 }
             }
         }

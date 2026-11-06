@@ -27,9 +27,9 @@ public class LavaFactoryControllerHud implements IBlockHud {
         if (minecraft.level.getBlockEntity(blockHit.getBlockPos()) instanceof TileEntityLavaFactoryController factory) {
             int state = factory.isMultiblock();
             if (state == TileEntityLavaFactoryController.NOT_MULTI) {
-                guiGraphics.drawWordWrap(minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".factory.notPart.desc"), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 5, 200, 0xFFFFFF);
+                guiGraphics.drawWordWrap(minecraft.font, Component.translatable("tooltip.actuallyadditions.factory.notPart.desc"), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 5, 200, 0xFFFFFF);
             } else if (state == TileEntityLavaFactoryController.HAS_AIR || state == TileEntityLavaFactoryController.HAS_LAVA) {
-                guiGraphics.drawWordWrap(minecraft.font, Component.translatable("tooltip." + ActuallyAdditions.MODID + ".factory.working.desc"), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 5, 200, 0xFFFFFF);
+                guiGraphics.drawWordWrap(minecraft.font, Component.translatable("tooltip.actuallyadditions.factory.working.desc"), resolution.getGuiScaledWidth() / 2 + 5, resolution.getGuiScaledHeight() / 2 + 5, 200, 0xFFFFFF);
             }
         }
     }

@@ -181,7 +181,7 @@ public abstract class BlockContainerBase extends Block implements EntityBlock {
         super.playerWillDestroy(world, pos, state, player);
         // SkyTekx: upstream 74982c36 (#1436), the message only from the server, so it shows once
         if (!player.isCreative() && !world.isClientSide && world.getBlockEntity(pos) instanceof TileEntityBase tileBase && tileBase.stopFromDropping) {
-            player.displayClientMessage(Component.translatable("info." + ActuallyAdditions.MODID + ".machineBroke").withStyle(ChatFormatting.RED), false);
+            player.displayClientMessage(Component.translatable("info.actuallyadditions.machineBroke").withStyle(ChatFormatting.RED), false);
         }
     }
 

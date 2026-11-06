@@ -88,14 +88,15 @@ public class SackGui extends AAScreen<SackContainer> {
     }
 
     // The pickup tooltip of main, wrapped at 200 pixels as main's TODO asks. Main says sack in this
-    // screen and bag in the one of the Void Sack
+    // screen and bag in the one of the Void Sack. SkyTekx: main writes the lines as English literals,
+    // here they are lang keys, info.actuallyadditions.gui.autoInsert.* with the noun sack or bag
     static void renderAutoInsertTooltip(GuiGraphics guiGraphics, Font font, int mouseX, int mouseY, boolean autoInsert, String noun) {
         List<Component> text = new ArrayList<>();
-        text.add(Component.literal("Auto-Insert " + (autoInsert
-            ? "On"
-            : "Off")).withStyle(ChatFormatting.BOLD));
-        text.add(Component.literal("Turn this on to make items that get picked up automatically go into the " + noun + "."));
-        text.add(Component.literal("Note that this WON'T work when you are holding the " + noun + " in your hand.").withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
+        text.add(Component.translatable("info.actuallyadditions.gui.autoInsert." + (autoInsert
+            ? "on"
+            : "off")).withStyle(ChatFormatting.BOLD));
+        text.add(Component.translatable("info.actuallyadditions.gui.autoInsert.desc." + noun));
+        text.add(Component.translatable("info.actuallyadditions.gui.autoInsert.note." + noun).withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
         guiGraphics.renderTooltip(font, FilterSettingsGui.wrap(font, text), mouseX, mouseY);
     }
 

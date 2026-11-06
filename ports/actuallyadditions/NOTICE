@@ -230,6 +230,10 @@ Modifications
     * Screens: fluid bars show the fluid in its colour without stretching it, the energy overlay of
       a looked at machine shows its charge as text again, the look at overlays no longer cover the
       hotbar, and the textured buttons compute their hover state and tooltips as vanilla does.
+    * Translations: the (wip) label is gone from everything that works, filters say allowlist and
+      blocklist, the sack tooltips can be translated, the Chinese translation of upstream's main
+      branch ships, and the old .lang files of the 1.12 versions, which Minecraft 1.20.1 does not
+      read, are gone.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

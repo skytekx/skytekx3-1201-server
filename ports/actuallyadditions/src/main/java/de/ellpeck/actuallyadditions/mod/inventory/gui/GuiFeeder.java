@@ -44,12 +44,12 @@ public class GuiFeeder extends AAScreen<ContainerFeeder> {
         if (x >= this.leftPos + 69 && y >= this.topPos + 30 && x <= this.leftPos + 69 + 10 && y <= this.topPos + 30 + 10) {
             // SkyTekx: upstream 73be71af shows the tooltip that the base had commented out
             List<Component> array = List.of(
-                    Component.literal(this.tileFeeder.currentAnimalAmount + " ").append(Component.translatable("info." + ActuallyAdditions.MODID + ".gui.animals")),
+                    Component.literal(this.tileFeeder.currentAnimalAmount + " ").append(Component.translatable("info.actuallyadditions.gui.animals")),
                     this.tileFeeder.currentAnimalAmount >= 2 && this.tileFeeder.currentAnimalAmount < TileEntityFeeder.THRESHOLD
-                ? Component.translatable("info." + ActuallyAdditions.MODID + ".gui.enoughToBreed")
+                ? Component.translatable("info.actuallyadditions.gui.enoughToBreed")
                 : this.tileFeeder.currentAnimalAmount >= TileEntityFeeder.THRESHOLD
-                    ? Component.translatable("info." + ActuallyAdditions.MODID + ".gui.tooMany")
-                    : Component.translatable("info." + ActuallyAdditions.MODID + ".gui.notEnough")
+                    ? Component.translatable("info.actuallyadditions.gui.tooMany")
+                    : Component.translatable("info.actuallyadditions.gui.notEnough")
             );
             guiGraphics.renderComponentTooltip(this.font, array, x, y);
         }

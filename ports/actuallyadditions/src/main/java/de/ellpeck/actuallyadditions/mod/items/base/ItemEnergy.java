@@ -13,6 +13,7 @@ package de.ellpeck.actuallyadditions.mod.items.base;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditionsClient;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.tile.CustomEnergyStorage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -60,7 +61,8 @@ public abstract class ItemEnergy extends ItemBase {
             energy = stack.getTag().getInt("Energy");
         }
         NumberFormat format = NumberFormat.getInstance();
-        tooltip.add(Component.translatable("misc.actuallyadditions.power_long", format.format(energy), format.format(this.maxPower)));
+        tooltip.add(Component.translatable("misc.actuallyadditions.power_long", format.format(energy), format.format(this.maxPower))
+            .withStyle(ChatFormatting.GRAY));
     }
 
     @Override

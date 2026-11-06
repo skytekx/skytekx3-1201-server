@@ -374,17 +374,17 @@ public class ClientEvents {
                 if (tileHit instanceof TileEntityBase base) {
 	                if (base.isRedstoneToggle()) {
                         // SkyTekx: Components instead of I18n strings (upstream 3a767e18)
-                        Component component = Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode").append(": ")
-                                .append(Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode." + (base.isPulseMode
+                        Component component = Component.translatable("info.actuallyadditions.redstoneMode").append(": ")
+                                .append(Component.translatable("info.actuallyadditions.redstoneMode." + (base.isPulseMode
                             ? "pulse"
                             : "deactivation")).withStyle(ChatFormatting.DARK_RED));
                         guiGraphics.drawString(font, component, (int) (event.getWindow().getGuiScaledWidth() / 2f + 5), (int) (event.getWindow().getGuiScaledHeight() / 2f + 5), 0xFFFFFF);
 
                         Component expl;
                         if (!stack.isEmpty() && stack.getItem() == CommonConfig.Other.redstoneConfigureItem) {
-                            expl = Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode.validItem").withStyle(ChatFormatting.GREEN);
+                            expl = Component.translatable("info.actuallyadditions.redstoneMode.validItem").withStyle(ChatFormatting.GREEN);
                         } else {
-                            expl = Component.translatable("info." + ActuallyAdditions.MODID + ".redstoneMode.invalidItem", Component.translatable(CommonConfig.Other.redstoneConfigureItem.asItem().getDescriptionId()).getString()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
+                            expl = Component.translatable("info.actuallyadditions.redstoneMode.invalidItem", Component.translatable(CommonConfig.Other.redstoneConfigureItem.asItem().getDescriptionId()).getString()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
                         }
                         guiGraphics.drawString(font, expl, (int) (event.getWindow().getGuiScaledWidth() / 2f + 5), (int) (event.getWindow().getGuiScaledHeight() / 2f + 15), 0xFFFFFF);
                     }

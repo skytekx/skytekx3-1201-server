@@ -90,7 +90,7 @@ as `forge:gems/aluminum`. The pattern list creates them on purpose, and the WARN
 On the Mac mini the boot of 2026-11-02 13:22 went from 41844 to 41338 recipes. Since Extreme Reactors is
 ignored, the boots and reloads from 17:20 on go from 41844 to 41344. A test server with the mods of
 3.1.3 and the config of 2026-11-04 went from 42986 to 42477 recipes. Forge test boots of the merged tree
-of 2026-11-06 went from 54281 to 53762 at 21:00 and from 54473 to 53954 at 21:14
+of 2026-11-06 went from 54281 to 53762 on the boot of 20:57 and from 54473 to 53954 on the boot of 21:11
 (`packboot-logs/regen-base-forge-latest.log` and `regen-r1-forge-latest.log` in the scratch folder of
 the session). The second boot had 192 more generated melting files, which AlmostUnified counts before
 their conditions, and it removed 519 recipes both times.
@@ -195,8 +195,8 @@ those of the branch: Actually Additions, Expanded Delight, Mystical Automation, 
 Create: Integrated Farming with Create: Dragons Plus, Bygone Nether, LittleTiles, Extreme Reactors
 2.0.97 and the forks of Ender IO and Create Crafts & Additions. The dump script needed the fix of
 3bb9339 first, since Create: Dragons Plus adds an accessor `getRecipes()` to the recipe manager that
-returns the map of recipes by type. A Forge test boot of the merged tree at 21:00 then dumped 48,197
-recipes, 273 unify tags and 595 tagged items, and the audit found:
+returns the map of recipes by type. On a Forge test boot of the merged tree that started at 20:57, the dump of
+21:00 then held 48,197 recipes, 273 unify tags and 595 tagged items, and the audit found:
 
 - 284 variants, the 282 of 3.1.3 and the salts of Expanded Delight and Pam's Food Core, which became
   variants of the Mekanism salt when salt joined the materials (4b3774b).
@@ -208,7 +208,7 @@ recipes, 273 unify tags and 595 tagged items, and the audit found:
   the crystals have no twin in a tag that AlmostUnified reads.
 - Two rices. Actually Additions and Farmer's Delight each have their own, and they share only
   `forge:crops/rice`, a crop tag outside the patterns of `unify.json`. Of the 56 ingredients of the
-  boot of 21:14 that take rice, 23 take both, 26 only that of Farmer's Delight and 7 only that of
+  second boot that take rice, 23 take both, 26 only that of Farmer's Delight and 7 only that of
   Actually Additions. They stay apart until the owner decides, see
   [Open items](../open-items.md#owner-decisions).
 - The salt of Medieval Embroidery sat in no tag at all, and its 14 recipes named it directly. Since
@@ -225,8 +225,8 @@ recipes, 273 unify tags and 595 tagged items, and the audit found:
   `tag_fixes.js`. The other 14 come from mods of 3.1.3, such as `forge:wires/all_metal` of the wires
   of Create Crafts & Additions, which 1.3.3 shipped as well and no file uses.
 
-A second boot at 21:14 ran with the salt of Medieval Embroidery, the skip tags and the new hide list.
-Its dump read 48,380 recipes and 596 tagged items. The audit found 285 variants, the same single
+A second boot at 21:11 ran with the salt of Medieval Embroidery, the skip tags and the new hide list.
+Its dump of 21:14 held 48,380 recipes and 596 tagged items. The audit found 285 variants, the same single
 ingredient, no result that is a variant and 1,208 grids with two different items, none of them a
 cinnamon one, and wrote the hide list that the boot had loaded, 285 variants (859ecb7). The tag
 `c:hidden_from_recipe_viewers` held 300 items on that boot, the 285 variants and the 15 items of other

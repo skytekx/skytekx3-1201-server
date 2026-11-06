@@ -20,7 +20,7 @@ b9aa28a54d47054ba5653bec2f20e0a675ab5120 data/forge/tags/blocks/storage_blocks/r
 fb4f349bc6fd89f26ef2ba72a9236f05eefd8ea2 data/forge/tags/blocks/storage_blocks/void_crystal.json
 cf5b58cdf67335da2f86915674ea666c48d05faa data/minecraft/tags/blocks/crops.json
 8dbaf9b7bd6774bc7c01a47a72b8a7fdaee51f87 data/minecraft/tags/blocks/mineable/axe.json
-0f159793ba45fc4aee456d9b70fab9c0003899e8 data/minecraft/tags/blocks/mineable/pickaxe.json
+32191fe399bac5ad4136ff1a0b3c0b4699b30b1c data/minecraft/tags/blocks/mineable/pickaxe.json
 fab721a4fe7ece1d0e019ce36c4d2862f70ee53b data/minecraft/tags/blocks/needs_stone_tool.json
 51d50547b5f031f4fa6e62189af06059a407c009 data/minecraft/tags/blocks/slabs.json
 a60870f29ca48ea0d55ac32620ff5b4bb2f2f62e data/minecraft/tags/blocks/stairs.json

@@ -104,6 +104,7 @@ public class ClientEvents {
 
             if (mc.level == null) {
                 WorldData.clear();
+                cachedGlowingEntities.clear();
             }
 
             if (mc.player != null) {
@@ -113,11 +114,14 @@ public class ClientEvents {
     }
 
     // SkyTekx: the client tick of ItemEngineerGoggles, moved here by upstream 844efe42. The base
-    // registered each goggles item on the Forge bus from its common constructor
-    private final Set<Entity> cachedGlowingEntities = new ConcurrentSet<>();
+    // registered each goggles item on the Forge bus from its common constructor. Upstream 3b297993
+    // (#1523) makes the set static and lets MinecraftMixin ask it. The base set the glowing tag of
+    // the client copies of the entities, which the client never renders, since it takes the glowing
+    // flag the server syncs. This port keeps the entities in the set only and asks the set
+    private static final Set<Entity> cachedGlowingEntities = new ConcurrentSet<>();
 
     /**
-     * Renders a special visual effect for entities around the player if the player is wearing goggles that allow them to see spectral mobs.
+     * Collects the entities around the player that glow while the player wears goggles that allow them to see spectral mobs.
      *
      * @param player The player wearing the goggles.
      */
@@ -128,17 +132,13 @@ public class ClientEvents {
             AABB aabb = new AABB(player.getX() - range, player.getY() - range, player.getZ() - range, player.getX() + range, player.getY() + range, player.getZ() + range);
             List<Entity> entities = player.level().getEntitiesOfClass(Entity.class, aabb);
             if (entities != null && !entities.isEmpty()) {
-                this.cachedGlowingEntities.addAll(entities);
+                cachedGlowingEntities.addAll(entities);
             }
 
-            if (!this.cachedGlowingEntities.isEmpty()) {
-                for (Entity entity : this.cachedGlowingEntities) {
-                    if (!entity.isAlive() || entity.distanceToSqr(player.getX(), player.getY(), player.getZ()) > range * range) {
-                        entity.setGlowingTag(false);
-
-                        this.cachedGlowingEntities.remove(entity);
-                    } else {
-                        entity.setGlowingTag(true);
+            if (!cachedGlowingEntities.isEmpty()) {
+                for (Entity entity : cachedGlowingEntities) {
+                    if (!entity.isAlive() || entity.level() != player.level() || entity.distanceToSqr(player.getX(), player.getY(), player.getZ()) > range * range) {
+                        cachedGlowingEntities.remove(entity);
                     }
                 }
             }
@@ -146,14 +146,14 @@ public class ClientEvents {
             return;
         }
 
-        if (!this.cachedGlowingEntities.isEmpty()) {
-            for (Entity entity : this.cachedGlowingEntities) {
-                if (entity.isAlive()) {
-                    entity.setGlowingTag(false);
-                }
-            }
-            this.cachedGlowingEntities.clear();
-        }
+        cachedGlowingEntities.clear();
+    }
+
+    /**
+     * SkyTekx: whether the client draws the glowing outline of the entity for the goggles (upstream 3b297993)
+     */
+    public static boolean shouldGlow(Entity entity) {
+        return !cachedGlowingEntities.isEmpty() && cachedGlowingEntities.contains(entity);
     }
 
     @SubscribeEvent

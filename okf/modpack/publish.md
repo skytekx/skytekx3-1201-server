@@ -102,21 +102,23 @@ boots had rewritten on disk (ce31f6f, the builder reads git HEAD).
 - Every index entry with its client env, from the Modrinth CDN, unpatched. The server runs eleven of
   them patched, which only matters on the server. Since 3.0.7 this includes Modflared, which opens the
   Cloudflare Tunnel to `hex.skytekx.com`, see [client](client.md#mac-mini).
-- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 57,
+- The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2. From the next pack on they are 58,
   Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO
   Legacy Machines, Mob Grinding Utils, Flux Networks, SkyTekx DE Fixes, Extreme Reactors 2, ZeroCore 2,
   the LittleTiles build of c5694e16, the Mystical Automation port, the Mekanism: Extra Modules port,
   the Expanded Delight port, the Create: Integrated Farming port, the Ender IO backport build
-  6.3.0-skytekx.1 in place of 6.2.18-beta and the Create Crafts & Additions fork
-  1.20.1-1.7.3-skytekx.1 in place of the Modrinth file 1.3.3 (`local-mods/`, 57 jars on
-  2026-11-06). Under `overrides/licenses/` travel the sources of the Backpack port, of the LittleTiles
-  build and of Mekanism: Extra Modules, the license texts of Simply Jetpacks 2, EnderIO Legacy
-  Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical Automation, Mekanism: Extra
-  Modules and the boss data of Iron's Apothic Invaders, the license texts and the NOTICE of the
-  Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE of the Create: Integrated Farming
-  port, the license texts of the parts of the Ender IO build 6.3.0-skytekx.1 with their NOTICE, and
-  the MIT text of the Create Crafts & Additions fork with Create's two MIT notices,
-  `createaddition-1.20.1-1.7.3-skytekx.1-LICENSE.txt` (`licenses/` in git).
+  6.3.0-skytekx.1 in place of 6.2.18-beta, the Create Crafts & Additions fork 1.20.1-1.7.3-skytekx.1
+  in place of the Modrinth file 1.3.3 and the new Actually Additions fork 1.20.1-1.1.52-skytekx.1
+  (`local-mods/`, 58 jars on 2026-11-06). Under `overrides/licenses/` travel the sources of the
+  Backpack port, of the LittleTiles build and of Mekanism: Extra Modules, the license texts of Simply
+  Jetpacks 2, EnderIO Legacy Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical
+  Automation, Mekanism: Extra Modules and the boss data of Iron's Apothic Invaders, the license texts
+  and the NOTICE of the Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE of the
+  Create: Integrated Farming port, the license texts of the parts of the Ender IO build
+  6.3.0-skytekx.1 with their NOTICE, the MIT text of the Create Crafts & Additions fork with Create's
+  two MIT notices, `createaddition-1.20.1-1.7.3-skytekx.1-LICENSE.txt`, and the MIT text of the
+  Actually Additions fork with the Mekanism notice,
+  `ActuallyAdditions-1.20.1-1.1.52-skytekx.1-LICENSE.txt` (`licenses/` in git).
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
   KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
   FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
@@ -224,7 +226,8 @@ the Create: Integrated Farming port and its library Create: Dragons Plus 1.11.9 
 [Create Integrated Farming port](createintegratedfarming-port.md)), with the Ender IO backport
 6.3.0-skytekx.1 (see [Ender IO backport](enderio-backport.md)), with the Create Crafts & Additions
 backport 1.20.1-1.7.3-skytekx.1 (see [Create Crafts & Additions backport](createaddition-backport.md)),
-with the Apotheosis bosses of
+with the new Actually Additions fork 1.20.1-1.1.52-skytekx.1 (see
+[Actually Additions backport](actuallyadditions-backport.md)), with the Apotheosis bosses of
 Iron's Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine
 mods of 2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
 [mod set](mod-set.md#additions-of-2026-11-04)), and with Bygone Nether, whose tag repair in the fixes
@@ -242,7 +245,9 @@ and magnet keys work, whether the conduit facades render with the Embeddium of t
 client joins over the Create Crafts & Additions channel `createaddition:main` with its protocol 2 and
 the update of a 3.1.2 instance drops `createaddition-1.20.1-1.3.3.jar`, whether JEI and EMI show the
 charging steps of Sequenced Assembly, whether the new ponder scenes of the pump, the connectors and
-the servo open, whether the Draconic Evolution fixes work in a client and whether the mobs and
+the servo open, whether a client joins with the Actually Additions protocol 5, whether its manual
+opens as a Patchouli book and JEI and EMI show its categories, whether the Draconic Evolution fixes
+work in a client and whether the mobs and
 structures of Bygone Nether render there. Its deploy has to move the fixes pack to the end of the pack
 order, see [boot fixes](../content/boot-fixes.md#load-order).
 
@@ -252,6 +257,13 @@ and accepts no other (`CreateAddition.java:73-77` in `ports/createaddition/`, ea
 client cannot join the fork server and a client of the next pack cannot join the 1.3.3 server. Both
 wait for the alternator scan and the live world test of the wires on a copy of the live world, the
 rollout gates under [Release](createaddition-backport.md#release) of the backport page.
+
+The Actually Additions fork is new and replaces no jar, but a client of the next pack carries it. Its
+channel `actuallyadditions:main` accepts only its own protocol 5 and no absent mod
+(`PacketHandler.java:169-175` in `ports/actuallyadditions/`), so that client cannot join a server
+without the fork. The upload therefore also goes out together with copying
+`ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar` into the server's `mods/` while the java process is
+gone, see the [operator notes](actuallyadditions-backport.md#operator-notes) of the backport page.
 
 The full pack of 98bf164 with the six mods that stand in for NeoForge 1.21.1 mods, Create: Dragons
 Plus included, booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the

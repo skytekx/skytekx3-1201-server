@@ -1651,7 +1651,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     beans, each with one or two seeds, and both pools take the uniform fortune bonus. An unripe
     crop drops its seed. The four generated loot tables are byte identical to the `loot_table`
     files of `main` at `cd9d9c6`. A right click on a ripe crop gives the drops minus one seed to
-    the player and sets the crop back to age 0. On `main` the click goes on to the held item after
+    the player and sets the crop back to age 0, which keeps `persistent` since the review at the
+    integration. Upstream `main` replants the default state, so a harvested wild crop pops off its
+    grass at the next neighbour update. On `main` the click goes on to the held item after
     the harvest, which spends bone meal on the replanted crop on the server while the client still
     sees the ripe one. Here the harvest consumes the click and swings the hand, as the sweet berry
     bush does. The four crops get the block state property `persistent` of `38d6404b`, default
@@ -1794,15 +1796,17 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `entity.minecraft.villager.actuallyadditions.engineer`, which replaces the 1.12 key. Its trades
     are those of `main` in four levels, from black quartz ore and the Laser Wrench to the Empowerer
     and the Extreme Laser Relay, through `BasicTradeList`, which gives a 1.20.1 `MerchantOffer` an
-    `ItemStack` cost. Zombie villagers have no Engineer overlay, as on `main`. The plain directional
-    blocks turn and mirror with a structure (`b3bac386`, `3b180faf`), and so do the nested
-    `Container` classes of `DirectionalBlock` and `FullyDirectionalBlock` and the Crusher, which
-    `main` leaves out. Without them the Coffee Maker, the Coal Generator, the Atomic Reconstructor,
-    the laser relays and the Crusher of a rotated house faced the way the file stores them. The
-    Powered Furnace and the crystal clusters still do not turn, as on `main`. The generated
-    processor list, job site tag and sound entry match `main` byte for byte. Savegame: new ids only,
-    the profession, the point of interest type, the sound, the processor list and the loot table.
-    Villages generate the house in new chunks only.
+    `ItemStack` cost. The plain directional blocks turn and mirror with a structure (`b3bac386`,
+    `3b180faf`), and so do the nested `Container` classes of `DirectionalBlock` and
+    `FullyDirectionalBlock` and the Crusher, which `main` leaves out. Without them the Coffee
+    Maker, the Coal Generator, the Atomic Reconstructor, the laser relays and the Crusher of a
+    rotated house faced the way the file stores them. The Powered Furnace turns through
+    `DirectionalBlock.Container` as well, since its `HORIZONTAL_FACING` is the property
+    `Container.FACING` (`BlockPoweredFurnace`), where `main` leaves it fixed. The crystal clusters
+    turn through `FullyDirectionalBlock` as on `main`, since `CrystalClusterBlock` has no override
+    of its own. The generated processor list, job site tag and sound entry match `main` byte for
+    byte. Savegame: new ids only, the profession, the point of interest type, the sound, the
+    processor list and the loot table. Villages generate the house in new chunks only.
     In the test of source change 54, `/place template` set the house with `StopDrop` 1 on its
     machines. Breaking its Coffee Maker with `/setblock ... destroy` dropped nothing, while a Coffee
     Maker set by `/setblock` dropped itself. `/place jigsaw` from `village/desert/houses` placed 15
@@ -1816,6 +1820,26 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     its first offers sold black quartz ore and black quartz for emeralds, and the dev client
     opened its `MerchantScreen` with them. Not tested: the house in a savanna village (none in
     five) and on the pack's Arclight.
+    Local deviations from the review at the integration:
+    - Zombie villagers get the Engineer overlay
+      `textures/entity/zombie_villager/profession/engineer.png`, a byte copy of the villager overlay
+      of `main` (SHA-1 `e243802b`). The 1.20.1 `VillagerProfessionLayer` builds that path for every
+      zombie villager with the profession and does not check that the file exists, so a converted
+      Engineer would render the missing texture. Upstream `main` has the same gap. Vanilla 1.20.1
+      ships the same image for both overlays for 11 of its 14 professions (`client-extra.jar` of
+      the Forge Gradle cache, compared with `cmp`). Not checked in a client.
+    - The Engineer's trades join the lists that the Forge 47 `VillagerTradingManager` hands to the
+      `VillagerTradesEvent`, a mutable `NonNullList` for each level from 1 to 5. Upstream `main` puts
+      immutable `List.of` lists in their place, so a later listener, such as a KubeJS script, that
+      adds Engineer trades would throw an `UnsupportedOperationException`, and an earlier one would
+      lose its trades (`InitVillager.setupTrades`).
+    The integration booted the jar of the review fix (SHA-1
+    `235119dc2fedccfce7b76c9a127b5516c8dbce30`, 3223628 bytes, one build) alone on a dedicated Forge
+    47.4.18 server. It reached `Done` with 0 FATAL and 0 ERROR lines, a summoned Engineer of level 1
+    offered black quartz and a Laser Wrench for emeralds, a summoned Farmer kept its vanilla offers,
+    and a zombie villager with the Engineer profession loaded with it
+    (`bp2/actuallyadditions/wcint/` in the workflow scratchpad). Not tested: a second trade listener,
+    the overlay in a client and the harvest of a wild crop.
 58. Loot modifiers: bats and chests get the drops of the 1.12 handler again through two global
     loot modifiers of `b9435301`, which replace the base's `mod/misc/DungeonLoot.java`. That class
     was commented out in full and still registered on the Forge bus, as upstream undid in

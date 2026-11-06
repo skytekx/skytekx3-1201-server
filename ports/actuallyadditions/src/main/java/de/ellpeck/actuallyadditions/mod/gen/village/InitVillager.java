@@ -20,16 +20,17 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 import java.util.List;
 
 // SkyTekx: the trades of the Engineer of upstream 2a2f5c6c, the engineer career of 1.12 with the
-// Item Interface in place of the Phantom Connector
+// Item Interface in place of the Phantom Connector. Main replaces the lists of the event with immutable
+// ones, here the trades join the mutable lists that Forge hands out, so a later listener can still add
 public final class InitVillager {
 	public static void setupTrades(VillagerTradesEvent event) {
 		if (event.getType() == ActuallyVillagers.ENGINEER.get()) {
 			Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
-			trades.put(1, List.of(new BasicTradeList(new BasicTradeList.PriceRange(1, 2), new ItemStack(ActuallyBlocks.BLACK_QUARTZ_ORE.get()), new BasicTradeList.PriceRange(2, 3)), new BasicTradeList(new BasicTradeList.PriceRange(1, 2), new ItemStack(ActuallyItems.BLACK_QUARTZ.get()), new BasicTradeList.PriceRange(6, 8)), new BasicTradeList(new BasicTradeList.PriceRange(1, 3), new ItemStack(ActuallyItems.LASER_WRENCH.get()), new BasicTradeList.PriceRange(1, 1))));
-			trades.put(2, List.of(new BasicTradeList(new ItemStack(ActuallyItems.COFFEE_BEANS.get()), new BasicTradeList.PriceRange(20, 30), new BasicTradeList.PriceRange(1, 2)), new BasicTradeList(new BasicTradeList.PriceRange(3, 5), new ItemStack(ActuallyBlocks.ITEM_INTERFACE.get()), new BasicTradeList.PriceRange(1, 1)), new BasicTradeList(new BasicTradeList.PriceRange(10, 20), new ItemStack(ActuallyBlocks.LASER_RELAY.get()), new BasicTradeList.PriceRange(1, 2))));
-			trades.put(3, List.of(new BasicTradeList(new ItemStack(ActuallyBlocks.TINY_TORCH.get()), new BasicTradeList.PriceRange(30, 40), new BasicTradeList.PriceRange(1, 2)), new BasicTradeList(new BasicTradeList.PriceRange(1, 2), new ItemStack(ActuallyBlocks.WOOD_CASING.get()), new BasicTradeList.PriceRange(1, 2))));
-			trades.put(4, List.of(new BasicTradeList(new BasicTradeList.PriceRange(3, 5), new ItemStack(ActuallyBlocks.IRON_CASING.get()), new BasicTradeList.PriceRange(1, 2)), new BasicTradeList(new ItemStack(ActuallyBlocks.EMPOWERER.get()), new BasicTradeList.PriceRange(1, 1), new BasicTradeList.PriceRange(15, 20)), new BasicTradeList(new BasicTradeList.PriceRange(30, 40), new ItemStack(ActuallyBlocks.LASER_RELAY_EXTREME.get()), new BasicTradeList.PriceRange(1, 1))));
+			trades.get(1).addAll(List.of(new BasicTradeList(new BasicTradeList.PriceRange(1, 2), new ItemStack(ActuallyBlocks.BLACK_QUARTZ_ORE.get()), new BasicTradeList.PriceRange(2, 3)), new BasicTradeList(new BasicTradeList.PriceRange(1, 2), new ItemStack(ActuallyItems.BLACK_QUARTZ.get()), new BasicTradeList.PriceRange(6, 8)), new BasicTradeList(new BasicTradeList.PriceRange(1, 3), new ItemStack(ActuallyItems.LASER_WRENCH.get()), new BasicTradeList.PriceRange(1, 1))));
+			trades.get(2).addAll(List.of(new BasicTradeList(new ItemStack(ActuallyItems.COFFEE_BEANS.get()), new BasicTradeList.PriceRange(20, 30), new BasicTradeList.PriceRange(1, 2)), new BasicTradeList(new BasicTradeList.PriceRange(3, 5), new ItemStack(ActuallyBlocks.ITEM_INTERFACE.get()), new BasicTradeList.PriceRange(1, 1)), new BasicTradeList(new BasicTradeList.PriceRange(10, 20), new ItemStack(ActuallyBlocks.LASER_RELAY.get()), new BasicTradeList.PriceRange(1, 2))));
+			trades.get(3).addAll(List.of(new BasicTradeList(new ItemStack(ActuallyBlocks.TINY_TORCH.get()), new BasicTradeList.PriceRange(30, 40), new BasicTradeList.PriceRange(1, 2)), new BasicTradeList(new BasicTradeList.PriceRange(1, 2), new ItemStack(ActuallyBlocks.WOOD_CASING.get()), new BasicTradeList.PriceRange(1, 2))));
+			trades.get(4).addAll(List.of(new BasicTradeList(new BasicTradeList.PriceRange(3, 5), new ItemStack(ActuallyBlocks.IRON_CASING.get()), new BasicTradeList.PriceRange(1, 2)), new BasicTradeList(new ItemStack(ActuallyBlocks.EMPOWERER.get()), new BasicTradeList.PriceRange(1, 1), new BasicTradeList.PriceRange(15, 20)), new BasicTradeList(new BasicTradeList.PriceRange(30, 40), new ItemStack(ActuallyBlocks.LASER_RELAY_EXTREME.get()), new BasicTradeList.PriceRange(1, 1))));
 		}
 	}
 }

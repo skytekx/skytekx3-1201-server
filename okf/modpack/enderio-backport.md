@@ -36,17 +36,18 @@ bundles sit in the common rules of the first bundle's spec.
 | Reference only | Upstream's stalled branch `experiment/1.20.1-backport` (8 commits of 2026-03 on `1.21.1` at 010b057e), read for API translations. Its 8.x core is not used |
 | Fork | Folder `ports/enderio/` with the 6.x layout `src/{api,core,main,machines,conduits,armory}`, Java 17, ForgeGradle 6.0.54 (`UPSTREAM.md`, Build changes) |
 | Target version | Version 6.3.0-skytekx.1 in `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar`, the jarJar jar with Registrate and GraphLib3 inside |
-| Ships as | The jar `local-mods/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` (SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`, de0d78b), which replaced the 6.2.18-beta jar |
+| Ships as | The jar `local-mods/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` (SHA-1 `a05d8b0aec3e8429e74ebd0b754c2c04f139ca10`, 02af58e), which replaced the 6.2.18-beta jar. The first build of de0d78b had the SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`, see [Fix build](#fix-build) |
 | Build check | The tasks `compileJava`, `compileMachinesJava`, `compileConduitsJava` and `compileArmoryJava` in one call, with `/opt/jdk17`, `-Xmx2g` and `LC_ALL=C.UTF-8`. The task `compileJava` alone covers only the api, core and main source sets, and the module tasks run `processResources`. A full build needs `LC_ALL=C.UTF-8` because of the lang file `no_no<U+200C>.json` (`UPSTREAM.md`, Building) |
 | Addon check | The script `bp2/enderio-tools/eiocompat.py` in the workflow scratchpad must print `TOTAL MISSING: 0` for the built jar against `local-mods/eio_legacy_machines-0.4.9.jar` |
 
 ## Status on 2026-11-06
 
 Nine of the ten bundles are done, and the pack ships them as Ender IO 6.3.0-skytekx.1 since de0d78b.
-The visual polish is not ported, so the jar has no connected glass and no machine or conduit
-particles. The jar passed a savegame test from 6.2.18-beta and full pack boots on Forge and Arclight,
-see [Release](#release). Nobody has joined it with a client of the pack or loaded a copy of the live
-world yet. The paragraphs below record each bundle as it was integrated.
+Since 02af58e the jar also carries two fixes that the release audit found missing, see [Fix
+build](#fix-build). The visual polish is not ported, so the jar has no connected glass and no machine
+or conduit particles. The jar passed a savegame test from 6.2.18-beta and full pack boots on Forge and
+Arclight, see [Release](#release). Nobody has joined it with a client of the pack or loaded a copy of
+the live world yet. The paragraphs below record each bundle as it was integrated.
 
 The vendored base (8799e05), the reproducible Java 17 build of 6.3.0-skytekx.1 (dd66c98) and the
 license texts and the change notice in the jar (e508261) are on the branch
@@ -148,7 +149,7 @@ The review fix checked the license of the Apothic Spawners step and ships its MI
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Fork infrastructure (`eio-b0-fork-bootstrap`) | Network protocol bump, JSON data maps for 1.20.1, optional Curios support | 10 | The vendored base | Done in 6a3268f, 90c9f8b, 10ba7e1 and effd892. The vendor, version and license work of the old feature `fork-bootstrap` is done in 8799e05, dd66c98 and e508261 |
-| Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Done in 1e5fde6, 59e7770, 6f5774a, 49bb41c, 91a7f49, 46b3e5f, be881bc and f142998 |
+| Fix pack (`eio-b1-6x-fix-pack`) | Fluid tank and sponge dupes, the stacked capacitor bank dupe, ghost and filter slot dupes, machine outputs that void, recipe outputs, small fixes, validation of client packets | 26 | Fork infrastructure | Done in 1e5fde6, 59e7770, 6f5774a, 49bb41c, 91a7f49, 46b3e5f, be881bc and f142998, plus bc4ab00 and dd0d3ac after the release |
 | Vat (`eio-b2-vat`) | The unpowered Vat and its nine fermenting recipes | 32 | Fix pack | Done in e7e29bd, a175998 and bef7784 |
 | Obelisks (`eio-b3-obelisks`) | Inhibitor, relocator and attractor obelisks on the 6.x obelisk base | 25 | Fix pack, Vat | Done in 29eb56d, 964c947, c366c8c, 532f762 and da92e45 |
 | Charger and keybinds (`eio-b4-charger-keybinds`) | Wireless charger with two antennas, keybinds for the travel staff and the electromagnet with Curios | 23 | Fix pack, obelisks | Done in d893d46, 4e38565 and 1abec27 |
@@ -184,7 +185,7 @@ new config keys).
 
 | Check | Result |
 |---|---|
-| Jar | The file `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar`, SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`, 8,471,799 bytes, the `-all` jar of `./gradlew build` with Java 17 and `LC_ALL=C.UTF-8`. A build in a fresh checkout and one in the main working tree gave the same SHA-1 |
+| Jar | The file `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` of de0d78b, SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`, 8,471,799 bytes, replaced in 02af58e (see [Fix build](#fix-build)), the `-all` jar of `./gradlew build` with Java 17 and `LC_ALL=C.UTF-8`. A build in a fresh checkout and one in the main working tree gave the same SHA-1 |
 | Datagen | The task `runData` changed no committed file. Its cache `src/generated/resources/.cache/` is ignored by git, and a build from a tree that still holds it packs the cache into the jar, so the release jar comes from a tree without it |
 | Build warnings | The compiler settings are unchanged. Javac printed the mapping warnings of `GliderRotationMixin` and `RecipeManagerMixin` and three removal warnings for the deprecated 6.x methods `moveFluids` and `getConnectionState` (workflow scratchpad, `eioship/build1.log`) |
 | Addons | The compat scan finds 0 missing symbols for EnderIO Legacy Machines 0.4.9 (3 inherited members not verified, as before), Exchangers 3.5.1 and AllTheLeaks 1.1.1 (`eioship/compat-jar3.log`). EnderIO Legacy Machines requires `enderio` `[0,)` and Exchangers takes `[1.0,)` |
@@ -237,6 +238,28 @@ Not tested in the release: a client of the pack, JEI and EMI, the screens of the
 keybinds, the facade rendering with the Embeddium of the pack, a copy of the live world and the Arclight
 checks of the obelisks, the charger and the facades listed in [Arclight notes](#arclight-notes). They
 stay in `ports/enderio-backport-carryover.json` under `release`.
+
+### Fix build
+
+The release audit of 2026-11-06 found that the jar of de0d78b lacked a 6.x energy fix of upstream. The
+fix build keeps the version 6.3.0-skytekx.1, because no build of the fork has reached a client or the
+live server yet. Its commits are bc4ab00 (the wired charger), dd0d3ac (the coordinate selector),
+f95cafb (both named in the NOTICE) and 02af58e (the jar in `local-mods/` and its permission record).
+
+| Check | Result |
+|---|---|
+| Jar | SHA-1 `a05d8b0aec3e8429e74ebd0b754c2c04f139ca10`, 8,471,934 bytes, the `-all` jar of `./gradlew build` with Java 17 and `LC_ALL=C.UTF-8`. It was built in a fresh worktree whose `ports/enderio/` equals that of f95cafb, and a second build in the fresh worktree of the Forge boot gave the same SHA-1 (workflow scratchpad, `bp2/enderio/fix/build-fresh.log`). Against the jar of de0d78b only `NOTICE_enderio`, `CoordinateSelectorItem` with its inner class and `WiredChargerBlockEntity` differ |
+| Addons | The compat scan finds 0 missing symbols for EnderIO Legacy Machines 0.4.9 (3 inherited members not verified, as before), Exchangers 3.5.1 and AllTheLeaks 1.1.1 (workflow scratchpad, `bp2/enderio/fix/compat-jar2.log`) |
+| Self test | A dev `runServer` on Forge 47.1.1 with a temporary test class, never committed, passed 10 of 10 checks: an unpowered charger with a capacitor adds nothing in 20 ticks and is inactive, a powered one moves 30 uI in a tick with a basic capacitor and pays exactly what the item gains, a nearly full item takes 5 uI and the charger pays 5, a full item moves to the output, and the selector runs on the server without paper and aimed at air (`bp2/enderio/fix/runserver-after.log`). The same test against the code of de0d78b failed 6 of 10: the unpowered charger put 600 uI into the item in 20 ticks, a buffer of 1000 uI gave the item 1600 uI in one tick, and both uses of the selector threw the `RuntimeException` of `RuntimeDistCleaner` (`runserver-before.log`) |
+| Forge boot | Label `enderio-fix-forge` of a fresh worktree at 02af58e, run with `PACKBOOT_DONE_ONLY=1` on the harness of the final pack boots: `Done` in 16.2 s, 0 FATAL, no crash, no watchdog, a clean stop, the same 3 ERROR lines as the release boot, and 11 signatures with 0 new against `enderio-forge` and `newmods-fix-forge` (workflow scratchpad, `packboot-logs/enderio-fix-forge-*`). No Arclight boot was run for the fix build |
+
+The first run of the self test deadlocked at its stop after it had placed a wired charger
+(`runserver-after1-deadlock.log`), so the later runs remove the charger before the stop. A light
+worker called `MachineBlock.getLightEmission`, which without Starlight reads the block entity through
+`getExistingBlockEntity` and waits for the main thread, while the main thread waited for the light
+(`MachineBlock.java:151-168`, the code of the base). The pack server runs Starlight 1.1.2
+(`modrinth.index.json`, server only), so it takes the safe `getBlockEntity` branch. A single player
+world of the pack has no Starlight and may meet the same deadlock. Not verified in a client.
 
 ## Scope
 
@@ -315,6 +338,19 @@ Each item names the upstream commit it ports and the commit on the branch.
   outputs again from the current inputs when it places them, so a swapped input cannot copy a
   capacitor. The mossy cobblestone dupe dc01be82e does not apply, because 6.x has no such SAG Mill
   recipe.
+- The wired charger only charges while it has energy (aa5d911b0, bc4ab00). Before, `isActive` and
+  `serverTick` checked only the input, the output, the capacitor and the redstone mode, and
+  `chargeItem` offered `max(stored, maxEnergyUse)` and then took it with `takeEnergy`, which stops at
+  zero. An unpowered charger with a basic capacitor therefore put 30 uI into the item every tick for
+  free, voided what the item did not accept and moved a full buffer in one tick. It now simulates
+  `consumeEnergy`, which caps at the stored energy and at `maxEnergyUse`, and the item side, then
+  executes both with the accepted amount. The release audit found the fix missing (finding eio-fid-1).
+  Upstream never put it on the 1.20.1 branch.
+- The coordinate selector no longer reaches the client class `LocalPlayer` on the server (95ca40bac,
+  dd0d3ac). Its methods `use` and `checkPaper` ran `instanceof LocalPlayer` on both sides, and on a
+  dedicated server Forge's `RuntimeDistCleaner` refuses the class with a `RuntimeException`, so every
+  use without paper or aimed at air logged a stack trace through `PacketUtils` and failed on the
+  server. The checks now call `Player.isLocalPlayer()`.
 - The small fixes in 46b3e5f are a copy in `ChunkBoundLookup` (69b0bd57f), the fire crafting sound
   config (4b57a5733), the swimming pose after a staff blink into a wall (59b00dd66), no doubled
   modifiers on loot capacitors (ed55f0d53) and a guard on the AE2 first tick of ME conduits
@@ -336,6 +372,15 @@ Each item names the upstream commit it ports and the commit on the branch.
 - The reach test is `player.canReach(pos, 1.5)`, the test of `MachineBlockEntity.stillValid` and
   `ConduitBlockEntity.stillValid`. It measures from the eye and follows the `forge:block_reach`
   attribute, so a packet passes exactly while its screen may stay open (f142998, `Packet.java:51`).
+
+A hash level pass on 2026-11-06 looked for more fixes like the charger. Of the 476 fix and feat
+commits in 41ed3d5e..origin/1.21.1, 193 had a hash in no inventory, carryover, okf or research text
+and no subject twin on `1.20.1`. It set aside 29 translation, CI, build and test commits and matched
+the removed Java lines of the rest against the fork, then read every commit with a match against the
+6.x code (workflow scratchpad, `bp2/enderio/fix/applies.tsv`). Two apply and are ported, the charger
+and the selector above. Five apply but are client or single player polish and wait for the visual
+polish (inventory, `plan.excluded` entry `6x-client-fixes`). The fixes 22be1bf91, d3d4cdf22 and
+2fddeacac are already in the 6.x code, and the rest fix code of the NeoForge port or the 8.x core.
 
 The common rules in the spec of the first bundle carry what the fix pack hands to later bundles:
 client data slots, obelisk ranges, the conduit GUI data path, conduit items, the packet reach and the
@@ -801,6 +846,9 @@ Not ported in 6.3.0-skytekx.1. The plan below stays for a later build.
 - Machines show particles while they run (f761802d6, particles only). The 6.x client key
   `machineParticles` (`BaseClientConfig.java:17`) already exists and can switch them off. The sounds
   of that commit stay out.
+- The five client fixes of the hash level pass fit here, among them the JEI drag into a ghost slot
+  (16b5d9bf7), which needs a new serverbound packet and so a protocol bump once a build has reached
+  clients (carryover, `eio-b9-visual-polish`).
 - Walking and landing on a conduit bundle shows conduit or facade particles (6ae3dd177). On a faced
   bundle they use the facade's state, as upstream's `addLandingEffects` and `addRunningEffects` do,
   because vanilla particles of the bundle state take the conduit channel colour of tint index 0. Break
@@ -895,7 +943,8 @@ Left out on purpose (inventory, `plan.excluded`):
 | Optional fluid codec of the Vat (`vat-optional-fluidstack-codec`) | Commit fec605fba fixes a NeoForge component codec. The port keeps fluids in NBT |
 | Smaller 8.x changes (`misc-8x-qol`) | Vacuum range, wrench rotation, external capacitor insertion, throttling and idle energy configs, renderer fixes of 8.x and buffer fixes for pooled buffers that 6.x does not use |
 | Athena resource pack (`athena-resourcepack-restructure`) | Athena 4.x on 1.21.1 only. The pack ships Athena 3.1.2 |
-| Regression fixes of 8.x (`8x-regression-fixes`) | They fix code that the NeoForge port or the 8.x conduit core introduced. Spot checks found the 6.x paths free of these bugs |
+| Regression fixes of 8.x (`8x-regression-fixes`) | They fix code that the NeoForge port or the 8.x conduit core introduced. The hash level pass of 2026-11-06 read every unrecorded fix against the 6.x code and found two that apply, see [Fix pack](#fix-pack) |
+| Client fixes that also apply to 6.x (`6x-client-fixes`) | A JEI drag into a ghost slot that only the client sees (16b5d9bf7), a fall counter shared by the client and the integrated server (10d2d7d49), the inventory key that closes the travel anchor screen while its name box has focus (4ff762ba3), the tint of painted slabs (cb5d01654) and culled range particles (8ceb13091). None is a dupe or a server fault, so they wait for the visual polish |
 | Translation refresh (`translations-refresh`) | The 8.x lang files use 8.x keys. Only English entries for ported content are added |
 | Port and build churn (`port-and-build-churn`) | NeoForge, Regilite and MDG ports, restructures, formatting, game tests and CI, with no player effect |
 | The 8.x core of the experiment branch (`experiment-1201-backport-core`) | Read for API translations only. Its core would bring the one way conduit format and drop the compatibility with EnderIO Legacy Machines |
@@ -1200,6 +1249,10 @@ a permission gate). The wind charge default is the owner's to change
   than 8 blocks from the feet, the distance of a vanilla container. The review replaced it in f142998
   with the reach test of the menus, because the Apotheosis 7.4.8 reach affix and gems open screens from
   9 to 13 blocks away, and every change made there was dropped.
+- The release jar of de0d78b (SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`) shipped without the
+  wired charger fix of aa5d911b0, and the inventory listed the painted walls of the base as new
+  content and the machine particles as ported. The release audit of 2026-11-06 found all three, and
+  the fix build of 02af58e replaced the jar.
 
 Related: [Twilight Forest backport](twilightforest-backport.md), [mod set](mod-set.md),
 [publish](publish.md), [Arclight runtime](../server/arclight.md), [open items](../open-items.md).

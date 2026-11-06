@@ -14,6 +14,30 @@
           "name": "actuallyadditions:fermenting_barrel"
         }
       ],
+      "functions": [
+        {
+          "function": "minecraft:copy_nbt",
+          "ops": [
+            {
+              "op": "replace",
+              "source": "tanks.inputTank",
+              "target": "BlockEntityTag.tanks.inputTank"
+            }
+          ],
+          "source": "block_entity"
+        },
+        {
+          "function": "minecraft:copy_nbt",
+          "ops": [
+            {
+              "op": "replace",
+              "source": "tanks.outputTank",
+              "target": "BlockEntityTag.tanks.outputTank"
+            }
+          ],
+          "source": "block_entity"
+        }
+      ],
       "rolls": 1.0
     }
   ],

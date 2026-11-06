@@ -17,7 +17,6 @@ import de.ellpeck.actuallyadditions.mod.tile.TileEntityInventoryBase;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +24,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,12 +34,15 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class BlockContainerBase extends Block implements EntityBlock {
     public BlockContainerBase(Properties properties) {
@@ -147,13 +148,12 @@ public abstract class BlockContainerBase extends Block implements EntityBlock {
 	            boolean powered = world.getBestNeighborSignal(pos) > 0;
                 boolean wasPowered = base.isRedstonePowered;
                 if (powered && !wasPowered) {
+                    // SkyTekx: upstream c197f653, the tile counts as powered before it reacts to the pulse,
+                    // so a neighbour update from the pulse cannot start a second pulse and recurse
+                    base.setRedstonePowered(true);
                     if (base.respondsToPulses()) {
-                        // TODO: [port] eval what this does? :D
-                        //                        world.scheduleUpdate(pos, this, this.tickRate(world));
-                        // Who knows -Flanks
                         base.activateOnPulse();
                     }
-                    base.setRedstonePowered(true);
                 } else if (!powered && wasPowered) {
                     base.setRedstonePowered(false);
                 }
@@ -172,26 +172,32 @@ public abstract class BlockContainerBase extends Block implements EntityBlock {
         this.updateRedstoneState(worldIn, pos);
     }
 
-    @Override
-    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (stack.hasTag()) {
-            BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof TileEntityBase base) {
-	            CompoundTag compound = stack.getOrCreateTag().getCompound("Data");
-                base.readSyncableNBT(compound, TileEntityBase.NBTType.SAVE_BLOCK);
-            }
-        }
-    }
+    // SkyTekx: no setPlacedBy, as on main since the 1.21 port (23815b70, removed in b66af844). It read the
+    // 1.12 "Data" compound, which nothing writes, with SAVE_BLOCK after BlockItem had merged the
+    // BlockEntityTag of the item, and that empty read cleared the tanks and the coffee cache again
 
     @Override
     public void playerWillDestroy(@Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState state, Player player) {
         super.playerWillDestroy(world, pos, state, player);
-        if (!player.isCreative()) {
-            BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof TileEntityBase && ((TileEntityBase) tile).stopFromDropping) {
-                player.displayClientMessage(Component.translatable("info." + ActuallyAdditions.MODID + ".machineBroke").withStyle(ChatFormatting.RED), false);
-            }
+        // SkyTekx: upstream 74982c36 (#1436), the message only from the server, so it shows once
+        if (!player.isCreative() && !world.isClientSide && world.getBlockEntity(pos) instanceof TileEntityBase tileBase && tileBase.stopFromDropping) {
+            player.displayClientMessage(Component.translatable("info." + ActuallyAdditions.MODID + ".machineBroke").withStyle(ChatFormatting.RED), false);
         }
+    }
+
+    // SkyTekx: upstream 74982c36 (#1436) returns air from playerWillDestroy, so that the drops of a
+    // machine with StopDrop come from the empty loot table of air. Block.playerWillDestroy returns
+    // nothing on 1.20.1, so the drops of such a machine are empty here. This also holds for an explosion
+    // and for the breakers, which pass the block entity to the loot as well. The inventory still drops
+    // in onRemove, as upstream and 1.12 do
+    @Nonnull
+    @Override
+    @SuppressWarnings("deprecation")
+    public List<ItemStack> getDrops(@Nonnull BlockState state, @Nonnull LootParams.Builder builder) {
+        if (builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TileEntityBase tileBase && tileBase.stopFromDropping) {
+            return Collections.emptyList();
+        }
+        return super.getDrops(state, builder);
     }
 
     @Override

@@ -22,6 +22,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -136,19 +137,16 @@ public class BlockAtomicReconstructor extends FullyDirectionalBlock.Container im
             String base = block.getDescriptionId() + ".info.";
             pTooltip.add(Component.translatable(base + "1." + this.toPick1).append(" ").append(Component.translatable(base + "2." + this.toPick2)).withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 
-            if (pStack.hasTag() && pStack.getTag().contains("BlockEntityTag")) {
-                CompoundTag BET = pStack.getTag().getCompound("BlockEntityTag");
-                int energy = 0;
-                if (BET.contains("Energy")) {
-                    energy = BET.getInt("Energy");
-                }
+            // SkyTekx: upstream c1e274db, the energy and the redstone mode each show when the item carries them
+            CompoundTag BET = BlockItem.getBlockEntityData(pStack);
+            if (BET != null && BET.contains("Energy")) {
+                int energy = BET.getInt("Energy");
                 NumberFormat format = NumberFormat.getInstance();
-                pTooltip.add(Component.translatable("misc.actuallyadditions.power_single", format.format(energy)));
-
-                if (BET.contains("IsPulseMode")) {
-                    pTooltip.add(Component.translatable("info.actuallyadditions.redstoneMode").append(": ")
-                            .append(Component.translatable(BET.getBoolean("IsPulseMode")?"info.actuallyadditions.redstoneMode.pulse":"info.actuallyadditions.redstoneMode.deactivation").withStyle($ -> $.withColor(ChatFormatting.RED))));
-                }
+                pTooltip.add(Component.translatable("misc.actuallyadditions.power_single", format.format(energy)).withStyle(ChatFormatting.GRAY));
+            }
+            if (BET != null && BET.contains("IsPulseMode")) {
+                pTooltip.add(Component.translatable("info.actuallyadditions.redstoneMode").append(": ")
+                        .append(Component.translatable(BET.getBoolean("IsPulseMode")?"info.actuallyadditions.redstoneMode.pulse":"info.actuallyadditions.redstoneMode.deactivation").withStyle($ -> $.withColor(ChatFormatting.RED))));
             }
         }
 

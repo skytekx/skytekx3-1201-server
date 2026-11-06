@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "actuallyadditions:fluid_placer"
+    }
+  ],
+  "result": {
+    "item": "actuallyadditions:fluid_placer"
+  }
+}

@@ -14,6 +14,19 @@
           "name": "actuallyadditions:dropper"
         }
       ],
+      "functions": [
+        {
+          "function": "minecraft:copy_nbt",
+          "ops": [
+            {
+              "op": "replace",
+              "source": "IsPulseMode",
+              "target": "BlockEntityTag.IsPulseMode"
+            }
+          ],
+          "source": "block_entity"
+        }
+      ],
       "rolls": 1.0
     }
   ],

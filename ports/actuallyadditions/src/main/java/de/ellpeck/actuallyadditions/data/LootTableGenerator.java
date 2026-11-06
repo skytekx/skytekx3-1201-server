@@ -57,19 +57,41 @@ public class LootTableGenerator extends LootTableProvider {
         protected void generate() {
             CopyNbtFunction.Builder copyEnergy = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("Energy", "BlockEntityTag.Energy");
             CopyNbtFunction.Builder copyPulseMode = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("IsPulseMode", "BlockEntityTag.IsPulseMode");
+            // SkyTekx: upstream c1e274db, f05b284e and 2b8884da keep the contents as data components. On 1.20.1
+            // copy_nbt takes the same keys from the block entity into BlockEntityTag, which BlockItem merges
+            // back on placement. A single tank writes its FluidStack at the root of the block entity
+            // (FluidName, Amount and an optional Tag), the Fermenting Barrel keeps its two tanks in "tanks".
+            // A missing key, such as Tag, is skipped. StopDrop, Redstone and the work timers stay behind
+            CopyNbtFunction.Builder copyFluid = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy("FluidName", "BlockEntityTag.FluidName")
+                .copy("Amount", "BlockEntityTag.Amount")
+                .copy("Tag", "BlockEntityTag.Tag");
+            CopyNbtFunction.Builder copyInputTank = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("tanks.inputTank", "BlockEntityTag.tanks.inputTank");
+            CopyNbtFunction.Builder copyOutputTank = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("tanks.outputTank", "BlockEntityTag.tanks.outputTank");
+            CopyNbtFunction.Builder copyCoffeeCache = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("Cache", "BlockEntityTag.Cache");
 
             //Special Drops
             dropNBT(ActuallyBlocks.ATOMIC_RECONSTRUCTOR, $ -> $.apply(copyEnergy).apply(copyPulseMode));
             dropKeepEnergy(ActuallyBlocks.DISPLAY_STAND);
             dropKeepEnergy(ActuallyBlocks.COAL_GENERATOR);
-            dropKeepEnergy(ActuallyBlocks.OIL_GENERATOR);
+            dropNBT(ActuallyBlocks.OIL_GENERATOR, $ -> $.apply(copyEnergy).apply(copyFluid));
+            dropKeepEnergy(ActuallyBlocks.LEAF_GENERATOR);
             dropKeepEnergy(ActuallyBlocks.CRUSHER);
             dropKeepEnergy(ActuallyBlocks.CRUSHER_DOUBLE);
             dropKeepEnergy(ActuallyBlocks.POWERED_FURNACE);
+            dropNBT(ActuallyBlocks.COFFEE_MACHINE, $ -> $.apply(copyEnergy).apply(copyFluid).apply(copyCoffeeCache));
+            dropNBT(ActuallyBlocks.FLUID_COLLECTOR, $ -> $.apply(copyFluid).apply(copyPulseMode));
+            dropNBT(ActuallyBlocks.FLUID_PLACER, $ -> $.apply(copyFluid).apply(copyPulseMode));
+            dropKeepPulseMode(ActuallyBlocks.BREAKER);
+            dropKeepPulseMode(ActuallyBlocks.PLACER);
+            dropKeepPulseMode(ActuallyBlocks.DROPPER);
+            dropNBT(ActuallyBlocks.CANOLA_PRESS, $ -> $.apply(copyEnergy).apply(copyFluid));
+            dropNBT(ActuallyBlocks.FERMENTING_BARREL, $ -> $.apply(copyInputTank).apply(copyOutputTank));
+            // SkyTekx: only the energy, as on main. The work area of the compass stays with the block
+            dropKeepEnergy(ActuallyBlocks.FARMER);
 
             this.dropSelf(ActuallyBlocks.BATTERY_BOX.get());
             this.dropSelf(ActuallyBlocks.ITEM_INTERFACE_HOPPING.get());
-            this.dropSelf(ActuallyBlocks.FARMER.get());
             this.dropSelf(ActuallyBlocks.BIOREACTOR.get());
             this.dropSelf(ActuallyBlocks.EMPOWERER.get());
             this.dropSelf(ActuallyBlocks.TINY_TORCH.get());
@@ -81,27 +103,18 @@ public class LootTableGenerator extends LootTableProvider {
             this.dropSelf(ActuallyBlocks.ENERGIZER.get());
             this.dropSelf(ActuallyBlocks.ENERVATOR.get());
             this.dropSelf(ActuallyBlocks.LAVA_FACTORY_CONTROLLER.get());
-            this.dropSelf(ActuallyBlocks.CANOLA_PRESS.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_ITEMFACE.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_PLACER.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_LIQUIFACE.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_ENERGYFACE.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_REDSTONEFACE.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_BREAKER.get());
-            this.dropSelf(ActuallyBlocks.FERMENTING_BARREL.get());
             this.dropSelf(ActuallyBlocks.FEEDER.get());
             this.dropSelf(ActuallyBlocks.HEAT_COLLECTOR.get());
             this.dropSelf(ActuallyBlocks.GREENHOUSE_GLASS.get());
-            this.dropSelf(ActuallyBlocks.BREAKER.get());
-            this.dropSelf(ActuallyBlocks.PLACER.get());
-            this.dropSelf(ActuallyBlocks.DROPPER.get());
-            this.dropSelf(ActuallyBlocks.FLUID_PLACER.get());
-            this.dropSelf(ActuallyBlocks.FLUID_COLLECTOR.get());
-            this.dropSelf(ActuallyBlocks.COFFEE_MACHINE.get());
             this.dropSelf(ActuallyBlocks.PHANTOM_BOOSTER.get());
             this.dropSelf(ActuallyBlocks.RANGED_COLLECTOR.get());
             this.dropSelf(ActuallyBlocks.LONG_RANGE_BREAKER.get());
-            this.dropSelf(ActuallyBlocks.LEAF_GENERATOR.get());
             this.dropSelf(ActuallyBlocks.XP_SOLIDIFIER.get());
             this.dropSelf(ActuallyBlocks.LASER_RELAY.get());
             this.dropSelf(ActuallyBlocks.LASER_RELAY_ADVANCED.get());
@@ -204,6 +217,9 @@ public class LootTableGenerator extends LootTableProvider {
             lootFunctionProvider.accept(lootpool);
 
             add(blockSupplier.get(), LootTable.lootTable().withPool(applyExplosionCondition(ActuallyBlocks.ATOMIC_RECONSTRUCTOR.get(), lootpool)));
+        }
+        private void dropKeepPulseMode(Supplier<Block> blockSupplier) {
+            dropNBT(blockSupplier, $ -> $.apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("IsPulseMode", "BlockEntityTag.IsPulseMode")));
         }
         private void dropKeepEnergy(Supplier<Block> blockSupplier) {
             dropNBT(blockSupplier, $ -> $.apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("Energy", "BlockEntityTag.Energy")));

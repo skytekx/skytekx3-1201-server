@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "actuallyadditions:fermenting_barrel"
+    }
+  ],
+  "result": {
+    "item": "actuallyadditions:fermenting_barrel"
+  }
+}

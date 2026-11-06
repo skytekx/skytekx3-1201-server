@@ -122,6 +122,8 @@ Modifications
     * Coal Generator: it burns every furnace fuel at 20 CF/t instead of six fixed fuels, shows
       what a fuel gives in its screen and no longer darkens its screen twice. The unused solid
       fuel recipe type stays registered for data packs.
+    * Generators: the Leaf-Eating Generator follows its config and eats leaves again, and the Bio
+      Reactor faces the player, renders its model and shows its energy bar.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

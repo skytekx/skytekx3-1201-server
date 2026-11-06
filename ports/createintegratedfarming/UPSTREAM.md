@@ -161,13 +161,19 @@ items below are what differs from upstream, with the reason.
     `advancements/` and `tags/blocks|items/`. Recipe results use `item`, the wooden rod ingredient
     `forge:rods/wooden`, load conditions the `forge:` types under `conditions`, and the advancements get
     the `minecraft:recipes/root` parent. The chicken food maps use the 1.20.1 uniform int provider form.
-    The item map names the new tag `create_integrated_farming:chicken_food` with the six chicken foods of
-    1.20.1 (`Chicken.FOOD_ITEMS`), the fluid map `#forge:plantoil`. The block atlas file goes, because
-    it only served the removed roosts. `MODPACK_README.md` stays upstream's 1.21.1 text and does not
-    match this build. It names `#minecraft:chicken_food`, `#c:plantoil`, the 1.21.1 int provider form
-    without `value`, the chicken roosts of Vanilla Backport and the duck, goose and turkey roosts with
-    their food tags. Data packs for this build follow source changes 3 and 11 and the chicken food
-    section of `okf/modpack/createintegratedfarming-port.md` in the pack repository.
+    The item map names the new tag `create_integrated_farming:chicken_food`, the fluid map
+    `#forge:plantoil`. The tag holds the six vanilla chicken foods of 1.20.1 and, as optional entries, the
+    cabbage seeds, tomato seeds and rice of Farmer's Delight and the flax seeds of Supplementaries. These
+    are the items that the two mods add to `Chicken.FOOD_ITEMS` at common setup (Farmer's Delight
+    `CommonSetup#registerItemSetAdditions`, Supplementaries `ModSetup#registerMobFoods` through
+    Moonlight's `RegHelper#registerChickenFood`, both read with javap), so the roost takes what a vanilla
+    chicken eats in the pack, as upstream's `#minecraft:chicken_food` key does on 1.21.1. The Expanded
+    Delight port of the pack adds no chicken food. The block atlas file goes, because it only served the
+    removed roosts. `MODPACK_README.md` stays upstream's 1.21.1 text and does not match this build. It
+    names `#minecraft:chicken_food`, `#c:plantoil`, the 1.21.1 int provider form without `value`, the
+    chicken roosts of Vanilla Backport and the duck, goose and turkey roosts with their food tags. Data
+    packs for this build follow source changes 3 and 11 and the chicken food section of
+    `okf/modpack/createintegratedfarming-port.md` in the pack repository.
 12. Lava Fishing Net drops: Forge 1.20.1 loot tables have no load conditions, and a table that names the
     net's item fails to load with an error while the block is not registered. The conditional loot table
     goes, and `LavaFishingNetBlock#getDrops` drops the block under the same `survives_explosion` rule.

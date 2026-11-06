@@ -10,6 +10,7 @@
 
 package de.ellpeck.actuallyadditions.mod.inventory;
 
+import de.ellpeck.actuallyadditions.mod.crafting.ActuallyRecipes;
 import de.ellpeck.actuallyadditions.mod.crafting.PressingRecipe;
 import de.ellpeck.actuallyadditions.mod.inventory.slot.SlotItemHandlerUnconditioned;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityCanolaPress;
@@ -64,7 +65,10 @@ public class ContainerCanolaPress extends AbstractContainerMenu {
             //Other Slots in Inventory excluded
             if (slot >= inventoryStart) {
                 //Shift from Inventory
-                Optional<PressingRecipe> recipeOptional = TileEntityCanolaPress.getRecipeForInput(newStack);
+                // SkyTekx: the client predicts with the recipes it received, the API list is server only
+                Optional<PressingRecipe> recipeOptional = player.level().isClientSide
+                    ? player.level().getRecipeManager().getAllRecipesFor(ActuallyRecipes.Types.PRESSING.get()).stream().filter(recipe -> recipe.getInput().test(newStack)).findFirst()
+                    : TileEntityCanolaPress.getRecipeForInput(newStack);
                 if (recipeOptional.isPresent()) {
                     if (!this.moveItemStackTo(newStack, 0, 1, false)) {
                         return ItemStack.EMPTY;

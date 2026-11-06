@@ -998,3 +998,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     and becomes a stack of one, so a stack of base cups, which only creative could hold, keeps its
     count until it is split. The machine keeps its NBT keys. New ids: the recipe type and the
     recipe serializer `actuallyadditions:coffee_ingredient`.
+35. Canola Press and Fermenting Barrel: JEI gets the pressing category of `0632253a` with the
+    Canola Press as catalyst and the accessor `PressingRecipe.getInput` it reads, and the
+    fermenting category fills its arrow over the time of the recipe (`62ff6acd`). Shift click into
+    the press predicts with the recipes the client received, since only the server fills the API
+    list of the pressing recipes. The menu fix of `056ec5c1` only adapts the 1.20.4 `RecipeHolder`
+    and has nothing to do on the base, whose press already moves pressable items on shift click.
+    The crop tag of `9689b4c1` came with source change 9, and its two other files only add TODO
+    comments to the fermenting and liquid fuel recipes. No data, NBT key or block state changes.

@@ -100,9 +100,14 @@ public class TileEntityLaserRelayItemAdvanced extends TileEntityLaserRelayItem i
 
     // SkyTekx: the button ids of f46de7d9, 0 to 3 for the inbound filter, 4 to 7 for the outbound
     // one and 8 and 9 for the two smart buttons. The base handed every id to both filters and used
-    // 2 and 3 for the smart buttons, which are also the ids of filter buttons
+    // 2 and 3 for the smart buttons, which are also the ids of filter buttons. A local deviation
+    // from main: only a player who has the menu of this relay open may press them, as with the
+    // Ranged Collector
     @Override
     public void onButtonPressed(int buttonID, Player player) {
+        if (!(player.containerMenu instanceof ContainerLaserRelayItemWhitelist menu) || menu.tile != this) {
+            return;
+        }
         switch (buttonID) {
             case 0, 1, 2, 3 -> this.leftFilter.onButtonPressed(buttonID);
             case 4, 5, 6, 7 -> this.rightFilter.onButtonPressed(buttonID - 4);

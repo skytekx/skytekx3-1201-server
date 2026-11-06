@@ -204,12 +204,16 @@ next to it are upstream's Maven artifacts and are not shipped.
     `ItemCombinerMenuAccessor` of `6f56772` came with the Item Tag filter (source change 47), and
     `client.MinecraftMixin` of `3b29799` comes with the Engineer's Goggles. Before source change 47
     the annotation processor wrote no refmap, so the jar had none and Mixin logged one WARN line at
-    boot that the reference map could not be read. The dev runs get the properties `mixin.env.remapRefMap` and
-    `mixin.env.refMapRemappingFile`, so the mixins of the deobfuscated mod jars apply there. The
-    two mixins of `main` touch nothing that Arclight patches: `AnvilMixin` injects at the head of
-    `AnvilMenu.mayPickup`, while Arclight's `RepairContainerMixin` only redirects and injects in
-    `AnvilMenu.createResult` and its `ItemCombinerMixin` injects at the head of
-    `ItemCombinerMenu.stillValid` and leaves `inputSlots` alone (javap of `common.jar` in
+    boot that the reference map could not be read. The dev runs get the properties
+    `mixin.env.remapRefMap` and `mixin.env.refMapRemappingFile`, so the mixins of the deobfuscated
+    mod jars apply there. The two mixins of `main` touch nothing that Arclight patches:
+    `AnvilMixin` injects at the head of `AnvilMenu.mayPickup` and, as a local addition of source
+    change 47, at the head of `AnvilMenu.createResult`. Arclight's `RepairContainerMixin`
+    redirects the `ResultContainer.setItem` calls in `createResult`, injects at its call of
+    `broadcastChanges` and modifies two of its constants, none of them at the head, and its
+    `ItemCombinerMixin` injects at the head of `ItemCombinerMenu.stillValid` and only shadows
+    `inputSlots` (mutable, so Arclight may put its own container there) and `resultSlots`, which
+    the accessor reads at each call (javap of `common.jar` in
     `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`). The client mixin `MinecraftMixin`
     injects at the head of `Minecraft.shouldEntityAppearGlowing`. No mixin uses `@Overwrite`.
 
@@ -218,11 +222,13 @@ next to it are upstream's Maven artifacts and are not shipped.
 These commits change the mod itself on top of the base. Each later commit that ports a fix or a
 feature adds its item here, and the NOTICE in the jar sums them up.
 
-1. Optional dependencies: `mods.toml` declares `patchouli` (`[1.20.1-81,)`), `curios` (`[5.0,)`)
-   and `jei` (`[15.0,)`), each with `mandatory=false`, ordering `NONE` and side `BOTH`, so Forge
-   checks the version range of each one that is present. That check is their only effect, since
-   the mod list of Forge 47 shows no dependencies (`ModListScreen` of Forge 47.4.0 shows the name,
-   version, credits, authors, URL, child mods, license and description). Upstream declares
+1. Optional dependencies: `mods.toml` declares `patchouli` (`[1.20.1-81,)`), `curios`
+   (`[5.2.0+1.20.1,)`) and `jei` (`[15.0,)`), each with `mandatory=false`, ordering `NONE` and
+   side `BOTH`, so Forge checks the version range of each one that is present. That check is
+   their only effect, since the mod list of Forge 47 shows no dependencies (`ModListScreen` of
+   Forge 47.4.0 shows the name, version, credits, authors, URL, child mods, license and
+   description). The Curios bound was `[5.0,)` until the integration of source change 49 raised
+   it, see there. Upstream declares
    none of the three in `neoforge.mods.toml` on `main`. Only its publish block marks Patchouli
    as required and JEI and Curios as optional on Modrinth and CurseForge (`main`
    `build.gradle:287-289`), and its manual says in chat when Patchouli is missing (`19cfbc92`,
@@ -1365,6 +1371,25 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Advanced Item Laser Relay opened no screen in that run, which clicks a few ticks after a
     teleport, so the relay screen is covered by the scenario only. Not tested: the pickup on the
     pack's Arclight and next to a plugin that cancels the Bukkit pickup.
+    The review at the integration added three local deviations from `main`. The pickup of the
+    Traveler's Sack skips the tag `forge:holds_items`, which the slots of the sack menu refuse as
+    well. Neither the fork nor any jar of the pack fills that tag (no `tags/items/holds_items.json`
+    in the 275 jars of the pack cache or in `local-mods/`), so a shulker box still goes into the
+    sack by pickup and through the menu until a datapack or a later bundle fills it. The pickup
+    still ignores the target of an item entity, as `main` does, since `ItemEntity.playerTouch`
+    checks it only after the Forge event and the field `target` has no getter on 1.20.1 (javap of
+    the mapped Forge 47.4.0 jar). A sack in the main hand returns `sidedSuccess`, where `main`
+    passes on both sides, so the client no longer goes on to use the item in the off hand once the
+    sack opened. The buttons of the Advanced Item Laser Relay act only for a player who has the
+    relay's menu open, as source change 48 describes for the Ranged Collector. The integration test
+    ran a dedicated Forge 47.4.18 server with the same mods and the jar of the review fix (SHA-1
+    `a022b6306c14157f59c6b9861ab5c5a82d135e9c`, 3126365 bytes) and the dev client with a further
+    local scenario `fsint`, which is not committed either (`bp2/actuallyadditions/srv-fsint-run3/`
+    and `fsint-tools/devtest-fsint.patch` in the workflow scratchpad). The server log has no ERROR
+    line. In survival, a Traveler's Sack in the main hand returned `SUCCESS`
+    on the client, its screen opened, and the 16 snowballs in the off hand stayed. A shulker box
+    that the player touched went into a sack with the pickup toggle on, as the empty tag predicts.
+    The relay guard was not exercised.
 47. Item Tag filter: the new item `actuallyadditions:item_tag` of `6f56772` holds one item tag,
     and every filter slot of the mod matches the items in that tag (`FilterSettings.check`). The
     tag id sits in the stack's NBT key `tag` as a string, the 1.20.1 form of the attachment of the
@@ -1372,9 +1397,19 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `main`. Renaming the item in an anvil to the id of an existing item tag sets it at the cost 0
     (`CommonEvents.onAnvilEvent`, `main` parses the name with `ResourceLocation.tryParse`), and
     the mixin `AnvilMixin` with the accessor `ItemCombinerMenuAccessor` lets the player take that
-    result, which vanilla's `mayPickup` refuses at the cost 0. A name that names no item tag
-    leaves the anvil without a result, as on `main`. The refmap maps the accessor to the field
-    `f_39769_` and the injection to `m_6560_`. The item also opens its own screen in the new menu
+    result, which vanilla's `mayPickup` refuses at the cost 0. The handler acts only while the
+    right slot is empty, a local deviation from `main` (`CommonEvents.java:233-247` on `main`).
+    The event keeps the material cost 0, and `AnvilMenu.onTake` empties the whole right slot for a
+    material cost of 0 or less, so on `main` an Item Tag renamed with any stack on the right
+    deletes that stack. With an item on the right, vanilla gives an Item Tag no result, since it
+    is neither damageable nor enchantable. A name that names no item tag cancels the event.
+    `ForgeHooks.onAnvilChange` then returns false and `createResult` returns before it clears the
+    result slot, so the result of the last valid name stayed there and the mixin let the player
+    take it. `AnvilMixin` therefore also clears the result slot at the head of `createResult`
+    while an Item Tag lies in the left slot, through the accessor's `getResultSlots`, another
+    local addition, so the anvil shows no result for such a name. The refmap maps the accessor to
+    the fields `f_39769_` and `f_39768_` and the injections to `m_6560_` and `m_6640_`. The item
+    also opens its own screen in the new menu
     `actuallyadditions:item_tag_container`, which `main` registers but never opens (its `use` is
     commented out), and whose button handler there only clears the tag, so the tag the screen
     sends was lost. Here Enter sends a tag that exists on the client through the new serverbound
@@ -1401,6 +1436,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     ground. The jar boots alone on a dedicated Forge 47.4.18 server (without Curios, Patchouli
     and JEI) with 0 ERROR and 0 FATAL lines and no WARN about the reference map. Not tested: an
     Item Tag in a laser relay network.
+    In the integration test of source change 46, an Item Tag on the left and 64 diamonds on the
+    right with the name `forge:ingots` showed no result, a shift click on the result slot took
+    nothing, and the diamonds stayed. With the diamonds taken out the result came back. The name
+    `forge:ingotsx` then left the result slot empty and a shift click there took nothing, and the
+    name `forge:ingots` gave the tagged Item Tag again, which the player took, while the 64 diamonds
+    stayed in the inventory. The same scenario against the jar of the bundle before the review
+    (SHA-1 `f81afeeb`) showed the tagged result with the diamonds on the right, and taking it
+    deleted all 64 diamonds (`bp2/actuallyadditions/srv-fsint-ctrl/`).
 48. Ranged Collector: its screen opens again and its filter works (`adc276e8`). The base never
     built the filter buttons, so `containerTick` of the screen threw a `NullPointerException` on
     the client as soon as the screen opened, and the collector ignored every button. Since its
@@ -1415,6 +1458,16 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     In the same test the screen of the Ranged Collector opened, and after its WH button made the
     allow list of the Item Tag test a deny list, the collector also took the 5 cobblestone and 4
     dirt dropped next to it.
+    A local deviation from `main` from the review at the integration: the filter buttons of the
+    collector act only for a player who has its menu open, and those of the Advanced Item Laser
+    Relay only for a player who has the menu of that relay open (`onButtonPressed` of both block
+    entities). The button to tile handler of source change 14 checks the sender, a loaded chunk and
+    a distance of 8 blocks, so a player whom a protection plugin keeps from opening the screen could
+    still switch the filter of another player's collector by packets. In the integration test of
+    source change 46, the buttons 0 and 2 sent by packet without the menu left the filter of a
+    collector at `Whitelist:1b` and `Damage:0b`, and the WH button of the open screen then set
+    `Whitelist:0b`. Against the jar before the review the same two packets set `Whitelist:0b` and
+    `Damage:1b`.
 49. Crafting Table On A Stick: the crafting grid works again (`c4d81aea`). The base opened
     `CraftingMenu` with `ContainerLevelAccess.NULL`, which runs nothing it is handed, so the grid
     never showed a result and the items in it were deleted when the menu closed. The menu now
@@ -1444,3 +1497,10 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     player, and opened nothing once the crafter was gone. Two oak logs in the grid showed 4 oak
     planks as the result, and closing the screen gave the logs back. The server without Curios
     of source change 47 reached `Done`. Not tested: a client and a server that both lack Curios.
+    The integration raised the Curios range in `mods.toml` from `[5.0,)` to `[5.2.0+1.20.1,)`, the
+    form that Mekanism 10.4 uses for the same bound. The API jars of Curios `5.2.0-beta.3+1.20.1`
+    and `5.2.0+1.20.1` from Modrinth show that `CuriosApi.getCuriosInventory` and
+    `ICuriosItemHandler.findFirstCurio`, which `CuriosCompat` calls, first appear in 5.2.0 (javap),
+    and the entity files under `curios/entities` came with 5.2.0-beta.1 (`docs/CHANGELOG.md` of the
+    Curios branch 1.20.x). With an older Curios the hotkey would throw a `NoSuchMethodError`. The
+    pack ships 5.14.1.

@@ -43,7 +43,9 @@ Do you want Automation? Wireless Transport? Better Machines? A cup o' Coffee? Ch
 [[dependencies.actuallyadditions]]
     modId="curios"
     mandatory=false
-    versionRange="[5.0,)"
+    # SkyTekx: 5.2.0+1.20.1 is the first Curios with CuriosApi.getCuriosInventory and
+    # ICuriosItemHandler.findFirstCurio, which CuriosCompat calls, and the betas before it lack them
+    versionRange="[5.2.0+1.20.1,)"
     ordering="NONE"
     side="BOTH"
 

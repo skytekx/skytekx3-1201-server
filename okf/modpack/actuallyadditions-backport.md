@@ -870,7 +870,7 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
 ## Pack integration
 
 - AlmostUnified 0.11.0 lists neither black quartz nor any crystal as a material
-  (`config/almostunified/unify.json`, `materials` from line 39), so the new `forge:` tags unify
+  (`config/almostunified/unify.json`, `materials` from line 45), so the new `forge:` tags unify
   nothing of the mod's own items.
 - AlmostUnified does rewrite the compat outputs of the mining lens. Mekanism tin, lead and uranium
   ore and Immersive Engineering silver ore become the ores of the mod with the highest priority,

@@ -3,7 +3,7 @@ type: Plan
 title: Create Crafts & Additions backport
 description: Which features of the Create Crafts & Additions 1.21.1 line (1.7.3) go onto its 1.20.1 Forge base for the pack, in which bundles and order, which upstream work stays out, and the license, savegame and operator rules of the fork.
 tags: [modpack, mods, createaddition, create, backport]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Create Crafts & Additions backport
@@ -53,7 +53,7 @@ client wait for the [release](#release).
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
 | Baseline (`cca-baseline`) | Version fix, new config keys, packet id and protocol bump | 4.5 | Nothing | Done in 779a060, 946c19c, ea5b3dc and 0f93520 on top of 78f4f06, 7286996 and f11c10b. The boot and login checks belong to the release |
-| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Done in 173dee4, 1f9580a, d3a0178, 9699085, 5c08350, a5584ce and 7eb20d9, with the scan tool a3285fc, the test record 0a1cabe and the review fix c4b5d0d. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release |
+| Connector rework (`cca-wiregraph`) | The WireGraph, the `/cca_wires` command, the live world migration test, wire render culling, shears, festive wire, the connector capability retry | 34.5 | Baseline | Ported, live world test open. Code in 173dee4, 1f9580a, d3a0178, 9699085, 5c08350, a5584ce and 7eb20d9, with the scan tool a3285fc, the test record 0a1cabe and the review fix c4b5d0d. The [test world run](#wire-graph-test) passed on Arclight with skytekx-compat 2.1.3. The copy of the live world, skytekx-compat 2.1.6 and the client checks wait for the release, which takes them from `ports/createaddition-backport-carryover.json` |
 | Small fixes (`cca-phase1-fixes`) | Accumulator, Liquid Blaze Burner, goggle timers, sounds, stress tooltips, death messages, CC:Tweaked hardening, barbed wire, data fixes, Electrum Block | 21.5 | Baseline | Done in 68ac009, 1c55181, d200303, 4cea82f, bc65bd1, f084665, ee2e417, 5946e46, 12ac066, e782463 and c0c031d, with the review fix 739b6f8. The in game and boot tests belong to the release |
 | Changes of 1.6.0 (`cca-160-rework`) | Alternator with two shafts, Capacitor as an FE item, Electrum Amulet, Tesla Coil light | 12.5 | Baseline, small fixes | Done in a7cbc03, f287b38, c2bbc62 and 36d6c2d, with the review fix b83da4e and the scan tool 7f1364c. Tested on a Forge 47.4.18 server with Create 6.0.8. The in game tests with a client, the Arclight boot and the scan of the live world belong to the release |
 | Ignitable fluids (`cca-ignitable-fluids`) | Fire over fluids in the `forge:ignites` tag, four vanilla mixins and the refmap | 6.5 | Baseline | Done in 11cd485 and f6885dd, with the review fixes fb644ea and a60df19. Tested on reduced Arclight and Forge test servers. The boot with the whole mod set belongs to the release |
@@ -672,7 +672,17 @@ tag (`WireSpool.java:89`, `107`). Both only need a check in game, see [Excluded]
 - The new ponders ran only in a dev client. A pack client must open the scenes of the pump, the
   connectors and the servo, the accumulator scene and Create's Fluid Tank scene with the whole mod
   set, see [Ponders and translations](#ponders-and-translations).
-- The docs work adds the row in [Mod set](mod-set.md), the carryover file and the final status here.
+- The live world test of the connector rework is a rollout gate as well. Its steps, from the scan
+  before the upgrade through the boots with skytekx-compat 2.1.6 and 2.1.3, Chunky, the relay and
+  the restart to the round trip to 1.3.3, and the client checks of the render culling, the shears,
+  the festive wire and `/cca_wires` are listed for this bundle in
+  `ports/createaddition-backport-carryover.json`. The pack ships EntityCulling, which culls block
+  entities on its own. If a pack client hides long wires behind occluders, add the connector, the
+  small light connector, the large connector and the redstone relay of `createaddition` to its
+  `blockEntityWhitelist` in `config/entityculling.json` and ship that file as an override, since the
+  repository holds no EntityCulling config yet.
+- The docs work adds the row in [Mod set](mod-set.md), the entries of this bundle to the carryover
+  file and the final status here.
 
 ## Excluded
 
@@ -878,10 +888,10 @@ The world was built with 1.3.3 by `setblock` with node NBT:
 | Chunky radius 500 around X 320 | 4225 chunks in 2 min 23 s, the flow stayed at 1000 FE/t |
 | Stress | 60 rounds of force loading, editing and unloading three chunks of the chain with `/cca_wires rebuild` in between. The graph came back to 47 nodes and 6 networks |
 | Relay | Unpowered while loaded and then unloaded, no energy crossed it. Powered again and unloaded, 1000 FE/t |
-| Restart | Vertices and buffers were saved and loaded, and the flow resumed. `/cca_wires verify` read the 26 unloaded nodes back |
+| Restart | Vertices and buffers were saved and loaded, and the flow resumed. The command `/cca_wires verify` read the 26 unloaded nodes back |
 | Broken connector with the far end unloaded | The wire dropped at the broken connector, and the far end let go without a drop when its chunk loaded |
 | Round trip to 1.3.3 | Version 1.3.3 kept every wire and ignored the saved graph. A connector broken under 1.3.3 left the graph stale, see the first finding |
-| Region scan at the end | `tools/wire_scan.py` found no difference between the saved graphs and the region files |
+| Region scan at the end | The scan `tools/wire_scan.py` found no difference between the saved graphs and the region files. All 50 nodes of the Overworld and both of the Nether were known to the graph. A rerun on 2026-11-06 with the three lists of the second review fix gave 0 differences, 0 gone vertices, 0 nodes not yet discovered and 0 unchecked vertices in both dimensions |
 | Stop right after `Done` | After the review fix c4b5d0d, a tenth boot with the jar of the integrated branch got `stop` over RCON 0.8 s after `Done`. The server stopped in 12 s with no ERROR or FATAL line, wrote the Overworld's `data/createaddition_wires.dat` at the stop, and its 50 vertices matched the region files |
 
 All ten boots, four of them on 1.3.3, reached `Done` with no ERROR or FATAL line and no crash report.
@@ -915,6 +925,9 @@ Not covered by this run:
   for festive wire and the refusal of a player without op level 2.
 - Nodes in the old `node0` to `node7` format. A loaded block entity converts them at once, so the test
   world could not hold any.
+
+The file `ports/createaddition-backport-carryover.json` hands these open steps to the
+[release](#release), and the status row stays at "Ported, live world test open" until they pass.
 
 ## Local divergences
 
@@ -1001,6 +1014,11 @@ The plan ports these with upstream's or the safe default, and the owner may rule
 - Before and after that test, scan the copy with
   `tools/wire_scan.py <world> --json before.json` and later `--compare before.json`. One sided wire
   ends in the first scan are the wires the upgrade cuts. Reconnect them in game after the update.
+  In the scan after the upgrade only the differences count: a position whose wires differ between
+  the graph and the world, and a vertex whose full chunk holds no wire node. The test passes with 0
+  of them in every dimension. Nodes that the graph has not discovered yet, because nobody loaded
+  their chunk since the upgrade, and vertices in chunks that are not full are listed apart and are no
+  fault.
 - The command `/cca_wires stats`, `verify` or `rebuild` runs over RCON, for example
   `python3 tools/rcon.py 127.0.0.1 65535 "$RCON_PW" cca_wires stats`. Each action works on the graph
   of the dimension the command runs in (`source.getLevel()` in `WireGraphCommand.java`), and RCON runs

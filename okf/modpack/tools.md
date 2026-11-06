@@ -3,16 +3,21 @@ type: Reference
 title: Tools
 description: The scripts in tools/ in the order they are used, from datapack sync and mod updates through jar patches and the mrpack build to the Modrinth upload and RCON, with what each one really does and where it runs.
 tags: [modpack, tools, build, modrinth]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Tools
 
-The folder [tools/](../../tools) holds eleven scripts. Six came from the build sessions of June and July
-2026. The seventh, `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at 16:58
-whether the installed mods have updates. It was committed at 18:14 (257d4c1). The last three are the
-region scans that checked the Halloween world on the Mac mini the same evening. The eleventh,
-`cf_tunnel.py`, sets up the Cloudflare Tunnel that made the server public at 21:13.
+The folder [tools/](../../tools) holds the scripts below. Six came from the build sessions of June and
+July 2026. The seventh, `update_mods.py`, appeared on 2026-10-31 at 17:50, after the owner asked at
+16:58 whether the installed mods have updates. It was committed at 18:14 (257d4c1). Three region
+scans checked the Halloween world on the Mac mini the same evening, and `cf_tunnel.py` sets up the
+Cloudflare Tunnel that made the server public at 21:13. The order script `datapack_order.py`
+followed on 2026-11-04 (2dc53e6) and the wire scan `wire_scan.py` of the Create Crafts & Additions
+backport on 2026-11-05 (a3285fc). Three more live on other pages: the permission check
+`mrpack_permissions.py` on [Publish](publish.md), the alternator scan `alternator_scan.py` on the
+[Create Crafts & Additions backport](createaddition-backport.md#release) and the Arclight rebuild in
+`tools/arclight/` on [Arclight runtime](../server/arclight.md).
 
 | Order | Tool | Lines | Job | Needs | Writes |
 |---|---|---:|---|---|---|
@@ -28,7 +33,7 @@ region scans that checked the Halloween world on the Mac mini the same evening. 
 | After a pregen | Scan, `void_scan.py` | 346 | Lists structure starts and blocks below the islands and in void columns | Python with numpy | Nothing |
 | After a pregen | Scan, `void_float.py` | 160 | Separates blocks that hang from an island from blocks that float free | Python with numpy | Nothing |
 | After a pregen | Scan, `structure_pieces.py` | 35 | Prints every piece of one structure with its projection and box | Python with numpy | Nothing |
-| Before and after a CC&A upgrade | Scan, `wire_scan.py` | 196 | Lists the Create Crafts & Additions wire nodes of a world, the wires left at one end and how the saved wire graph differs from the world | Python 3 | Nothing, or a JSON file with `--json` |
+| Before and after a CC&A upgrade | Scan, `wire_scan.py` | 230 | Lists the Create Crafts & Additions wire nodes of a world, the wires left at one end and how the saved wire graph differs from the world | Python 3 | Nothing, or a JSON file with `--json` |
 
 The Modrinth token and the RCON password live in the ansible vault as `vault_modrinth_pat` and
 `vault_rcon_password`, see [secrets](../server/secrets.md). The RCON password is passed as a command
@@ -220,11 +225,16 @@ small islands that the terrain places low on purpose.
 The scan [wire_scan.py](../../tools/wire_scan.py) came with the
 [Create Crafts & Additions backport](createaddition-backport.md#wire-graph-test) on 2026-11-05. It reads
 the region files of every dimension with the standard library only, also chunks kept in `c.X.Z.mcc`
-files, and lists every connector and redstone relay with its wires. It reports the wire ends whose far
-end does not point back, which the wire graph of the backport cuts at its first check, and with a
-saved graph every vertex of `data/createaddition_wires.dat` that differs from the world. With
-`--json` it writes the node lists, and `--compare` lists every node whose wires changed since such a
-file.
+files, and lists every connector and redstone relay with its wires. Nodes still in the old `node0` to
+`node7` format count with their old slots, read as `WireVertex.fromBlockEntityTag` reads them. It
+reports the wire ends whose far end does not point back, which the wire graph of the backport cuts at
+its first check. With a saved graph it compares `data/createaddition_wires.dat` with the world in
+three lists. A difference is a position that the graph and a block entity both hold with other
+wires, or a graph vertex whose full chunk holds no wire node. Nodes that the graph has not discovered
+yet, because nobody loaded their chunk and no wire reached them since the upgrade, are listed apart
+and are no difference. Vertices in chunks that the scan could not read or that are not full count as
+unchecked. With `--json` it writes the node lists, and `--compare` lists every node whose wires
+changed since such a file.
 
 ```sh
 tools/wire_scan.py world --json /tmp/wires-before.json

@@ -1,0 +1,69 @@
+{
+ "_about": "Items deferred while porting earlier bundles of the Create Crafts & Additions backport. Later porters and the release: grep this file for your bundle name or feature id and pick up what was handed to you. The plan is in createaddition-backport-inventory.json, the docs in okf/modpack/createaddition-backport.md.",
+ "bundles": {
+  "cca-wiregraph": [
+   {
+    "bundle": "cca-wiregraph",
+    "to": "cca-pack-release",
+    "ids": [
+     "wiregraph-live-world-migration",
+     "wiregraph-core"
+    ],
+    "status": "Ported, live world test open",
+    "deferred": [
+     "Live world copy: on a copy of the live world with every dimension (Mac mini), run tools/wire_scan.py <world> --json before.json with 1.3.3 still in place. Count the one sided wire ends of that scan before the deploy, because the first graph check of the fork cuts them without a drop.",
+     "Boot the copy with the release jar and skytekx-compat 2.1.6 on the production Arclight jar. Run cca_wires stats and cca_wires verify in every dimension that holds wires (execute in for all but the Overworld). The boot must keep the boot baseline.",
+     "Run Chunky with radius 500 around the largest wire network of the copy and check that the flow holds and that the log stays clean, since WireGraphVerifier reads unloaded chunks through chunkMap.read and IOWorker.loadAsync while Chunky queues its own chunk IO.",
+     "Toggle a redstone relay while its chunk and the chunks around it are unloaded: unpowered no energy crosses it, powered again the flow resumes.",
+     "Restart the copy, run cca_wires verify again, stop it and run tools/wire_scan.py <world> --compare before.json. Pass: 0 differences (0 differ, 0 gone) in every dimension. Nodes not yet discovered by the graph and unchecked vertices are no fault. The compare list must hold only the one sided wire ends of the first scan.",
+     "Repeat the boot, the verify and the scan with skytekx-compat 2.1.3. Both versions must give the same graph, since 2.1.6 hands out a copy of the queued tag and 2.1.3 does not (okf/server/logs-and-crashes.md).",
+     "Round trip: boot the copy once with 1.3.3 after the fork boot, break a connector there, then boot the fork again. The verifier must drop the stale vertex at load (7eb20d9), and the 11 new config keys come back with their defaults.",
+     "Node0..node7 format: reading wire nodes in the old format through WireVertex.fromBlockEntityTag was not tested, because a loaded block entity converts them at once. If the live world copy holds any (wire_scan.py counts them), check that they match after the upgrade.",
+     "Keep the status cell of the connector rework on okf/modpack/createaddition-backport.md at 'Ported, live world test open' until every step above has passed."
+    ]
+   },
+   {
+    "bundle": "cca-wiregraph",
+    "to": "cca-pack-release",
+    "ids": [
+     "connector-wire-render-culling",
+     "connector-shears-cut-wires",
+     "festive-wire-low-current",
+     "wiregraph-command"
+    ],
+    "status": "Ported, client checks open",
+    "deferred": [
+     "Render culling, on a pack client with Embeddium, Oculus and EntityCulling: a 32 block wire whose connector is off screen or behind a wall stays drawn, a far end in a chunk the client has not loaded, the F3+B boxes, and the box of the wire held in hand (HeldWireBounds).",
+     "EntityCulling runs its own block entity occlusion culling and may still hide a long wire while the connector block itself is occluded. If wires vanish behind occluders, add createaddition:connector, createaddition:small_light_connector, createaddition:large_connector and createaddition:redstone_relay to the blockEntityWhitelist of EntityCulling in config/entityculling.json and ship that file as an override, since the repository holds no EntityCulling config yet.",
+     "Shears on a connector with 4 wires drop 4 wire items in survival and nothing in creative mode, and each far end lets go of its wire.",
+     "A festive spool between two large connectors shows the red message that it requires a high current wire, and no wire is made.",
+     "The command /cca_wires refuses a player without op level 2. Over RCON it was tested in the Overworld, the Nether and the End only. Run stats in the Skylands and the Twilight Forest with execute in."
+    ]
+   },
+   {
+    "bundle": "cca-wiregraph",
+    "to": "cca-pack-release",
+    "ids": [
+     "connector-external-cap-recheck"
+    ],
+    "status": "Ported, retry not seen firing",
+    "deferred": [
+     "The planned chunk border test cannot be built on Forge 1.20.1: a ticking connector's neighbour is always in a chunk at full ticket level and getBlockEntity waits for it. Only the normal path (energy flows) was verified. Watch for a connector next to a machine whose capability is late after a restart of the live world copy."
+    ]
+   },
+   {
+    "bundle": "cca-wiregraph",
+    "to": "cca-pack-release",
+    "ids": [
+     "wiregraph-core"
+    ],
+    "status": "Optional review notes",
+    "deferred": [
+     "WireGraphVerifier: isReadable() checks tag.contains(\"block_entities\") and blockEntity() fetches the list again later. A concurrent put of __context that resizes the map could make the second lookup empty and markMissing a real node. All 83 full chunks of the full pack Arclight test world have exactly 20 top level keys, so the resize threshold of 24 is not crossed. Optional: take the ListTag once in SavedChunk or isReadable and reuse it, and only markMissing when the saved section block state at the position is not a CC&A wire node block.",
+     "AbstractConnectorBlockEntity: as in upstream 1.7.2, a wire end stays stale on B when its partner A was removed by a non player (drill, explosion or contraption) while B was unloaded and A dropped the wire. Breaking B before the graph prunes that end drops the wire a second time (playerWillDestroy and dropWires, or remove()). No practical exploit was found. Optional: prune the slots whose partner is in missing in onNodeLoaded, or skip the drop in remove() and dropWires for a slot whose far end the graph has confirmed gone.",
+     "The status row of cca-wiregraph on okf/modpack/createaddition-backport.md lists the integrated commits. Renumber the UPSTREAM.md Source changes items and the NOTICE summary if later bundles append items."
+    ]
+   }
+  ]
+ }
+}

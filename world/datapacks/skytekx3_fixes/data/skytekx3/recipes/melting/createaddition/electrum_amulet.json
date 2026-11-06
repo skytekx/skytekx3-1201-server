@@ -11,14 +11,18 @@
   },
   "result": {
     "tag": "forge:molten_electrum",
-    "amount": 405
+    "amount": 315
   },
   "byproducts": [
     {
-      "fluid": "tconstruct:molten_emerald",
+      "fluid": "tconstruct:molten_diamond",
       "amount": 100
+    },
+    {
+      "tag": "forge:molten_zinc",
+      "amount": 90
     }
   ],
   "temperature": 760,
-  "time": 125
+  "time": 110
 }

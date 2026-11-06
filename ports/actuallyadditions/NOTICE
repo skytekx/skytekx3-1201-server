@@ -187,6 +187,9 @@ Modifications
       composted.
     * Tiny Torch: it gives light level 12, has no collision, and a click on the bottom face of a
       block places it standing instead of throwing an error.
+    * Black quartz ore: it generates in the stone and deepslate of the Overworld between Y -25
+      and 45, as on upstream's main branch, unless generateQuartz is off, and drops black quartz
+      unless mined with silk touch.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

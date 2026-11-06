@@ -1671,3 +1671,29 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     is now built from every direction but down, the same five values as before. Savegame: the new
     property is additive. A crop of an older world has no saved `persistent`, loads with its age
     and `false` and behaves as before. The Tiny Torch keeps its five facings.
+55. Black quartz ore: the base generates nothing, as `mod/gen/AAWorldGen.java` is commented out
+    in full. The ore generates as on `main` (`02422d65`, `97c7a969`, `ec4b79ff`). The configured
+    feature `actuallyadditions:ore_black_quartz` is a `minecraft:ore` of size 6 with no discard
+    chance, whose two targets `minecraft:stone_ore_replaceables` and
+    `minecraft:deepslate_ore_replaceables` both place `black_quartz_ore`, since no deepslate
+    variant exists. The placed feature of the same id has a count of 8, `in_square`, a trapezoid
+    height range from Y -25 to 45 and the `minecraft:biome` filter, which keeps each placement in
+    the biomes that the modifier gave the feature to. The new classes `ActuallyConfiguredFeatures`,
+    `ActuallyPlacedFeatures` and `ActuallyBiomeModifiers` feed the `DatapackBuiltinEntriesProvider`,
+    and the record `gen/modifier/BoolConfigFeatureBiomeModifier` adds its features in the phase
+    `ADD` when the named switch of the common config is on. Its serializer
+    `actuallyadditions:bool_config_feature_modifier` is a plain `Codec` in
+    `ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS`, as Forge 47 wants it (`main` registers a
+    `MapCodec`), and the modifier `add_black_quartz` lands in
+    `data/actuallyadditions/forge/biome_modifier/` instead of `neoforge/biome_modifier/`. It names
+    `#minecraft:is_overworld` and the switch `generateQuartz` of source change 6. The three
+    generated files match those of `main` at `cd9d9c6` byte for byte. The condition codec
+    `bool_config_condition` that `main` registers in the same class is a NeoForge recipe
+    condition, and the base already has its Forge 47 form. In the SkyTekx Skylands the void
+    columns carry the biome `skytekx3:sky_void`, which no overworld tag lists (only
+    `#skytekx3:has_structure/sky_floaters` and two Dungeons Arise tags name it, see
+    `skylands-datapack/data/`), so the biome filter drops every placement there, and the 14 island
+    biomes that `skylands-datapack/data/minecraft/tags/worldgen/biome/is_overworld.json` adds get
+    the ore. The ore drops black quartz with the ore fortune bonus and itself with silk touch
+    (`abbc1ae9`, `005b3ccc`, ticked in `port.MD` as upstream did). The base dropped the ore block,
+    marked as temporary. Savegame: the world generation only reaches chunks that do not exist yet.

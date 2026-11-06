@@ -1,0 +1,45 @@
+package de.ellpeck.actuallyadditions.mod.gen;
+
+import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+
+import java.util.List;
+
+// SkyTekx: the placed features of main (upstream 02422d65, 97c7a969, ec4b79ff), written by the data
+// generator into data/actuallyadditions/worldgen/placed_feature/. Every list ends in the biome filter, which
+// keeps a placement inside the biomes that a biome modifier gave the feature to
+public class ActuallyPlacedFeatures {
+	public static final ResourceKey<PlacedFeature> PLACED_ORE_BLACK_QUARTZ = createKey("ore_black_quartz");
+
+	public static void bootstrap(BootstapContext<PlacedFeature> context) {
+		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
+
+		PlacementUtils.register(context, PLACED_ORE_BLACK_QUARTZ, holdergetter.getOrThrow(ActuallyConfiguredFeatures.ORE_BLACK_QUARTZ),
+				commonOrePlacement(8, HeightRangePlacement.triangle(VerticalAnchor.absolute(-25), VerticalAnchor.absolute(45))));
+	}
+
+	private static List<PlacementModifier> orePlacement(PlacementModifier modifier, PlacementModifier modifier1) {
+		return List.of(modifier, InSquarePlacement.spread(), modifier1, BiomeFilter.biome());
+	}
+
+	private static List<PlacementModifier> commonOrePlacement(int count, PlacementModifier modifier) {
+		return orePlacement(CountPlacement.of(count), modifier);
+	}
+
+	private static ResourceKey<PlacedFeature> createKey(String name) {
+		return ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(ActuallyAdditions.MODID, name));
+	}
+}

@@ -25,6 +25,7 @@ import de.ellpeck.actuallyadditions.mod.entity.EntityWorm;
 import de.ellpeck.actuallyadditions.mod.entity.InitEntities;
 import de.ellpeck.actuallyadditions.mod.event.CommonEvents;
 import de.ellpeck.actuallyadditions.mod.fluids.InitFluids;
+import de.ellpeck.actuallyadditions.mod.gen.ActuallyBiomeModifiers;
 import de.ellpeck.actuallyadditions.mod.inventory.ActuallyContainers;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.items.Worm;
@@ -98,6 +99,8 @@ public class ActuallyAdditions {
         ENTITIES.register(eventBus);
         eventBus.addListener(this::onConfigReload);
         ActuallyParticles.init(eventBus);
+        // SkyTekx: the serializer of the biome modifiers of upstream 02422d65
+        ActuallyBiomeModifiers.init(eventBus);
         ActuallyTags.init();
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarted);

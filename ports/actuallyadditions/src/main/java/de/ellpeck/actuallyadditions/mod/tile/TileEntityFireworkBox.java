@@ -91,62 +91,104 @@ public class TileEntityFireworkBox extends TileEntityBase implements IEnergyDisp
         this.storage.readFromNBT(compound);
 
         if (type != NBTType.SAVE_BLOCK) {
-            this.intValuePlay = compound.getInt("Play");
-            this.chargeAmount = compound.getInt("ChargeAmount");
-            this.flightTime = compound.getInt("FlightTime");
-            this.trailOrFlickerChance = compound.getFloat("TrailFlickerChance");
-            this.flickerChance = compound.getFloat("FlickerChance");
-            this.colorAmount = compound.getInt("ColorAmount");
-            this.typeChance0 = compound.getFloat("TypeChance0");
-            this.typeChance1 = compound.getFloat("TypeChance1");
-            this.typeChance2 = compound.getFloat("TypeChance2");
-            this.typeChance3 = compound.getFloat("TypeChance3");
-            this.typeChance4 = compound.getFloat("TypeChance4");
-            this.areaOfEffect = compound.getInt("Area");
+            // SkyTekx: clamped like the numbers of the screen, so that a box that already holds
+            // bad values, or a crafted save, cannot crash its tick after a restart
+            this.intValuePlay = clampPlay(compound.getInt("Play"));
+            this.chargeAmount = clampChargeAmount(compound.getInt("ChargeAmount"));
+            this.flightTime = clampFlightTime(compound.getInt("FlightTime"));
+            this.trailOrFlickerChance = clampChance(compound.getFloat("TrailFlickerChance"));
+            this.flickerChance = clampChance(compound.getFloat("FlickerChance"));
+            this.colorAmount = clampColorAmount(compound.getInt("ColorAmount"));
+            this.typeChance0 = clampChance(compound.getFloat("TypeChance0"));
+            this.typeChance1 = clampChance(compound.getFloat("TypeChance1"));
+            this.typeChance2 = clampChance(compound.getFloat("TypeChance2"));
+            this.typeChance3 = clampChance(compound.getFloat("TypeChance3"));
+            this.typeChance4 = clampChance(compound.getFloat("TypeChance4"));
+            this.areaOfEffect = clampArea(compound.getInt("Area"));
         }
+    }
+
+    // SkyTekx: the ranges of the sliders of GuiFireworkBox on upstream main. The base and main
+    // stored any number the client sent. A type chance of -1 made Weight.of throw in
+    // getRandomType ("Weight should be >= 0"), and a Value Play of 2e9 overflowed the bound of
+    // Mth.nextInt in getRandomWithPlay, both inside the tick of the block entity. The values are
+    // saved, so the box crashed the world again after every restart
+    private static int clampPlay(double value) {
+        return clampInt(value, 0, 5);
+    }
+
+    private static int clampChargeAmount(double value) {
+        return clampInt(value, 1, 4);
+    }
+
+    private static int clampFlightTime(double value) {
+        return clampInt(value, 1, 3);
+    }
+
+    private static int clampColorAmount(double value) {
+        return clampInt(value, 1, 6);
+    }
+
+    private static int clampArea(double value) {
+        return clampInt(value, 0, 4);
+    }
+
+    private static int clampInt(double value, int min, int max) {
+        // The cast saturates at the int range, and a NaN casts to 0
+        return Mth.clamp((int) value, min, max);
+    }
+
+    private static float clampChance(double value) {
+        // A NaN fails both comparisons and becomes 0
+        return value >= 0.0D ? (value <= 1.0D ? (float) value : 1.0F) : 0.0F;
     }
 
     @Override
     public void onNumberReceived(double number, int id, Player player) {
         switch (id) {
             case 0:
-                this.intValuePlay = (int) number;
+                this.intValuePlay = clampPlay(number);
                 break;
             case 1:
-                this.chargeAmount = (int) number;
+                this.chargeAmount = clampChargeAmount(number);
                 break;
             case 2:
-                this.flightTime = (int) number;
+                this.flightTime = clampFlightTime(number);
                 break;
             case 3:
-                this.trailOrFlickerChance = (float) number;
+                this.trailOrFlickerChance = clampChance(number);
                 break;
             case 4:
-                this.flickerChance = (float) number;
+                this.flickerChance = clampChance(number);
                 break;
             case 5:
-                this.colorAmount = (int) number;
+                this.colorAmount = clampColorAmount(number);
                 break;
             case 6:
-                this.typeChance0 = (float) number;
+                this.typeChance0 = clampChance(number);
                 break;
             case 7:
-                this.typeChance1 = (float) number;
+                this.typeChance1 = clampChance(number);
                 break;
             case 8:
-                this.typeChance2 = (float) number;
+                this.typeChance2 = clampChance(number);
                 break;
             case 9:
-                this.typeChance3 = (float) number;
+                this.typeChance3 = clampChance(number);
                 break;
             case 10:
-                this.typeChance4 = (float) number;
+                this.typeChance4 = clampChance(number);
                 break;
             case 11:
-                this.areaOfEffect = (int) number;
+                this.areaOfEffect = clampArea(number);
                 break;
+            default:
+                // SkyTekx: an unknown id changes nothing, so there is nothing to save or send
+                return;
         }
 
+        // SkyTekx: marks the chunk for saving, as upstream main does
+        this.setChanged();
         this.sendUpdate();
     }
 

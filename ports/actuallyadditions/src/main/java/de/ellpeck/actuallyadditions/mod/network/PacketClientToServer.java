@@ -65,7 +65,7 @@ public class PacketClientToServer {
         } else if (message.data == null) {
             PacketHandler.warnDropped(sender, "serverbound", "it carries no data for the handler index " + message.handlerId);
         } else {
-            PacketHandler.enqueueLogged(context, () -> message.handler.handleData(message.data, context),
+            PacketHandler.enqueueLogged(context, () -> message.handler.handleData(message.data, context), sender,
                 () -> "serverbound handler " + message.handlerId + " for " + PacketHandler.describe(sender));
         }
         context.setPacketHandled(true);

@@ -277,6 +277,38 @@ public final class AADevTestClient {
             this.command("data get block " + pos(this.farCrusher) + " IsAutoSplit");
             this.command("execute in minecraft:the_nether run data get block " + pos(this.nearCrusher) + " IsAutoSplit");
         });
+        // Finite numbers out of the slider ranges. Without the clamps of the firework box a type
+        // chance of -1 makes Weight.of throw at the next shot, and a Value Play of 2e9 overflows
+        // the bound of Mth.nextInt, both a ticking block entity crash. Expected: no WARN, Play 5,
+        // TypeChance0 0, and the box fires (its energy drops below 1000)
+        this.step("firework box: out of range numbers on a powered box", 130, () -> {
+            String dimension = player().level().dimension().location().toString();
+            int me = player().getId();
+            this.backToOrigin();
+            CompoundTag chance = gui(this.fireworkBox, dimension, me, 0);
+            chance.putInt("NumberID", 6);
+            chance.putDouble("Number", -1.0D);
+            this.sendServerbound("type chance -1 to the firework box", NUMBER_TO_TILE, chance);
+            CompoundTag play = gui(this.fireworkBox, dimension, me, 0);
+            play.putInt("NumberID", 0);
+            play.putDouble("Number", 2.0E9D);
+            this.sendServerbound("value play 2e9 to the firework box", NUMBER_TO_TILE, play);
+            // Energy for two shots: the box fires every 100 ticks while it holds 500 CF
+            this.command("data merge block " + pos(this.fireworkBox) + " {Energy:1000}");
+        });
+        this.step("firework box: after the next shot", 20, () -> {
+            this.command("data get block " + pos(this.fireworkBox) + " Play");
+            this.command("data get block " + pos(this.fireworkBox) + " TypeChance0");
+            this.command("data get block " + pos(this.fireworkBox) + " Energy");
+        });
+        // The WARN limit of PacketHandler: 30 more dropped packets within the minute of the ones
+        // above. Expected: WARN lines up to 20 for this sender in the window, then one line that
+        // the rest is suppressed, and the server keeps running
+        this.step("packet flood: 30 packets with an unknown handler index", 20, () -> {
+            for (int i = 0; i < 30; i++) {
+                this.sendServerbound("flood " + i, 99, new CompoundTag());
+            }
+        });
     }
 
     private static CompoundTag gui(BlockPos pos, String world, int playerId, int button) {

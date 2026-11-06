@@ -469,13 +469,16 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     client overwrite the booklet data of any online player by UUID, and `main` reads nothing from it
     any more). A failing handler logs a WARN that names the player instead of vanishing in the
     future of `enqueueWork` (`main` disconnects the player instead). Each dropped packet logs one
-    WARN line that names the sender. The `PROTOCOL_VERSION` of the channel `actuallyadditions:main`
-    goes from 4 to 5, so a client of the base is refused at login. Of `9d166ac9` only the split of
-    client and server handlers is taken, its typed payloads are not ported. The value clamps of the
-    reactors stay with their features: the firework box ranges
-    (`TileEntityFireworkBox.onNumberReceived`) and the lower bound of the button id of the XP
-    Solidifier (`TileEntityXPSolidifier.java:208`). The Vertical Digger, the Ranged Collector and
-    the sack menu already ignore unknown button ids. Later handlers (the hotkey of the Crafter on a
+    WARN line that names the sender, within the limit per sender of source change 17. The
+    `PROTOCOL_VERSION` of the channel `actuallyadditions:main` goes from 4 to 5, so a client of the
+    base is refused at login. That rests on the version check of Forge's `SimpleChannel`
+    (`PROTOCOL_VERSION::equals` on both sides), and nobody has logged in with a stock 1.1.52 client
+    yet, so the clean mismatch disconnect is not verified. Of `9d166ac9` only the split of client
+    and server handlers is taken, its typed payloads are not ported. The firework box clamps its
+    numbers itself since source change 17, because a finite number out of range crashed its tick.
+    The lower bound of the button id of the XP Solidifier stays with that feature
+    (`TileEntityXPSolidifier.java:208`). The Vertical Digger, the Ranged Collector and the sack menu
+    already ignore unknown button ids. Later handlers (the hotkey of the Crafter on a
     Stick, the Item Tag filter) go through `addServerbound` without another protocol bump, since no
     build ships in between. The dev only test mod `aadevtest` in `src/devtest` (a source set that
     only the client dev run loads, the jar task packs `sourceSets.main` alone) drives these tests
@@ -547,3 +550,36 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     world with the jar of this change: the crusher held 4180 CF that only the network could have
     brought, and the save still held the network. A player entry that the jar of this change wrote
     holds `BookGotten`, `HasBatWings` and `BatWingsFlyTime` and no booklet keys.
+17. Review fixes of the server safety bundle: the review found that one finite number packet still
+    crashed the server through the Firework Box. `onNumberReceived` stored any number, so a type
+    chance of minus 1 made `Weight.of` throw "Weight should be >= 0" in `getRandomType`, and a Value
+    Play of 2e9 overflowed the bound of `Mth.nextInt` in `getRandomWithPlay`. Both throw in the tick
+    of the block entity or in a neighbour update, and since the box saves the values as `Play` and
+    `TypeChance0` to `TypeChance4`, the world crashed again after every restart. Upstream `main`
+    clamps nothing either (`TileEntityFireworkBox.onNumberReceived`). The box now clamps every
+    number to the slider ranges of `main`'s `GuiFireworkBox` (lines 48 to 61): Value Play 0 to 5,
+    charge amount 1 to 4, flight time 1 to 3, color amount 1 to 6, area 0 to 4 and the seven
+    chances 0 to 1. An unknown id changes nothing, and a change calls `setChanged` before
+    `sendUpdate` as on `main`. `readSyncableNBT` applies the same clamps, so a box that already
+    holds bad values or a crafted save loads safely, and the NBT keys stay the same. The WARN lines
+    of source change 14 had no limit, so a modified client could fill the log and the disk, since
+    neither the pack nor Arclight limits the packet rate. `PacketHandler` now logs at most 20 WARN
+    lines per sender in 60 seconds, then one line that the rest is suppressed and, with the next
+    WARN after the window, one line with their count. The Item Laser Relay puts its two compass
+    lines on one line with a separator, as upstream `cf0349b1` does, because `LaserRelayHud` draws
+    the text with one `drawString` call. On the client only the sync packet of the local player keys
+    the client copy of the player data (`PlayerData.getClientData`), and any other player of the
+    client level gets a throwaway `PlayerSave`, so a remote player in a tick event cannot replace
+    the synced bat wings state once that tick is enabled. The test mod sends a type chance of
+    minus 1 and a Value Play of 2e9 to a Firework Box with 1000 CF, reads the stored values after
+    its next shot, and then sends 30 packets with the unknown handler index 99.
+    The test mod ran against the jar of this change (SHA-1 `3855717cd50ea85d3e11971532235d93d5e3832f`,
+    4616133 bytes, two builds) on a dedicated Forge 47.4.18 server and on the pack's Arclight
+    safeiter2, with the mods of source change 16. On both
+    the box held `Play` 5 and `TypeChance0` 0.0 after the two packets, fired at its next shot (its
+    energy went from 1000 to 500 CF), logged no WARN for the two numbers and kept running. On
+    Arclight the 30 flood packets after the 16 WARN lines of the other crafted packets gave 4 more
+    WARN lines and one line that the rest is suppressed (the Forge run predates the flood case). The
+    other results match source change 16: 122 of the 125 blocks and all 107 items ran with no ERROR
+    line and no crash on the server, the client got its player data at login, and every machine
+    screen that opened was closed by the server 10 blocks away (21 on Forge, 22 on Arclight).

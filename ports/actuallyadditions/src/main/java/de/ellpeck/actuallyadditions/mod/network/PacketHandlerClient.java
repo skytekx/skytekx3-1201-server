@@ -65,7 +65,7 @@ public final class PacketHandlerClient {
         Player player = Minecraft.getInstance().player;
 
         if (player != null) {
-            PlayerData.getDataFromPlayer(player).readFromNBT(dataTag, false);
+            PlayerData.getClientData(player.getUUID()).readFromNBT(dataTag, false);
 
             if (compound.getBoolean("Log")) {
                 ActuallyAdditions.LOGGER.info("Receiving (new or changed) Player Data for player " + player.getName() + ".");

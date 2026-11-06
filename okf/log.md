@@ -903,7 +903,8 @@ logs stay on the Mac and are not in the repo.
   since 70f7684, see [Mod set](modpack/mod-set.md#bundled-jars) and [KubeJS](modpack/kubejs.md).
 - The full pack with all of it booted on Arclight in a test copy with 0 FATAL lines and the same 3
   ERROR lines as before the wave, see [Mod set](modpack/mod-set.md#bundled-jars). The server's
-  `mods/` gets the new jars only with the deploy of 3.1.3.
+  `mods/` gets the new jars only with the deploy of the next pack after 3.1.3, since 3.1.3 went live
+  without them.
 - The review of the wave found four more gaps, fixed in 97ad92a to ab581fd. The fixes datapack gives
   the Energizer Active FE Power Port of Extreme Reactors 2.0.97 the loot table that the jar lacks, see
   [Boot fixes](content/boot-fixes.md#gameplay-overrides). The license file of Extreme Reactors 2 carries

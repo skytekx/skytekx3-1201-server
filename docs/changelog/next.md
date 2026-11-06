@@ -41,6 +41,27 @@
 - The wired charger only charges items while it has power. Before, a charger with a capacitor filled
   items for free.
 
+## Create Crafts & Additions
+- Create Crafts & Additions is now a SkyTekx build, 1.20.1-1.7.3-skytekx.1, with the fixes and
+  content of the newer 1.7 line on top of the old version. Your machines, wires and items stay as
+  they are.
+- New blocks: the Electric Pump, a fluid pump that runs on FE, and the Electric Servo Motor, which
+  turns a contraption to an angle set by redstone and works as a CC:Tweaked peripheral.
+- Wires and redstone relays now carry energy across unloaded chunks, and shears cut all wires of a
+  connector at once. Festive wire no longer joins two large connectors.
+- The Tesla Coil can charge items in a Sequenced Assembly, turns gold items into electrum and
+  Create's copper tiles back towards plain copper, and glows while powered.
+- The alternator takes a shaft on both sides, the Capacitor stores FE, and the Electrum Amulet now
+  charges the FE item in your other hand instead of giving Luck and Speed. Every charge shocks you
+  for two seconds.
+- Fire spreads over oils and fuels such as seed oil, bioethanol and crude oil.
+- Goggles show the burn time of the Liquid Blaze Burner and the charge time of the Tesla Coil,
+  tooltips show stress values, and the Rolling Mill rolls paper into straw. New ponders explain the
+  pump, the servo and the connectors.
+- Fixed: the Modular Accumulator crash, long wires that vanished off screen, mined Electrum Blocks
+  that dropped nothing, barbed wire that could not be waterlogged or wrenched, and missing death
+  messages.
+
 ## On an existing world
 - The structures, blocks and bastions of Bygone Nether only appear in Nether chunks that nobody has
   visited yet, so look beyond the explored area.
@@ -48,3 +69,10 @@
 - The salt of Expanded Delight and of Pam's HarvestCraft unifies to the Mekanism salt.
 - Server and client need all six mods, and the pack brings them. Joining with an older pack fails.
 - Ender IO also needs the same build on server and client, and the pack brings it.
+- Create Crafts & Additions also needs the same build on server and client, and the pack brings it.
+- An alternator with a shaft of another machine behind it joins that machine's network at the
+  update. Check alternators whose back touches a shaft, because a speed clash breaks a block.
+- Powered Tesla Coils now change gold items and Create's copper tiles that pass under them. Check
+  belt and depot lines that carry these items under a coil.
+- A wire that only one of its two connectors still knew about is removed at the update. Reconnect
+  it with a spool.

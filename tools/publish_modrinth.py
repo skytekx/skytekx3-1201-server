@@ -8,9 +8,12 @@ The token can also come as the first argument, but then other local users can re
 
 Before any network call it checks the .mrpack it would upload: the file exists, its index has this
 VERSION, and every jar inside it has a modrinth-permissions/<jar>.md with Status OK
-(tools/mrpack_permissions.py). The version changelog is read from docs/changelog/<VERSION>.md, which
-must exist and not be empty, so a VERSION bump cannot reuse an old changelog. A failed check stops the
-dry run too; there is no override. The dry run prints the changelog it would send.
+(tools/mrpack_permissions.py). Every jar that local-mods/ names by a pointer file instead of holding
+it (tools/fetch_local_mods.py) must be inside it, with the size and SHA-1 of the pointer unless
+PACK_RULES of tools/patch_mods.py patch it for the pack. The version changelog is read from
+docs/changelog/<VERSION>.md, which must exist and not be empty, so a VERSION bump cannot reuse an old
+changelog. A failed check stops the dry run too; there is no override. The dry run prints the
+changelog it would send.
 
 The CC BY-NC-SA parts of the bundled Ender IO and of the Twilight Forest fork allow no commercial use,
 and Modrinth creates every project as monetized. So --go switches the project to demonetized through
@@ -20,7 +23,9 @@ reports demonetized or force-demonetized. The dry run only warns, it changes not
 import hashlib, json, os, sys, mimetypes, urllib.request, urllib.error, uuid, zipfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fetch_local_mods
 import mrpack_permissions
+import patch_mods
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 PAT = os.environ.get("MODRINTH_TOKEN") or (args[0] if args else None)
@@ -41,6 +46,25 @@ BODY = open(REPO+"/docs/MODPACK_DESCRIPTION.md").read()
 SUMMARY = open(REPO+"/docs/MODPACK_SUMMARY.txt").read().strip()   # Modrinth allows 256 characters
 assert len(SUMMARY) <= 256 and "<!--" not in BODY, "summary too long or a comment left in the body"
 
+def pointer_problems(z):
+    """Problems of the jars that local-mods/ names by a pointer file, in the open .mrpack `z`: each one
+    must ship in overrides/mods/, unpatched with the size and SHA-1 of its pointer."""
+    problems = []
+    try:
+        pointers = fetch_local_mods.read_dir(os.path.join(REPO, "local-mods"))
+    except fetch_local_mods.PointerError as e:
+        return [f"local-mods/ pointer {e}"]
+    names = set(z.namelist())
+    for p in pointers:
+        shipped = "overrides/mods/" + patch_mods.pack_jar_name(p["file"])
+        if shipped not in names:
+            problems.append(f"{p['file']}, named by its pointer in local-mods/, is not at {shipped}")
+        elif shipped == "overrides/mods/" + p["file"]:
+            why = fetch_local_mods.problem(p, z.read(shipped))
+            if why:
+                problems.append(f"{shipped} has {why}")
+    return problems
+
 def preflight():
     """Check the .mrpack itself (not local-mods/), so an old or hand-made file is caught too."""
     if not os.path.exists(MRPACK):
@@ -50,9 +74,9 @@ def preflight():
             idx = json.loads(z.read("modrinth.index.json"))
             jars = mrpack_permissions.mrpack_jars(z)
             jar_data = mrpack_permissions.mrpack_jar_data(z, REPO)
+            problems = pointer_problems(z)
     except (zipfile.BadZipFile, KeyError, ValueError) as e:
         sys.exit(f"{MRPACK} is not a readable .mrpack: {e}")
-    problems = []
     if idx.get("versionId") != VERSION:
         problems.append(f"its modrinth.index.json has versionId {idx.get('versionId')!r}, not {VERSION!r}")
     for jar, why in mrpack_permissions.check(REPO, jars, jar_data):

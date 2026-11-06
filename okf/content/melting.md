@@ -329,15 +329,19 @@ accessor `getRecipes()` to the recipe manager that returns the map of recipes by
 So `createaddition` keeps 24 files in each case, `twilightforest` has 20 without Molten and 29 with it, and the
 folder holds 9,526 files. With the electrum rod the rod of Thermal Extra stops melting as well, since it melted only
 through the tag `forge:rods/electrum` of the generated recipe. The audit of the generated recipes of the run finds
-no dupe in either case. Nobody has melted the changed items in a melter yet.
+no dupe in either case. A second Forge boot at 20:47, of the tree with these files, reached Done with 0 FATAL lines,
+no crash and the 3 accepted ERROR lines of a test copy, and no line of its log names a generated recipe. Its dump
+held 8,317 generated recipes, one fewer than the 8,318 of the first, and gave the same 9,701 files again. Nobody has
+melted the changed items in a melter yet.
 
 The rest of the run stays out of the folder until the full regeneration for the mods of the branch has a review of
-its own. It gave 9,701 files: 178 new ones, 129 of them for Actually Additions, and 15 files of other mods that gain
-glass through dragon's breath, which Create: Dragons Plus fills into a glass bottle. It also
-dropped the melon juice of Farmer's Delight, which the juicer of Expanded Delight makes with the glass bottle in its
-`container` key, and the reader counts that key as nothing (`QUIET_KEYS` in `gen_melting.py`). The audit of the run found three new dupes: the
-crusher of Actually Additions grinds an iron, golden or diamond horse armor into six raw iron, raw gold or diamonds,
-and a horse armor takes four ingots or diamonds in the pack. The run exited with status 1 for them.
+its own. It gave 9,701 files. Against the folder that is 176 more, 129 of them for Actually Additions, and 15 changed
+files of other mods that gain glass through dragon's breath, which Create: Dragons Plus fills into a glass bottle.
+The run also drops the melon juice of Farmer's Delight, which the juicer of Expanded Delight makes with the glass
+bottle in its `container` key, a key that the reader counts as nothing (`QUIET_KEYS` in `gen_melting.py`). On the
+second dump, `gen_melting.py --check` names these 192 files. The audit of the run found three new dupes: the crusher
+of Actually Additions grinds an iron, golden or diamond horse armor into six raw iron, raw gold or diamonds, and a
+horse armor takes four ingots or diamonds in the pack. The run exited with status 1 for them.
 
 ## Counts per mod
 

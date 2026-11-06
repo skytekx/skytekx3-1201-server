@@ -994,5 +994,20 @@ logs stay on the Mac and are not in the repo.
   pack goes up before a pack client has joined a test server with it, see
   [Open items](open-items.md).
 
+## 2026-11-06: Actually Additions fix build
+
+- The release audit found that a wild crop kept its `persistent` flag after a right click harvest
+  only until its first growth step, and then popped off its grass at the next neighbour update
+  (finding aa-fid-1). Since 56b7ffa the crop carries the flag through bone meal and random ticks.
+  The fix calls the growth methods of `CropBlock`, so the Bukkit grow event that Arclight fires
+  there still reaches plugins. The rebuilt jar keeps the version 1.1.52-skytekx.1 (be0192d, SHA-1
+  `b45fde952365db78ba57b68400643056647789e3`), see
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#fix-build).
+- The dev client passed every check with the new jar on a Forge test server and on the Arclight
+  test server, and the release jar failed the growth checks (110cd83). The link check finds no pack
+  jar that links the mod and 0 missing references of the fork. A full pack Forge boot of be0192d
+  reached `Done` with 0 FATAL lines, the same 3 ERROR lines as the release boot and no new log
+  signature against `actuallyadditions-forge` (2851c39).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

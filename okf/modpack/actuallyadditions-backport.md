@@ -140,8 +140,8 @@ Vertical Digger), 4eaaaab (the phantomfaces, the Player Interface and the booste
 Fluid Collector and the Fluid Placer), 68e1bd8 (the Farmer), 167c868 (the Atomic Reconstructor and
 the lenses), 693c527 (the Display Stand and the Empowerer) and 98711dd (the Greenhouse Glass), with
 the review fix cff2f92 (`UPSTREAM.md`, source changes 23 to 29). The processing machines bundle,
-written in parallel, numbers its source changes from 23 as well, so the later of the two merges
-renumbers them. The review found that the phantomface kept handing out the handlers of a target
+written in parallel, numbered its source changes from 23 as well, and its merge moved them to
+30 to 40. The review found that the phantomface kept handing out the handlers of a target
 block entity that was gone. No block entity of the mod invalidates its own handlers, so once the
 target was made anew at the same place, as after a chunk reload, an Energyface or a Liquiface
 drained the removed copy while the live one kept its energy or fluid. The face now remembers the
@@ -187,6 +187,51 @@ energy and relays bundle plans as well. That bundle builds on them and only adds
 the Arclight hardening, since the Phantom Breaker, the placers and the lenses still act as the
 shared fake player `[Minecraft]`.
 
+The processing machines bundle is done. Its eleven commits are 8a1ac46 (the crushers), d5d3bc1
+(the Powered Furnace), e09a6a6 (the Coal Generator fuels), 3751de6 (the Leaf-Eating Generator and
+the Bio Reactor), 7b3485e (the Coffee Maker and its data driven ingredients), 9c9a285 (the Canola
+Press and the Fermenting Barrel in JEI), 6b7355e (the Energizer and the Enervator), 6b7cd54 (the
+Experience Solidifier), 2eccd48 (the Firework Box screen), dc2cdbb (the Automatic Feeder) and
+2895da5 (the Lava Factory overlay), with the review fix 1205f84 (`UPSTREAM.md`, source changes 30
+to 40). Both machine bundles dropped `(wip)` labels in the same lines of `en_us.json`, and the
+merge keeps every label that either of them dropped. The review found that the crushing serializer
+refused a recipe with no result or more than two with an `IllegalStateException`, which the recipe
+manager of Forge 47 does not catch, so one such data pack recipe stopped a dedicated server at
+boot. It now throws a `JsonSyntaxException`, which the recipe manager logs and skips, as `main`
+does with the error of its result codec (bb84d539). The review also found that the Leaf-Eating
+Generator, which the bundle turned on, and the Heat Collector removed blocks with no event. Both
+now post the break event of the shared fake player first (see [Arclight notes](#arclight-notes)).
+The cheap notes of the review are in the same fix. The generator collects only the leaves of its
+cube, its area setting is a radius capped at 16, and coffee beans, tiny coal and tiny charcoal lose
+their `(wip)` label as on `main`. The API list `ActuallyAdditionsAPI.COFFEE_MACHINE_INGREDIENTS`
+now holds `CoffeeIngredientRecipe` objects, and `addCoffeeMachineIngredient` does nothing, both as
+on `main` (971fdd65). No pack mod uses the API, see the property table.
+
+The porter's test server ran the mod with Patchouli, Curios and JEI on Forge 47.4.18 by console
+(`bp2/actuallyadditions/srv-pm-final/` in the workflow scratchpad, script `pm-tools/pmtest.sh`). It
+reached `Done` with 0 FATAL and 0 ERROR lines. The Coal Generator burned a lava bucket, oak logs and
+tiny coal, both crushers crushed, the Coffee Maker brewed with milk, and the Automatic Feeder gave a
+comparator output (`srv-pm-final/console.log`). The integration ran three more boots with a test
+data pack that holds a crushing recipe with three results, one without a result and one with two
+(`bp2/actuallyadditions/pmint/`). With the porter's jar of the bundle before the merge and the
+review fix (SHA-1 `929763b159614a8d910c215df42ac98a9b18fcd5`) the server stopped at boot with
+"Failed to load datapacks, can't proceed with server load" (`old-console.log`). With the jar of
+1205f84 (SHA-1 `b1548fd464ec23a10139bac799eff6c099a43bc7`, 3073698 bytes, one build) it reached
+`Done`, logged the two parsing errors and crushed andesite with the recipe of two results. A
+Leaf-Eating Generator in 405 persistent oak leaves made 5100 CF in about 5 seconds
+(`new-latest.log`). With a test only mod that cancels every break event of a fake player it made 0
+CF and every leaf stayed (`cancel-latest.log`, source in `pmint/canceller-src/`). The three
+integration boots also logged the ERROR line of the flat test world without layers. The Heat
+Collector path was compiled but not run, since it removes a block at random once in 200 tries after
+1000 ticks. No boot of the bundle ran on Arclight. That AlmostUnified keeps the crushing outputs
+vanilla rests on `minecraft` leading its `modPriorities` (`config/almostunified/unify.json:3`), and
+no AlmostUnified boot checked it.
+
+Nobody has opened a client with this state either. The crusher, coffee and pressing categories of
+JEI, the fermenting arrow, the click areas, the firework sliders, the buttons of the Experience
+Solidifier, the armor and off hand slots of the Energizer and the Enervator and the Bio Reactor
+model in all four facings wait for the client test of the release.
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -196,7 +241,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Server safety (`aa-server-safety`) | Client classes out of common code, packet validation, menu validity with the drill upgrade dupe, player data sync | 18.5 | Baseline | Done in ebfb95b, 147d182, 95c3289 and 1f3efa5, review fix 3576f4c |
 | Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Done in 681664e, c1c79a0, 077c3cd and d4d05a7, review fix 655b320 |
 | Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Done in 76bcfa8, 2b2f447, 8adc613, 07cde77 and 4c4d0ca, review fixes cb89609 and f13045a |
-| Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Planned |
+| Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Done in 8a1ac46, d5d3bc1, e09a6a6, 3751de6, 7b3485e, 9c9a285, 6b7355e, 6b7cd54, 2eccd48, dc2cdbb and 2895da5, review fix 1205f84 |
 | World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Done in d884a85, 4eaaaab, 17f74f1, 68e1bd8, 167c868, 693c527 and 98711dd, review fix cff2f92 |
 | Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Planned |
 | Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Planned |
@@ -574,6 +619,12 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   serializers `bat_loot` and `dungeon_loot`, the point of interest and profession `engineer`, the
   ore and patch features with their biome modifiers and the house pool. Each spec lists its own
   under New ids.
+- A Double Crusher placed with the base jar saved a plain `actuallyadditions:crusher` block entity.
+  It loads with its items, but the chunk does not tick it and logs one WARN "invalid for ticking",
+  so it has to be broken and placed again (`UPSTREAM.md`, source change 30). The base gave the
+  Double Crusher no recipe, so only a creative world can hold one. The Coal Generator no longer
+  writes `currentRecipe` and ignores it on load, and the cup `coffee_cup` keeps its id and becomes a
+  stack of one (`UPSTREAM.md`, source changes 32 and 34).
 - Worldgen reaches new chunks only. The config files `actuallyadditions-common.toml` and, on the
   client, `actuallyadditions-client.toml` are new to the pack, so nothing needs a migration.
 
@@ -584,7 +635,12 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   lens and the mining lens change blocks without any event on `main` too. Since the world machines
   bundle, the Breaker, the Long-Range Breaker, the Vertical Digger and the Phantom Breaker post the
   break event of the shared fake player through the drop chance helper, while the lenses still post
-  nothing (`UPSTREAM.md`, source change 23). The port adds one fake player per level with the fixed
+  nothing (`UPSTREAM.md`, source change 23). Since the review fix 1205f84 of the processing machines
+  bundle, the Leaf-Eating Generator and the Heat Collector post the same event through
+  `WorldUtil.fireFakeBreakEvent` before they remove a leaf or a lava or magma block, and a refused
+  block stays. The generator then tries up to 8 of its shuffled leaves in one cycle, so next to a
+  claim it posts up to 8 events every 5 ticks (`mod/tile/TileEntityLeafGenerator.java`, lines 37 and
+  96, and `UPSTREAM.md`, source change 33). The port adds one fake player per level with the fixed
   profile `[ActuallyAdditions]`, posts `BlockEvent.BreakEvent` and `EntityPlaceEvent` for every
   machine break and placement and reverts on a cancel. Arclight 1.0.6 turns both into the Bukkit
   `BlockBreakEvent` and `BlockPlaceEvent` with the fake player (javap by the review on the
@@ -648,6 +704,29 @@ These differ from upstream on purpose and must survive the next upstream sync.
   client side toggle, the removal from the selected hotbar slot and the recursion.
 - The loot tables of the crystal clusters use the 1.20.1 form of the silk touch predicate and
   otherwise match `main` (`UPSTREAM.md`, source change 20).
+- Milk works again in the Coffee Maker. The two milk recipes carry the additive key
+  `"milk": true`, and the effects that the slots before the milk added lose one amplifier and gain
+  120 seconds, as the 1.12 `MilkIngredient` did. The JEI line
+  `jei.actuallyadditions.coffee.extra.milk` reads "+02:00, -1 Level". On `main` milk does nothing
+  and is never used up (`UPSTREAM.md`, source change 34).
+- The input slot of the Energizer and the Enervator holds one item, and the output takes a copy of
+  one. Copying the whole stack duplicated stacked energy items, and `main` still does that. Their
+  armor slots ask `ItemStack.canEquip`, where `main` takes any armor item in any of the four slots
+  (`UPSTREAM.md`, source change 36).
+- Shift click into the crushers, the Coffee Maker and the Canola Press predicts the move with the
+  recipes the client received, since only the server fills the recipe lists of the API. The screen
+  factory of the crushers builds the screen of the Double Crusher for it, so its JEI click area
+  applies (`UPSTREAM.md`, source changes 30, 34 and 35).
+- The firework sliders send their value when the mouse lets go of them or a key moves them, not on
+  every step of a drag, and an integer slider sends the whole number it shows (`UPSTREAM.md`,
+  source change 38).
+- The comparator output of the Automatic Feeder stays at 15 above the animal limit, and the menu of
+  the Experience Solidifier uses the existing lang key `container.actuallyadditions.xpSolidifier`
+  (`UPSTREAM.md`, source changes 37 and 39).
+- The Leaf-Eating Generator and the Heat Collector post a break event before they remove a block,
+  the generator collects only the leaves of its cube, and its area setting is a radius from 1 to 16
+  with a comment that says so. Upstream `main` posts no event, collects every position of the cube
+  and takes any area up to `Integer.MAX_VALUE` (`UPSTREAM.md`, source change 33).
 - The jar leaves out eight textures and three dead block models of `main`, see
   [Assets](#assets).
 

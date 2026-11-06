@@ -191,8 +191,8 @@ a host that does not resolve or an `http` URL refused the build, and so did the 
 its pointer. The runs used a scratch copy of the branch and are not in the repo.
 
 A second test of 2026-11-06 ran in a throwaway clone with every permission record set to OK on disk,
-so that only the new checks could stop a build. On the branch, whose unpushed commits still held the
-ZeroCore jar, the build refused and named the two commits that add and delete it, and the upload
+so that only the new checks could stop a build. On the branch before the history rewrite, whose
+local commits still held the ZeroCore jar then, the build refused and named the two commits that add and delete it, and the upload
 script refused a pack for the same reason. On a commit with the same tree and no history the build
 wrote a pack with the same 1,063 entries as before, and that pack passed the preflight of the upload
 script. A copy of the jar committed under `plugins/` and deleted again in the next commit refused

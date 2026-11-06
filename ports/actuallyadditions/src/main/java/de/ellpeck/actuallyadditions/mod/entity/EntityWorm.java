@@ -11,6 +11,7 @@
 package de.ellpeck.actuallyadditions.mod.entity;
 
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
+import de.ellpeck.actuallyadditions.mod.misc.apiimpl.farmer.DefaultFarmerBehavior;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -81,7 +82,9 @@ public class EntityWorm extends Entity {
         if (waterTicket != null)
             waterTicket.invalidate();
 
-        waterTicket = FarmlandWaterManager.addAABBTicket(this.level(), new AABB(getX() - 2, getY() - 1.5, getZ() - 2, getX() + 2, getY(), getZ() + 2));
+        // SkyTekx: the watered area of upstream a6f50e2f, the 3x3 of farmland below and around the worm
+        AABB aabb = new AABB(getX() - 1.5, getY() - 1.5, getZ() - 1.0, getX() + 1.5, getY() + 0.5, getZ() + 1.5);
+        waterTicket = FarmlandWaterManager.addAABBTicket(this.level(), aabb);
     }
 
     @Override
@@ -104,21 +107,14 @@ public class EntityWorm extends Entity {
 
                         if (canWormify(this.level(), pos, state)) {
                             boolean isFarmland = block instanceof FarmBlock;
-
-/*                            if (!isFarmland || state.getValue(FarmlandBlock.MOISTURE) < 7) {
+                            // SkyTekx: the worm tills the dirt and grass around it again (upstream
+                            // a6f50e2f). useHoeAt tills with a fake player, which Worm#onHoe skips,
+                            // and the water ticket above keeps the farmland moist
+                            if (!isFarmland) {
                                 if (isMiddlePose || this.level().random.nextFloat() >= 0.45F) {
-
-                                    if (!isFarmland) {
-                                        DefaultFarmerBehavior.useHoeAt(this.level, pos);
-                                    }
-                                    state = this.level().getBlockState(pos);
-                                    isFarmland = state.getBlock() instanceof FarmlandBlock;
-
-                                    if (isFarmland) {
-                                        this.level().setBlock(pos, state.setValue(FarmlandBlock.MOISTURE, 7), 2);
-                                    }
+                                    DefaultFarmerBehavior.useHoeAt(this.level(), pos);
                                 }
-                            }*/
+                            }
 
                             if (isFarmland && this.level().random.nextFloat() >= 0.95F) {
                                 BlockPos plant = pos.above();

@@ -41,13 +41,15 @@ public class ItemLaserWrench extends ItemBase {
         Level world = context.getLevel();
         Player player = context.getPlayer();
 
-        ItemStack stack = player.getItemInHand(context.getHand());
+        // SkyTekx: the stack of the context and messages only for a player (upstream e08ef13a)
+        ItemStack stack = context.getItemInHand();
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEntityLaserRelay relay) {
 	        if (!world.isClientSide) {
                 if (ItemPhantomConnector.getStoredPosition(stack) == null) {
                     ItemPhantomConnector.storeConnection(stack, pos.getX(), pos.getY(), pos.getZ(), world);
-                    player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.stored.desc"), true);
+                    if (player != null)
+                        player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.stored.desc"), true);
                 } else {
                     BlockPos savedPos = ItemPhantomConnector.getStoredPosition(stack);
                     if (savedPos != null) {
@@ -63,13 +65,15 @@ public class ItemLaserWrench extends ItemBase {
                                 ((TileEntityLaserRelay) savedTile).sendUpdate();
                                 relay.sendUpdate();
 
-                                player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.connected.desc"), true);
+                                if (player != null)
+                                    player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.connected.desc"), true);
 
                                 return InteractionResult.SUCCESS;
                             }
                         }
 
-                        player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.cantConnect.desc"), false);
+                        if (player != null)
+                            player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.cantConnect.desc"), false);
                         ItemPhantomConnector.clearStorage(stack, "XCoordOfTileStored", "YCoordOfTileStored", "ZCoordOfTileStored", "WorldOfTileStored");
                     }
                 }

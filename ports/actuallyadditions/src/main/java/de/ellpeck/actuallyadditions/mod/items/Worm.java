@@ -10,18 +10,23 @@
 
 package de.ellpeck.actuallyadditions.mod.items;
 
+import de.ellpeck.actuallyadditions.api.ActuallyTags;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.entity.EntityWorm;
 import de.ellpeck.actuallyadditions.mod.items.base.ItemBase;
+import de.ellpeck.actuallyadditions.mod.util.LootTableUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.util.FakePlayer;
@@ -39,7 +44,9 @@ public class Worm extends ItemBase {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
-        ItemStack stack = context.getPlayer().getItemInHand(context.getHand());
+        // SkyTekx: the stack of the context and a nullable player (upstream acb52994, #1489)
+        ItemStack stack = context.getItemInHand();
+        Player player = context.getPlayer();
         Level level = context.getLevel();
         BlockState state = level.getBlockState(pos);
 
@@ -54,7 +61,7 @@ public class Worm extends ItemBase {
         worm.setPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
         worm.setCustomName(stack.getHoverName());
         level.addFreshEntity(worm);
-        if (!context.getPlayer().isCreative())
+        if (player == null || !player.getAbilities().instabuild)
             stack.shrink(1);
 
         return InteractionResult.SUCCESS;
@@ -72,17 +79,30 @@ public class Worm extends ItemBase {
                 return;
             }
 
-            if (level.isClientSide || !CommonConfig.Other.WORMS.get() || event.getResult() == Event.Result.DENY)
+            // SkyTekx: a simulated tilling, which a mod may run to ask whether a block can be tilled,
+            // changes no block and so drops no worms
+            if (level.isClientSide || event.isSimulated() || !CommonConfig.Other.WORMS.get() || event.getResult() == Event.Result.DENY)
                 return;
 
             BlockPos pos = event.getContext().getClickedPos();
             if (level.isEmptyBlock(pos.above())) {
                 BlockState state = level.getBlockState(pos);
-                if (state.getBlock() == Blocks.GRASS_BLOCK && level.random.nextFloat() >= 0.95F) {
-                    ItemStack stack = new ItemStack(ActuallyItems.WORM.get(), level.random.nextInt(2) + 1);
-                    ItemEntity item = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, stack);
+                // SkyTekx: the blocks of the block tag actuallyadditions:worm_drop (upstream e37019a5)
+                // drop the loot table actuallyadditions:worm_drop (159fd67c, 02ca59fe). Its 5 percent
+                // chance of one or two worms is the base's old roll. The luck of a missing player is 0
+                // (acb52994, #1489)
+                if (state.is(ActuallyTags.Blocks.WORM_CAN_POP) && level instanceof ServerLevel serverLevel) {
+                    Player player = event.getPlayer();
+                    float luck = player != null ? player.getLuck() : 0;
 
-                    level.addFreshEntity(item);
+                    List<ItemStack> lootWormItems = LootTableUtil.getLootFromTable(level, LootTableUtil.WORM_DROP)
+                            .getRandomItems(new LootParams.Builder(serverLevel)
+                                    .withLuck(luck)
+                                    .create(LootContextParamSets.EMPTY));
+
+                    for (ItemStack item : lootWormItems) {
+                        level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, item));
+                    }
                 }
             }
         }

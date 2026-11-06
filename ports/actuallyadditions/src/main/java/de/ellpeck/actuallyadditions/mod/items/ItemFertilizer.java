@@ -28,7 +28,8 @@ public class ItemFertilizer extends ItemBase {
     
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        ItemStack stack = context.getPlayer().getItemInHand(context.getHand());
+        // SkyTekx: the stack of the context, a dispenser or fake player context may have no player (upstream e08ef13a)
+        ItemStack stack = context.getItemInHand();
         if (BoneMealItem.applyBonemeal(stack, context.getLevel(), context.getClickedPos(), context.getPlayer())) {
             if (!context.getLevel().isClientSide) {
                 context.getLevel().levelEvent(2005, context.getClickedPos(), 0);

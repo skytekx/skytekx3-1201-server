@@ -34,11 +34,14 @@ public class ItemTeleportStaff extends ItemEnergy {
         ItemStack stack = player.getItemInHand(hand);
         if (!world.isClientSide) {
             HitResult rayTraceResult = player.pick(100,1F,false);
-            if (rayTraceResult.getType() == HitResult.Type.BLOCK || player.getXRot() >= -5) {
+            // SkyTekx: upstream c812512a and bae1ef5e. The staff also jumps when the trace misses, and the
+            // cost grows with the square root of the Manhattan distance. The base charged 200 per square
+            // block of distance, so every jump of more than a few blocks cost more than a full staff
+            if (rayTraceResult.getType() == HitResult.Type.BLOCK || rayTraceResult.getType() == HitResult.Type.MISS) {
                 Vec3 location = rayTraceResult.getLocation();
                 Vec3 pos = Vec3.atBottomCenterOf(BlockPos.containing(location.x, location.y, location.z));
                 int baseUse = 200;
-                int use = baseUse + (int) (baseUse * player.blockPosition().distSqr(BlockPos.containing(pos.x, pos.y, pos.z)));
+                int use = baseUse + (int) (baseUse * Math.sqrt(player.blockPosition().distManhattan(BlockPos.containing(pos.x, pos.y, pos.z))));
                 if (this.getEnergyStored(stack) >= use) {
                     ((ServerPlayer) player).connection.teleport(pos.x, pos.y + 1F, pos.z, player.getYRot(), player.getXRot());
                     player.removeVehicle();

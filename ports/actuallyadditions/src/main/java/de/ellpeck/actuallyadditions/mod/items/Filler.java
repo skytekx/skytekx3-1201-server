@@ -1,5 +1,5 @@
 /*
- * This file ("ItemFillingWand.java") is part of the Actually Additions mod for Minecraft.
+ * This file ("Filler.java") is part of the Actually Additions mod for Minecraft.
  * It is created and owned by Ellpeck and distributed
  * under the Actually Additions License to be found at
  * http://ellpeck.de/actaddlicense
@@ -12,7 +12,7 @@ package de.ellpeck.actuallyadditions.mod.items;
 
 import de.ellpeck.actuallyadditions.mod.items.base.ItemEnergy;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
-import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
+import de.ellpeck.actuallyadditions.mod.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -40,9 +40,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemFillingWand extends ItemEnergy {
+// SkyTekx: named Filler as on upstream 87b02617. The registry id stays handheld_filler
+public class Filler extends ItemEnergy {
 
-    public ItemFillingWand() {
+    public Filler() {
         super(500000, 1000);
     }
 
@@ -71,9 +72,11 @@ public class ItemFillingWand extends ItemEnergy {
         wand.getOrCreateTag().put("state", NbtUtils.writeBlockState(state));
     }
 
+    // SkyTekx: reads without adding an empty tag, since the tooltip and the tick call it on every stack
     private static Optional<BlockState> loadData(ItemStack stack) {
-        if (stack.getOrCreateTag().contains("state")) {
-            return Optional.of(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), stack.getOrCreateTag().getCompound("state")));
+        CompoundTag compound = stack.getTag();
+        if (compound != null && compound.contains("state")) {
+            return Optional.of(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound.getCompound("state")));
         }
 
         return Optional.empty();
@@ -85,7 +88,8 @@ public class ItemFillingWand extends ItemEnergy {
             return InteractionResult.PASS;
         }
 
-        ItemStack stack = context.getPlayer().getItemInHand(context.getHand());
+        // SkyTekx: the stack of the context (upstream e08ef13a)
+        ItemStack stack = context.getItemInHand();
         if (!context.getLevel().isClientSide && context.getPlayer().getUseItemRemainingTicks() <= 0) {
             if (context.getPlayer().isCrouching()) {
                 BlockState state = context.getLevel().getBlockState(context.getClickedPos());
@@ -111,9 +115,12 @@ public class ItemFillingWand extends ItemEnergy {
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
         if (!world.isClientSide) {
             boolean clear = true;
-            if (entity instanceof Player) {
-                HitResult result = WorldUtil.getNearestBlockWithDefaultReachDistance(world, (Player) entity);
-                if (result instanceof BlockHitResult) {
+            if (entity instanceof Player player) {
+                // SkyTekx: the second corner is the block the player looks at within reach (upstream
+                // d1438dd6 and 2fbf2984). The base's stub always answered 0, 0, 0. A miss is a
+                // BlockHitResult too, so the type is checked as well
+                HitResult result = player.pick(Util.getReachDistance(player), 1f, false);
+                if (result instanceof BlockHitResult && result.getType() == HitResult.Type.BLOCK) {
                     CompoundTag compound = stack.getOrCreateTag();
 
                     BlockPos pos = ((BlockHitResult) result).getBlockPos();

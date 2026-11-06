@@ -446,21 +446,21 @@ counts in the list below are older than the last twenty-three of them and were n
   stock jars of the index, which stay as they are, and the KubeJS scripts fix two more. It needs
   exactly Draconic Evolution 3.1.2.621 and Brandon's Core 3.2.1.302 and is required on both sides, see
   [Draconic Evolution fixes](draconic-fixes.md).
-- Extreme Reactors 2.0.97 and ZeroCore 2.1.48 left the index on 2026-11-05 for the CurseForge files of
-  the same author, because Modrinth stops at 2.0.84 and 2.1.45 for 1.20.1 and Extreme Reactors 2.0.97
-  needs ZeroCore 2.1.48. Extreme Reactors declares MIT, and `licenses/` carries its MIT text together
-  with the MIT notice of Big Reactors, the 1.7.10 mod whose reactor and turbine code and fuel textures
-  it carries over. ZeroCore is All Rights Reserved and rides on the modpack grant of its project
-  description, see `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. That grant covers the
-  `.mrpack` but forbids reposts on other websites, and a jar in this public repository would be one.
-  So since 2026-11-06 git tracks no copy of it. It tracks the pointer
+- Extreme Reactors 2.0.97 and ZeroCore 2.1.48 left the index on 2026-11-05 for the CurseForge files
+  of the same author, because Modrinth stops at 2.0.84 and 2.1.45 for 1.20.1 and Extreme Reactors
+  2.0.97 needs ZeroCore 2.1.48. Extreme Reactors declares MIT, and `licenses/` carries its MIT text
+  together with the MIT notice of Big Reactors, the 1.7.10 mod whose reactor and turbine code and
+  fuel textures it carries over. ZeroCore is All Rights Reserved and rides on the modpack grant of
+  its project description, see `modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`. That grant
+  covers the `.mrpack` but forbids reposts on other websites, and a jar in this public repository
+  would be one. So since 2026-11-06 git tracks no copy of it. It tracks the pointer
   `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json` with the URL of CurseForge file 7344725, its
   SHA-1 and its size, and `tools/build_mrpack.py` fetches the file into its cache and checks it at
-  every build, see
-  [tools](tools.md#pointed-jars). The owner chose this way, see
-  [open items](../open-items.md#owner-decisions), and the record says OK since.
-  The new Energizer Active FE
-  Power Port of 2.0.97 has no loot table in the jar, so the fixes datapack gives it one, see
+  every build, see [tools](tools.md#pointed-jars). The owner answered "continue" to the offer of
+  options A (this pointer), B (back to the Modrinth builds) and C (ask the author), so A, the
+  recommended default, was taken, and B and C stay possible, see
+  [open items](../open-items.md#owner-decisions). The record says OK since. The new Energizer Active
+  FE Power Port of 2.0.97 has no loot table in the jar, so the fixes datapack gives it one, see
   [Boot fixes](../content/boot-fixes.md#gameplay-overrides).
 - LittleTiles 1.6.0-pre161 left the index on 2026-11-05 for 1.6.0-pre161-skytekx.1, a build of the
   head of the upstream branch `1.20` (c5694e16), 43 commits past that last 1.20.1 release. Those

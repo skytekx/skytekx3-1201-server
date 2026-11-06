@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:display_stand"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_quartz",
+    "amount": 2400
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 80
+    }
+  ],
+  "temperature": 637,
+  "time": 283
+}

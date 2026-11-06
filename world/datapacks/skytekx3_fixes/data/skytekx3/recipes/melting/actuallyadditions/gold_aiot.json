@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:damagable_melting",
+  "ingredient": {
+    "item": "actuallyadditions:gold_aiot"
+  },
+  "result": {
+    "tag": "forge:molten_gold",
+    "amount": 990,
+    "unit_size": 10
+  },
+  "temperature": 700,
+  "time": 189
+}

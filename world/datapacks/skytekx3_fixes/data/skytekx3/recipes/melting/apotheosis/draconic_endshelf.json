@@ -13,6 +13,12 @@
     "tag": "forge:ender",
     "amount": 2500
   },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_glass",
+      "amount": 333
+    }
+  ],
   "temperature": 477,
   "time": 259
 }

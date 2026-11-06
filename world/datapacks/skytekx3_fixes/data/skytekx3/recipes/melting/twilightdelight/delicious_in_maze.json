@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightdelight"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilight_construct"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "twilightdelight:delicious_in_maze"
+  },
+  "result": {
+    "tag": "forge:molten_phantom",
+    "amount": 450
+  },
+  "temperature": 1700,
+  "time": 191
+}

@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:advanced_leaf_blower"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_diamond",
+    "amount": 198
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_iron",
+      "amount": 90
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 80
+    }
+  ],
+  "temperature": 1450,
+  "time": 117
+}

@@ -1,0 +1,36 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism_extra_modules"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "mekanism_extra_modules:emergency_revival_unit"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 3420
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 540
+    },
+    {
+      "tag": "forge:molten_osmium",
+      "amount": 360
+    },
+    {
+      "tag": "forge:molten_tin",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_bronze",
+      "amount": 20
+    }
+  ],
+  "temperature": 800,
+  "time": 371
+}

@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:laser_relay_extreme"
+  },
+  "result": {
+    "fluid": "tconstruct:molten_obsidian",
+    "amount": 1000
+  },
+  "byproducts": [
+    {
+      "fluid": "tconstruct:molten_diamond",
+      "amount": 198
+    },
+    {
+      "tag": "forge:molten_iron",
+      "amount": 180
+    },
+    {
+      "tag": "forge:molten_gold",
+      "amount": 20
+    }
+  ],
+  "temperature": 1000,
+  "time": 221
+}

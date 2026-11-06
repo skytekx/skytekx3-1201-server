@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:energizer"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 360
+  },
+  "byproducts": [
+    {
+      "tag": "forge:molten_gold",
+      "amount": 160
+    }
+  ],
+  "temperature": 800,
+  "time": 120
+}

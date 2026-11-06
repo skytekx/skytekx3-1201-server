@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "actuallyadditions"
+    }
+  ],
+  "type": "tconstruct:melting",
+  "ingredient": {
+    "item": "actuallyadditions:powered_furnace"
+  },
+  "result": {
+    "tag": "forge:molten_iron",
+    "amount": 540
+  },
+  "temperature": 800,
+  "time": 147
+}

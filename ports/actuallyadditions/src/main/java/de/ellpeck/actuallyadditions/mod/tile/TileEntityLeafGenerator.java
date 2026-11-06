@@ -13,6 +13,7 @@ package de.ellpeck.actuallyadditions.mod.tile;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.network.PacketHelperServer;
+import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,6 +32,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TileEntityLeafGenerator extends TileEntityBase implements ISharingEnergyProvider, IEnergyDisplay {
+
+    // SkyTekx: how many refused leaves one cycle passes over before it gives up
+    private static final int BREAK_TRIES = 8;
 
     public final CustomEnergyStorage storage = new CustomEnergyStorage(35000, 0, 450);
     public final LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> this.storage);
@@ -74,18 +78,29 @@ public class TileEntityLeafGenerator extends TileEntityBase implements ISharingE
                     int energyProduced = CommonConfig.Machines.LEAF_GENERATOR_CF_PER_LEAF.get();
                     if (energyProduced > 0 && energyProduced <= tile.storage.getMaxEnergyStored() - tile.storage.getEnergyStored()) {
                         int range = CommonConfig.Machines.LEAF_GENERATOR_AREA.get();
+                        // SkyTekx: a local change. Only the leaves are copied out of the mutable cursor,
+                        // where the base and main collected every position of the cube first
                         List<BlockPos> breakPositions = BlockPos.betweenClosedStream(
                                 pos.offset(-range, -range, -range),
-                                pos.offset(range, range, range)).map(BlockPos::immutable).collect(Collectors.toList());
-                        breakPositions.removeIf(blockPos -> {
+                                pos.offset(range, range, range)).filter(blockPos -> {
                             BlockState offsetState = level.getBlockState(blockPos);
-                            return !(offsetState.getBlock() instanceof LeavesBlock || offsetState.is(BlockTags.LEAVES));
-                        });
+                            return offsetState.getBlock() instanceof LeavesBlock || offsetState.is(BlockTags.LEAVES);
+                        }).map(BlockPos::immutable).collect(Collectors.toList());
 
-                        if (!breakPositions.isEmpty()) {
-                            Collections.shuffle(breakPositions);
-                            BlockPos theCoord = breakPositions.get(0);
+                        // SkyTekx: a local change. The leaf goes only when the break event of the fake
+                        // player at the generator passes, so a protection mod or, on Arclight, a Bukkit
+                        // claim plugin can keep it. A refused leaf makes the next shuffled one the
+                        // candidate, up to BREAK_TRIES of them, and a cycle without a leaf makes no energy
+                        Collections.shuffle(breakPositions);
+                        BlockPos theCoord = null;
+                        for (int i = 0; i < Math.min(BREAK_TRIES, breakPositions.size()); i++) {
+                            if (WorldUtil.fireFakeBreakEvent(tile, level, breakPositions.get(i))) {
+                                theCoord = breakPositions.get(i);
+                                break;
+                            }
+                        }
 
+                        if (theCoord != null) {
                             level.levelEvent(2001, theCoord, Block.getId(level.getBlockState(theCoord)));
 
                             level.setBlockAndUpdate(theCoord, Blocks.AIR.defaultBlockState());

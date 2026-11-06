@@ -91,7 +91,13 @@ public class TileEntityHeatCollector extends TileEntityBase implements ISharingE
 
                         if (level.random.nextInt(200) == 0) {
                             int randomSide = blocksAround.get(level.random.nextInt(blocksAround.size()));
-                            level.setBlockAndUpdate(pos.relative(WorldUtil.getDirectionBySidesInOrder(randomSide)), Blocks.AIR.defaultBlockState());
+                            BlockPos removePos = pos.relative(WorldUtil.getDirectionBySidesInOrder(randomSide));
+                            // SkyTekx: a local change. The lava or magma block goes only when the break
+                            // event of the fake player at the collector passes, so a protection mod or,
+                            // on Arclight, a Bukkit claim plugin can keep it
+                            if (WorldUtil.fireFakeBreakEvent(tile, level, removePos)) {
+                                level.setBlockAndUpdate(removePos, Blocks.AIR.defaultBlockState());
+                            }
                         }
                     }
                 }

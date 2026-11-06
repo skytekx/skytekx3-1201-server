@@ -325,6 +325,20 @@ public final class WorldUtil {
         return 0F;
     }
 
+    // SkyTekx: a local change. The Leaf-Eating Generator and the Heat Collector remove blocks without a
+    // tool or drops, and upstream main posts no event for that. They ask here first, so protection mods
+    // and, on Arclight, Bukkit plugins see the break of the shared fake player at the machine and can
+    // refuse it. Answers true when the block may go
+    public static boolean fireFakeBreakEvent(BlockEntity caller, Level level, BlockPos pos) {
+        if (level instanceof ServerLevel) {
+            FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) level);
+            BlockPos tePos = caller.getBlockPos();
+            fake.setPos(tePos.getX() + 0.5, tePos.getY() + 0.5, tePos.getZ() + 0.5);
+            return !MinecraftForge.EVENT_BUS.post(new BreakEvent(level, pos, level.getBlockState(pos), fake));
+        }
+        return false;
+    }
+
     /**
      * Tries to break a block as if this player had broken it.  This is a complex operation.
      *

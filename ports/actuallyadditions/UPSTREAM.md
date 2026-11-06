@@ -896,7 +896,11 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     each one matches its file on `main` in ingredient, items, counts and chances. The base's single
     `crushing/bone_crusher` is now `crushing/bone` as on `main`. The serializer takes a missing
     `chance` as 1.0 and a missing `count` as 1 as the result codec of `main` does (`bb84d539`), and
-    refuses more than two results. Ores crush to two raw ores, iron and deepslate iron with a 20
+    refuses a recipe with no result or more than two with a `JsonSyntaxException`, so the recipe
+    manager logs and skips that recipe as `main` does with the error of its codec. An
+    `IllegalStateException`, which the base threw for no result, is not caught by the recipe
+    manager of Forge 47 and stops a dedicated server at boot (a local fix of the integration
+    review). Ores crush to two raw ores, iron and deepslate iron with a 20
     percent chance of raw gold and copper with 5 percent. AlmostUnified keeps those outputs
     vanilla, because `minecraft` leads its `modPriorities` (`config/almostunified/unify.json:3`).
     The crusher recipes themselves came with source change 10 (`7bcebe6`). JEI gets the crusher
@@ -940,13 +944,22 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `SOLID_FUEL_RECIPES` stay, unused, so that a data pack that still ships such a recipe loads.
     Savegame: `BurnTime` and `MaxBurnTime` keep their meaning. The key `currentRecipe` of a
     burning generator is no longer written and is ignored on load, and the generator finishes the
-    burn at 20 CF/t, the rate it had before.
+    burn at 20 CF/t, the rate it had before. Tiny coal and tiny charcoal lose their `(wip)` label,
+    as on `main` (a local fix of the integration review).
 33. Other generators: the Leaf-Eating Generator reads `leafGeneratorCooldown`,
     `leafGeneratorCPPerLeaf` and `leafGeneratorArea` of the common config (source change 6), as
     `5182ac8b` does. The base read the 1.12 enums in `mod/config/values/`, which nothing loads, so
     the energy per leaf was 0 and the generator never ate a leaf. It now takes a leaf every 5
     ticks for 300 CF from the blocks within 7 of it (a 15 block cube), counting every
-    `LeavesBlock` and every block in `minecraft:leaves`. The Bio Reactor faces the player who
+    `LeavesBlock` and every block in `minecraft:leaves`. Unlike `main` the generator posts the break
+    event of the shared fake player at its own position before it takes a leaf
+    (`WorldUtil.fireFakeBreakEvent`), so a protection mod or, on Arclight, a Bukkit claim plugin can
+    keep the leaf. A refused leaf makes the next of the shuffled leaves the candidate, up to 8 of
+    them, and a cycle without a leaf makes no energy. The Heat Collector asks the same event before
+    it removes a lava or magma block next to it. It collects only the leaves out of the cube instead
+    of every position first, and `leafGeneratorArea` is a radius from 1 to 16 with a comment that
+    says so, where `main` calls it the odd size of a 7x7x7 area and takes any value up to
+    `Integer.MAX_VALUE`. These are local changes of the integration review. The Bio Reactor faces the player who
     places it (`822913f0`), so the generator writes its blockstate, which matches `main`, and the
     block no longer shows the missing model that source change 18 left. Its screen draws the
     energy bar and its tooltip and labels the output with the lang key
@@ -993,7 +1006,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     1.12 `MilkIngredient` did: every effect that the slots before it added loses one amplifier and
     gains 120 seconds, an effect at the lowest amplifier goes, and the milk is used up and leaves
     its bucket. The JEI line now says "+02:00, -1 Level", which matches those 120 seconds and the
-    manual text of the base. The names lose their `(wip)` label (`0a6aa654`). Not ported:
+    manual text of the base. The names lose their `(wip)` label (`0a6aa654`), and the coffee beans
+    lose it as well, as on `main` (a local fix of the integration review). Not ported:
     `56322ebc` only adds a TODO about the saturation. Savegame: the item `coffee_cup` keeps its id
     and becomes a stack of one, so a stack of base cups, which only creative could hold, keeps its
     count until it is split. The machine keeps its NBT keys. New ids: the recipe type and the

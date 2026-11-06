@@ -116,14 +116,18 @@ Modifications
       plants below Y 0.
     * Crushers: the Double Crusher works, shift click fills the crushers, their screens show
       their own background, and the crushing recipes of upstream's main branch, among them the
-      copper and deepslate ores, come with a JEI category.
+      copper and deepslate ores, come with a JEI category. A data pack crushing recipe with
+      no result or more than two is skipped with a log line instead of stopping the server.
     * Powered Furnace: JEI lists it under smelting and opens that category from its screen, the
       auto split button no longer covers the energy bar, and the item has its tooltip again.
     * Coal Generator: it burns every furnace fuel at 20 CF/t instead of six fixed fuels, shows
       what a fuel gives in its screen and no longer darkens its screen twice. The unused solid
       fuel recipe type stays registered for data packs.
     * Generators: the Leaf-Eating Generator follows its config and eats leaves again, and the Bio
-      Reactor faces the player, renders its model and shows its energy bar.
+      Reactor faces the player, renders its model and shows its energy bar. The Leaf-Eating
+      Generator and the Heat Collector post a block break event before they remove a leaf or a
+      lava block, so protection plugins can keep it, and the leaf area is capped at a radius
+      of 16.
     * Coffee: the Coffee Maker brews drinkable coffee from empty cups, uses its water and
       takes cups and ingredients from automation. Its ingredients are data driven recipes with a
       JEI category as on upstream's main branch, effects stack without doubling, and a cup gives

@@ -138,6 +138,8 @@ Modifications
       button ids.
     * Firework Box: its settings screen works, with sliders that send their value when they are
       let go and the background of upstream's main branch.
+    * Automatic Feeder: it shows the animal count in its screen, has a title, and its comparator
+      output follows the number of animals against the limit, as on upstream's main branch.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

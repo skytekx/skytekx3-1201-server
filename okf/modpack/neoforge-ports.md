@@ -273,13 +273,13 @@ Evidence of 2026-11-05, details on [Mod set](mod-set.md#tests):
 
 ### Operator steps
 
-The owner mirrors the server by hand, and the mod goes live with pack 3.1.3, because clients without
-it cannot join. The full list is on [Mod set](mod-set.md#deploy):
+The owner mirrors the server by hand, and the mod goes live with the next pack after 3.1.3, because
+clients without it cannot join. Pack 3.1.3 went live without it. The full list is on [Mod set](mod-set.md#deploy):
 
 - Stop the server over RCON and wait until the java process is gone.
 - Download the jar from its CDN link in `modrinth.index.json`, check the SHA-1 above and copy it into
   the server's `mods/` by hand. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/` from the build
-  machine. Clients need the same jar, which pack 3.1.3 brings them.
+  machine. Clients need the same jar, which the next pack after 3.1.3 brings them.
 - Deploy the fixes pack with its two new tag files, start the server and, with nobody online, run
   `/datapack disable "file/skytekx3_fixes"` and `/datapack enable "file/skytekx3_fixes" last` once,
   so that the Quark tag repair loads after the pack of the mod.

@@ -303,7 +303,8 @@ mods of the pack is still open. See [open items](../open-items.md#not-verified).
 ### Deploy
 
 Clients without the mod cannot join a server with it, so it goes live together with the pack that
-carries it, 3.1.3. The owner mirrors the server by hand:
+carries it, the next pack after 3.1.3, which went live without it. The owner mirrors the server by
+hand:
 
 1. Stop the server over RCON and wait until the java process is gone.
 2. Download the jar from its CDN link in `modrinth.index.json`, check the SHA-1 above, and put it into
@@ -313,9 +314,9 @@ carries it, 3.1.3. The owner mirrors the server by hand:
    `data/bygonenether/tags/worldgen/structure/no_basalt.json`.
 4. Start the server. The first start appends the pack `mod:bygonenether` after the fixes pack, so with
    nobody online run `/datapack disable "file/skytekx3_fixes"` and
-   `/datapack enable "file/skytekx3_fixes" last` once, as the deploy of 3.1.3 needs anyway (see
-   [boot fixes](../content/boot-fixes.md#load-order)). Then `tools/datapack_order.py world/level.dat`
-   should show no mod pack after the fixes pack.
+   `/datapack enable "file/skytekx3_fixes" last` once, as the deploy of 3.1.3 did and the deploy of
+   the next pack needs anyway (see [boot fixes](../content/boot-fixes.md#load-order)). Then
+   `tools/datapack_order.py world/level.dat` should show no mod pack after the fixes pack.
 5. Check the boot against the baseline. No line "Couldn't load tag quark:wraith_spawnable" may remain,
    and `/execute in minecraft:the_nether run locate structure #bygonenether:no_basalt` should name a
    bastion or a structure of the mod.

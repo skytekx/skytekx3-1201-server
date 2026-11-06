@@ -3,7 +3,7 @@ type: Mod
 title: Draconic Evolution fixes
 description: Why the pack keeps the stock Draconic Evolution 3.1.2.621 instead of a backport of its 1.21 line, which bugs the pack's own addon SkyTekx DE Fixes 1.0.0 fixes in it through Mixin after the 1.21 branches, which two fixes the pack's KubeJS scripts apply, and how the addon stays within the Draconic Evolution license.
 tags: [modpack, mods, draconicevolution, mixin]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Draconic Evolution fixes
@@ -122,8 +122,9 @@ against the new jars.
 The fix pack is required on both sides. The Draconic tool tier decides the mining speed on the client
 as well as on the server. Its channel `skytekx_defixes:main` carries no messages and is there for
 the login check: it accepts only its own protocol version on the other side, so by the code a
-client without the mod cannot join a server with it and the other way round. No client has tried that yet. Like the other new
-mods of 3.1.3, the jar reaches the server with the deploy of that pack.
+client without the mod cannot join a server with it and the other way round. No client has tried that yet. Pack 3.1.3
+went live without it, so like the other new mods of the next pack after 3.1.3, the jar reaches the
+server with the deploy of that pack.
 
 ## Build and update
 

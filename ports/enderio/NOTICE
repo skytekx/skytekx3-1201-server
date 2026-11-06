@@ -12,11 +12,32 @@ Original work
   Source:   https://github.com/Team-EnderIO/EnderIO
   Base:     branch 1.20.1 @ 18ee1b17bf6879298e911fff751204b07f2e4228 (2026-03-16): Ender IO
             6.2.18-beta plus the two later community fixes f9e1806c and 18ee1b17, Forge 47
+  Backport: features and fixes taken from branch 1.21.1 (Ender IO 8.2.x, NeoForge 1.21.1) up to
+            8989fcebda3eb9e678fea4138f577c47a22a5e8d (2026-11-04)
 
 Modifications
 -------------
   Modified by SkyTekx (Florian Kleber), 2026, for the SkyTekx 3 modpack. The result runs on
   Minecraft 1.20.1 with Forge 47, keeps the mod id enderio and is versioned 6.3.0-skytekx.1.
+
+  Summary of the changes:
+  - An additive subset of Ender IO 8.2.x on the 6.2.x code. New are the Vat and its fermenting
+    recipes, the inhibitor, relocator and attractor obelisks, the wireless charger and its
+    antennas, and keybinds for the travel staff and the electromagnet with optional Curios
+    support. The filters gain the big, big advanced and limited item filters, tooltips and filter
+    screens opened from the conduit screen. Energy and fluid conduits gain insert priorities,
+    redstone conduits a strong output, and conduit bundles take facades, also AE2 facades. The
+    powered spawner gains its capture mode and the Mind Killer.
+  - Fixes from 8.x and SkyTekx fixes for dupes and crashes that also hit 6.x: fluid tanks,
+    capacitor bank items, ghost and filter slots, machine outputs, recipe outputs, and checks of
+    the packets that clients send.
+  - 1.21.1 APIs translated to 1.20.1 ones: data components became item stack NBT, data
+    attachments became Forge capabilities, new packets joined the existing Forge channel with a
+    new protocol version (1.0-skytekx.1), and data maps are read by a reload listener of the
+    mod. Copied 8.x data uses the 1.20.1 folder names and forge: tags.
+  - Left out: the 8.x conduit rewrite and its save format, the 8.1 alloy changes, the removal of
+    6.x content, the 8.x farming station and the 8.x sounds. Every registry id, NBT key, block
+    state and config key of 6.2.18 stays, so worlds, configs and addons of 6.2.18 keep working.
 
   The complete change history is the git history of the ports/enderio directory of
   https://github.com/skytekx/skytekx3-1201-server

@@ -8,7 +8,8 @@
 - zips the index and the overrides, all read from git HEAD, so edits that are not committed
   (configs rewritten by a server boot, for example) stay out of the pack
 - fetches the jars that local-mods/ names by a pointer file <jar>.fetch.json instead of holding them
-  (tools/fetch_local_mods.py) into a cache outside the tree, checks their size and SHA-1 against the
+  (tools/fetch_local_mods.py) into a cache, outside the tree unless $SKYTEKX3_FETCH_CACHE points into
+  it, which the tools refuse unless git ignores that path. It checks their size and SHA-1 against the
   pointer and bundles them exactly like tracked jars. A failed download or check refuses the build
 - patches the bundled jars that tools/patch_mods.py lists in PACK_RULES (patch_mods.py read from git
   HEAD too) and ships each under the file name that pack_jar_name gives it, so local-mods/ keeps the

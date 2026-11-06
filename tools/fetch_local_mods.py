@@ -9,8 +9,8 @@ tracks local-mods/<jar>.fetch.json:
     {"file": "<jar>", "url": "https://...", "sha1": "<40 hex digits>", "size": <bytes>,
      "source": "<the page or project the file comes from>", "reason": "<why git holds no copy>"}
 
-tools/build_mrpack.py reads each pointer from git HEAD, fetches the jar into a cache outside the tree,
-checks its size and SHA-1 and bundles it exactly as it bundles a tracked jar. This script does the same
+tools/build_mrpack.py reads each pointer from git HEAD, fetches the jar into the cache, checks its
+size and SHA-1 and bundles it exactly as it bundles a tracked jar. This script does the same
 for operators who mirror local-mods/ into mods/ by hand:
 
     python3 tools/fetch_local_mods.py               # put every pointed jar into local-mods/
@@ -18,10 +18,12 @@ for operators who mirror local-mods/ into mods/ by hand:
     python3 tools/fetch_local_mods.py --check       # only list the pointers and the jars still missing
 
 The cache is $SKYTEKX3_FETCH_CACHE, else $XDG_CACHE_HOME/skytekx3/local-mods, else
-~/.cache/skytekx3/local-mods. A cached copy counts only while its size and SHA-1 match. A pointer
-that does not parse, a failed download or a wrong size or SHA-1 stops the script with exit code 1,
-and no file that failed the check is written anywhere. Into the repository's own local-mods/ it writes
-only jars that git ignores (.gitignore), so a pointed jar cannot slip into a commit.
+~/.cache/skytekx3/local-mods, so it lies outside the tree unless $SKYTEKX3_FETCH_CACHE or --cache
+points into it. A cached copy counts only while its size and SHA-1 match. A pointer that does not
+parse, a failed download or a wrong size or SHA-1 stops the script with exit code 1, and no file that
+failed the check is written anywhere. Inside the work tree of this repository it writes only to paths
+that git ignores, the jar in --dest and the cache alike, and checks the same for the temporary
+.fetch-* file that a killed run leaves next to them, so a pointed jar cannot slip into a commit.
 
 Standard library only. Importing it has no side effects: build_mrpack.py, mrpack_permissions.py and
 publish_modrinth.py use its functions.
@@ -42,6 +44,8 @@ SUFFIX = ".fetch.json"
 KEYS = ("file", "url", "sha1", "size", "source", "reason")
 UA = "skytekx/skytekx3-1201-server fetch_local_mods (+https://github.com/skytekx)"
 TIMEOUT = 120
+TMP_PREFIX = ".fetch-"  # Temporary files of _write, /local-mods/.fetch-* in .gitignore
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SHA1 = re.compile(r"[0-9a-f]{40}")
 
 
@@ -106,7 +110,7 @@ def problem(p, data):
 
 
 def cache_dir():
-    """The download cache, always outside the repository unless the caller points it there."""
+    """The download cache, outside the repository unless the caller points it there."""
     if os.environ.get("SKYTEKX3_FETCH_CACHE"):
         return os.environ["SKYTEKX3_FETCH_CACHE"]
     base = os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache")
@@ -117,7 +121,7 @@ def _write(path, data):
     """Write `data` to `path` through a temporary file in the same folder, so no half file is left.
     The file gets the mode of a plain new file (0666 less the umask), not the 0600 of mkstemp."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), prefix=".fetch-")
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), prefix=TMP_PREFIX)
     try:
         with os.fdopen(fd, "wb") as fh:
             fh.write(data)
@@ -131,16 +135,32 @@ def _write(path, data):
         raise
 
 
-def fetch(p, cache=None):
-    """The checked bytes of the jar that the pointer `p` names, from the cache or downloaded into it.
-    Raises PointerError when the download fails or its size or SHA-1 differ from the pointer."""
-    path = os.path.join(cache or cache_dir(), p["sha1"], p["file"])
+def cache_path(p, cache=None):
+    """Where the cache keeps the jar that the pointer `p` names: one folder per SHA-1."""
+    return os.path.join(cache or cache_dir(), p["sha1"], p["file"])
+
+
+def cached(p, cache=None):
+    """The checked bytes of the jar that the pointer `p` names from the cache, or None. Reads only."""
+    path = cache_path(p, cache)
     if os.path.isfile(path):
         with open(path, "rb") as fh:
             data = fh.read()
         if problem(p, data) is None:
             return data
-        # A damaged copy, or a pointer that is wrong itself. Only a checked download replaces it.
+    return None
+
+
+def fetch(p, cache=None):
+    """The checked bytes of the jar that the pointer `p` names, from the cache or downloaded into it.
+    Raises PointerError when the cache lies in the tree where git would track it (_safe_target), when
+    the download fails or when its size or SHA-1 differ from the pointer."""
+    path = cache_path(p, cache)
+    _safe_target(REPO, path)
+    data = cached(p, cache)
+    if data is not None:
+        return data
+    # No copy, a damaged copy, or a pointer that is wrong itself. Only a checked download replaces it.
     req = urllib.request.Request(p["url"], headers={"User-Agent": UA})
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
@@ -155,7 +175,7 @@ def fetch(p, cache=None):
 
 
 def _ignored(repo, rel):
-    """True when git ignores `rel` in `repo`, False when it would track it, None without git."""
+    """True when git ignores `rel` in `repo`, False when it would track it, None when git cannot tell."""
     try:
         r = subprocess.run(["git", "-C", repo, "check-ignore", "-q", "--", rel], capture_output=True)
     except OSError:
@@ -163,8 +183,30 @@ def _ignored(repo, rel):
     return {0: True, 1: False}.get(r.returncode)
 
 
+def _safe_target(repo, path):
+    """Raise PointerError unless a jar written to `path` stays out of the commits of `repo`. A path
+    outside its work tree, or inside its .git, is fine. A path inside needs git to ignore both the
+    path and the temporary file that _write puts next to it, which a killed run leaves behind. The
+    folder of `path` is resolved, the file name is not, because os.replace swaps a symlink there for
+    the file instead of following it."""
+    top = os.path.realpath(repo)
+    real = os.path.join(os.path.realpath(os.path.dirname(os.path.abspath(path))), os.path.basename(path))
+    if os.path.commonpath([top, real]) != top:
+        return
+    rel = os.path.relpath(real, top)
+    if rel.split(os.sep)[0] == ".git":
+        return
+    for r in (rel, os.path.join(os.path.dirname(rel), TMP_PREFIX + "probe")):
+        r = r.replace(os.sep, "/")
+        ignored = _ignored(top, r)
+        if ignored is not True:
+            raise PointerError("%s lies inside the repository, and git %s %s, so a jar written there could "
+                               "slip into a commit. Add it to .gitignore or write outside the tree"
+                               % (path, "does not ignore" if ignored is False else "cannot tell whether it ignores", r))
+
+
 def main(argv=None):
-    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    repo = REPO
     local_mods = os.path.join(repo, "local-mods")
     ap = argparse.ArgumentParser(description="Fetch the jars that local-mods/ names by a pointer file.")
     ap.add_argument("--dest", help="folder for the jars (default: local-mods/ of this repository)")
@@ -179,7 +221,6 @@ def main(argv=None):
     if not pointers:
         print("fetch_local_mods: no pointer files in", local_mods)
         return 0
-    in_repo = os.path.realpath(dest) == os.path.realpath(local_mods)
     failed = 0
     for p in pointers:
         target = os.path.join(dest, p["file"])
@@ -194,9 +235,10 @@ def main(argv=None):
             print("missing  %s%s" % (target, " (%s)" % have if have else ""), flush=True)
             failed += 1
             continue
-        if in_repo and _ignored(repo, "local-mods/" + p["file"]) is False:
-            print("refused  %s: git does not ignore local-mods/%s, add it to .gitignore first"
-                  % (target, p["file"]), file=sys.stderr)
+        try:
+            _safe_target(repo, target)
+        except PointerError as e:
+            print("refused  %s" % e, file=sys.stderr)
             failed += 1
             continue
         try:

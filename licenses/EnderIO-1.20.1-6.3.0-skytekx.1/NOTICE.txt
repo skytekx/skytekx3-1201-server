@@ -1,0 +1,64 @@
+Ender IO 6.3.0-skytekx.1 for Minecraft 1.20.1 (mods/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar)
+=========================================================================================
+
+The SkyTekx 3 modpack bundles an UNOFFICIAL, MODIFIED build of Ender IO. It is not made, checked or
+supported by Team Ender IO. Report problems with it to https://github.com/skytekx/skytekx3-1201-server
+and not to Team Ender IO.
+
+The build starts from https://github.com/Team-EnderIO/EnderIO, branch 1.20.1 at commit
+18ee1b17bf6879298e911fff751204b07f2e4228 (2026-03-16), which is the release 6.2.18-beta plus two later
+community fixes. It adds a subset of the features and fixes of the branch 1.21.1 (Ender IO 8.2.x) up to
+commit 8989fcebda3eb9e678fea4138f577c47a22a5e8d. Its complete source is the folder ports/enderio of
+https://github.com/skytekx/skytekx3-1201-server at the commit that added the jar to local-mods/, and
+ports/enderio/UPSTREAM.md lists the build changes. The jar carries its own change notice as
+NOTICE_enderio, the Unlicense as LICENSE_enderio and the texts below in META-INF/licenses/enderio/.
+This folder repeats them, so that they travel with every copy of the pack.
+
+Parts and their licenses
+------------------------
+Ender IO by Team Ender IO, its own code and assets, and the changes made by SkyTekx
+  The Unlicense, see EnderIO-Unlicense.txt (LICENSE.txt of the branch 1.20.1). The README of the
+  repository also releases the code under CC0 1.0. New textures and models come from the branch
+  1.21.1 of the same repository, under the same Unlicense.
+
+Code from Patchouli by Vazkii (https://github.com/VazkiiMods/Patchouli)
+  The classes IOConfigWidget$GhostBuffers and IOConfigWidget$GhostRenderLayer and the method
+  IOConfigWidget.initBuffers (package com.enderio.machines.client.gui.widget.ioconfig) are taken from
+  Patchouli, and the block rendering of FireCraftingCategory (package
+  com.enderio.base.common.integrations.jei.category) is borrowed from Patchouli's PageMultiblock, as
+  the source comments and ioconfig/notice.md say. SkyTekx did not change these parts. They are
+  licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported license,
+  https://creativecommons.org/licenses/by-nc-sa/3.0/, see Patchouli-CC-BY-NC-SA-3.0.txt (the LICENSE
+  of Patchouli). They may only be shared for non-commercial purposes, with this credit and under the
+  same license. The jar as a whole is therefore passed on for non-commercial purposes only. The
+  SkyTekx 3 modpack is free of charge and earns no money.
+
+SoulDataReloadListener (package com.enderio.machines.common.souldata)
+  MIT, Copyright (c) 2020 Joseph Bettendorff a.k.a. "Commoble", see Commoble-MIT.txt (the header of
+  the source file).
+
+IFluidItemInteractive and the temporary file save of ConduitSavedData
+  Adapted from Mekanism ("Adapted from Mekanism's FluidUtils", "an exact copy of Mekanism
+  MekanismSavedData's system"). Mekanism is MIT, Copyright (c) Aidan C. Brady, see Mekanism-MIT.txt
+  (the LICENSE of https://github.com/mekanism/Mekanism).
+
+The movement step for mobs without AI in SpawnerMachineTask.tickNoAIMobs
+  Ender IO commit 84bfe2477 took it from the ASEvents class of Apothic Spawners
+  (https://github.com/Shadows-of-Fire/Apothic-Spawners), and SkyTekx moved it to the Forge 1.20.1
+  LivingTickEvent. Apothic Spawners is MIT, Copyright (c) 2024-2025 Stormraven Studios, LLC, see
+  ApothicSpawners-MIT.txt (the LICENSE of its branch 1.21 at fa52d69e).
+
+Libraries in META-INF/jarjar/, all unmodified
+  GraphLib3-3.0.7.jar: MIT, Copyright (c) 2016 David Quintana (gigaherz), see GraphLib-MIT.txt (the
+    LICENSE.txt of https://github.com/gigaherz/GraphLib).
+  Registrate-MC1.20-1.3.11.jar: Mozilla Public License 2.0, see Registrate-MPL-2.0.txt. Its Source
+    Code Form is the branch 1.20 of https://github.com/tterrag1098/Registrate and the sources jar
+    https://maven.tterrag.com/com/tterrag/registrate/Registrate/MC1.20-1.3.11/Registrate-MC1.20-1.3.11-sources.jar
+  checker-qual-3.33.0.jar: MIT, Copyright 2004-present by the Checker Framework developers, see
+    checker-qual-MIT.txt (the META-INF/LICENSE.txt of that jar).
+  guava-32.1.2-jre.jar, failureaccess-1.0.1.jar,
+  listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar, error_prone_annotations-2.18.0.jar
+    and jsr305-3.0.2.jar: Apache License 2.0, see Apache-2.0.txt. Guava carries the same text in its
+    own META-INF/LICENSE.
+
+The jar holds no sound files, so the sound credits in the README of the repository do not concern it.

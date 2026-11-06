@@ -909,12 +909,13 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
 
 ## Savegame notes
 
-- No live world has the mod, so the savegame test is short. OLD is the base a6bcde1 with its one
+- No live world has the mod, so the savegame test was short. OLD was the base a6bcde1 with its one
   boot fix, the InvTweaks removal, as the jar `237e0fc65275a0204fe7008f144c395207e41205`, because
-  the vendored base build `c37140ce` does not start in the Arclight pack (see the status). NEW is
-  the final build. The test places one of every block, fills machines, tanks, relay networks,
-  phantom bindings, sacks, drills and batteries, stops over RCON, swaps the jar and checks that
-  everything loads with its contents.
+  the vendored base build `c37140ce` does not start in the Arclight pack (see the status). NEW was
+  the release jar `227073059543dd3d969cd53a15f1fd42a38985cb`. A world with every block of the base,
+  filled machines and tanks, relay networks, phantom bindings, sacks, a drill and batteries loaded
+  with the same items, fluids and energy, and the changes below showed as planned, see
+  [Savegame test](#savegame-test).
 - No registry id, NBT key, block state value or saved data key of the base is renamed or removed.
   The items `dough` and `paper_cone`, the menu `bag_container` and the recipe serializer
   `actuallyadditions:solid_fuel` stay registered. The machine inventories keep the base's slot list.
@@ -923,6 +924,13 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   (`UPSTREAM.md`, source change 42), and crops load with `persistent` false, the old behaviour.
   A crop harvested by right click keeps the value it had (source change 54). Crystal clusters keep
   their state, since the base already has the property.
+- The base turns a crystal cluster against the nearest direction the player looks in
+  (`mod/blocks/base/FullyDirectionalBlock.java:23` at a6bcde1), while the fork turns it to the
+  clicked face and keeps it only on a sturdy block behind it (`CrystalClusterBlock.java:46` and `:85`,
+  source change 20). Both agree when the player looks straight at the clicked face. A cluster that the base
+  placed while the player looked past the clicked face, on a floor seen at a flat angle for example,
+  has no sturdy block behind it and pops off with its shards when that neighbour changes. That was
+  read in the code and not tested, and no live world holds such a cluster.
 - Additive NBT keys: the Vertical Digger gains the format marker `CheckYMin` and starts once more
   from its own height, the sack data gains `Filter`, every filter gains `Damage`, the Void Sack
   keeps `Filter` and `AutoInsert` on its stack, the Farmer gains its work area `Area`, and a broken
@@ -1059,6 +1067,73 @@ The bundle differs from `main` in these points (`UPSTREAM.md`, source changes 54
   require that `player.containerMenu` belongs to that machine (review of the server safety bundle).
   The Arclight hardening left this open, and the check goes in together with a claim plugin
   (carryover `aa-ship`).
+
+## Release test
+
+### Savegame test
+
+No live world has the mod, so the test ran on a fresh flat world of a dedicated Forge 47.4.18 server
+with the mods of the fork's dev runs (JEI 15.3.0.4, Patchouli 85, Curios 5.14.1, The One Probe and
+Mekanism 10.4.6), so that the dev client could join it at the end. OLD was the base with the InvTweaks
+removal, jar `237e0fc65275a0204fe7008f144c395207e41205`, and NEW the release jar
+`227073059543dd3d969cd53a15f1fd42a38985cb` of ed177d0. The scripts, the command files, the snapshots
+and the logs are in the workflow scratchpad under `bp2/actuallyadditions/ship/` (`tools/`, `sv/`,
+`srv-sv/logs-keep/`).
+
+- The test area sits in the chunks (102, 98) and (102, 99), two chunks from the forceloaded chunk
+  (100, 100). Their ticket level is 33, so they are loaded but never tick, and nothing in them could
+  run between the snapshots. The forceloaded chunk itself ticks and holds a working setup.
+- The first OLD boot placed all 121 blocks of the base, the four crops at age 7 on farmland and the
+  six crystal clusters facing up, as the base places them on a floor seen from above, and gave 49 block entities their contents:
+  5000 energy in every powered machine, items in the output slots, canola oil, refined canola oil,
+  water and lava in the tanks, seeds in the Bio Reactor and the Farmer, a Vertical Digger at `CheckY`
+  -63, a Firework Box with values outside the slider ranges, five phantom blocks bound to a chest,
+  the Oil Generator, the Crusher, a stone and a cobblestone, a Phantom Placer bound to an air block
+  with cobblestone, and an Advanced Item Laser Relay with a diamond filter. A chest held a drill with
+  the Speed and 3x3 augments and 20000 energy, two batteries with energy, a Traveler's Sack, a Void
+  Sack with a cobblestone filter in its stack, a filter, the ring, the staff, crystals, a coffee cup,
+  dough, a paper cone and a Double Crusher.
+- The relay networks and the sack contents need a player with a Laser Wrench and a sack in hand, so
+  a script wrote them in the format of the base's `WorldData` and `SackManager` (three networks and
+  one sack with 7 diamonds, 20 iron ingots and 9 black quartz). At the second OLD boot the base read
+  them: its Coal Generator fed a Crusher through two energy relays 6 blocks apart and crushed 5 bones
+  into 30 bone meal (`console-old2.log`).
+- The first NEW boot loaded the world with a data pack recipe of the empowering type that has three
+  modifiers. It logged one ERROR for that recipe ("Must have exactly 4 modifiers, has: 3") and
+  reached `Done` (source change 70). It logged no `Skipping BlockEntity` line and no unknown registry
+  id. The only registry lines are the WARN lines "Object did not get ID it asked for" for the six ids
+  that are new against the base save, the Item Tag, the four banner pattern items and the Engineer's
+  work sound. A stone set in each test chunk made the server write both chunks again, so every block
+  entity went through the save code of NEW (`latest-new1.log`).
+- The snapshot after the OLD boots and the one after the first NEW boot (`snap-A.json`,
+  `snap-B.json`) both count 49 block entities, 241 items in 33 kinds with the sack contents, 2000 mB
+  canola oil, 2500 mB refined canola oil, 2000 mB lava, 4000 mB water and 130500 energy. The relay
+  networks and the sack data are unchanged. The block states changed as planned: the four crops gained
+  `persistent=false`, the Hopping Item Interface `facing=down` and the Bio Reactor `facing=north`. The
+  Firework Box clamped Play 99 to 5, ChargeAmount 99 to 4, FlightTime 99 to 3, ColorAmount 99 to 6,
+  Area 99 to 4 and its chances to the range of 0 to 1. Additive keys appeared and nothing else: the
+  filters of the Ranged Collector and the Advanced Item Laser Relay gained `Damage`, the coffee cup
+  `Damage` 0 and the battery in the Battery Box an empty `ForgeCaps`.
+- The second NEW boot let the test chunks tick. The Double Crusher of the base logged the WARN
+  "Block entity actuallyadditions:crusher ... invalid for ticking" once and kept its 8 bone meal.
+  Broken with `setblock ... destroy` it dropped itself with `BlockEntityTag` Energy 5000 and the bone
+  meal, and placed again it became a `crusher_double` block entity with six slots that crushed bones.
+  The Vertical Digger gained `CheckYMin` -64 and started again at Y -61, its own height minus one,
+  instead of -63, and mined until its 5000 energy were used up. The Phantom Placer put a cobblestone
+  on its bound block, a hopper under the phantom itemface pulled the 5 diamonds and 9 gold ingots out
+  of the bound chest, the Bio Reactor burned its seeds, and the crusher of the forceloaded chunk kept
+  crushing through the network the base had saved. A Long-Range Breaker broke the Canola Press in its
+  line, and the press item kept 2000 mB canola oil and 5000 energy in its `BlockEntityTag`.
+- The dev client of the fork then joined with a local scenario
+  (`bp2/actuallyadditions/ship/tools/devtest-shipsv.patch`, not committed). The Traveler's Sack of the
+  base opened with the 7 diamonds, 20 iron ingots and 9 black quartz of its saved data, the Void Sack
+  showed the cobblestone filter of its stack, and the drill screen showed its Speed and 3x3 augments
+  with 20000 energy kept. Both sacks gained `AutoInsert` and the void filter `Damage`
+  (`sv/client-latest.log`).
+
+The Player Interface of the base never saved its player, so it had nothing to keep. Not covered are
+a Phantom Energyface or a relay with a pipe or cable over a real unload and the Item Tag anvil rename
+on Arclight (carryover `aa-arclight-test`).
 
 ## Local divergences
 

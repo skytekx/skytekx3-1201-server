@@ -19,10 +19,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BlockLampController extends FullyDirectionalBlock {
+
+    // SkyTekx: upper bound of lamps that one controller switches in a single update
+    private static final int MAX_LAMPS = 4096;
 
     public BlockLampController() {
         super(ActuallyBlocks.defaultPickProps());
@@ -38,36 +42,40 @@ public class BlockLampController extends FullyDirectionalBlock {
         this.updateLamp(world, pos);
     }
 
+    // SkyTekx: walk the connected lamps breadth first with a hash set and a cap. Upstream recursed
+    // once per lamp and kept the visited positions in a list that never held the checked offsets,
+    // so a large lamp field lagged the server and could overflow the stack in a neighbour update
     private void updateLamp(Level world, BlockPos pos) {
-        if (!world.isClientSide) {
-            BlockState state = world.getBlockState(pos);
-            BlockPos coords = pos.relative(WorldUtil.getDirectionByPistonRotation(state));
-            this.updateLampsAtPos(world, coords, world.getBestNeighborSignal(pos) > 0, new ArrayList<>());
+        if (world.isClientSide) {
+            return;
         }
-    }
-
-    private void updateLampsAtPos(Level world, BlockPos pos, boolean powered, List<BlockPos> updatedAlready) {
         BlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-        if (block instanceof BlockColoredLamp) {
-            if (state.getValue(BlockStateProperties.LIT) && !powered) {
-                world.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, false));
-            }
-
-            if (!state.getValue(BlockStateProperties.LIT) && powered) {
-                world.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, true));
-            }
-
-            this.updateSurrounding(world, pos, powered, updatedAlready);
+        BlockPos start = pos.relative(WorldUtil.getDirectionByPistonRotation(state));
+        if (!world.isLoaded(start)) {
+            return;
         }
-    }
+        boolean powered = world.getBestNeighborSignal(pos) > 0;
 
-    private void updateSurrounding(Level world, BlockPos pos, boolean powered, List<BlockPos> updatedAlready) {
-        for (Direction side : Direction.values()) {
-            BlockPos offset = pos.relative(side);
-            if (!updatedAlready.contains(offset)) {
-                updatedAlready.add(pos);
-                this.updateLampsAtPos(world, offset, powered, updatedAlready);
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        Set<BlockPos> seen = new HashSet<>();
+        queue.add(start);
+        seen.add(start);
+        int lamps = 0;
+        while (!queue.isEmpty() && lamps < MAX_LAMPS) {
+            BlockPos current = queue.poll();
+            BlockState lamp = world.getBlockState(current);
+            if (!(lamp.getBlock() instanceof BlockColoredLamp)) {
+                continue;
+            }
+            lamps++;
+            if (lamp.getValue(BlockStateProperties.LIT) != powered) {
+                world.setBlockAndUpdate(current, lamp.setValue(BlockStateProperties.LIT, powered));
+            }
+            for (Direction side : Direction.values()) {
+                BlockPos offset = current.relative(side);
+                if (seen.add(offset) && world.isLoaded(offset)) {
+                    queue.add(offset);
+                }
             }
         }
     }

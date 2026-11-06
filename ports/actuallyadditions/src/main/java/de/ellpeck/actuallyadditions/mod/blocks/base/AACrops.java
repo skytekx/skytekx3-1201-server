@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -32,6 +33,12 @@ public class AACrops extends CropBlock {
     // so a block update next to it no longer pops it off its grass. A crop of an older world has no
     // value saved and loads with the default false, the old behaviour
     public static final BooleanProperty PERSISTENT = BooleanProperty.create("persistent");
+
+    // SkyTekx: CropBlock grows a crop to getStateForAge(age), which starts from the default state, so a
+    // harvested wild crop lost the flag at its first growth step and popped off its grass at the next
+    // neighbour update. The flag of the growing crop is held here while it grows, and getStateForAge
+    // carries it into the grown state
+    private static final ThreadLocal<Boolean> GROWING_PERSISTENT = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     public AACrops(Properties p_i48421_1_, Supplier<Item> seedSupplier) {
         super(p_i48421_1_);
@@ -65,6 +72,38 @@ public class AACrops extends CropBlock {
         return super.canSurvive(state, level, pos);
     }
 
+    @Nonnull
+    @Override
+    public BlockState getStateForAge(int age) {
+        BlockState grown = super.getStateForAge(age);
+        return GROWING_PERSISTENT.get() ? grown.setValue(PERSISTENT, true) : grown;
+    }
+
+    // SkyTekx: random ticks, the Growth Ring and the worm grow a crop here, bone meal and the Greenhouse
+    // Glass through growCrops. Both call super, so the Forge crop events and the Bukkit BlockGrowEvent,
+    // which Arclight fires from these two methods of CropBlock, still run
+    @Override
+    public void randomTick(@Nonnull BlockState state, @Nonnull ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        Boolean outer = GROWING_PERSISTENT.get();
+        GROWING_PERSISTENT.set(state.getValue(PERSISTENT));
+        try {
+            super.randomTick(state, level, pos, random);
+        } finally {
+            GROWING_PERSISTENT.set(outer);
+        }
+    }
+
+    @Override
+    public void growCrops(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+        Boolean outer = GROWING_PERSISTENT.get();
+        GROWING_PERSISTENT.set(state.getValue(PERSISTENT));
+        try {
+            super.growCrops(level, pos, state);
+        } finally {
+            GROWING_PERSISTENT.set(outer);
+        }
+    }
+
     @Override
     protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE, PERSISTENT);
@@ -96,8 +135,9 @@ public class AACrops extends CropBlock {
                 }
             }
 
-            // SkyTekx: keep persistent, so a harvested wild crop stays on its grass. Main replants the
-            // default state, which pops off the grass at the next neighbour update
+            // SkyTekx: keep persistent, so a harvested wild crop stays on its grass, also once it grows
+            // again (getStateForAge). Main replants the default state, which pops off the grass at the
+            // next neighbour update
             world.setBlockAndUpdate(pos, state.setValue(AGE, 0));
         }
 

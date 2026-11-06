@@ -1664,8 +1664,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     crop drops its seed. The four generated loot tables are byte identical to the `loot_table`
     files of `main` at `cd9d9c6`. A right click on a ripe crop gives the drops minus one seed to
     the player and sets the crop back to age 0, which keeps `persistent` since the review at the
-    integration. Upstream `main` replants the default state, so a harvested wild crop pops off its
-    grass at the next neighbour update. On `main` the click goes on to the held item after
+    integration, and since source change 71 the crop also keeps it when it grows again. Upstream
+    `main` replants the default state, so a harvested wild crop pops off its grass at the next
+    neighbour update. On `main` the click goes on to the held item after
     the harvest, which spends bone meal on the replanted crop on the server while the client still
     sees the ripe one. Here the harvest consumes the click and swings the hand, as the sweet berry
     bush does. The four crops get the block state property `persistent` of `38d6404b`, default
@@ -2252,4 +2253,19 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     crushing recipe). The serializer now throws a `JsonSyntaxException` with the same message. On
     `main` the codec of `63fbbb33` returns a `DataResult` error for the same case, which the recipe
     manager logs and skips as well.
+    Savegame: none. New ids: none.
+71. Crop growth: a crop with `persistent` set keeps the flag when it grows. The replant of source
+    change 54 kept it only while the crop stayed at age 0, as finding aa-fid-1 of the release
+    audit showed. `CropBlock#randomTick` and `CropBlock#growCrops` set the state of
+    `getStateForAge(age)`, which starts from the default state with `persistent` `false`, so the
+    first growth step from a random tick, bone meal, the Greenhouse Glass, the Growth Ring or a worm
+    dropped the flag. The crop then fell back to the soil check of a crop, which outside the world
+    generation accepts only farmland, and popped off its grass at the next neighbour update, the
+    same end as on `main`. `AACrops` now overrides both growth methods to hold the flag of the
+    growing crop in a thread local while the methods of `CropBlock` run, and its `getStateForAge`
+    sets the flag on the grown state. The vanilla growth logic, the Forge crop events of the
+    random tick and the Bukkit `BlockGrowEvent` stay in place. Arclight fires that event from the
+    two methods of `CropBlock` (its `CropBlockMixin` redirects their `setBlock` calls), so a copy of
+    the vanilla methods in `AACrops` would have dropped it for the four crops. A crop that a player
+    plants has `persistent` `false` and grows as before.
     Savegame: none. New ids: none.

@@ -131,6 +131,9 @@ Modifications
       adds two minutes, as in the 1.12 versions, which upstream's main branch dropped.
     * Canola: JEI shows the pressing recipes of the Canola Press and the progress of the
       Fermenting Barrel, and shift click into the press works on a client of a server.
+    * Energizer and Enervator: both have armor slots that only take fitting armor and keep cursed
+      armor, an off hand slot and titles, and their input holds one item, which stops a
+      duplication of stacked energy items.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

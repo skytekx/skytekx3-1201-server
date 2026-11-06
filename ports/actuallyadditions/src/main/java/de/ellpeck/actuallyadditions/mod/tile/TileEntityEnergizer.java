@@ -75,7 +75,7 @@ public class TileEntityEnergizer extends TileEntityInventoryBase implements Menu
                     }
 
                     if (canTakeUp) {
-                        tile.inv.setStackInSlot(1, tile.inv.getStackInSlot(0).copy());
+                        tile.inv.setStackInSlot(1, tile.inv.getStackInSlot(0).copyWithCount(1));
                         tile.inv.setStackInSlot(0, StackUtil.shrink(tile.inv.getStackInSlot(0), 1));
                     }
                 }
@@ -85,6 +85,14 @@ public class TileEntityEnergizer extends TileEntityInventoryBase implements Menu
                 tile.lastEnergy = tile.storage.getEnergyStored();
             }
         }
+    }
+
+    // SkyTekx: the input holds one item. A stack of energy items shares one tag, so charging it and
+    // moving the whole stack out while the input lost one item duplicated the rest (upstream main
+    // copies the stack too)
+    @Override
+    public int getMaxStackSize(int slot) {
+        return slot == 0 ? 1 : super.getMaxStackSize(slot);
     }
 
     @Override
@@ -108,7 +116,7 @@ public class TileEntityEnergizer extends TileEntityInventoryBase implements Menu
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.energizer");
     }
 
     @Nullable

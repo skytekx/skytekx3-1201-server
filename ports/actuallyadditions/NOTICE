@@ -219,6 +219,8 @@ Modifications
     * Laser relays: a relay finds its network through an index instead of going through every
       connection of the world, which made large relay networks slow. The saved networks are
       unchanged.
+    * Ring of Magnetizing: the rings of a player look for items every fourth tick and only once
+      for all rings in the inventory, instead of once per ring in every tick.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

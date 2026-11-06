@@ -850,3 +850,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     the Mekanism tin and lead and the Immersive Engineering silver results into the ores of its
     priority mod, as it does with other recipes. The Lens of the Miner loses its `(wip)` label.
     Savegame: no key, id or state changes. A reconstructor that holds a lens keeps it.
+28. Display Stand and Empowerer: putting an item in swings the hand, in creative too (`350da9b`,
+    `a841121`). The Empowered Emeradic Crystal and its block ask for short grass, `minecraft:grass`
+    on 1.20.1, instead of the two block tall grass (`d8ad92c`, #1410). On `main` the item is
+    `Items.SHORT_GRASS`, its 1.20.3 name, the only vanilla id after 1.20.1 that `main` uses here.
+    The provider `EmpoweringRecipeGenerator`, the two generated recipes and their hashes in the
+    cache of the provider match. Savegame: no key, id or state changes.

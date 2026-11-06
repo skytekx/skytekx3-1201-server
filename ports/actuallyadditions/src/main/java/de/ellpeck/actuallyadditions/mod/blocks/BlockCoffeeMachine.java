@@ -38,16 +38,17 @@ public class BlockCoffeeMachine extends DirectionalBlock.Container {
 
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!world.isClientSide) {
-            TileEntityCoffeeMachine tile = (TileEntityCoffeeMachine) world.getBlockEntity(pos);
-            if (tile != null) {
+        // SkyTekx: upstream 09673dd1. The base passed the click on, so the held item was used too
+        if (world.isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            if (world.getBlockEntity(pos) instanceof TileEntityCoffeeMachine tile) {
                 if (!this.tryUseItemOnTank(player, hand, tile.tank)) {
                     NetworkHooks.openScreen((ServerPlayer) player, tile, pos);
                 }
             }
-            return InteractionResult.PASS;
+            return InteractionResult.CONSUME;
         }
-        return super.use(state, world, pos, player, hand, hit);
     }
 
     @Nullable

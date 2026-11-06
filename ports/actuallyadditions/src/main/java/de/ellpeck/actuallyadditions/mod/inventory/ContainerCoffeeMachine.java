@@ -81,11 +81,12 @@ public class ContainerCoffeeMachine extends AbstractContainerMenu {
             //Other Slots in Inventory excluded
             else if (slot >= inventoryStart) {
                 //Shift from Inventory
-                if (newStack.getItem() == ActuallyItems.COFFEE_CUP.get()) {
+                // SkyTekx: upstream 0a6aa654, the empty cups go into the cup slot
+                if (newStack.getItem() == ActuallyItems.EMPTY_CUP.get()) {
                     if (!this.moveItemStackTo(newStack, TileEntityCoffeeMachine.SLOT_INPUT, TileEntityCoffeeMachine.SLOT_INPUT + 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (ItemCoffee.getIngredientFromStack(newStack) != null) {
+                } else if (ItemCoffee.getIngredientRecipeFromStack(player.level(), newStack) != null) {
                     if (!this.moveItemStackTo(newStack, 3, 11, false)) {
                         return ItemStack.EMPTY;
                     }

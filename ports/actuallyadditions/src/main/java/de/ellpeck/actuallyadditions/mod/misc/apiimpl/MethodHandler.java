@@ -14,16 +14,21 @@ import de.ellpeck.actuallyadditions.api.internal.IAtomicReconstructor;
 import de.ellpeck.actuallyadditions.api.internal.IMethodHandler;
 import de.ellpeck.actuallyadditions.api.lens.Lens;
 import de.ellpeck.actuallyadditions.api.recipe.CoffeeIngredient;
+import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockLaserRelay;
+import de.ellpeck.actuallyadditions.mod.crafting.CoffeeIngredientRecipe;
 import de.ellpeck.actuallyadditions.mod.crafting.LaserRecipe;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityAtomicReconstructor;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -61,6 +66,44 @@ public class MethodHandler implements IMethodHandler {
         return worked;
     }
 
+    // SkyTekx: upstream 971fdd65, the same as above for the data driven ingredient
+    @Override
+    public boolean addRecipeEffectToStack(ItemStack stack, CoffeeIngredientRecipe ingredient) {
+        boolean worked = false;
+        if (ingredient != null) {
+            List<MobEffectInstance> effects = ingredient.getEffects();
+            if (!effects.isEmpty()) {
+                for (MobEffectInstance effect : effects) {
+                    MobEffectInstance effectHas = this.getSameEffectFromStack(stack, effect);
+                    if (effectHas != null) {
+                        if (effectHas.getAmplifier() < ingredient.getMaxAmplifier() - 1) {
+                            this.addEffectProperties(stack, effect, false, true);
+                            worked = true;
+                        }
+                    } else {
+                        this.addEffectToStack(stack, effect);
+                        worked = true;
+                    }
+                }
+            }
+        }
+        return worked;
+    }
+
+    // SkyTekx: the milk of the 1.12 MilkIngredient, which upstream main dropped
+    @Override
+    public void weakenEffectsOnStack(ItemStack stack, int extraSeconds) {
+        MobEffectInstance[] effects = this.getEffectsFromStack(stack);
+        if (effects != null && effects.length > 0) {
+            this.clearEffectsFromStack(stack);
+            for (MobEffectInstance effect : effects) {
+                if (effect.getAmplifier() > 0) {
+                    this.addEffectToStack(stack, new MobEffectInstance(effect.getEffect(), effect.getDuration() + extraSeconds, effect.getAmplifier() - 1));
+                }
+            }
+        }
+    }
+
     @Override
     public MobEffectInstance getSameEffectFromStack(ItemStack stack, MobEffectInstance effect) {
         MobEffectInstance[] effectsStack = this.getEffectsFromStack(stack);
@@ -76,19 +119,40 @@ public class MethodHandler implements IMethodHandler {
 
     @Override
     public void addEffectProperties(ItemStack stack, MobEffectInstance effect, boolean addDur, boolean addAmp) {
+        // SkyTekx: upstream 90cecc8e. The base wiped the whole tag of the stack and wrote every effect
+        // back once per effect it found, so effects doubled with each ingredient
         MobEffectInstance[] effects = this.getEffectsFromStack(stack);
-        stack.setTag(new CompoundTag());
-        for (int i = 0; i < effects.length; i++) {
-            if (effects[i].getEffect() == effect.getEffect()) {
-                effects[i] = new MobEffectInstance(effects[i].getEffect(), effects[i].getDuration() + (addDur
-                    ? effect.getDuration()
-                    : 0), effects[i].getAmplifier() + (addAmp
-                    ? effect.getAmplifier() > 0
-                    ? effect.getAmplifier()
-                    : 1
-                    : 0));
+        boolean effectUpdated = false;
+        if (effects != null) {
+            for (int i = 0; i < effects.length; i++) {
+                if (effects[i].getEffect() == effect.getEffect()) {
+                    effects[i] = new MobEffectInstance(effects[i].getEffect(),
+                            effects[i].getDuration() + (addDur ? effect.getDuration() : 0),
+                            effects[i].getAmplifier() + (addAmp ? effect.getAmplifier() > 0 ? effect.getAmplifier() : 1 : 0));
+                    effectUpdated = true;
+                    break;
+                }
             }
-            this.addEffectToStack(stack, effects[i]);
+        }
+        if (!effectUpdated) {
+            this.addEffectToStack(stack, effect);
+        } else {
+            this.clearEffectsFromStack(stack);
+            for (MobEffectInstance updatedEffect : effects) {
+                this.addEffectToStack(stack, updatedEffect);
+            }
+        }
+    }
+
+    // SkyTekx: removes the effect keys only, the other NBT of the stack (its damage) stays
+    private void clearEffectsFromStack(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null) {
+            int counter = tag.getInt("Counter");
+            for (int i = 1; i <= counter; i++) {
+                tag.remove(String.valueOf(i));
+            }
+            tag.remove("Counter");
         }
     }
 
@@ -98,7 +162,8 @@ public class MethodHandler implements IMethodHandler {
 
         int prevCounter = tag.getInt("Counter");
         CompoundTag compound = new CompoundTag();
-        //compound.putInt("ID", Potion.getIdFromPotion(effect.getEffect())); //TODO ?!
+        // SkyTekx: upstream 56402e46 stores the effect by its registry name
+        compound.putString("ID", BuiltInRegistries.MOB_EFFECT.getKey(effect.getEffect()).toString());
         compound.putInt("Duration", effect.getDuration());
         compound.putInt("Amplifier", effect.getAmplifier());
 
@@ -112,16 +177,25 @@ public class MethodHandler implements IMethodHandler {
     @Override
     public MobEffectInstance[] getEffectsFromStack(ItemStack stack) {
         ArrayList<MobEffectInstance> effects = new ArrayList<>();
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = stack.getTag();
+        if (tag == null) {
+            return null;
+        }
         int counter = tag.getInt("Counter");
         while (counter > 0) {
-            CompoundTag compound = (CompoundTag) tag.get(counter + "");
-            MobEffectInstance effect = new MobEffectInstance(MobEffect.byId(compound.getInt("ID")), compound.getInt("Duration"), compound.getByte("Amplifier"));
-            effects.add(effect);
+            CompoundTag compound = tag.getCompound(counter + "");
+            String id = compound.getString("ID");
+            ResourceLocation effectID = id.isEmpty() ? new ResourceLocation("speed") : ResourceLocation.tryParse(id);
+            MobEffect effect = effectID == null ? null : BuiltInRegistries.MOB_EFFECT.get(effectID);
+            if (effect == null) {
+                ActuallyAdditions.LOGGER.error("Unable to find effect with ID: {}, defaulting to speed", effectID);
+                effect = MobEffects.MOVEMENT_SPEED;
+            }
+            effects.add(new MobEffectInstance(effect, compound.getInt("Duration"), compound.getByte("Amplifier")));
             counter--;
         }
-        return effects.size() > 0
-            ? effects.toArray(new MobEffectInstance[effects.size()])
+        return !effects.isEmpty()
+            ? effects.toArray(new MobEffectInstance[0])
             : null;
     }
 

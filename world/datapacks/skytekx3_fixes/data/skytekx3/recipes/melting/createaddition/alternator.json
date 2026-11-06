@@ -11,18 +11,14 @@
   },
   "result": {
     "tag": "forge:molten_copper",
-    "amount": 630
+    "amount": 720
   },
   "byproducts": [
     {
       "tag": "forge:molten_iron",
-      "amount": 618
-    },
-    {
-      "tag": "forge:molten_zinc",
-      "amount": 90
+      "amount": 621
     }
   ],
   "temperature": 500,
-  "time": 132
+  "time": 141
 }

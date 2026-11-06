@@ -16,7 +16,7 @@
   "byproducts": [
     {
       "tag": "forge:molten_iron",
-      "amount": 11
+      "amount": 9
     }
   ],
   "temperature": 700,

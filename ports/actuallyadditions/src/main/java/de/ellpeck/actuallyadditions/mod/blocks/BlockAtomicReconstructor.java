@@ -14,7 +14,6 @@ import de.ellpeck.actuallyadditions.api.lens.ILensItem;
 import de.ellpeck.actuallyadditions.mod.blocks.base.FullyDirectionalBlock;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityAtomicReconstructor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -72,6 +71,12 @@ public class BlockAtomicReconstructor extends FullyDirectionalBlock.Container im
                             heldItem.shrink(1);
                         }
                         return InteractionResult.CONSUME;
+                    } else if (ItemStack.isSameItemSameTags(heldItem, reconstructor.inv.getStackInSlot(0)) && heldItem.getCount() + 1 <= heldItem.getMaxStackSize()) {
+                        // SkyTekx: lenses stack, so a stack of the same lens takes the lens out, as in
+                        // c0e0480d. The tags must match too, so a named lens is not merged away
+                        reconstructor.inv.setStackInSlot(0, ItemStack.EMPTY);
+                        heldItem.grow(1);
+                        return InteractionResult.CONSUME;
                     }
                 } else {
                     ItemStack slot = reconstructor.inv.getStackInSlot(0);
@@ -120,8 +125,9 @@ public class BlockAtomicReconstructor extends FullyDirectionalBlock.Container im
 
             if (this.lastSysTime + 3000 < sysTime) {
                 this.lastSysTime = sysTime;
-                if (Minecraft.getInstance().level != null) {
-                    RandomSource random = Minecraft.getInstance().level.random;
+                // SkyTekx: the level of the tooltip, which may be null, as in ae60e77a (#1415)
+                if (pLevel != null) {
+                    RandomSource random = pLevel.random;
                     this.toPick1 = random.nextInt(NAME_FLAVOR_AMOUNTS_1) + 1;
                     this.toPick2 = random.nextInt(NAME_FLAVOR_AMOUNTS_2) + 1;
                 }

@@ -81,8 +81,14 @@ public class LensColor extends Lens {
         return false;
     }
 
+    // SkyTekx: the converted stack keeps the size of the stack it came from, as in 13168497 (#1477).
+    // The base dropped a whole stack on the ground and gave back one item
     private ItemStack tryConvert(ItemStack stack, RegistryAccess registryAccess) {
-        return ColorChangeRecipe.getRecipeForStack(stack).map(recipe -> recipe.getResultItem(registryAccess)).orElse(ItemStack.EMPTY);
+        ItemStack newStack = ColorChangeRecipe.getRecipeForStack(stack).map(recipe -> recipe.getResultItem(registryAccess)).orElse(ItemStack.EMPTY);
+        if (!newStack.isEmpty()) {
+            newStack.setCount(Math.min(stack.getCount(), newStack.getMaxStackSize()));
+        }
+        return newStack;
     }
 
     @Override

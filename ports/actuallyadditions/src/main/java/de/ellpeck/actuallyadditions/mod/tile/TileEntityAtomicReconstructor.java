@@ -29,8 +29,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 
@@ -59,12 +57,11 @@ public class TileEntityAtomicReconstructor extends TileEntityInventoryBase imple
         PacketHelperServer.spawnLaserWithTimeServer(world, startX, startY, startZ, endX, endY, endZ, currentLens.getColor(), 25, 0, 0.2F, 0.8F);
     }
 
+    // SkyTekx: lenses stack since c0e0480d, and the slot still holds the one lens in use, so a hopper
+    // cannot put a whole stack in
     @Override
-    public AABB getRenderBoundingBox() {
-        if (getProgress() > 0.0f)
-            return new AABB(getPosition(), getPosition().offset(1,1,1).relative(getBlockState().getValue(BlockStateProperties.FACING), 11));
-        else
-            return super.getRenderBoundingBox();
+    public int getMaxStackSize(int slot) {
+        return 1;
     }
 
     @Override

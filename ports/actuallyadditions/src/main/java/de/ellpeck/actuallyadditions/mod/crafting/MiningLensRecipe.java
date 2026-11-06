@@ -98,7 +98,9 @@ public class MiningLensRecipe implements Recipe<Container>, WeightedEntry {
             Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient"));
             int weight = GsonHelper.getAsInt(pJson, "weight");
             JsonObject resultObject = GsonHelper.getAsJsonObject(pJson, "result");
-            ItemStack result = new ItemStack(GsonHelper.getAsItem(resultObject, "item"));
+            // SkyTekx: the result has an optional count, the 1.20.1 form of main's ITEM_WITH_COUNT_CODEC
+            // (08b4f923, 7fd9c103)
+            ItemStack result = new ItemStack(GsonHelper.getAsItem(resultObject, "item"), GsonHelper.getAsInt(resultObject, "count", 1));
 
             return new MiningLensRecipe(pRecipeId, ingredient, weight, result);
         }

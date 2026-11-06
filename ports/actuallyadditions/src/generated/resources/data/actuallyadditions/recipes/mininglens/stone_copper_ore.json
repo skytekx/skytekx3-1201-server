@@ -1,0 +1,10 @@
+{
+  "type": "actuallyadditions:mining_lens",
+  "ingredient": {
+    "tag": "actuallyadditions:stone_ore_replaceables"
+  },
+  "result": {
+    "item": "minecraft:copper_ore"
+  },
+  "weight": 5000
+}

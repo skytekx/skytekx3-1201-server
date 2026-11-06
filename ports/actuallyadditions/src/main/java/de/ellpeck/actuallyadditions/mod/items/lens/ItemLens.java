@@ -20,7 +20,8 @@ public class ItemLens extends ItemBase implements ILensItem {
     private final Lens type;
 
     public ItemLens(Lens type) {
-        super(ActuallyItems.defaultProps().stacksTo(1));
+        // SkyTekx: lenses stack to 64, as in c0e0480d. The Atomic Reconstructor still holds one
+        super(ActuallyItems.defaultProps());
         this.type = type;
     }
 

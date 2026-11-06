@@ -1,0 +1,17 @@
+{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
+  "type": "actuallyadditions:mining_lens",
+  "ingredient": {
+    "tag": "actuallyadditions:stone_ore_replaceables"
+  },
+  "result": {
+    "item": "immersiveengineering:ore_silver",
+    "count": 1
+  },
+  "weight": 1000
+}

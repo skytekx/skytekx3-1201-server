@@ -1,0 +1,10 @@
+{
+  "type": "actuallyadditions:mining_lens",
+  "ingredient": {
+    "tag": "actuallyadditions:stone_ore_replaceables"
+  },
+  "result": {
+    "item": "actuallyadditions:black_quartz_ore"
+  },
+  "weight": 3000
+}

@@ -231,6 +231,15 @@ evidence and the page with the details. The rulings behind the first section are
   `config/create_dragons_plus-common.toml` the fluids and generated recipes, and single recipes can go
   in `kubejs/server_scripts/recipe_fixes.js`. See
   [Create Integrated Farming port](modpack/createintegratedfarming-port.md#create-dragons-plus).
+- The fake player of the Actually Additions machines when a claim plugin comes. The fork's breakers,
+  placers, lenses and the other machines act as the one fake player `[ActuallyAdditions]` with the
+  fixed UUID `5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd` (`ports/actuallyadditions/UPSTREAM.md`, source
+  change 60). A claim plugin then has to trust that player everywhere or refuse it everywhere. One
+  fake player per owner would need a new additive owner key on every machine. The same plugin
+  should come with the open menu check of the screen packets in `PacketHandler.guiTarget`, so a
+  player cannot toggle machines in a foreign claim. The pack runs EssentialsX only, so nothing is
+  needed today. See
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
 
 ## Defects to fix
 
@@ -288,6 +297,13 @@ evidence and the page with the details. The rulings behind the first section are
   fine. A fix would create the missing nodes in `load` or `onLoad`. Until then nobody places
   bundles with NBT by command. Whether a Create contraption that moves a bundle takes the same path
   is not verified. See [Ender IO backport](modpack/enderio-backport.md#operator-notes).
+- Several Actually Additions machines change blocks without a block event, so a claim or logging
+  plugin on Arclight does not see them. They are the harvest and planting of the Farmer, the Fluid
+  Placer and the Fluid Collector and the Lava Factory (`ports/actuallyadditions/UPSTREAM.md`, source
+  change 60). The sacks pick items up before the Bukkit pickup events, and the Ranged Collector
+  takes item entities without the Bukkit `InventoryPickupItemEvent` (source changes 46 and 48). The
+  mod is not in the pack yet. See
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
 
 ## Not verified
 
@@ -446,6 +462,15 @@ evidence and the page with the details. The rulings behind the first section are
   pack client has joined a fork server, and the alternator scan and the wire test on a copy of the
   live world have not run. Both are rollout gates, see [Create Crafts & Additions
   backport](modpack/createaddition-backport.md#release).
+- Lost drops on Arclight from other mods' block breakers. Arclight 1.0.6 pushes a capture context for
+  every Forge break event that it bridges to Bukkit, and only the break of a real player takes it
+  off again, while its `Block.popResource` puts every drop into the top context. The test of the
+  Actually Additions fork showed that a machine break of the old fork jar left such a context
+  behind, so a torch that fell off a broken block later was lost, and 178 contexts piled up
+  (`al-events-old.log` of the workflow scratchpad). The fork now takes back its own contexts.
+  Whether other mods of the pack post break events outside a player break, and lose drops the same
+  way on the live server, nobody has checked. See
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
 
 ## Docs and housekeeping
 

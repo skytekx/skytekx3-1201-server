@@ -3,7 +3,7 @@ type: Runbook
 title: Logs and crashes
 description: Where the server logs live, how to read a run, the crash history with root causes and fixes, the stop path, the boot error baseline and the error counts of each recent boot.
 tags: [server, logs, crashes, debugging, arclight]
-timestamp: 2026-11-04
+timestamp: 2026-11-06
 ---
 
 # Logs and crashes
@@ -360,6 +360,22 @@ loader, which filled the new `world/serverconfig/` files with their defaults ("I
 corrected from null to its default"). The second boot shows 45 of them. The rest of the WARNs follow
 the same loggers as on the build machine, with 109 from LootDataManager, 39 each from Tinkers'
 Construct and mixin, 37 from Mantle and 30 from Aether Redux.
+
+The pack boot copies of the workflow scratchpad (`packboot-arclight/` and `packboot-forge/`, not in
+the repo), which the backport integrations boot, have no EssentialsX and log two more ERROR lines on
+every boot, for example `aa-ship-arclight` and `enderio-fix-forge` of 2026-11-06. Neither comes from
+a fork of this repo.
+
+- The `RuntimeDistCleaner` line for `net/minecraft/client/resources/model/ModelBakery` comes from
+  the client mixin `client.ModelBakeryMixin`, which Advanced AE 1.3.6 lists for both sides in
+  `mixins.aae.json` (lines 5739 to 5742 of `packboot-logs/aa-ship-arclight-debug.log.gz`, see
+  [Mod set](../modpack/mod-set.md#additions-of-2026-11-04)). Advanced AE joined the index in 1815a73
+  on 2026-11-04 at 19:53, after the live boot of 16:05 that day, so a live boot with it should log
+  this line too. Nobody has checked that on the live server yet.
+- The Nostalgic Tweaks line "Could not create a startup backup config file" comes from a jar that
+  the copies load and the live server keeps in `client-only-mods/` (line 289 of
+  `packboot-logs/aa-ship-arclight-latest.log`, see
+  [Mod set](../modpack/mod-set.md#where-the-jars-live)).
 
 ### Runtime noise after boot
 

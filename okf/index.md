@@ -3,7 +3,7 @@ type: Project
 title: SkyTekx 3
 description: Knowledge base for SkyTekx 3, the Minecraft 1.20.1 modpack and server on Forge and Arclight, with its state on 2026-10-31, the stack at a glance and a map of every page.
 tags: [skytekx, minecraft, modpack, server, overview]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # SkyTekx 3
@@ -84,7 +84,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | [Expanded Delight port](modpack/expandeddelight-port.md) | The Forge 1.20.1 port of the Farmer's Delight addon Expanded Delight 0.1.4 in `ports/expandeddelight/`, the Farmer's Respite files that stay out, its tags with Pam's Food Core and Mekanism, its tests on Forge and Arclight and its deploy |
 | [Create Integrated Farming port](modpack/createintegratedfarming-port.md) | The Forge 1.20.1 port of the Create addon Create: Integrated Farming 1.4.3 in `ports/createintegratedfarming/`, with its roosts, fishing nets and Vacuum Harvester, the content of its library Create: Dragons Plus, its tests on Forge and Arclight and its deploy |
 | [AlmostUnified](modpack/almostunified.md) | One item per material across the tech mods |
-| [KubeJS](modpack/kubejs.md) | The four server scripts and how to work with Rhino |
+| [KubeJS](modpack/kubejs.md) | The ten server scripts and how to work with Rhino |
 | [Plugins](modpack/plugins.md) | EssentialsX, its files, permissions, metrics and update checks |
 | [Tools](modpack/tools.md) | The eleven scripts in `tools/` and what each one really does |
 | [Client](modpack/client.md) | The owner's Prism instance, the client-only mods, the main menu, the client crashes and how a player joins from outside the LAN |

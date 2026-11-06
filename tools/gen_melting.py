@@ -127,6 +127,10 @@ KNOWN_DUPES = {
     'cyclic:solidifier/gilded_blackstone':
         'The Cyclic solidifier makes gilded blackstone of two gold nuggets, and Create crushing gives 18 back',
 }
+for _armor, _gives in (('iron', 'raw iron'), ('golden', 'raw gold'), ('diamond', 'diamonds')):
+    KNOWN_DUPES['actuallyadditions:crushing/%s_horse_armor' % _armor] = (
+        'DragN Livestock crafts the %s horse armor of four ingots or gems, and the Actually Additions crusher grinds '
+        'it into six %s without melting' % (_armor, _gives))
 for _color in ('white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime', 'pink', 'gray', 'light_gray', 'cyan',
                'purple', 'blue', 'brown', 'green', 'red', 'black'):
     KNOWN_DUPES['cyclic:crusher/concrete_%s_powder' % _color] = (

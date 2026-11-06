@@ -153,22 +153,44 @@ ZeroCore 2.1.48, CurseForge file 7344725 on `mediafilez.forgecdn.net` with SHA-1
 - The builder reads each pointer from git HEAD, takes the jar from the cache or downloads it there,
   and bundles it under the path that a tracked copy would have, so `PACK_RULES`, the permission guard
   and the file list treat it like any bundled jar. The cache is `$SKYTEKX3_FETCH_CACHE`, else
-  `$XDG_CACHE_HOME/skytekx3/local-mods/`, else `~/.cache/skytekx3/local-mods/`, always outside the
-  tree, with one folder per SHA-1.
+  `$XDG_CACHE_HOME/skytekx3/local-mods/`, else `~/.cache/skytekx3/local-mods/`, with one folder per
+  SHA-1. It lies outside the tree unless `$SKYTEKX3_FETCH_CACHE` points into it, which the tools
+  refuse unless git ignores that path.
 - A pointer that does not parse, a failed download, a size or SHA-1 that differs from the pointer and
   a jar that git tracks next to its pointer stop the build before it moves or writes anything, also
   with `--allow-unpermitted`.
+- No commit reachable from HEAD may hold a pointed jar, at any path, because a push publishes every
+  one of them. The builder takes the blob id of each fetched jar, the id that `git hash-object` gives
+  for it, and runs `git log --find-object` with that id on HEAD. Unless the command prints nothing,
+  the build names the jar and the commits and stops, and with `--allow-unpermitted` it writes only
+  `SkyTekx3-<version>-UNPERMITTED.mrpack`. For ZeroCore 2 the id is
+  `f94d426ce1c02a3d3cbb16ddaf09db424c5435ae`.
 - The upload script refuses a `.mrpack` that lacks a pointed jar in `overrides/mods/` or ships it
-  unpatched with other bytes than its pointer names.
+  unpatched with other bytes than its pointer names. It runs the same history check before any call
+  to Modrinth, with the jar from the `.mrpack` or from the cache.
 - For a server, `python3 tools/fetch_local_mods.py` puts every pointed jar into `local-mods/` with the
-  same checks and the same cache, and `--dest mods` puts it straight into `mods/`. It writes into
-  `local-mods/` only what git ignores there, and `--check` only lists what is missing.
+  same checks and the same cache, and `--dest mods` puts it straight into `mods/`. Inside the
+  repository it writes only to paths that git ignores, the jar in `--dest` and the cache alike, and it
+  checks the same for the temporary `.fetch-*` file that a killed run leaves next to them. The file
+  `.gitignore` ignores `/local-mods/.fetch-*` for that. The option `--check` only lists what is
+  missing.
 
 The test of 2026-11-06 built the pack of the branch before and after the change of ZeroCore 2 with
 `--allow-unpermitted`. Both files held the same 1,063 entries in the same order with the same
 content, ZeroCore 2 included. A pointer with a wrong SHA-1, a wrong size, a missing file on the CDN,
 a host that does not resolve or an `http` URL refused the build, and so did the jar tracked next to
 its pointer. The runs used a scratch copy of the branch and are not in the repo.
+
+A second test of 2026-11-06 ran in a throwaway clone with every permission record set to OK on disk,
+so that only the new checks could stop a build. On the branch, whose unpushed commits still held the
+ZeroCore jar, the build refused and named the two commits that add and delete it, and the upload
+script refused a pack for the same reason. On a commit with the same tree and no history the build
+wrote a pack with the same 1,063 entries as before, and that pack passed the preflight of the upload
+script. A copy of the jar committed under `plugins/` and deleted again in the next commit refused
+the build as well. The fetch script refused `--dest plugins`, a cache in `.zc-cache/`, a folder
+`docs/` whose jars git ignores but whose `.fetch-*` files it does not, and a symlink outside the
+tree that leads into `plugins/`, and it wrote into `local-mods/` and `mods/` and to a cache in
+`mods/`.
 
 Up to 3.0.5 it packed the working tree, not git. The 3.0.5 file therefore holds 14 untracked config
 files, among them `config/avaritia-common.toml` of a removed mod, and the Spark profiler's temporary

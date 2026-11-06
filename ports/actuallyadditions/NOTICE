@@ -101,6 +101,11 @@ Modifications
       mined with a pickaxe, and the Fluid Collector also empties full water and lava cauldrons.
     * Farmer: a compass sets its work area, it plants nether wart again, leaves modded farmland
       alone and tills modded soil into its own farmland, and planting makes a sound.
+    * Atomic Reconstructor: its beam and the other lasers render as particles, the renderer no
+      longer crashes, death messages and tooltips work, lenses stack, the Lens of Color keeps
+      stack sizes, and the Lens of the Miner makes copper, black quartz, ancient debris and
+      deepslate ores, plus the ores of Mekanism, Immersive Engineering, Powah and ElementalCraft
+      when those mods are loaded, without doubling the chances on deepslate.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

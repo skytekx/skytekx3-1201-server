@@ -807,3 +807,46 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Savegame: the additive key `Area` holds an area set with the configure item. A farmer without
     it works the area of the config as before, and the client gets the area that the server
     works.
+27. Atomic Reconstructor and lenses: the renderer of the reconstructor returns when the block at
+    its position is no longer a reconstructor (`713568d`), which crashed the client when it read
+    the facing of another block. Every laser of the server is a beam particle now, the
+    reconstructor's too (`337fbfb`): the particle has its own render type with additive blending
+    (`fb80bf3`, `58b9cbc`), and `AssetUtil.renderLaserParticle` draws the tube in the format
+    position, colour and lightmap. The base wrote the particle into the tesselator without
+    beginning it, which throws, and spawned no particle for any laser but the reconstructor's,
+    whose beam its block entity renderer drew. The particle leaves out the texture coordinates of
+    `main`, which point at the white sprite of Forge in a format that has no texture, and it only
+    spawns when the client has a level and a player, where `main` can read a null player. The
+    lens sits in the middle of the block again (`337fbfb`). Death by the Lens of Certain Death
+    shows its five messages again (`c995908`): the message id already holds the mod id, so the
+    base looked for keys with the mod id twice, and the lang keys are now
+    `death.actuallyadditions.atomic_reconstructor.1` to `.5` as on `main`. The flavour name in
+    the tooltip of the reconstructor item reads the level of the tooltip, which can be null
+    (`ae60e77`, #1415), so the common class no longer names the client class `Minecraft`.
+    Lenses stack to 64 (`c0e0480`), and a stack of the same lens with the same tags takes the
+    lens out of the reconstructor. The slot holds one lens, so a hopper cannot fill it with a
+    stack. The Lens of Color keeps the size of an item stack it converts (`1316849`, #1477), the
+    base gave back one item for a whole stack. The Lens of the Miner reads the ores of stone from
+    `actuallyadditions:stone_ore_replaceables`, of deepslate from
+    `actuallyadditions:deepslate_ore_replaceables` and of netherrack from
+    `forge:ore_bearing_ground/netherrack`, the Forge name of `main`'s
+    `c:ore_bearing_ground/netherrack` (`af8f1f1`). The base used `forge:stone`, which holds
+    deepslate and tuff too, so deepslate got the stone ores as well. It gains copper and black
+    quartz ore in stone (`6005bee`, `d9cae5b`, `e1cd1b4`), ancient debris in netherrack
+    (`f471f4f`) and the eight deepslate ores (`482fc7a`, `d9cae5b`) with `main`'s weights. The 20
+    generated recipes and the hashes in the cache of `MiningLensGenerator` are written by hand to
+    match the provider. The result of a mining lens recipe reads an optional `count`, the 1.20.1
+    form of `main`'s item with count codec (`08b4f92`, `7fd9c10`). The ores of other mods are hand
+    written recipes in `src/main/resources/data/actuallyadditions/recipes/mininglens/`, each with
+    a `forge:mod_loaded` condition, so Forge skips them when the mod is missing and JEI never
+    lists them (`e1cd1b4`, `911356a`, `82c99e0`). They are the five Mekanism ores (tin, osmium,
+    fluorite, lead and uranium, checked in Mekanism 1.20.1 10.4.16.80 of the pack), the silver
+    ore of Immersive Engineering (`immersiveengineering:ore_silver`, checked in 10.2.0-183 of the
+    pack), the uraninite ore of Powah (checked in the Forge jar `Powah-5.0.11.jar` for 1.20.1 from
+    Modrinth, SHA-1 `f6dca27e`) and the inert crystal ore of ElementalCraft (checked in
+    `elementalcraft-1.20.1-6.0.1.jar` from Modrinth, SHA-1 `602f902e`), all with `main`'s weights. Left out
+    are the sets of Elements of Power and XyCraft, since no 1.20.1 jar of them could be checked,
+    and of Modern Industrialization, whose 1.20.1 builds are for Fabric only. AlmostUnified turns
+    the Mekanism tin and lead and the Immersive Engineering silver results into the ores of its
+    priority mod, as it does with other recipes. The Lens of the Miner loses its `(wip)` label.
+    Savegame: no key, id or state changes. A reconstructor that holds a lens keeps it.

@@ -13,6 +13,7 @@ package de.ellpeck.actuallyadditions.mod.blocks.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import de.ellpeck.actuallyadditions.api.lens.ILensItem;
+import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityAtomicReconstructor;
 import de.ellpeck.actuallyadditions.mod.util.AssetUtil;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -31,10 +32,12 @@ public class ReconstructorRenderer implements BlockEntityRenderer<TileEntityAtom
 
     @Override
     public void render(TileEntityAtomicReconstructor tile, float partialTicks, @Nonnull PoseStack matrices, @Nonnull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+        // SkyTekx: the guard of 713568d7. A renderer that runs after the block changed read the facing
+        // of a state without one and crashed the client
+        if (!tile.getBlockState().is(ActuallyBlocks.ATOMIC_RECONSTRUCTOR.get())) {
+            return;
+        }
         ItemStack stack = tile.inv.getStackInSlot(0);
-        //default color 0x1b6dff
-        int color = tile.getBeamColor();
-        int length = 5;
         Direction direction = tile.getOrientation();
         float rot = 360.0f - direction.getOpposite().toYRot(); //Sigh...
         float pitch = 0;
@@ -44,20 +47,13 @@ public class ReconstructorRenderer implements BlockEntityRenderer<TileEntityAtom
             pitch = -90;
         }
 
-        if (stack.getItem() instanceof ILensItem) {
-            length = ((ILensItem) stack.getItem()).getLens().getDistance();
-        }
-
-        if (tile.getProgress() > 0) {
-            AssetUtil.renderLaser(matrices, buffer, 0, 0, 0, rot, pitch, length, 0, color, 0.8f * tile.getProgress(), 0.2f);
-            tile.decTTL();
-        }
+        // SkyTekx: the beam is a particle now, as in 337fbfb8, so the renderer only draws the lens
         if (stack.isEmpty() || !(stack.getItem() instanceof ILensItem)) {
             return;
         }
 
         matrices.pushPose();
-        matrices.translate(0.5F, 0.5F, 0.45F);
+        matrices.translate(0.5F, 0.5F, 0.5F);
 
         matrices.mulPose(Axis.YP.rotationDegrees(rot));
         matrices.mulPose(Axis.XP.rotationDegrees(pitch));
@@ -71,8 +67,4 @@ public class ReconstructorRenderer implements BlockEntityRenderer<TileEntityAtom
         matrices.popPose();
     }
 
-    @Override
-    public boolean shouldRenderOffScreen(TileEntityAtomicReconstructor tile) {
-        return tile.getProgress() > 0.0f;
-    }
 }

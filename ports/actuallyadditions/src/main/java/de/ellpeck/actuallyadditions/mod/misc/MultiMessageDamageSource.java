@@ -28,7 +28,9 @@ public class MultiMessageDamageSource extends DamageSource {
 
 	@Override
 	public Component getLocalizedDeathMessage(LivingEntity entity) {
-		String locTag = "death." + ActuallyAdditions.MODID + "." + this.getMsgId() + "." + (entity.level().random.nextInt(this.messageCount) + 1);
+		// SkyTekx: the message id already holds the mod id (actuallyadditions.atomic_reconstructor), as
+		// c995908d found. The base looked for death.actuallyadditions.actuallyadditions... keys
+		String locTag = "death." + this.getMsgId() + "." + (entity.level().random.nextInt(this.messageCount) + 1);
 		return Component.translatable(locTag, entity.getName());
 	}
 }

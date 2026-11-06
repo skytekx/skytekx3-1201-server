@@ -234,6 +234,8 @@ Modifications
       blocklist, the sack tooltips can be translated, the Chinese translation of upstream's main
       branch ships, and the old .lang files of the 1.12 versions, which Minecraft 1.20.1 does not
       read, are gone.
+    * Garden Cloche: canola, coffee, flax and rice grow in the Garden Cloche of Immersive
+      Engineering when that mod is loaded.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

@@ -278,6 +278,40 @@ that leaves the Battery Box. The energy and fluid relays still build a new `Lazy
 capability call and never invalidate it, as the base did, while the Battery Box now invalidates its
 own. All of these are in the carryover for the Arclight hardening and the release.
 
+The filters and sacks bundle is done. Its five commits are b9a294b (the sacks, the filters and the
+buttons of the Advanced Item Laser Relay), 4212a66 (the Item Tag filter with the first two mixins),
+f9e4aaf (the Ranged Collector), f83497f (the Crafting Table On A Stick with its key bind and Curios)
+and 10edce8 (the porter's test record), with the review fix 0f2d071 (`UPSTREAM.md`, source changes
+46 to 49). The machine contents bundle landed first as source change 45, so the merge renumbered
+this bundle's source changes from 45 to 48 up to 46 to 49 and kept both sets of `NOTICE` lines and
+generated recipe hashes. The review found that the anvil handler of `main`
+(`CommonEvents.java:233-247` on `main`) deletes the whole stack in the second slot of an anvil when
+an Item Tag is renamed there, since the event keeps the material cost 0. The fork now acts only on
+an empty second slot and clears a stale result at the head of `createResult`. The review fix also
+raises the Curios range to `[5.2.0+1.20.1,)`, lets only a player with the open menu press the filter
+buttons of the Ranged Collector and the Advanced Item Laser Relay, skips `forge:holds_items` in the
+sack pickup and lets a sack in the main hand succeed on the client, see [Local
+divergences](#local-divergences).
+
+The porter's test ran the dev client with a local scenario on a dedicated Forge 47.4.18 server
+against the jar of the four feature commits (SHA-1 `f81afeeb`), across one restart, and with the
+server safety harness, which ran with nothing skipped. The integration added a further local
+scenario (`bp2/actuallyadditions/fsint-tools/` in the workflow scratchpad) and ran it against the
+jar of the review fix (SHA-1 `a022b6306c14157f59c6b9861ab5c5a82d135e9c`, 3126365 bytes) and, as a
+control, against the porter's jar. With the review fix an Item Tag with 64 diamonds in the second
+slot gave no result and kept the diamonds, a name without a tag after a valid one left the result
+slot empty, two button packets without the menu left a collector's filter as it was, and the 16
+snowballs in the off hand stayed when a sack opened in survival. The control lost all 64 diamonds
+and let the packets switch the filter. The server log of both runs has no ERROR line. A shulker box
+still went into a Traveler's Sack, because no jar of the pack fills `forge:holds_items`
+(`UPSTREAM.md`, source change 46).
+
+The serverbound handlers of the bundle take the indices 9 (`GUI_STRING_TO_CONTAINER_HANDLER`) and 10
+(`HOTKEY_HANDLER`) of `DATA_HANDLERS` without a protocol bump, since no build with protocol 5 has
+shipped. That order is fixed for the later bundles, which append after index 10. The tools bundle
+adds no handler (its worktree at 18e3ac8 leaves `PacketHandler.java` unchanged). The protocol stays
+5 up to the first release, and any change of the handler list after that bumps it.
+
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
 
@@ -291,7 +325,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Done in d884a85, 4eaaaab, 17f74f1, 68e1bd8, 167c868, 693c527 and 98711dd, review fix cff2f92 |
 | Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Done in 9695d90, 75ba7e7, decae4e and 1dc2c74, review fix fc660fb |
 | Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Planned |
-| Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Planned |
+| Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Done in b9a294b, 4212a66, f9e4aaf, f83497f and 10edce8, review fix 0f2d071 |
 | Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Planned |
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Planned |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Planned |
@@ -332,10 +366,11 @@ decide. Nothing in the pack depends on the version, see the property table.
 
 - The setup stage already did the version, the reproducible jar and the license fields (1eccbee,
   a6bcde1, `UPSTREAM.md` build changes 1 to 9).
-- The file `mods.toml` gets optional dependencies on Patchouli (`[1.20.1-81,)`), Curios (`[5.0,)`)
-  and JEI (`[15.0,)`). Patchouli stays optional as upstream has it: the `neoforge.mods.toml` of
-  `main` declares no Patchouli dependency, only the Modrinth publish block marks it required, and
-  the manual warns in chat when Patchouli is missing (19cfbc92).
+- The file `mods.toml` gets optional dependencies on Patchouli (`[1.20.1-81,)`), Curios (`[5.0,)`,
+  raised to `[5.2.0+1.20.1,)` by the filters and sacks bundle) and JEI (`[15.0,)`). Patchouli stays
+  optional as upstream has it: the `neoforge.mods.toml` of `main` declares no Patchouli dependency,
+  only the Modrinth publish block marks it required, and the manual warns in chat when Patchouli is
+  missing (19cfbc92).
 - The resource and data pack format becomes 15. The base still says 6 with a 1.16 comment
   (`src/main/resources/pack.mcmeta`).
 - The folder `src/main/java/invtweaks/` goes, as 9bc38d2a does on 1.20.4. Its two annotation classes
@@ -512,8 +547,8 @@ decide. Nothing in the pack depends on the version, see the property table.
 - The sacks pick items up, save their options and their filter, and the Void Sack gets its own menu
   and recipe. Filters match by damage and NBT, and the advanced item relay filters work (f46de7d9).
 - The new item `actuallyadditions:item_tag` holds one item tag, set in its screen or by renaming it
-  in an anvil at no cost, and every filter slot accepts it. Its string goes through the hardened
-  packets, capped at 256 characters.
+  alone in an anvil at no cost, and every filter slot accepts it. Its string goes through the
+  hardened packets, capped at 256 characters.
 - The Ranged Collector picks up items again. The Crafting Table On A Stick opens with a key bind
   from the inventory or a Curios charm slot. Every Curios call sits in one compat class that runs
   only when Curios is loaded.
@@ -657,10 +692,11 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   (`UPSTREAM.md`, source change 42), and crops load with `persistent` false, the old behaviour.
   Crystal clusters keep their state, since the base already has the property.
 - Additive NBT keys: the Vertical Digger gains the format marker `CheckYMin` and starts once more
-  from its own height, the sack data gains `Filter`, the Farmer gains its work area `Area`, and a
-  broken machine item carries `BlockEntityTag` with only the kept keys. Firework Box values outside
-  the slider ranges are clamped on load. Player data stops writing the old manual keys and still
-  reads them.
+  from its own height, the sack data gains `Filter`, every filter gains `Damage`, the Void Sack
+  keeps `Filter` and `AutoInsert` on its stack, the Farmer gains its work area `Area`, and a broken
+  machine item carries `BlockEntityTag` with only the kept keys. Firework Box values outside the
+  slider ranges are clamped on load. Player data stops writing the old manual keys and still reads
+  them.
 - New ids include the item `item_tag`, the menus `void_sack_container` and `item_tag_container`, the
   recipe type `coffee_ingredient`, four banner pattern items with their patterns, the loot modifier
   serializers `bat_loot` and `dungeon_loot`, the point of interest and profession `engineer`, the
@@ -713,17 +749,24 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   (carryover).
 - The magnet ring scans a 5 block box every tick for every ring. It scans every 4 ticks instead, and
   the pickup still goes through `ItemEntity.playerTouch`, so Bukkit pickup events fire.
-- The anvil mixin injects at the head of `AnvilMenu.mayPickup` and an accessor reads
-  `ItemCombinerMenu.inputSlots`. Arclight's own anvil mixin only touches `AnvilMenu.createResult`,
-  so they do not collide (javap by the review). The goggles mixin is client only. No mixin uses
-  `@Overwrite`.
-- The sacks pick up items in Forge's `EntityItemPickupEvent`. Whether Arclight posts the Bukkit
-  pickup event before or after it is not verified yet.
+- The anvil mixin injects at the head of `AnvilMenu.mayPickup` and at the head of
+  `AnvilMenu.createResult`, and an accessor reads `ItemCombinerMenu.inputSlots` and `resultSlots`.
+  Arclight's own anvil mixin redirects the `setItem` calls in `createResult`, injects at its
+  `broadcastChanges` call and changes two constants, none of them at the head, so they do not
+  collide (javap of `RepairContainerMixin` and `ItemCombinerMixin`, `UPSTREAM.md`, build change
+  11). The result of a Forge `AnvilUpdateEvent` skips the Bukkit `PrepareAnvilEvent`, as every
+  such result does. The goggles mixin is client only. No mixin uses `@Overwrite`.
+- The sacks pick up items in Forge's `EntityItemPickupEvent`, which Arclight's `ItemEntityMixin`
+  posts before the Bukkit `PlayerPickupItemEvent` and `EntityPickupItemEvent`, so a plugin that
+  cancels those does not stop a sack (`UPSTREAM.md`, source change 46). The Ranged Collector takes
+  item entities without the Bukkit `InventoryPickupItemEvent` and scans its area every unpowered
+  tick (source change 48). Neither ran on the pack's Arclight yet (carryover).
 - The screen packets reach any machine within 8 blocks of the sender, whether or not its menu is
-  open. A claim plugin that cancels the right click never sees them, so a player could toggle
-  machines in a foreign claim. The pack has no claim plugin or mod today. If one is added, the
-  check in `PacketHandler.guiTarget` should also require that `player.containerMenu` belongs to
-  that machine (review of the server safety bundle).
+  open. Only the Ranged Collector and the Advanced Item Laser Relay check that the sender has their
+  menu open since the review fix of the filters and sacks bundle. A claim plugin that cancels the
+  right click never sees them, so a player could toggle machines in a foreign claim. The pack has no
+  claim plugin or mod today. If one is added, the check in `PacketHandler.guiTarget` should also
+  require that `player.containerMenu` belongs to that machine (review of the server safety bundle).
 
 ## Local divergences
 
@@ -787,6 +830,18 @@ These differ from upstream on purpose and must survive the next upstream sync.
   the generator collects only the leaves of its cube, and its area setting is a radius from 1 to 16
   with a comment that says so. Upstream `main` posts no event, collects every position of the cube
   and takes any area up to `Integer.MAX_VALUE` (`UPSTREAM.md`, source change 33).
+- The Item Tag works in an anvil only with an empty second slot, and a name that names no tag
+  leaves the anvil empty. On `main` the cost 0 of the result empties the second slot whatever it
+  holds, and a stale result stays takeable. The Item Tag screen sets the tag, which `main`
+  registers but never opens (`UPSTREAM.md`, source change 47).
+- The sack menus are bound to the slot and the stack they opened with, a filter toggle marks the
+  sack data or the relay for saving, the `SackManager` keeps one map per world, and the filter
+  tooltips wrap at 200 pixels. The Traveler's Sack pickup skips `forge:holds_items` as the sack
+  slots do, and a sack in the main hand succeeds on the client, so the off hand item is not used
+  as well. The filter buttons of the Ranged Collector and the Advanced Item Laser Relay act only
+  for a player with that block's menu open (`UPSTREAM.md`, source changes 46 and 48).
+- The Crafting Table On A Stick calls Curios only through `CuriosCompat`, and the dependency asks
+  for Curios 5.2.0 or newer (`UPSTREAM.md`, source change 49).
 - The jar leaves out eight textures and three dead block models of `main`, see
   [Assets](#assets).
 
@@ -802,8 +857,9 @@ These differ from upstream on purpose and must survive the next upstream sync.
   live world gets them in new areas only. Keep `/locate` sweeps off the live server.
 - A boot is clean when it reaches `Done` with 0 FATAL lines, no crash report, no watchdog and only
   the two accepted ERROR lines, with no new ERROR line of the mod (see
-  [Logs and crashes](../server/logs-and-crashes.md#boot-error-baseline)). Until the first mixin of
-  the fork lands, Mixin also logs one WARN that `actuallyadditions.refmap.json` could not be read.
+  [Logs and crashes](../server/logs-and-crashes.md#boot-error-baseline)). Since the Item Tag filter
+  brought the first mixins, the jar carries `actuallyadditions.refmap.json` and Mixin logs no WARN
+  about it (`UPSTREAM.md`, build change 11).
 - Announce the new mod to the players, with the manual that needs Patchouli and the key bind of the
   Crafting Table On A Stick.
 

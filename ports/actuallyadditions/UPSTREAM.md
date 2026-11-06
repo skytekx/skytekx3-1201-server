@@ -1134,16 +1134,21 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     placed. The state without the facing falls back to `down` in the block entity. The debug
     line `System.out.println(cap.getSlots())` that `bd392b0` added and `main` still has stays
     out. The model without cull faces of `9b6dd7d` (#1401, changelog 1.2.14), which fixes the
-    faces that vanished next to other blocks, came with source change 18, and the blockstate has
-    one variant for every facing, as on `main`. Savegame: a Hopping Item Interface saved without
-    the property loads with the default `facing=down` and keeps pushing down.
+    faces that vanished next to other blocks, came with source change 18. The blockstate keeps the
+    single variant of `main` for all five facings, so the model does not turn with the facing, as
+    upstream, and `BlockStateGenerator` still writes it with `standardBlock`. Upstream has no side
+    model to turn. Savegame: a Hopping Item Interface saved without the property loads with the
+    default `facing=down` and keeps pushing down.
     In a run of the same test a Hopping Item Interface facing east pulled the 32 cobblestone out
     of the chest above it into the chest of its item network and pushed them on into the chest
     east of it, and a hopper fed 8 raw iron through an Item Interface and an item relay on top
     of a furnace into the input slot of the furnace. The server safety harness of source change
     14 then placed, right clicked, wrenched and broke the Hopping Item Interface with no ERROR
     line and no crash on the server. It skipped only the Ranged Collector and the Advanced Item
-    Laser Relay, whose screens the sacks and filters port fixes.
+    Laser Relay, whose screens the sacks and filters port fixes. On Arclight the interface pulls
+    from inventories and item entities without the Bukkit `InventoryMoveItemEvent` or
+    `InventoryPickupItemEvent` that a vanilla hopper fires, as other modded item transport does.
+    Not tested: a Hopping Item Interface under a claimed chest on the pack's Arclight.
 43. Battery box and energy items: the Battery Box writes its charge on all four sides, in white
     and with the normal display mode, and centres the name on its own width (`c1ee118`). The base
     pushed and popped the same turn four times, so the four lines landed on one side, black and

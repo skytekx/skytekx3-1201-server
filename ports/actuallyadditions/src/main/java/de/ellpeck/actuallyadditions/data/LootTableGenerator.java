@@ -15,12 +15,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -205,16 +207,28 @@ public class LootTableGenerator extends LootTableProvider {
 
             //this.add(ActuallyBlocks.BLACK_QUARTZ_ORE.get(), ore -> droppingItemWithFortune(ore, ActuallyItems.BLACK_QUARTZ.get()));
 
-            addCrop(ActuallyBlocks.CANOLA, ActuallyItems.CANOLA, ActuallyItems.CANOLA_SEEDS);
-            addCrop(ActuallyBlocks.RICE, ActuallyItems.RICE, ActuallyItems.RICE_SEEDS);
-            addCrop(ActuallyBlocks.FLAX, () -> Items.STRING, ActuallyItems.FLAX_SEEDS);
-            addCrop(ActuallyBlocks.COFFEE, ActuallyItems.COFFEE_BEANS, ActuallyItems.COFFEE_BEANS);
+            // SkyTekx: upstream 506d481d (changelog 1.3.11), the drop counts of 1.12. A ripe crop drops
+            // between min and min + bonus of its crop and one or two seeds, each with the uniform fortune bonus
+            addCrop(ActuallyBlocks.CANOLA, ActuallyItems.CANOLA, 2, 3, ActuallyItems.CANOLA_SEEDS);
+            addCrop(ActuallyBlocks.RICE, ActuallyItems.RICE, 1, 2, ActuallyItems.RICE_SEEDS);
+            addCrop(ActuallyBlocks.FLAX, () -> Items.STRING, 2, 4, ActuallyItems.FLAX_SEEDS);
+            addCrop(ActuallyBlocks.COFFEE, ActuallyItems.COFFEE_BEANS, 2, 2, ActuallyItems.COFFEE_BEANS);
         }
 
-        private void addCrop(Supplier<Block> block, Supplier<Item> item, Supplier<Item> seed) {
-            add(block.get(), createCropDrops(block.get(), item.get(), seed.get(),
-                LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 7))));
+        private void addCrop(Supplier<Block> block, Supplier<Item> item, int min, int bonus, Supplier<Item> seed) {
+            LootItemBlockStatePropertyCondition.Builder cropCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 7));
+            LootTable.Builder table = LootTable.lootTable()
+                .withPool(LootPool.lootPool().add(LootItem
+                    .lootTableItem(item.get()).when(cropCondition)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(min, min + bonus)))
+                    .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
+                    .otherwise(LootItem.lootTableItem(seed.get())))
+                )
+                .withPool(LootPool.lootPool().add(LootItem.lootTableItem(seed.get()).when(cropCondition)
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                    .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))));
 
+            add(block.get(), applyExplosionDecay(block.get(), table));
         }
 
         private void dropNBT(Supplier<Block> blockSupplier, Consumer<LootPool.Builder> lootFunctionProvider) {

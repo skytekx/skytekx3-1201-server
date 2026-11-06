@@ -42,6 +42,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -141,6 +142,7 @@ public class ActuallyAdditions {
         //Lenses.init();
 //        CompatUtil.registerCraftingTweaks();
         event.enqueueWork(() -> CraftingHelper.register(TargetNBTIngredient.Serializer.NAME, TargetNBTIngredient.SERIALIZER));
+        event.enqueueWork(ActuallyAdditions::registerCompostables);
 
         commonCapsLoaded = false; // Loader.isModLoaded("commoncapabilities");
 
@@ -150,6 +152,18 @@ public class ActuallyAdditions {
         //AAWorldGen gen = new AAWorldGen();
         CrusherCrafting.init();
         //LensMining.init();
+    }
+
+    // SkyTekx: upstream 3a2f298e (#1431, changelog 1.3.8) writes a compostables data map. Forge 47 has none,
+    // so the chances go into the vanilla table. They are the values of main's generated data map, in which
+    // the later crop entries of coffee beans and flax seeds replace their seed entries
+    private static void registerCompostables() {
+        ComposterBlock.COMPOSTABLES.put(ActuallyItems.CANOLA.get(), 0.65F);
+        ComposterBlock.COMPOSTABLES.put(ActuallyItems.CANOLA_SEEDS.get(), 0.3F);
+        ComposterBlock.COMPOSTABLES.put(ActuallyItems.COFFEE_BEANS.get(), 0.65F);
+        ComposterBlock.COMPOSTABLES.put(ActuallyItems.FLAX_SEEDS.get(), 0.65F);
+        ComposterBlock.COMPOSTABLES.put(ActuallyItems.RICE.get(), 0.65F);
+        ComposterBlock.COMPOSTABLES.put(ActuallyItems.RICE_SEEDS.get(), 0.3F);
     }
 
     private void onConfigReload(ModConfigEvent event) {

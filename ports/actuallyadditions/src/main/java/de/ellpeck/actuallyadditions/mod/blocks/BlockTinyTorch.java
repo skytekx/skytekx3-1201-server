@@ -34,16 +34,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockTinyTorch extends BlockBase {
-    public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP);
+    // SkyTekx: upstream a6a9467d, the same five values as before, all but down
+    public static final DirectionProperty FACING = DirectionProperty.create("facing", direction -> direction != Direction.DOWN);
 
+    // SkyTekx: upstream d3f22bb5 (changelog 1.3.20), no collision, a player walks through the torch
     public BlockTinyTorch() {
-        super(Properties.of().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOD).strength(0.0F, 0.8F));
+        super(Properties.of().pushReaction(PushReaction.DESTROY).sound(SoundType.WOOD).strength(0.0F, 0.8F).noCollission());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
     }
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        return 8;
+        // SkyTekx: upstream 4cc4b40c, light 12 instead of 8
+        return 12;
     }
 
     @Override
@@ -90,7 +93,9 @@ public class BlockTinyTorch extends BlockBase {
         Direction facing = context.getClickedFace();
         BlockPos pos = context.getClickedPos();
         if (this.canSurvive(state, levelreader, pos)) {
-            return state.setValue(BlockTinyTorch.FACING, facing);
+            // SkyTekx: upstream a6a9467d (#1409). A click on the bottom face of a block gave the facing
+            // down, which the property does not hold, and setValue threw. A vertical face places it standing
+            return state.setValue(BlockTinyTorch.FACING, facing.getAxis() == Direction.Axis.Y ? Direction.UP : facing);
         } else {
             Direction[] adirection = context.getNearestLookingDirections();
             for(Direction direction : adirection) {

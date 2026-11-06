@@ -1978,3 +1978,18 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     193 there), so these are local changes. The Phantom Booster needed no change, the face reads
     the boosters above it from its own chunk.
     Savegame: none. New ids: none.
+62. Laser relay network index: `LaserRelayConnectionHandler#getNetworkFor` and
+    `#getConnectionsFor` went through every connection of every network of the level
+    (`LaserRelayConnectionHandler.java` lines 71 to 120, the same on `main`). A relay caches its
+    network until the change counter of that network moves, but it asks again at each transfer
+    while it has no network, every relay of a network asks again after any change to it, and every
+    relay asks at the world start, when each one counts its neighbours and bumps the counter. With a
+    few hundred relays that was quadratic work. The transient map `WorldData.laserRelayIndex` now
+    holds the network of every relay position, so both lookups only look at the network of the
+    relay. The data builds it when it loads, and the handler keeps it up to date where a
+    connection is added or removed, where networks merge and where a relay leaves its network. A
+    relay that a save lists in two networks, which the handler never writes, joins them into one
+    at the load, as `addConnection` would have done. The saved format, the list `Networks` of
+    connection pairs, is unchanged. The checks for loaded chunks in the transfer loops of the
+    energy, fluid and item relays stay as they are. This is a local change.
+    Savegame: none, the index is never saved. New ids: none.

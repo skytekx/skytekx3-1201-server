@@ -15,12 +15,14 @@ import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.data.PlayerData.PlayerSave;
 import de.ellpeck.actuallyadditions.mod.misc.apiimpl.LaserRelayConnectionHandler;
 import io.netty.util.internal.ConcurrentSet;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +33,10 @@ public class WorldData extends SavedData {
     public static final String SAVE_NAME = ActuallyAdditions.MODID + "_worldsave";
     private static WorldData data;
     public final ConcurrentSet<Network> laserRelayNetworks = new ConcurrentSet<>();
+    // SkyTekx: a local change. The network of every relay position, so that the connection handler
+    // finds a relay's network without going through every connection of the level. It is never saved,
+    // load builds it from Networks and LaserRelayConnectionHandler keeps it up to date
+    public final Map<BlockPos, Network> laserRelayIndex = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<UUID, PlayerSave> playerSaveData = new ConcurrentHashMap<>();
 
     public WorldData() {
@@ -57,6 +63,7 @@ public class WorldData extends SavedData {
             Network network = LaserRelayConnectionHandler.readNetworkFromNBT(networkList.getCompound(i));
             worldData.laserRelayNetworks.add(network);
         }
+        LaserRelayConnectionHandler.rebuildIndex(worldData);
 
         worldData.playerSaveData.clear();
         ListTag playerList = compound.getList("PlayerData", 10);

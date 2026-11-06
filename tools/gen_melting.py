@@ -46,6 +46,9 @@ The rules, in short (the full text is on okf/content/melting.md):
 - Inputs that the machine keeps or hands back count as nothing: the pedestal items of Ars Nouveau imbuement, the mould
   of the Mob Grinding Utils solidifier, the lens of the Industrial Foregoing laser drills, every rune on the runic altar
   of Botania, and the tool that a durability recipe of Cucumber, Bookshelf or RecipesAPI damages and hands back.
+- Inputs that a machine uses up under a key that names no ingredient elsewhere count: the container of the cooking
+  pot of Farmer's Delight and of the juicer of Expanded Delight, and the items on the display stands of the Empowerer
+  of Actually Additions.
 - A recipe with an ingredient that no item fills, such as an empty tag that Forge shows as a barrier, is left out,
   since nobody can make it. The dump leaves every barrier out of the item lists.
 - Without SkyTekx Molten the same is computed again with its fluids and recipes removed. An item whose content differs
@@ -161,6 +164,17 @@ KEPT_KEYS = {
     'industrialforegoing:laser_drill_ore': {'catalyst'},
     'industrialforegoing:laser_drill_fluid': {'catalyst'},
 }
+# Inputs that a machine uses up although their JSON key names no ingredient elsewhere, per recipe type: the JSON keys
+# (lower case) whose items count as used up. Each one was read in the mod's code on 2026-11-06. The cooking pot of
+# Farmer's Delight 1.3.4 and the juicer of Expanded Delight serve the result into its container and shrink the
+# container stack (CookingPotBlockEntity.useStoredContainersOnMeal and useHeldItemOnMeal, and
+# JuicerBlockEntity.useStoredContainersOnDrink and useHeldItemOnDrink). The Empowerer of Actually Additions shrinks
+# the item on each of its four display stands (TileEntityEmpowerer).
+USED_KEYS = {
+    'farmersdelight:cooking': {'container'},
+    'expandeddelight:juicing': {'container'},
+    'actuallyadditions:empowering': {'modifiers'},
+}
 # Items that a machine hands back after the craft, per recipe type, as an item kind of the dump and an item tag for dumps
 # without that kind. The runic altar of Botania spawns every RuneItem it took again (RunicAltarBlockEntity).
 RETURNED_ITEMS = {'botania:runic_altar': ('botania_rune', 'botania:runes')}
@@ -220,7 +234,7 @@ THERMAL_OUT_KEYS = ('result', 'results', 'output', 'outputs')
 FLUID_IN_KEYS = {'fluid', 'fluidinput', 'inputfluid', 'fluids', 'fluid_input', 'mix'}
 # Keys in an IN_KEYS list that hold one ingredient each. Under a singular key a list is a list of alternatives.
 LIST_OF_SLOTS = {'ingredients', 'inputs', 'input', 'materials', 'pedestalitems', 'inputitems', 'additives', 'items',
-                 'components', 'secondary', 'essences'}
+                 'components', 'secondary', 'essences', 'modifiers'}
 # Keys of other data that hold no ingredient, so the reader does not count them as unknown
 MELT_TYPES = {'tconstruct:melting', 'tconstruct:damagable_melting', 'tconstruct:ore_melting'}
 # Keys of a recipe JSON that a recipe defined in code still has
@@ -797,6 +811,7 @@ class JsonReader:
         consume = js.get('consumeingredient', True) is not False
         keep_second = bool(js.get('keepHeldItem'))
         kept_keys = KEPT_KEYS.get(rtype, ())
+        used_keys = USED_KEYS.get(rtype, ())
         for key, val in js.items():
             lk = key.lower()
             if lk in OUT_KEYS:
@@ -810,7 +825,7 @@ class JsonReader:
                     f = self.fluid_of(x) if isinstance(x, dict) else None
                     if f:
                         self.fluid_outs.append(f)
-            elif lk in IN_KEYS:
+            elif lk in IN_KEYS or lk in used_keys:
                 nodes = val if (isinstance(val, list) and lk in LIST_OF_SLOTS) else [val]
                 for idx, x in enumerate(nodes):
                     if not consume or lk in kept_keys or (keep_second and idx >= 1):

@@ -12,6 +12,7 @@ package de.ellpeck.actuallyadditions.mod.event;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.ellpeck.actuallyadditions.api.misc.IGoggles;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockAtomicReconstructor;
@@ -35,6 +36,8 @@ import de.ellpeck.actuallyadditions.mod.config.ClientConfig;
 import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.data.WorldData;
 import de.ellpeck.actuallyadditions.mod.inventory.gui.EnergyDisplay;
+import de.ellpeck.actuallyadditions.mod.items.DrillItem;
+import de.ellpeck.actuallyadditions.mod.items.ItemDrillUpgrade;
 import de.ellpeck.actuallyadditions.mod.tile.IEnergyDisplay;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityBase;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
@@ -43,19 +46,28 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -243,6 +255,81 @@ public class ClientEvents {
         //                }
         //            }
         //        }
+    }
+
+    // SkyTekx: the outlines of the 3x3 and 5x5 drill area (upstream f390ffd4, with the upgrade list
+    // of d84518fe)
+    @SubscribeEvent
+    public void renderBlockHighlight(RenderHighlightEvent.Block event) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null)
+            return;
+
+        ItemStack stack = player.getMainHandItem();
+        if (stack.getItem() instanceof DrillItem drillItem) {
+            List<ItemDrillUpgrade.UpgradeType> upgrades = DrillItem.getUpgrades(stack);
+            if (!player.isShiftKeyDown() && upgrades.contains(ItemDrillUpgrade.UpgradeType.THREE_BY_THREE)) {
+                Level level = player.level();
+                Vec3 vec3 = event.getCamera().getPosition();
+                double d0 = vec3.x();
+                double d1 = vec3.y();
+                double d2 = vec3.z();
+                BlockHitResult blockHitResult = event.getTarget();
+                BlockPos targetPos = blockHitResult.getBlockPos();
+                BlockState blockState = level.getBlockState(targetPos);
+                if (stack.isCorrectToolForDrops(blockState)) {
+                    int radius = upgrades.contains(ItemDrillUpgrade.UpgradeType.FIVE_BY_FIVE) ? 2 : 1;
+                    VertexConsumer lineConsumer = event.getMultiBufferSource().getBuffer(RenderType.lines());
+
+                    List<BlockPos> coords = drillItem.gatherBreakingPositions(stack, radius, level, targetPos, blockHitResult.getDirection(), player);
+                    for (BlockPos blockPos : coords) {
+                        if (blockPos.equals(targetPos)) continue; //Let the original event draw this one!
+                        renderHitOutline(event.getPoseStack(), lineConsumer, player, d0, d1, d2, level, blockPos, level.getBlockState(blockPos));
+                    }
+                }
+            }
+        }
+    }
+
+    // SkyTekx: the outline helpers of upstream f390ffd4, which main keeps in AssetUtil. They live in
+    // this client only class, so that no lambda of a common class names the vertex classes of the
+    // client. They draw like the vanilla block outline of LevelRenderer#renderHitOutline
+    private static void renderHitOutline(PoseStack poseStack, VertexConsumer consumer, Entity entity,
+                                         double camX, double camY, double camZ, Level level, BlockPos pos, BlockState state) {
+        renderShape(poseStack, consumer, state.getShape(level, pos, CollisionContext.of(entity)),
+                (double) pos.getX() - camX,
+                (double) pos.getY() - camY,
+                (double) pos.getZ() - camZ,
+                0.0F,
+                0.0F,
+                0.0F,
+                0.4F
+        );
+    }
+
+    private static void renderShape(PoseStack poseStack, VertexConsumer consumer, VoxelShape shape,
+                                    double x, double y, double z, float red, float green, float blue, float alpha) {
+        PoseStack.Pose posestack$pose = poseStack.last();
+        shape.forAllEdges(
+                (minX, minY, minZ, maxX, maxY, maxZ) -> {
+                    float f = (float) (maxX - minX);
+                    float f1 = (float) (maxY - minY);
+                    float f2 = (float) (maxZ - minZ);
+                    float f3 = Mth.sqrt(f * f + f1 * f1 + f2 * f2);
+                    f /= f3;
+                    f1 /= f3;
+                    f2 /= f3;
+                    consumer.vertex(posestack$pose.pose(), (float) (minX + x), (float) (minY + y), (float) (minZ + z))
+                            .color(red, green, blue, alpha)
+                            .normal(posestack$pose.normal(), f, f1, f2)
+                            .endVertex();
+                    consumer.vertex(posestack$pose.pose(), (float) (maxX + x), (float) (maxY + y), (float) (maxZ + z))
+                            .color(red, green, blue, alpha)
+                            .normal(posestack$pose.normal(), f, f1, f2)
+                            .endVertex();
+                }
+        );
     }
 
     @SubscribeEvent

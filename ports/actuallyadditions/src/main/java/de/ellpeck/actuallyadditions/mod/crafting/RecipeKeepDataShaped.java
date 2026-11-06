@@ -1,6 +1,7 @@
 package de.ellpeck.actuallyadditions.mod.crafting;
 
 import com.google.gson.JsonObject;
+import de.ellpeck.actuallyadditions.mod.items.base.ItemEnergy;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -49,10 +50,28 @@ public class RecipeKeepDataShaped extends ShapedRecipe {
             }
         }
 
-        if (!datasource.isEmpty() && datasource.hasTag())
-            craftingResult.setTag(datasource.getTag().copy());
+        if (!datasource.isEmpty())
+            copyData(datasource, craftingResult);
 
         return craftingResult;
+    }
+
+    /**
+     * SkyTekx: copies the NBT of the donor onto the result, and the donor's energy with it. Upstream
+     * 99ea93eb copies the stack attachments, where 1.20.4 keeps item energy. On 1.20.1 the energy
+     * capability writes the NBT key Energy only when the stack is saved or copied, so the key of the
+     * donor can lag behind its storage. The result gets the energy the capability reports
+     */
+    public static void copyData(ItemStack datasource, ItemStack result) {
+        if (datasource.hasTag())
+            result.setTag(datasource.getTag().copy());
+
+        if (datasource.getItem() instanceof ItemEnergy donor && result.getItem() instanceof ItemEnergy) {
+            int energy = donor.getEnergyStored(datasource);
+            if (energy > 0) {
+                result.getOrCreateTag().putInt("Energy", energy);
+            }
+        }
     }
 
 

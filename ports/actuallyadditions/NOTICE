@@ -216,6 +216,9 @@ Modifications
       block drops.
     * Phantom blocks: a phantomface, Phantom Placer or Phantom Breaker no longer loads the chunk of
       its target or keeps it loaded, whether the target is out of range or in an unloaded chunk.
+    * Laser relays: a relay finds its network through an index instead of going through every
+      connection of the world, which made large relay networks slow. The saved networks are
+      unchanged.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

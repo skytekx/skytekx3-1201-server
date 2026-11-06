@@ -30,6 +30,16 @@ public record BoolConfigFeatureBiomeModifier(HolderSet<Biome> biomes, HolderSet<
 		switch (boolConfig) {
 			case "generateQuartz":
 				return CommonConfig.Worldgen.GENERATE_QUARTZ.get();
+			case "generateCanola":
+				return CommonConfig.Worldgen.GENERATE_CANOLA.get();
+			case "generateFlax":
+				return CommonConfig.Worldgen.GENERATE_FLAX.get();
+			case "generateCoffee":
+				return CommonConfig.Worldgen.GENERATE_COFFEE.get();
+			// SkyTekx: main defines generateRice (2ffe78d6) but never reads it, so its rice patches ignore the
+			// switch. Here it works like the other three
+			case "generateRice":
+				return CommonConfig.Worldgen.GENERATE_RICE.get();
 			default:
 				return true;
 		}

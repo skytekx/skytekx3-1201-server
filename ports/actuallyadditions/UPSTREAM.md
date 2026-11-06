@@ -1697,3 +1697,27 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     the ore. The ore drops black quartz with the ore fortune bonus and itself with silk touch
     (`abbc1ae9`, `005b3ccc`, ticked in `port.MD` as upstream did). The base dropped the ore block,
     marked as temporary. Savegame: the world generation only reaches chunks that do not exist yet.
+56. Wild crops: patches of ripe canola, flax, coffee and rice generate as on `main` (`16cd3a69`,
+    changelog 1.3.6, rice in `2ffe78d6`, changelog 1.3.20), so the four crops and the seeds have a
+    source. The base had none, which left the Coffee Maker and the Canola Press of source change 10
+    and the advancements `pickup_coffee` and `craft_coffee_machine` of source change 11 out of
+    reach in survival. Each patch places the crop at age 7 with `persistent` set (`38d6404b`,
+    source change 54) as a `random_patch` of `simple_block` in empty air: canola with 10 tries,
+    flax with 8 and coffee with 6, and rice with 20 tries, a spread of 8 and no vertical spread,
+    only where the block below touches water or flowing water on one of its four sides. The placed
+    features keep the rarity of `main` (once in 8 chunks, rice once in 4), the noise count
+    (`-0.8`, 5 and 10), `in_square`, the heightmap `WORLD_SURFACE_WG` and the biome filter. Inside a
+    `WorldGenRegion` a crop accepts every block of `#minecraft:dirt` as soil, since the patches
+    stand on grass (`16cd3a69`). The biome tags of `main` become their Forge 47 names. Canola grows
+    in `#forge:is_hot/overworld` or `#forge:is_sparse/overworld`, flax in
+    `#forge:is_dense/overworld` or `#forge:is_cold/overworld`, coffee in `#forge:is_hot/overworld`
+    and rice in `#minecraft:is_overworld`, where `main` names `c:is_sparse_vegetation/overworld`,
+    `c:is_dense_vegetation/overworld` and `c:is_overworld`. The holder set `neoforge:or` becomes
+    `forge:or` with the same values. The eight feature files match those of `main` byte for byte,
+    and the four modifiers differ from `main` only in these names. None of the five tags lists
+    `skytekx3:sky_void` (`skylands-datapack/data/` and `world/datapacks/`). The Skylands island
+    biomes are only in the two `is_overworld` tags, so they get rice but none of the other three
+    patches. The modifier reads `generateCanola`, `generateFlax`, `generateCoffee` and
+    `generateRice` of source change 6. On `main` the rice switch exists but the modifier never
+    reads it, so the rice patches ignore it there. Savegame: the world generation only reaches
+    chunks that do not exist yet.

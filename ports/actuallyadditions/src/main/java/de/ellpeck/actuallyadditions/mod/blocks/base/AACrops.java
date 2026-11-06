@@ -3,11 +3,13 @@ package de.ellpeck.actuallyadditions.mod.blocks.base;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -43,6 +45,16 @@ public class AACrops extends CropBlock {
     @Override
     protected ItemLike getBaseSeedId() {
         return this.itemSupplier.get();
+    }
+
+    // SkyTekx: upstream 16cd3a69. The wild patches stand on grass and dirt, which a crop refuses outside the
+    // world generation
+    @Override
+    protected boolean mayPlaceOn(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) {
+        if (level instanceof WorldGenRegion) {
+            return state.is(BlockTags.DIRT);
+        }
+        return super.mayPlaceOn(state, level, pos);
     }
 
     @Override

@@ -99,14 +99,16 @@ public class EmpoweringRecipeGenerator extends RecipeProvider {
                 .addModifier(Items.FLINT)
                 .addModifier(Tags.Items.STONE).save(consumer, "void_block");
 
+        // SkyTekx: short grass as in d8ad92c4 (#1410), minecraft:grass on 1.20.1. Tall grass is the two
+        // block plant, which the recipes never meant
         EmpoweringBuilder.builder(ActuallyItems.EMPOWERED_EMERADIC_CRYSTAL.get(), ActuallyItems.EMERADIC_CRYSTAL.get(), 5000, 50, Crystals.EMERALD.conversionColorParticles)
                 .addModifier(Tags.Items.DYES_LIME)
-                .addModifier(Items.TALL_GRASS)
+                .addModifier(Items.GRASS)
                 .addModifier(ItemTags.SAPLINGS)
                 .addModifier(Tags.Items.SLIMEBALLS).save(consumer, "emeradic");
         EmpoweringBuilder.builder(ActuallyBlocks.EMPOWERED_EMERADIC_CRYSTAL.get(), ActuallyBlocks.EMERADIC_CRYSTAL.get(), 50000, 500, Crystals.EMERALD.conversionColorParticles)
                 .addModifier(Tags.Items.DYES_LIME)
-                .addModifier(Items.TALL_GRASS)
+                .addModifier(Items.GRASS)
                 .addModifier(ItemTags.SAPLINGS)
                 .addModifier(Tags.Items.SLIMEBALLS).save(consumer, "emeradic_block");
 

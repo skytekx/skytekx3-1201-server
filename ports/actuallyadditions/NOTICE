@@ -106,6 +106,8 @@ Modifications
       stack sizes, and the Lens of the Miner makes copper, black quartz, ancient debris and
       deepslate ores, plus the ores of Mekanism, Immersive Engineering, Powah and ElementalCraft
       when those mods are loaded, without doubling the chances on deepslate.
+    * Display Stand and Empowerer: the hand swings when an item goes in, and the empowered
+      emeradic crystals ask for short grass instead of tall grass.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

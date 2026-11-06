@@ -73,19 +73,24 @@ public class BlockDisplayStand extends BlockContainerBase {
 						ItemStack toPut = heldItem.copy();
 						toPut.setCount(1);
 						stand.inv.setStackInSlot(0, toPut);
-						if (!player.isCreative()) {
+						// SkyTekx: the hand swings when an item goes in, in creative too, as in 350da9b2
+						// and a841121d
+						if (!player.isCreative())
 							heldItem.shrink(1);
-						}
-						return InteractionResult.CONSUME;
+						else
+							player.swing(hand, true);
+						return InteractionResult.SUCCESS;
 					} else if (ItemUtil.canBeStacked(heldItem, stackThere)) {
 						int maxTransfer = Math.min(stackThere.getCount(), heldItem.getMaxStackSize() - heldItem.getCount());
 						if (maxTransfer > 0) {
 							if (!player.isCreative())
 								player.setItemInHand(hand, StackUtil.grow(heldItem, maxTransfer));
+							else
+								player.swing(hand, true);
 							ItemStack newStackThere = stackThere.copy();
 							newStackThere.shrink(maxTransfer);
 							stand.inv.setStackInSlot(0, newStackThere);
-							return InteractionResult.CONSUME;
+							return InteractionResult.SUCCESS;
 						}
 					}
 				} else {

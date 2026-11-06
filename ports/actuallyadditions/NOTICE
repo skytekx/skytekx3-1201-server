@@ -150,6 +150,9 @@ Modifications
       relay works while crouching too, item particles fly from the source to the target, energy
       relays no longer lose energy to storages that refuse the real transfer, and the fluid
       relay rate follows fluidLaserTransferRate.
+    * Item interfaces: the Hopping Item Interface faces the way it is placed, pulls from above
+      and pushes that way, and no longer crashes the server tick, and the Item Interface reaches
+      every slot of its network.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

@@ -79,7 +79,10 @@ public abstract class TileEntityBase extends BlockEntity {
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        this.readSyncableNBT(pkt.getTag(), NBTType.SYNC);
+        // SkyTekx: the null check of 26758cb4. The packet holds no tag when the update tag is empty, as
+        // for the Hopping Item Interface, and the client then threw when it was placed
+        if (pkt.getTag() != null)
+            this.readSyncableNBT(pkt.getTag(), NBTType.SYNC);
     }
 
     @Override

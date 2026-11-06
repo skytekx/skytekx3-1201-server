@@ -12,7 +12,6 @@ package de.ellpeck.actuallyadditions.mod.tile;
 
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
-import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import de.ellpeck.actuallyadditions.mod.util.compat.SlotlessableItemHandlerWrapper;
 import net.minecraft.core.BlockPos;
@@ -62,7 +61,7 @@ public class TileEntityItemInterfaceHopping extends TileEntityItemInterface {
                         List<ItemEntity> items = level.getEntities(EntityType.ITEM, axisAlignedBB, EntitySelector.ENTITY_STILL_ALIVE);
                         if (items != null && !items.isEmpty()) {
                             for (ItemEntity item : items) {
-                                if (item != null && item.isAlive()) {
+                                if (item != null) {
                                     if (ActuallyAdditions.commonCapsLoaded) {
                                         Object slotless = tile.itemHandler.getSlotlessHandler();
                                         // TODO: [port] add back?
@@ -83,7 +82,7 @@ public class TileEntityItemInterfaceHopping extends TileEntityItemInterface {
                                             ItemStack left = cap.insertItem(i, item.getItem(), false);
                                             item.setItem(left);
 
-                                            if (!StackUtil.isValid(left)) {
+                                            if (left.isEmpty()) {
                                                 item.discard();
                                                 break;
                                             }
@@ -125,8 +124,10 @@ public class TileEntityItemInterfaceHopping extends TileEntityItemInterface {
             this.handlerToPullFrom = new SlotlessableItemHandlerWrapper(normal, slotless);
         }
 
+        // SkyTekx: the hopper facing of bd392b0a. The base read FACING, which the block does not have, and
+        // threw in the server tick. DOWN, the default, for a state without the property
         BlockState state = this.level.getBlockState(this.getBlockPos());
-        Direction facing = state.getValue(BlockStateProperties.FACING);
+        Direction facing = state.getOptionalValue(BlockStateProperties.FACING_HOPPER).orElse(Direction.DOWN);
 
         BlockPos toPos = this.getBlockPos().relative(facing);
         if (this.level.isLoaded(toPos)) {

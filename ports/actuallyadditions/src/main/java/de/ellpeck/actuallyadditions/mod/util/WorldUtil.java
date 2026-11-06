@@ -46,6 +46,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
@@ -98,8 +99,10 @@ public final class WorldUtil {
             }*/
         }
 
+        // SkyTekx: the extraction of 5a1eabea. The base had it commented out, so doItemInteraction never
+        // moved an item and the Hopping Item Interface neither pulled nor pushed
         if (!StackUtil.isValid(extracted)) {
-/*            IItemHandler handler = extractWrapper.getNormalHandler();
+            IItemHandler handler = extractWrapper.getNormalHandler().resolve().orElse(null);
             if (handler != null) {
                 for (int i = Math.max(0, slotStart); i < Math.min(slotEnd, handler.getSlots()); i++) {
                     if (filter == null || !filter.needsCheck() || filter.check(handler.getStackInSlot(i))) {
@@ -110,7 +113,7 @@ public final class WorldUtil {
                         }
                     }
                 }
-            }*/
+            }
         }
 
         return extracted;

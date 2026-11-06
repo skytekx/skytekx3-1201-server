@@ -856,3 +856,12 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `Items.SHORT_GRASS`, its 1.20.3 name, the only vanilla id after 1.20.1 that `main` uses here.
     The provider `EmpoweringRecipeGenerator`, the two generated recipes and their hashes in the
     cache of the provider match. Savegame: no key, id or state changes.
+29. Greenhouse Glass: the glass renders its model with the cutout layer again, and the faces
+    between two panes are culled (`817797a`, `1224c1d`). The base returned the render shape
+    `INVISIBLE`, the gap that source change 18 left. The texture has only fully clear and fully
+    solid pixels, so the cutout layer of `main` shows it as the translucent layer would. The model
+    of `main` came with source change 18, its recipe of `3f35689` with source change 10. The search
+    for the plant below the glass goes down to the bottom of the world, where the base and `main`
+    stop at Y 0. The bone meal check keeps the 1.20.1 signature with the client flag, which
+    `06bb77b` drops for 1.20.4. The glass loses its `(wip)` label. Savegame: no key, id or state
+    changes.

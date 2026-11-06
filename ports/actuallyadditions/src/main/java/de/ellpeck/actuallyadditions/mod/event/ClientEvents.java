@@ -337,7 +337,9 @@ public class ClientEvents {
     @SubscribeEvent
     public void onGameOverlay(RenderGuiOverlayEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (event.getOverlay() == GuiOverlayManager.findOverlay(new ResourceLocation("crosshair")) && minecraft.screen == null) { //ALL
+        // SkyTekx: after the portal overlay, which Forge 47 draws before the hotbar, as upstream
+        // f1c7b249 does, so the hotbar is drawn over the look at overlays (the crosshair came after it)
+        if (event.getOverlay() == GuiOverlayManager.findOverlay(new ResourceLocation("portal")) && minecraft.screen == null) { //ALL
             GuiGraphics guiGraphics = event.getGuiGraphics();
             Player player = minecraft.player;
             if (player == null) {

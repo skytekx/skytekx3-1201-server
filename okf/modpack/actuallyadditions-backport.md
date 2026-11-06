@@ -131,9 +131,61 @@ upstream. The main, devtest and test sources of 6c5aca4 compile, and one build g
 `24432d0c23eb8106cdfc7a0f24241edd90340952` (2959595 bytes, 2265 entries) with
 `LICENSE_actuallyadditions` and `NOTICE_actuallyadditions` and without `mcmod.info`, the tab texture
 or an `_old/` folder. No boot of this state is recorded, and nobody has run the client test of the
-retexture yet. It cannot pass before two later ports, since the Bio Reactor has no blockstate until
-the generators port gives it a facing (822913f0) and the Greenhouse Glass renders invisible until
-the greenhouse glass port brings the Java part of 817797ad (`UPSTREAM.md`, source change 18).
+retexture yet. It cannot pass before the generators port gives the Bio Reactor a facing and with it
+a blockstate (822913f0). The Greenhouse Glass rendered invisible until the Java part of 817797ad
+came, which 707b2b7 of the world machines bundle brought (`UPSTREAM.md`, source changes 18 and 29).
+
+The world machines bundle is done. Its seven commits are 6d88498 (the breakers, placers and the
+Vertical Digger), 936c866 (the phantomfaces, the Player Interface and the boosters), e3b6d77 (the
+Fluid Collector and the Fluid Placer), 806a7d1 (the Farmer), d58f5e7 (the Atomic Reconstructor and
+the lenses), 28320f9 (the Display Stand and the Empowerer) and 707b2b7 (the Greenhouse Glass), with
+the review fix dba4acd (`UPSTREAM.md`, source changes 23 to 29). The processing machines bundle,
+written in parallel, numbers its source changes from 23 as well, so the later of the two merges
+renumbers them. The review found that the phantomface kept handing out the handlers of a target
+block entity that was gone. No block entity of the mod invalidates its own handlers, so once the
+target was made anew at the same place, as after a chunk reload, an Energyface or a Liquiface
+drained the removed copy while the live one kept its energy or fluid. The face now remembers the
+block entity it forwards and drops the handlers when that block entity changes or is removed. The
+review also found that the Phantom Breaker computed its drops at its own position with its own
+block entity, as `main` still does, so a bound shulker box lost its contents. It now reads the
+bound block, breaks through the harvest check and break event of the Breaker and leaves fluids
+alone. The cheap notes of the review are in the same fix. The Long-Range Breaker no longer deletes
+fluid sources, the Fluid Placer keeps a fluid without a block in its tank, the placer helper
+`WorldUtil.useItemAtSide` checks the block in front with the fake player in its context and hands
+back a copy of the stack, and the worm check reads the level of the tilling event (a65dccf9,
+#1480).
+
+The scripted test server of the bundle ran the mod alone on Forge 47.4.18 in a flat world (command
+files `wmtools/cmds1.txt` to `cmds7.txt`, logs in `bp2/actuallyadditions/wm/` of the workflow
+scratchpad). The Breaker broke stone, snow and a chest and kept water, the Long-Range Breaker broke
+both blocks in its line, the miner lens made ores in stone, deepslate and netherrack
+(`b2-latest.log`), and a new Vertical Digger started below its own height (`b4-latest.log`). In the
+savegame test from the jar of the base to the jar of the bundle, a digger saved by the base started
+once more from its own height and ran down to Y -64, a phantom itemface kept its binding and moved
+items into its chest, and two Player Interfaces kept their players, one of them saved with the old
+long pair (`sv-old-latest.log`, `sv-new1-latest.log`, `sv-new2-latest.log`). Every boot ended with 0
+FATAL lines. The integration ran one more script (`bp2/actuallyadditions/wmint/int1.txt`) with the
+jar of 707b2b7 and with the jar of dba4acd (SHA-1 `80c75636d809bde41710ec1cd7dfb4ecc5ae5bde`,
+3015933 bytes, one build). An Energyface with two boosters fed a Long-Range Breaker from a Battery
+Box 50 blocks away, and a `clone` made the box's block entity anew in one tick. With 707b2b7 the
+receiver kept filling while the live box stayed at 100000 FE, and with dba4acd the live box lost
+what the receiver got (`int-old-latest.log`, `int-new-latest.log`). The test makes the block entity
+anew instead of waiting for the target chunk to unload, because the face asks for its target every
+tick and so refreshes the one tick ticket of the chunk. That reading of the vanilla chunk code was
+not checked in a log. A Phantom Breaker bound to a shulker box with five diamonds gave an empty box
+with 707b2b7 and the box with the diamonds with dba4acd, and the Phantom Breaker and the Long-Range
+Breaker kept a water source with dba4acd. The checks of the bundle's own script gave the same
+results with both jars, and both boots logged only the ERROR line of the flat test world without
+layers.
+
+Nobody has opened a client with this state. The beam particle, the Greenhouse Glass on the cutout
+layer, the overlays of the Farmer and the phantomfaces, the buttons of the miner and the Phantom
+Placer and the JEI list of the mining lens wait for the client test of the release. The bundle also
+ports fb80bf33 and 58b9cbc9, the laser render type and `AssetUtil.renderLaserParticle`, which the
+energy and relays bundle plans as well. That bundle builds on them and only adds db1bb6e7,
+7fb62cb8, de635bb7 and b3f87a6f (carryover). No jar of this state may reach the live server before
+the Arclight hardening, since the Phantom Breaker, the placers and the lenses still act as the
+shared fake player `[Minecraft]`.
 
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
@@ -145,7 +197,7 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Data core (`aa-data-core`) | Recipes, `forge:` tags, advancements and the JEI plugin shell | 21 | Baseline | Done in 2053e6a, 71370b7, 63a8eff and a98f81c, review fix fb2f22c |
 | Assets (`aa-assets`) | Retexture 2.0 and 2.1, removal of the 1.12 asset leftovers, block shapes, directional crystal clusters, lamps, block sounds and the vanilla stairs, slab and wall tags | 20 | Baseline, data core | Done in d7357e9, e6a4962, 05f63d2, 94b6b3c and 11ac001, review fixes e8f5b47 and 6c5aca4 |
 | Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Planned |
-| World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Planned |
+| World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Done in 6d88498, 936c866, e3b6d77, 806a7d1, d58f5e7, 28320f9 and 707b2b7, review fix dba4acd |
 | Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Planned |
 | Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Planned |
 | Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Planned |
@@ -297,10 +349,10 @@ decide. Nothing in the pack depends on the version, see the property table.
   no user on `main`. Three hand written models that `main` still carries go too, because nothing
   names them and their textures do not exist (`double_powered_furnace`, `green_block` and
   `white_block`, `UPSTREAM.md`, source change 18).
-- Later bundles close the gaps this one leaves. The generators port adds the Bio Reactor
-  blockstate, the greenhouse glass port makes the glass visible, the fluid collector and placer
-  fixes add the Fluid Placer to `minecraft:mineable/pickaxe` (07c59fb3), and the AIOT fixes take
-  the axe check of `AllInOneTool.useOn` from 6686f1f4, which the block shapes left out.
+- Later bundles close the gaps this one leaves. The world machines bundle made the glass visible
+  (707b2b7) and added the Fluid Placer to `minecraft:mineable/pickaxe` (07c59fb3, in e3b6d77). The
+  generators port adds the Bio Reactor blockstate, and the AIOT fixes take the axe check of
+  `AllInOneTool.useOn` from 6686f1f4, which the block shapes left out.
 
 ### Processing machines
 
@@ -325,22 +377,25 @@ decide. Nothing in the pack depends on the version, see the property table.
 
 - The Long-Range Breaker and the Vertical Digger mine again. On the base the drop helper always
   returns 0 (`mod/util/WorldUtil.java:293-305`). The Placer places again, and the Breaker breaks
-  snow.
+  snow. The Phantom Breaker takes the drops of the bound block with that block's own block entity,
+  and neither it nor the Long-Range Breaker deletes fluid blocks (review of the bundle, local).
 - The Vertical Digger keeps its saved layer below Y 0. The base uses Y -1 as not started and 0 as
   done (`mod/tile/TileEntityVerticalDigger.java:57`, `105-121`). The port uses the minimum build
   height as in ae6f1603 and marks the new format with an additive key. It does not copy 738f098b,
   which restarts every digger from the top at each chunk load.
-- The phantom blocks and boosters work and drop their capabilities when the target changes. The
-  Fluid Collector and Placer take from cauldrons and no longer waste fluid.
+- The phantom blocks and boosters work and drop their capabilities when the target or its block
+  entity changes. The Fluid Collector empties full cauldrons, and the Fluid Placer no longer wastes
+  fluid or voids a fluid that has no block.
 - The Farmer works with modded farmland, takes a compass for its area, handles nether wart, potatoes
   and carrots and leaves custom soil alone (b26c47dd, #1522).
 - The Atomic Reconstructor no longer crashes its renderer or tooltip, takes a stack of lenses and
   gets the mining lens recipes for black quartz, ancient debris, deepslate and copper ores. The
-  compat sets come for Mekanism and Immersive Engineering, which the pack has. The five other sets
-  come only after their ids are checked against each mod's 1.20.1 jar.
+  compat sets come for Mekanism and Immersive Engineering, which the pack has, and for Powah and
+  ElementalCraft, whose ids were checked in their 1.20.1 Forge jars. Elements of Power and XyCraft
+  wait for a 1.20.1 jar to check, and Modern Industrialization has only Fabric builds for 1.20.1.
 - The emeradic empowering recipes ask for short grass, which is `minecraft:grass` on 1.20.1. The
-  base has the same tall grass bug as upstream had before d8ad92c4. The Greenhouse Glass renders and
-  has a recipe.
+  base has the same tall grass bug as upstream had before d8ad92c4. The Greenhouse Glass renders on
+  the cutout layer without faces between two panes and has a recipe.
 
 ### Energy and relays
 
@@ -509,10 +564,11 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 - New block state properties load with their default: the Bio Reactor and the hopping item interface
   take their default facing, and crops load with `persistent` false, the old behaviour. Crystal
   clusters keep their state, since the base already has the property.
-- Additive NBT keys: the Vertical Digger gains a format marker and restarts from the top once, the
-  sack data gains `Filter`, the Farmer gains its area offsets, and a broken machine item carries
-  `BlockEntityTag` with only the kept keys. Firework Box values outside the slider ranges are
-  clamped on load. Player data stops writing the old manual keys and still reads them.
+- Additive NBT keys: the Vertical Digger gains the format marker `CheckYMin` and starts once more
+  from its own height, the sack data gains `Filter`, the Farmer gains its work area `Area`, and a
+  broken machine item carries `BlockEntityTag` with only the kept keys. Firework Box values outside
+  the slider ranges are clamped on load. Player data stops writing the old manual keys and still
+  reads them.
 - New ids include the item `item_tag`, the menus `void_sack_container` and `item_tag_container`, the
   recipe type `coffee_ingredient`, four banner pattern items with their patterns, the loot modifier
   serializers `bat_loot` and `dungeon_loot`, the point of interest and profession `engineer`, the
@@ -525,12 +581,15 @@ All four parts are local, see [Arclight notes](#arclight-notes).
 
 - Upstream breaks blocks as the shared fake player `[Minecraft]`, and on the base the Breaker posts
   no break event at all (`mod/tile/TileEntityBreaker.java:115`). The Phantom Breaker, the conversion
-  lens and the mining lens change blocks without any event on `main` too. The port adds one fake
-  player per level with the fixed profile `[ActuallyAdditions]`, posts `BlockEvent.BreakEvent` and
-  `EntityPlaceEvent` for every machine break and placement and reverts on a cancel. Arclight 1.0.6
-  turns both into the Bukkit `BlockBreakEvent` and `BlockPlaceEvent` with the fake player (javap by
-  the review on the production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, extract in
-  the workflow scratchpad under `aacritic/arc/`).
+  lens and the mining lens change blocks without any event on `main` too. Since the world machines
+  bundle, the Breaker, the Long-Range Breaker, the Vertical Digger and the Phantom Breaker post the
+  break event of the shared fake player through the drop chance helper, while the lenses still post
+  nothing (`UPSTREAM.md`, source change 23). The port adds one fake player per level with the fixed
+  profile `[ActuallyAdditions]`, posts `BlockEvent.BreakEvent` and `EntityPlaceEvent` for every
+  machine break and placement and reverts on a cancel. Arclight 1.0.6 turns both into the Bukkit
+  `BlockBreakEvent` and `BlockPlaceEvent` with the fake player (javap by the review on the
+  production jar `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, extract in the workflow
+  scratchpad under `aacritic/arc/`).
 - A claim plugin has to trust `[ActuallyAdditions]` for machines to work inside claims. The pack
   runs EssentialsX only. Fake players per owner would need a new key on every tile and go on the
   [open items](../open-items.md) at the release.
@@ -563,6 +622,14 @@ These differ from upstream on purpose and must survive the next upstream sync.
 - The drill and filter screens close when the selected slot changes, the Firework Box clamps its
   values, and the Experience Solidifier refuses negative button ids.
 - The Vertical Digger marks its format with an additive key instead of resetting on every load.
+- The Phantom Breaker takes the drops of the bound block with that block's own block entity. It,
+  the Breaker and the Long-Range Breaker leave fluid blocks alone, the Fluid Placer keeps a fluid
+  without a block in its tank, and the machine placer hands back a copy of the stack of the fake
+  player. A phantomface drops the handlers of a target block entity that was replaced or removed,
+  the Player Interface compares squared distances and so reaches 32 blocks as on 1.12, and only the
+  Fluid Collector empties cauldrons (`UPSTREAM.md`, source changes 23 to 25). Upstream `main` takes
+  the drops at the Phantom Breaker, lets its breakers delete fluid sources and gives the Player
+  Interface a reach of about 5.7 blocks.
 - Machines break and place as the fake player `[ActuallyAdditions]` with block events, phantom
   blocks check the chunk first, relays use an index, and the magnet ring is throttled.
 - The fork keeps the ids that `main` removed or renamed and the base's inventory format.

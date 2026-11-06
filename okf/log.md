@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Change log
@@ -858,6 +858,27 @@ logs stay on the Mac and are not in the repo.
   pieces fell from 9,800 to 2,157 blocks on Forge and the magma blocks from 136 to 0, at the same pregen
   speed, see [Mod set](modpack/mod-set.md#tests). The new page
   [NeoForge ports](modpack/neoforge-ports.md) sums up the mods that stand in for 1.21.1 only mods.
+
+## 2026-11-06: The NeoForge ports boot with the full pack
+
+- On 2026-11-05 four more mods that only exist for NeoForge 1.21.1 joined the branch after Bygone
+  Nether, each as a fork in `ports/` with its jar in `local-mods/`: Mystical Automation (3b9e2f7 and
+  3c92dcb), Mekanism: Extra Modules (9813e0a to fa64b7f), Expanded Delight (eb734ad to 047ff2d) and
+  Create: Integrated Farming (b4bea7f to 26fc840) with its library Create: Dragons Plus 1.11.9 as an
+  index entry (c15417f), see [NeoForge ports](modpack/neoforge-ports.md).
+- The full pack of 98bf164 with all six booted on Forge 47.4.18 and on the hardened Arclight jar in
+  test copies, twice on each loader. Every boot reached `Done` with 0 FATAL lines, no crash report and
+  no watchdog and stopped over RCON with exit code 0. The repeats without mixin export kept the 3
+  ERROR lines and the 11 log signatures of the boots `wavea-forge` and `wavea-arclight` before the six
+  mods. Every mixin of the six whose target mod is in the pack applied on both loaders, and their
+  blocks, items and entities were in the registries, see
+  [NeoForge ports](modpack/neoforge-ports.md#status).
+- The boots found a defect of Bygone Nether 1.3.2 that costs nothing: the jar never registers the
+  serializer of its two loot modifiers, which only matter next to Infernal Expansion, so Forge logs two
+  WARN lines. A Nether generation of 36 chunks on Arclight logged no feature order cycle.
+- The server's `mods/` gets the six jars only with the deploy of the next pack. The steps are on
+  [NeoForge ports](modpack/neoforge-ports.md#deploy-of-all-six), and the player notes wait in
+  `docs/changelog/next.md`.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

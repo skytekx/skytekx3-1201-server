@@ -912,3 +912,12 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     checks `BlockEntityType.isValid` and logs one WARN "invalid for ticking"), so it has to be
     broken and placed again. The base gave the Double Crusher no recipe, so only a creative world
     can hold one.
+31. Powered Furnace: JEI lists it as a catalyst of the smelting category (`ca3f84ef`), and a click
+    on the arrows of its screen opens that category (`53414c43`). The auto split button is a
+    vanilla button at the top left of the screen with a tooltip, where the base drew a small
+    button over the corner of the energy bar (the furnace parts of `fc7032fa` and `bfaf90b4`, and
+    `73f7af4d`). The item shows the tooltip "Previously Double Furnace" again (`bf4be229`, the 1.12
+    item block tooltip whose lang key the base still had). The name loses its `(wip)` label
+    (`4b55999a`), and the tick uses its own level and position parameters (`323c0756`). The block
+    already gives light level 12 while it works, so `bbf42da6` only drops the comment that doubted
+    it. No data, NBT key or block state changes.

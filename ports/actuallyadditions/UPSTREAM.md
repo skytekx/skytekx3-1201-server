@@ -1118,3 +1118,28 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     left an item relay at priority minus 1. Screenshots of the dev client show the energy, fluid
     and item lasers. Not tested: a storage that refuses the real transfer (`9fe3fa1`) and the
     pack's Arclight.
+42. Item interfaces: the Hopping Item Interface has the hopper facing `facing` again, `down`,
+    `north`, `south`, `west` or `east`, set from the clicked face as a hopper does, and it turns
+    and mirrors with the structure (`bd392b0`, changelog 1.2.14). The base had no property, so
+    its block entity threw in the server tick when it read `FACING`. It pulls from the inventory
+    above it and pushes the way it faces, and `WorldUtil.extractItem` reads the item handler
+    again (`5a1eabe`), which the base had commented out, so the interface never moved an item.
+    The Item Interface numbers the slots of all handlers in its network one after the other and
+    skips relays in unloaded chunks (`5a1eabe`). The base started at 0 again for every handler,
+    so each handler covered the slots of the one before and most of a network was out of reach.
+    The wrapper `SlotlessableItemHandlerWrapper` keeps the `LazyOptional` of Forge, and its unused
+    slotless part is deprecated as in `5a1eabe`. A block entity update packet without a tag no
+    longer throws on the client (`26758cb`), which happened when a Hopping Item Interface was
+    placed. The state without the facing falls back to `down` in the block entity. The debug
+    line `System.out.println(cap.getSlots())` that `bd392b0` added and `main` still has stays
+    out. The model without cull faces of `9b6dd7d` (#1401, changelog 1.2.14), which fixes the
+    faces that vanished next to other blocks, came with source change 18, and the blockstate has
+    one variant for every facing, as on `main`. Savegame: a Hopping Item Interface saved without
+    the property loads with the default `facing=down` and keeps pushing down.
+    In a run of the same test a Hopping Item Interface facing east pulled the 32 cobblestone out
+    of the chest above it into the chest of its item network and pushed them on into the chest
+    east of it, and a hopper fed 8 raw iron through an Item Interface and an item relay on top
+    of a furnace into the input slot of the furnace. The server safety harness of source change
+    14 then placed, right clicked, wrenched and broke the Hopping Item Interface with no ERROR
+    line and no crash on the server. It skipped only the Ranged Collector and the Advanced Item
+    Laser Relay, whose screens the sacks and filters port fixes.

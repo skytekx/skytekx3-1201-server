@@ -16,6 +16,8 @@ import net.minecraftforge.items.IItemHandler;
 public class SlotlessableItemHandlerWrapper {
 
     private final LazyOptional<IItemHandler> normalHandler;
+    // SkyTekx: deprecated as in 5a1eabea. Every caller passes null, the slotless compat is commented out
+    @Deprecated
     private final Object slotlessHandler;
 
     public SlotlessableItemHandlerWrapper(LazyOptional<IItemHandler> normalHandler, Object slotlessHandler) {
@@ -27,6 +29,7 @@ public class SlotlessableItemHandlerWrapper {
         return this.normalHandler;
     }
 
+    @Deprecated
     public Object getSlotlessHandler() {
         return this.slotlessHandler;
     }

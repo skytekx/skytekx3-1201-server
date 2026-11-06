@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -61,6 +62,11 @@ public class Worm extends ItemBase {
 
     public static void onHoe(BlockEvent.BlockToolModificationEvent event) {
         if (event.getToolAction() == ToolActions.HOE_TILL) {
+            // SkyTekx: no worms when a machine tills, as in b26c47dd, since the Farmer now tills
+            // through the hoe item and so posts this event
+            if (event.getPlayer() instanceof FakePlayer) {
+                return;
+            }
             Level level = event.getPlayer().level();
 
             if (level.isClientSide || !CommonConfig.Other.WORMS.get() || event.getResult() == Event.Result.DENY)

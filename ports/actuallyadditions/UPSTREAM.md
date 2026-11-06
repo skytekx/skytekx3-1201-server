@@ -788,3 +788,22 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     change 22 left in that tag, so a pickaxe breaks it at its normal speed and it drops itself.
     The provider `BlockTagsGenerator` lists it, and the generated tag file and its hash in the
     cache of the provider match. Savegame: no key, id or state changes.
+26. Farmer: the configure item of the common config (`farmerConfigurator`, a compass by default)
+    cycles the work area through 1, 3, 5 and so on up to `farmerArea` and starts the sweep again,
+    and the look at overlay `FarmerHud` shows the area and how to change it (`b66af84`). The
+    overlay is a client only `IBlockHud` that the `ClientEvents` constructor registers, and the
+    three lang keys of `b66af84` come with it. The Farmer leaves soil alone that already holds the
+    plant, any `FarmBlock` as in `b66af84` and modded farmland through Forge's `canSustainPlant`,
+    and tills dirt with the hoe item (`b26c47d`, #1522). Forge's `getToolModifiedState` asks the
+    block, so a modded soil turns into its own farmland, for example the rich soil of Farmer's
+    Delight into rich soil farmland, where the base set vanilla farmland on every dirt. The hoe is
+    unbreakable, since it now wears like a real one, the energy of the tilling is only used when
+    the soil changed, and the hoe plays the till sound once. Worms do not drop when a fake player
+    tills (`b26c47d`). A planted crop makes its place sound (`bfd8eb8`). Nether wart is planted
+    again (`124cac1`): the base cast the item `Items.NETHER_WART` to `IPlantable`, which threw at
+    every try. Potatoes and carrots already worked on 1.20.1 through Forge's `IPlantable`, so
+    `b23ba8f` (#1464) only adds its fallback for a seed or crop item whose block is no
+    `IPlantable`, and the harvest puts those items back into the seed slots as well (`690aa4b`).
+    Savegame: the additive key `Area` holds an area set with the configure item. A farmer without
+    it works the area of the config as before, and the client gets the area that the server
+    works.

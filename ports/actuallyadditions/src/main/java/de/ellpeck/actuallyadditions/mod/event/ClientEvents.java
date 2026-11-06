@@ -15,6 +15,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import de.ellpeck.actuallyadditions.api.misc.IGoggles;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockAtomicReconstructor;
+import de.ellpeck.actuallyadditions.mod.blocks.BlockFarmer;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockLaserRelay;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockLavaFactoryController;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockPhantom;
@@ -22,6 +23,7 @@ import de.ellpeck.actuallyadditions.mod.blocks.BlockPlayerInterface;
 import de.ellpeck.actuallyadditions.mod.blocks.BlockVerticalDigger;
 import de.ellpeck.actuallyadditions.mod.blocks.IHudDisplay;
 import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.BlockHuds;
+import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.FarmerHud;
 import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.IBlockHud;
 import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.LaserRelayHud;
 import de.ellpeck.actuallyadditions.mod.blocks.blockhuds.LavaFactoryControllerHud;
@@ -74,6 +76,7 @@ public class ClientEvents {
     // blocks only implement the marker IHudDisplay, so the client registers them here
     public ClientEvents() {
         BlockHuds.register(BlockAtomicReconstructor.class, new ReconstructorHud());
+        BlockHuds.register(BlockFarmer.class, new FarmerHud());
         BlockHuds.register(BlockLaserRelay.class, new LaserRelayHud());
         BlockHuds.register(BlockLavaFactoryController.class, new LavaFactoryControllerHud());
         BlockHuds.register(BlockPhantom.class, new PhantomHud());

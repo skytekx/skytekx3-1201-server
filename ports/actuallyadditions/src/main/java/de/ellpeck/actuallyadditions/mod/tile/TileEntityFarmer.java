@@ -24,6 +24,7 @@ import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
@@ -54,6 +55,10 @@ public class TileEntityFarmer extends TileEntityInventoryBase implements IFarmer
 
     private int lastEnergy;
 
+    // SkyTekx: the work area of b66af844, set with the configure item of the common config. 0 means
+    // not set, so a farmer without the additive key Area works the area of the config as before
+    private int area;
+
     public TileEntityFarmer(BlockPos pos, BlockState state) {
         super(ActuallyBlocks.FARMER.getTileEntityType(), pos, state, 12);
     }
@@ -66,6 +71,12 @@ public class TileEntityFarmer extends TileEntityInventoryBase implements IFarmer
         if (type == NBTType.SAVE_TILE) {
             compound.putInt("CheckX", this.checkX);
             compound.putInt("CheckY", this.checkY);
+            if (this.area > 0) {
+                compound.putInt("Area", this.area);
+            }
+        } else if (type == NBTType.SYNC) {
+            // The client shows the area that the server works, whatever its own config says
+            compound.putInt("Area", this.getArea());
         }
         this.storage.writeToNBT(compound);
         super.writeSyncableNBT(compound, type);
@@ -79,6 +90,11 @@ public class TileEntityFarmer extends TileEntityInventoryBase implements IFarmer
         if (type == NBTType.SAVE_TILE) {
             this.checkX = compound.getInt("CheckX");
             this.checkY = compound.getInt("CheckY");
+        }
+        if (type != NBTType.SAVE_BLOCK) {
+            this.area = compound.contains("Area", Tag.TAG_INT)
+                ? Math.max(0, compound.getInt("Area"))
+                : 0;
         }
         this.storage.readFromNBT(compound);
         super.readSyncableNBT(compound, type);
@@ -99,7 +115,7 @@ public class TileEntityFarmer extends TileEntityInventoryBase implements IFarmer
                     tile.waitTime--;
 
                     if (tile.waitTime <= 0) {
-                        int area = CommonConfig.Machines.FARMER_AREA.get();
+                        int area = Math.min(tile.getArea(), CommonConfig.Machines.FARMER_AREA.get());
                         if (area % 2 == 0) {
                             area++;
                         }
@@ -190,6 +206,31 @@ public class TileEntityFarmer extends TileEntityInventoryBase implements IFarmer
     @Override
     public BlockPos getPosition() {
         return this.worldPosition;
+    }
+
+    /**
+     * @return the side length of the work area, the one of the config while none is set
+     */
+    public int getArea() {
+        return this.area > 0
+            ? this.area
+            : CommonConfig.Machines.FARMER_AREA.get();
+    }
+
+    // SkyTekx: the cycle of b66af844, 1, 3, 5 and so on up to the area of the config, then 1 again
+    public int cycleArea() {
+        int max = CommonConfig.Machines.FARMER_AREA.get();
+        int current = this.getArea();
+        this.area = current >= max
+            ? 1
+            : Math.min(current + 2, max);
+
+        // Start the sweep again, so that a smaller area does not plant behind the machine
+        this.checkX = 0;
+        this.checkY = 0;
+        this.setChanged();
+        this.sendUpdate();
+        return this.area;
     }
 
     @Override

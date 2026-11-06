@@ -11,11 +11,13 @@
 package de.ellpeck.actuallyadditions.mod.blocks;
 
 import de.ellpeck.actuallyadditions.mod.blocks.base.DirectionalBlock;
+import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.tile.TileEntityFarmer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
-public class BlockFarmer extends DirectionalBlock.Container {
+public class BlockFarmer extends DirectionalBlock.Container implements IHudDisplay {
 
     public BlockFarmer() {
         super(ActuallyBlocks.defaultPickProps().sound(SoundType.METAL));
@@ -46,6 +48,15 @@ public class BlockFarmer extends DirectionalBlock.Container {
 
     @Override
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+        // SkyTekx: the configure item of the common config (a compass by default) cycles the work
+        // area, as in b66af844
+        ItemStack heldItem = player.getItemInHand(handIn);
+        if (!heldItem.isEmpty() && heldItem.getItem() == CommonConfig.Other.farmerConfigureItem && worldIn.getBlockEntity(pos) instanceof TileEntityFarmer farmer) {
+            if (!worldIn.isClientSide) {
+                farmer.cycleArea();
+            }
+            return InteractionResult.SUCCESS;
+        }
         return this.openGui(worldIn, player, pos, TileEntityFarmer.class);
     }
 }

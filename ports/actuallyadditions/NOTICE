@@ -99,6 +99,8 @@ Modifications
       32 blocks and no longer throws without a player, and the Player Probe binds again.
     * Fluid machines: the Fluid Placer places again without wasting fluid and drops itself when
       mined with a pickaxe, and the Fluid Collector also empties full water and lava cauldrons.
+    * Farmer: a compass sets its work area, it plants nether wart again, leaves modded farmland
+      alone and tills modded soil into its own farmland, and planting makes a sound.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

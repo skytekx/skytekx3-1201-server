@@ -1208,3 +1208,63 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     beam of an Atomic Reconstructor, which only spawns for players within 8 blocks of its start
     or end as on `main`, and closer screenshots show the cobblestone items over the item relays.
     The client log has no ERROR line but the one of the sound system of the headless client.
+45. Machines that keep their contents: the Coal, Oil and Leaf-Eating Generators, both crushers, the
+    Display Stand, the Powered Furnace, the Atomic Reconstructor, the Coffee Maker, the Canola
+    Press and the Farmer keep their energy when broken, the Oil Generator, the Coffee Maker, the
+    Fluid Placer and Collector, the Canola Press and the Fermenting Barrel keep their fluids, and
+    the reconstructor, the Fluid Placer and Collector, the Breaker, the Placer and the Dropper keep
+    their redstone mode (`c1e274d`, `f05b284`, changelog 1.3.10). Upstream collects data
+    components with `collectImplicitComponents` and copies them with `CopyComponentsFunction`.
+    Here the loot tables copy the same values with `minecraft:copy_nbt` from the block entity into
+    `BlockEntityTag` under their NBT keys: `Energy`, `IsPulseMode`, the coffee cache `Cache`, a
+    single tank as `FluidName`, `Amount` and `Tag` at the root of the block entity, and the two
+    tanks of the barrel as `tanks.inputTank` and `tanks.outputTank`. The vanilla `BlockItem`
+    merges that tag into the new block entity on placement. The base already copied the energy of
+    six of these machines. A key that is missing, such as `Tag` of a fluid without NBT, is
+    skipped. The keys `StopDrop` and `Redstone`, the work timers and the inventory stay behind,
+    and the Farmer leaves its compass area with the block as on `main`, which copies only its
+    energy. The copy in `FluidContents.get()` of `2b8884d` keeps a tank from sharing the stack of
+    a data component, and the NBT form reads a new `FluidStack` at every load, so it needs no such
+    guard. The base read the 1.12 tag `Data` with `SAVE_BLOCK` in `BlockContainerBase.setPlacedBy`
+    after that merge, and the empty read cleared the tanks and the coffee cache again. The method
+    is gone, as on `main` since the 1.21 port (`23815b7`, removed in `b66af84`). The Leaf-Eating
+    Generator gets the energy item with its tooltip (`c1e274d`), and the reconstructor item shows
+    its energy and its redstone mode each only when it carries them.
+    The 17 shapeless recipes `actuallyadditions:reset/<block>` of `a85dcdc` craft each of these
+    machines alone into an empty one, since their result has no tag.
+    A machine with `StopDrop` 1, which the Engineer's House of `main` sets on every machine of its
+    template, drops nothing and tells a survival player that it broke (`74982c3`, #1436, changelog
+    1.3.9). Upstream returns air from `playerWillDestroy`, so the loot of air applies. On 1.20.1
+    that method returns nothing, so `BlockContainerBase.getDrops` gives no drops when the block
+    entity of the loot context has `StopDrop`. That also holds for explosions, the breakers of the
+    mod and `/loot ... mine`, which pass the block entity as well. The message comes only from the
+    server, so it shows once. The inventory of such a machine still drops in `onRemove`, as on
+    `main` and on 1.12. The plan of the bundle wanted it kept back as well, but the machines of
+    the house template have empty inventories (dump of `andrew_period_house.nbt` on `main`), so
+    that would only destroy what a player put in.
+    A tile counts as powered before it reacts to a pulse (`c197f65`), so a neighbour update from
+    its own pulse cannot start a second pulse.
+    The lamps, the Fermenting Barrel and the Leaf-Eating Generator drop when broken with any tool
+    (`632c347`, #1447, changelog 1.3.11). The three property helpers in `ActuallyBlocks` lose
+    their explicit `requiresCorrectToolForDrops` as upstream, but `Properties.copy(Blocks.STONE)`
+    takes over the flag of stone (javap of `BlockBehaviour$Properties.copy` in Forge 47.4.0), so
+    the machines built on them still need a pickaxe to drop. On `main` the same helpers use
+    `ofFullCopy(Blocks.STONE)`, which copies that flag too (1.21.1 source not checked, not
+    verified).
+    Savegame: no id, block state or NBT key changes. The NBT on the item is additive, and an item
+    without `BlockEntityTag`, as the base dropped it for most of these machines, places an empty
+    machine as before.
+    In a test on a dedicated Forge 47.4.18 server with the jar of this change (SHA-1
+    `fa32053c00d39df8614ca6c7a7698a6565cb82b1`) and the dev client of the fork under Xvfb, with a
+    local test scenario that is not committed, a survival player broke 14 of these machines with
+    set contents, picked each up and placed it back. Every item carried exactly the kept keys,
+    the tooltips showed the energy and, on the reconstructor, the pulse mode, and every placed
+    machine had the energy, tanks, coffee cache and pulse mode it had before. The Farmer came back
+    without its area. A crusher crafted alone in the inventory grid lost its tag and placed with 0
+    energy. A crusher and a Coal Generator with `StopDrop` 1 dropped no machine, the crusher
+    dropped the iron ore of its inventory, and the message showed once. The command
+    `/loot spawn ... mine` gave no item for a crusher with `StopDrop` and a tagged crusher for a
+    normal one. Broken by hand, the Leaf-Eating Generator, the Fermenting Barrel and a lamp
+    dropped and a crusher did not. A Placer of the mod placed a tagged crusher through its fake
+    player with its energy. The server log has no ERROR line. Not tested: the pack's Arclight
+    and a pulse that recurses before `c197f65`.

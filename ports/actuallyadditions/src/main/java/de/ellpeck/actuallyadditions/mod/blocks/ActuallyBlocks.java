@@ -121,7 +121,7 @@ public final class ActuallyBlocks {
         (b) -> new AABlockItem.BlockEntityEnergyItem(b, defaultBlockItemProperties), TileEntityCoalGenerator::new);
 
     public static final AABlockReg<BlockLeafGenerator, AABlockItem, TileEntityLeafGenerator> LEAF_GENERATOR = new AABlockReg<>("leaf_generator", BlockLeafGenerator::new,
-        (b) -> new AABlockItem(b, defaultBlockItemProperties) , TileEntityLeafGenerator::new);
+        (b) -> new AABlockItem.BlockEntityEnergyItem(b, defaultBlockItemProperties) , TileEntityLeafGenerator::new);
 
     public static final AABlockReg<BlockXPSolidifier, AABlockItem, TileEntityXPSolidifier> XP_SOLIDIFIER = new AABlockReg<>("xp_solidifier", BlockXPSolidifier::new,
         (b) -> new AABlockItem(b, defaultBlockItemProperties), TileEntityXPSolidifier::new);
@@ -316,17 +316,19 @@ public final class ActuallyBlocks {
         (b) -> new AABlockItem(b, defaultBlockItemProperties));
 
     // SkyTekx: upstream a69eaed1, a fresh Properties for each block. The casings set their own sound,
-    // which a shared instance would carry over to every block built after them
+    // which a shared instance would carry over to every block built after them.
+    // Upstream 632c3473 (#1447) drops the explicit requiresCorrectToolForDrops here, as on main.
+    // Properties.copy still takes that flag over from stone, so these blocks keep needing a pickaxe
     public static BlockBehaviour.Properties miscBlockProperties() {
-        return BlockBehaviour.Properties.copy(Blocks.STONE).requiresCorrectToolForDrops().strength(1.5f, 10f);
+        return BlockBehaviour.Properties.copy(Blocks.STONE).strength(1.5f, 10f);
     }
 
     public static BlockBehaviour.Properties defaultPickProps(float hardness, float resistance) {
-        return BlockBehaviour.Properties.copy(Blocks.STONE).requiresCorrectToolForDrops().strength(hardness, resistance).sound(SoundType.STONE);
+        return BlockBehaviour.Properties.copy(Blocks.STONE).strength(hardness, resistance).sound(SoundType.STONE);
     }
 
     public static BlockBehaviour.Properties defaultPickProps() {
-        return BlockBehaviour.Properties.copy(Blocks.STONE).requiresCorrectToolForDrops().strength(1.5F, 10.0F).sound(SoundType.STONE);
+        return BlockBehaviour.Properties.copy(Blocks.STONE).strength(1.5F, 10.0F).sound(SoundType.STONE);
     }
 
     public static BlockBehaviour.Properties defaultCropProps() {

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "actuallyadditions:display_stand"
+    }
+  ],
+  "result": {
+    "item": "actuallyadditions:display_stand"
+  }
+}

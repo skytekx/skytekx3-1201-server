@@ -8,6 +8,7 @@ import de.ellpeck.actuallyadditions.mod.crafting.ActuallyRecipes;
 import de.ellpeck.actuallyadditions.mod.crafting.TargetNBTIngredient;
 import de.ellpeck.actuallyadditions.mod.crafting.WrappedRecipe;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
+import de.ellpeck.actuallyadditions.registration.AABlockReg;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -582,6 +583,34 @@ public class ItemRecipeGenerator extends RecipeProvider {
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(ActuallyBlocks.BLACK_QUARTZ_ORE.getItem()), RecipeCategory.MISC, ActuallyItems.BLACK_QUARTZ.get(), 0.7F, 100)
             .unlockedBy("", has(Items.AIR))
             .save(consumer, new ResourceLocation(ActuallyAdditions.MODID, "black_quartz_ore_blasting"));
+
+        // Reset Recipes
+        // SkyTekx: upstream a85dcdc0, a machine that keeps its contents as an item crafts alone into an
+        // empty one. The result has no BlockEntityTag, so the energy, tanks and redstone mode are gone
+        generateReset(ActuallyBlocks.OIL_GENERATOR, consumer);
+        generateReset(ActuallyBlocks.COAL_GENERATOR, consumer);
+        generateReset(ActuallyBlocks.LEAF_GENERATOR, consumer);
+        generateReset(ActuallyBlocks.POWERED_FURNACE, consumer);
+        generateReset(ActuallyBlocks.CRUSHER, consumer);
+        generateReset(ActuallyBlocks.CRUSHER_DOUBLE, consumer);
+        generateReset(ActuallyBlocks.DISPLAY_STAND, consumer);
+        generateReset(ActuallyBlocks.ATOMIC_RECONSTRUCTOR, consumer);
+        generateReset(ActuallyBlocks.FARMER, consumer);
+        generateReset(ActuallyBlocks.DROPPER, consumer);
+        generateReset(ActuallyBlocks.PLACER, consumer);
+        generateReset(ActuallyBlocks.BREAKER, consumer);
+        generateReset(ActuallyBlocks.FLUID_COLLECTOR, consumer);
+        generateReset(ActuallyBlocks.FLUID_PLACER, consumer);
+        generateReset(ActuallyBlocks.COFFEE_MACHINE, consumer);
+        generateReset(ActuallyBlocks.CANOLA_PRESS, consumer);
+        generateReset(ActuallyBlocks.FERMENTING_BARREL, consumer);
+    }
+
+    protected void generateReset(@Nonnull AABlockReg<?, ?, ?> item, @Nonnull Consumer<FinishedRecipe> consumer) {
+        Recipe.shapeless(item.getItem())
+                .ingredients(item.getItem())
+                .name(new ResourceLocation(ActuallyAdditions.MODID, "reset/" + item.getName()))
+                .save(consumer);
     }
 
     protected void generatePaxels(Consumer<FinishedRecipe> consumer) {

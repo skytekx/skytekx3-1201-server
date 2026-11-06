@@ -14,6 +14,51 @@
           "name": "actuallyadditions:coffee_machine"
         }
       ],
+      "functions": [
+        {
+          "function": "minecraft:copy_nbt",
+          "ops": [
+            {
+              "op": "replace",
+              "source": "Energy",
+              "target": "BlockEntityTag.Energy"
+            }
+          ],
+          "source": "block_entity"
+        },
+        {
+          "function": "minecraft:copy_nbt",
+          "ops": [
+            {
+              "op": "replace",
+              "source": "FluidName",
+              "target": "BlockEntityTag.FluidName"
+            },
+            {
+              "op": "replace",
+              "source": "Amount",
+              "target": "BlockEntityTag.Amount"
+            },
+            {
+              "op": "replace",
+              "source": "Tag",
+              "target": "BlockEntityTag.Tag"
+            }
+          ],
+          "source": "block_entity"
+        },
+        {
+          "function": "minecraft:copy_nbt",
+          "ops": [
+            {
+              "op": "replace",
+              "source": "Cache",
+              "target": "BlockEntityTag.Cache"
+            }
+          ],
+          "source": "block_entity"
+        }
+      ],
       "rolls": 1.0
     }
   ],

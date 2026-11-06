@@ -161,6 +161,14 @@ Modifications
       Leaf Generator and the other lasers render as particles, the lasers use the shader that
       upstream chose for shader packs, and the item particles of item networks no longer
       disturb translucent particles nearby.
+    * Machines that keep their contents: the generators, the crushers, the Display Stand, the
+      Powered Furnace, the Atomic Reconstructor, the Coffee Maker, the Canola Press and the Farmer
+      keep their energy when broken, the Oil Generator, the Coffee Maker, the Fluid Placer and
+      Collector, the Canola Press and the Fermenting Barrel their fluids, and the reconstructor,
+      the Fluid Placer and Collector, the Breaker, the Placer and the Dropper their redstone mode.
+      Crafting such a machine alone empties it. A machine marked to stop dropping, as upstream
+      marks the machines of its Engineer's House, drops nothing, and the lamps, the Fermenting
+      Barrel and the Leaf-Eating Generator drop when broken with any tool.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

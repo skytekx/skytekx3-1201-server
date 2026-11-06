@@ -3,15 +3,16 @@ type: Plan
 title: Ender IO backport
 description: Which features of the Ender IO 1.21.1 line (8.2.x) go onto its 1.20.1 Forge base (6.2.x) for the pack, in which bundles and order, which upstream work stays out, and the license, savegame, Arclight and operator rules of the fork.
 tags: [modpack, mods, enderio, backport]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Ender IO backport
 
-The pack ships Ender IO 6.2.18-beta as the bundled jar `local-mods/EnderIO-1.20.1-6.2.18-beta-all.jar`
-(SHA-1 `33587f98f2d96507de0e9d2f57f5ab35328ace7d`). Upstream develops the mod on its 1.21.1 NeoForge
-line, Ender IO 8.2.x. This plan backports an additive subset of that line onto a vendored copy of
-upstream's `1.20.1` branch in `ports/enderio/`, the same way as the
+Until 2026-11-06 the pack shipped Ender IO 6.2.18-beta as the bundled jar
+`local-mods/EnderIO-1.20.1-6.2.18-beta-all.jar` (SHA-1 `33587f98f2d96507de0e9d2f57f5ab35328ace7d`).
+Since de0d78b it ships the fork build 6.3.0-skytekx.1 instead, see [Release](#release). Upstream
+develops the mod on its 1.21.1 NeoForge line, Ender IO 8.2.x. This plan backports an additive subset
+of that line onto a vendored copy of upstream's `1.20.1` branch in `ports/enderio/`, the same way as the
 [Twilight Forest backport](twilightforest-backport.md). The fork keeps the mod id `enderio` and every
 registry id, NBT key, block state property, capability id and config key, so the live world, the
 configs and the addons keep working. The work is done for SkyTekx, a modpack by ts4.party.
@@ -23,9 +24,9 @@ hours, dependencies and a full spec (upstream commits, translation notes, savega
 common rules in the first bundle), `plan.excluded` holds the upstream work left out with its reason,
 and `critic_notes` holds the review that corrected the first draft. The critic notes give 29 features
 and 241 h, while the bundle list sums to 31 features and 244 h. The bundle list is the reference. The
-file `ports/enderio-backport-carryover.json` will record what a bundle hands to a later one. It does
-not exist yet. Until it does, the rules that the fix pack hands to later bundles sit in the common
-rules of the first bundle's spec.
+file `ports/enderio-backport-carryover.json` records per bundle what it handed to a later one or left
+untested, and under `release` what the release left open. The rules that the fix pack hands to later
+bundles sit in the common rules of the first bundle's spec.
 
 | Property | Value |
 |---|---|
@@ -35,11 +36,17 @@ rules of the first bundle's spec.
 | Reference only | Upstream's stalled branch `experiment/1.20.1-backport` (8 commits of 2026-03 on `1.21.1` at 010b057e), read for API translations. Its 8.x core is not used |
 | Fork | Folder `ports/enderio/` with the 6.x layout `src/{api,core,main,machines,conduits,armory}`, Java 17, ForgeGradle 6.0.54 (`UPSTREAM.md`, Build changes) |
 | Target version | Version 6.3.0-skytekx.1 in `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar`, the jarJar jar with Registrate and GraphLib3 inside |
-| Ships as | A jar in `local-mods/` that replaces the 6.2.18-beta jar |
+| Ships as | The jar `local-mods/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` (SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`, de0d78b), which replaced the 6.2.18-beta jar |
 | Build check | The tasks `compileJava`, `compileMachinesJava`, `compileConduitsJava` and `compileArmoryJava` in one call, with `/opt/jdk17`, `-Xmx2g` and `LC_ALL=C.UTF-8`. The task `compileJava` alone covers only the api, core and main source sets, and the module tasks run `processResources`. A full build needs `LC_ALL=C.UTF-8` because of the lang file `no_no<U+200C>.json` (`UPSTREAM.md`, Building) |
 | Addon check | The script `bp2/enderio-tools/eiocompat.py` in the workflow scratchpad must print `TOTAL MISSING: 0` for the built jar against `local-mods/eio_legacy_machines-0.4.9.jar` |
 
-## Status on 2026-11-05
+## Status on 2026-11-06
+
+Nine of the ten bundles are done, and the pack ships them as Ender IO 6.3.0-skytekx.1 since de0d78b.
+The visual polish is not ported, so the jar has no connected glass and no machine or conduit
+particles. The jar passed a savegame test from 6.2.18-beta and full pack boots on Forge and Arclight,
+see [Release](#release). Nobody has joined it with a client of the pack or loaded a copy of the live
+world yet. The paragraphs below record each bundle as it was integrated.
 
 The vendored base (8799e05), the reproducible Java 17 build of 6.3.0-skytekx.1 (dd66c98) and the
 license texts and the change notice in the jar (e508261) are on the branch
@@ -127,8 +134,16 @@ passed (workflow scratchpad, `bp2/enderio/b7/fullbuild6.log` and `rundata.log`).
 a temporary test class, never committed, passed 65 of 65 checks (`bp2/enderio/b7int/runserver-int.log`
 line 7480), and a dev client under Xvfb with Embeddium passed 20 of 20
 (`bp2/enderio/b7int/runclient5-latest.log` line 561), the first client run of the fork. Nobody has run
-the Arclight tests yet, see the end of [Conduit facades](#conduit-facades). The other content bundles
-are not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot has run the fork.
+the Arclight tests yet, see the end of [Conduit facades](#conduit-facades).
+
+The powered spawner is the last bundle of the machine lane, done in 613ab17 (capture mode), d0a0d70
+(the Mind Killer) and 052a0e4 (review fix). The integration compiled every source set and ran a full
+build, whose `-all` jar has the SHA-1 `59cb329ddb92ea90a28088f4c4936b0354ad2ce6`, and the compat scan
+still finds 0 missing symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks (workflow
+scratchpad, `bp2/enderio/b8int/fullbuild.log` and `compat.log`). A dev `runServer` with a temporary
+test class, never committed, passed 47 of 47 checks (`bp2/enderio/b8int/runserver1.log` line 6438).
+The review fix checked the license of the Apothic Spawners step and ships its MIT text, see
+[License conditions](#license-conditions). Its record on this page came with the release.
 
 | Bundle | What it covers | Hours | Needs | Status |
 |---|---|---|---|---|
@@ -140,8 +155,8 @@ are not ported yet. The pack still ships the 6.2.18-beta jar, and no pack boot h
 | Filters (`eio-b5-filters`) | Big, big advanced and limited item filters, filter tooltips | 28 | Fix pack | Done in 8281651, 711e904, 4ae8f65 and ddc96c8 |
 | Conduit improvements (`eio-b6-conduit-qol`) | Energy and fluid conduit priorities, strong redstone power, the filter GUI from the conduit GUI | 31 | Filters | Done in 8979086, 755d1ca, bcfec4c, 6c746fb and 4053059 |
 | Conduit facades (`eio-b7-conduit-facades`) | Four facade items on the 6.x conduit bundle, AE2 facades as conduit facades | 32 | Conduit improvements | Done in f6324b3, 612b8d9, 8b9dd65 and 19d3e70 |
-| Powered spawner (`eio-b8-powered-spawner`) | Capture mode and the Mind Killer | 23 | Fix pack, charger and keybinds | Planned |
-| Visual polish (`eio-b9-visual-polish`) | Connected glass through Athena, machine particles, conduit movement particles | 14 | Powered spawner, conduit facades | Planned |
+| Powered spawner (`eio-b8-powered-spawner`) | Capture mode and the Mind Killer | 23 | Fix pack, charger and keybinds | Done in 613ab17, d0a0d70 and 052a0e4 |
+| Visual polish (`eio-b9-visual-polish`) | Connected glass through Athena, machine particles, conduit movement particles | 14 | Powered spawner, conduit facades | Not ported. The jar 6.3.0-skytekx.1 ships without it |
 
 ### Order
 
@@ -158,6 +173,70 @@ Structure and ordering).
 - The visual polish comes last, after both lanes.
 - Both lanes edit the generated `lang/en_us.json` and `lang/en_ud.json`. At integration the keys of both
   sides are merged, or `runData` runs, and neither side simply wins.
+
+## Release
+
+The ship stage of 2026-11-06 built the jar, wired it into the pack and tested it. Its commits are
+6c7b04f (a summary of the changes in `NOTICE`, which ships as `NOTICE_enderio`), 995b8d1 (Apothic
+Spawners named in the `license` field of `mods.toml` and in `UPSTREAM.md`), de0d78b (the jar swap in
+`local-mods/`), 2504344 (the permission record, `licenses/` and the permission README) and b4722b5 (the
+new config keys).
+
+| Check | Result |
+|---|---|
+| Jar | The file `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar`, SHA-1 `892025b092e4742d4d01ad04d3ae50a10d764da5`, 8,471,799 bytes, the `-all` jar of `./gradlew build` with Java 17 and `LC_ALL=C.UTF-8`. A build in a fresh checkout and one in the main working tree gave the same SHA-1 |
+| Datagen | The task `runData` changed no committed file. Its cache `src/generated/resources/.cache/` is ignored by git, and a build from a tree that still holds it packs the cache into the jar, so the release jar comes from a tree without it |
+| Build warnings | The compiler settings are unchanged. Javac printed the mapping warnings of `GliderRotationMixin` and `RecipeManagerMixin` and three removal warnings for the deprecated 6.x methods `moveFluids` and `getConnectionState` (workflow scratchpad, `eioship/build1.log`) |
+| Addons | The compat scan finds 0 missing symbols for EnderIO Legacy Machines 0.4.9 (3 inherited members not verified, as before), Exchangers 3.5.1 and AllTheLeaks 1.1.1 (`eioship/compat-jar3.log`). EnderIO Legacy Machines requires `enderio` `[0,)` and Exchangers takes `[1.0,)` |
+| Ids | Every item model, blockstate, lang key, tag file, recipe file and recipe type of 6.2.18-beta is in the new jar. The new jar adds 15 items and 8 blocks. Every Ender IO id that Exchangers, Mystical Agriculture, Spartan Shields, BiblioCraft, EnderIO Legacy Machines and Soul Shards name and that 6.2.18-beta had is still there. The 13 ids of Exchangers that already did not exist in 6.2.18, such as `item_capacitor_silver`, stay missing |
+| Savegame | A world saved by 6.2.18-beta on Forge 47.4.18 loaded with the new jar with every block entity, conduit node, connection, filter, upgrade and the conduit and travel saved data intact, see below |
+| Forge boot | Label `enderio-forge` of the ship tree a0ebaaa, a worktree whose pack files (`local-mods/`, `config/`, `kubejs/`, the datapacks, the index and `licenses/`) are those of b4722b5: `Done` in 17.7 s, 0 FATAL, no crash, no watchdog, clean stop, 11 signatures and 0 new against `wavea-forge` and `newmods-forge-r2` |
+| Arclight boot | Label `enderio-arclight` of the same tree on the hardened jar that `arclight.jar` points to, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`: `Done` in 30.4 s, 0 FATAL, no crash, no watchdog, clean stop, 11 signatures and 0 new against `wavea-arclight` and `newmods-arclight-r2` |
+| Mixins | On both loaders the debug log shows `LivingEntityMixin`, `AbstractCookingRecipeAccessor` and `RecipeManagerMixin` of Ender IO applied, and the `CountedIngredientMixin` of AllTheLeaks applied to `com.enderio.core.common.recipes.CountedIngredient` |
+
+Both boots log the same 3 ERROR lines as their baselines: the `ModelBakery` class that
+`RuntimeDistCleaner` refuses on a dedicated server, the backup file of Nostalgic Tweaks and the
+reflection of AllTheLeaks. The test copies run without EssentialsX, so the production baseline of 2
+accepted lines does not apply to them one to one (see [logs and
+crashes](../server/logs-and-crashes.md#boot-error-baseline)). The boot logs are in the workflow
+scratchpad, `packboot-logs/enderio-forge-*` and `enderio-arclight-*`.
+
+The savegame test ran on a plain Forge 47.4.18 server with `-Xmx3G`, AE2 15.4.12 with GuideME 20.1.15,
+Mekanism 10.4.16.80, Curios 5.14.1, EnderIO Legacy Machines 0.4.9 and the tracked `config/enderio/`
+(workflow scratchpad, `eioship/sg/`).
+
+- The old jar placed 31 machine blocks, 29 of Ender IO and 2 of EnderIO Legacy Machines, among them a
+  fluid tank, a pressurized tank, a powered spawner with a zombie soul and a capacitor, the three
+  capacitor banks, the XP and aversion obelisks, a travel anchor, a vacuum chest with a filter, a soul
+  binder, a soul engine and the farming station and Killer Joe, plus 16 decoration blocks and two chests
+  with 53 item stacks of Ender IO and EnderIO Legacy Machines. Fluids, energy, items and settings went
+  in with `/setblock` and `/data merge`.
+- Conduit bundles cannot be placed with NBT by command, see [Operator notes](#operator-notes). Five
+  bundles with all twelve conduit types of the pack, item, energy, the three fluid conduits, redstone,
+  ME, dense ME, the three chemical conduits and heat, went into the saved chunk offline with every side
+  disconnected. A second boot of the old jar loaded them with their chunk, connected them to each other,
+  to a chest, a capacitor bank and a fluid tank, and kept a dynamic item connection with a basic filter
+  and an extraction speed upgrade. It saved them and the conduit network with a graph list for each of
+  the 12 types.
+- With the new jar every one of the 43 block entities came back with the same id. The only changes are
+  the ones the plan expects: the `Size` key of machine inventories is no longer written (f9e1806c of the
+  base), conduit bundles no longer write the empty `Facades` map, energy conduit sides gain `Priority`
+  0, and the conduit node list comes in another order with the same content. Connections, filters,
+  upgrades, fluids, chest slots and the saved data `enderio_conduit_network` (the same graphs with the
+  same positions and links for all 12 types) and `enderio_traveldata` are unchanged. The log had no
+  ERROR line, only the expected WARN lines of the corrected config and of the new registry ids.
+- New content worked in the same world: the Vat made 1000 mB of hootch from water, wheat seeds and
+  wheat, a powered spawner in capture mode filled an empty soul vial with a cow in the 6.x vial format
+  without spawning it, the Mind Killer on top of the old spawner made it spawn zombies with `NoAI` and
+  the tag `enderio:movable`, the inhibitor obelisk and the wireless charger took power, and the new
+  filters, facades and blocks went into a chest. A painted hardened facade, added offline to an old
+  bundle, loaded and saved, and a TNT blast next to it left that bundle standing and destroyed the bare
+  bundle beside it.
+
+Not tested in the release: a client of the pack, JEI and EMI, the screens of the new blocks, the
+keybinds, the facade rendering with the Embeddium of the pack, a copy of the live world and the Arclight
+checks of the obelisks, the charger and the facades listed in [Arclight notes](#arclight-notes). They
+stay in `ports/enderio-backport-carryover.json` under `release`.
 
 ## Scope
 
@@ -711,6 +790,8 @@ the Arclight tests of facade placement and removal with EssentialsX or a claim p
 
 ### Visual polish
 
+Not ported in 6.3.0-skytekx.1. The plan below stays for a later build.
+
 - Clear glass and fused quartz connect through Athena 3.1.2, a client only mod of the pack
   (`modrinth.index.json:354`), with the ten CTM textures of cb6a40551. Coloured glass keeps its tinted
   model.
@@ -862,16 +943,20 @@ Already in the 6.x base, so no work (same file):
 - A bundle that ports code derived from a third party appends it to `NOTICE`. If the data map shim
   reuses the soul data reload listener, it joins that MIT entry.
 - The Mind Killer tick handler of 84bfe2477 carries upstream's credit to the Apothic Spawners project.
-  Its license is not checked yet. The port either checks it and adds a `NOTICE` line, or writes the
-  four lines from scratch.
+  Its repository has the MIT License with the line "Copyright (c) 2024-2025 Stormraven Studios, LLC"
+  (branch 1.21 at fa52d69e). Since 052a0e4 its text ships as `ApothicSpawners-MIT.txt` and `NOTICE`
+  names it, and since 995b8d1 the `license` field of `mods.toml` names it too.
 - The 1.21.1 sounds stay out unless the CC BY-NC 3.0 credit list of their freesound sources is
   recovered and shipped with them.
 - New textures and models come from the 1.21.1 tip of the same repository, whose `LICENSE.txt` is the
   same Unlicense text as on `1.20.1` (license check of the research).
-- The permission record `modrinth-permissions/EnderIO-1.20.1-6.2.18-beta-all.jar.md` still says that
-  the Unlicense "unconditionally permits" redistribution, which the Patchouli parts contradict. The new
-  jar needs a record that names the non-commercial condition, the NOTICE and the SHA-1 of the
-  reproducible build, plus the license texts in `licenses/`. That rewrite is separate pack work.
+- The permission record is `modrinth-permissions/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar.md` since
+  2504344. It names the modified build, the non-commercial condition of the Patchouli parts, the texts
+  in the jar and in `licenses/EnderIO-1.20.1-6.3.0-skytekx.1/`, the source under `ports/enderio` and
+  the SHA-1 of the reproducible build. Its source link points at `tree/master/ports/enderio`, so
+  `tools/mrpack_permissions.py` refuses the jar until `origin/master` holds that folder and this jar.
+  The old record said that the Unlicense "unconditionally permits" redistribution, which the
+  Patchouli parts contradict.
 
 ## Savegame notes
 
@@ -908,7 +993,9 @@ Already in the 6.x base, so no work (same file):
   mode with their soul, capacitor and progress.
 - A rollback to 6.2.18-beta would lose the new blocks and items like any removed registry entry, and
   the new keys would be ignored. Nobody has tested a rollback.
-- A load of a copy of the live world with conduits, tanks, obelisks and spawners must pass before any
+- A synthetic world of 6.2.18-beta with conduits of every type, tanks, obelisks, spawners, filters
+  and EnderIO Legacy Machines loaded unchanged with the release jar, see [Release](#release). A load
+  of a copy of the live world with conduits, tanks, obelisks and spawners must still pass before any
   deploy (inventory, `critic_notes`, For the ship stage).
 
 ## Arclight notes
@@ -1031,6 +1118,10 @@ These differ from upstream on purpose and must survive a re-sync.
   32600 bytes that `NetworkHooks.openScreen` accepts (`AbstractFilterMenu.java:41`).
 - Two filter menus on the same conduit filter cannot both edit it. The first one to save wins, and the
   other closes.
+- The powered spawner looks for a Mind Killer above it on its first server tick and when the block
+  above changes, never in `onLoad` (d0a0d70). Upstream reads it in `onLoad`.
+- A capture in `COPY` mode drops the UUID of the copied mob, so a second vial of the same mob can be
+  released while the first copy lives (052a0e4). Upstream copies the UUID.
 
 ## Open questions
 
@@ -1038,7 +1129,6 @@ Nobody has verified these yet (inventory, `critic_notes`, Things nobody has veri
 
 - Whether Bukkit plugin teleports post Forge's `EntityTeleportEvent`, which decides whether the
   inhibitor blocks `/home` and `/tpa`.
-- The license of the Apothic Spawners snippet.
 
 The owner may also want the content left out with a small cost: the weather obelisk (about 10 h, with
 a permission gate) and the painted walls (about 3 h). The wind charge default is the owner's to change
@@ -1051,6 +1141,8 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   dedicated `runServer` reaches `Done` with and without Curios.
 - The release stage runs `runData` and reconciles the generated resources, then swaps the `-all` jar
   into `local-mods/` and removes the 6.2.18-beta jar, so two Ender IO jars never load together. The
+  release of 2026-11-06 did that in de0d78b. Build the jar from a tree without
+  `src/generated/resources/.cache/`, or the cache that `runData` leaves behind ends up in the jar. The
   same swap goes into `mods/` by hand, as `AGENTS.md` asks (see [mod set](mod-set.md)). The pack
   build takes its files from git HEAD, so the jar, the permission record and the license texts are
   committed first.
@@ -1060,8 +1152,8 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   `attractorAttractBosses` and the particle switch. The tracked `config/enderio/machines-common.toml`
   lacks the sections `energy.inhibitor`, `energy.relocator`, `energy.attractor`, `obelisks`,
   `energy.wirelessCharger` and `wirelessCharger`, so Forge corrects it with a WARN at the first boot.
-  Forge appends missing keys and keeps old values. The regenerated `config/enderio/*.toml` files are
-  committed. The `"Spawn Type"` stays `ENTITYTYPE`.
+  Forge appends missing keys and keeps old values. The regenerated `machines-common.toml` is committed
+  since b4722b5, and the other two files came back unchanged. The `"Spawn Type"` stays `ENTITYTYPE`.
   Config files change only while the java process is gone.
 - A test on a copy of the live world with the production Arclight jar comes before the deploy. It loads
   conduits, tanks, obelisks and spawners, checks the inhibitor against pearls, chorus fruit, `/tp`,
@@ -1077,6 +1169,13 @@ a permission gate) and the painted walls (about 3 h). The wind charge default is
   before any release, so "1.0-skytekx.1" still covers them.
 - The server stops over RCON with `save-all flush` and `stop`, and the java process must be gone before
   the jar swap.
+- Never place a conduit bundle with NBT by command. A `/setblock`, `/clone` or `/data merge` of an
+  `enderio:conduit` with a `ConduitBundle` compound leaves the bundle without graph nodes, because its
+  block entity reads the types after `setLevel`. The next capability query of a neighbour crashes the
+  server tick ("no node matching original type" in `ConduitBundle.getNodeFor`), and the bundle cannot
+  be saved. Both 6.2.18-beta and the release jar do this on the test server. Bundles that load with
+  their chunk are fine. Whether moving a bundle with a Create contraption takes the same path is not
+  verified.
 - Players learn that the travel staff and electromagnet keys are unbound and sit under the Ender IO
   category of the controls, that the inhibitor obelisk blocks pearls and other teleports in its range,
   that the capacitor and the soul filter come out of an Aversion Obelisk before it becomes a relocator,

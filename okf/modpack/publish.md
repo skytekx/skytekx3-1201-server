@@ -113,7 +113,8 @@ boots had rewritten on disk (3a398b1, the builder reads git HEAD).
   Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical Automation, Mekanism: Extra
   Modules and the boss data of Iron's Apothic Invaders, the license texts and the NOTICE of the
   Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE of the Create: Integrated Farming
-  port, and the license texts of the parts of Ender IO 6.2.18 with their NOTICE (`licenses/` in git).
+  port, and the license texts of the parts of the Ender IO build 6.3.0-skytekx.1 with their NOTICE
+  (`licenses/` in git).
 - The bundled jars under `overrides/mods/`, 44 in 3.1.1 and 3.1.2 and 49 in 3.1.3. Since 3.1.3 they
   include Simply Jetpacks 2, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO Legacy
   Machines, Mob Grinding Utils, Flux Networks and SkyTekx Molten, with the license texts under
@@ -174,14 +175,14 @@ On the build machine, after the blockers are fixed:
    Modrinth API reports for the project and warns when the project is missing or not demonetized. The
    Patchouli parts of Ender IO (CC BY-NC-SA 3.0) and the assets of the Twilight Forest fork (CC BY-NC-SA
    4.0) allow no commercial use, so the pack must earn nothing, Modrinth creator rewards included
-   (`modrinth-permissions/EnderIO-1.20.1-6.2.18-beta-all.jar.md`). Modrinth creates every project as
+   (`modrinth-permissions/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar.md`). Modrinth creates every project as
    `monetized` (`project_creation.rs` of its server Labrinth, read in the license review of
    2026-11-05), and the public projects of Extreme Reactors, ZeroCore, LittleTiles, Iron's Apothic
    Invaders and Ender IO all reported `monetized` that day. The rewards reach every creator
    automatically (modrinth.com/legal/cmp-info), so the status of the project is the switch that
-   counts. Record the status and the date in the row of the version. Listing Ender IO as a CDN entry of
-   the index instead of bundling it would drop the Patchouli condition, but not the one of the Twilight
-   Forest fork, so the project stays demonetized while the fork is bundled.
+   counts. Record the status and the date in the row of the version. Since the pack bundles a
+   modified Ender IO build (de0d78b), a CDN entry of the index can no longer drop the Patchouli
+   condition, and the Twilight Forest fork sets the same limit, so the project stays demonetized.
 5. Upload: `python3 tools/publish_modrinth.py --go`. It creates the project if it is missing, sets its
    `monetization_status` to `demonetized` through the API, reads it back and refuses the upload unless
    Modrinth reports `demonetized` or `force-demonetized`. Then the version goes up as a featured beta,

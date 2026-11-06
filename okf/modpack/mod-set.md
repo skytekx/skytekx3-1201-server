@@ -404,12 +404,15 @@ counts in the list below are older than the last fourteen of them and were not r
 - 26 come from CurseForge, among them Bibliocraft, Bird's Nests, Clean Swing Through Grass, Connectivity,
   Cupboard, Deadly World, Fireflies, Hexxit Additions, Infernal Mobs, Shield Parry, Traverse and
   Tumbleweed.
-- 2 match a Modrinth file exactly and could move into the index: Elevator Mod (`elevatorid`) and
-  EnderIO 6.2.18 beta. Ender IO is Unlicense, but the jar holds code from Patchouli (CC BY-NC-SA 3.0)
-  and MIT code adapted from Mekanism and one more mod, and it bundles MIT, MPL-2.0 and Apache-2.0
-  libraries without their texts. Since 2026-11-05 those texts and a NOTICE travel in `licenses/EnderIO-1.20.1-6.2.18-beta/`,
-  and its record `modrinth-permissions/EnderIO-1.20.1-6.2.18-beta-all.jar.md` lists the conditions,
-  among them that the pack stays non-commercial.
+- 1 matches a Modrinth file exactly and could move into the index: Elevator Mod (`elevatorid`).
+  EnderIO 6.2.18 beta was the second until de0d78b replaced it with the backport build
+  `EnderIO-1.20.1-6.3.0-skytekx.1-all.jar` from `ports/enderio/`, see
+  [Ender IO backport](enderio-backport.md#release). Ender IO is Unlicense, but the jar holds code from
+  Patchouli (CC BY-NC-SA 3.0) and MIT code adapted from Mekanism, Commoble and Apothic Spawners, and
+  it bundles MIT, MPL-2.0 and Apache-2.0 libraries. The texts and a NOTICE travel in the jar and in
+  `licenses/EnderIO-1.20.1-6.3.0-skytekx.1/`, and its record
+  `modrinth-permissions/EnderIO-1.20.1-6.3.0-skytekx.1-all.jar.md` lists the conditions, among them
+  that the pack stays non-commercial.
 - Offline Skins is listed as a Modrinth mod, but no Modrinth file has its SHA-1.
 - 4 were built locally from source: Aether Genesis (2026-06-30), Nyx (2026-06-29, see
   [Nyx](../content/nyx.md)), SkyTekx Compat (2026-07-12, see [compat mod](../content/compat-mod.md)) and

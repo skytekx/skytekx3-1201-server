@@ -3,7 +3,7 @@ type: Decisions
 title: Decisions
 description: Every owner ruling on SkyTekx 3 from 2026-06-26 to 2026-10-31, grouped by area, with its status on 2026-10-31 and the page or file where it lives.
 tags: [decisions, rulings, owner]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Decisions
@@ -164,6 +164,7 @@ These rules apply to every later change.
 | 2026-06-30 18:20 | A folder with the files the Modrinth permissions page asks for | Done in 7995a0a, brought up to date in 955275c. Six blockers remain | [Publish](modpack/publish.md#what-blocks-a-release) |
 | 2026-10-31 20:09 | Update the Modrinth pack and test it | Partial. Version 3.0.6 went up at 20:27 after five builder fixes. It installs, but it needs BrassAmber BattleTowers to join this server and froze with an 8 GB heap after the join. With 12 GB it plays, and the Modrinth texts ask for that since 21:25. Version 3.0.7 of 21:55 only adds Modflared and the server list | [Publish](modpack/publish.md#test-of-2026-10-31) |
 | 2026-11-04 11:53 | No pack with skytekx-compat 2.1.5 ("nein"). The pack keeps 2.1.3, so the Skylands protection stays on the server only, and clients get no join retry during Mojang outages | Done. Pack 3.1.2 ships 2.1.3, and newer compat builds run on the server only | [SkyTekx Compat](content/compat-mod.md#open-points) |
+| Offer of 2026-11-05, answered with the prompt "continue" (date and time of the answer not verified) | The answer "continue" to the offer of options A, B and C for ZeroCore 2.1.48 was taken as A, the recommended default: keep the All Rights Reserved jar out of the public repository and fetch its CurseForge file at build time. B (back to the Modrinth builds 2.0.84 and 2.1.45) and C (ask the author to allow the copy) stay possible | Partial. The pointer file, the fetch by the build and the checks of the build and the upload are done. The history rewrite of the unpushed commits that tracked the jar is open | [Open items](open-items.md#owner-decisions) |
 
 ## Git and docs
 

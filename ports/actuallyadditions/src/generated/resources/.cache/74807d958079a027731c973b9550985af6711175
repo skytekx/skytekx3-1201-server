@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-06T11:53:53.790441776	Tags for minecraft:item mod id actuallyadditions
+// 1.20.1	2026-11-06T12:38:38.187841673	Tags for minecraft:item mod id actuallyadditions
 ea53bfe045e7e533a13fa2fa8793cd7741e92902 data/actuallyadditions/tags/items/buckets/canola_oil.json
 fb46ac4e564c749fcaa5ba1393ab33fcd91817f5 data/actuallyadditions/tags/items/buckets/crystallized_oil.json
 e70a00f63e5f22e8f37d76d45bbadc66ff0e3598 data/actuallyadditions/tags/items/buckets/empowered_oil.json
@@ -40,6 +40,11 @@ fb95ac8041521e1d2879f6fcb652266dcd9e0fb1 data/forge/tags/items/storage_blocks/em
 148cd937543fd58b196403c18839b2698bf87fdf data/forge/tags/items/storage_blocks/palis_crystal.json
 b9aa28a54d47054ba5653bec2f20e0a675ab5120 data/forge/tags/items/storage_blocks/restonia_crystal.json
 fb4f349bc6fd89f26ef2ba72a9236f05eefd8ea2 data/forge/tags/items/storage_blocks/void_crystal.json
+67af57742b08793269bb4a594e224a05f55b83e5 data/forge/tags/items/tools/axes.json
+67af57742b08793269bb4a594e224a05f55b83e5 data/forge/tags/items/tools/paxels.json
+67af57742b08793269bb4a594e224a05f55b83e5 data/forge/tags/items/tools/pickaxes.json
+67af57742b08793269bb4a594e224a05f55b83e5 data/forge/tags/items/tools/shovels.json
+67af57742b08793269bb4a594e224a05f55b83e5 data/forge/tags/items/tools/swords.json
 67af57742b08793269bb4a594e224a05f55b83e5 data/minecraft/tags/items/axes.json
 67af57742b08793269bb4a594e224a05f55b83e5 data/minecraft/tags/items/cluster_max_harvestables.json
 67af57742b08793269bb4a594e224a05f55b83e5 data/minecraft/tags/items/pickaxes.json

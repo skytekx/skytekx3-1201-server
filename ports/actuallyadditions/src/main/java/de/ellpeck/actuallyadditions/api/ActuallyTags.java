@@ -58,6 +58,14 @@ public final class ActuallyTags {
         public static final TagKey<Item> LAMPS = tag("lamps");
         // SkyTekx: the Curios charm slot of b5cb3434, filled with the Crafting Table On A Stick
         public static final TagKey<Item> CURIOS_CHARM = ItemTags.create(new ResourceLocation("curios", "charm"));
+        // SkyTekx: the Forge 47 tool tags that pack mods read next to minecraft:pickaxes and friends
+        // (Farmer's Delight, Immersive Engineering, Mekanism Tools and Tinkers' Construct), and the
+        // paxel tag of Mekanism Tools and Mystical Agradditions, which the AIOTs join
+        public static final TagKey<Item> TOOLS_PICKAXES = forge("tools/pickaxes");
+        public static final TagKey<Item> TOOLS_AXES = forge("tools/axes");
+        public static final TagKey<Item> TOOLS_SHOVELS = forge("tools/shovels");
+        public static final TagKey<Item> TOOLS_SWORDS = forge("tools/swords");
+        public static final TagKey<Item> TOOLS_PAXELS = forge("tools/paxels");
 
         private static TagKey<Item> tag(String name) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(ActuallyAdditions.MODID, name));

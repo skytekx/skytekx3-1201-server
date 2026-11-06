@@ -330,9 +330,11 @@ container, and [Excluded](#excluded) gives the reasons.
   full pack the wire comes out as Immersive Engineering's `wire_electrum`, because
   `immersiveengineering` leads `createaddition` in `modPriorities` and IE 10.2.0 puts that wire
   into `forge:wires/electrum` (`ImmersiveEngineering-1.20.1-10.2.0-183.jar`). The rod stays CC&A's.
-  Thermal Extra 3.3.3 also tags its `electrum_rod` as `forge:rods/electrum`, but neither
-  `createaddition` nor `thermal_extra` is in `modPriorities`, and AlmostUnified 0.11.0 picks no
-  item for a tag that no listed mod owns (`ReplacementMap.getPreferredItemForTag`). IE also adds
+  Thermal Extra 3.3.3 also tags its `electrum_rod` as `forge:rods/electrum`. Since eb57414
+  (2026-11-04) `createaddition` and `thermal_extra` follow `twilightforest` at the end of
+  `modPriorities`, with `createaddition` first, so AlmostUnified gives `forge:rods/electrum` to the
+  CC&A rod and the Thermal Extra rod is a variant (see
+  [AlmostUnified](almostunified.md#configuration)). IE also adds
   its `plate_gold` to `forge:plates/gold`, so that plate charges too. Nobody has checked the wire
   and the rod in the full pack yet. The channeling recipe keeps its 1.20.1 values.
 - Nine new recipes deoxidize Create's copper tiles, tile slabs and tile stairs (c08b593 and

@@ -3,7 +3,7 @@ type: Runbook
 title: Deploy on Debian (systemd)
 description: The Linux deployment path for a Debian or Ubuntu host with the systemd unit, ServerLinux.sh, mcrcon, ports, firewall and DNS, plus the files that git does not hold.
 tags: [server, deploy, systemd, rcon, linux, debian]
-timestamp: 2026-11-04
+timestamp: 2026-11-06
 ---
 
 # Deploy on Debian (systemd)
@@ -67,7 +67,10 @@ the index means four steps.
 
 1. Download every index entry whose `env.server` is not `unsupported`, and check its hash against the
    index.
-2. Copy the `local-mods/` jars into `mods/`.
+2. Run `python3 tools/fetch_local_mods.py` for the jars that `local-mods/` names by a pointer file
+   instead of holding them, ZeroCore 2 among them since 2026-11-06, then copy the `local-mods/` jars
+   into `mods/`. The script checks size and SHA-1 and stops on any mismatch, see
+   [Tools](../modpack/tools.md#pointed-jars).
 3. Run `python3 tools/patch_mods.py`.
 4. Add BrassAmber BattleTowers, which is on the build machine but in no pack, see
    [Mod set](../modpack/mod-set.md#jars-outside-the-index).

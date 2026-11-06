@@ -3,7 +3,7 @@ type: Runtime
 title: Arclight runtime
 description: The hardened Arclight 1.20.1 jar built from patches/, the arclight.jar symlink, the Java 17 rule, how mods and plugins load and why the server must stop over RCON.
 tags: [server, arclight, java, forge, bukkit]
-timestamp: 2026-11-04
+timestamp: 2026-11-06
 ---
 
 # Arclight runtime
@@ -153,7 +153,8 @@ unzip and an ASM 9.x install (any Arclight/Forge 47 server `libraries/` folder h
 
 ## Mods vs plugins
 - Forge mods load only from `mods/` (gitignored). It is assembled from the [index](../modpack/mod-set.md)
-  downloads plus a copy of the tracked `local-mods/*.jar`; nothing points Forge at `local-mods/` directly.
+  downloads plus a copy of the `local-mods/*.jar`, with the jars that pointer files name there fetched
+  first by `tools/fetch_local_mods.py`. Nothing points Forge at `local-mods/` directly.
 - Bukkit plugins load from `plugins/` (gitignored; EssentialsX et al.).
 
 So Java 17 stays the rule because it is the only version with a successful boot on record. Whether this

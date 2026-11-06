@@ -81,10 +81,13 @@ builds.
    and a new test. Since 2026-11-03 git ships such an EMI build, the fork from github.com/skytekx/emi
    (1ea5bb29, as 1.1.24-skytekx.2 since 2026-11-04). The new test is still open.
 3. ZeroCore 2.1.48 is All Rights Reserved, and the modpack grant of its author forbids reposts on any
-   website other than CurseForge, Modrinth and the FTB launcher. Git tracks the jar in `local-mods/`
-   since ffc3aa3, so the push of step 2 below would serve it from GitHub. Its record says VERIFY, and
-   the build tools refuse a public pack, until the owner settles it, see
-   [open items](../open-items.md#owner-decisions).
+   website other than CurseForge, Modrinth and the FTB launcher. Git tracked the jar in `local-mods/`
+   from ffc3aa3 on, so the push of step 2 below would have served it from GitHub. Resolved for the
+   pack on 2026-11-06 with option A of [open items](../open-items.md#owner-decisions): git holds only
+   the pointer `local-mods/ZeroCore2-1.20.1-2.1.48.jar.fetch.json`, the builder fetches CurseForge
+   file 7344725 and checks its size and SHA-1, and the record says OK
+   (`modrinth-permissions/ZeroCore2-1.20.1-2.1.48.jar.md`). The jar itself is still in the local
+   commits from ffc3aa3 on, so those commits have to be rewritten without it before that push.
 
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so
@@ -109,9 +112,10 @@ boots had rewritten on disk (ce31f6f, the builder reads git HEAD).
   the Expanded Delight port, the Create: Integrated Farming port, the Ender IO backport build
   6.3.0-skytekx.1 in place of 6.2.18-beta, the Create Crafts & Additions fork 1.20.1-1.7.3-skytekx.1
   in place of the Modrinth file 1.3.3 and the new Actually Additions fork 1.20.1-1.1.52-skytekx.1
-  (`local-mods/`, 58 jars on 2026-11-06). Under `overrides/licenses/` travel the sources of the
-  Backpack port, of the LittleTiles build and of Mekanism: Extra Modules, the license texts of Simply
-  Jetpacks 2, EnderIO Legacy Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical
+  (`local-mods/`, 57 jars and the pointer file of ZeroCore 2 on 2026-11-06). The builder fetches the
+  ZeroCore jar from its CurseForge file, so it reaches players only inside the `.mrpack`, as its
+  author allows. Under `overrides/licenses/` travel the sources of the Backpack port, of the
+  LittleTiles build and of Mekanism: Extra Modules, the license texts of Simply Jetpacks 2, EnderIO Legacy Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical
   Automation, Mekanism: Extra Modules and the boss data of Iron's Apothic Invaders, the license texts
   and the NOTICE of the Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE of the
   Create: Integrated Farming port, the license texts of the parts of the Ender IO build
@@ -158,13 +162,22 @@ On the build machine, after the blockers are fixed:
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
    write the changelog in `docs/changelog/<VERSION>.md`, starting from `docs/changelog/next.md`. If
    the public address changes, change `SERVERS` in `build_mrpack.py` as well.
-2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Merge the
-   branch that carries `ports/` into master, push it and run `git fetch`. Then build with
-   `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The builder refuses
-   a public pack while a bundled jar points its source at `tree/master/ports/<dir>` on GitHub and the
-   local `origin/master` lacks that directory or that build of the jar in `local-mods/`, and the upload
-   script checks the jars inside the `.mrpack` the same way (`tools/mrpack_permissions.py`). Those
-   source links are the source offers that the licenses of these builds demand.
+2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Before the
+   push, check that no commit to be pushed holds a jar that a pointer file stands for:
+   `git log --oneline origin/master..HEAD -- local-mods/ZeroCore2-1.20.1-2.1.48.jar` has to print
+   nothing. Merge the branch that carries `ports/` into master, push it and run `git fetch`. Then
+   build with `python3 tools/build_mrpack.py` and commit the rewritten `modrinth.index.json`. The
+   builder refuses a public pack while a bundled jar points its source at `tree/master/ports/<dir>` on
+   GitHub and the local `origin/master` lacks that directory or that build of the jar in `local-mods/`,
+   and the upload script checks the jars inside the `.mrpack` the same way
+   (`tools/mrpack_permissions.py`). Those source links are the source offers that the licenses of
+   these builds demand. The builder also downloads every jar that `local-mods/` names by a pointer
+   file, ZeroCore 2 from `mediafilez.forgecdn.net` among them, into `~/.cache/skytekx3/local-mods/`
+   (or `$SKYTEKX3_FETCH_CACHE`), and refuses the build when a download fails or its size or SHA-1
+   differ from the pointer. The upload script refuses a `.mrpack` without that jar or with other
+   bytes, see [tools](tools.md#pointed-jars). A local test build that is never uploaded, while other
+   blockers remain, is `python3 tools/build_mrpack.py --allow-unpermitted`. It writes
+   `SkyTekx3-<version>-UNPERMITTED.mrpack`, which the upload script never picks up.
 3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap, add BrassAmber BattleTowers by
    hand as players do, and join the server with it. On Asahi Linux add the JVM flag from
    [client](client.md#java-and-the-asahi-flag) and join by the Mac mini's LAN address, since Modflared

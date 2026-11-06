@@ -3,7 +3,7 @@ type: Plan
 title: Actually Additions backport
 description: How the unreleased 1.20.1 Forge branch of Actually Additions becomes a release for the pack, which fixes and features of the newer NeoForge lines up to 1.3.26 it takes in which bundles and order, which upstream work stays out, and the license, savegame, Arclight and operator rules of the fork.
 tags: [modpack, mods, actuallyadditions, backport]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Actually Additions backport
@@ -217,6 +217,11 @@ decide. Nothing in the pack depends on the version, see the property table.
   the data of `main` names.
 - Advancements and the JEI plugin shell with the laser, mining lens and empowerer categories come
   here. The other categories land with their machines. EMI shows them through its JEI layer.
+- The coffee branch of the advancement tree stays out of reach after this bundle. Coffee beans,
+  canola, flax and rice have no source until the wild patches of the world content bundle land,
+  because the plant generation of the base is commented out. So `pickup_coffee`,
+  `craft_coffee_machine` and the recipes of the Coffee Maker, Canola Press, Fermenting Barrel and
+  Oil Generator wait for that bundle (`UPSTREAM.md`, source change 11).
 
 ### Assets
 

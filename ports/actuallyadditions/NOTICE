@@ -198,6 +198,10 @@ Modifications
       Engineer villager works at a Coffee Maker and trades machines. Its jigsaw names the empty
       pool, as vanilla houses do, and its chest takes crystal blocks again, as in the 1.12
       versions. Directional machines, among them the Crusher, turn and mirror with a structure.
+    * Loot: bats killed by a player drop Bat Wings, more with looting, and dungeon, mineshaft,
+      weaponsmith, stronghold library, igloo, desert pyramid, nether fortress, end city and
+      mansion chests can hold crystals, crystal blocks, drill cores, black quartz and Bat Wings,
+      through global loot modifiers behind doBatDrops and villageAndDungeonLoot.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

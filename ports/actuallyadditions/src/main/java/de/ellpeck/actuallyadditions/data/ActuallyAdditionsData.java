@@ -66,6 +66,9 @@ public class ActuallyAdditionsData {
 
         generator.addProvider(true, new SoundsGenerator(packOutput, helper));
 
+        // SkyTekx: the bat and chest loot of upstream b9435301
+        generator.addProvider(true, new GlobalLootModifierGenerator(packOutput));
+
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(
                 packOutput, lookupProvider, Set.of(ActuallyAdditions.MODID)));
 

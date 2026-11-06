@@ -324,7 +324,7 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    `ActuallyAdditions.java:115` and `159`) and `758001e` (a regression of the 1.21 line, the base
    wraps its client listeners in `DistExecutor`, `ActuallyAdditions.java:112`). The base still
    registers the fully commented `DungeonLoot` on the Forge bus (`ActuallyAdditions.java:105`),
-   which is harmless and goes away with the loot modifiers (`4a16be4`).
+   which is harmless. Source change 58 removes it with the loot modifiers (`4a16be4`).
 9. Tags: the base shipped no `forge:` tag at all. The class `ActuallyTags` and the two tag
    generators now hold the tags of `main` with every `c:` tag mapped to its Forge 47 name, as the
    1.20.4 line still had them (`1d581fc`, `c952c77`, `9689b4c`, `af8f1f1`, `e37019a`, `8d56947`,
@@ -1774,3 +1774,26 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     processor list, job site tag and sound entry match `main` byte for byte. Savegame: new ids only,
     the profession, the point of interest type, the sound, the processor list and the loot table.
     Villages generate the house in new chunks only.
+58. Loot modifiers: bats and chests get the drops of the 1.12 handler again through two global
+    loot modifiers of `b9435301`, which replace the base's `mod/misc/DungeonLoot.java`. That class
+    was commented out in full and still registered on the Forge bus, as upstream undid in
+    `4a16be41`. Class and registration are gone. The serializers `actuallyadditions:bat_loot` and
+    `actuallyadditions:dungeon_loot` are plain codecs built with `codecStart` in
+    `ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS`, and the data generator writes the two
+    modifiers into `data/actuallyadditions/loot_modifiers/` and lists them in
+    `data/forge/loot_modifiers/global_loot_modifiers.json` with the condition
+    `forge:loot_table_id` (`main`: `neoforge`). A bat that a player kills drops one or two Bat Wings
+    with the chance 1 in 15 while `doBatDrops` of source change 6 is on, and every level of looting
+    raises the chance by 2 in 15 and the largest count by one. The killer is `KILLER_ENTITY` of
+    1.20.1 (`main`: `ATTACKING_ENTITY`), and the looting level is `LootContext.getLootingModifier`,
+    which Forge 47 takes from the killer's weapon and the `LootingLevelEvent`, where `main` reads the
+    enchantment level itself. The wing drop handler of `ItemWingsOfTheBats` stays unregistered, as
+    on `main`, so wings do not drop twice. While `villageAndDungeonLoot` is on, the chests of the
+    simple dungeon, the abandoned mineshaft, the village weaponsmith, the stronghold library, the
+    igloo, the desert pyramid, the nether bridge, the end city and the woodland mansion get, each
+    with its own chance, one to three crystals (1 in 5) and crystal blocks (1 in 15), a drill core
+    (1 in 10), one to five black quartz (1 in 5) and one or two Bat Wings (1 in 10), in the mix of
+    the 1.12 handler. On `main` the table names of `BuiltInLootTables` are `ResourceKey`s of 1.21
+    and never equal the queried `ResourceLocation`, so its chests get nothing. On 1.20.1 both are
+    `ResourceLocation`s and the loot arrives. The `System.out` line of `main` for every drill core
+    roll is left out. Savegame: none, the modifiers only act on loot rolled after the update.

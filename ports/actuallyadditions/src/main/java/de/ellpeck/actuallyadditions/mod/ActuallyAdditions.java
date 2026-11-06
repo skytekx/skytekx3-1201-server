@@ -33,8 +33,8 @@ import de.ellpeck.actuallyadditions.mod.gen.village.InitVillager;
 import de.ellpeck.actuallyadditions.mod.inventory.ActuallyContainers;
 import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.items.Worm;
+import de.ellpeck.actuallyadditions.mod.lootmodifier.ActuallyLootModifiers;
 import de.ellpeck.actuallyadditions.mod.misc.BannerHelper;
-import de.ellpeck.actuallyadditions.mod.misc.DungeonLoot;
 import de.ellpeck.actuallyadditions.mod.misc.apiimpl.LaserRelayConnectionHandler;
 import de.ellpeck.actuallyadditions.mod.misc.apiimpl.MethodHandler;
 import de.ellpeck.actuallyadditions.mod.network.PacketHandler;
@@ -108,6 +108,8 @@ public class ActuallyAdditions {
         ActuallyParticles.init(eventBus);
         // SkyTekx: the serializer of the biome modifiers of upstream 02422d65
         ActuallyBiomeModifiers.init(eventBus);
+        // SkyTekx: the bat and chest loot of upstream b9435301 replaces the dead DungeonLoot handler (4a16be41)
+        ActuallyLootModifiers.init(eventBus);
         ActuallyTags.init();
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
@@ -116,7 +118,6 @@ public class ActuallyAdditions {
         // SkyTekx: the Engineer house in the village pools and the crops in village farms (upstream 523cba59, e6c8af19)
         MinecraftForge.EVENT_BUS.addListener(ActuallyVillages::modifyVillageStructures);
         MinecraftForge.EVENT_BUS.register(new CommonEvents());
-        MinecraftForge.EVENT_BUS.register(new DungeonLoot());
         MinecraftForge.EVENT_BUS.addListener(ActuallyAdditions::reloadEvent);
         MinecraftForge.EVENT_BUS.addListener(Worm::onHoe);
         InitFluids.init(eventBus);

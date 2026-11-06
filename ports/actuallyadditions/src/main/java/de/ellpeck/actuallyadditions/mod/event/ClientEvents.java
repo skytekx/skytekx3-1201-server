@@ -130,7 +130,9 @@ public class ClientEvents {
         if (!face.isEmpty() && face.getItem() instanceof IGoggles goggles && goggles.displaySpectralMobs()) {
             double range = 8;
             AABB aabb = new AABB(player.getX() - range, player.getY() - range, player.getZ() - range, player.getX() + range, player.getY() + range, player.getZ() + range);
-            List<Entity> entities = player.level().getEntitiesOfClass(Entity.class, aabb);
+            // SkyTekx: the wearer is left out, or the own model glows in third person. Upstream main
+            // collects every entity of the box, the wearer included
+            List<Entity> entities = player.level().getEntities(player, aabb);
             if (entities != null && !entities.isEmpty()) {
                 cachedGlowingEntities.addAll(entities);
             }

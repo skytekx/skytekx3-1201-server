@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -38,7 +39,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -78,6 +81,15 @@ public class ItemWaterBowl extends ItemBase {
                 FluidState fluidState = blockState.getFluidState();
 
                 if (fluidState.isSourceOfType(Fluids.WATER)) {
+                    // SkyTekx: the source goes through the Forge break event first, which Arclight hands
+                    // to Bukkit as a BlockBreakEvent, so claim plugins can keep the water in place. On a
+                    // refusal the server sends the inventory again, since the client already showed the
+                    // filled bowl
+                    if (!mayTakeBlock(player, level, pos)) {
+                        player.containerMenu.sendAllDataToRemote();
+                        return;
+                    }
+
                     if (blockState.getBlock() instanceof BucketPickup pickup) {
                         ItemStack fillResult = pickup.pickupBlock(level, pos, blockState);
                         if (!fillResult.isEmpty()) {
@@ -133,6 +145,11 @@ public class ItemWaterBowl extends ItemBase {
                         ? InteractionResultHolder.success(new ItemStack(Items.BOWL))
                         : InteractionResultHolder.success(stack);
                 } else {
+                    // SkyTekx: the client may already show the empty bowl when a plugin refused the
+                    // water on the server, so the server sends the inventory again
+                    if (!world.isClientSide) {
+                        player.containerMenu.sendAllDataToRemote();
+                    }
                     return InteractionResultHolder.fail(stack);
                 }
             }
@@ -143,6 +160,8 @@ public class ItemWaterBowl extends ItemBase {
     public void inventoryTick(ItemStack stack, Level world, Entity entity, int itemSlot, boolean isSelected) {
         if (!world.isClientSide) {
             if (CommonConfig.Other.WATER_BOWL_LOSS.get()) {
+                // SkyTekx: the spilled water obeys spawn protection and adventure mode like a placed
+                // bowl, see the checks in use
                 if (world.getGameTime() % 10 == 0 && world.random.nextFloat() >= 0.5F) {
                     int lastX = 0;
                     int lastY = 0;
@@ -157,7 +176,9 @@ public class ItemWaterBowl extends ItemBase {
                     if (lastX != 0 && lastX != (int) entity.getX() || lastY != 0 && lastY != (int) entity.getY()) {
                         if (!entity.isShiftKeyDown()) {
                             if (entity instanceof Player player) {
-	                            if (this.tryPlaceContainedLiquid(player, world, player.blockPosition(), true)) {
+                                BlockPos pos = player.blockPosition();
+                                if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, Direction.UP, stack)
+                                    && this.tryPlaceContainedLiquid(player, world, pos, true)) {
                                     this.checkReplace(player, stack, new ItemStack(Items.BOWL), itemSlot);
                                 }
                             }
@@ -175,12 +196,24 @@ public class ItemWaterBowl extends ItemBase {
         }
     }
 
+    // SkyTekx: the tick passes the slot index within its compartment, so a bowl ticked from an armor
+    // slot above 0 would ask the one slot offhand list for that index and throw. The index is checked
     private void checkReplace(Player player, ItemStack old, ItemStack stack, int slot) {
         if (player.getInventory().getItem(slot) == old) {
             player.getInventory().setItem(slot, stack);
-        } else if (player.getInventory().offhand.get(slot) == old) {
+        } else if (slot < player.getInventory().offhand.size() && player.getInventory().offhand.get(slot) == old) {
             player.getInventory().offhand.set(slot, stack);
         }
+    }
+
+    // SkyTekx: posts the Forge break event for a block the bowl takes or washes away. Answers true on
+    // the client, which predicts the change, and for a player that is no server player
+    private static boolean mayTakeBlock(Player player, Level world, BlockPos pos) {
+        if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            return ForgeHooks.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos) != -1;
+        }
+
+        return true;
     }
 
     @Override
@@ -203,14 +236,28 @@ public class ItemWaterBowl extends ItemBase {
                     world.addParticle(ParticleTypes.LARGE_SMOKE, pos.getX() + Math.random(), pos.getY() + Math.random(), pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
                 }
             } else {
+                // SkyTekx: the block that the water washes away goes through the Forge break event and
+                // the water through the Forge place event, which Arclight hands to Bukkit, so claim
+                // plugins see both. A refused break keeps the block and the water in the bowl. A
+                // refused place takes the water back, after the block it washed away has dropped as
+                // the break event allowed. Upstream main posts neither event
                 if (!world.isClientSide && (nonSolid || replaceable) && world.getFluidState(pos).isEmpty()) {
+                    if (!state.isAir() && !mayTakeBlock(player, world, pos)) {
+                        return false;
+                    }
                     world.destroyBlock(pos, true);
                 }
 
-                world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-
+                BlockSnapshot snapshot = world.isClientSide ? null : BlockSnapshot.create(world.dimension(), world, pos);
                 BlockState placeState = Blocks.WATER.defaultBlockState();
                 world.setBlock(pos, placeState, 3);
+
+                if (snapshot != null && ForgeEventFactory.onBlockPlace(player, snapshot, Direction.UP)) {
+                    snapshot.restore(true, false);
+                    return false;
+                }
+
+                world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
 
             return true;

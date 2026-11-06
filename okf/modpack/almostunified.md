@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: AlmostUnified
-description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter, the ore overrides and an EMI hide list carry that into the world, and why yellorium stays apart.
+description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter, the ore overrides and an EMI hide list of 285 variants carry that into the world, what the audit of the merged mod set found, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
 timestamp: 2026-11-06
 ---
@@ -57,7 +57,9 @@ The config lives in [config/almostunified/](../../config/almostunified) (commit 
   2026-11-04 for the dusts of ender pearl, quartz, saltpeter and wood and the knightmetal ingots and
   blocks, which two or three mods made each. Salt joined on 2026-11-05 (4b3774b) with the Expanded
   Delight port, so the salt of that mod and of Pam's Food Core gives way to the Mekanism salt, see
-  [Expanded Delight port](expandeddelight-port.md#pack-fit).
+  [Expanded Delight port](expandeddelight-port.md#pack-fit). Since 2026-11-06 `tag_fixes.js` also puts
+  the salt of Medieval Embroidery into `forge:dusts/salt` (3891eb8), so it gives way as well, see
+  [Audit of the merged mod set](#audit-of-the-merged-mod-set).
 - The map `priorityOverrides` gives the knightmetal ingots and blocks to Twilight Forest, which would
   lose them to Tinkers' Construct, and silicon to AE2, whose recipes use it most.
 - The map `itemTagInheritance` lets a preferred item take five tags that only its variants had and
@@ -87,7 +89,11 @@ as `forge:gems/aluminum`. The pattern list creates them on purpose, and the WARN
 
 On the Mac mini the boot of 2026-11-02 13:22 went from 41844 to 41338 recipes. Since Extreme Reactors is
 ignored, the boots and reloads from 17:20 on go from 41844 to 41344. A test server with the mods of
-3.1.3 and the config of 2026-11-04 went from 42986 to 42477 recipes.
+3.1.3 and the config of 2026-11-04 went from 42986 to 42477 recipes. Forge test boots of the merged tree
+of 2026-11-06 went from 54281 to 53762 at 21:00 and from 54473 to 53954 at 21:14
+(`packboot-logs/regen-base-forge-latest.log` and `regen-r1-forge-latest.log` in the scratch folder of
+the session). The second boot had 192 more generated melting files, which AlmostUnified counts before
+their conditions, and it removed 519 recipes both times.
 
 ## One item per material
 
@@ -168,18 +174,63 @@ EMI does not use the hiding of AlmostUnified, which works in JEI and REI only. I
 the tag `c:hidden_from_recipe_viewers` out of its item list, and tags come from the server, so the list
 reaches every client without a new pack. The file
 [kubejs/data/c/tags/items/hidden_from_recipe_viewers.json](../../kubejs/data/c/tags/items/hidden_from_recipe_viewers.json)
-names the 282 variants, each one optional, so the mod set of 3.1.2 on the Mac mini loads it too. Other
-mods put 15 items of their own into the same tag. The audit writes the file, nobody edits it by hand.
+named the 282 variants, each one optional, so the mod set of 3.1.2 on the Mac mini loads it too. Other
+mods put 15 items of their own into the same tag. Since the audit of the merged mod set it names 285,
+see [Audit of the merged mod set](#audit-of-the-merged-mod-set). The audit writes the file, nobody edits it by hand.
 After a change to the mods or to `unify.json`, run the dump on a test server and then
 `python3 -I tools/unify_audit.py <dump> --server <test server> --hidden kubejs/data/c/tags/items/hidden_from_recipe_viewers.json`.
 
-The check also lists 1,206 pairs of crafting recipes that share a grid and give two different items,
+The check of 2026-11-04 also listed 1,206 pairs of crafting recipes that share a grid and give two different items,
 where Polymorph lets the player choose. In 29 of them the two items have the same name: the emerald
 tools and armor of Cyclic and Medieval Embroidery, the steel armor of Mekanism Tools and Railcraft, the
 gold bars of Cyclic, Quark and Tinkers' Construct, the gold chains and lanterns of BiblioCraft and
 Cyclic, the crop crates of Farmer's Delight and Quark and a few blocks. Each is an item of its own with
 its own stats or looks, so they stay until the owner decides, see
 [Open items](../open-items.md#owner-decisions).
+
+### Audit of the merged mod set
+
+The merge of master into the port branch on 2026-11-06 (5c2c6f3) brought together the mods of 3.1.3 and
+those of the branch: Actually Additions, Expanded Delight, Mystical Automation, Mekanism: Extra Modules,
+Create: Integrated Farming with Create: Dragons Plus, Bygone Nether, LittleTiles, Extreme Reactors
+2.0.97 and the forks of Ender IO and Create Crafts & Additions. The dump script needed the fix of
+3bb9339 first, since Create: Dragons Plus adds an accessor `getRecipes()` to the recipe manager that
+returns the map of recipes by type. A Forge test boot of the merged tree at 21:00 then dumped 48,197
+recipes, 273 unify tags and 595 tagged items, and the audit found:
+
+- 284 variants, the 282 of 3.1.3 and the salts of Expanded Delight and Pam's Food Core, which became
+  variants of the Mekanism salt when salt joined the materials (4b3774b).
+- No other new variant. The new mods put their own materials only into tags of their own: the black
+  quartz gem, ore and block and the twelve crystal blocks of Actually Additions, the alloys of Ender
+  IO, the metals of Extreme Reactors and the cinnamon of Expanded Delight. The electrum ingot, nugget,
+  plate and block and the copper and electrum wires of the Create Crafts & Additions fork stay
+  variants of the items of Thermal and Immersive Engineering, as with 1.3.3. Black quartz, canola and
+  the crystals have no twin in a tag that AlmostUnified reads.
+- Two rices. Actually Additions and Farmer's Delight each have their own, and they share only
+  `forge:crops/rice`, a crop tag outside the patterns of `unify.json`. Of the 56 ingredients of the
+  boot of 21:14 that take rice, 23 take both, 26 only that of Farmer's Delight and 7 only that of
+  Actually Additions. They stay apart until the owner decides, see
+  [Open items](../open-items.md#owner-decisions).
+- The salt of Medieval Embroidery sat in no tag at all, and its 14 recipes named it directly. Since
+  3891eb8 it is a fourth variant of the Mekanism salt, so these recipes take every salt, and the salt
+  ore block of the mod gives nine Mekanism salt.
+- One ingredient without its preferred item, the copper ore melting of Tinkers' Construct, and no
+  result that is a variant, as on 2026-11-04.
+- 1,218 shared crafting grids with two different items, ten of them the cinnamon wood set of Expanded
+  Delight against the [wood fallbacks](kubejs.md#wood-fallbacks). Since 506781f the cinnamon planks
+  sit in ten skip tags. No grid gives one item in two counts or two variants, and no pair of items of
+  the same name involves a mod of the branch.
+- 15 tags that a variant has and its preferred item lacks. One is new, `forge:salt/salt` of Pam's salt.
+  Only the tag file `forge:salt` of Pam's mod uses it, and that tag holds the Mekanism salt through
+  `tag_fixes.js`. The other 14 come from mods of 3.1.3, such as `forge:wires/all_metal` of the wires
+  of Create Crafts & Additions, which 1.3.3 shipped as well and no file uses.
+
+A second boot at 21:14 ran with the salt of Medieval Embroidery, the skip tags and the new hide list.
+Its dump read 48,380 recipes and 596 tagged items. The audit found 285 variants, the same single
+ingredient, no result that is a variant and 1,208 grids with two different items, none of them a
+cinnamon one, and wrote the hide list that the boot had loaded, 285 variants (859ecb7). The tag
+`c:hidden_from_recipe_viewers` held 300 items on that boot, the 285 variants and the 15 items of other
+mods. The outputs are in `regen/audit/` of the scratch folder of the session.
 
 ### One ore per metal
 

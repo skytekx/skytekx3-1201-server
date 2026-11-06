@@ -998,5 +998,22 @@ logs stay on the Mac and are not in the repo.
   052a0e4 (9e48ddd). The server's `mods/` gets the two jars with the deploy of the next pack, with the
   SHA-1 values of the deploy steps on [NeoForge ports](modpack/neoforge-ports.md#deploy-of-all-six).
 
+## 2026-11-06: Ender IO fix build
+
+- The release audit found that the Ender IO jar of de0d78b let an unpowered wired charger with a
+  capacitor fill items with energy for free. The fork now ports the upstream fix aa5d911b0 (bc4ab00),
+  and a hash level pass over the upstream fixes that no record named added the coordinate selector fix
+  of 95ca40bac (dd0d3ac), which keeps a client class off the server. The rebuilt jar keeps the version
+  6.3.0-skytekx.1 (02af58e, SHA-1 `a05d8b0aec3e8429e74ebd0b754c2c04f139ca10`), see
+  [Ender IO backport](modpack/enderio-backport.md#fix-build).
+- A dev self test passed 10 of 10 checks with the fixes and failed 6 of 10 with the code of de0d78b.
+  The compat scan finds 0 missing symbols for EnderIO Legacy Machines, Exchangers and AllTheLeaks. A
+  full pack Forge boot of 02af58e reached `Done` with 0 FATAL lines, the same 3 ERROR lines as the
+  release boot and no new log signature against `enderio-forge`.
+- The backport page and the inventory no longer call the machine particles ported, and they count the
+  painted walls as part of the 6.x base (f590d4d). The client and live world tests of the release and
+  the conduit crash by command are on [Open items](open-items.md) (7f4840a), and the next pack notes
+  of [Publish](modpack/publish.md) name the build and its client checks (8a189d8).
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

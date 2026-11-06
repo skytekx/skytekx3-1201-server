@@ -3,7 +3,7 @@ type: Reference
 title: Boot fixes
 description: How the server boot went from 152 errors to 2, with the skytekx3_fixes override datapack, the jar patches of tools/patch_mods.py, two config fixes and a hand edited jar.
 tags: [content, server, datapack, mods, boot]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Boot fixes

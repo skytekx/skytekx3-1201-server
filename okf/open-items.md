@@ -357,7 +357,6 @@ evidence and the page with the details. The rulings behind the first section are
   ports](modpack/neoforge-ports.md#boots-of-the-merged-branch). The copies ran without EssentialsX and
   the other plugins, no player joined them, and no copy of the live world has loaded the mods of the
   branch. These checks wait for the next pack after 3.1.3.
-
 - The nine mods of 2026-11-04 in play. A test server ran their blocks for half a minute, but nobody
   has opened their screens, built an ME network with the AE addons or used a Cyclic machine in a
   client. They run on the server since the deploy of 3.1.3 on 2026-11-05, which moved the fixes pack to

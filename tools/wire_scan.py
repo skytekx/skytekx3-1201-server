@@ -10,9 +10,15 @@ Reports, per dimension (overworld, the_nether, the_end and every dimensions/<ns>
      wires, counted, plus the wire ends whose far end does not point back (one sided). 1.3.3 deletes
      one end of a wire whose far end it cannot find, and the wire graph of the backport cuts the other
      end at its first check, so these are the wires a migration loses. Nodes still in the old
-     node0..node7 format and nodes in chunks that are not full are counted too.
-  2. With a saved wire graph (data/createaddition_wires.dat of the dimension), every vertex that
-     differs from the block entity at its position.
+     node0..node7 format and nodes in chunks that are not full are counted too. Their old slots
+     count as wires with absolute far ends, as WireVertex.fromBlockEntityTag reads them.
+  2. With a saved wire graph (data/createaddition_wires.dat of the dimension), three lists:
+     a. Differences: a position that both the graph and a block entity hold, with other wires.
+     b. Gone: a graph vertex whose full chunk the scan read and that holds no wire node there.
+     c. Not yet discovered: a block entity the graph does not know. The graph only learns a node
+        when its chunk loads or a wire reaches it, so this list is no difference.
+     Only a and b count as differences. Vertices in chunks the scan could not read or that are not
+     full are counted apart as unchecked.
   3. With --compare, every wire node whose wires differ from an earlier --json of the same world.
 Every chunk and region file it could not read is listed. Their nodes are missing from the counts.
 """
@@ -112,20 +118,35 @@ def dimensions(world):
                     dims.append((ns + ":" + os.path.relpath(dirpath, os.path.join(root, ns)).replace(os.sep, "/"), dirpath))
     return [(d, p) for d, p in dims if os.path.isdir(os.path.join(p, "region"))]
 
+def is_full(status):
+    return status in ("minecraft:full", "full")
+
+def wires_of(be, pos):
+    # As WireVertex.fromBlockEntityTag: the nodes list holds far ends relative to the node, the old
+    # node0..node7 slots hold them absolute, and an old slot replaces a listed one with its index.
+    slots = {}
+    for n in be.get("nodes", []) or []:
+        slots[n["id"]] = (n["id"], n["other"], n["type"], pos[0] + n["x"], pos[1] + n["y"], pos[2] + n["z"])
+    for i in range(8):
+        other = be.get("node%d" % i)
+        if other is None or other == -1: continue
+        slots[i] = (i, other, be.get("type%d" % i, 0), be.get("x%d" % i, 0), be.get("y%d" % i, 0), be.get("z%d" % i, 0))
+    return sorted(slots.values())
+
 def scan_dim(base):
-    nodes = {}
+    nodes, full = {}, set()
     region = os.path.join(base, "region")
     for f in sorted(os.listdir(region)):
         if not f.endswith(".mca"): continue
         for c in chunks(os.path.join(region, f)):
+            if is_full(c.get("Status")) and "xPos" in c and "zPos" in c:
+                full.add((c["xPos"], c["zPos"]))
             for be in c.get("block_entities", []) or []:
                 if be.get("id") not in IDS: continue
                 pos = (be["x"], be["y"], be["z"])
-                wires = sorted((n["id"], n["other"], n["type"], pos[0] + n["x"], pos[1] + n["y"], pos[2] + n["z"])
-                               for n in be.get("nodes", []) or [])
                 legacy = sorted(k for k in be if k.startswith("node") and k != "nodes")
-                nodes[pos] = {"id": be["id"], "wires": wires, "legacy": legacy, "status": c.get("Status")}
-    return nodes
+                nodes[pos] = {"id": be["id"], "wires": wires_of(be, pos), "legacy": legacy, "status": c.get("Status")}
+    return nodes, full
 
 def one_sided(nodes):
     res = []
@@ -136,7 +157,7 @@ def one_sided(nodes):
                 res.append((pos, w))
     return res
 
-def graph_diff(base, nodes):
+def graph_diff(base, nodes, full):
     path = os.path.join(base, "data", "createaddition_wires.dat")
     if not os.path.isfile(path): return None
     tag = read_nbt(gzip.decompress(open(path, "rb").read()))
@@ -145,10 +166,13 @@ def graph_diff(base, nodes):
     for v in data.get("Vertices", []):
         graph[unpack_pos(v["Pos"])] = sorted((s["Index"], s["OtherIndex"], s["Type"]) + unpack_pos(s["Other"])
                                              for s in v.get("Slots", []))
-    diff = [(p, graph.get(p), nodes[p]["wires"] if p in nodes else None)
-            for p in sorted(set(graph) | set(nodes))
-            if graph.get(p) != (nodes[p]["wires"] if p in nodes else None)]
-    return len(graph), len(data.get("Buffers", [])), diff
+    differ = [(p, graph[p], nodes[p]["wires"]) for p in sorted(set(graph) & set(nodes))
+              if graph[p] != nodes[p]["wires"]]
+    gone = [(p, graph[p]) for p in sorted(set(graph) - set(nodes)) if (p[0] >> 4, p[2] >> 4) in full]
+    unchecked = [p for p in sorted(set(graph) - set(nodes)) if (p[0] >> 4, p[2] >> 4) not in full]
+    undiscovered = [(p, nodes[p]["wires"]) for p in sorted(set(nodes) - set(graph))]
+    return {"vertices": len(graph), "buffers": len(data.get("Buffers", [])), "differ": differ,
+            "gone": gone, "unchecked": unchecked, "undiscovered": undiscovered}
 
 def main():
     args = sys.argv[1:]
@@ -159,7 +183,7 @@ def main():
     if "--compare" in args: earlier = json.load(open(args[args.index("--compare") + 1]))
     dump = {}
     for dim, base in dimensions(world):
-        nodes = scan_dim(base)
+        nodes, full = scan_dim(base)
         if not nodes and not os.path.isfile(os.path.join(base, "data", "createaddition_wires.dat")): continue
         ends = sum(len(n["wires"]) for n in nodes.values())
         print("%s: %d wire nodes, %d wire ends" % (dim, len(nodes), ends))
@@ -168,15 +192,25 @@ def main():
         for pos, w in lonely[:50]:
             print("    %s node %d -> %s node %d (type %d)" % (pos, w[0], w[3:6], w[1], w[2]))
         legacy = [p for p, n in nodes.items() if n["legacy"]]
-        partial = [p for p, n in nodes.items() if n["status"] != "minecraft:full"]
+        partial = [p for p, n in nodes.items() if not is_full(n["status"])]
         print("  in the node0..node7 format: %d, in chunks that are not full: %d" % (len(legacy), len(partial)))
-        g = graph_diff(base, nodes)
+        g = graph_diff(base, nodes, full)
         if g is None:
             print("  no saved wire graph")
         else:
-            print("  saved wire graph: %d vertices, %d buffers, %d differ from the world" % (g[0], g[1], len(g[2])))
-            for pos, gv, wv in g[2][:50]:
-                print("    %s graph %s world %s" % (pos, gv, wv))
+            print("  saved wire graph: %d vertices, %d buffers, %d differences (%d differ, %d gone)"
+                  % (g["vertices"], g["buffers"], len(g["differ"]) + len(g["gone"]), len(g["differ"]), len(g["gone"])))
+            for pos, gv, wv in g["differ"][:50]:
+                print("    differ %s graph %s world %s" % (pos, gv, wv))
+            for pos, gv in g["gone"][:50]:
+                print("    gone %s graph %s, no wire node in its full chunk" % (pos, gv))
+            print("  not yet discovered by the graph: %d wire nodes, %d of them with wires"
+                  % (len(g["undiscovered"]), sum(1 for _, wv in g["undiscovered"] if wv)))
+            for pos, wv in g["undiscovered"][:50]:
+                print("    not yet discovered %s world %s" % (pos, wv))
+            print("  unchecked vertices (chunk not read or not full): %d" % len(g["unchecked"]))
+            for pos in g["unchecked"][:50]:
+                print("    unchecked %s" % (pos,))
         if earlier is not None:
             old = {tuple(n["pos"]): [tuple(w) for w in n["wires"]] for n in earlier.get(dim, [])}
             new = {p: n["wires"] for p, n in nodes.items()}

@@ -285,12 +285,12 @@ public class TileEntityLaserRelayFluids extends TileEntityLaserRelay {
 
     @Override
     public Component getExtraDisplayString() {
-        return Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.fluid.extra").append(": ").append(Component.translatable(this.mode.name).withStyle(ChatFormatting.DARK_RED));
+        return Component.translatable("info.actuallyadditions.laserRelay.fluid.extra").append(": ").append(Component.translatable(this.mode.name).withStyle(ChatFormatting.DARK_RED));
     }
 
     @Override
     public Component getCompassDisplayString() {
-        return Component.translatable("info." + ActuallyAdditions.MODID + ".laserRelay.energy.display").withStyle(ChatFormatting.GREEN);
+        return Component.translatable("info.actuallyadditions.laserRelay.energy.display").withStyle(ChatFormatting.GREEN);
     }
 
     @Override

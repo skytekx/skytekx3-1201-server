@@ -2132,3 +2132,36 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     so the call stays and draws the one background, and every screen of the mod extends
     `AAScreen`. The switch `hideEnergyOverlay` came with source change 6.
     Savegame: none. New ids: none.
+67. Lang files: the base labelled 131 names `(wip)`, and the bundles before this change dropped the
+    label wherever their feature works. The rest goes here, as the 1.20.4 line did it in `8a16143e`,
+    `f5e37362`, `06ef7146` and `9d76fad7`: the Black Quartz Ore, the Wood Casing, the Solidified
+    Experience, the Shock Absorber, the three Energy Laser Relays, the Fluid and Item Laser Relays,
+    both Item Interfaces, black quartz, rice dough and rice slimeballs, and the unused names of the
+    six crystal AIOTs (without the typo of `main` in the Enori one). The Lens of the Killer and the
+    two laser relay modifiers lose the label too, although `main` still shows `(WIP)`, because they
+    can be crafted and work on the fork: the lens kills through `LensKiller` (source changes 10 and
+    27), and `TileEntityLaserRelay` and `RenderLaserRelay` read the range and invisibility
+    modifiers. The label stays as `(WIP)`,
+    in the capitals of `5f3326af`, on what does not work: the Wings Of The Bats, whose flight tick
+    is switched off with `if (false && ...)` and never registered, the Storage Crate Keeper, which is
+    a plain item without a crate to keep, the dough and the paper cone, which the base registers
+    with no use, and 13 unused names of the 1.12 versions, among them the eight crushed dusts. Both
+    crafted items keep their recipe of `main`. Fifteen names and tooltips of removed 1.12 content,
+    which no code and no registry names, are gone as in `615d1a25`, `39b20107`, `06ef7146` and
+    `9d76fad7`. The Handheld Filler
+    tooltip shows its block again (`8b5b0738`), and the filters say allowlist and blocklist
+    (`66e6123a`, the lang keys keep their names). The literal pickup tooltip of the sacks, English
+    in `main` too, uses the new keys `info.actuallyadditions.gui.autoInsert.*`. The manual chapter
+    on banners, which the Patchouli book does not show (source change 65), describes the pattern
+    items of source change 59 instead of the 1.12 crafting grid. The code names its lang keys as
+    literals instead of joining `ActuallyAdditions.MODID` into them, as `cf0349b1` does, which
+    changes no key. Of its other changes the energy item tooltip turns gray, and the rest is on the
+    fork already. The Chinese translation of `871d8414` ships as `zh_cn.json`, with the eight banner
+    colour keys of source change 59 renamed from `silver` and `lightBlue` to `light_gray` and
+    `light_blue`. The eight `.lang` files of the 1.12 versions (`de_DE`, `en_UD`, `fr_CA`,
+    `fr_FR`, `it_IT`, `ko_KR`, `ru_RU` and `zh_CN`) are gone, since Minecraft 1.20.1 only reads
+    `.json` lang files, and `main` still carries all but the Chinese one. Already on the fork: the
+    advancement titles in title case of `4b3a6a08` (source change 11), the lava factory key of
+    `e408eb94`, the drill core of `154add17`, the firework box of `41e85391`, the items of
+    `5a9f7d91` and the Vertical Digger name (source change 23).
+    Savegame: none. New ids: none.

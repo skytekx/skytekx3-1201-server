@@ -37,8 +37,8 @@ public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItem
     // SkyTekx: Components instead of I18n strings (upstream 3a767e18). The filter and smart buttons
     // of 3a767e18 send their ids to the relay itself as in f46de7d9, where 3a767e18 sent the filter
     // ids to the menu, which ignores them, and the base had no buttons at all
-    private final Component inboundText = Component.translatable("info." + ActuallyAdditions.MODID + ".gui.inbound");
-    private final Component outboundText = Component.translatable("info." + ActuallyAdditions.MODID + ".gui.outbound");
+    private final Component inboundText = Component.translatable("info.actuallyadditions.gui.inbound");
+    private final Component outboundText = Component.translatable("info.actuallyadditions.gui.outbound");
     private final TileEntityLaserRelayItemAdvanced tile;
 
     private FilterSettingsGui leftFilter;
@@ -92,8 +92,8 @@ public class GuiLaserRelayItemWhitelist extends AAScreen<ContainerLaserRelayItem
 
         if (this.buttonSmartWhitelistLeft.isMouseOver(mouseX, mouseY) || this.buttonSmartWhitelistRight.isMouseOver(mouseX, mouseY)) {
             List<FormattedCharSequence> list = new ArrayList<>();
-            list.add(Component.translatable("info." + ActuallyAdditions.MODID + ".gui.smart").withStyle(ChatFormatting.BOLD).getVisualOrderText());
-            list.addAll(this.font.split(Component.translatable("info." + ActuallyAdditions.MODID + ".gui.smartInfo"), 200));
+            list.add(Component.translatable("info.actuallyadditions.gui.smart").withStyle(ChatFormatting.BOLD).getVisualOrderText());
+            list.addAll(this.font.split(Component.translatable("info.actuallyadditions.gui.smartInfo"), 200));
             guiGraphics.renderTooltip(this.font, list, mouseX, mouseY);
         }
     }

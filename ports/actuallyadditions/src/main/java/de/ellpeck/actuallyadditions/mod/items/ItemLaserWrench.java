@@ -49,7 +49,7 @@ public class ItemLaserWrench extends ItemBase {
                 if (ItemPhantomConnector.getStoredPosition(stack) == null) {
                     ItemPhantomConnector.storeConnection(stack, pos.getX(), pos.getY(), pos.getZ(), world);
                     if (player != null)
-                        player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.stored.desc"), true);
+                        player.displayClientMessage(Component.translatable("tooltip.actuallyadditions.laser.stored.desc"), true);
                 } else {
                     BlockPos savedPos = ItemPhantomConnector.getStoredPosition(stack);
                     if (savedPos != null) {
@@ -66,14 +66,14 @@ public class ItemLaserWrench extends ItemBase {
                                 relay.sendUpdate();
 
                                 if (player != null)
-                                    player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.connected.desc"), true);
+                                    player.displayClientMessage(Component.translatable("tooltip.actuallyadditions.laser.connected.desc"), true);
 
                                 return InteractionResult.SUCCESS;
                             }
                         }
 
                         if (player != null)
-                            player.displayClientMessage(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".laser.cantConnect.desc"), false);
+                            player.displayClientMessage(Component.translatable("tooltip.actuallyadditions.laser.cantConnect.desc"), false);
                         ItemPhantomConnector.clearStorage(stack, "XCoordOfTileStored", "YCoordOfTileStored", "ZCoordOfTileStored", "WorldOfTileStored");
                     }
                 }
@@ -95,11 +95,11 @@ public class ItemLaserWrench extends ItemBase {
     public void appendHoverText(ItemStack stack, Level playerIn, List<Component> list, TooltipFlag advanced) {
         BlockPos coords = ItemPhantomConnector.getStoredPosition(stack);
         if (coords != null) {
-            list.add(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".boundTo.desc").append(":"));
+            list.add(Component.translatable("tooltip.actuallyadditions.boundTo.desc").append(":"));
             list.add(Component.literal("X: " + coords.getX()));
             list.add(Component.literal("Y: " + coords.getY()));
             list.add(Component.literal("Z: " + coords.getZ()));
-            list.add(Component.translatable("tooltip." + ActuallyAdditions.MODID + ".clearStorage.desc").withStyle(ChatFormatting.ITALIC));
+            list.add(Component.translatable("tooltip.actuallyadditions.clearStorage.desc").withStyle(ChatFormatting.ITALIC));
         }
     }
 }

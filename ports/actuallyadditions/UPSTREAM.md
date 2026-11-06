@@ -13,6 +13,7 @@ the base of the SkyTekx 1.20.1 Forge backport of the mod's newer NeoForge lines.
 | Released | Never. No 1.20.1 build exists on Modrinth or CurseForge |
 | Port source | Branch `main` @ `cd9d9c63254f471f966ee51b078afdf47af5f852` (2026-06-19, `mod_version=1.3.26`, NeoForge 1.21.1, release 1.3.26) |
 | Intermediate steps | Branch `1.20.4` @ `0ebbd811fd511e83fa50eea36f62df38b1e267c8` (2024-06-27, 1.2.14, NeoForge 20.4) and branch `1.21` @ `d9b0a714d1303569f913f855260376309484ba00` (2024-10-23, 1.3.6, NeoForge 21.1) |
+| Content level | Parity with upstream 1.3.26 (`cd9d9c6`) except the exclusions (build change 4) |
 
 The branches `1.20.4`, `1.21` and `main` fork from the base branch at `97532ff` (2024-03-04, "Mark
 tiny torch in port.md"). The base has four commits after that fork point: `0e3fec7` (a filter
@@ -156,11 +157,13 @@ next to it are upstream's Maven artifacts and are not shipped.
    has the mod yet, so the number can still change before the first release. If the backport
    brings the content close to the 1.3.x line, `1.3.26-skytekx.N` would say that more clearly, the
    way the Create Crafts & Additions fork names the line it backports (`1.20.1-1.7.3-skytekx.1`).
-   That choice belongs to the release. The plan keeps 1.1.52: the code base is 1.1.52, and a
-   1.3.26 base number would claim parity with a NeoForge 1.21.1 build that has data components
-   and 1.21 content, and it would point bug reports at the wrong changelog. Once the backport
-   bundles have landed, this file and the NOTICE state the content level as "content parity:
-   upstream 1.3.26 (`cd9d9c6`) except the exclusions".
+   That choice belonged to the release, and the release keeps 1.1.52-skytekx.1: the code base is
+   1.1.52, and a 1.3.26 base number would claim parity with a NeoForge 1.21.1 build that has data
+   components and 1.21 content, and it would point bug reports at the wrong changelog. With every
+   backport bundle landed, this file and the NOTICE state the content level instead: content
+   parity with upstream 1.3.26 (`cd9d9c6`) except the exclusions. The NOTICE line `Content`
+   names them, and the Excluded table of `okf/modpack/actuallyadditions-backport.md` gives the
+   reason for each.
 5. Reproducible jar: the `jar` task sets `preserveFileTimestamps = false` and
    `reproducibleFileOrder = true`, and the manifest no longer has `Implementation-Timestamp`. Two
    clean builds of the same commit give the same SHA-1. With the build changes 1 to 9 and no
@@ -281,6 +284,15 @@ feature adds its item here, and the NOTICE in the jar sums them up.
    1.12 enums in `mod/config/values/`, which nothing loads. The translation keys of the built in
    config screen (`a831cbb`, `1be720f`, `8d01e07`) are not added, because Forge 47 has no such
    screen.
+   At the release every owning feature reads `CommonConfig` or `ClientConfig`. Two live readers
+   of the 1.12 enums are left, and both read `false`, since nothing sets `currentValue`: the
+   spider cobweb drop of `CommonEvents#onEntityDropEvent` (`DO_SPIDER_DROPS`), which `main`
+   reads the same way (`CommonEvents.java:181` on `main`), and the bat drop listener of
+   `ItemWingsOfTheBats`, which no bus registers, since the loot modifier of source change 58 now
+   drops the wings behind `doBatDrops`. The other enum readers sit in comments. Six keys of the
+   common config have no reader, `doUpdateCheck`, `doCatDrops`, `advancedInfo`,
+   `advancedInfoTooltips`, `superDuperHardRecipes` and `noColoredItemNames`, and none of them has
+   one on `main` either (grep of both trees).
 7. Data generators: the providers of the base reproduce the committed `src/generated` byte for byte
    (a `runData` into an empty folder rewrote all 906 files unchanged, only the 18 `.cache` files
    differ in their time stamp). On top of that, as on the newer lines: the booklet and the Crate

@@ -159,7 +159,6 @@ public class TileEntityXPSolidifier extends TileEntityInventoryBase implements I
                 List<ExperienceOrb> orbs = level.getEntitiesOfClass(ExperienceOrb.class, new AABB(pos.getX() - range, pos.getY() - range, pos.getZ() - range, pos.getX() + 1 + range, pos.getY() + 1 + range, pos.getZ() + 1 + range));
                 if (orbs != null && !orbs.isEmpty()) {
                     for (ExperienceOrb orb : orbs) {
-                        // TODO: [port] validate the getPersistentData is correct
                         if (orb != null && orb.isAlive() && !orb.getPersistentData().getBoolean(ActuallyAdditions.MODID + "FromSolidified")) {
                             tile.singlePointAmount += orb.getValue();
                             orb.discard();
@@ -205,7 +204,8 @@ public class TileEntityXPSolidifier extends TileEntityInventoryBase implements I
 
     @Override
     public void onButtonPressed(int buttonID, Player player) {
-        if (buttonID < this.buttonAmounts.length) {
+        // SkyTekx: a crafted packet can send any id, so negative ones are refused too
+        if (buttonID >= 0 && buttonID < this.buttonAmounts.length) {
             int playerXP = getPlayerXP(player);
             if (playerXP > 0) {
                 int xp = this.buttonAmounts[buttonID] == -999
@@ -223,7 +223,7 @@ public class TileEntityXPSolidifier extends TileEntityInventoryBase implements I
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.xpSolidifier");
     }
 
     @Nullable

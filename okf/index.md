@@ -70,6 +70,7 @@ What is still open, from owner rulings that were never built to unverified claim
 | [World reset and pregen](server/world-reset.md) | Wiping dimensions, Chunky pregen with measured rates, datapack order and fresh worlds |
 | [Performance and worldgen profiling](server/performance.md) | Spark profiles, heap and tick data, the open levers and the Skylands structure density |
 | [Logs and crashes](server/logs-and-crashes.md) | Where the logs are, every crash with its cause, the stop path and the boot error baseline |
+| [Golem](server/golem.md) | The plan for Golem, the Rust hybrid on Aosabi that replaces Arclight, with the GraphQL API and the port of EssentialsX, LuckPerms and the Spigot settings |
 
 ### Modpack
 

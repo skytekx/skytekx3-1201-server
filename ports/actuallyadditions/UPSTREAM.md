@@ -1954,6 +1954,20 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     stay out of this change. The harvest and planting of the Farmer, the Fluid Placer and Collector
     and the Lava Factory still change blocks without an event.
     Savegame: none. New ids: none.
+    The Arclight 1.0.6 test server of the bundle, with the pack's `safeiter2` jar, Patchouli, a
+    flat world and a test only Bukkit plugin that logs and on request cancels `BlockBreakEvent` and
+    `BlockPlaceEvent`, ran the Breaker, the Placer, the Phantom Breaker, the Phantom Placer, the
+    Long-Range Breaker, the Leaf-Eating Generator and the Atomic Reconstructor with the Lens of
+    the Miner and with the conversion of an iron block and of a redstone wire. Every change showed
+    up as `[ActuallyAdditions]` with the fixed UUID and stopped while the plugin cancelled it. The
+    Phantom Breaker on a chest dropped the diamonds of the chest, a torch on the stone that the
+    Breaker broke dropped as an item, and the capture stack of Arclight stayed at 0
+    (`bp2/actuallyadditions/al-events-final.log`, jar SHA-1
+    `a808fcb685cb8a800c4a9a310d916d8488124db3`). The same run with the jar of `693daa2`
+    (`al-events-old.log`) lost the torch, ended with 178 contexts on the stack, and its lenses
+    changed the blocks while the plugin cancelled. A refused Leaf-Eating Generator with two leaves
+    in range posted about 7 break events per second and a refused Breaker one per work cycle of 15
+    ticks. Not tested: the drill, which needs a client, the Vertical Digger and the Farmer.
 61. Phantom blocks and unloaded targets: a phantomface, the Phantom Placer and the Phantom Breaker
     checked their binding with `Level#getBlockEntity` at the target in every server tick, before
     the range check, and the face also read the block at the target there. On the server thread
@@ -1978,6 +1992,12 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     193 there), so these are local changes. The Phantom Booster needed no change, the face reads
     the boosters above it from its own chunk.
     Savegame: none. New ids: none.
+    On the same server a phantomface bound 295 blocks away never loaded the chunk of its target, and
+    the chunk of a chest in range of a face with two boosters unloaded within 25 seconds after its
+    forceload ended, like a control chunk without a face. With the jar of `693daa2` both target
+    chunks stayed loaded. The first form of this change, with `hasChunkAt` in front of
+    `Level#getBlockEntity`, still kept the chunk of the chest loaded, which led to the reads
+    through the loaded chunk (`al-events-final.log`, `al-events-old.log`).
 62. Laser relay network index: `LaserRelayConnectionHandler#getNetworkFor` and
     `#getConnectionsFor` went through every connection of every network of the level
     (`LaserRelayConnectionHandler.java` lines 71 to 120, the same on `main`). A relay caches its
@@ -1993,6 +2013,14 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     connection pairs, is unchanged. The checks for loaded chunks in the transfer loops of the
     energy, fluid and item relays stay as they are. This is a local change.
     Savegame: none, the index is never saved. New ids: none.
+    A chain of 50 energy relays, 4 blocks apart and written into the save as one network, carried
+    the energy of a Coal Generator to a Powered Furnace as with the jar of `693daa2`: 8337 and then
+    10465 CF in the furnace after 12 and 17 seconds, against 7996 and 10124. Removing the middle
+    relay stopped the flow and left two networks of 24 and 23 pairs in the save, which a restart
+    kept. A save that lists the middle relay in two networks carried the energy through again after
+    the load. The joined network is written back with the next change of the data
+    (`al-relay-boot1.log` to `al-relay-boot4.log`). No profile was taken, so the gain of the index
+    was not measured.
 63. Ring of Magnetizing: every ring stack in the inventory looked for item entities in its box of 11
     blocks in every tick. The rings of a player now look every 4 ticks
     (`ItemMagnetRing.SCAN_INTERVAL`), staggered by the entity id of the player so that the players
@@ -2010,3 +2038,4 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     `3ed5e9cc` works, so the ring keeps it and a stack of 64 still costs 3200 CF, as on the base
     and on 1.12.
     Savegame: none. New ids: none.
+    Not tested in game, since the ring needs a player.

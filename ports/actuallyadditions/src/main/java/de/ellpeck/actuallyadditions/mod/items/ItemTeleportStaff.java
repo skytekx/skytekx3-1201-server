@@ -34,10 +34,13 @@ public class ItemTeleportStaff extends ItemEnergy {
         ItemStack stack = player.getItemInHand(hand);
         if (!world.isClientSide) {
             HitResult rayTraceResult = player.pick(100,1F,false);
-            // SkyTekx: upstream c812512a and bae1ef5e. The staff also jumps when the trace misses, and the
-            // cost grows with the square root of the Manhattan distance. The base charged 200 per square
-            // block of distance, so every jump of more than a few blocks cost more than a full staff
-            if (rayTraceResult.getType() == HitResult.Type.BLOCK || rayTraceResult.getType() == HitResult.Type.MISS) {
+            // SkyTekx: the cost of upstream c812512a and bae1ef5e grows with the square root of the
+            // Manhattan distance. The base charged 200 per square block of distance, so every jump of
+            // more than a few blocks cost more than a full staff. A miss still jumps only while the
+            // player looks no more than 5 degrees upward, as on the base and as the manual says.
+            // Upstream main jumps on every miss, which throws a player looking up 100 blocks into the
+            // air and to a deadly fall
+            if (rayTraceResult.getType() == HitResult.Type.BLOCK || player.getXRot() >= -5) {
                 Vec3 location = rayTraceResult.getLocation();
                 Vec3 pos = Vec3.atBottomCenterOf(BlockPos.containing(location.x, location.y, location.z));
                 int baseUse = 200;

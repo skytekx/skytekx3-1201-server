@@ -1034,3 +1034,16 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     throws no `ArrayIndexOutOfBoundsException` any more (source change 14). The recipe with
     experience bottles came with source change 10 (`b68cfecd`, `9492973a`). The experience formulas
     excerpted from Ender IO keep their credit, and `NOTICE` names them. No NBT key changes.
+38. Firework Box: the settings screen of `fd92ee85` and `5c13128a` works, with its twelve sliders
+    in two columns, the background `gui_firework_box.png` of `5c13128a` (512 by 512, byte identical
+    to `main`) and the title above it. The block entity names its menu (`fff34a3a`), and the name
+    loses its `(wip)` label (`41e85391`). The base screen drew nothing and had no slider. The
+    slider ranges are the ranges that the box clamps every number to since source change 17
+    (Value Play 0 to 5, charge amount 1 to 4, flight time 1 to 3, color amount 1 to 6, area 0 to
+    4 and the seven chances 0 to 1), so the server keeps that clamp in `onNumberReceived` and
+    `readSyncableNBT`. Two local changes to the screen of `main`: a slider sends its number when
+    the mouse lets go of it, also outside of it, or when a key moves it, where `main` sends one
+    packet for each step of a drag and so one block update to every client near the box, and an
+    integer slider sends the whole number it shows, where `main` sends the raw value, which the
+    server cuts down (a slider at 4.6 showed 5 and stored 4). The screen builds no sliders when
+    the client found no box at the position of the menu (source change 15). No NBT key changes.

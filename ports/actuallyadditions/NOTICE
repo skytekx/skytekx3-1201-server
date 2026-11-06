@@ -136,6 +136,8 @@ Modifications
       duplication of stacked energy items.
     * Experience Solidifier: the screen has its buttons again, and the server refuses negative
       button ids.
+    * Firework Box: its settings screen works, with sliders that send their value when they are
+      let go and the background of upstream's main branch.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

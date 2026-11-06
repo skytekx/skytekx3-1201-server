@@ -337,7 +337,8 @@ public class TileEntityFireworkBox extends TileEntityBase implements IEnergyDisp
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        // SkyTekx: upstream fff34a3a
+        return Component.translatable("container.actuallyadditions.fireworkBox");
     }
 
     @Nullable

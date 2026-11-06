@@ -85,11 +85,22 @@
   banner patterns come with their own items.
 - The Wings Of The Bats and the Storage Crate Keeper are still marked (WIP) and do nothing yet.
 
+## Smeltery and recipes
+- The items of the new mods melt in the Tinkers smeltery: the machines, tools, drills, AIOTs and
+  crystals of Actually Additions, the Vat, obelisks, wireless charger, Mind Killer and new filters of
+  Ender IO, the machines of Mystical Automation, the MekaSuit modules, the Vacuum Harvester and the Lava
+  Fishing Net, the Fluid Hatch, and the juicer and casks of Expanded Delight.
+- Drinks and jellies made in the Cooking Pot or the Juicer melt into the glass of their bottle or jar,
+  and dragon's breath melts into the glass of its bottle.
+- Cinnamon planks make only the cinnamon doors, fences, slabs and other wooden items, and no longer
+  offer the oak ones next to them.
+
 ## On an existing world
 - The structures, blocks and bastions of Bygone Nether only appear in Nether chunks that nobody has
   visited yet, so look beyond the explored area.
 - The cinnamon trees, wild crops and salt ore of Expanded Delight only grow in new Overworld chunks.
-- The salt of Expanded Delight and of Pam's HarvestCraft unifies to the Mekanism salt.
+- The salt of Expanded Delight, of Pam's HarvestCraft and of Medieval Embroidery unifies to the
+  Mekanism salt. Medieval Embroidery salt that you already carry turns into it as well.
 - Server and client need all six mods, and the pack brings them. Joining with an older pack fails.
 - Ender IO also needs the same build on server and client, and the pack brings it.
 - Create Crafts & Additions also needs the same build on server and client, and the pack brings it.

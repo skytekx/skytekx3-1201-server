@@ -1217,23 +1217,29 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     Press and the Farmer keep their energy when broken, the Oil Generator, the Coffee Maker, the
     Fluid Placer and Collector, the Canola Press and the Fermenting Barrel keep their fluids, and
     the reconstructor, the Fluid Placer and Collector, the Breaker, the Placer and the Dropper keep
-    their redstone mode (`c1e274d`, `f05b284`, changelog 1.3.10). Upstream collects data
-    components with `collectImplicitComponents` and copies them with `CopyComponentsFunction`.
-    Here the loot tables copy the same values with `minecraft:copy_nbt` from the block entity into
+    their redstone mode (`c1e274d`, `f05b284`, changelog 1.3.10). Upstream collects data components
+    with `collectImplicitComponents` and copies them with `CopyComponentsFunction`. Here the loot
+    tables copy the same values with `minecraft:copy_nbt` from the block entity into
     `BlockEntityTag` under their NBT keys: `Energy`, `IsPulseMode`, the coffee cache `Cache`, a
     single tank as `FluidName`, `Amount` and `Tag` at the root of the block entity, and the two
-    tanks of the barrel as `tanks.inputTank` and `tanks.outputTank`. The vanilla `BlockItem`
-    merges that tag into the new block entity on placement. The base already copied the energy of
-    six of these machines. A key that is missing, such as `Tag` of a fluid without NBT, is
-    skipped. The keys `StopDrop` and `Redstone`, the work timers and the inventory stay behind,
-    and the Farmer leaves its compass area with the block as on `main`, which copies only its
-    energy. The copy in `FluidContents.get()` of `2b8884d` keeps a tank from sharing the stack of
-    a data component, and the NBT form reads a new `FluidStack` at every load, so it needs no such
-    guard. The base read the 1.12 tag `Data` with `SAVE_BLOCK` in `BlockContainerBase.setPlacedBy`
-    after that merge, and the empty read cleared the tanks and the coffee cache again. The method
-    is gone, as on `main` since the 1.21 port (`23815b7`, removed in `b66af84`). The Leaf-Eating
-    Generator gets the energy item with its tooltip (`c1e274d`), and the reconstructor item shows
-    its energy and its redstone mode each only when it carries them.
+    tanks of the barrel as `tanks.inputTank` and `tanks.outputTank`. The vanilla `BlockItem` merges
+    that tag into the new block entity on placement. The base already copied the energy of seven of
+    these machines, the reconstructor with its pulse mode (the lines after `//Special Drops` in
+    `LootTableGenerator` of `e37a9eb`, as in `226a439`). A key that is missing, such as `Tag` of a
+    fluid without NBT, is skipped. The function copies a key whatever its value, so a Breaker,
+    Placer or Dropper in its default mode drops with `IsPulseMode` 0 and an empty fluid machine
+    with the fluid `minecraft:empty` and the amount 0. Such a drop stacks with a newly crafted
+    machine only after the reset recipe below. The same holds on `main`, where
+    `collectImplicitComponents` always sets the pulse mode and the tank (`f05b284`). The keys
+    `StopDrop` and `Redstone`, the work timers and the inventory stay behind, and the Farmer leaves
+    its compass area with the block as on `main`, which copies only its energy. The copy in
+    `FluidContents.get()` of `2b8884d` keeps a tank from sharing the stack of a data component, and
+    the NBT form reads a new `FluidStack` at every load, so it needs no such guard. The base read
+    the 1.12 tag `Data` with `SAVE_BLOCK` in `BlockContainerBase.setPlacedBy` after that merge, and
+    the empty read cleared the tanks and the coffee cache again. The method is gone, as on `main`
+    since the 1.21 port (`23815b7`, removed in `b66af84`). The Leaf-Eating Generator gets the
+    energy item with its tooltip (`c1e274d`), and the reconstructor item shows its energy and its
+    redstone mode each only when it carries them.
     The 17 shapeless recipes `actuallyadditions:reset/<block>` of `a85dcdc` craft each of these
     machines alone into an empty one, since their result has no tag.
     A machine with `StopDrop` 1, which the Engineer's House of `main` sets on every machine of its
@@ -1261,7 +1267,9 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     In a test on a dedicated Forge 47.4.18 server with the jar of this change (SHA-1
     `fa32053c00d39df8614ca6c7a7698a6565cb82b1`) and the dev client of the fork under Xvfb, with a
     local test scenario that is not committed, a survival player broke 14 of these machines with
-    set contents, picked each up and placed it back. Every item carried exactly the kept keys,
+    set contents, picked each up and placed it back. The Coal Generator, the Double Crusher and the
+    Placer were left out of these cycles. The Coal Generator only ran in the `StopDrop` case and
+    the Placer only as the machine that places a crusher. Every item carried exactly the kept keys,
     the tooltips showed the energy and, on the reconstructor, the pulse mode, and every placed
     machine had the energy, tanks, coffee cache and pulse mode it had before. The Farmer came back
     without its area. A crusher crafted alone in the inventory grid lost its tag and placed with 0
@@ -1271,4 +1279,8 @@ feature adds its item here, and the NOTICE in the jar sums them up.
     normal one. Broken by hand, the Leaf-Eating Generator, the Fermenting Barrel and a lamp
     dropped and a crusher did not. A Placer of the mod placed a tagged crusher through its fake
     player with its energy. The server log has no ERROR line. Not tested: the pack's Arclight
-    and a pulse that recurses before `c197f65`.
+    and a pulse that recurses before `c197f65`. On Arclight the merge of `BlockEntityTag` runs in
+    `BlockItem.updateCustomBlockEntityTag` while CraftBukkit captures the block states, the path
+    that shulker boxes take as well. The ship stage should place a tagged crusher and a filled Oil
+    Generator as a player on the Arclight test server and check that the energy and the tank come
+    back (not verified).

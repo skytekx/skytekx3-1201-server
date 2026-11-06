@@ -378,6 +378,10 @@
       "required": false
     },
     {
+      "id": "expandeddelight:salt",
+      "required": false
+    },
+    {
       "id": "immersiveengineering:coal_coke",
       "required": false
     },
@@ -646,6 +650,10 @@
       "required": false
     },
     {
+      "id": "medievalembroidery:salt",
+      "required": false
+    },
+    {
       "id": "mekanism:block_bronze",
       "required": false
     },
@@ -771,6 +779,10 @@
     },
     {
       "id": "oreberriesreplanted:copper_nugget",
+      "required": false
+    },
+    {
+      "id": "pamhc2foodcore:saltitem",
       "required": false
     },
     {

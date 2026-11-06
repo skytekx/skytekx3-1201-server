@@ -58,7 +58,7 @@ public class WiredChargerBlockEntity extends PoweredMachineBlockEntity {
     @Override
     public void serverTick() {
         super.serverTick();
-        if (canAct()) {
+        if (isActive()) {
             chargeItem();
         } else {
             this.progress = 0;
@@ -67,7 +67,7 @@ public class WiredChargerBlockEntity extends PoweredMachineBlockEntity {
 
     @Override
     protected boolean isActive() {
-        return canAct();
+        return hasEnergy() && canAct();
     }
 
     public boolean acceptItem(ItemStack item) {
@@ -97,8 +97,10 @@ public class WiredChargerBlockEntity extends PoweredMachineBlockEntity {
                     Math.max(this.energyStorage.getEnergyStored(), this.energyStorage.getMaxEnergyUse()));
 
                 if (energyToInsert > 0) {
-                    itemEnergyStorage.receiveEnergy(energyToInsert, false);
-                    this.energyStorage.takeEnergy(energyToInsert);
+                    int taken = this.energyStorage.consumeEnergy(energyToInsert, true);
+                    int accepted = itemEnergyStorage.receiveEnergy(taken, true);
+                    itemEnergyStorage.receiveEnergy(accepted, false);
+                    this.energyStorage.consumeEnergy(accepted, false);
                     this.progress = (float)itemEnergyStorage.getEnergyStored()/itemEnergyStorage.getMaxEnergyStored();
                 }
             }

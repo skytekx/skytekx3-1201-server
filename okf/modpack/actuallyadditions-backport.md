@@ -309,8 +309,35 @@ still went into a Traveler's Sack, because no jar of the pack fills `forge:holds
 The serverbound handlers of the bundle take the indices 9 (`GUI_STRING_TO_CONTAINER_HANDLER`) and 10
 (`HOTKEY_HANDLER`) of `DATA_HANDLERS` without a protocol bump, since no build with protocol 5 has
 shipped. That order is fixed for the later bundles, which append after index 10. The tools bundle
-adds no handler (its worktree at 18e3ac8 leaves `PacketHandler.java` unchanged). The protocol stays
-5 up to the first release, and any change of the handler list after that bumps it.
+added no handler (`git diff 6fa0144..23a4668` leaves the package `mod/network` unchanged). The
+protocol stays 5 up to the first release, and any change of the handler list after that bumps it.
+
+The tools bundle is done. Its four commits are f45c764 (the drills, their screen and the dye
+recipes), fb6753d (the AIOT actions and the forge tool tags), 99f283a (the Bowl of Water, the
+Handheld Filler, the Teleport Staff and the worms) and 6042f57 (the Engineer's Infrared Goggles),
+with the review fix 23a4668 (`UPSTREAM.md`, source changes 50 to 53). The merge onto the filters
+and sacks bundle kept both sides of the item tag constants in `ActuallyTags`, of the lang lines of
+the Item Filter and the Bowl of Water and of the generated recipe, item tag and loot table hashes.
+The review found that the filler, which never filled on the base, became a duplication once it
+worked. It placed the full saved state for one item, so a double slab, eight snow layers or mature
+wheat came out of it for a single item and dropped their whole loot. The fork now saves and reads
+the block in its default state with only its orientation (`mod/items/Filler.java`, `normalize`).
+The review fix also gives the filler and the Bowl of Water the Forge block events, keeps the
+Teleport Staff from jumping on a miss while the player looks up, and leaves the wearer out of the
+goggles' outline, see [Local divergences](#local-divergences). The bundle removes the `WorldUtil`
+helpers `getNearestPositionWithAir`, `getMovingObjectPosWithReachDistance` and
+`getNearestBlockWithDefaultReachDistance`, so a later bundle traces with `Player#pick` and
+`Util.getReachDistance` instead.
+
+The integration booted the jar of the review fix (SHA-1
+`eec659a2c452a4043ed1ad7c39e2d084f7394161`, 3151368 bytes) on a dedicated Forge 47.4.18 server next
+to Patchouli, Curios, JEI and Mekanism with the porter's smoke script. The server reached `Done`
+with 0 FATAL and 0 ERROR lines and no crash report, a worm summoned by command lived, and the loot
+table `actuallyadditions:worm_drop` loaded and rolled (`bp2/actuallyadditions/tlint1.out` in the
+workflow scratchpad). Nobody has tested the tools in game yet. The release runs those tests, among
+them the drill areas with fortune and silk touch, the placer augment, the drill screen, the AIOT
+actions, the bowl, the filler with its normalized state and the goggles on a dedicated server
+(carryover `aa-ship`).
 
 The pack does not ship the mod yet. Most new config keys have no reader yet, because their blocks
 keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source change 6).
@@ -324,9 +351,9 @@ keep reading the 1.12 enums until their features land (`UPSTREAM.md`, source cha
 | Processing machines (`aa-processing-machines`) | Crushers, Powered Furnace, Coal Generator fuels, the other generators, Coffee Maker, Canola Press and Fermenting Barrel, Energizer and Enervator, Experience Solidifier, Firework Box, Automatic Feeder, Lava Factory | 33.5 | Server safety, data core, assets | Done in 8a1ac46, d5d3bc1, e09a6a6, 3751de6, 7b3485e, 9c9a285, 6b7355e, 6b7cd54, 2eccd48, dc2cdbb and 2895da5, review fix 1205f84 |
 | World machines (`aa-world-machines`) | Breakers, placers and the Vertical Digger, phantom blocks and boosters, Fluid Collector and Placer, Farmer, Atomic Reconstructor and lenses, Display Stand and Empowerer, Greenhouse Glass | 28.5 | Server safety, data core, assets | Done in d884a85, 4eaaaab, 17f74f1, 68e1bd8, 167c868, 693c527 and 98711dd, review fix cff2f92 |
 | Energy and relays (`aa-energy-relays`) | Laser relays, item interfaces, Battery Box and energy items, laser and particle rendering | 13.5 | Server safety, data core, assets | Done in 9695d90, 75ba7e7, decae4e and 1dc2c74, review fix fc660fb |
-| Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Planned |
+| Machine contents (`aa-machine-retain`) | Machines keep energy, fluids and redstone mode when broken, reset recipes, house machines that drop nothing, drops with the wrong tool | 7.5 | Processing machines, world machines, energy and relays | Done in 8510592 and 4439c57, review fix ae6a98d |
 | Filters and sacks (`aa-filters-sacks`) | Sacks and the Void Sack, filters with the advanced item relay fix, the Item Tag filter, Ranged Collector, Crafting Table On A Stick with a key bind and Curios | 21.5 | Server safety, data core, energy and relays | Done in b9a294b, 4212a66, f9e4aaf, f83497f and 10edce8, review fix 0f2d071 |
-| Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Planned |
+| Tools (`aa-tools`) | Drills, AIOTs, small item fixes, Engineer's Goggles | 19.5 | Server safety, data core, energy and relays | Done in f45c764, fb6753d, 99f283a and 6042f57, review fix 23a4668 |
 | Arclight hardening (`aa-arclight-local`) | A named fake player with block events, a chunk guard for phantom blocks, an index of the relay networks, a throttle for the magnet ring | 15 | World machines, energy and relays, tools | Planned |
 | World content (`aa-world-content`) | Crops, black quartz ore, wild crop patches, Engineer house and villager, loot modifiers, banner patterns | 25.5 | Data core, assets, machine contents | Planned |
 | Manual and compat (`aa-ui-docs-compat`) | Manual on Patchouli, screen fixes, lang cleanup, Garden Cloche and Mekanism crusher recipes | 15 | Processing machines, world machines, energy and relays, machine contents, filters and sacks, tools, Arclight hardening, world content | Planned |
@@ -557,12 +584,15 @@ decide. Nothing in the pack depends on the version, see the property table.
 
 - Drills get the range, attribute, highlight, placement, tooltip and dye fixes, and their screen
   refuses an upper augment without the lower one (75c3757e). The drill does not copy the cascade
-  guard that `main` marks as taken from Apotheosis (main `DrillItem.java:257`).
-- AIOTs till, flatten and strip, show their damage and join the tool tags. Water bowl, filler,
+  guard that `main` marks as taken from Apotheosis (main `DrillItem.java:257`). A thread local flag
+  of its own keeps a nested break to its one block instead (`UPSTREAM.md`, source change 50).
+- AIOTs till, flatten and strip and join the vanilla and the forge tool tags. Water bowl, filler,
   teleport staff, ring of growth and worms get their fixes, among them no crash when a fake player
-  hoes grass (a65dccf9).
-- The Engineer's Goggles render on the head, and the advanced ones make mobs glow for the wearer
-  only through a client mixin (3b297993). The base sets the real glowing flag from a client tick.
+  hoes grass (a65dccf9, which came with the review fix cff2f92). The filler keeps only the
+  orientation of its saved block, and the staff keeps the base's rule for a miss (source change 52).
+- The Engineer's Goggles render on the head, and the advanced ones outline the entities around the
+  wearer for the wearer only through a client mixin (3b297993). The base set the glowing tag of the
+  client copies from a client tick, which drew nothing (source change 53).
 
 ### Arclight hardening
 
@@ -697,6 +727,10 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   machine item carries `BlockEntityTag` with only the kept keys. Firework Box values outside the
   slider ranges are clamped on load. Player data stops writing the old manual keys and still reads
   them.
+- The drill keeps `Energy`, `Items` and the augment's `SlotToPlaceFrom`, the worm `Timer` and the
+  Bowl of Water `lastX` and `lastY`. The Handheld Filler keeps its key `state` with the keys
+  `First*`, `Second*` and `Curr*`, but reads a saved state back with only its orientation, so a
+  filler that saved a double slab places a bottom slab (`UPSTREAM.md`, source change 52).
 - New ids include the item `item_tag`, the menus `void_sack_container` and `item_tag_container`, the
   recipe type `coffee_ingredient`, four banner pattern items with their patterns, the loot modifier
   serializers `bat_loot` and `dungeon_loot`, the point of interest and profession `engineer`, the
@@ -761,6 +795,18 @@ All four parts are local, see [Arclight notes](#arclight-notes).
   cancels those does not stop a sack (`UPSTREAM.md`, source change 46). The Ranged Collector takes
   item entities without the Bukkit `InventoryPickupItemEvent` and scans its area every unpowered
   tick (source change 48). Neither ran on the pack's Arclight yet (carryover).
+- The drill's placer augment lets the hotbar stack place itself through `ItemStack#useOn`, so the
+  Forge place events and Arclight's `BlockPlaceEvent` fire. That event names the drill as the item
+  in hand. The drill's center block gets two break events, the one of
+  `ServerPlayerGameMode.destroyBlock` and a second from `WorldUtil.breakExtraBlock`
+  (`mod/util/WorldUtil.java:342`), and in creative the extra blocks get none. Both predate the
+  bundle and go to the Arclight hardening (carryover `aa-arclight-local`).
+- Since the review fix 23a4668 the Handheld Filler skips a position that spawn protection, the world
+  border or adventure mode keeps from the player and posts the Forge place event for every block,
+  and a cancelled place costs nothing and ends the job. The Bowl of Water posts the break event for
+  the water it takes and for a block that its water washes away, and the place event for the
+  water. On the base neither path was reachable, since the filler never filled and the bowl never
+  picked up water. None of the tools ran on the pack's Arclight yet (carryover).
 - The screen packets reach any machine within 8 blocks of the sender, whether or not its menu is
   open. Only the Ranged Collector and the Advanced Item Laser Relay check that the sender has their
   menu open since the review fix of the filters and sacks bundle. A claim plugin that cancels the
@@ -842,6 +888,19 @@ These differ from upstream on purpose and must survive the next upstream sync.
   for a player with that block's menu open (`UPSTREAM.md`, source changes 46 and 48).
 - The Crafting Table On A Stick calls Curios only through `CuriosCompat`, and the dependency asks
   for Curios 5.2.0 or newer (`UPSTREAM.md`, source change 49).
+- The drill keeps `Item#onBlockStartBreak` with a thread local guard against nested breaks, its
+  outline helpers live in the client class `ClientEvents`, and the keep data recipes copy the
+  donor's energy. The AIOT strip check asks `consumesAction()`, and the AIOTs also join the forge
+  tool tags. The id of the worm loot table lives in `LootTableUtil`, and a simulated tilling drops
+  no worms (`UPSTREAM.md`, source changes 50 to 52).
+- The Handheld Filler saves and reads its block in the default state with only its orientation,
+  never waterlogged and with a double slab as a bottom slab, and it posts the Forge place event for
+  every block. The Bowl of Water posts the break and place events. The Teleport Staff jumps on a
+  miss only while the player looks no more than 5 degrees upward, as the manual says. Upstream
+  `main` keeps the full state in the filler, posts no event for either item and lets the staff
+  jump 100 blocks up on a miss (`UPSTREAM.md`, source change 52).
+- The infrared goggles keep the entities in a set of their own instead of the glowing tag and
+  leave the wearer out of it (`UPSTREAM.md`, source change 53).
 - The jar leaves out eight textures and three dead block models of `main`, see
   [Assets](#assets).
 

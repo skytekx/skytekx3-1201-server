@@ -1,9 +1,9 @@
 ---
 type: Mod
 title: Expanded Delight port
-description: The Forge 1.20.1 port of Expanded Delight 0.1.4 for NeoForge 1.21.1 that the pack bundles, what it adds, which upstream files stay out for license reasons, the fixes of the port and of its review, how its tags meet Farmer's Delight, Pam's Food Core and Mekanism, the worldgen and Skylands check, the tests of 2026-11-05 on Forge and Arclight and the operator steps.
+description: The Forge 1.20.1 port of Expanded Delight 0.1.4 for NeoForge 1.21.1 that the pack bundles, what it adds, which upstream files stay out for license reasons, the fixes of the port and of its review, how its tags meet Farmer's Delight, Pam's Food Core and Mekanism, the worldgen and Skylands check, the tests of 2026-11-05 on Forge and Arclight, the fox food fix of 2026-11-06 and the operator steps.
 tags: [modpack, mods, expandeddelight, farmersdelight, port]
-timestamp: 2026-11-05
+timestamp: 2026-11-06
 ---
 
 # Expanded Delight port
@@ -16,7 +16,7 @@ the newest NeoForge line to Forge 1.20.1, built from `ports/expandeddelight/`.
 
 | Property | Value |
 |---|---|
-| Jar | File [local-mods/expandeddelight-0.1.4-skytekx.1.jar](../../local-mods/expandeddelight-0.1.4-skytekx.1.jar), 486,426 bytes, SHA-1 `45b288dd96173e620db5a6d1065250a96b584949` since 047ff2d, the build of 2428130 with the review fixes. The first bundled build of d9eb6cc had 485,909 bytes and SHA-1 `3e156033dbf6a5a09d199960614776023e15e69a` |
+| Jar | File [local-mods/expandeddelight-0.1.4-skytekx.1.jar](../../local-mods/expandeddelight-0.1.4-skytekx.1.jar), 486,648 bytes, SHA-1 `2036aa13e77937afc7ba69b7f1a7c9ce8e9b21be` since f655eec, the build of 99183d0 with the fox food fix. The build of 2428130 with the review fixes (047ff2d) had 486,426 bytes and SHA-1 `45b288dd96173e620db5a6d1065250a96b584949`, the first bundled build of d9eb6cc had 485,909 bytes and SHA-1 `3e156033dbf6a5a09d199960614776023e15e69a` |
 | Mod | The id stays `expandeddelight`, the version is `0.1.4-skytekx.1` and the authors field names the original author |
 | Upstream | Branch `1.21-neo` of github.com/ianm1647/expandeddelight at `ea826400654702587e86c9e94544bfd74f065083` (2026-08-25, 0.1.4). The 1.20 branch at `8d8fe44d` served as the reference for the 1.20.1 game API |
 | Needs | Farmer's Delight 1.20.1-1.3.4 or newer, which the index has (`modrinth.index.json`) |
@@ -96,6 +96,12 @@ with its reason. In short:
   two wall signs. Hoppers and pipes on the sides put only valid containers into the juicer's
   container slot (c99d6cf), the rule of shift clicking in the menu. The peanut joined `forge:nuts`
   (2428130).
+- Cranberries are fox food again (99183d0). Upstream adds them to the vanilla tag
+  `minecraft:fox_food`, but the data conversion of 36ce58e dropped that file with the chicken, parrot
+  and pig food tags, on the claim that all four need Minecraft 1.20.5. Only those three do. The 1.20.1
+  client jar ships `data/minecraft/tags/items/fox_food.json` with sweet and glow berries, and javap of
+  the Forge 47 `Fox` class shows that `isFood` reads `ItemTags.FOX_FOOD`. The port adds no chicken,
+  parrot or pig food, so its asparagus and chili pepper seeds feed no chicken.
 - Upstream's overrides of Farmer's Delight's dough and melon juice recipes stay out. The pack edits
   no recipes of other mods per mod, and on 1.20.1 those recipes have other ids.
 
@@ -207,6 +213,17 @@ Not verified: a boot with the full pack, a client (the juicer screen, its recipe
 sign and tooltip rendering, and the seven new names) and the hand interactions that need a player:
 milking a goat, filling and emptying a cask, planting cranberries and stripping logs.
 
+### Fox food test of 2026-11-06
+
+The jar of f655eec (SHA-1 `2036aa13`) on a plain Forge 47.4.18 server with only Farmer's Delight
+1.20.1-1.3.4, `-Xmx3G` (`bp2/nm/newmods-fix-ed/server/console.log` in the session's scratch
+directory). The boot reached `Done` in 49.0 s with 0 ERROR and 0 FATAL lines, and the server stopped
+over RCON with exit code 0. The command `forge tags minecraft:item get minecraft:fox_food` listed
+`expandeddelight:cranberries`, `minecraft:glow_berries` and `minecraft:sweet_berries`, and
+`forge tags minecraft:item query expandeddelight:cranberries` named `forge:berries`,
+`minecraft:fox_food` and `sereneseasons:autumn_crops`. The tag `minecraft:chicken_food` stayed unknown,
+as in vanilla 1.20.1. Nobody fed or bred a fox by hand, which needs a player.
+
 ## Operator notes
 
 The owner mirrors the server by hand, and the mod goes live with the next pack, because clients
@@ -216,7 +233,7 @@ without it cannot join.
   which the next pack brings them.
 - Stop the server over RCON and wait until the java process is gone. Then copy
   `local-mods/expandeddelight-0.1.4-skytekx.1.jar` into the server's `mods/` by hand and check its
-  SHA-1 against `45b288dd96173e620db5a6d1065250a96b584949`. Farmer's Delight 1.20.1-1.3.4 is there
+  SHA-1 against `2036aa13e77937afc7ba69b7f1a7c9ce8e9b21be`. Farmer's Delight 1.20.1-1.3.4 is there
   already. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/` from the build machine.
 - The first boot writes `config/expandeddelight-common.toml` with the recipe book switch of the juicer.
   Commit it before `tools/build_mrpack.py`, which takes overrides from git HEAD.

@@ -1,9 +1,9 @@
 ---
 type: Reference
 title: NeoForge ports
-description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps. Bygone Nether, the Mystical Automation port, the Mekanism: Extra Modules port, the Expanded Delight port and the Create: Integrated Farming port so far.
-tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism, expandeddelight, farmersdelight, createintegratedfarming, create]
-timestamp: 2026-11-05
+description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps, and the full pack boots that checked all of them together. Bygone Nether, the Mystical Automation port, the Mekanism: Extra Modules port, the Expanded Delight port and the Create: Integrated Farming port with Create: Dragons Plus so far.
+tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism, expandeddelight, farmersdelight, createintegratedfarming, create, boot-test]
+timestamp: 2026-11-06
 ---
 
 # NeoForge ports
@@ -18,13 +18,138 @@ reproducible Java 17 Gradle build, the version suffix `-skytekx.1`, a `NOTICE` i
 `local-mods/` with its record in `modrinth-permissions/`. A fork keeps the mod id of its upstream, so
 worlds and configs keep working if an upstream build for Forge 1.20.1 replaces it later.
 
-| Mod | Stands in for | Way into the pack | Source | Since |
+| Mod | Stands in for | Way into the pack | Source | Since | State |
+|---|---|---|---|---|---|
+| [Bygone Nether](#bygone-nether) 1.3.2 | Eternal Nether, NeoForge 1.21.1 only | Index entry, no fork | Modrinth version `RA38ax2z`, built from upstream commit cb38a20 | Commit 3d7c5cc0, 2026-11-05 | Boots with the full pack on Forge and Arclight, see [status](#status). Client untested |
+| [Mystical Automation](#mystical-automation) 1.0.8-skytekx.1 | Itself, NeoForge 1.21.1 and newer only | Fork in `ports/mysticalautomation/`, jar in `local-mods/` | Branch `1.21` of the upstream repository at 4149601 ("Release 1.0.8") | Commits c3bb6eb and e6b9182, 2026-11-05 | Boots with the full pack on Forge and Arclight. Client untested |
+| [Mekanism: Extra Modules](#mekanism-extra-modules) 0.1.0-beta.3-skytekx.1 | Itself, NeoForge 1.21.1 with Mekanism 10.7 only | Fork in `ports/mekanism-extra-modules/`, jar in `local-mods/` | Tag `v1.21.1-0.1.0-beta.3` of the upstream repository at 1548dd6 | Commits a2df2b5 to b59a9df, 2026-11-05 | Boots with the full pack on Forge and Arclight. Client untested |
+| [Expanded Delight](#expanded-delight) 0.1.4-skytekx.1 | Itself, NeoForge 1.21.1 only, and on 1.20.1 an older Fabric line with 44 items | Fork in `ports/expandeddelight/`, jar in `local-mods/` | Branch `1.21-neo` of the upstream repository at ea82640, with branch `1.20` at 8d8fe44 as the reference for the 1.20.1 API | Commits c8c0ef8 to d93682b, 2026-11-05 | Boots with the full pack on Forge and Arclight. Client untested |
+| [Create: Integrated Farming](#create-integrated-farming) 1.4.3-skytekx.1 | Itself, NeoForge 1.21.1 only | Fork in `ports/createintegratedfarming/`, jar in `local-mods/`, its library Create: Dragons Plus 1.11.9 as an index entry | Branch `1.21.1/6.0.0-dev` of the upstream repository at 1f63780 ("[version] Release 1.4.3") | Commits dc176f0 to 3b20b42, 2026-11-05 | Boots with the full pack on Forge and Arclight, Create: Dragons Plus too. Client untested |
+
+## Status
+
+All six mods of the table, Create: Dragons Plus included, are in the branch, and the full pack with
+them booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the test copies.
+What remains for each of them is a test in a client, which only the next pack brings, see
+[open items](../open-items.md#not-verified).
+
+| Mod | Mixins applied on Forge and Arclight | Registry ids found on both | Log lines of the mod in the full pack | Still open |
 |---|---|---|---|---|
-| [Bygone Nether](#bygone-nether) 1.3.2 | Eternal Nether, NeoForge 1.21.1 only | Index entry, no fork | Modrinth version `RA38ax2z`, built from upstream commit cb38a20 | 3d7c5cc0, 2026-11-05 |
-| [Mystical Automation](#mystical-automation) 1.0.8-skytekx.1 | Itself, NeoForge 1.21.1 and newer only | Fork in `ports/mysticalautomation/`, jar in `local-mods/` | Branch `1.21` of the upstream repository at 4149601 ("Release 1.0.8") | Commits c3bb6eb and e6b9182, 2026-11-05 |
-| [Mekanism: Extra Modules](#mekanism-extra-modules) 0.1.0-beta.3-skytekx.1 | Itself, NeoForge 1.21.1 with Mekanism 10.7 only | Fork in `ports/mekanism-extra-modules/`, jar in `local-mods/` | Tag `v1.21.1-0.1.0-beta.3` of the upstream repository at 1548dd6 | Commits a2df2b5 to b59a9df, 2026-11-05 |
-| [Expanded Delight](#expanded-delight) 0.1.4-skytekx.1 | Itself, NeoForge 1.21.1 only, and on 1.20.1 an older Fabric line with 44 items | Fork in `ports/expandeddelight/`, jar in `local-mods/` | Branch `1.21-neo` of the upstream repository at ea82640, with branch `1.20` at 8d8fe44 as the reference for the 1.20.1 API | Commits c8c0ef8 to d93682b, 2026-11-05 |
-| [Create: Integrated Farming](#create-integrated-farming) 1.4.3-skytekx.1 | Itself, NeoForge 1.21.1 only | Fork in `ports/createintegratedfarming/`, jar in `local-mods/`, its library Create: Dragons Plus 1.11.9 as an index entry | Branch `1.21.1/6.0.0-dev` of the upstream repository at 1f63780 ("[version] Release 1.4.3") | Commits dc176f0 to 3b20b42, 2026-11-05 |
+| Bygone Nether 1.3.2 | All 6. The test script loaded `PiglinAi` and `PiglinBruteAi`, which a boot without piglins leaves unloaded | 21 blocks, 35 items and 8 entities. The jar names and models four gilded netherite armor pieces, but 1.3.2 registers only the shield | Two WARN lines for its loot modifiers, see [log lines](#log-lines-of-the-new-mods) | A client, the natural spawns inside its structures, a long Nether pregen |
+| Mystical Automation 1.0.8-skytekx.1 | The mod has no mixins | 7 blocks and 7 items | One WARN line, the first write of its common config | A client: screens, JEI categories, ghost slots |
+| Mekanism: Extra Modules 0.1.0-beta.3-skytekx.1 | Its one mixin into `LaserBeamPhase` of Draconic Evolution. That class loads with the first Chaos Guardian, so the test script loaded it | 3 items | One WARN line, the first write of its server config | A client, a Chaos Guardian fight, a boot with EssentialsX |
+| Expanded Delight 0.1.4-skytekx.1 | The mod has no mixins | 45 blocks, 99 items and 2 entities | Two WARN lines, the first write of its common config and a tooltip that Advanced Loot Info lacks | A client, the interactions by hand |
+| Create: Integrated Farming 1.4.3-skytekx.1 | All 6. The test script loaded `TreeCutter` | 5 blocks and 5 items | One WARN line, the first write of its server config | A client: Ponder scenes, the JEI category Roosting, renderers |
+| Create: Dragons Plus 1.11.9 | All 19 whose target mod is in the pack, the two Aether mixins included. The two mixins for Create Garnished and the one for logic units of Immersive Engineering, which also wants Dye Depot, stay off as their conditions say, and the five client mixins never load on a server | 19 blocks and 21 items, among them the 16 dye fluids with their buckets, dragon's breath with its cauldron and the Fluid Hatch. Its 35 fluids for Dye Depot, Dyenamics and Arts & Crafts only exist with those mods | Three WARN lines, the first write of its common config and of its two server configs | A client, an Aether fan recipe, the progression check of [open items](../open-items.md) |
+
+### Full pack boots of 2026-11-06
+
+Four boots ran in test copies outside the repository, built from a detached worktree of 052a0e4 by
+the scratch harness `packboot_mtt.sh`, which is not in the repository. Each copy held every server
+entry of `modrinth.index.json`, the jars of `local-mods/`, the jar patches of `tools/patch_mods.py`,
+`config/`, `kubejs/` and the three world datapacks, used seed 12345 and a 5 GB heap, forceloaded points
+in the Overworld, the Twilight Forest and the Skylands until they ticked, and stopped with
+`save-all flush` and `stop` over RCON. The Arclight copies ran the repository's `arclight.jar` (SHA-1
+70b44a84). The commits after 052a0e4 that the branch got while the boots ran touch only docs and
+`ports/`, not the pack. The baselines are the boots `wavea-forge` and `wavea-arclight` of 2026-11-05
+from 593db2f, the last full pack boots before the six mods.
+
+| Boot | Server | Mixin export | Done after | Mod ids and jars | FATAL, crash, watchdog | ERROR lines | Log signatures | Stop |
+|---|---|---|---|---|---|---|---|---|
+| Baseline `wavea-forge` | Forge 47.4.18 | Off | 15.3 s, 129 s wall | 290 and 265 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+| First run `newmods-forge` | Forge 47.4.18 | On | 22.5 s, 202 s wall | 297 and 271 | 0, 0, 0 | 5 | 13 | Over RCON, java exit 0 |
+| Repeat `newmods-forge-r2` | Forge 47.4.18 | Off | 16.3 s, 118 s wall | 297 and 271 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+| Baseline `wavea-arclight` | Arclight 1.0.6 | Off | 16.6 s, 130 s wall | 291 and 265 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+| First run `newmods-arclight` | Arclight 1.0.6 | On | 20.9 s, 181 s wall | 298 and 271 | 0, 0, 0 | 5 | 13 | Over RCON, java exit 0 |
+| Repeat `newmods-arclight-r2` | Arclight 1.0.6 | Off | 21.8 s, 146 s wall | 298 and 271 | 0, 0, 0 | 3 | 11 | Over RCON, java exit 0 |
+
+- The 3 ERROR lines of the repeats are those of every test copy: `RuntimeDistCleaner` refusing
+  `ModelBakery`, the startup backup of Nostalgic Tweaks and the AllTheLeaks reflection into Citadel.
+  The repeats have no log signature that the baselines lack. The seven more mod ids are the six mods
+  and the library Conditional Mixin inside the Create: Dragons Plus jar.
+- The two runs with mixin export logged two more signatures, each twice: "Attempted to load class
+  net/minecraft/client/gui/screens/Screen for invalid dist DEDICATED_SERVER" from `RuntimeDistCleaner`
+  and the matching "Error loading class" of Mixin, at the moment Mixin writes Create's `StationBlock`
+  after the mixin of Create: Steam 'n' Rails. They come from the unfiltered export and not from a new
+  mod. Both repeats ran the same mods without the export and are free of them. The Create Crafts &
+  Additions boot `cca-rel-forge` of 2026-11-05 ran the same flag without Create: Dragons Plus, Create:
+  Integrated Farming, Expanded Delight and Mekanism: Extra Modules and logged the same four lines at
+  the same place, and none of the 30 other full pack boots since 2026-11-02, all with a filtered
+  export or none, logged them.
+- On Arclight `Done` came about 5 s later than in its baseline in both runs, on Forge about 1 s in the
+  repeat. Nobody checked which mod costs that time.
+- The first runs also ran the test script with `/kubejs reload server_scripts`, which starts the
+  server log of KubeJS anew, so their diff lists the 22 recipe warnings of that log as gone. The
+  repeats did not reload, and their KubeJS log matches the baselines.
+
+### How the checks ran
+
+- For the mixins both first runs had `-Dmixin.debug.export=true`. A scratch script in the copy's
+  `kubejs/server_scripts/`, never in the repository, loaded with `Java.loadClass` the targets that a
+  boot without players and machines leaves unloaded, among them `LaserBeamPhase`, `TreeCutter`,
+  `AirCurrent`, `FanProcessing`, `OpenEndedPipe` and `PiglinAi`. Every exported target class carried
+  the merged mixin, as a `@MixinMerged` entry or as the accessor interface, and no line "Mixin apply
+  failed" appeared.
+- For the registries `execute if block` over RCON parsed each of the 132 block ids that the six jars
+  declare in their blockstates, `clear @a` each of their 211 item models and `execute if entity` each
+  of the 10 entity types of their language files. An id that a registry lacks fails with "Unknown
+  block type" or "Unknown item". Both loaders found the same 277 ids. The other 76 are the 35 fluids
+  and 35 buckets that Create: Dragons Plus keeps for absent dye mods, its template model `dye_bucket`,
+  the four gilded netherite armor models of Bygone Nether and the blocking model of its shield.
+- In the Nether the Arclight repeat forceloaded 36 chunks around 0 0 until they ticked, which places
+  their features. The game builds the feature order of a dimension for all of its biomes at the first
+  decorated chunk (`FeatureSorter`, called from `ChunkGenerator`), and no line "Feature order cycle"
+  appeared. A `/locate` found the nearest soul sand valley at -340 188 and the nearest bastion of
+  `#bygonenether:no_basalt` at 192 320.
+- These boots did not check the content in play, a client, EssentialsX and the other plugins of the
+  real server, or the Nether beyond those 36 chunks.
+
+### Log lines of the new mods
+
+A scan of every WARN, ERROR and FATAL record of `latest.log` for the ids and packages of the six mods
+and of Conditional Mixin found ten lines on each loader, the same in the first runs and the repeats:
+
+- Bygone Nether logs "Could not decode GlobalLootModifier with json id
+  bygonenether:soul_stone_from_block" and the same for `soul_stone_in_catacombs`, because the
+  serializer `bygonenether:replace_item` does not exist. In the 1.3.2 jar no class calls
+  `ModLootModifiers.register`, so its deferred register never reaches the event bus (javap of the jar,
+  2026-11-06). Both modifiers only swap the soul stone drop for the soul stone of Infernal Expansion
+  when that mod is loaded (`mod_dependency` in `data/bygonenether/loot_modifiers/`). The pack has no
+  Infernal Expansion, so nothing is lost. The port's test servers of 2026-11-05 logged the same two
+  lines.
+- Advanced Loot Info logs "Missing function tooltips for
+  ianm1647.expandeddelight.common.loot.CopyDrinkFunction". Its loot tabs know no tooltip for the loot
+  function `expandeddelight:copy_drink` of the port, so a drop that uses it shows without that detail.
+  This only touches a client and nobody looked at it there.
+- Seven lines "Configuration file ... is not correct. Correcting" are the first write of configs that
+  git does not hold: `config/expandeddelight-common.toml`, `config/create_dragons_plus-common.toml`
+  and `config/mysticalautomation-common.toml`, and in the world `create_dragons_plus-server.toml`,
+  `create_dragons_plus-aether-integration-server.toml`, `create_integrated_farming-server.toml` and
+  `mekanism_extra_modules-server.toml`. Forge logs this line for every config that it creates.
+
+### Deploy of all six
+
+The owner mirrors the server by hand. The six mods go live together with the next pack, because a
+client without any of them cannot join. The steps of each mod are in its section below, in short:
+
+- Stop the server over RCON and wait until the java process is gone.
+- Copy the four port jars from `local-mods/` into the server's `mods/` and check their SHA-1:
+  `MysticalAutomation-1.20.1-1.0.8-skytekx.1.jar` 585446d5,
+  `mekanism_extra_modules-0.1.0-beta.3-skytekx.1.jar` 3c40952a,
+  `expandeddelight-0.1.4-skytekx.1.jar` 45b288dd and
+  `create-integrated-farming-1.20.1-1.4.3-skytekx.1.jar` 74b2b560.
+- Download the two index jars from their `cdn.modrinth.com` links in `modrinth.index.json` into
+  `mods/` and check their SHA-1: `bygonenether-1.3.2-1.20.x.jar` 529e31d2 and
+  `CreateDragonsPlus-1.11.9.jar` cb249347. On the Mac mini `macos/sync-to-mac.sh` mirrors `mods/`
+  from the build machine.
+- Deploy the fixes pack with the two tag files of Bygone Nether and move it to the end of the pack
+  order once, see [Mod set](mod-set.md#deploy).
+- Start the server and check the boot against the error baseline. Expect the ten WARN lines of
+  [log lines](#log-lines-of-the-new-mods) and no new ERROR line. The first boot writes the seven
+  configs named there.
+- The structures of Bygone Nether and the trees, crops and salt ore of Expanded Delight only reach
+  chunks that do not exist yet. A Nether pregen with Chunky places the new structures ahead of time,
+  one dimension at a time as on [World reset and pregen](../server/world-reset.md).
 
 ## Bygone Nether
 
@@ -110,9 +235,10 @@ Evidence of 2026-11-05, details on [Mod set](mod-set.md#tests):
 - With the basalt guard tag, the bastion in a basalt delta of the test seed held 2,157 basalt, 0 magma
   blocks and 8 lava inside its pieces on Forge, against 9,800, 136 and 175 without it, and the pregen
   took 2:47 against 2:52. Arclight gave 2,176, 3 and 8.
+- The full pack with the mod booted on Forge and on Arclight on 2026-11-06, and the Arclight repeat
+  generated 36 Nether chunks without a feature order cycle, see [status](#status).
 - Nobody tested the natural spawns inside the structures, the rescue of a Piglin Prisoner, the Gilded
-  Netherite Shield, the textures in a client and a boot of the full pack with the mod, see
-  [open items](../open-items.md#not-verified).
+  Netherite Shield and the textures in a client, see [open items](../open-items.md#not-verified).
 
 ### Operator steps
 
@@ -215,8 +341,9 @@ and Patchouli and driven over RCON. The full tables are on
   nothing, an enchanted ghost over plain leggings or a plain sword gave nothing in the Crafter and the
   Awakening Altarnator, and matching inputs gave their results with or without enchantments. The
   Farmer merged a cocoa result of 3 into 62 as 64 and 1 and waited while its outputs were full.
-- Nobody tested the screens, the JEI categories, the recipe transfer, the ghost slots in a client, the
-  guide book entries and a boot of the full pack with the mod.
+- The full pack with the mod booted on Forge and on Arclight on 2026-11-06, see [status](#status).
+- Nobody tested the screens, the JEI categories, the recipe transfer, the ghost slots in a client and
+  the guide book entries.
 
 ### Operator steps
 
@@ -336,8 +463,10 @@ that ticks a server player without a client. The full tables are in
   servers.
 - A test copy of the jar with the Draconic Evolution range `[3.1.2.620]` stopped the Forge boot at mod
   loading, so the pin works.
+- The full pack with the mod booted on Forge and on Arclight on 2026-11-06 and applied its mixin into
+  `LaserBeamPhase` next to the one of SkyTekx DE Fixes, see [status](#status).
 - Nobody tested a real client, the HUD icons, the module screen, a Chaos Guardian fight, the EssentialsX
-  `/kill` command itself and a boot with EssentialsX or the full pack.
+  `/kill` command itself and a boot with EssentialsX.
 
 ### Operator steps
 
@@ -494,7 +623,8 @@ are on [Expanded Delight port](expandeddelight-port.md#test-of-2026-11-05).
   same results, pressed an apple juice into the hopper below and stopped over RCON with exit code 0.
 - Nobody tested a client (the juicer screen, its recipe book, JEI, the boats, signs and tooltips and
   the seven new names), the hand interactions that need a player (milking a goat, filling a cask,
-  planting cranberries, stripping a log) and a boot of the full pack with the mod.
+  planting cranberries, stripping a log). The full pack with the mod booted on Forge and on Arclight
+  on 2026-11-06, see [status](#status).
 
 ### Operator steps
 
@@ -631,9 +761,11 @@ are on [Create Integrated Farming port](createintegratedfarming-port.md#tests).
   ERROR lines, loaded `using_converts_to` in both forms, dropped a bowl for each of two feedings of
   bread, showed the egg of the placed roost schematic and the `crafting/` rewards of the recipe
   advancements, and stopped over RCON with exit code 0 after a second boot.
-- Nobody tested a client (the Ponder scenes, the JEI category Roosting, the renderers) or a boot of the
-  full pack with the two mods, on Forge or on Arclight, and the Aether part of Create: Dragons Plus
-  never ran.
+- The full pack with the two mods booted on Forge and on Arclight on 2026-11-06 and applied all their
+  mixins that have a target in the pack, the two Aether mixins of Create: Dragons Plus included, see
+  [status](#status).
+- Nobody tested a client (the Ponder scenes, the JEI category Roosting, the renderers), and no Aether
+  fan recipe of Create: Dragons Plus ran.
 
 ### Operator steps
 

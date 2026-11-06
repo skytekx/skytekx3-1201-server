@@ -106,15 +106,17 @@ boots had rewritten on disk (ce31f6f, the builder reads git HEAD).
   Simply Jetpacks 2 among them, patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`, EnderIO
   Legacy Machines, Mob Grinding Utils, Flux Networks, SkyTekx DE Fixes, Extreme Reactors 2, ZeroCore 2,
   the LittleTiles build of c5694e16, the Mystical Automation port, the Mekanism: Extra Modules port,
-  the Expanded Delight port, the Create: Integrated Farming port and the Ender IO backport build
-  6.3.0-skytekx.1 in place of 6.2.18-beta (`local-mods/`, 57 jars on 2026-11-06). Under
-  `overrides/licenses/` travel the sources of the Backpack port, of the LittleTiles
+  the Expanded Delight port, the Create: Integrated Farming port, the Ender IO backport build
+  6.3.0-skytekx.1 in place of 6.2.18-beta and the Create Crafts & Additions fork
+  1.20.1-1.7.3-skytekx.1 in place of the Modrinth file 1.3.3 (`local-mods/`, 57 jars on
+  2026-11-06). Under `overrides/licenses/` travel the sources of the Backpack port, of the LittleTiles
   build and of Mekanism: Extra Modules, the license texts of Simply Jetpacks 2, EnderIO Legacy
   Machines, Flux Networks, Extreme Reactors 2, SkyTekx DE Fixes, Mystical Automation, Mekanism: Extra
   Modules and the boss data of Iron's Apothic Invaders, the license texts and the NOTICE of the
   Expanded Delight port, the LGPL, GPL and MIT texts and the NOTICE of the Create: Integrated Farming
-  port, and the license texts of the parts of the Ender IO build 6.3.0-skytekx.1 with their NOTICE
-  (`licenses/` in git).
+  port, the license texts of the parts of the Ender IO build 6.3.0-skytekx.1 with their NOTICE, and
+  the MIT text of the Create Crafts & Additions fork with Create's two MIT notices,
+  `createaddition-1.20.1-1.7.3-skytekx.1-LICENSE.txt` (`licenses/` in git).
 - The `config/` and `kubejs/` files of the commit the pack was built from, 534 config files and 6
   KubeJS files in 3.0.6 and 3.0.7 (3.0.5 shipped 550 config files from disk). They include the
   FancyMenu layout, but the FancyMenu jars are not in the pack, see [client](client.md#main-menu).
@@ -220,7 +222,9 @@ with SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with 
 of the pack unified to the Mekanism salt (see [Expanded Delight port](expandeddelight-port.md)), with
 the Create: Integrated Farming port and its library Create: Dragons Plus 1.11.9 (see
 [Create Integrated Farming port](createintegratedfarming-port.md)), with the Ender IO backport
-6.3.0-skytekx.1 (see [Ender IO backport](enderio-backport.md)), with the Apotheosis bosses of
+6.3.0-skytekx.1 (see [Ender IO backport](enderio-backport.md)), with the Create Crafts & Additions
+backport 1.20.1-1.7.3-skytekx.1 (see [Create Crafts & Additions backport](createaddition-backport.md)),
+with the Apotheosis bosses of
 Iron's Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), with the nine
 mods of 2026-11-04, five addons of Applied Energistics 2 and Cyclic among them (see
 [mod set](mod-set.md#additions-of-2026-11-04)), and with Bygone Nether, whose tag repair in the fixes
@@ -234,10 +238,20 @@ the Ponder scenes and the JEI category Roosting of Create: Integrated Farming wo
 client joins with the Ender IO network protocol 1.0-skytekx.1 and the update of a 3.1.2 instance
 replaces the 6.2.18-beta jar, since server and client need the same build, whether JEI and EMI show
 the Vat recipes, whether the screens of the Vat, the obelisks and the wireless charger and the staff
-and magnet keys work, whether the conduit facades render with the Embeddium of the pack, whether the
-Draconic Evolution fixes work in a client and whether the mobs and structures of Bygone Nether render
-there. Its deploy has to move the fixes pack to the end of the pack order, see
-[boot fixes](../content/boot-fixes.md#load-order).
+and magnet keys work, whether the conduit facades render with the Embeddium of the pack, whether a
+client joins over the Create Crafts & Additions channel `createaddition:main` with its protocol 2 and
+the update of a 3.1.2 instance drops `createaddition-1.20.1-1.3.3.jar`, whether JEI and EMI show the
+charging steps of Sequenced Assembly, whether the new ponder scenes of the pump, the connectors and
+the servo open, whether the Draconic Evolution fixes work in a client and whether the mobs and
+structures of Bygone Nether render there. Its deploy has to move the fixes pack to the end of the pack
+order, see [boot fixes](../content/boot-fixes.md#load-order).
+
+The upload has to go out together with the jar swap of Create Crafts & Additions in the server's
+`mods/`, which still holds 1.3.3. The fork bumped the protocol of `createaddition:main` from 1 to 2
+and accepts no other (`CreateAddition.java:73-77` in `ports/createaddition/`, ea5b3dc), so a 3.1.2
+client cannot join the fork server and a client of the next pack cannot join the 1.3.3 server. Both
+wait for the alternator scan and the live world test of the wires on a copy of the live world, the
+rollout gates under [Release](createaddition-backport.md#release) of the backport page.
 
 The full pack of 98bf164 with the six mods that stand in for NeoForge 1.21.1 mods, Create: Dragons
 Plus included, booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the

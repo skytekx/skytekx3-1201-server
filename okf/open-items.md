@@ -4,7 +4,6 @@ title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
 timestamp: 2026-11-06
-timestamp: 2026-11-05
 ---
 
 # Open items
@@ -72,8 +71,9 @@ evidence and the page with the details. The rulings behind the first section are
   Modrinth project `skytekx3` yet, and Modrinth creates projects as `monetized`. Since 2026-11-05 the
   dry run of `tools/publish_modrinth.py` prints the status and warns unless it is demonetized, and
   `--go` sets the project to `demonetized` through the API and refuses the upload if Modrinth keeps
-  another value. Demonetizing is needed while the Twilight Forest fork is bundled, whatever happens to
-  Ender IO, because moving Ender IO to the index drops only the Patchouli condition. Nobody has run
+  another value. Demonetizing is needed while either fork is bundled. The pack ships a modified Ender IO
+  build (de0d78b), which must stay bundled, so its Patchouli condition stays as long as it ships, and
+  the Twilight Forest fork sets the same limit. Nobody has run
   `--go` with the check yet, so whether the token may set the field is not verified, see
   [Publish](modpack/publish.md#release-steps).
 
@@ -280,6 +280,14 @@ evidence and the page with the details. The rulings behind the first section are
   `Entity.load` for a NaN coordinate, and which mod writes such entities is still open. Since
   skytekx-compat 2.1.6 a "Dropped entity" line names the next one with its type, chunk and raw
   position, see [SkyTekx Compat](content/compat-mod.md#entities-that-fail-to-load).
+- A `/setblock`, `/clone` or `/data merge` of an `enderio:conduit` block with a `ConduitBundle`
+  compound leaves the bundle without graph nodes, because its block entity reads the conduit types
+  after `setLevel`. The next capability query of a neighbour crashes the server tick in
+  `ConduitBundle.getNodeFor`, and the bundle cannot be saved. Ender IO 6.2.18-beta and the fork
+  build 6.3.0-skytekx.1 both do it on a test server, while bundles that load with their chunk are
+  fine. A fix would create the missing nodes in `load` or `onLoad`. Until then nobody places
+  bundles with NBT by command. Whether a Create contraption that moves a bundle takes the same path
+  is not verified. See [Ender IO backport](modpack/enderio-backport.md#operator-notes).
 
 ## Not verified
 
@@ -409,17 +417,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The SkyTekx logo's origin before 2026-06-28 18:12 is not recorded.
 - Why Better Combat, Memory Leak Fix, Geophilic Backported, Platform and VanillaBackport were parked is
   not recorded, nor why the Forge pack overrides Botania's placed features (commit 0064c2f).
-- About 7,000 machine recipes hide their ingredients from the recipe probe of 2026-11-02, so whether
-  they take every variant of a material was not checked. No chunk generated since 17:33 that day was
-  checked for Mekanism tin and lead either, only the loaded config. See
-  [AlmostUnified](modpack/almostunified.md#one-item-per-material).
-- Expanded Delight in a client. A plain Forge test server loaded its recipes, items and blocks and
-  ran the juicer, the casks, the crops and the worldgen, and an Arclight copy with the hardened jar
-  and nine mods ran the juicer with 0 ERROR lines, and the full pack booted with it on 2026-11-06
-  (see [NeoForge ports](modpack/neoforge-ports.md#status)), but nobody has opened the juicer screen
-  or its recipe book, seen its JEI categories, its boats, signs and new names, or milked a goat,
-  filled a cask, planted cranberries, fed a fox cranberries or stripped a cinnamon log by hand. See [Expanded Delight
-  port](modpack/expandeddelight-port.md#integration-test).
 - 245 of the 7,116 recipes that hide their ingredients have no file to read, mostly AlmostUnified's
   own trackers, Ars Nouveau enchantments and smithing recipes, so whether they take the preferred items
   was not checked. No chunk generated since 17:33 on 2026-11-02 was checked for Mekanism tin and lead
@@ -429,6 +426,20 @@ evidence and the page with the details. The rulings behind the first section are
   the config of AlmostUnified, the recipe fixes of 2026-11-04 and the two trims run on the Mac mini since
   the start of 3.1.3 at 00:46 on 2026-11-05. See
   [AlmostUnified](modpack/almostunified.md#emi-hide-list).
+- Expanded Delight in a client. A plain Forge test server loaded its recipes, items and blocks and
+  ran the juicer, the casks, the crops and the worldgen, and an Arclight copy with the hardened jar
+  and nine mods ran the juicer with 0 ERROR lines, and the full pack booted with it on 2026-11-06
+  (see [NeoForge ports](modpack/neoforge-ports.md#status)), but nobody has opened the juicer screen
+  or its recipe book, seen its JEI categories, its boats, signs and new names, or milked a goat,
+  filled a cask, planted cranberries, fed a fox cranberries or stripped a cinnamon log by hand. See [Expanded Delight
+  port](modpack/expandeddelight-port.md#integration-test).
+- Ender IO 6.3.0-skytekx.1 in a client and on the live world. A savegame test from 6.2.18-beta, full
+  pack boots on Forge and Arclight and dev self tests passed, but nobody has joined with a client of
+  the pack, seen the Vat recipes in JEI and EMI, opened the screens of the new blocks, used the staff
+  and magnet keys or seen the facades with Embeddium. A copy of the live world on the production
+  Arclight jar is open too, with the inhibitor obelisk against `/home` and `/tpa` of EssentialsX, the
+  attractor next to a Flux Networks point and the wireless charger with several players. See
+  [Ender IO backport](modpack/enderio-backport.md#release).
 
 ## Docs and housekeeping
 

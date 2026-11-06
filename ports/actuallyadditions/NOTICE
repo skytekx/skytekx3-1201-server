@@ -89,6 +89,11 @@ Modifications
       faces the player and switches at most 4096 connected lamps without deep recursion.
     * Sounds: casings sound like their material, machines like metal and crystal blocks and
       clusters like amethyst, as on upstream's main branch.
+    * Breakers and placers: the Long-Range Breaker and the Vertical Digger mine and collect their
+      drops, the Breaker breaks blocks that need a tool, such as snow, the Placer and the
+      Phantom Breaker work, and the Phantom Placer has its side button. The Vertical Digger mines
+      down to the bottom of the world, keeps its layer across restarts and restarts once from
+      its own height when it was saved by an older build.
 
   The complete source of this build, with every change as a separate commit, is in
   https://github.com/skytekx/skytekx3-1201-server under ports/actuallyadditions.

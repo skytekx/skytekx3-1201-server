@@ -22,9 +22,11 @@ public class MinerHud implements IBlockHud {
         }
         BlockEntity tile = minecraft.level.getBlockEntity(((BlockHitResult) rayCast).getBlockPos());
         if (tile instanceof TileEntityVerticalDigger miner) {
-            String info = miner.checkY == 0
+            // SkyTekx: the states of the min build height, the base and main still test 0 and -1
+            int minHeight = minecraft.level.getMinBuildHeight();
+            String info = miner.checkY == minHeight
                     ? "Done Mining!"
-                    : miner.checkY == -1
+                    : miner.checkY < minHeight
                     ? "Calculating positions..."
                     : "Mining at " + (miner.getBlockPos().getX() + miner.checkX) + ", " + miner.checkY + ", " + (miner.getBlockPos().getZ() + miner.checkZ) + ".";
             guiGraphics.drawString(minecraft.font, info, (int) (resolution.getGuiScaledWidth() / 2f + 5), (int) (resolution.getGuiScaledHeight() / 2f - 20), 0xFFFFFF);

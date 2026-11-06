@@ -11,8 +11,9 @@
 package de.ellpeck.actuallyadditions.mod.tile;
 
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
-import de.ellpeck.actuallyadditions.mod.config.values.ConfigStringListValues;
+import de.ellpeck.actuallyadditions.mod.config.CommonConfig;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerMiner;
+import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.network.gui.IButtonReactor;
 import de.ellpeck.actuallyadditions.mod.network.PacketHelperServer;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IAcceptor;
@@ -21,6 +22,7 @@ import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
@@ -28,7 +30,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -36,7 +37,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.TierSortingRegistry;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -52,10 +53,18 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
     public static final int DEFAULT_RANGE = 2;
     public final CustomEnergyStorage storage = new CustomEnergyStorage(200000, 2000, 0);
     public final LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> this.storage);
+    // SkyTekx: CheckY marks the layer to mine next, the min build height minus 1 means not started and
+    // the min build height means done, as in ae6f1603. The base used -1 and 0, which are real layers
+    // below Y 0. CheckYMin is an additive key that holds the min build height CheckY was written
+    // against. A digger without it (saved by the base, or freshly placed) restarts from its own Y
+    // minus 1 once. Not 738f098b, which restarts every digger at each chunk load
+    private static final String CHECK_Y_MIN_KEY = "CheckYMin";
+    private static final int CHECK_Y_MIN_UNKNOWN = Integer.MIN_VALUE;
     public boolean onlyMineOres;
     public int checkX;
-    public int checkY = -1;
+    public int checkY;
     public int checkZ;
+    private int checkYMin = CHECK_Y_MIN_UNKNOWN;
     private int oldEnergy;
     private int oldCheckX;
     private int oldCheckY;
@@ -73,6 +82,9 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
             compound.putInt("CheckX", this.checkX);
             compound.putInt("CheckY", this.checkY);
             compound.putInt("CheckZ", this.checkZ);
+            if (this.checkYMin != CHECK_Y_MIN_UNKNOWN) {
+                compound.putInt(CHECK_Y_MIN_KEY, this.checkYMin);
+            }
         }
         if (type != NBTType.SAVE_BLOCK || this.onlyMineOres) {
             compound.putBoolean("OnlyOres", this.onlyMineOres);
@@ -87,6 +99,9 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
             this.checkX = compound.getInt("CheckX");
             this.checkY = compound.getInt("CheckY");
             this.checkZ = compound.getInt("CheckZ");
+            this.checkYMin = compound.contains(CHECK_Y_MIN_KEY, Tag.TAG_INT)
+                ? compound.getInt(CHECK_Y_MIN_KEY)
+                : CHECK_Y_MIN_UNKNOWN;
         }
         this.onlyMineOres = compound.getBoolean("OnlyOres");
     }
@@ -101,16 +116,20 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
         if (t instanceof TileEntityVerticalDigger tile) {
             tile.serverTick();
 
+            int minHeight = level.getMinBuildHeight();
+            tile.updateCheckYFormat(minHeight);
+
             if (!tile.isRedstonePowered && tile.ticksElapsed % 5 == 0) {
-                if (tile.checkY != 0) {
+                if (tile.checkY != minHeight) {
                     int range = TileEntityPhantomface.upgradeRange(DEFAULT_RANGE, level, pos);
-                    if (tile.checkY < 0) {
+                    if (tile.checkY < minHeight) {
                         tile.checkY = tile.worldPosition.getY() - 1;
                         tile.checkX = -range;
                         tile.checkZ = -range;
+                        tile.setChanged();
                     }
 
-                    if (tile.checkY > 0) {
+                    if (tile.checkY > minHeight) {
                         if (tile.mine()) {
                             tile.checkX++;
                             if (tile.checkX > range) {
@@ -119,6 +138,9 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
                                 if (tile.checkZ > range) {
                                     tile.checkZ = -range;
                                     tile.checkY--;
+                                    // SkyTekx: save the layer, the chunk is not marked dirty while the
+                                    // digger only passes air, so a restart went back to an older layer
+                                    tile.setChanged();
                                 }
                             }
                         }
@@ -135,21 +157,39 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
         }
     }
 
+    // SkyTekx: brings CheckY to the format of the min build height of this level, once per load
+    private void updateCheckYFormat(int minHeight) {
+        if (this.checkYMin == minHeight) {
+            return;
+        }
+        if (this.checkYMin == CHECK_Y_MIN_UNKNOWN || this.checkY < this.checkYMin) {
+            // Saved by the base, never saved, or not started: start again from the top
+            this.checkY = minHeight - 1;
+        } else if (this.checkY == this.checkYMin) {
+            // Done stays done when the dimension's min build height changed
+            this.checkY = minHeight;
+        }
+        this.checkYMin = minHeight;
+        this.setChanged();
+    }
+
     private boolean mine() {
         int actualUse = ENERGY_USE_PER_BLOCK * (this.onlyMineOres
             ? 3
             : 1);
         if (this.storage.getEnergyStored() >= actualUse) {
             BlockPos pos = new BlockPos(this.worldPosition.getX() + this.checkX, this.checkY, this.worldPosition.getZ() + this.checkZ);
+            // SkyTekx: the tool check of e91c1569 (#1421) and 902e8064 (#1425), a block counts when a
+            // Netherite AIOT is the right tool for its drops
+            ItemStack fakePickaxe = new ItemStack(ActuallyItems.NETHERITE_AIOT.get());
 
             BlockState state = this.level.getBlockState(pos);
             Block block = state.getBlock();
             ItemStack stack = block.getCloneItemStack(state, new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, false), this.level, pos, FakePlayerFactory.getMinecraft((ServerLevel) this.level));
             if (!state.isAir()) {
-                //block.getHarvestLevel(state) <= DrillItem.HARVEST_LEVEL
-                if (TierSortingRegistry.isCorrectTierForDrops(Tiers.NETHERITE, state) && state.getDestroySpeed(this.level, pos) >= 0F && !(block instanceof IFluidBlock) && this.isMinable(block, stack)) {
+                if (fakePickaxe.isCorrectToolForDrops(state) && state.getDestroySpeed(this.level, pos) >= 0F && !(block instanceof IFluidBlock) && this.isMinable(state, stack)) {
                     List<ItemStack> drops = Block.getDrops(state, (ServerLevel) this.level, pos, this.level.getBlockEntity(pos));
-                    float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, drops, this.level, pos);
+                    float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, this.level, pos);
 
                     if (chance > 0 && this.level.random.nextFloat() <= chance) {
                         if (StackUtil.canAddAll(this.inv, drops, false)) {
@@ -172,26 +212,22 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
         return false;
     }
 
-    private boolean isMinable(Block block, ItemStack stack) {
-        if (block != null) {
+    // SkyTekx: the ores of the forge:ores block and item tags and the lists of the common config, as in
+    // 17d8dcce. The base read the 1.12 config enum, whose lists are null on 1.20.1
+    private boolean isMinable(BlockState state, ItemStack stack) {
+        Block block = state.getBlock();
+        if (!state.isAir()) {
             if (!this.isBlacklisted(block)) {
                 if (!this.onlyMineOres) {
                     return true;
                 } else {
+                    if (state.is(Tags.Blocks.ORES) || StackUtil.isValid(stack) && stack.is(Tags.Items.ORES)) {
+                        return true;
+                    }
                     if (StackUtil.isValid(stack)) {
-                        // TODO: [port] come back and see if there is a tag for this
-
-                        //                        int[] ids = OreDictionary.getOreIDs(stack);
-                        //                        for (int id : ids) {
-                        //                            String name = OreDictionary.getOreName(id);
-                        //                            if (name.startsWith("ore") || name.startsWith("denseore")) {
-                        //                                return true;
-                        //                            }
-                        //                        }
-
                         String reg = ForgeRegistries.BLOCKS.getKey(block).toString();
                         if (!reg.isEmpty()) {
-                            for (String string : ConfigStringListValues.MINER_EXTRA_WHITELIST.getValue()) {
+                            for (String string : CommonConfig.Machines.MINER_EXTRA_WHITELIST.get()) {
                                 if (reg.equals(string)) {
                                     return true;
                                 }
@@ -212,7 +248,7 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
     private boolean isBlacklisted(Block block) {
         String reg =  ForgeRegistries.BLOCKS.getKey(block).toString();
         if (!reg.isEmpty()) {
-            for (String string : ConfigStringListValues.MINER_BLACKLIST.getValue()) {
+            for (String string : CommonConfig.Machines.MINER_BLACKLIST.get()) {
                 if (reg.equals(string)) {
                     return true;
                 }
@@ -232,9 +268,12 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
             this.onlyMineOres = !this.onlyMineOres;
             this.sendUpdate();
         } else if (buttonID == 1) {
+            int minHeight = player.level().getMinBuildHeight();
             this.checkX = 0;
-            this.checkY = -1;
+            this.checkY = minHeight - 1;
             this.checkZ = 0;
+            this.checkYMin = minHeight;
+            this.setChanged();
         }
     }
 
@@ -255,7 +294,7 @@ public class TileEntityVerticalDigger extends TileEntityInventoryBase implements
 
     @Override
     public Component getDisplayName() {
-        return Component.empty();
+        return Component.translatable("container.actuallyadditions.vertical_digger");
     }
 
     @Nullable

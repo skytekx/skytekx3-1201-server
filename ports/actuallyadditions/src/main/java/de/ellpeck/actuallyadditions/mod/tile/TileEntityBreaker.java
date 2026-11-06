@@ -13,7 +13,6 @@ package de.ellpeck.actuallyadditions.mod.tile;
 import de.ellpeck.actuallyadditions.mod.blocks.ActuallyBlocks;
 import de.ellpeck.actuallyadditions.mod.inventory.ContainerBreaker;
 import de.ellpeck.actuallyadditions.mod.util.ItemStackHandlerAA.IAcceptor;
-import de.ellpeck.actuallyadditions.mod.util.NetHandlerSpaghettiServer;
 import de.ellpeck.actuallyadditions.mod.util.StackUtil;
 import de.ellpeck.actuallyadditions.mod.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -29,11 +28,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import javax.annotation.Nonnull;
@@ -79,16 +77,22 @@ public class TileEntityBreaker extends TileEntityInventoryBase implements MenuPr
     public static <T extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState state, T t) {
         if (t instanceof TileEntityBreaker tile) {
             tile.serverTick();
+        }
+    }
 
-            if (!tile.isRedstonePowered && !tile.isPulseMode) {
-                if (tile.currentTime > 0) {
-                    tile.currentTime--;
-                    if (tile.currentTime <= 0) {
-                        tile.doWork();
-                    }
-                } else {
-                    tile.currentTime = 15;
+    // SkyTekx: the work timer lives in the instance tick as in a117dd53, so that the Placer, whose
+    // ticker calls TileEntityPlacer::serverTick, runs it too. On the base the Placer never placed
+    @Override
+    protected void serverTick() {
+        super.serverTick();
+        if (!this.isRedstonePowered && !this.isPulseMode) {
+            if (this.currentTime > 0) {
+                this.currentTime--;
+                if (this.currentTime <= 0) {
+                    this.doWork();
                 }
+            } else {
+                this.currentTime = 15;
             }
         }
     }
@@ -99,20 +103,22 @@ public class TileEntityBreaker extends TileEntityInventoryBase implements MenuPr
     }
 
     private void doWork() {
-        Direction side = WorldUtil.getDirectionByPistonRotation(this.level.getBlockState(this.worldPosition));
+        Direction side = WorldUtil.getDirectionByPistonRotation(this.getBlockState());
         BlockPos breakCoords = this.worldPosition.relative(side);
         BlockState stateToBreak = this.level.getBlockState(breakCoords);
         Block blockToBreak = stateToBreak.getBlock();
 
-        if (!this.isPlacer && blockToBreak != Blocks.AIR && !(blockToBreak instanceof IFluidBlock) && stateToBreak.getDestroySpeed(this.level, breakCoords) >= 0.0F) {
+        // SkyTekx: the break path of 217fc733 (snow, PR #1515) with the drop chance of e91c1569 and
+        // 902e8064. The base asked the fake player with an empty hand, which can harvest nothing that
+        // needs a tool. Fluids stay out as on 1.12, main dropped that check with IFluidBlock
+        if (!this.isPlacer && blockToBreak != Blocks.AIR && !(blockToBreak instanceof LiquidBlock) && !(blockToBreak instanceof IFluidBlock) && stateToBreak.getDestroySpeed(this.level, breakCoords) >= 0.0F) {
             List<ItemStack> drops = Block.getDrops(stateToBreak, (ServerLevel) this.level, breakCoords, this.level.getBlockEntity(breakCoords));
-            FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) this.level);
-            if (fake.connection == null) {
-                fake.connection = new NetHandlerSpaghettiServer(fake);
-            }
-            if (stateToBreak.canHarvestBlock(this.level, breakCoords, fake)) { //TODO might double check this is right mikey
+            float chance = WorldUtil.fireFakeHarvestEventsForDropChance(this, this.level, breakCoords);
+
+            if (chance > 0 && this.level.random.nextFloat() <= chance) {
                 if (StackUtil.canAddAll(this.inv, drops, false)) {
-                    this.level.destroyBlock(breakCoords, false);
+                    this.level.levelEvent(2001, breakCoords, Block.getId(this.level.getBlockState(breakCoords)));
+                    this.level.setBlockAndUpdate(breakCoords, Blocks.AIR.defaultBlockState());
                     StackUtil.addAll(this.inv, drops, false);
                     this.setChanged();
                 }

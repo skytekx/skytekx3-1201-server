@@ -12,6 +12,7 @@ package de.ellpeck.actuallyadditions.mod.util;
 
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditions;
 import de.ellpeck.actuallyadditions.mod.ActuallyAdditionsClient;
+import de.ellpeck.actuallyadditions.mod.items.ActuallyItems;
 import de.ellpeck.actuallyadditions.mod.tile.FilterSettings;
 import de.ellpeck.actuallyadditions.mod.util.compat.SlotlessableItemHandlerWrapper;
 import net.minecraft.core.BlockPos;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -47,7 +49,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public final class WorldUtil {
 
@@ -172,8 +173,10 @@ public final class WorldUtil {
         if (level instanceof ServerLevel && StackUtil.isValid(stack) && pos != null) {
             BlockPos offsetPos = pos.relative(side);
             BlockState state = level.getBlockState(offsetPos);
-            Block block = state.getBlock();
-            boolean replaceable = false; //= block.canBeReplaced(world, offsetPos); //TODO
+            // SkyTekx: the replace check of a117dd53, the base hard coded false
+            boolean replaceable = state.canBeReplaced(new BlockPlaceContext(level, null, InteractionHand.MAIN_HAND, stack,
+                    new BlockHitResult(new Vec3(0, 0, 0), side, pos, false)
+            ));
 
             //Redstone
             if (replaceable && stack.getItem() == Items.REDSTONE) {
@@ -292,16 +295,27 @@ public final class WorldUtil {
     }
 
     //I think something is up with this, but I'm not entirely certain what.
-    public static float fireFakeHarvestEventsForDropChance(BlockEntity caller, List<ItemStack> drops, Level level, BlockPos pos) {
+    // SkyTekx: the drop chance of 17d8dcce and 902e8064. The base never answered anything but 0, so the
+    // Long-Range Breaker and the Vertical Digger mined nothing. The fake player holds a Netherite AIOT
+    // for the harvest check, as on main, and gets its previous item back afterwards. On Forge 47
+    // BlockState#canHarvestBlock posts the HarvestCheck that EventHooks.doPlayerHarvestCheck posts on main
+    public static float fireFakeHarvestEventsForDropChance(BlockEntity caller, Level level, BlockPos pos) {
         if (level instanceof ServerLevel) {
             FakePlayer fake = FakePlayerFactory.getMinecraft((ServerLevel) level);
-            BlockPos tePos = caller.getBlockPos();
-            fake.setPos(tePos.getX() + 0.5, tePos.getY() + 0.5, tePos.getZ() + 0.5);
-            BlockState state = level.getBlockState(pos);
+            int selected = fake.getInventory().selected;
+            ItemStack heldBefore = fake.getInventory().items.get(selected);
+            fake.getInventory().items.set(selected, new ItemStack(ActuallyItems.NETHERITE_AIOT.get()));
+            try {
+                BlockPos tePos = caller.getBlockPos();
+                fake.setPos(tePos.getX() + 0.5, tePos.getY() + 0.5, tePos.getZ() + 0.5);
+                BlockState state = level.getBlockState(pos);
 
-            BreakEvent event = new BreakEvent(level, pos, state, fake);
-            if (!MinecraftForge.EVENT_BUS.post(event)) {
-                //return ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, 0, 1, false, fake); //TODO what?!
+                BreakEvent event = new BreakEvent(level, pos, state, fake);
+                if (!MinecraftForge.EVENT_BUS.post(event)) {
+                    return state.canHarvestBlock(level, pos, fake) ? 1F : 0F;
+                }
+            } finally {
+                fake.getInventory().items.set(selected, heldBefore);
             }
         }
         return 0F;

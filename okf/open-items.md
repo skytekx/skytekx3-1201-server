@@ -208,6 +208,22 @@ evidence and the page with the details. The rulings behind the first section are
   player cannot toggle machines in a foreign claim. The pack runs EssentialsX only, so nothing is
   needed today. See
   [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
+- The dungeon loot of Actually Additions in the chests of other structure mods. The fork's loot
+  modifier adds crystals, black quartz, drill cores and Bat Wings only to the nine vanilla chest
+  tables it names (`ports/actuallyadditions/UPSTREAM.md`, source change 58). Better Dungeons 4.0.4
+  and Better Strongholds 4.0.3 roll chest tables of their own, so their chests get none, and nobody
+  has checked what the chests of Better Mineshafts 4.0.4 roll. Whether those tables join the list is
+  a choice on balance (the `aa-ship` loot item of the world content bundle in
+  `ports/actuallyadditions-backport-carryover.json`). No chest of the three mods was opened in a
+  world. See
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#pack-integration).
+- The flax seeds of Actually Additions as flax. The fork puts them into `forge:crops/flax`, as
+  upstream does with `c:crops/flax`, and Supplementaries 3.1.44 makes its rope, sack and doormat
+  from that tag, so the seeds craft rope without anyone growing flax
+  (`ports/actuallyadditions/UPSTREAM.md`, source change 9, the `aa-ship/pack-wiring` item of the
+  data core bundle in the carryover file). Keep that, or remove the seeds from the tag in
+  `kubejs/server_scripts/tag_fixes.js`. See
+  [Actually Additions backport](modpack/actuallyadditions-backport.md#pack-integration).
 
 ## Defects to fix
 

@@ -258,12 +258,16 @@ client cannot join the fork server and a client of the next pack cannot join the
 wait for the alternator scan and the live world test of the wires on a copy of the live world, the
 rollout gates under [Release](createaddition-backport.md#release) of the backport page.
 
-The Actually Additions fork is new and replaces no jar, but a client of the next pack carries it. Its
-channel `actuallyadditions:main` accepts only its own protocol 5 and no absent mod
+The Actually Additions fork is new and replaces no jar, but a client of the next pack carries it.
+Its channel `actuallyadditions:main` accepts only its own protocol 5 and no absent mod
 (`PacketHandler.java:169-175` in `ports/actuallyadditions/`), so that client cannot join a server
 without the fork. The upload therefore also goes out together with copying
 `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar` into the server's `mods/` while the java process is
 gone, see the [operator notes](actuallyadditions-backport.md#operator-notes) of the backport page.
+No pack client has joined a server with this jar yet, so no public pack with it goes up before a
+client from the `.mrpack` has logged in to the Arclight test server over protocol 5, at least the
+login item of carryover `aa-client-test`, see [Release](actuallyadditions-backport.md#release) of
+the backport page.
 
 The full pack of 98bf164 with the six mods that stand in for NeoForge 1.21.1 mods, Create: Dragons
 Plus included, booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the

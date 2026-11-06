@@ -12,6 +12,7 @@ package de.ellpeck.actuallyadditions.mod.blocks;
 
 import de.ellpeck.actuallyadditions.mod.blocks.base.BlockBase;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -29,22 +30,16 @@ public class BlockGreenhouseGlass extends BlockBase {
         super(ActuallyBlocks.defaultPickProps(0.5F, 10.0F).sound(SoundType.GLASS).randomTicks());
     }
 
-
-    // TODO: [port] figure this out
-    //    @Override
-    //    @Deprecated
-    //    @OnlyIn(Dist.CLIENT)
-    //    public boolean shouldSideBeRendered(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
-    //        BlockState otherState = world.getBlockState(pos.offset(side));
-    //        Block block = otherState.getBlock();
-    //
-    //        return state != otherState || block != this && super.shouldSideBeRendered(state, world, pos, side);
-    //    }
-
+    // SkyTekx: the glass renders its model again, and the faces between two panes are culled, as in
+    // 817797ad and 1224c1de. The base made it invisible
+    @Override
+    public boolean skipRendering(BlockState state, BlockState adjacentState, Direction side) {
+        return adjacentState.is(this) || super.skipRendering(state, adjacentState, side);
+    }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -78,7 +73,8 @@ public class BlockGreenhouseGlass extends BlockBase {
         BlockPos.MutableBlockPos mut = new BlockPos(glassPos).mutable();
         while (true) {
             mut.set(mut.getX(), mut.getY() - 1, mut.getZ());
-            if (mut.getY() < 0) {
+            // SkyTekx: down to the bottom of the world, the base and main stop at Y 0
+            if (mut.getY() < world.getMinBuildHeight()) {
                 return null;
             }
             BlockState state = world.getBlockState(mut);

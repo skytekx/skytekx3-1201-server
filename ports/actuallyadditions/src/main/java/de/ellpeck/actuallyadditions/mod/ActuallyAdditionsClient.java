@@ -120,6 +120,9 @@ public class ActuallyAdditionsClient {
         ItemBlockRenderTypes.setRenderLayer(ActuallyBlocks.RICE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ActuallyBlocks.FLAX.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ActuallyBlocks.COFFEE.get(), RenderType.cutout());
+
+        // SkyTekx: the greenhouse glass of 817797ad, whose texture has only clear and solid pixels
+        ItemBlockRenderTypes.setRenderLayer(ActuallyBlocks.GREENHOUSE_GLASS.get(), RenderType.cutout());
     }
 
     public static void setupSpecialRenders(EntityRenderersEvent.RegisterRenderers event) {

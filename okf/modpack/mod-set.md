@@ -351,7 +351,7 @@ From `~/.claude/history.jsonl`, session 5bd3e1de:
 |---|---|---|
 | File [modrinth.index.json](../../modrinth.index.json) | Yes | The index entries with path, SHA-1, SHA-512, size, download URL and env per side |
 | Folder [local-mods/](../../local-mods) | Yes | 58 jars that are not on Modrinth or were built from source, and since 2026-11-06 the pointer file of ZeroCore 2, whose jar git does not hold (`.gitignore` ignores its path). All 59 ship as `overrides/mods/` |
-| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars and BrassAmber BattleTowers, which exists nowhere else in the repo. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. SkyTekx DE Fixes, Bygone Nether, Mystical Automation, Mekanism: Extra Modules, the Expanded Delight port, the Create: Integrated Farming port and Create: Dragons Plus join them only with the deploy of the next pack after 3.1.3. Pack 3.1.3 went live without them. That deploy also swaps four jars by hand: Extreme Reactors 2.0.84 out and 2.0.97 in, ZeroCore 2.1.45 out and 2.1.48 in (from `python3 tools/fetch_local_mods.py`, since git holds only its pointer), LittleTiles 1.6.0-pre161 out and 1.6.0-pre161-skytekx.1 in, and Create Crafts & Additions 1.3.3 out and 1.20.1-1.7.3-skytekx.1 in, because two jars of one mod id stop the boot. The Create Crafts & Additions swap waits for the live world gates of its [backport](createaddition-backport.md#release). The Actually Additions fork 1.20.1-1.1.52-skytekx.1 joins with the same deploy as a new jar, see its [operator notes](actuallyadditions-backport.md#operator-notes). Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
+| Folder `mods/` | No (`.gitignore:33`) | What the server loads: every index jar with a server side except Nostalgic Tweaks (206 on 2026-11-04), the `local-mods/` jars. The nine mods of 2026-11-04, Advanced Loot Info with its library, Flux Networks and SkyTekx Molten joined them with the deploy of 3.1.3 on 2026-11-05. SkyTekx DE Fixes, Bygone Nether, Mystical Automation, Mekanism: Extra Modules, the Expanded Delight port, the Create: Integrated Farming port and Create: Dragons Plus join them only with the deploy of the next pack after 3.1.3. Pack 3.1.3 went live without them. That deploy also swaps four jars by hand: Extreme Reactors 2.0.84 out and 2.0.97 in, ZeroCore 2.1.45 out and 2.1.48 in (from `python3 tools/fetch_local_mods.py`, since git holds only its pointer), LittleTiles 1.6.0-pre161 out and 1.6.0-pre161-skytekx.1 in, and Create Crafts & Additions 1.3.3 out and 1.20.1-1.7.3-skytekx.1 in, because two jars of one mod id stop the boot. The Create Crafts & Additions swap waits for the live world gates of its [backport](createaddition-backport.md#release). The Actually Additions fork 1.20.1-1.1.52-skytekx.1 joins with the same deploy as a new jar, see its [operator notes](actuallyadditions-backport.md#operator-notes). Also `ad_astra-forge-1.20.1-1.15.20.jar.bak`, the unpatched original, which Forge ignores |
 | Folder `client-only-mods/` | No (`.gitignore:34`) | 17 jars kept off the server: the 16 index entries with server env `unsupported`, Modflared among them since 44358a8, and Nostalgic Tweaks, moved by hand. Just Enough Resources was one of them from 19e712ec to 14fc2390 |
 | Folder `disabled-mods/` | No (`.gitignore:56`) | 8 parked jars, listed below |
 
@@ -591,7 +591,7 @@ neither the index nor `local-mods/`, so a fresh clone and the packs up to 3.0.5 
 | Jar | What it is | License | Source | Since 2026-10-31 |
 |---|---|---|---|---|
 | Jar `alltheleaks-1.1.1+1.20.1-forge.jar` | Memory leak fixes (AllTheLeaks) | MIT | Not on Modrinth | In `local-mods/` (782126f) |
-| Jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` | BrassAmber BattleTowers, the successor the owner named on 2026-06-29 12:01 | All Rights Reserved | CurseForge only | Still only in the server's `mods/`. Players add it by hand (21:48) |
+| Jar `ba_bt-1.20.1-3.0.0-beta3.2.1.jar` | BrassAmber BattleTowers, the successor the owner named on 2026-06-29 12:01 | All Rights Reserved | CurseForge, and since 2026-11-01 the GitHub release of `skytekx/battletowers` | Players added it by hand from 21:48. In the index since c5386c1 of 2026-11-01 |
 | Jar `cataclysm_spellbooks-1.2.9-1.20.1.jar` | Cataclysm Spellbooks, built 2026-06-29 06:46 from the fork skytekx/Cataclysm_Spellbooks, commit 36d1cee | MIT | The fork has no release. Modrinth has a different upstream file that does not carry the fix | In `local-mods/` (782126f) |
 
 The owner ruled on 2026-06-29 06:25 to patch Spellbooks rather than Cataclysm, because the upstream
@@ -616,7 +616,8 @@ overworld. skytekx-compat 2.1.3 enforces that, see
 `meteors-2.5-forge.jar` (CurseForge project 1489468, file 8137833, uploaded 2026-05-24, 1,173,120
 bytes, SHA-1 a9d3117be3bc39120ee93b08352a9e1c8f54efd1) declares `GNU LGPL v2.1 or later` in its
 `mods.toml`, while the CurseForge project field says All Rights Reserved. It is not on Modrinth and
-not in the pack. Like BattleTowers it sits only in the server's `mods/`, and players add it by hand.
+not in the pack at first. Like BattleTowers it sat only in the server's `mods/`, and players added it
+by hand until the index took both on 2026-11-01, see below.
 A client without it cannot join, because it adds blocks, items and entities. Its code has no
 mixins, no network or process calls and no class loading, and it touches the world only through
 Forge events, its entities and its saved data.
@@ -628,6 +629,15 @@ A Modrinth pack may also download files from `github.com`, but neither jar is th
 holds the Forge port of Falling Meteors. A copy of either jar under a SkyTekx account would be a
 redistribution, so it needs the authors' permission first, as the bundled jars on
 [publish](publish.md#what-blocks-a-release) do.
+
+On 2026-11-01 at 19:28 the owner reported the BrassAmber team's permission for BattleTowers and had
+both jars hosted unchanged as releases in the public repos `skytekx/battletowers` and
+`skytekx/falling-meteors-reimagined` ([Decisions](../decisions.md)). Since c5386c1 of that day the
+index downloads both from there, on client and server, checked by SHA-1, so packs from 3.1.1 on bring
+them and players no longer add them by hand (static check of the 3.1.4 pack on 2026-11-07). The
+permission for BattleTowers rests on the owner's report, and `modrinth-permissions/` holds no record
+for either jar yet. Falling Meteors declares LGPL 2.1 or later but comes with no published source.
+Both points matter before a public upload.
 
 ## Backpack
 

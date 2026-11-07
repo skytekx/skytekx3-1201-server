@@ -3,7 +3,7 @@ type: Reference
 title: Client
 description: The owner's Prism Launcher instance for SkyTekx 3 on Asahi Linux, with Java 17, the 16K page allocator flag, the mods only clients have, the custom main menu, the client crash history and how a player joins from outside the LAN.
 tags: [modpack, client, prism, asahi]
-timestamp: 2026-11-04
+timestamp: 2026-11-07
 ---
 
 # Client
@@ -49,7 +49,8 @@ the pack it holds:
 
 - AllTheLeaks, BrassAmber BattleTowers and the Cataclysm Spellbooks fork build, with the same SHA-1 as
   on the server. Up to 3.0.5 no pack had them. Since 3.0.6 the pack bundles the first and the last.
-  BattleTowers is still in no pack, and since 2026-10-31 21:48 players add it by hand (see
+  From 2026-10-31 21:48 players added BattleTowers by hand. Since c5386c1 of 2026-11-01 the index
+  downloads it from a GitHub release, so packs from 3.1.1 on bring it (see
   [mod set](mod-set.md#jars-outside-the-index)).
 - FancyMenu 3.9.6, Konkrete 1.8.0 and Melody 1.0.3 for the main menu (see below).
 - Nostalgic Tweaks 2.0.0-beta.922 for the old swing (see [combat](../content/combat.md#swing-animation)).
@@ -209,7 +210,8 @@ A player outside the LAN gets in with pack 3.0.7 like this:
    It brings Modflared and a server list with the one entry SkyTekx at `hex.skytekx.com`.
 2. Add BrassAmber BattleTowers to the `mods/` folder of the instance, since the server refuses a client
    without it. The owner decided on 2026-10-31 at 21:48 that players add it by hand. The official file
-   is linked on [mod set](mod-set.md#jars-outside-the-index).
+   is linked on [mod set](mod-set.md#jars-outside-the-index). Packs from 3.1.1 on bring it, so this
+   step only applies to 3.0.7.
 3. Give the game at least 12 GB of memory, see [publish](publish.md#test-of-2026-10-31).
 4. On a Mac with Apple Silicon, install Rosetta 2. Modflared runs an Intel build of cloudflared there.
 5. Start the game. On the first start Modflared downloads cloudflared from GitHub. Then join SkyTekx

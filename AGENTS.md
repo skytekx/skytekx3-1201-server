@@ -28,9 +28,8 @@ bundled jars in `local-mods/`). The stack and the self-hosting steps are in the 
   `git status` before every commit. Real secrets live in the ansible vault.
 - Treat `mods/` as state that the repo cannot rebuild. It holds the index jars, eleven of them patched
   in place, the bundled jars from `local-mods/` (three of them patched too, and the pack ships Simply
-  Jetpacks 2 patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`), BrassAmber BattleTowers and
-  Falling Meteors Reimagined, which are in no pack. Change the set in `modrinth.index.json` or `local-mods/` and mirror the change
-  into `mods/` by hand. Git holds no copy of a jar that a pointer file `local-mods/<jar>.fetch.json`
+  Jetpacks 2 patched as `SimplyJetpacks2-1.20.1-2.11.0.1-skytekx.1.jar`). Change the set in
+  `modrinth.index.json` or `local-mods/` and mirror the change into `mods/` by hand. Git holds no copy of a jar that a pointer file `local-mods/<jar>.fetch.json`
   names, ZeroCore 2 for now, because its license forbids one in this public repository. Fetch it with
   `tools/fetch_local_mods.py` before you mirror `local-mods/`, and never commit it. Update mods with
   `tools/update_mods.py`, never with `tools/resolve_all.py`. See

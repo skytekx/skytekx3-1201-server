@@ -95,7 +95,9 @@ builds.
 Decided on 2026-10-31 at 21:48: BrassAmber BattleTowers stays on the server and players add the jar by
 hand. The server refuses a client without it, and it is All Rights Reserved and only on CurseForge, so
 bundling it would need a grant from its author. Since about 21:56 the Modrinth body tells players to
-get it from CurseForge. See [mod set](mod-set.md#jars-outside-the-index).
+get it from CurseForge. See [mod set](mod-set.md#jars-outside-the-index). The owner reversed this on
+2026-11-01 at 19:28 ([Decisions](../decisions.md)). Since c5386c1 of that day the index downloads
+BattleTowers and Falling Meteors Reimagined from GitHub releases, so packs from 3.1.1 on bring both.
 
 Fixed on 2026-10-31: the stale project texts (21:25, the new summary and body credit ts4.party,
 name no person or handle and drop "kitchen-sink", Better Combat and Radium), the Nyx entry that downloaded from a GitHub release that does not exist (d3391bf,
@@ -139,7 +141,9 @@ boots had rewritten on disk (3a398b1, the builder reads git HEAD).
 - Since 3.0.7 a server list under `client-overrides/servers.dat` with the one entry SkyTekx at
   `hex.skytekx.com`. An instance that is updated to 3.0.7 gets this file in place of its own server
   list, so its own entries are lost. The changelog of 3.0.7 says so.
-- No resource pack, none of the other jar patches and no BrassAmber BattleTowers, which players add by
+- No resource pack and none of the other jar patches. BrassAmber BattleTowers and Falling Meteors
+  Reimagined are index entries since c5386c1 and download from the GitHub releases of
+  `skytekx/battletowers` and `skytekx/falling-meteors-reimagined`, so players no longer add them by
   hand.
 
 ## Junk in the build
@@ -186,8 +190,7 @@ On the build machine, after the blockers are fixed:
    build that is never uploaded, while other blockers remain, is
    `python3 tools/build_mrpack.py --allow-unpermitted`. It writes
    `SkyTekx3-<version>-UNPERMITTED.mrpack`, which the upload script never picks up.
-3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap, add BrassAmber BattleTowers by
-   hand as players do, and join the server with it. On Asahi Linux add the JVM flag from
+3. Import the `.mrpack` into a fresh Prism instance with a 12 GB heap and join the server with it. On Asahi Linux add the JVM flag from
    [client](client.md#java-and-the-asahi-flag) and join by the Mac mini's LAN address, since Modflared
    cannot open the tunnel on Linux on ARM. Stay in the world until EMI logs "Reloaded EMI" and the heap
    settles. The 90% message of AllTheLeaks at the join is normal. A heap that stays full is not.

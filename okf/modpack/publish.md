@@ -3,7 +3,7 @@ type: Runbook
 title: Publish
 description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Publish
@@ -301,9 +301,9 @@ the backport page.
 The full pack of 052a0e4 with the six mods that stand in for NeoForge 1.21.1 mods, Create: Dragons
 Plus included, booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the
 test copies, see [NeoForge ports](neoforge-ports.md#status). That boot covers the server side only.
-The player notes for these six mods are drafted in `docs/changelog/next.md`. Before the upload, add
-the other changes of the next pack to it, and rename it to `docs/changelog/<VERSION>.md`, the file
-that `tools/publish_modrinth.py` sends as the changelog of the version.
+The player notes for these six mods and the other changes of the next pack are in
+`docs/changelog/3.1.4.md`, the file that `tools/publish_modrinth.py` sends as the changelog of
+version 3.1.4.
 
 Versions 3.0.0 to 3.0.4, 3.0.6 and 3.0.7 are on Modrinth. 3.0.5 was built but never uploaded. None of the
 `.mrpack` files is in git (`.gitignore:36`). The 3.0.5 file was committed on 2026-07-12 at 23:43

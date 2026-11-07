@@ -3,7 +3,7 @@ type: Plan
 title: Create Crafts & Additions backport
 description: Which features of the Create Crafts & Additions 1.21.1 line (1.7.3) go onto its 1.20.1 Forge base for the pack, in which bundles and order, which upstream work stays out, and the license, savegame and operator rules of the fork.
 tags: [modpack, mods, createaddition, create, backport]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Create Crafts & Additions backport
@@ -1149,7 +1149,7 @@ The plan ports these with upstream's or the safe default, and the owner may rule
 
 ## Changelog for players
 
-The player notes of the next pack are in `docs/changelog/next.md`, section Create Crafts & Additions.
+The player notes of the next pack are in `docs/changelog/3.1.4.md`, section Create Crafts & Additions.
 The lists below are the full record of what changes for players.
 
 ### New for players

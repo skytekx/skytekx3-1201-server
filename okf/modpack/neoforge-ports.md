@@ -3,7 +3,7 @@ type: Reference
 title: NeoForge ports
 description: The mods that only exist for NeoForge 1.21.1, or for 1.20.1 only on Fabric, and how each one reaches the Forge 1.20.1 pack, as an older Forge build in the index or as a vendored fork under ports/, with its source, what came in and what stayed out, its license conditions, its tests and the operator steps, and the full pack boots that checked all of them together. Bygone Nether, the Mystical Automation port, the Mekanism: Extra Modules port, the Expanded Delight port and the Create: Integrated Farming port with Create: Dragons Plus so far.
 tags: [modpack, mods, ports, neoforge, index, mysticalautomation, mekanism, expandeddelight, farmersdelight, createintegratedfarming, create, boot-test]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # NeoForge ports
@@ -32,7 +32,7 @@ All six mods of the table, Create: Dragons Plus included, are in the branch, and
 them booted on Forge 47.4.18 and on Arclight on 2026-11-06 with the error baseline of the test copies.
 A later Forge boot of 8dbd317 checked the rebuilt jars of Expanded Delight and Create: Integrated
 Farming, see [the boot of the two fixes](#boot-of-the-two-fixes). The latest full pack boots ran on
-both loaders after the merge of master with pack 3.1.3, see [boots of the merged
+both loaders after master with pack 3.1.3 came into the branch, see [boots of the merged
 branch](#boots-of-the-merged-branch). What remains for each of them is a test in a client, which only
 the next pack brings, see [open items](../open-items.md#not-verified).
 
@@ -117,10 +117,12 @@ b781300).
 
 ### Boots of the merged branch
 
-After the merge of master with pack 3.1.3 (5c2c6f3) and the regeneration of the unification and the
+After the merge of master with pack 3.1.3 and the regeneration of the unification and the
 melting for the merged mod set, four boots ran on the same harness with the forceloaded points, each
 from a fresh detached worktree: the branch at 4c3374b and, as the reference, origin/master at b2d9a8f,
-which is pack 3.1.3. The branch worktree got the ZeroCore 2 jar from `tools/fetch_local_mods.py`. The
+which is pack 3.1.3. Since the rebase of 2026-11-07 the branch sits on master instead of the merge, and
+5c2c6f3, the rebased copy of the first parent of the merge, has the merged tree. The branch worktree got the
+ZeroCore 2 jar from `tools/fetch_local_mods.py`. The
 Arclight copies ran `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar` (SHA-1 70b44a84), the jar that
 `arclight.jar` points to. The summaries are `packboot-logs/final-merge-*` and `master313-*` in the
 workflow scratchpad, not in the repository.

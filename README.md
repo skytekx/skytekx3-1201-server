@@ -22,7 +22,7 @@ skytekx.com does not point at a game server yet.
 | Server | Arclight 1.20.1 1.0.6 in a hardened build, `arclight-forge-1.20.1-1.0.6-6de9fec-safeiter2.jar`, started through the symlink `arclight.jar` |
 | Java | Java 17. The boots that reached `Done` ran Temurin 17.0.19 on the build machine and 17.0.21 on the Mac mini. The one try with Java 21 failed on a missing mod and was never repeated |
 | Plugins | EssentialsX 2.22.0 |
-| Mods | 230 entries in `modrinth.index.json` plus 59 bundled jars (counted 2026-11-06 after the merge of master with SkyTekx Molten). Git holds 58 of them in `local-mods/` and since 2026-11-06 names ZeroCore 2 there by a pointer file, see [Mod set](okf/modpack/mod-set.md) |
+| Mods | 230 entries in `modrinth.index.json` plus 59 bundled jars (counted 2026-11-06, with master and its SkyTekx Molten in the branch). Git holds 58 of them in `local-mods/` and since 2026-11-06 names ZeroCore 2 there by a pointer file, see [Mod set](okf/modpack/mod-set.md) |
 | Recipe layers | AlmostUnified for one item per material, Polymorph for grid conflicts, KubeJS for scripts |
 | Recipe viewers | EMI and JEI |
 | Pregen and profiling | Chunky and Spark |

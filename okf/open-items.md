@@ -3,7 +3,7 @@ type: Backlog
 title: Open items
 description: Everything that is still open on SkyTekx 3 on 2026-10-31, from owner rulings that were never built and choices only the owner can make to known defects, unverified claims and stale docs.
 tags: [open-items, backlog, todo]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Open items
@@ -48,9 +48,6 @@ evidence and the page with the details. The rulings behind the first section are
 - The recipe port from SkyTekx 2 (2026-06-27 10:34). The port notes in `docs/RECIPE_PORT.md` still have
   VERIFY rows, and most of `kubejs/server_scripts/gameplay.js` is commented out. See
   [KubeJS](modpack/kubejs.md).
-- No dashes in commit messages (2026-06-29 22:14). Spaced hyphens used as dashes remain in the bodies of
-  bc9a935 and 573b71b. A fix means another history rewrite and force push.
-
 
 ## Owner decisions
 
@@ -122,10 +119,6 @@ evidence and the page with the details. The rulings behind the first section are
 - Twelve of the builds that came with the mod update of 2026-10-31 are betas, and Naturalist moved to a
   different version line. The ruling of 2026-06-27 asks for the most stable configuration. Keep them or
   pin the last releases. See [Mod set](modpack/mod-set.md#update-of-2026-10-31).
-- The author address of the local commits of 2026-10-31. They carry `skytekx@erebos.xyz` from the
-  repo's local git config, while the 40 commits before them use one other address. On 2026-06-29 18:38
-  the owner had the address of the first commit changed. Settle the address before the push. See
-  [Related repos and services](related.md#this-repo-on-github).
 - Plugin telemetry and update checks. The bStats switch is on, PluginMetrics is not opted out, the
   Essentials update check is on, and Iron's Lib fetches Patreon data at runtime. The log audit of
   2026-11-04 found that Iron's Lib 2.3.0 also sends a server id, the player count and its version to
@@ -146,6 +139,17 @@ evidence and the page with the details. The rulings behind the first section are
   history of the build machine. See [Secrets](server/secrets.md#exposed-values-to-rotate).
 - The two local backup branches `backup-pre-reconstruct` and `backup-pre-scrub` hold the history before
   the rewrites of 2026-06-29. Keep or delete them.
+- Commits of the owner after the rewrite of 2026-11-07. The agent signs every commit it makes, but a
+  commit that the owner makes without the agent carries no signature, so GitHub shows no verified
+  badge on it, unless a key on the owner's account signs it. The repo's local git config on the Mac mini still sets
+  `skytekx@erebos.xyz` and should set `kleber@snek.at`, as the ruling of 2026-11-07 asks. That comes
+  from the session of the rewrite and was not checked on the Mac mini. See
+  [Decisions](decisions.md#git-and-docs).
+- Clones on the old history. The rewrite of 2026-11-07 gave every commit a new id, so the checkout on
+  the Mac mini and every other clone need a reset to the new master and branch, after a look at
+  `git status` for local work. The remote branches `claude/minecraft-server-performance-88o82x` and
+  `feat/twilight-forest` still sit on the old history. Rebase or delete them. See
+  [Related repos and services](related.md#this-repo-on-github).
 - Weak mobs gather in the Skylands. They do not burn there, because the fixed noon never counts as day,
   so 59 stood in the loaded part of the Skylands a minute after they came back on 2026-11-02. If that is
   too many, a KubeJS rule could let undead burn under open sky in the Skylands or thin out spawns there.
@@ -350,10 +354,10 @@ evidence and the page with the details. The rulings behind the first section are
   check of its 268 client jars found every mandatory dependency present in a matching version, and the
   server runs the same mods, but no fresh install, no update of a 3.1.2 instance and no join was
   tested, see [publish](modpack/publish.md#version-history).
-- The merged branch with players. After the merge of master with pack 3.1.3, the full pack of the
+- The merged branch with players. After master with pack 3.1.3 came into the branch, the full pack of the
   branch at 4c3374b booted on Forge 47.4.18 and on the production Arclight jar with the forceloaded
   points, the 3 ERROR lines of the test copies and no new log signature against the branch before
-  the merge and against 3.1.3, see [NeoForge
+  master came in and against 3.1.3, see [NeoForge
   ports](modpack/neoforge-ports.md#boots-of-the-merged-branch). The copies ran without EssentialsX and
   the other plugins, no player joined them, and no copy of the live world has loaded the mods of the
   branch. These checks wait for the next pack after 3.1.3.

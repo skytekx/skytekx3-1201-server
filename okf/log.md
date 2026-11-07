@@ -3,7 +3,7 @@ type: Log
 title: Change log
 description: Chronological change log of SkyTekx 3 from the audit of SkyTekx 2 on 2026-06-26 to the move to the Mac mini and the Halloween world of 2026-10-31.
 tags: [log, history]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Change log
@@ -148,7 +148,8 @@ was done. The times below come from the prompts and the logs. The lineage before
   `patches/`, see [Arclight runtime](server/arclight.md#the-hardened-jar).
 - At 22:14 the owner ruled that commit messages carry no dashes and no semicolons and asked to clean
   the whole history. The messages were rewritten with `git filter-branch` at 22:45 and force-pushed at
-  22:51. Two spaced hyphens used as dashes survived, in bc9a935 and 573b71b.
+  22:51. Two spaced hyphens used as dashes survived, in bc9a935 and 573b71b, until the rewrite of
+  2026-11-07.
 - At 22:45 the hot air balloon of the Ruins mod and seven more structures were floated in the Skylands
   (b2b5861).
 - At 22:30 the owner asked for the performance report in the OKF and not in `docs/`.
@@ -1112,7 +1113,7 @@ logs stay on the Mac and are not in the repo.
 
 ## 2026-11-06: Unification and melting for the mods of the branch
 
-- After the merge of master with pack 3.1.3 (5c2c6f3), the unify audit and the generated melting were
+- After the merge of master with pack 3.1.3, the unify audit and the generated melting were
   run again for the merged mod set, as [AlmostUnified](modpack/almostunified.md#audit-of-the-merged-mod-set)
   and [Melting](content/melting.md#running-it-again) describe. Two Forge 47.4.18 test boots of the merged
   tree, at 20:57 and 21:11, reached `Done` with 0 FATAL lines and the 3 accepted ERROR lines of a test
@@ -1135,7 +1136,9 @@ logs stay on the Mac and are not in the repo.
 
 ## 2026-11-06: Pack 3.1.3 merged into the branch and booted
 
-- The merge 5c2c6f3 brought the 55 commits of master after 9786a09 into the branch, up to b2d9a8f:
+- The merge of 2026-11-06 brought the 55 commits of master after 9786a09 into the branch, up to b2d9a8f
+  (since the rebase of 2026-11-07 the branch sits on them instead, and 5c2c6f3, the rebased copy of
+  the first parent of the merge, has the merged tree):
   pack 3.1.3 with the nine mods of 2026-11-04, Advanced Loot Info, Flux Networks and SkyTekx Molten,
   the unification of 2026-11-04, the replacement of the old Chocolate Quest blocks, the note fix of
   The One Probe and about 9,530 generated melting recipes. The merge took the config values and the
@@ -1158,6 +1161,39 @@ logs stay on the Mac and are not in the repo.
   ports](modpack/neoforge-ports.md#boots-of-the-merged-branch). The summaries are
   `packboot-logs/final-merge-*-summary.json` and `master313-*-summary.json` in the workflow
   scratchpad, not in the repository.
+
+## 2026-11-07: The history rewritten and the branch rebased onto master
+
+- The owner ruled on 2026-11-07, in the answers in the session of the rewrite, that every commit
+  carries the owner's address `kleber@snek.at`, which GitHub links to the owner's account, and
+  Claude as the committer with the SSH signature of the session, which GitHub shows as verified, and
+  no Co-authored-by trailer, see [Decisions](decisions.md#git-and-docs). Before, 333 commits had that
+  author address and 755 `skytekx@erebos.xyz`, which GitHub links to no account, and the 350
+  commits that the owner committed had no signature.
+- The rewrite replayed every commit but the merge of 2026-11-06, 1,087 in all, with their author and
+  committer dates and signed each one with one key. The 643 commits of master kept their trees but
+  for the remapped ids below, and the merge 160438f of
+  `feat/twilight-forest` stays a merge. The 405 commits of the port branch after the old merge base
+  9786a09 now sit linearly on master. Each got the tree of a plain rebase onto master, and the resolved
+  merge of 2026-11-06 decided where that rebase conflicts. Where the merge could not decide either,
+  2,080 times on 9 text paths, the commit got a union of its own text and that of master. These
+  commits in between can hold text that nobody wrote in that form, such as a doubled comment in
+  `tools/build_mrpack.py` in c5f5955. The tips hold none of it, and 5c2c6f3, the rebased copy of
+  the first parent of the merge, got the merged tree. The merge itself is gone, and its old id now
+  names 5c2c6f3. The 39 commits after it kept their trees but for the remapped ids.
+- The remap made every commit id that the docs, the records and the messages cited name the new
+  commit, and the `git show` in `tools/arclight/rebuild_safeiter.sh` as well. A cited id of this repo
+  that shares its first seven characters with a commit of AE2 was remapped by decision. The 197
+  messages that broke the rules of AGENTS.md got minimal fixes: 173 with semicolons, 31 with a
+  Claude-Session trailer, 14 with another type, 6 with hyphens used as dashes, one with an em dash
+  and one with a blank line at the end. The sources zip of Mekanism: Extra Modules names its commit
+  in its zip comment, so the follow-up b413c94 rebuilt it from the new commit and updated its SHA-1.
+- An independent checker passed the dry run: every commit signed by the one key, author and committer
+  as ruled with the old dates, every tree as expected, the tips equal to the old ones but for the
+  remapped ids and the zip, and no object of the ZeroCore 2 jar reachable. The force push of master
+  and the branch ends the rewrite, see
+  [Related repos and services](related.md#this-repo-on-github). The report and the stamp of the
+  checker are in the workflow scratchpad, not in the repository.
 
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

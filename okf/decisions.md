@@ -3,7 +3,7 @@ type: Decisions
 title: Decisions
 description: Every owner ruling on SkyTekx 3 from 2026-06-26 to 2026-10-31, grouped by area, with its status on 2026-10-31 and the page or file where it lives.
 tags: [decisions, rulings, owner]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Decisions
@@ -43,8 +43,12 @@ These rules apply to every later change.
   credits carry no real names (2026-06-29 10:00, 10:10 and 10:24).
 - Commit messages carry no dashes and no semicolons (2026-06-29 22:14). The website follows the same
   rule in English and German (2026-06-30 04:24).
-- AGENTS.md and the wiki do not name the owner as commit author, because other people may write code
-  with an agent (2026-06-29 18:46 and 18:47).
+- A commit that the owner drives carries the owner's address `kleber@snek.at` as author, and a
+  commit that the agent makes has `Claude <noreply@anthropic.com>` as its signed committer, with no
+  Co-authored-by trailer (2026-11-07). This replaced the rule of 2026-06-29 18:46 and 18:47 that
+  AGENTS.md and the wiki do not name the owner as commit author. Its reason still holds, since other
+  people may write code with an agent, so their commits carry their own address. No page names the
+  owner.
 
 ## Scope and platform
 
@@ -68,7 +72,7 @@ These rules apply to every later change.
 | 2026-06-27 15:09 | The project contact address is `skytekx@erebos.xyz`, not office@netsnek.com | Done. It is the contact in the user agent of `tools/resolve_all.py:9` and `tools/publish_modrinth.py:13` | [History](history.md#from-ts3party-to-ts4party) |
 | 2026-06-29 10:00 and 10:10 | Credit SkyTekx as "a modpack by ts4.party, the TeamSpeak for party, formerly known as ts3.party", with netsnek.com as supporter (worded "Supported by" at 14:46) | Partial. The website footer and credits, the README and since 2026-10-31 21:25 the Modrinth texts follow it. Two lead texts on the website still name the ts3.party community | [Related repos and services](related.md#claims-on-the-site-that-are-wrong-on-2026-10-31) |
 | 2026-06-29 10:24 | No real names in the credits | Done on 2026-11-02. Nyx 1.0.1 credits the port to SkyTekx, and `modrinth-permissions/nyx-1.20.1-1.0.1.jar.md` names no person | [Nyx](content/nyx.md#open-points) |
-| 2026-06-29 18:46 and 18:47 | AGENTS.md and the wiki must not name the owner as commit author | Done | [AGENTS.md](../AGENTS.md) |
+| 2026-06-29 18:46 and 18:47 | AGENTS.md and the wiki must not name the owner as commit author | Superseded on 2026-11-07. Every commit carries the owner's address since then, and AGENTS.md names that address but not the person, see [Git and docs](#git-and-docs) | [AGENTS.md](../AGENTS.md) |
 | 2026-06-30 04:54 | The website subtitle reads "Hexxit × Tekkit × SkyFactory" | Done. The README title follows it since 2026-10-31 | [History](history.md#names) |
 
 ## Mod set and sourcing
@@ -173,8 +177,11 @@ These rules apply to every later change.
 | 2026-06-29 18:38 | Fix the author address of the first commit and rebuild the history as granular multi-line Commitizen commits | Done. Force-pushed at 18:53. The states before the rewrites are on two local backup branches | [Related repos and services](related.md#this-repo-on-github) |
 | 2026-06-29 18:38 | A README with self-hosting steps like the older repos, an AGENTS.md and an OKF wiki for other agents | Done, rebuilt on 2026-10-31 | [README](../README.md), [AGENTS.md](../AGENTS.md), [OKF index](index.md) |
 | 2026-06-29 22:11 and 22:30 | A performance report, kept in the OKF and not in `docs/` | Done | [Performance](server/performance.md) |
-| 2026-06-29 22:14 | No dashes and no semicolons in commit messages, clean the whole history | Partial. Two spaced hyphens used as dashes remain in the bodies of bc9a935 and 573b71b | [Open items](open-items.md#docs-and-housekeeping) |
+| 2026-06-29 22:14 | No dashes and no semicolons in commit messages, clean the whole history | Done on 2026-11-07. The history rewrite of that day fixed the 197 messages that still broke the rules with minimal edits, the two spaced hyphens used as dashes in the bodies of bc9a935 and 573b71b among them | [Change log](log.md#2026-11-07-the-history-rewritten-and-the-branch-rebased-onto-master) |
 | 2026-10-31 16:33 | Read all logs and code and write an OKF | Done with this rebuild | [OKF index](index.md) |
+| 2026-11-07, the owner's answers in the session of the rewrite (time not verified) | Every commit gets the author address `kleber@snek.at`, which GitHub links to the owner's account, instead of `skytekx@erebos.xyz`, which GitHub links to no account. Before, 333 commits had the first and 755 the second | Done for the whole history by the rewrite of 2026-11-07. Commits of the owner after it need the address in the owner's git config, see [Open items](open-items.md#owner-decisions) | [AGENTS.md](../AGENTS.md#git-conventions), [Related repos and services](related.md#this-repo-on-github) |
+| 2026-11-07, the same answers | Claude is the committer of every commit and signs it with the SSH key of the session, so GitHub shows every commit as verified. No commit carries a Co-authored-by or Claude-Session trailer | Done for the whole history. Before, 729 commits were signed, and the 350 commits that the owner committed and 9 others had no signature. The 31 Claude-Session trailers are gone | [AGENTS.md](../AGENTS.md#git-conventions) |
+| 2026-11-07, the same answers | Rewrite the whole history, rebase the port branch onto master instead of the merge of 2026-11-06, and force push master and the branch | Done. An independent checker passed the dry run, and master and the branch were force pushed on 2026-11-07 | [Change log](log.md#2026-11-07-the-history-rewritten-and-the-branch-rebased-onto-master), [Related repos and services](related.md#this-repo-on-github) |
 
 ## Website
 

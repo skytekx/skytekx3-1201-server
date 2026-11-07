@@ -110,8 +110,13 @@ macos/skytekx3ctl rcon "<command>"                            # On the Mac mini,
 
 ## Git conventions
 
-- Commits are authored by the human who drives the work, not by the AI. Add no `Co-Authored-By`
-  trailers for the agent.
+- Commits are authored by the human who drives the work, not by the AI. For the owner that is the
+  address `kleber@snek.at`, which GitHub links to the owner's account, with the author name that the
+  history uses. The agent commits as `Claude <noreply@anthropic.com>` and signs every commit with the
+  SSH key of its session (`gpg.format ssh`, `commit.gpgsign true`), so GitHub shows the commit as
+  verified. Add no `Co-Authored-By` or `Claude-Session` trailers, since
+  the signed committer already names the agent. The owner ruled this on 2026-11-07, see
+  [Decisions](okf/decisions.md#git-and-docs).
 - Use Conventional Commits in the Commitizen style, multi-line, with a body that explains why.
   - Types in use are `feat`, `fix`, `perf`, `chore` and `docs`.
   - Scopes in use are `skylands`, `worldgen`, `mods`, `pack`, `server`, `macos`, `content`, `recipes`,

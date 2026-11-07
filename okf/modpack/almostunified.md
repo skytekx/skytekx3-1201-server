@@ -3,7 +3,7 @@ type: Reference
 title: AlmostUnified
 description: How AlmostUnified 0.11.0 collapses the duplicate metals, dusts and plates of the tech mods to one item per material, how an inventory converter, the ore overrides and an EMI hide list of 285 variants carry that into the world, what the audit of the merged mod set found, and why yellorium stays apart.
 tags: [modpack, recipes, unification]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # AlmostUnified
@@ -190,10 +190,12 @@ its own stats or looks, so they stay until the owner decides, see
 
 ### Audit of the merged mod set
 
-The merge of master into the port branch on 2026-11-06 (5c2c6f3) brought together the mods of 3.1.3 and
+The merge of master into the port branch on 2026-11-06 brought together the mods of 3.1.3 and
 those of the branch: Actually Additions, Expanded Delight, Mystical Automation, Mekanism: Extra Modules,
 Create: Integrated Farming with Create: Dragons Plus, Bygone Nether, LittleTiles, Extreme Reactors
-2.0.97 and the forks of Ender IO and Create Crafts & Additions. The dump script needed the fix of
+2.0.97 and the forks of Ender IO and Create Crafts & Additions. Since the rebase of 2026-11-07 the branch sits on
+master instead, and 5c2c6f3, the rebased copy of the first parent of the merge, has the merged tree. The dump
+script needed the fix of
 3bb9339 first, since Create: Dragons Plus adds an accessor `getRecipes()` to the recipe manager that
 returns the map of recipes by type. On a Forge test boot of the merged tree that started at 20:57, the dump of
 21:00 then held 48,197 recipes, 273 unify tags and 595 tagged items, and the audit found:

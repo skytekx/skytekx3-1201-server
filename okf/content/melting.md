@@ -3,7 +3,7 @@ type: Reference
 title: Melting
 description: How every armor piece, weapon, tool and item that holds a meltable material melts in the Tinkers smeltery, with 9,717 generated recipe files, the rules behind them, the dupe audit, the self check of the reader and one command to run it again after SkyTekx Molten or the mod set changes.
 tags: [content, recipes, tconstruct, datapack, tools]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Melting
@@ -311,8 +311,10 @@ byproducts, which only the foundry does (see [runs of the follow-up](#runs-of-th
 
 ## After the merge of 2026-11-06
 
-The merge of master into the port branch on 2026-11-06 (5c2c6f3) put the fork 1.20.1-1.7.3-skytekx.1 of Create
-Crafts & Additions in the place of 1.3.3 and brought the Twilight Delight recipes of the branch (ff8ff40). The folder
+The merge of master into the port branch on 2026-11-06 put the fork 1.20.1-1.7.3-skytekx.1 of Create
+Crafts & Additions in the place of 1.3.3 and brought the Twilight Delight recipes of the branch (ff8ff40). Since the
+history rewrite of 2026-11-07 the branch sits on master by a rebase instead, the merge commit is gone, and 5c2c6f3,
+the rebased copy of its first parent, has its tree. The folder
 still came from the dump of 01:19, which knew neither, and a review of the merge found files that melt into more
 than the new recipes take. The fork changed three recipes, the alternator, the electrum amulet and the spool, and
 added charging recipes that turn gold into electrum. Against 6.2.18 and 2.0.84, Ender IO 6.3.0-skytekx.1 adds 47

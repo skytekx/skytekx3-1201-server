@@ -3,7 +3,7 @@ type: Reference
 title: Related repos and services
 description: The sibling repos, the skytekx GitHub organisation, the skytekx.com website and the Modrinth project around SkyTekx 3, with their state on 2026-10-31.
 tags: [related, github, website, modrinth, repos]
-timestamp: 2026-11-04
+timestamp: 2026-11-07
 ---
 
 # Related repos and services
@@ -29,9 +29,12 @@ The history behind them is on [History](history.md).
 
 - The command `git ls-remote origin` returned `refs/heads/master` 4c5e331 on 2026-10-31 at 18:24, 18:56
   and 20:00. The local master adds the commits of 2026-10-31 on top, starting with a64f045 at 18:14.
-- These commits carry the author and committer address `skytekx@erebos.xyz`, which the repo's
-  local git config sets. The 40 commits before them all use one other address. Which address the new
-  commits keep is an owner decision before the push, see [Open items](open-items.md#owner-decisions).
+- Since the rewrite of 2026-11-07 every commit carries the author address `kleber@snek.at`, which
+  GitHub links to the owner's account, and the committer `Claude <noreply@anthropic.com>` with an SSH
+  signature, which GitHub shows as verified. Before it, 333 commits had that author address and 755
+  `skytekx@erebos.xyz`, which the repo's local git config set and which GitHub links to no account,
+  and the 350 commits that the owner committed had no signature. The owner chose the address
+  and the signed committer on 2026-11-07, see [Decisions](decisions.md#git-and-docs).
 - The local tracking ref `origin/master` still points at b6a1e20 of 2026-06-30, so `git status` also
   counts the six commits from 7995a0a to 4c5e331 as ahead. GitHub has everything up to 4c5e331. A
   plain `git fetch` corrects the display.
@@ -39,6 +42,16 @@ The history behind them is on [History](history.md).
   original commits with the rebuilt granular history. The second at 22:51 followed a `git filter-branch`
   that removed dashes and semicolons from the commit messages. The pre-rewrite states survive only in
   the local branches `backup-pre-reconstruct` and `backup-pre-scrub`.
+- A third rewrite on 2026-11-07 replaced the whole history and ends with a force push of master and
+  the port branch `claude/twilight-forest-port-mods-j2owbq`. Master goes from the old tip 3fa5ae6 to
+  b2d9a8f with the same trees but for the remapped ids. The branch had merged master on 2026-11-06
+  and goes from the old tip fff20e1 to a line that sits on the new master without a merge: the
+  rebased 0491f46, the zip follow-up b413c94 and the docs commit of the rewrite on top. Every other
+  commit id that these pages cite names the new commit, see the
+  [Change log](log.md#2026-11-07-the-history-rewritten-and-the-branch-rebased-onto-master). The old
+  commits live on only in clones that were not reset and in the remote branches
+  `claude/minecraft-server-performance-88o82x` and `feat/twilight-forest`, which the rewrite left
+  alone, see [Open items](open-items.md#owner-decisions).
 - The repository description on GitHub still says "kitchen-sink" and "Published:
   modrinth.com/modpack/skytekx3" (GitHub API, 2026-10-31). The project is not public, and the owner had
   the phrase "kitchen sink" removed from the website on 2026-06-29 11:02.

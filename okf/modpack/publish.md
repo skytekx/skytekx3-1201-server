@@ -169,8 +169,8 @@ files above.
 On the build machine, after the blockers are fixed:
 
 1. Set the new version in `VERSION` of `tools/build_mrpack.py` and of `tools/publish_modrinth.py`, and
-   write the changelog in `docs/changelog/<VERSION>.md`, starting from `docs/changelog/next.md`. If
-   the public address changes, change `SERVERS` in `build_mrpack.py` as well.
+   write the changelog in `docs/changelog/<VERSION>.md`, starting from `docs/changelog/next.md` if a
+   draft exists there. If the public address changes, change `SERVERS` in `build_mrpack.py` as well.
 2. Commit everything the pack should carry, since the builder reads git HEAD, not the disk. Before
    the push, check that no commit holds a jar that a pointer file stands for, at any path:
    `git log --oneline --find-object=f94d426ce1c02a3d3cbb16ddaf09db424c5435ae HEAD` has to print

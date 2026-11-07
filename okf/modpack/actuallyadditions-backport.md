@@ -3,7 +3,7 @@ type: Plan
 title: Actually Additions backport
 description: How the unreleased 1.20.1 Forge branch of Actually Additions became the release 1.1.52-skytekx.1 that the pack bundles, which fixes and features of the newer NeoForge lines up to 1.3.26 it took in which bundles and order, which upstream work stays out, how the release was tested, and the license, savegame, Arclight and operator rules of the fork.
 tags: [modpack, mods, actuallyadditions, backport]
-timestamp: 2026-11-06
+timestamp: 2026-11-07
 ---
 
 # Actually Additions backport
@@ -1442,10 +1442,12 @@ These differ from upstream on purpose and must survive the next upstream sync.
   `plugins/Essentials/userdata/` named by its UUID `5bc9ca5e-449d-4e9f-9707-7d8d34e2eecd`. Git does
   not ignore that folder, so keep such a file out of commits. Nobody has checked this yet
   (carryover `aa-ship`).
-- The first boot of the live world with Flux Networks copies `defaultconfigs/fluxnetworks-server.toml`
-  with the current id of the Phantom Energyface (0a5bb1b). A world that already has
-  `world/serverconfig/fluxnetworks-server.toml` keeps its own file, so change `blockBlacklistStrings`
-  there to `["actuallyadditions:phantom_energyface"]` while the java process is gone.
+- A new world copies `defaultconfigs/fluxnetworks-server.toml` with the current id of the Phantom
+  Energyface (0a5bb1b). A world that already has `world/serverconfig/fluxnetworks-server.toml` keeps
+  its own file. The live world is such a world, since it got Flux Networks with the deploy of 3.1.3 on
+  2026-11-05, before 0a5bb1b (log.md, 2026-11-05). So the deploy of 3.1.4 changes
+  `blockBlacklistStrings` there to `["actuallyadditions:phantom_energyface"]` while the java process
+  is gone, or Flux plugs and points still connect to the Phantom Energyface.
 - Announce the new mod to the players, with the manual that needs Patchouli and the key bind of the
   Crafting Table On A Stick.
 

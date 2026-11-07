@@ -107,9 +107,11 @@ evidence and the page with the details. The rulings behind the first section are
   bridge it and drops 7,243 Chipped recipes. In the install test of 3.0.6 the client ran out of its
   8 GB heap after the join and froze, and with 12 GB it played. Since 2026-11-03 git ships the EMI fork
   instead (eadc7a6d, as 1.1.24-skytekx.2 since 2026-11-04), which implements the JEI 15.74 API, and
-  the server and both MacBooks run it. A pack built from git still needs an install test, the heap
-  included. See [Mod set](modpack/mod-set.md#bundled-jars) and
-  [Publish](modpack/publish.md#test-of-2026-10-31).
+  the server and both MacBooks run it. The install test of pack 3.1.4 on 2026-11-07 ran with the fork, but its client
+  held 5.7 to 5.9 GB of heap at the main menu alone, and no run stayed in the world until EMI had
+  reloaded, because the test machine had no room for a 12 GB client next to the server. The 12 GB
+  advice stands. See [Mod set](modpack/mod-set.md#bundled-jars) and
+  [Publish](modpack/publish.md#test-of-2026-11-07).
 - Six bundled jars are All Rights Reserved without a grant: Aether Genesis, Connectivity, Cupboard,
   Deadly World, Fireflies and Hexxit Additions. Ask for permission, replace or remove them before a
   public release. See [Publish](modpack/publish.md#what-blocks-a-release).
@@ -284,7 +286,24 @@ evidence and the page with the details. The rulings behind the first section are
   `kubejs/server_scripts/tag_fixes.js`. See
   [Actually Additions backport](modpack/actuallyadditions-backport.md#pack-integration).
 
+- A filter for the shield atlas of Spartan Shields (2026-11-07). Spartan Shields 3.1.1 adds a
+  directory source of `entity/` to `assets/minecraft/atlases/shield_patterns.json`, so every entity
+  texture of every mod lands in the shield pattern atlas, which the client of 3.1.4 builds at
+  16384x8192, about 512 MB of texture. A resource pack that filters the source cut it to 4096x2048 in
+  the client test, but shields with entity textures may look different then, and nobody has checked
+  them. Shipping such a pack is the owner's call. See
+  [Publish](modpack/publish.md#test-of-2026-11-07).
+
 ## Defects to fix
+
+- The creative tab `DECreativeTabs$CyclingTab` of Draconic Evolution 3.1.2.621 divides by zero
+  (`DECreativeTabs.java:92`) when NVL Force Fields fills its tab at the join, so JEI leaves out the
+  group Building Blocks. Seen in the client test of pack 3.1.4, and probably old, since 3.1.3 has the
+  same jars, see [Publish](modpack/publish.md#test-of-2026-11-07).
+- AllTheLeaks 1.1.1 logs `Cannot have null removal reason on Clone event!` at ERROR level on Arclight
+  when a player respawns, and afterwards lists one leaked `ServerPlayer`. Seen on the test server of
+  2026-11-07 and not new in 3.1.4, but it is an ERROR line outside the boot baseline, see
+  [Publish](modpack/publish.md#test-of-2026-11-07).
 
 - The tracked world copies of the Skylands datapacks on the build machine are behind their sources
   since the commits of 2026-10-31 (1c6f8d4, 1cc9702, 50824a3 and bcb113c). They belong to the old world,
@@ -349,6 +368,11 @@ evidence and the page with the details. The rulings behind the first section are
   [Actually Additions backport](modpack/actuallyadditions-backport.md#arclight-notes).
 
 ## Not verified
+
+- A stable session of pack 3.1.4 with a 12 GB heap. The client test of 2026-11-07 joined and rendered
+  the new content, but the test machine had room for a client of at most about 8 GB next to the server,
+  and no run lasted until "Reloaded EMI". The first player to join the updated server with 12 GB on a
+  real machine closes this. See [Publish](modpack/publish.md#test-of-2026-11-07).
 
 - Pack 3.1.3 in a client. No client loaded it before it went to the players on 2026-11-05. A static
   check of its 268 client jars found every mandatory dependency present in a matching version, and the
@@ -501,7 +525,9 @@ evidence and the page with the details. The rulings behind the first section are
   filled a cask, planted cranberries, fed a fox cranberries or stripped a cinnamon log by hand. See [Expanded Delight
   port](modpack/expandeddelight-port.md#integration-test).
 - Ender IO 6.3.0-skytekx.1 in a client and on the live world. A savegame test from 6.2.18-beta, full
-  pack boots on Forge and Arclight and dev self tests passed, but nobody has joined with a client of
+  pack boots on Forge and Arclight and dev self tests passed, and on 2026-11-07 a client of pack 3.1.4
+  joined an Arclight test server over the Ender IO protocol and the new blocks rendered (see
+  [Publish](modpack/publish.md#test-of-2026-11-07)), but nobody has played with a client of
   the pack, seen the Vat recipes in JEI and EMI, opened the screens of the new blocks, used the staff
   and magnet keys or seen the facades with Embeddium. A copy of the live world on the production
   Arclight jar is open too, with the inhibitor obelisk against `/home` and `/tpa` of EssentialsX, the
@@ -511,8 +537,9 @@ evidence and the page with the details. The rulings behind the first section are
   the live server. A dedicated Forge 47.4.18 server loaded a world saved by the base jar with every item,
   fluid and energy value, and the full pack booted with the fork on Forge and on Arclight on
   2026-11-06 with no new log signature, the jar with the crop fix on Arclight in the [boots of the
-  merged branch](modpack/neoforge-ports.md#boots-of-the-merged-branch), but no pack client has joined
-  a server with it. Open are the JEI and EMI categories, the screens, the lasers and particles with
+  merged branch](modpack/neoforge-ports.md#boots-of-the-merged-branch). On 2026-11-07 a client of
+  pack 3.1.4 joined an Arclight test server over protocol 5 and the blocks of the mod rendered, but
+  no client stayed until EMI had reloaded. Open are the JEI and EMI categories, the screens, the lasers and particles with
   Oculus and Embeddium and the tools in a client, the Bukkit events of the drill, the machines and the magnet rings under the
   AATest plugin with EssentialsX, and a Flux Networks point next to a Phantom Energyface, which the
   config of 0a5bb1b should keep apart. The carryover file
@@ -521,10 +548,12 @@ evidence and the page with the details. The rulings behind the first section are
   [Actually Additions backport](modpack/actuallyadditions-backport.md#release-test).
 - Create Crafts & Additions 1.20.1-1.7.3-skytekx.1 in a client and on the live world. A plain Forge
   test server loaded a world saved by 1.3.3 with the fork unchanged, and the full pack booted with it
-  on Forge and Arclight on 2026-11-06 and charged, pumped and moved energy over wires there, but no
-  pack client has joined a fork server, and the alternator scan and the wire test on a copy of the
-  live world have not run. Both are rollout gates, see [Create Crafts & Additions
-  backport](modpack/createaddition-backport.md#release).
+  on Forge and Arclight on 2026-11-06 and charged, pumped and moved energy over wires there. On
+  2026-11-07 a client of pack 3.1.4 joined an Arclight fork server, and a 3.1.3 client was refused
+  with a screen that names Create Crafts & Additions and Ender IO (see
+  [Publish](modpack/publish.md#test-of-2026-11-07)). Nobody has used the new blocks in a client yet,
+  and the alternator scan and the wire test on a copy of the live world have not run. Both are rollout
+  gates, see [Create Crafts & Additions backport](modpack/createaddition-backport.md#release).
 - Lost drops on Arclight from other mods' block breakers. Arclight 1.0.6 pushes a capture context for
   every Forge break event that it bridges to Bukkit, and only the break of a real player takes it
   off again, while its `Block.popResource` puts every drop into the top context. The test of the

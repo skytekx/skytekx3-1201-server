@@ -534,7 +534,8 @@
      "Ponders on a pack client: the pump, connector and servo scenes, the accumulator scene and Create's Fluid Tank scene with the whole mod set.",
      "Optional code notes, not applied to keep the release jar stable: the ListTag of WireGraphVerifier, the stale wire end double drop, the shared clientTimeRemaining of TimeRemainingPacket, a debug line for the late answer guard of the verifier, and the pump hysteresis, which is an open owner decision.",
      "Deploy: with the java process gone, remove mods/createaddition-1.20.1-1.3.3.jar from the server and copy local-mods/createaddition-1.20.1-1.7.3-skytekx.1.jar in, together with the next pack, since clients need the same jar."
-    ]
+    ],
+    "progress": "2026-11-07, client test of pack 3.1.4: a 3.1.3 pack client with 1.3.3 was refused by the fork server on an Arclight test copy with 'Connection closed - mismatched mod channel list'. Its screen named Create Crafts & Additions and Ender IO, because createaddition:main and enderio:network both rejected it. A 3.1.4 client joined the fork server over createaddition:main 2, and the 10 placed blocks of the mod rendered. Still open: a fork client against a 1.3.3 server, the gates on a copy of the live world and the other client checks (okf/modpack/publish.md, Test of 2026-11-07)."
    }
   ]
  }

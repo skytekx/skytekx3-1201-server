@@ -1195,5 +1195,25 @@ logs stay on the Mac and are not in the repo.
   [Related repos and services](related.md#this-repo-on-github). The report and the stamp of the
   checker are in the workflow scratchpad, not in the repository.
 
+## 2026-11-07: Pack 3.1.4
+
+- After the rewrite the owner asked whether a clone of master holds everything and then to bump the
+  pack and hand over a file for the players. Master was fast-forwarded to the port branch, and dc03fb4
+  set the version to 3.1.4 in the builder, the upload script and the index. The private build
+  `SkyTekx3-3.1.4-UNPERMITTED.mrpack` of 14:45 has 94,923,984 bytes, 230 index entries and 59 bundled
+  jars, see [Publish](modpack/publish.md#version-history). Its player notes moved from
+  `docs/changelog/next.md` to `docs/changelog/3.1.4.md` and were corrected after a review.
+- A static check of the 276 client jars found every mandatory dependency present and the protocol pins
+  of Create Crafts & Additions, Actually Additions and Ender IO equal on client and server. It also
+  showed that BrassAmber BattleTowers and Falling Meteors Reimagined come with the pack since c5386c1,
+  so players add no jar by hand, which 1b9fad9 fixed in the docs.
+- The client test installed the pack fresh, reached the main menu with an 8 GB heap, joined an
+  Arclight test server and rendered the new blocks and the Bygone Nether mobs, and a 3.1.3 client was
+  refused. The memory limit of the test machine stopped every run before EMI had reloaded, so the
+  12 GB advice stands, see [Publish](modpack/publish.md#test-of-2026-11-07). The changelog now
+  tells players about the memory and the wait for EMI.
+- The live server still runs 3.1.3. The deploy of 3.1.4 with its gates on a copy of the live world
+  waits for the Mac mini, and players switch when the server does.
+
 Related: [OKF index](index.md), [History](history.md), [Decisions](decisions.md),
 [Open items](open-items.md).

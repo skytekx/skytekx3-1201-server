@@ -1,7 +1,7 @@
 ---
 type: Runbook
 title: Publish
-description: The state of the SkyTekx3 Modrinth project, the install test of 2026-10-31, what blocks a public release, the release steps, and the history of the mrpack versions.
+description: The state of the SkyTekx3 Modrinth project, the install tests of 2026-10-31 and 2026-11-07, what blocks a public release, the release steps, and the history of the mrpack versions.
 tags: [modpack, modrinth, release, mrpack]
 timestamp: 2026-11-07
 ---
@@ -67,6 +67,47 @@ Two more runs of the same instance followed that evening.
 So 3.0.6 needs a 12 GB heap, and EMI still lacks the Chipped recipes. No install test of 3.0.7 is
 recorded. It differs from 3.0.6 only by Modflared and the server list and has the same JEI and EMI
 builds.
+
+## Test of 2026-11-07
+
+Pack 3.1.4 (SHA-1 7a696cd6a24cea534f5535b98b19bbfe7eee6831) went into a new instance through a
+script that follows the install order of Prism Launcher, in a cloud container with Xvfb and Mesa
+llvmpipe (GL 4.5), Java 17, an offline account and the Forge client 47.4.18. A test server built from
+a worktree of ccd9267 ran on the hardened Arclight jar with `online-mode=false` and a 4 GB heap. Every
+process of the container shared one memory cgroup of 13.35 GiB, and that limit decided most of the
+results. The logs and screenshots are in the workflow scratchpad, not in the repository.
+
+| Step | Result |
+|---|---|
+| Install | The index lists 230 files, of which 217 are for the client and 13 were skipped as client unsupported, and the overrides add 10,818 files. The instance holds 276 jars, with no failure and no collision between the index and the overrides. Four downloads come from github.com instead of the Modrinth CDN (ExtendedAE, BrassAmber BattleTowers, Elementary Staffs and Falling Meteors Reimagined), and the overrides carry 59 jars, so Prism shows its dialog about files from outside Modrinth. Real Prism and the Modrinth App were not run |
+| Start with an 8 GB heap | Main menu after 204 s on llvmpipe, 306 mods, no dependency screen, 0 FATAL lines. The 33 ERROR lines have the startup sources of 3.1.3: AllTheLeaks, the notes of ModernFix about the reload listeners of ZeroCore 2 and LittleTiles, Moonlight palette masks, five SlashBlade item models, four molten buckets of ticex and three mixin configs without `minVersion`. After GC the heap held 5.7 to 5.9 GB at the main menu, and the process 12.2 GB |
+| Test server | Done after 19.9 s with 300 mod ids and the 3 ERROR lines of the test copy baseline |
+| Join | The handshake accepted all 196 channels, among them `actuallyadditions:main` 5, `createaddition:main` 2 and `enderio:network` 1.0-skytekx.1, and the registry snapshot went in without a remap error. Every run then hit the memory limit. The kernel killed the 8 GB client before it connected. A 4.6 GB client ran out of heap in the recipe registration of JEI. A 5 GB client loaded the world and was killed while EMI baked its 345,385 recipes. A 4.6 GB client stayed in the world but spent 665 s of 11 minutes in full GCs, and "Reloaded EMI" never came |
+| New content | In front of the camera stood 69 blocks of the new and changed mods and all 8 mobs of Bygone Nether. None showed the missing texture, the inventory icons rendered, and the client logged no missing model for their namespaces |
+| 3.1.3 client | Refused with "mismatched mod channel list". The screen names Create Crafts & Additions (1.20.1-1.3.3 against 1.20.1-1.7.3-skytekx.1) and Ender IO (6.2.18-beta against 6.3.0-skytekx.1), the mods of the rejected channels `createaddition:main` and `enderio:network` |
+
+The smaller clients ran with changes that only the test made and the pack does not carry: ModernFix
+dynamic resources, a filter for the shield atlas, a lower render distance and, in two runs, the JEI
+plugin of Iron's Spellbooks taken out. So 3.1.4 needs at least 12 GB of heap, as 3.0.6 did. A stable
+session with EMI reloaded was not seen, and the first join of a player with 12 GB on a real machine
+is the open check.
+
+The test found these issues. None of them blocks the pack.
+
+- Spartan Shields 3.1.1 ships `assets/minecraft/atlases/shield_patterns.json` with a directory source
+  of `entity/`, which pulls every entity texture of every mod into the shield pattern atlas. The client
+  builds it at 16384x8192, about 512 MB of texture plus the sprite data in RAM. A resource pack that
+  filters this source cut it to 4096x2048 in the test. Whether the pack ships such a filter is open,
+  see [open items](../open-items.md).
+- The creative tab `DECreativeTabs$CyclingTab` of Draconic Evolution divides by zero
+  (`DECreativeTabs.java:92`) when NVL Force Fields fills its tab, so JEI leaves out the group
+  Building Blocks. Both jars were in 3.1.3 as well.
+- The clients load the stock jars of the mods that `tools/patch_mods.py` patches only for the server,
+  so they log the failed mixin `SummonedSwordMixin` of ticex and the three `minVersion` lines.
+- On the server AllTheLeaks logs `Cannot have null removal reason on Clone event!` at ERROR level
+  when a player respawns, and Nyx logs "Async effect add" while ocean ruins generate. Neither is new
+  in 3.1.4, since the live server runs the same AllTheLeaks 1.1.1 and the same Arclight jar, but the
+  first is an ERROR line outside the boot baseline.
 
 ## What blocks a release
 
@@ -235,6 +276,7 @@ the build machine, see [tools](tools.md#mac-mini).
 | 3.1.1 | 2026-11-03 17:37 | 73,371,625 B | 225 | 44 | Private build with `--allow-unpermitted`, sent straight to players and never uploaded, because five bundled jars lack permission. It carries everything since 3.0.7, among it the Twilight Forest backport, Nyx 1.0.1, the minimap at the top right (`config/xaerohud.txt`) and the single Hexbiscus |
 | 3.1.2 | 2026-11-03 20:33 | 73,371,076 B | 224 | 44 | Private build like 3.1.1. Elenai Dodge 2 removed, Nyx allows enchanting by day |
 | 3.1.3 | 2026-11-05 00:41 | 75,915,546 B | 232 | 49 | Private build like 3.1.2, sent straight to players. The nine mods of 2026-11-04 with FLib, Advanced Loot Info in the place of Just Enough Resources, Flux Networks, SkyTekx Molten, EMI 1.1.24-skytekx.2, the patched Simply Jetpacks 2, Starlight off the clients, 3D dropped items and no Read Me note of The One Probe |
+| 3.1.4 | 2026-11-07 14:45 | 94,923,984 B | 230 | 59 | Private build like 3.1.3, from dc03fb4. SkyTekx DE Fixes, Extreme Reactors 2.0.97 with ZeroCore 2.1.48, the LittleTiles build, Bygone Nether, the ports of Mystical Automation, Mekanism: Extra Modules, Expanded Delight and Create: Integrated Farming with Create: Dragons Plus, and the forks of Ender IO, Create Crafts & Additions and Actually Additions. Needs a 12 GB heap, see [test](#test-of-2026-11-07) |
 
 Pack 3.1.3 is the first with Simply Jetpacks 2 bundled and the first that ships a patched jar (see
 [boot fixes](../content/boot-fixes.md#jar-patches)). It is also the first that keeps Starlight off the
@@ -250,7 +292,7 @@ a nested old copy of L2 Library whose newer standalone jar Forge picks. A fresh 
 Advanced Loot Info in EMI and the machines of the new mods are not tested yet. Its deploy moved the
 fixes pack to the end of the pack order, see [boot fixes](../content/boot-fixes.md#pack-order).
 
-Pack 3.1.3 went live without the mods below. The next pack after 3.1.3 is the first with
+Pack 3.1.3 went live without the mods below. Pack 3.1.4 is the first with
 SkyTekx DE Fixes (see [Draconic Evolution fixes](draconic-fixes.md)), with Extreme Reactors 2.0.97,
 ZeroCore 2.1.48 and the LittleTiles build of c5694e16 bundled (see
 [mod set](mod-set.md#bundled-jars)), with the Mystical Automation port (see
@@ -265,21 +307,13 @@ with the new Actually Additions fork 1.20.1-1.1.52-skytekx.1 (see
 [Actually Additions backport](actuallyadditions-backport.md)), with the Apotheosis bosses of
 Iron's Apothic Invaders and three Twilight Delight recipes (see [KubeJS](kubejs.md)), and with Bygone
 Nether, whose tag repair in the fixes pack also needs that pack at the end of the pack order (see
-[mod set](mod-set.md#bygone-nether)). Its row should record whether a fresh install and the update of
-a 3.1.3 instance were tested in Prism Launcher and the Modrinth App, whether the screens and JEI
-categories of Mystical Automation work in a client, whether the module screen and HUD of Mekanism:
-Extra Modules, the juicer screen and boats of Expanded Delight and the Ponder scenes and the JEI
-category Roosting of Create: Integrated Farming work there, whether a client joins with the Ender IO
-network protocol 1.0-skytekx.1 and the update of a 3.1.3 instance replaces the 6.2.18-beta jar, since
-server and client need the same build, whether JEI and EMI show the Vat recipes, whether the screens
-of the Vat, the obelisks and the wireless charger and the staff and magnet keys work, whether the
-conduit facades render with the Embeddium of the pack, whether a client joins over the Create Crafts &
-Additions channel `createaddition:main` with its protocol 2 and the update of a 3.1.3 instance drops
-`createaddition-1.20.1-1.3.3.jar`, whether JEI and EMI show the charging steps of Sequenced Assembly,
-whether the new ponder scenes of the pump, the connectors and the servo open, whether a client joins
-with the Actually Additions protocol 5, whether its manual opens as a Patchouli book and JEI and EMI
-show its categories, whether the Draconic Evolution fixes work in a client and whether the mobs and
-structures of Bygone Nether render there. The server appends the pack of every mod it sees for the
+[mod set](mod-set.md#bygone-nether)). The [test of 2026-11-07](#test-of-2026-11-07) covered a fresh install, the join over the
+protocols of Ender IO, Create Crafts & Additions and Actually Additions and the render of the new
+blocks and of the Bygone Nether mobs. Still open are the update of a 3.1.3 instance in Prism Launcher
+and the Modrinth App, a stable session with EMI reloaded, the JEI and EMI categories of the new mods
+(the Vat, the charging steps of Sequenced Assembly, Roosting and the Actually Additions machines), the
+screens, HUDs, keys, ponder scenes and boats of the new mods, the conduit facades with Embeddium, the
+manual of Actually Additions as a Patchouli book and the Draconic Evolution fixes in a client. The server appends the pack of every mod it sees for the
 first time after the fixes pack, so its deploy has to move the fixes pack to the end of the pack order
 again, as the deploy of 3.1.3 did, see [boot fixes](../content/boot-fixes.md#load-order).
 
@@ -296,9 +330,9 @@ Its channel `actuallyadditions:main` accepts only its own protocol 5 and no abse
 without the fork. The upload therefore also goes out together with copying
 `ActuallyAdditions-1.20.1-1.1.52-skytekx.1.jar` into the server's `mods/` while the java process is
 gone, see the [operator notes](actuallyadditions-backport.md#operator-notes) of the backport page.
-No pack client has joined a server with this jar yet, so no public pack with it goes up before a
-client from the `.mrpack` has logged in to the Arclight test server over protocol 5, at least the
-login item of carryover `aa-client-test`, see [Release](actuallyadditions-backport.md#release) of
+A client from the `.mrpack` of 3.1.4 logged in to the Arclight test server over protocol 5 in the
+[test of 2026-11-07](#test-of-2026-11-07), which covers the login item of carryover
+`aa-client-test`. Its other items stay open, see [Release](actuallyadditions-backport.md#release) of
 the backport page.
 
 The full pack of 052a0e4 with the six mods that stand in for NeoForge 1.21.1 mods, Create: Dragons

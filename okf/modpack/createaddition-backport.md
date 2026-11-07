@@ -607,10 +607,13 @@ The release shipped the fork on 2026-11-06 in four commits on top of the ponders
 
 These steps stay open. The carryover file lists each of them under `cca-pack-release`.
 
-- A stock 1.3.3 pack client logs in to the fork server, and a fork client logs in to a 1.3.3 server.
-  Both logins must end with `Connection closed - mismatched mod channel list`, and the mismatch
-  screen must name `createaddition:main` (Forge 47 `HandshakeHandler`, the protocol bump of
-  0611ece). A fork client must also log in to the fork server.
+- A fork client logs in to a 1.3.3 server, and the login must end with `Connection closed -
+  mismatched mod channel list` (Forge 47 `HandshakeHandler`, the protocol bump of 0611ece). The
+  other two logins passed in the client test of pack 3.1.4 on 2026-11-07, see
+  [Publish](publish.md#test-of-2026-11-07). A 3.1.3 client was refused by the fork server on an
+  Arclight test copy with that message, and its screen named Create Crafts & Additions next to
+  Ender IO, since `createaddition:main` and `enderio:network` both rejected it. A 3.1.4 client logged
+  in to the fork server over protocol 2.
 - The alternator scan is a rollout gate. Run `tools/alternator_scan.py <world> --json before.json`
   on a copy of the live world with every dimension. Each listed alternator has a kinetic block behind
   it that Create joins to its network on the first server tick after the upgrade (3f97be7). Then

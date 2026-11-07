@@ -212,7 +212,9 @@ A player outside the LAN gets in with pack 3.0.7 like this:
    without it. The owner decided on 2026-10-31 at 21:48 that players add it by hand. The official file
    is linked on [mod set](mod-set.md#jars-outside-the-index). Packs from 3.1.1 on bring it, so this
    step only applies to 3.0.7.
-3. Give the game at least 12 GB of memory, see [publish](publish.md#test-of-2026-10-31).
+3. Give the game at least 12 GB of memory, see [publish](publish.md#test-of-2026-10-31). Pack 3.1.4
+   needs the same, since its client held 5.7 to 5.9 GB at the main menu alone, see
+   [publish](publish.md#test-of-2026-11-07).
 4. On a Mac with Apple Silicon, install Rosetta 2. Modflared runs an Intel build of cloudflared there.
 5. Start the game. On the first start Modflared downloads cloudflared from GitHub. Then join SkyTekx
    from the server list. Linux on ARM cannot join this way.
